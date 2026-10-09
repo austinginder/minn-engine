@@ -1639,11 +1639,108 @@ function block_core_calendar_update_has_published_post_on_delete($post_id)
     block_core_calendar_update_has_published_posts();
 }
 
-/** The block hooks applied to a post's content, the post as the anchor's context. */
+/**
+ * The block hooks applied to a post's content, the post as the anchor's
+ * context. A navigation's items are its root: they are wrapped in a
+ * navigation block carrying the post's stored ignored list, so its
+ * first_child and last_child hooks apply, and the list that block ends
+ * with comes back in $ignored_hooked_blocks_at_root (probe block-hooks-rest).
+ */
 function apply_block_hooks_to_content_from_post_object($content, $post = null, $callback = 'insert_hooked_blocks', &$ignored_hooked_blocks_at_root = null)
 {
     $post = get_post($post);
-    return $post === null ? $content : apply_block_hooks_to_content((string) $content, $post, $callback);
+    if ($post === null) {
+        return $content;
+    }
+    if ($post->post_type !== 'wp_navigation') {
+        return apply_block_hooks_to_content((string) $content, $post, $callback);
+    }
+    $stored = json_decode((string) get_post_meta($post->ID, '_wp_ignored_hooked_blocks', true), true);
+    $attrs = is_array($stored) && $stored !== [] ? ['metadata' => ['ignoredHookedBlocks' => $stored]] : [];
+    $wrapped = parse_blocks(apply_block_hooks_to_content(get_comment_delimited_block_content('core/navigation', $attrs, (string) $content), $post, $callback))[0] ?? null;
+    $ignored_hooked_blocks_at_root = (array) ($wrapped['attrs']['metadata']['ignoredHookedBlocks'] ?? []);
+    return $wrapped === null ? (string) $content : implode('', array_map('serialize_block', (array) $wrapped['innerBlocks']));
+}
+
+/** A REST answer's raw content given its hooked blocks (rendered again from it), and a navigation's root ignored list put in its meta. */
+function insert_hooked_blocks_into_rest_response($response, $post)
+{
+    if (empty($response->data['content']['raw'])) {
+        return $response;
+    }
+    $at_root = [];
+    $content = apply_block_hooks_to_content_from_post_object($response->data['content']['raw'], $post, 'insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata', $at_root);
+    if ($at_root !== []) {
+        $response->data['meta']['_wp_ignored_hooked_blocks'] = wp_json_encode($at_root);
+    }
+    $response->data['content']['raw'] = $content;
+    $response->data['content']['rendered'] = apply_filters('the_content', $content);
+    return $response;
+}
+
+/** A post about to be saved with its ignored hooked blocks marked in its content; a navigation's root list goes to meta_input. */
+function update_ignored_hooked_blocks_postmeta($post)
+{
+    if (!isset($post->post_content, $post->post_type)) {
+        return $post;
+    }
+    $at_root = [];
+    $post->post_content = apply_block_hooks_to_content_from_post_object($post->post_content, $post->ID ?? null, 'set_ignored_hooked_blocks_metadata', $at_root);
+    if ($at_root !== []) {
+        $post->meta_input = (array) ($post->meta_input ?? []) + ['_wp_ignored_hooked_blocks' => wp_json_encode($at_root)];
+    }
+    return $post;
+}
+
+/**
+ * A template or part about to be saved over REST (rest_pre_insert_wp_template,
+ * _part) with its ignored hooked blocks marked: an existing one by its
+ * saved form, a new one built from the changes (stamped with the time and
+ * the current user) and its wp_theme term; that error when it names none.
+ */
+function inject_ignored_hooked_blocks_metadata_attributes($changes, $deprecated = null)
+{
+    if (!isset($changes->post_content)) {
+        return $changes;
+    }
+    if (isset($changes->ID)) {
+        $template = _build_block_template_result_from_post(get_post($changes->ID));
+    } else {
+        $changes->post_modified = current_time('mysql');
+        $changes->post_author = (string) get_current_user_id();
+        $post = (object) (get_object_vars($changes) + ['ID' => 0, 'post_title' => '', 'post_excerpt' => '', 'post_status' => '', 'post_date' => $changes->post_modified]);
+        $template = _build_block_template_object_from_post_object($post, (array) ($changes->tax_input ?? []), []);
+    }
+    if (is_wp_error($template)) {
+        return $template;
+    }
+    $changes->post_content = apply_block_hooks_to_content($changes->post_content, $template, 'set_ignored_hooked_blocks_metadata');
+    return $changes;
+}
+
+/** A template part's attribute as kses leaves it: its tagName only when the allowed tags name it, anything else as given. */
+function filter_block_core_template_part_attributes($attribute_value, $attribute_name, $allowed_html)
+{
+    if ($attribute_name !== 'tagName') {
+        return $attribute_value;
+    }
+    return is_string($attribute_value) && isset($allowed_html[$attribute_value]) ? $attribute_value : '';
+}
+
+/** A block's own content (a part, a pattern) through the content filters, without the_content: shortcodes, blocks, texturize, smilies, the content tags. */
+function _wp_apply_block_content_filters($content, $context = '', &$seen_ids = null, $id = null)
+{
+    // The id is held in the seen list while its content is filtered, as a guard against a block that contains itself.
+    if ($id !== null) {
+        $seen_ids = (array) $seen_ids;
+        $seen_ids[$id] = true;
+    }
+    $content = do_blocks(do_shortcode(shortcode_unautop((string) $content)));
+    $content = wp_filter_content_tags(convert_smilies(wptexturize($content)), $context !== '' ? $context : null);
+    if ($id !== null) {
+        unset($seen_ids[$id]);
+    }
+    return $content;
 }
 
 /** The template types a block theme may define (data/template-types.json), through default_template_types. */

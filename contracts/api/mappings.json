@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 774,
-        "composes": 1759,
-        "leaf": 853,
+        "composes": 1763,
+        "leaf": 854,
         "noop": 2642,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7853,
+        "functions": 7858,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -32399,6 +32399,20 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_wp_apply_block_content_filters": {
+            "file": "blocks.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "convert_smilies",
+                "do_blocks",
+                "do_shortcode",
+                "shortcode_unautop",
+                "wp_filter_content_tags",
+                "wptexturize"
+            ]
+        },
         "_wp_array_get": {
             "file": "formatting.php",
             "lines": 10,
@@ -34489,12 +34503,15 @@
         },
         "apply_block_hooks_to_content_from_post_object": {
             "file": "blocks.php",
-            "lines": 2,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_block_hooks_to_content",
-                "get_post"
+                "get_comment_delimited_block_content",
+                "get_post",
+                "get_post_meta",
+                "parse_blocks"
             ]
         },
         "apply_filters": {
@@ -37999,6 +38016,13 @@
             "composes": [
                 "wp_kses"
             ]
+        },
+        "filter_block_core_template_part_attributes": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "filter_block_kses": {
             "file": "blocks.php",
@@ -45383,6 +45407,21 @@
                 "get_index_rel_link"
             ]
         },
+        "inject_ignored_hooked_blocks_metadata_attributes": {
+            "file": "blocks.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_build_block_template_object_from_post_object",
+                "_build_block_template_result_from_post",
+                "apply_block_hooks_to_content",
+                "current_time",
+                "get_current_user_id",
+                "get_post",
+                "is_wp_error"
+            ]
+        },
         "insert_hooked_blocks": {
             "file": "blocks.php",
             "lines": 15,
@@ -45402,6 +45441,17 @@
             "composes": [
                 "insert_hooked_blocks",
                 "set_ignored_hooked_blocks_metadata"
+            ]
+        },
+        "insert_hooked_blocks_into_rest_response": {
+            "file": "blocks.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_block_hooks_to_content_from_post_object",
+                "apply_filters",
+                "wp_json_encode"
             ]
         },
         "insert_with_markers": {
@@ -54595,6 +54645,16 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "update_ignored_hooked_blocks_postmeta": {
+            "file": "blocks.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_block_hooks_to_content_from_post_object",
+                "wp_json_encode"
+            ]
         },
         "update_menu_item_cache": {
             "file": "taxonomy.php",

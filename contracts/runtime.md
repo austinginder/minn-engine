@@ -8327,3 +8327,53 @@ Probe `load-helpers`.
     functions) waits for a decision. The reference stores pauses only
     inside a recovery-mode session, while the engine pauses on its own
     (Runtime\Recovery).
+
+## Block Hooks around REST (2026-10-09)
+
+Probe `block-hooks-rest`.
+
+- **filter_block_core_template_part_attributes.** A `tagName` survives
+  only when it is a key of the allowed HTML given, case-sensitively;
+  otherwise it is `''`. Every other attribute is returned as given.
+- **inject_ignored_hooked_blocks_metadata_attributes**
+  (`rest_pre_insert_wp_template` and `_part`).
+  - Changes with no content come back unchanged.
+  - An existing template (`ID`) gets its content marked by its saved
+    form; nothing else is added.
+  - A new one is stamped with `post_modified` (now) and `post_author`
+    (the current user's id, as a string), and built from its `wp_theme`
+    term. Without that term it answers the `template_missing_theme` error.
+  - Hooked blocks are not inserted, only marked in the anchor's
+    `metadata.ignoredHookedBlocks`.
+- **insert_hooked_blocks_into_rest_response.**
+  - An empty or missing raw content leaves the answer alone. Otherwise the
+    raw content gets its hooked blocks, with the marks set, and `rendered`
+    is `the_content` of the new raw (a self-closing static block renders
+    as nothing).
+  - For a navigation, the root's ignored list, merged with the stored
+    `_wp_ignored_hooked_blocks`, goes into the answer's
+    `meta._wp_ignored_hooked_blocks`.
+- **update_ignored_hooked_blocks_postmeta.**
+  - Nothing changes without both `post_content` and `post_type`.
+  - Otherwise the content is marked. For a navigation, the root's list
+    goes to `meta_input._wp_ignored_hooked_blocks`, keeping any other
+    meta input.
+- **Navigations as roots** (shared, `apply_block_hooks_to_content_from_post_object`).
+  - A `wp_navigation` post's items are wrapped in a navigation block that
+    carries its stored ignored list, so `first_child` and `last_child`
+    hooks apply, then unwrapped.
+  - The wrapper's final list comes back through
+    `$ignored_hooked_blocks_at_root`. The engine used to apply hooks to
+    the items as loose blocks.
+- **_wp_apply_block_content_filters.**
+  - It runs `shortcode_unautop`, `do_shortcode`, `do_blocks`,
+    `wptexturize`, `convert_smilies`, then `wp_filter_content_tags` with
+    the context given. There is no `the_content`, wpautop, autoembed or
+    `]]>` escaping.
+  - The id is held in `$seen_ids` while its content is filtered, then
+    removed.
+- **Still owed.**
+  - The engine's `wp_filter_content_tags` ignores the `template` context.
+    The reference adds no loading or decoding attributes there; the
+    engine adds them.
+  - `_wp_enqueue_auto_register_blocks` belongs to the block editor.

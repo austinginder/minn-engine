@@ -1,0 +1,192 @@
+[
+    [
+        "the hooks",
+        [
+            10,
+            10
+        ]
+    ],
+    [
+        "a template part's tag name",
+        [
+            "",
+            "header",
+            "div",
+            "zz",
+            "",
+            "",
+            "",
+            "Header",
+            "a--b",
+            "<!-- c -->",
+            "zz <x>",
+            [
+                "a"
+            ],
+            5
+        ]
+    ],
+    [
+        "ignored hooked blocks marked in a template",
+        [
+            {
+                "post_content": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"core/separator\"]}} --><p>t</p><!-- /wp:paragraph -->",
+                "post_type": "wp_template",
+                "post_name": "zz-tpl",
+                "tax_input": {
+                    "wp_theme": "twentytwentyfive"
+                },
+                "post_modified": "{date}",
+                "post_author": "0"
+            },
+            {
+                "post_content": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"core/separator\"]}} --><p>t</p><!-- /wp:paragraph -->",
+                "post_type": "wp_template_part",
+                "post_name": "zz-part",
+                "tax_input": {
+                    "wp_theme": "twentytwentyfive",
+                    "wp_template_part_area": "header"
+                },
+                "post_modified": "{date}",
+                "post_author": "0"
+            },
+            {
+                "post_type": "wp_template",
+                "post_name": "x"
+            },
+            [
+                "template_missing_theme",
+                "No theme is defined for this template."
+            ],
+            {
+                "ID": "{existing}",
+                "post_content": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"core/separator\"]}} --><p>t</p><!-- /wp:paragraph -->"
+            },
+            {
+                "post_content": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"core/separator\"]}} --><p>t</p><!-- /wp:paragraph -->",
+                "post_type": "wp_template",
+                "post_name": "zz-tpl",
+                "tax_input": {
+                    "wp_theme": "twentytwentyfive"
+                },
+                "post_modified": "{date}",
+                "post_author": "1"
+            },
+            {
+                "post_content": "<!-- wp:heading --><h2>h</h2><!-- /wp:heading -->",
+                "post_type": "wp_template",
+                "post_name": "zz-tpl",
+                "tax_input": {
+                    "wp_theme": "twentytwentyfive"
+                },
+                "post_modified": "{date}",
+                "post_author": "0"
+            }
+        ]
+    ],
+    [
+        "a REST answer given its hooked blocks",
+        [
+            {
+                "content": {
+                    "raw": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"core/separator\"]}} --><p>t</p><!-- /wp:paragraph --><!-- wp:separator /-->",
+                    "rendered": "<p class=\"wp-block-paragraph\">t</p>",
+                    "block_version": 1
+                },
+                "id": "{block}"
+            },
+            {
+                "id": "{block}"
+            },
+            {
+                "content": {
+                    "raw": "",
+                    "rendered": "r"
+                }
+            },
+            {
+                "content": {
+                    "raw": "<!-- wp:heading --><h2>other</h2><!-- /wp:heading -->",
+                    "rendered": "<h2 class=\"wp-block-heading\">other</h2>"
+                }
+            },
+            {
+                "content": {
+                    "raw": "<!-- wp:navigation-link {\"label\":\"a\",\"url\":\"/a\"} /--><!-- wp:home-link /-->",
+                    "rendered": "<li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"/a\"><span class=\"wp-block-navigation-item__label\">a</span></a></li><li class=\"wp-block-navigation-item wp-block-home-link\"><a class=\"wp-block-home-link__content wp-block-navigation-item__content\" href=\"https://{host}\" rel=\"home\" >Home</a></li>"
+                },
+                "meta": {
+                    "_wp_ignored_hooked_blocks": "[\"core\\/home-link\"]"
+                }
+            },
+            {
+                "content": {
+                    "raw": "<!-- wp:navigation-link {\"label\":\"a\",\"url\":\"/a\"} /--><!-- wp:home-link /-->",
+                    "rendered": "<li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"/a\"><span class=\"wp-block-navigation-item__label\">a</span></a></li><li class=\"wp-block-navigation-item wp-block-home-link\"><a class=\"wp-block-home-link__content wp-block-navigation-item__content\" href=\"https://{host}\" rel=\"home\" >Home</a></li>"
+                },
+                "meta": {
+                    "_wp_ignored_hooked_blocks": "[\"core\\/search\",\"core\\/home-link\"]"
+                }
+            }
+        ]
+    ],
+    [
+        "the ignored list stored on update",
+        [
+            {
+                "ID": "{block}",
+                "post_type": "wp_block",
+                "post_content": "<!-- wp:paragraph {\"metadata\":{\"ignoredHookedBlocks\":[\"core/separator\"]}} --><p>t</p><!-- /wp:paragraph -->"
+            },
+            {
+                "ID": "{block}",
+                "post_type": "wp_block"
+            },
+            {
+                "ID": "{nav}",
+                "post_type": "wp_navigation",
+                "post_content": "<!-- wp:navigation-link {\"label\":\"a\",\"url\":\"/a\"} /-->",
+                "meta_input": {
+                    "_wp_ignored_hooked_blocks": "[\"core\\/search\",\"core\\/home-link\"]"
+                }
+            },
+            {
+                "ID": "{nav}",
+                "post_type": "wp_navigation",
+                "post_content": "<!-- wp:navigation-link {\"label\":\"a\",\"url\":\"/a\"} /-->",
+                "meta_input": {
+                    "zz": "kept",
+                    "_wp_ignored_hooked_blocks": "[\"core\\/home-link\"]"
+                }
+            },
+            {
+                "ID": "{block}",
+                "post_content": "<!-- wp:paragraph --><p>t</p><!-- /wp:paragraph -->"
+            }
+        ]
+    ],
+    [
+        "a block's own content filtered",
+        [
+            "<p class=\"wp-block-paragraph\">a &#8220;b&#8221; &#8212; c</p>",
+            "plain text &#8220;q&#8221;",
+            "&#8220;quoted&#8221; &#8212; ]]> 🙂 <p class=\"wp-block-paragraph\">inner</p>",
+            "&#8220;quoted&#8221; &#8212; ]]> 🙂 <p class=\"wp-block-paragraph\">inner</p>\n",
+            "🙂 smile",
+            "a\n\nb",
+            "<img decoding=\"async\" src=\"https://zz.example/i.png\">",
+            "<img decoding=\"async\" src=\"https://zz.example/i.png\">",
+            "https://zz.example/",
+            "Wordpress and ]]> end",
+            "",
+            [
+                "x",
+                "y",
+                {
+                    "zz": true
+                }
+            ],
+            []
+        ]
+    ]
+]
