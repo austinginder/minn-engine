@@ -9,6 +9,7 @@ request, response, routing, and the outgoing client
 | [`CertificateName`](#certificatename) | final class | 56 | Whether a TLS certificate names a host: a wildcard only as a whole first |
 | [`CookieText`](#cookietext) | final class | 94 | Set-Cookie text and the matching rules a cookie jar applies: parsing a |
 | [`Destination`](#destination) | final readonly class | 102 | Where Minn\Http lets a request go. Only http and https; when hosts are |
+| [`DiePage`](#diepage) | final class | 126 | The page wp_die shows a browser, as the reference draws it (probe |
 | [`Download`](#download) | final readonly class | 36 | A file the engine fetches for itself (a package, a language pack), over |
 | [`Envelope`](#envelope) | interface | 9 | What runs around a matched route once the router knows the route takes |
 | [`Exchange`](#exchange) | final readonly class | 74 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
@@ -34,6 +35,7 @@ request, response, routing, and the outgoing client
 | [`RouteParams`](#routeparams) | interface | 10 | The parameters a route takes when they depend on what its captures name |
 | [`RouteRow`](#routerow) | final readonly class | 81 | One line of the route table: what a route is, who it is for, and what it |
 | [`Router`](#router) | final class | 254 | Matches a request to a #[Route] on one of the registered handler |
+| [`StatusText`](#statustext) | final class | 16 | The reason phrase a status line carries for each code, as the reference's |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
 | [`Transport`](#transport) | final class | 138 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
 | [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
@@ -194,6 +196,27 @@ somewhere private it was not allowed.
 A URL's host, lower-cased, without the brackets around an IPv6 address.
 
 Internals: `startsWithOne()` (private, line 89), `allowed()` (private, line 99), `dns()` (private, line 111)
+
+
+## DiePage
+
+`final class Minn\Http\DiePage` · `public/minn/src/Minn/Http/DiePage.php`
+
+The page wp_die shows a browser, as the reference draws it (probe
+functions-remaining): its stylesheet word for word, the html element's
+language (or dir='rtl' for a right-to-left message, which also sets a
+Tahoma font), the charset, the robots tag, the title and the message as
+given, then any links. The caller escapes what needs escaping. The
+stylesheet is kept here with four spaces for each of its tabs.
+
+- const `STYLES` = `'        html {             background: #f1f1f1;         }         body {             background: #fff;             border: 1px solid #ccd0d4;             color: #444;             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;             margin: 2em auto;             padding: 1em 2em;             max-width: 700px;             -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);             box-shadow: 0 1px 1px rgba(0, 0, 0, .04);         }         h1 {             border-bottom: 1px solid #dadada;             clear: both;             color: #666;             font-size: 24px;             margin: 30px 0 0 0;             padding: 0;             padding-bottom: 7px;         }         #error-page {             margin-top: 50px;         }         #error-page p,         #error-page .wp-die-message {             font-size: 14px;             line-height: 1.5;             margin: 25px 0 20px;         }         #error-page code {             font-family: Consolas, Monaco, monospace;         }         ul li {             margin-bottom: 10px;             font-size: 14px ;         }         a {             color: #3858e9;         }         a:hover,         a:active {             color: #183ad6;         }         a:focus {             color: #183ad6;             box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);             outline: 2px solid transparent;         }         .button {             background: #f3f5f6;             border: 1px solid #016087;             color: #016087;             display: inline-block;             text-decoration: none;             font-size: 13px;             line-height: 2;             height: 28px;             margin: 0;             padding: 0 10px 1px;             cursor: pointer;             -webkit-border-radius: 3px;             -webkit-appearance: none;             border-radius: 3px;             white-space: nowrap;             -webkit-box-sizing: border-box;             -moz-box-sizing:    border-box;             box-sizing:         border-box;              vertical-align: top;         }          .button.button-large {             line-height: 2.30769231;             min-height: 32px;             padding: 0 12px;         }          .button:hover,         .button:focus {             background: #f1f1f1;         }          .button:focus {             background: #f3f5f6;             border-color: #007cba;             -webkit-box-shadow: 0 0 0 1px #007cba;             box-shadow: 0 0 0 1px #007cba;             color: #016087;             outline: 2px solid transparent;             outline-offset: 0;         }          .button:active {             background: #f3f5f6;             border-color: #7e8993;             -webkit-box-shadow: none;             box-shadow: none;         }'`
+
+### static `html(string $languageAttributes, string $direction, string $charset, string $robots, string $title, string $message, string $links): string`
+
+The whole page: $languageAttributes go inside <html> unless the direction
+is 'rtl'; $robots is the printed robots tag.
+
+Internals: `styles()` (private, line 136)
 
 
 ## Download
@@ -1171,6 +1194,21 @@ reads to tell a route that does not take part from no route at all.
 Null when nothing matched, so the caller can fall through.
 
 Internals: `admits()` (private, line 118), `arguments()` (private, line 179), `answer()` (private, line 196), `enveloped()` (private, line 214), `methodsOf()` (private, line 242), `literal()` (private, line 255), `spells()` (private, line 266)
+
+
+## StatusText
+
+`final class Minn\Http\StatusText` · `public/minn/src/Minn/Http/StatusText.php`
+
+The reason phrase a status line carries for each code, as the reference's
+table has them (probe functions-remaining): its own wording where it
+differs from today's RFCs ("Request Entity Too Large", "Reserved" for 306).
+
+- const `PHRASES` = `array (   100 => 'Continue',   101 => 'Switching Protocols',   102 => 'Processing',   103 => 'Early Hints',   200 => 'OK',   201 => 'Created',   202 => 'Accepted',   203 => 'Non-Authoritative Information',   204 => 'No Content',   205 => 'Reset Content',   206 => 'Partial Content',   207 => 'Multi-Status',   226 => 'IM Used',   300 => 'Multiple Choices',   301 => 'Moved Permanently',   302 => 'Found',   303 => 'See Other',   304 => 'Not Modified',   305 => 'Use Proxy',   306 => 'Reserved',   307 => 'Temporary Redirect',   308 => 'Permanent Redirect',   400 => 'Bad Request',   401 => 'Unauthorized',   402 => 'Payment Required',   403 => 'Forbidden',   404 => 'Not Found',   405 => 'Method Not Allowed',   406 => 'Not Acceptable',   407 => 'Proxy Authentication Required',   408 => 'Request Timeout',   409 => 'Conflict',   410 => 'Gone',   411 => 'Length Required',   412 => 'Precondition Failed',   413 => 'Request Entity Too Large',   414 => 'Request-URI Too Long',   415 => 'Unsupported Media Type',   416 => 'Requested Range Not Satisfiable',   417 => 'Expectation Failed',   418 => 'I\'m a teapot',   421 => 'Misdirected Request',   422 => 'Unprocessable Entity',   423 => 'Locked',   424 => 'Failed Dependency',   425 => 'Too Early',   426 => 'Upgrade Required',   428 => 'Precondition Required',   429 => 'Too Many Requests',   431 => 'Request Header Fields Too Large',   451 => 'Unavailable For Legal Reasons',   500 => 'Internal Server Error',   501 => 'Not Implemented',   502 => 'Bad Gateway',   503 => 'Service Unavailable',   504 => 'Gateway Timeout',   505 => 'HTTP Version Not Supported',   506 => 'Variant Also Negotiates',   507 => 'Insufficient Storage',   510 => 'Not Extended',   511 => 'Network Authentication Required', )`
+
+### static `of(int $code): string`
+
+The phrase for a code, or empty for one the table does not know.
 
 
 ## Subject

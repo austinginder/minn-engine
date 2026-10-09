@@ -239,6 +239,10 @@ namespace {
         public function request($url, $args = [])
         {
             $defaults = ['method' => 'GET', 'timeout' => (float) apply_filters('http_request_timeout', 5, $url), 'redirection' => (int) apply_filters('http_request_redirection_count', 5, $url), 'httpversion' => apply_filters('http_request_version', '1.0', $url), 'user-agent' => apply_filters('http_headers_useragent', 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo('url'), $url), 'reject_unsafe_urls' => apply_filters('http_request_reject_unsafe_urls', false, $url), 'blocking' => true, 'headers' => [], 'cookies' => [], 'body' => null, 'compress' => false, 'decompress' => true, 'sslverify' => true, 'sslcertificates' => '', 'stream' => false, 'filename' => null, 'limit_response_size' => null];
+            // A HEAD request follows no redirects unless it asks to (probe functions-remaining).
+            if (($args['method'] ?? '') === 'HEAD') {
+                $defaults['redirection'] = 0;
+            }
             $parsed_args = apply_filters('http_request_args', wp_parse_args($args, $defaults), $url);
             $pre = apply_filters('pre_http_request', false, $parsed_args, $url);
             if ($pre !== false) {

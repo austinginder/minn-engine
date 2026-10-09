@@ -90,9 +90,14 @@ function wp_is_xml_request()
     return false;
 }
 
+/** Whether the request came over HTTPS; with no request (the command line), what $_SERVER says, as WP-CLI sets it for an https site. */
 function is_ssl()
 {
-    return Runtime::current()->isSecure();
+    if (Runtime::current()->request !== null) {
+        return Runtime::current()->isSecure();
+    }
+    $https = strtolower((string) ($_SERVER['HTTPS'] ?? ''));
+    return $https === 'on' || $https === '1' || (string) ($_SERVER['SERVER_PORT'] ?? '') === '443';
 }
 
 /** Whether the site's locale writes right to left. */
@@ -159,9 +164,11 @@ function wp_debug_mode()
 {
 }
 
+/** The protocol the request came over: HTTP/1.1, 2, 2.0 or 3 as the server says, anything else HTTP/1.0 (probe functions-remaining). */
 function wp_get_server_protocol()
 {
-    return 'HTTP/1.1';
+    $protocol = $_SERVER['SERVER_PROTOCOL'] ?? '';
+    return in_array($protocol, ['HTTP/1.1', 'HTTP/2', 'HTTP/2.0', 'HTTP/3'], true) ? $protocol : 'HTTP/1.0';
 }
 
 /** Starts the page timer timer_stop reads ($timestart). */

@@ -155,14 +155,16 @@ function wp_parse_args($args, $defaults = [])
     return Minn\Support\Lists::args($args, $defaults);
 }
 
+/** A string split on commas and whitespace; an array comes back as given (probe functions-remaining). */
 function wp_parse_list($input_list)
 {
-    return Lists::items($input_list);
+    return is_array($input_list) ? $input_list : Lists::items($input_list);
 }
 
+/** Whole numbers made positive, each once, keeping the keys of their first appearance (probe functions-remaining). */
 function wp_parse_id_list($input_list)
 {
-    return Lists::ids($input_list);
+    return array_unique(array_map('absint', wp_parse_list($input_list)));
 }
 
 function wp_parse_slug_list($input_list)
@@ -479,9 +481,17 @@ function set_url_scheme($url, $scheme = null)
     return apply_filters('set_url_scheme', Url::withScheme((string) $url, $scheme), $scheme, $url);
 }
 
+/** Whether the admin is forced onto HTTPS; a value given is kept for the request and the previous one returned (probe functions-remaining). */
 function force_ssl_admin($force = null)
 {
-    return defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN;
+    static $forced = null;
+    $forced ??= defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN;
+    if ($force === null) {
+        return $forced;
+    }
+    $previous = $forced;
+    $forced = (bool) $force;
+    return $previous;
 }
 
 function add_query_arg(...$args)

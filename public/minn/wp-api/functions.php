@@ -251,10 +251,10 @@ function wp_is_writable($path)
     return @is_writable((string) $path);
 }
 
+/** A path starting with a slash or backslash, or a drive letter and a backslash (C:/ is not one); a URL is not (probe functions-remaining). */
 function path_is_absolute($path)
 {
-    $path = (string) $path;
-    return $path !== '' && ($path[0] === '/' || preg_match('#^[a-zA-Z]:[/\\\\]#', $path) === 1 || wp_is_stream($path));
+    return preg_match('#^[/\\\\]|^[a-zA-Z]:\\\\#', (string) $path) === 1;
 }
 
 function path_join($base, $path)
@@ -297,7 +297,8 @@ function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
     $dir = rtrim((string) $dir, '/');
     $number = '';
     if ($unique_filename_callback !== null && is_callable($unique_filename_callback)) {
-        $candidate = (string) call_user_func($unique_filename_callback, $dir, $name, $ext);
+        // The callback is handed the whole file name and the extension (probe functions-remaining).
+        $candidate = (string) call_user_func($unique_filename_callback, $dir, $filename, $ext);
     } else {
         $candidate = $name . strtolower($ext);
         while (file_exists($dir . '/' . $candidate)) {
@@ -447,29 +448,67 @@ function apache_mod_loaded($mod, $default_value = false)
     return function_exists('apache_get_modules') ? in_array($mod, apache_get_modules(), true) : $default_value;
 }
 
+/** Never IIS here, through iis7_supports_permalinks. */
 function iis7_supports_permalinks()
 {
-    return false;
+    return apply_filters('iis7_supports_permalinks', false);
 }
 
+/**
+ * 0 for a safe path, else why not (probe functions-remaining): 1 for a lone
+ * ../, more than one, or one that is not the last segment (backslashes read
+ * as slashes); 2 for a colon in second place (a drive); 3 for a file outside
+ * the allowed list.
+ */
 function validate_file($file, $allowed_files = [])
 {
-    $file = (string) $file;
-    if ($file === '' || str_contains($file, '..') || str_contains($file, './')) {
-        return $file === '' ? 0 : 1;
+    $file = str_replace('\\', '/', (string) $file);
+    if ($file === '../' || substr_count($file, '../') > 1 || (str_contains($file, '../') && !str_ends_with($file, '../'))) {
+        return 1;
     }
-    if ($allowed_files !== [] && !in_array($file, $allowed_files, true)) {
-        return 3;
-    }
-    if (preg_match('|^.:[/\\\\]|', $file)) {
+    if (($file[1] ?? '') === ':') {
         return 2;
+    }
+    if (!empty($allowed_files) && !in_array($file, $allowed_files, true)) {
+        return 3;
     }
     return 0;
 }
 
+/**
+ * The site's address guessed from the request, as the installer does
+ * (probe functions-remaining): WP_SITEURL when set, else the scheme, the
+ * host, and the folder the request points into.
+ */
 function wp_guess_url()
 {
-    return home_url();
+    if (defined('WP_SITEURL') && WP_SITEURL !== '') {
+        return WP_SITEURL;
+    }
+    return rtrim((is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . _minn_guessed_path(), '/');
+}
+
+/**
+ * @internal The folder part of a guessed address: the request up to wp-admin
+ * or wp-login.php; for a script at the install's root, the script's own
+ * folder; for one in a subfolder, the request without that subfolder and
+ * what follows; for one outside the install, the request as made.
+ */
+function _minn_guessed_path(): string
+{
+    $uri = (string) ($_SERVER['REQUEST_URI'] ?? '');
+    $root = rtrim(str_replace('\\', '/', ABSPATH), '/');
+    $folder = dirname(str_replace('\\', '/', (string) ($_SERVER['SCRIPT_FILENAME'] ?? '')));
+    if (str_contains($uri, 'wp-admin') || str_contains($uri, 'wp-login.php')) {
+        return (string) preg_replace('#/(wp-admin/?.*|wp-login\.php.*)#i', '', $uri);
+    }
+    if ($folder === $root) {
+        return (string) preg_replace('#/[^/]*$#', '', (string) ($_SERVER['PHP_SELF'] ?? ''));
+    }
+    if (str_starts_with($folder, $root . '/')) {
+        return (string) preg_replace('#/' . preg_quote(substr($folder, strlen($root) + 1), '#') . '/[^/]*$#i', '', $uri);
+    }
+    return $uri;
 }
 
 /** Whether wp_cache_add is refused for now (Runtime\Deferrals). */
@@ -478,15 +517,19 @@ function wp_suspend_cache_addition($suspend = null)
     return Deferrals::cacheAddition($suspend);
 }
 
+/** Holds back clean_post_cache while set; the previous setting is returned, null before the first call (probe functions-remaining). */
 function wp_suspend_cache_invalidation($suspend = true)
 {
-    return false;
+    global $_wp_suspend_cache_invalidation;
+    $previous = $_wp_suspend_cache_invalidation;
+    $_wp_suspend_cache_invalidation = $suspend;
+    return $previous;
 }
 
+/** A status code's reason phrase, from the reference's table; empty for a code it does not know (probe functions-remaining). */
 function get_status_header_desc($code)
 {
-    $codes = [200 => 'OK', 201 => 'Created', 204 => 'No Content', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 307 => 'Temporary Redirect', 308 => 'Permanent Redirect', 400 => 'Bad Request', 401 => 'Unauthorized', 403 => 'Forbidden', 404 => 'Not Found', 405 => 'Method Not Allowed', 409 => 'Conflict', 410 => 'Gone', 429 => 'Too Many Requests', 500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable'];
-    return $codes[(int) $code] ?? '';
+    return Minn\Http\StatusText::of(absint($code));
 }
 
 /** robots.txt: the admin kept out (its AJAX endpoint let in), under do_robotstxt and robots_txt, whether or not the site is public. */
@@ -513,18 +556,27 @@ function status_header($code, $description = '')
     }
 }
 
+/** The no-cache headers sent; one set to false (Last-Modified) is taken off instead. */
 function nocache_headers()
 {
-    if (!headers_sent()) {
-        foreach (wp_get_nocache_headers() as $name => $value) {
+    if (headers_sent()) {
+        return;
+    }
+    foreach (wp_get_nocache_headers() as $name => $value) {
+        if ($value === false) {
+            header_remove($name);
+        } else {
             header("{$name}: {$value}");
         }
     }
 }
 
+/** The no-cache headers through nocache_headers, then Last-Modified false, which a plugin cannot keep (probe functions-remaining). */
 function wp_get_nocache_headers()
 {
-    return apply_filters('nocache_headers', ['Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0, no-store, private']);
+    $headers = apply_filters('nocache_headers', ['Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0, no-store, private']);
+    $headers['Last-Modified'] = false;
+    return $headers;
 }
 
 function cache_javascript_headers()
@@ -536,14 +588,15 @@ function wp_send_json($response, $status_code = null, $flags = 0)
     if (!headers_sent()) {
         header('Content-Type: application/json; charset=' . get_option('blog_charset'));
         if ($status_code !== null) {
-            http_response_code((int) $status_code);
+            status_header($status_code);
         }
     }
     echo wp_json_encode($response, $flags);
     if (wp_doing_ajax()) {
         wp_die('', '', ['response' => null]);
+    } else {
+        exit;
     }
-    exit;
 }
 
 function wp_send_json_success($value = null, $status_code = null, $flags = 0)
@@ -595,20 +648,95 @@ function wp_is_site_protected_by_basic_auth($context = '')
     return false;
 }
 
+/**
+ * The URLs in a text, each once (probe functions-remaining): an optional
+ * scheme and one or two slashes, a run with no space, parenthesis or angle
+ * bracket up to its last dot, then word characters and URL punctuation (a
+ * colon only before a digit). Each is entity-decoded and loses its
+ * semicolons.
+ */
 function wp_extract_urls($content)
 {
-    preg_match_all('#\bhttps?://[^\s<>"\']+#i', (string) $content, $m);
-    return array_values(array_unique($m[0]));
+    preg_match_all('!(?:[\w-]+:)?//?[^\s()<>]+\.(?:[\w#$%&*+\-./=?@\\\\^|~;]|:(?=\d))*!u', (string) $content, $m);
+    return array_values(array_unique(array_map(static fn (string $url): string => str_replace(';', '', html_entity_decode($url)), $m[0])));
 }
 
+/**
+ * The post's enclosures brought up to date with the audio and video its
+ * content links to (probe functions-remaining): an enclosure whose address
+ * left the content is deleted; each new link, through enclosure_links and
+ * without its fragment, is asked for its headers and kept when its
+ * content-type is audio or video. Kept quirks: the length is read from
+ * Content-Length as written, and the type stored is the one the link's
+ * extension matched, carried over from the last link that had one (the
+ * last type in the list when the extension matches none).
+ */
 function do_enclose($content, $post)
 {
-    return null;
+    $post = get_post($post);
+    if (!$post) {
+        return false;
+    }
+    $urls = wp_extract_urls($content ?? $post->post_content);
+    $enclosed = _minn_kept_enclosures($post->ID, $urls);
+    $links = [];
+    foreach ($urls as $url) {
+        if (!in_array($url, $enclosed, true)) {
+            $links[] = $url;
+        }
+    }
+    $mime = '';
+    foreach ((array) apply_filters('enclosure_links', $links, $post->ID) as $link) {
+        $url = (string) preg_replace('/#.*$/s', '', (string) $link);
+        $headers = in_array($url, $enclosed, true) ? false : wp_get_http_headers($url);
+        if (!$headers) {
+            continue;
+        }
+        _minn_enclosure_type($url, $mime);
+        $type = (string) ($headers['content-type'] ?? '');
+        $slash = strpos($type, '/');
+        if ($slash !== false && in_array(substr($type, 0, $slash), ['audio', 'video'], true)) {
+            add_post_meta($post->ID, 'enclosure', $url . "\n" . (isset($headers['Content-Length']) ? (int) $headers['Content-Length'] : 0) . "\n" . $mime . "\n");
+            $enclosed[] = $url;
+        }
+    }
 }
 
+/** @internal The enclosure addresses still in the content; the others' enclosure rows are deleted. */
+function _minn_kept_enclosures(int $post_id, array $urls): array
+{
+    $kept = [];
+    foreach ((array) get_post_meta($post_id, 'enclosure') as $value) {
+        $url = explode("\n", (string) $value)[0];
+        if (in_array($url, $urls, true)) {
+            $kept[] = $url;
+        } else {
+            delete_post_meta($post_id, 'enclosure', $value);
+        }
+    }
+    return $kept;
+}
+
+/** @internal Sets $mime to the type the address's extension matches, the last in the list when none does; untouched without an extension. */
+function _minn_enclosure_type(string $url, string &$mime): void
+{
+    $extension = pathinfo((string) parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION);
+    if ($extension === '') {
+        return;
+    }
+    foreach (wp_get_mime_types() as $extensions => $type) {
+        $mime = $type;
+        if (preg_match('!^(' . $extensions . ')$!i', $extension) === 1) {
+            return;
+        }
+    }
+}
+
+/** A URL's headers from a HEAD request, whatever the status; false when the request fails (probe functions-remaining). */
 function wp_get_http_headers($url, $deprecated = false)
 {
-    return false;
+    $response = wp_safe_remote_head($url);
+    return is_wp_error($response) ? false : wp_remote_retrieve_headers($response);
 }
 
 /** 1 while the loop's post is dated on a different day from the last date the_date printed, else 0. */
@@ -622,9 +750,26 @@ function build_query($data)
     return _minn_build_query((array) $data);
 }
 
+/**
+ * A query string (probe functions-remaining): a number key takes $prefix,
+ * nested keys go in brackets under $key, pairs join with $sep, and keys and
+ * values are URL-encoded unless $urlencode is false; nulls are left out and
+ * booleans are 1 and 0.
+ */
 function _http_build_query($data, $prefix = null, $sep = null, $key = '', $urlencode = true)
 {
-    return _minn_build_query((array) $data, (string) $key);
+    $pairs = [];
+    foreach ((array) $data as $name => $value) {
+        $name = (string) (is_int($name) && $prefix !== null ? $prefix . $name : $name);
+        $name = $key === '' ? ($urlencode ? urlencode($name) : $name) : $key . '%5B' . ($urlencode ? urlencode($name) : $name) . '%5D';
+        if (is_array($value) || is_object($value)) {
+            $pairs[] = _http_build_query($value, '', $sep, $name, $urlencode);
+        } elseif ($value !== null) {
+            $value = (string) (is_bool($value) ? (int) $value : $value);
+            $pairs[] = $name . '=' . ($urlencode ? urlencode($value) : $value);
+        }
+    }
+    return implode($sep ?? (string) ini_get('arg_separator.output'), array_filter($pairs, static fn (string $pair): bool => $pair !== ''));
 }
 
 /** A registered widget's description, escaped; nothing for a widget not registered. */
@@ -643,7 +788,7 @@ function wp_auth_check_load()
 function wp_auth_check_html()
 {
     $login_url = wp_login_url();
-    echo "\t\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\t" . esc_html__('Close dialog') . "\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">" . esc_html__('Session expired') . "</b></p>\n\t\t<p><a href=\"" . esc_url($login_url) . "\" target=\"_blank\">" . esc_html__('Please log in again.') . "</a>\n\t\t" . esc_html__('The login page will open in a new tab. After logging in you can close it and return to this page.') . "</p>\n\t</div>\n\t</div>\n\t</div>\n";
+    echo "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\t" . esc_html__('Close dialog') . "\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">" . esc_html__('Session expired') . "</b></p>\n\t\t<p><a href=\"" . esc_url($login_url) . "\" target=\"_blank\">" . esc_html__('Please log in again.') . "</a>\n\t\t" . esc_html__('The login page will open in a new tab. After logging in you can close it and return to this page.') . "</p>\n\t</div>\n\t</div>\n\t</div>\n\t";
 }
 
 function wp_auth_check($response)
@@ -716,23 +861,25 @@ function wp_get_wp_version()
     return $GLOBALS['wp_version'];
 }
 
+/**
+ * An admin notice's markup (probe functions-remaining): the arguments through
+ * wp_admin_notice_args, the id before the class, a true attribute written
+ * bare, the markup through wp_admin_notice_markup. A type with a space is
+ * done wrong but still used.
+ */
 function wp_get_admin_notice($message, $args = [])
 {
-    $args = wp_parse_args($args, ['type' => '', 'dismissible' => false, 'id' => '', 'additional_classes' => [], 'attributes' => [], 'paragraph_wrap' => true]);
-    $classes = ['notice'];
-    if ($args['type'] !== '') {
-        $classes[] = 'notice-' . $args['type'];
+    $args = apply_filters('wp_admin_notice_args', wp_parse_args($args, ['type' => '', 'dismissible' => false, 'id' => '', 'additional_classes' => [], 'attributes' => [], 'paragraph_wrap' => true]), $message);
+    if (is_string($args['type']) && str_contains($args['type'], ' ')) {
+        _doing_it_wrong(__FUNCTION__, __('The <code>type</code> key must be a string without spaces.'), '6.4.0');
     }
-    if ($args['dismissible']) {
-        $classes[] = 'is-dismissible';
-    }
-    $classes = array_merge($classes, (array) $args['additional_classes']);
-    $attributes = $args['id'] !== '' ? ' id="' . esc_attr($args['id']) . '"' : '';
+    $classes = array_merge(['notice'], $args['type'] !== '' ? ['notice-' . $args['type']] : [], $args['dismissible'] ? ['is-dismissible'] : [], (array) $args['additional_classes']);
+    $attributes = ($args['id'] !== '' ? ' id="' . esc_attr($args['id']) . '"' : '') . ' class="' . esc_attr(implode(' ', $classes)) . '"';
     foreach ((array) $args['attributes'] as $name => $value) {
-        $attributes .= ' ' . esc_attr($name) . '="' . esc_attr((string) $value) . '"';
+        $attributes .= ' ' . esc_attr($name) . ($value === true ? '' : '="' . esc_attr((string) $value) . '"');
     }
-    $message = $args['paragraph_wrap'] ? "<p>{$message}</p>" : $message;
-    return '<div class="' . esc_attr(implode(' ', $classes)) . '"' . $attributes . '>' . $message . '</div>';
+    $paragraph = $args['paragraph_wrap'] ? "<p>{$message}</p>" : $message;
+    return apply_filters('wp_admin_notice_markup', '<div' . $attributes . '>' . $paragraph . '</div>', $paragraph, $args);
 }
 
 function wp_admin_notice($message, $args = [])
@@ -811,9 +958,21 @@ function wp_nonce_url($actionurl, $action = -1, $name = '_wpnonce')
     return esc_html(add_query_arg($name, wp_create_nonce($action), $actionurl));
 }
 
+/** The page an expired or wrong nonce stops on: a log-out link to confirm for log-out, else a link back to the referer when there is one (probe functions-remaining). */
 function wp_nonce_ays($action)
 {
-    wp_die('The link you followed has expired.', 'Something went wrong.', 403);
+    if ($action === 'log-out') {
+        $title = sprintf(__('You are attempting to log out of %s'), get_bloginfo('name'));
+        $redirect = isset($_REQUEST['redirect_to']) ? (string) $_REQUEST['redirect_to'] : '';
+        $html = $title . '</p><p>' . sprintf(__('Do you really want to <a href="%s">log out</a>?'), wp_logout_url($redirect));
+    } else {
+        $html = __('The link you followed has expired.');
+        if (wp_get_referer()) {
+            $html .= '</p><p>' . sprintf('<a href="%s">%s</a>', esc_url(remove_query_arg('updated', wp_get_referer())), __('Please try again.'));
+        }
+        $title = __('An error occurred.');
+    }
+    wp_die($html, $title, ['response' => 403]);
 }
 
 function wp_referer_field($display = true)
@@ -825,9 +984,10 @@ function wp_referer_field($display = true)
     return $field;
 }
 
+/** The original referer as a hidden field: the one the form carried, else the referer ('previous') or this request's address (probe functions-remaining). */
 function wp_original_referer_field($display = true, $jump_back_to = 'current')
 {
-    $ref = wp_get_original_referer() ?: ($jump_back_to === 'previous' ? wp_get_referer() : _minn_request_uri());
+    $ref = wp_get_original_referer() ?: ($jump_back_to === 'previous' ? wp_get_referer() : wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
     $field = '<input type="hidden" name="_wp_original_http_referer" value="' . esc_attr((string) $ref) . '" />';
     if ($display) {
         echo $field;
@@ -856,23 +1016,19 @@ function wp_get_referer()
     return false;
 }
 
+/** The referer as given: the form's _wp_http_referer when it has one, else the Referer header, unslashed; false when neither (probe functions-remaining). */
 function wp_get_raw_referer()
 {
-    $request = Runtime::current()->request;
-    if ($request === null) {
-        return false;
+    if (!empty($_REQUEST['_wp_http_referer'])) {
+        return wp_unslash($_REQUEST['_wp_http_referer']);
     }
-    if (!empty($request->form['_wp_http_referer'])) {
-        return wp_unslash($request->form['_wp_http_referer']);
-    }
-    $header = $request->header('referer');
-    return $header === null || $header === '' ? false : wp_unslash($header);
+    return empty($_SERVER['HTTP_REFERER']) ? false : wp_unslash($_SERVER['HTTP_REFERER']);
 }
 
+/** The form's _wp_original_http_referer when it is a safe address on this site, else false. */
 function wp_get_original_referer()
 {
-    $value = Runtime::current()->request?->form['_wp_original_http_referer'] ?? null;
-    return $value ? wp_validate_redirect(wp_unslash($value), false) : false;
+    return empty($_REQUEST['_wp_original_http_referer']) ? false : wp_validate_redirect(wp_unslash($_REQUEST['_wp_original_http_referer']), false);
 }
 
 function wp_generate_uuid4()
@@ -883,14 +1039,20 @@ function wp_generate_uuid4()
     return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($bytes), 4));
 }
 
+/** A lowercase UUID; with a version, only 4 is known, and any other is done wrong and false (probe functions-remaining). */
 function wp_is_uuid($uuid, $version = null)
 {
     if (!is_string($uuid)) {
         return false;
     }
-    return $version === 4
-        ? preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $uuid) === 1
-        : preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $uuid) === 1;
+    if (is_numeric($version)) {
+        if ((int) $version !== 4) {
+            _doing_it_wrong(__FUNCTION__, __('Only UUID V4 is supported at this time.'), '4.9.0');
+            return false;
+        }
+        return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/', $uuid) === 1;
+    }
+    return preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $uuid) === 1;
 }
 
 function wp_die($message = '', $title = '', $args = [])
@@ -918,7 +1080,6 @@ function wp_die($message = '', $title = '', $args = [])
     $callback($message, $title, $args);
 }
 
-/** A charset's usual spelling: UTF-8 and ISO-8859-1 however they were written, anything else as given. */
 /**
  * The timezone menu's order: Etc entries among themselves by their own
  * names (GMT+N falling, UTC between them and the rest, the rest
@@ -977,11 +1138,11 @@ function _wp_die_process_input($message, $title = '', $args = [])
             $errors[] = ['code' => $code, 'message' => $message->get_error_message($code), 'data' => $data];
         }
         $data = $errors[0]['data'] ?? [];
-        // The first error's status is the response unless the caller names one.
+        // The first error's status is the response unless the caller names one; of its data, only wp_die's own arguments carry over (probe functions-remaining).
         if (is_array($data) && isset($data['status'])) {
             $defaults['response'] = $data['status'];
         }
-        $args = wp_parse_args($args, $defaults + (is_array($data) ? $data : []));
+        $args = wp_parse_args($args, array_intersect_key(is_array($data) ? $data : [], $defaults) + $defaults);
         $args['code'] = $errors[0]['code'] ?? '';
         $message = $errors[0]['message'] ?? '';
         if ($title === '' && isset($errors[0]['data']['title'])) {
@@ -1000,10 +1161,8 @@ function _wp_die_process_input($message, $title = '', $args = [])
     if (empty($args['code'])) {
         $args['code'] = 'wp_die';
     }
-    // The charset a handler declares is the site's unless the caller names one.
-    if (($args['charset'] ?? '') === 'utf-8' && !array_key_exists('charset', (array) $original)) {
-        $args['charset'] = _canonical_charset((string) get_option('blog_charset'));
-    }
+    // The charset is the site's unless the caller names one, in its usual spelling either way (probe functions-remaining).
+    $args['charset'] = _canonical_charset(array_key_exists('charset', (array) $original) ? (string) $args['charset'] : (string) get_option('blog_charset'));
     return [$message, $title, $args];
 }
 
@@ -1027,17 +1186,23 @@ function _xml_wp_die_handler($message, $title = '', $args = [])
 function _default_wp_die_handler($message, $title = '', $args = [])
 {
     [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
-    if (is_string($message) && !str_contains($message, '<p>') && $message !== '') {
-        $message = '<p>' . $message . '</p>';
+    if ($args['additional_errors'] !== []) {
+        $items = array_merge([$message], array_column($args['additional_errors'], 'message'));
+        $message = "<ul>\n\t\t<li>" . implode("</li>\n\t\t<li>", $items) . "</li>\n\t</ul>";
     }
+    $links = $args['link_url'] && $args['link_text'] ? "\n<p><a href='" . esc_url($args['link_url']) . "'>{$args['link_text']}</a></p>" : '';
     if ($args['back_link']) {
-        $message .= '<p><a href="javascript:history.back()">&laquo; Back</a></p>';
+        $links .= "\n<p><a href='javascript:history.back()'>" . __('&laquo; Back') . '</a></p>';
     }
     if (!headers_sent()) {
-        http_response_code((int) $args['response']);
-        header('Content-Type: text/html; charset=' . $args['charset']);
+        header("Content-Type: text/html; charset={$args['charset']}");
+        status_header((int) $args['response']);
+        nocache_headers();
     }
-    echo '<!DOCTYPE html><html lang="en"><head><meta charset="' . esc_attr($args['charset']) . '"><meta name="viewport" content="width=device-width"><title>' . esc_html(wp_specialchars_decode($title)) . '</title><style>html{background:#f1f1f1}body{background:#fff;border:1px solid #ccd0d4;color:#3c434a;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;margin:2em auto;padding:1em 2em;max-width:700px;box-shadow:0 1px 1px rgba(0,0,0,.04)}h1{border-bottom:1px solid #dadada;font-size:24px;margin:30px 0 0;padding:0 0 7px}p{font-size:14px;line-height:1.5;margin:25px 0 20px}</style></head><body id="error-page">' . "\n" . $message . "\n" . '</body></html>' . "\n";
+    add_filter('wp_robots', 'wp_robots_no_robots');
+    ob_start();
+    wp_robots();
+    echo Minn\Http\DiePage::html(get_language_attributes(), (string) $args['text_direction'], (string) $args['charset'], (string) ob_get_clean(), (string) $title, (string) $message, $links);
     if ($args['exit']) {
         exit;
     }
@@ -1114,17 +1279,29 @@ function do_favicon()
     exit;
 }
 
+/** The error handed to the XML-RPC server as its fault; nothing is printed without a server (probe functions-remaining). */
 function _xmlrpc_wp_die_handler($message, $title = '', $args = [])
 {
-    _ajax_wp_die_handler($message, $title, $args);
+    global $wp_xmlrpc_server;
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
+    if ($wp_xmlrpc_server) {
+        $wp_xmlrpc_server->output((new IXR_Error($args['response'], $message))->getXml());
+    }
+    if ($args['exit']) {
+        exit;
+    }
 }
 
+/** The message alone when it is a scalar (a WP_Error's first message counts); nothing else (probe functions-remaining). */
 function _scalar_wp_die_handler($message = '', $title = '', $args = [])
 {
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
     if (is_scalar($message)) {
         echo (string) $message;
     }
-    exit;
+    if ($args['exit']) {
+        exit;
+    }
 }
 
 function is_wp_error($thing)

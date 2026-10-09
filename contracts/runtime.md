@@ -9116,3 +9116,83 @@ temporary folder, removes them at the end, and unloads its text domains.
   - `% 0` throws PHP's own `DivisionByZeroError`.
   - Refusals of the expression's shape come from building it; an unmatched
     `?`, values left over, and the empty expression come from evaluating it.
+
+## The rest of functions.php (2026-10-09)
+
+Probe `functions-remaining`. The probe writes files to a temporary folder, a
+draft post for the enclosures and the `fresh_site` option, and puts all
+three back. HTTP is intercepted. CLI keeps no headers, so the header
+helpers are seen through their filters. Left out because nothing is
+observable without headers: `send_frame_options_header`,
+`send_nosniff_header`, `cache_javascript_headers`, and `wp_auth_check_load`
+outside the admin. Also left out: `wp_scheduled_delete` (it deletes every
+old trashed post on the shared database) and the `do_feed_*` functions.
+
+- **Shared fix: the error page.** `_default_wp_die_handler` now draws the
+  reference's page: its stylesheet word for word (`Minn\Http\DiePage`), the
+  language attributes (or `dir='rtl'` and a Tahoma font for a right-to-left
+  message), the robots tag with `wp_robots_no_robots` added (it stays added
+  for the request, as on the reference), and the title and message as
+  given. Several errors become a list, then come the link and the back
+  link. It sends its status through `status_header` and its no-cache
+  headers through `nocache_headers`. Before, it printed a cut-down page of
+  its own.
+- **Shared fix: `_wp_die_process_input`.** Of a `WP_Error`'s data, only
+  wp_die's own arguments carry into the arguments. Before, `status` and
+  `title` were merged in too. The charset is always written the usual way
+  (`iso-8859-1` becomes `ISO-8859-1`).
+- **The other die handlers.** `_scalar_wp_die_handler` reads a `WP_Error`'s
+  message and honours `exit`. Before, it always exited.
+  `_xmlrpc_wp_die_handler` prints nothing without an XML-RPC server.
+- **`wp_send_json`** sends its status through `status_header` and returns
+  after `wp_die` in an AJAX request instead of exiting.
+- **`wp_nonce_ays`.** For log-out it asks "You are attempting to log out
+  of {site}" with a confirm link. Otherwise it says "The link you followed
+  has expired." with a link back to a safe referer, titled "An error
+  occurred.". Before, it gave one fixed message.
+- **Shared fix: referers.** `wp_get_raw_referer` and
+  `wp_get_original_referer` read `$_REQUEST` and `$_SERVER`, as the
+  reference does, so a plugin that sets them is heard. Before, they read
+  the engine's request object. `wp_original_referer_field` falls back to
+  `$_SERVER['REQUEST_URI']`.
+- **Shared fix: `is_ssl` with no request** (the command line) reads
+  `$_SERVER['HTTPS']` and the port, as WP-CLI sets them for an https site.
+  With a request, nothing changed.
+- **Shared fix: HEAD requests** follow no redirects unless they ask to
+  (`redirection` 0).
+- **Shared fix: lists.** `wp_parse_list` hands an array back as given.
+  `wp_parse_id_list` keeps the keys where each id first appeared.
+- **`wp_extract_urls`** matches as the reference does: an optional scheme
+  and one or two slashes, a run with no space, parenthesis or angle
+  bracket up to its last dot, then word characters and URL punctuation (a
+  colon only before a digit). Each URL is entity-decoded and loses its
+  semicolons. So `https://localhost/x` is not a URL but `/to/file.txt` is.
+- **`do_enclose`** is real. An enclosure whose address left the content is
+  deleted. Each new link, through `enclosure_links` and without its
+  fragment, gets a HEAD request and is kept when its content-type is audio
+  or video. Kept quirks: the length comes from `Content-Length` as written,
+  so a plain array of headers gives 0. The stored type is the one the
+  link's extension matched, carried over from the last link that had one,
+  and empty before any. An extension that matches no type gives the last
+  type in the list. `wp_get_http_headers` returns a HEAD request's headers
+  whatever the status, false on failure.
+- **Smaller fixes.**
+  - `path_is_absolute`: a backslash start or `C:\` counts; `C:/` and URLs
+    do not.
+  - `validate_file`: 1 for a lone `../`, more than one, or one that is not
+    the last segment; 2 for a colon in second place.
+  - `wp_unique_filename` hands its callback the whole file name.
+  - `iis7_supports_permalinks` has its filter.
+  - The status phrase table is the reference's (`Minn\Http\StatusText`).
+  - `wp_get_server_protocol` keeps HTTP/1.1, 2, 2.0 and 3, else HTTP/1.0.
+  - `wp_get_nocache_headers` adds `Last-Modified` false after its filter.
+  - `wp_is_uuid` is lowercase only, and a version other than 4 is done
+    wrong.
+  - `_http_build_query` honours its prefix, separator and encoding.
+  - `wp_get_admin_notice`: its two filters, the id before the class, bare
+    true attributes, and done wrong for a type with a space.
+  - `force_ssl_admin` keeps a value it is given.
+  - `wp_suspend_cache_invalidation` keeps its setting, and
+    `clean_post_cache` waits while it is on.
+  - `wp_guess_url` guesses from the request.
+  - `wp_auth_check_html` matches the reference's whitespace.

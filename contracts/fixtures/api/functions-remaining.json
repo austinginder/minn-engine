@@ -1,0 +1,1621 @@
+[
+    [
+        "arrays and lists",
+        [
+            [
+                1,
+                "def",
+                0,
+                null,
+                "def",
+                "def",
+                "def",
+                "def"
+            ],
+            [
+                {
+                    "a": {
+                        "b": 1,
+                        "c": 2
+                    },
+                    "s": {
+                        "inner": 4
+                    },
+                    "new": {
+                        "deep": {
+                            "er": 3
+                        }
+                    }
+                },
+                "string"
+            ],
+            [
+                [
+                    {
+                        "name": "a",
+                        "n": 3,
+                        "g": "y"
+                    },
+                    {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    }
+                ],
+                [
+                    {
+                        "name": "a",
+                        "n": 3,
+                        "g": "y"
+                    },
+                    {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    }
+                ],
+                {
+                    "k2": {
+                        "name": "a",
+                        "n": 3,
+                        "g": "y"
+                    },
+                    "k1": {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    "k3": {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    }
+                },
+                [
+                    {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    },
+                    {
+                        "name": "a",
+                        "n": 3,
+                        "g": "y"
+                    }
+                ],
+                [
+                    {
+                        "name": "a",
+                        "n": 3,
+                        "g": "y"
+                    },
+                    {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    }
+                ],
+                [
+                    {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    {
+                        "name": "a",
+                        "n": 3,
+                        "g": "y"
+                    },
+                    {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    }
+                ],
+                []
+            ],
+            [
+                {
+                    "0": {
+                        "name": "b",
+                        "n": 2,
+                        "g": "x"
+                    },
+                    "2": {
+                        "name": "c",
+                        "n": 1,
+                        "g": "x"
+                    }
+                },
+                {
+                    "0": "b",
+                    "2": "c"
+                },
+                {
+                    "1": 3
+                },
+                {
+                    "1": 3
+                },
+                {
+                    "k1": "b",
+                    "k2": "a",
+                    "k3": "c"
+                },
+                []
+            ],
+            [
+                [
+                    "a",
+                    "b",
+                    "c"
+                ],
+                [
+                    "a",
+                    " b ",
+                    ""
+                ],
+                [
+                    "a",
+                    "b",
+                    "c",
+                    "d"
+                ],
+                [],
+                {
+                    "0": 1,
+                    "1": 2,
+                    "2": 0,
+                    "3": 3,
+                    "5": 4
+                },
+                {
+                    "0": 3,
+                    "2": 0
+                },
+                [
+                    "a",
+                    "b",
+                    "cd"
+                ],
+                [
+                    "hello-world"
+                ]
+            ],
+            {
+                "2": {
+                    "b": 2,
+                    "y": 1
+                },
+                "10": 4,
+                "a": 3,
+                "b": {
+                    "a": 2,
+                    "z": 1
+                }
+            },
+            [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true
+            ],
+            [
+                true,
+                false,
+                true,
+                true,
+                false
+            ],
+            [
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                true,
+                false,
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false
+            ],
+            [
+                [
+                    "https://a.example/x?y=1&z=2",
+                    "http://b.example/",
+                    "https://c.example/q#f",
+                    "ftp://g.example/h."
+                ],
+                []
+            ],
+            [
+                "<p[^<]*(?:>[\\s\\S]*<\\/p>|\\s*\\/>)",
+                "<ab[^<]*(?:>[\\s\\S]*<\\/ab>|\\s*\\/>)",
+                "",
+                "<img[^<]*(?:>[\\s\\S]*<\\/img>|\\s*\\/>)"
+            ],
+            [
+                true,
+                false,
+                false,
+                false
+            ],
+            [
+                "a=1&b%5Bc%5D=d+e&g=1&h=0",
+                "a=x y;p_5=five",
+                "top%5Ba%5D%5Bb%5D=1",
+                "",
+                "o=1"
+            ]
+        ]
+    ],
+    [
+        "paths and files",
+        [
+            [
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false
+            ],
+            [
+                "/a/b",
+                "/b",
+                "/a/",
+                "/b",
+                "a/b",
+                "/a/b/",
+                "C:\\a/b"
+            ],
+            [
+                0,
+                1,
+                0,
+                1,
+                2,
+                2,
+                0,
+                0,
+                0,
+                0,
+                1,
+                0,
+                0,
+                1,
+                0,
+                0,
+                2,
+                0,
+                2,
+                0,
+                1,
+                0
+            ],
+            [
+                0,
+                3,
+                1
+            ],
+            [
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                true
+            ],
+            [
+                [
+                    "a-2.txt",
+                    "b-1.jpg",
+                    "B-1.jpg",
+                    "new.txt",
+                    "c-1.png",
+                    "c-1.webp",
+                    "d.jpg",
+                    "e.tar-1.gz",
+                    "with-space.txt",
+                    "Unicode.txt",
+                    "htaccess",
+                    "noext"
+                ],
+                [
+                    [
+                        "a-2.txt",
+                        5,
+                        ".txt"
+                    ],
+                    [
+                        "b-1.jpg",
+                        5,
+                        ".jpg"
+                    ],
+                    [
+                        "B-1.jpg",
+                        5,
+                        ".JPG"
+                    ],
+                    [
+                        "new.txt",
+                        5,
+                        ".txt"
+                    ],
+                    [
+                        "c-1.png",
+                        5,
+                        ".png"
+                    ],
+                    [
+                        "c-1.webp",
+                        5,
+                        ".webp"
+                    ],
+                    [
+                        "d.jpg",
+                        5,
+                        ".jpg"
+                    ],
+                    [
+                        "e.tar-1.gz",
+                        5,
+                        ".gz"
+                    ],
+                    [
+                        "with-space.txt",
+                        5,
+                        ".txt"
+                    ],
+                    [
+                        "Unicode.txt",
+                        5,
+                        ".txt"
+                    ],
+                    [
+                        "htaccess",
+                        5,
+                        ""
+                    ],
+                    [
+                        "noext",
+                        5,
+                        ""
+                    ]
+                ],
+                "cb-a.txt.txt"
+            ],
+            [
+                true,
+                false,
+                false,
+                false,
+                true,
+                false
+            ],
+            [
+                [
+                    "image",
+                    "audio",
+                    "video",
+                    "document",
+                    "spreadsheet",
+                    "interactive",
+                    "text",
+                    "archive",
+                    "code"
+                ],
+                [
+                    "jpg",
+                    "jpeg",
+                    "jpe",
+                    "gif",
+                    "png",
+                    "bmp",
+                    "tif",
+                    "tiff",
+                    "ico",
+                    "heic",
+                    "heif",
+                    "webp",
+                    "avif"
+                ],
+                [
+                    "css",
+                    "htm",
+                    "html",
+                    "php",
+                    "js"
+                ]
+            ],
+            [
+                "jpg",
+                "txt",
+                false,
+                "mp4",
+                "pdf",
+                false
+            ],
+            [
+                {
+                    "path": "{abs}/wp-content/uploads/2020/05",
+                    "url": "//{host}/wp-content/uploads/2020/05",
+                    "subdir": "/2020/05",
+                    "basedir": "{abs}/wp-content/uploads",
+                    "baseurl": "//{host}/wp-content/uploads",
+                    "error": false
+                },
+                [
+                    "path",
+                    "url",
+                    "subdir",
+                    "basedir",
+                    "baseurl",
+                    "error"
+                ]
+            ],
+            [
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "dates, hashes and ids",
+        [
+            [
+                "DateTimeImmutable",
+                true,
+                true,
+                "DateTimeZone",
+                true
+            ],
+            [
+                "2026-10-07T12:34:56",
+                "2026-10-07T00:00:00",
+                "-0001-11-30T00:00:00",
+                false,
+                "2026-10-07T01:02:03"
+            ],
+            [
+                {
+                    "start": 1791158400,
+                    "end": 1791763199
+                },
+                {
+                    "start": 1791072000,
+                    "end": 1791676799
+                },
+                {
+                    "start": 1790985600,
+                    "end": 1791590399
+                },
+                {
+                    "start": 1791158400,
+                    "end": 1791763199
+                }
+            ],
+            [
+                "$generic$oTS9GnuYhGNOr5WWpFquHeNX33CXdNtVWGaxQfh0",
+                "$generic$XJQGK2eUryTa4vHbU0bDv1Ml3wGPwaC1ATczq0o_",
+                true,
+                false,
+                false,
+                false
+            ],
+            [
+                "zz-probe-1",
+                "zz-probe-2",
+                "zz-other-1",
+                "zz-probe-3"
+            ]
+        ]
+    ],
+    [
+        "status lines and headers",
+        [
+            [
+                "OK",
+                "Not Found",
+                "I'm a teapot",
+                "",
+                "Not Found",
+                "",
+                "",
+                "Early Hints",
+                "Unavailable For Legal Reasons"
+            ],
+            {
+                "100": "Continue",
+                "101": "Switching Protocols",
+                "102": "Processing",
+                "103": "Early Hints",
+                "200": "OK",
+                "201": "Created",
+                "202": "Accepted",
+                "203": "Non-Authoritative Information",
+                "204": "No Content",
+                "205": "Reset Content",
+                "206": "Partial Content",
+                "207": "Multi-Status",
+                "226": "IM Used",
+                "300": "Multiple Choices",
+                "301": "Moved Permanently",
+                "302": "Found",
+                "303": "See Other",
+                "304": "Not Modified",
+                "305": "Use Proxy",
+                "306": "Reserved",
+                "307": "Temporary Redirect",
+                "308": "Permanent Redirect",
+                "400": "Bad Request",
+                "401": "Unauthorized",
+                "402": "Payment Required",
+                "403": "Forbidden",
+                "404": "Not Found",
+                "405": "Method Not Allowed",
+                "406": "Not Acceptable",
+                "407": "Proxy Authentication Required",
+                "408": "Request Timeout",
+                "409": "Conflict",
+                "410": "Gone",
+                "411": "Length Required",
+                "412": "Precondition Failed",
+                "413": "Request Entity Too Large",
+                "414": "Request-URI Too Long",
+                "415": "Unsupported Media Type",
+                "416": "Requested Range Not Satisfiable",
+                "417": "Expectation Failed",
+                "418": "I'm a teapot",
+                "421": "Misdirected Request",
+                "422": "Unprocessable Entity",
+                "423": "Locked",
+                "424": "Failed Dependency",
+                "425": "Too Early",
+                "426": "Upgrade Required",
+                "428": "Precondition Required",
+                "429": "Too Many Requests",
+                "431": "Request Header Fields Too Large",
+                "451": "Unavailable For Legal Reasons",
+                "500": "Internal Server Error",
+                "501": "Not Implemented",
+                "502": "Bad Gateway",
+                "503": "Service Unavailable",
+                "504": "Gateway Timeout",
+                "505": "HTTP Version Not Supported",
+                "506": "Variant Also Negotiates",
+                "507": "Insufficient Storage",
+                "510": "Not Extended",
+                "511": "Network Authentication Required"
+            },
+            [
+                [
+                    "status_header",
+                    "HTTP/1.1 404 Not Found",
+                    [
+                        404,
+                        "Not Found",
+                        "HTTP/1.1"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.1 201 Made",
+                    [
+                        201,
+                        "Made",
+                        "HTTP/1.1"
+                    ]
+                ]
+            ],
+            {
+                "Expires": "Wed, 11 Jan 1984 05:00:00 GMT",
+                "Cache-Control": "no-cache, must-revalidate, max-age=0, no-store, private",
+                "Last-Modified": false
+            },
+            [
+                [
+                    "nocache_headers",
+                    {
+                        "Expires": "Wed, 11 Jan 1984 05:00:00 GMT",
+                        "Cache-Control": "no-cache, must-revalidate, max-age=0, no-store, private"
+                    },
+                    []
+                ],
+                [
+                    "nocache_headers",
+                    {
+                        "Expires": "Wed, 11 Jan 1984 05:00:00 GMT",
+                        "Cache-Control": "no-cache, must-revalidate, max-age=0, no-store, private"
+                    },
+                    []
+                ],
+                [
+                    "admin_referrer_policy",
+                    "strict-origin-when-cross-origin",
+                    []
+                ]
+            ],
+            [
+                [
+                    "status_header",
+                    "HTTP/2 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/2"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.0 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/1.0"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/2.0 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/2.0"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/3 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/3"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.0 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/1.0"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.1 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/1.1"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.0 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/1.0"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.0 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/1.0"
+                    ]
+                ],
+                [
+                    "status_header",
+                    "HTTP/1.0 200 OK",
+                    [
+                        200,
+                        "OK",
+                        "HTTP/1.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "referers and notices",
+        [
+            [
+                false,
+                false
+            ],
+            "//{host}/from-header/",
+            "/from-request/",
+            "//{host}/from-header/",
+            "//{host}/original/",
+            false,
+            [
+                [
+                    "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"/zz/page/?a=1&amp;b=&quot;2&quot;\" />",
+                    "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"/zz/page/?a=1&amp;b=&quot;2&quot;\" />"
+                ],
+                "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"/zz/page/?a=1&amp;b=&quot;2&quot;\" />",
+                "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"//{host}/from-header/\" />"
+            ],
+            "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"\" />",
+            [
+                "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"//{host}/original/\" />",
+                "<input type=\"hidden\" name=\"_wp_original_http_referer\" value=\"//{host}/original/\" />"
+            ],
+            "a'b",
+            [
+                "<div class=\"notice\"><p>Hello <b>there</b></p></div>",
+                "<div id=\"zz-id\" class=\"notice notice-error is-dismissible one two three\" data-x=\"y&quot;z\" hidden role=\"alert\"><p>Bad</p></div>",
+                "<div class=\"notice notice-success\"><p>Own paragraph</p></div>",
+                "<div class=\"notice notice-zz custom\"><p>Typed</p></div>",
+                "<div class=\"notice\"><p></p></div>",
+                "<div id=\"own\" class=\"notice\" class=\"mine\" id=\"dup\"><p>Attrs</p></div>"
+            ],
+            [
+                [
+                    "<div class=\"notice notice-warning\"><p>Printed</p></div><!-- filtered -->",
+                    null
+                ],
+                [
+                    [
+                        "wp_admin_notice",
+                        "Printed",
+                        [
+                            {
+                                "type": "warning"
+                            }
+                        ]
+                    ],
+                    [
+                        "wp_admin_notice_args",
+                        {
+                            "type": "warning",
+                            "dismissible": false,
+                            "id": "",
+                            "additional_classes": [],
+                            "attributes": [],
+                            "paragraph_wrap": true
+                        },
+                        [
+                            "Printed"
+                        ]
+                    ],
+                    [
+                        "wp_admin_notice_markup",
+                        "<div class=\"notice notice-warning\"><p>Printed</p></div>",
+                        [
+                            "<p>Printed</p>",
+                            {
+                                "type": "warning",
+                                "dismissible": false,
+                                "id": "",
+                                "additional_classes": [],
+                                "attributes": [],
+                                "paragraph_wrap": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+            ],
+            false
+        ]
+    ],
+    [
+        "the site's state",
+        [
+            true,
+            1,
+            true,
+            true,
+            true,
+            true,
+            false,
+            [
+                true,
+                false,
+                false,
+                true,
+                true
+            ],
+            [
+                null,
+                true,
+                false,
+                false
+            ],
+            [
+                null,
+                "UTF-8",
+                null,
+                null,
+                "UTF-8",
+                null,
+                true,
+                null,
+                true
+            ],
+            [
+                "UTF-8",
+                "UTF-8",
+                "UTF-8",
+                "UTF-8",
+                "UTF-8",
+                "latin1",
+                "ISO-8859-1",
+                "ISO-8859-1",
+                "ISO-8859-1",
+                "",
+                "zz",
+                "utf-8 "
+            ],
+            [
+                {
+                    "wp-auth-check": false
+                },
+                {
+                    "wp-auth-check": false,
+                    "other": 1
+                }
+            ],
+            {
+                "x": 1,
+                "wp-auth-check": true
+            },
+            [
+                "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\tClose dialog\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">Session expired</b></p>\n\t\t<p><a href=\"//{host}/wp-login.php\" target=\"_blank\">Please log in again.</a>\n\t\tThe login page will open in a new tab. After logging in you can close it and return to this page.</p>\n\t</div>\n\t</div>\n\t</div>\n\t",
+                null
+            ],
+            [
+                0,
+                0
+            ],
+            [
+                "https://guess.example",
+                "http://guess.example",
+                "https://guess.example",
+                "http://guess.example",
+                "https://guess.example/blog",
+                "https://guess.example/blog",
+                "https://guess.example/blog",
+                "https://guess.example/x/y.php",
+                "https://guess.example",
+                "https://guess.example/a/b/c"
+            ],
+            [
+                "0",
+                "off"
+            ]
+        ]
+    ],
+    [
+        "the wp_die handlers",
+        [
+            [
+                [
+                    "Zz",
+                    "WordPress &rsaquo; Error",
+                    {
+                        "response": 500,
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    "Zz",
+                    "Title",
+                    {
+                        "response": 500,
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    "First <b>problem</b>",
+                    "Data title",
+                    {
+                        "response": 418,
+                        "code": "zz_first",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": [
+                            {
+                                "code": "zz_second",
+                                "message": "Second problem",
+                                "data": {
+                                    "extra": 1
+                                }
+                            }
+                        ]
+                    }
+                ],
+                [
+                    "Zz",
+                    500,
+                    {
+                        "response": 500,
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    "Zz",
+                    "T",
+                    {
+                        "response": 403,
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": true,
+                        "link_url": "/x",
+                        "link_text": "X",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    "Zz",
+                    "T",
+                    {
+                        "response": "401",
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    "",
+                    "WordPress &rsaquo; Error",
+                    {
+                        "response": 500,
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    5,
+                    "WordPress &rsaquo; Error",
+                    {
+                        "response": 500,
+                        "code": "wp_die",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": []
+                    }
+                ],
+                [
+                    "First <b>problem</b>",
+                    "Own title",
+                    {
+                        "response": 400,
+                        "code": "zz_first",
+                        "exit": true,
+                        "back_link": false,
+                        "link_url": "",
+                        "link_text": "",
+                        "text_direction": "ltr",
+                        "charset": "UTF-8",
+                        "additional_errors": [
+                            {
+                                "code": "zz_second",
+                                "message": "Second problem",
+                                "data": {
+                                    "extra": 1
+                                }
+                            }
+                        ]
+                    }
+                ]
+            ],
+            [
+                "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title>Zz title</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\t\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\">Zz <b>message</b></div></body>\n</html>\n\t",
+                null
+            ],
+            [
+                "<!DOCTYPE html>\n<html dir='rtl'>\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title>Data title</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\tbody { font-family: Tahoma, Arial; }\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\"><ul>\n\t\t<li>First <b>problem</b></li>\n\t\t<li>Second problem</li>\n\t</ul></div>\n<p><a href='javascript:history.back()'>&laquo; Back</a></p></body>\n</html>\n\t",
+                null
+            ],
+            [
+                "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title>WordPress &rsaquo; Error</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\t\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\"><p>Own paragraph</p></div>\n<p><a href='https://zz.example/'>Go <i>on</i></a></p></body>\n</html>\n\t",
+                null
+            ],
+            [
+                [
+                    "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title><b>Bold</b> & \"title\"</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\t\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\">Both</div>\n<p><a href='/x?a=1&#038;b=2'>X & Y</a></p>\n<p><a href='javascript:history.back()'>&laquo; Back</a></p></body>\n</html>\n\t",
+                    null
+                ],
+                [
+                    [
+                        "status_header",
+                        "HTTP/1.0 404 Not Found",
+                        [
+                            404,
+                            "Not Found",
+                            "HTTP/1.0"
+                        ]
+                    ],
+                    [
+                        "nocache_headers",
+                        {
+                            "Expires": "Wed, 11 Jan 1984 05:00:00 GMT",
+                            "Cache-Control": "no-cache, must-revalidate, max-age=0, no-store, private"
+                        },
+                        []
+                    ],
+                    [
+                        "wp_robots",
+                        {
+                            "max-image-preview": "large",
+                            "noindex": true,
+                            "follow": true
+                        },
+                        []
+                    ]
+                ],
+                [
+                    "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title>One title</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\t\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\">Only <i>one</i></div></body>\n</html>\n\t",
+                    null
+                ],
+                [
+                    "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title>WordPress &rsaquo; Error</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\t\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\"></div></body>\n</html>\n\t",
+                    null
+                ],
+                [
+                    "<!DOCTYPE html>\n<html lang=\"en-US\">\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />\n\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n\t\t<meta name='robots' content='max-image-preview:large, noindex, follow' />\n\t<title>WordPress &rsaquo; Error</title>\n\t<style>\n\t\thtml {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\t\tbody {\n\t\t\tbackground: #fff;\n\t\t\tborder: 1px solid #ccd0d4;\n\t\t\tcolor: #444;\n\t\t\tfont-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;\n\t\t\tmargin: 2em auto;\n\t\t\tpadding: 1em 2em;\n\t\t\tmax-width: 700px;\n\t\t\t-webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t\tbox-shadow: 0 1px 1px rgba(0, 0, 0, .04);\n\t\t}\n\t\th1 {\n\t\t\tborder-bottom: 1px solid #dadada;\n\t\t\tclear: both;\n\t\t\tcolor: #666;\n\t\t\tfont-size: 24px;\n\t\t\tmargin: 30px 0 0 0;\n\t\t\tpadding: 0;\n\t\t\tpadding-bottom: 7px;\n\t\t}\n\t\t#error-page {\n\t\t\tmargin-top: 50px;\n\t\t}\n\t\t#error-page p,\n\t\t#error-page .wp-die-message {\n\t\t\tfont-size: 14px;\n\t\t\tline-height: 1.5;\n\t\t\tmargin: 25px 0 20px;\n\t\t}\n\t\t#error-page code {\n\t\t\tfont-family: Consolas, Monaco, monospace;\n\t\t}\n\t\tul li {\n\t\t\tmargin-bottom: 10px;\n\t\t\tfont-size: 14px ;\n\t\t}\n\t\ta {\n\t\t\tcolor: #3858e9;\n\t\t}\n\t\ta:hover,\n\t\ta:active {\n\t\t\tcolor: #183ad6;\n\t\t}\n\t\ta:focus {\n\t\t\tcolor: #183ad6;\n\t\t\tbox-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);\n\t\t\toutline: 2px solid transparent;\n\t\t}\n\t\t.button {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder: 1px solid #016087;\n\t\t\tcolor: #016087;\n\t\t\tdisplay: inline-block;\n\t\t\ttext-decoration: none;\n\t\t\tfont-size: 13px;\n\t\t\tline-height: 2;\n\t\t\theight: 28px;\n\t\t\tmargin: 0;\n\t\t\tpadding: 0 10px 1px;\n\t\t\tcursor: pointer;\n\t\t\t-webkit-border-radius: 3px;\n\t\t\t-webkit-appearance: none;\n\t\t\tborder-radius: 3px;\n\t\t\twhite-space: nowrap;\n\t\t\t-webkit-box-sizing: border-box;\n\t\t\t-moz-box-sizing:    border-box;\n\t\t\tbox-sizing:         border-box;\n\n\t\t\tvertical-align: top;\n\t\t}\n\n\t\t.button.button-large {\n\t\t\tline-height: 2.30769231;\n\t\t\tmin-height: 32px;\n\t\t\tpadding: 0 12px;\n\t\t}\n\n\t\t.button:hover,\n\t\t.button:focus {\n\t\t\tbackground: #f1f1f1;\n\t\t}\n\n\t\t.button:focus {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #007cba;\n\t\t\t-webkit-box-shadow: 0 0 0 1px #007cba;\n\t\t\tbox-shadow: 0 0 0 1px #007cba;\n\t\t\tcolor: #016087;\n\t\t\toutline: 2px solid transparent;\n\t\t\toutline-offset: 0;\n\t\t}\n\n\t\t.button:active {\n\t\t\tbackground: #f3f5f6;\n\t\t\tborder-color: #7e8993;\n\t\t\t-webkit-box-shadow: none;\n\t\t\tbox-shadow: none;\n\t\t}\n\n\t\t\t</style>\n</head>\n<body id=\"error-page\">\n\t<div class=\"wp-die-message\"></div></body>\n</html>\n\t",
+                    null
+                ]
+            ],
+            [
+                "ISO-8859-1",
+                "UTF-8",
+                "",
+                "UTF-8",
+                "zz",
+                "latin1"
+            ],
+            [
+                [
+                    "zz",
+                    null
+                ],
+                [
+                    "-1",
+                    null
+                ],
+                [
+                    "0",
+                    null
+                ],
+                [
+                    "",
+                    null
+                ],
+                [
+                    "First <b>problem</b>",
+                    null
+                ],
+                [
+                    "5",
+                    null
+                ]
+            ],
+            [
+                [
+                    "{\"code\":\"wp_die\",\"message\":\"Zz\",\"data\":{\"status\":400},\"additional_errors\":[]}",
+                    null
+                ],
+                [
+                    "{\"code\":\"zz_first\",\"message\":\"First <b>problem<\\/b>\",\"data\":{\"status\":418},\"additional_errors\":[{\"code\":\"zz_second\",\"message\":\"Second problem\",\"data\":{\"extra\":1}}]}",
+                    null
+                ],
+                [
+                    "{\"code\":\"wp_die\",\"message\":\"\",\"data\":{\"status\":500},\"additional_errors\":[]}",
+                    null
+                ]
+            ],
+            [
+                [
+                    "<error>\n    <code>wp_die</code>\n    <title><![CDATA[T]]></title>\n    <message><![CDATA[Zz &amp; &lt;x&gt;]]></message>\n    <data>\n        <status>400</status>\n    </data>\n</error>\n",
+                    null
+                ],
+                [
+                    "<error>\n    <code>zz_first</code>\n    <title><![CDATA[Data title]]></title>\n    <message><![CDATA[First &lt;b&gt;problem&lt;/b&gt;]]></message>\n    <data>\n        <status>418</status>\n    </data>\n</error>\n",
+                    null
+                ]
+            ],
+            [
+                [
+                    "zz",
+                    null
+                ],
+                [
+                    "5",
+                    null
+                ],
+                [
+                    "",
+                    null
+                ],
+                [
+                    "First <b>problem</b>",
+                    null
+                ]
+            ],
+            [
+                "",
+                null
+            ]
+        ]
+    ],
+    [
+        "the JSON senders and the nonce page",
+        [
+            [
+                null,
+                "{\"a\":1,\"b\":\"\\u00e9\\/x\"}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"a\":1}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "\"\\u003Ctag\\u003E\"",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"success\":true}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"success\":true,\"data\":{\"x\":1}}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"success\":false}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"success\":false,\"data\":\"bad\"}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"success\":false,\"data\":[{\"code\":\"zz_code\",\"message\":\"Zz message\"}]}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "{\"success\":false,\"data\":[]}",
+                [
+                    [
+                        "wp_die_ajax_handler",
+                        "",
+                        "",
+                        {
+                            "response": null
+                        }
+                    ]
+                ]
+            ],
+            [
+                201,
+                202,
+                400
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "You are attempting to log out of Minn</p><p>Do you really want to <a href=\"//{host}/wp-login.php?action=logout&amp;_wpnonce={nonce}\">log out</a>?",
+                        "You are attempting to log out of Minn",
+                        {
+                            "response": 403
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "You are attempting to log out of Minn</p><p>Do you really want to <a href=\"//{host}/wp-login.php?action=logout&amp;_wpnonce={nonce}\">log out</a>?",
+                        "You are attempting to log out of Minn",
+                        {
+                            "response": 403
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "The link you followed has expired.",
+                        "An error occurred.",
+                        {
+                            "response": 403
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "The link you followed has expired.</p><p><a href=\"//{host}/back/\">Please try again.</a>",
+                        "An error occurred.",
+                        {
+                            "response": 403
+                        }
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "The link you followed has expired.",
+                        "An error occurred.",
+                        {
+                            "response": 403
+                        }
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "cache invalidation suspended",
+        [
+            [
+                true,
+                false
+            ],
+            [
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "enclosures and header lookups",
+        [
+            [
+                "WpOrg\\Requests\\Utility\\CaseInsensitiveDictionary",
+                {
+                    "content-type": "text/html; charset=UTF-8",
+                    "content-length": "1234",
+                    "x-zz": "y"
+                },
+                false,
+                [],
+                {
+                    "content-type": "audio/ogg",
+                    "content-length": "9"
+                },
+                [
+                    [
+                        "https://zz.example/page",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/fail",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/missing",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/plain",
+                        "HEAD",
+                        null,
+                        0
+                    ]
+                ]
+            ],
+            [
+                [
+                    "https://zz.example/a.mp3\n1234\naudio/mpeg\n",
+                    "https://zz.example/video/b\n1234\naudio/mpeg\n",
+                    "https://zz.example/missing.mp3\n1234\naudio/mpeg\n",
+                    "https://zz.example/plain.ogg\n0\naudio/ogg\n"
+                ],
+                [
+                    [
+                        "https://zz.example/a.mp3",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/video/b",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/page",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/fail.mp3",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/missing.mp3",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/plain.ogg",
+                        "HEAD",
+                        null,
+                        0
+                    ],
+                    [
+                        "https://zz.example/z.pdf",
+                        "HEAD",
+                        null,
+                        0
+                    ]
+                ]
+            ],
+            [
+                [
+                    "https://zz.example/c.mp3\n1234\naudio/mpeg\n"
+                ],
+                [
+                    [
+                        "https://zz.example/c.mp3",
+                        "HEAD",
+                        null,
+                        0
+                    ]
+                ]
+            ],
+            [
+                [
+                    "https://zz.example/extra.mp3\n1234\naudio/mpeg\n"
+                ],
+                [
+                    [
+                        "https://zz.example/extra.mp3",
+                        "HEAD",
+                        null,
+                        0
+                    ]
+                ],
+                [
+                    [
+                        [],
+                        true
+                    ]
+                ],
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "calls done wrong along the way",
+        [
+            [
+                "wp_is_uuid",
+                "Only UUID V4 is supported at this time.",
+                "4.9.0"
+            ],
+            [
+                "wp_get_admin_notice",
+                "The type key must be a string without spaces.",
+                "6.4.0"
+            ]
+        ]
+    ]
+]

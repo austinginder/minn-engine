@@ -90,6 +90,10 @@ function get_post($post = null, $output = OBJECT, $filter = 'raw')
 
 function clean_post_cache($post)
 {
+    // Held back while wp_suspend_cache_invalidation is on (probe functions-remaining).
+    if (!empty($GLOBALS['_wp_suspend_cache_invalidation'])) {
+        return;
+    }
     $post = get_post($post);
     if ($post === null) {
         return;

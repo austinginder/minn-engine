@@ -59460,6 +59460,7 @@
                 "Minn\\Http\\CertificateName",
                 "Minn\\Http\\CookieText",
                 "Minn\\Http\\Destination",
+                "Minn\\Http\\DiePage",
                 "Minn\\Http\\Download",
                 "Minn\\Http\\Envelope",
                 "Minn\\Http\\Exchange",
@@ -59485,6 +59486,7 @@
                 "Minn\\Http\\RouteParams",
                 "Minn\\Http\\RouteRow",
                 "Minn\\Http\\Router",
+                "Minn\\Http\\StatusText",
                 "Minn\\Http\\Subject",
                 "Minn\\Http\\Transport",
                 "Minn\\Http\\TrustedProxies",
@@ -61171,6 +61173,108 @@
                     ],
                     "line": 111,
                     "end": 119
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\DiePage",
+            "short": "DiePage",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/DiePage.php",
+            "lines": 126,
+            "doc": "The page wp_die shows a browser, as the reference draws it (probe\nfunctions-remaining): its stylesheet word for word, the html element's\nlanguage (or dir='rtl' for a right-to-left message, which also sets a\nTahoma font), the charset, the robots tag, the title and the message as\ngiven, then any links. The caller escapes what needs escaping. The\nstylesheet is kept here with four spaces for each of its tabs.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "STYLES",
+                    "value": "'        html {             background: #f1f1f1;         }         body {             background: #fff;             border: 1px solid #ccd0d4;             color: #444;             font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Oxygen-Sans, Ubuntu, Cantarell, \"Helvetica Neue\", sans-serif;             margin: 2em auto;             padding: 1em 2em;             max-width: 700px;             -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .04);             box-shadow: 0 1px 1px rgba(0, 0, 0, .04);         }         h1 {             border-bottom: 1px solid #dadada;             clear: both;             color: #666;             font-size: 24px;             margin: 30px 0 0 0;             padding: 0;             padding-bottom: 7px;         }         #error-page {             margin-top: 50px;         }         #error-page p,         #error-page .wp-die-message {             font-size: 14px;             line-height: 1.5;             margin: 25px 0 20px;         }         #error-page code {             font-family: Consolas, Monaco, monospace;         }         ul li {             margin-bottom: 10px;             font-size: 14px ;         }         a {             color: #3858e9;         }         a:hover,         a:active {             color: #183ad6;         }         a:focus {             color: #183ad6;             box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wp-admin-theme-color, #3858e9);             outline: 2px solid transparent;         }         .button {             background: #f3f5f6;             border: 1px solid #016087;             color: #016087;             display: inline-block;             text-decoration: none;             font-size: 13px;             line-height: 2;             height: 28px;             margin: 0;             padding: 0 10px 1px;             cursor: pointer;             -webkit-border-radius: 3px;             -webkit-appearance: none;             border-radius: 3px;             white-space: nowrap;             -webkit-box-sizing: border-box;             -moz-box-sizing:    border-box;             box-sizing:         border-box;              vertical-align: top;         }          .button.button-large {             line-height: 2.30769231;             min-height: 32px;             padding: 0 12px;         }          .button:hover,         .button:focus {             background: #f1f1f1;         }          .button:focus {             background: #f3f5f6;             border-color: #007cba;             -webkit-box-shadow: 0 0 0 1px #007cba;             box-shadow: 0 0 0 1px #007cba;             color: #016087;             outline: 2px solid transparent;             outline-offset: 0;         }          .button:active {             background: #f3f5f6;             border-color: #7e8993;             -webkit-box-shadow: none;             box-shadow: none;         }'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "html",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "html(string $languageAttributes, string $direction, string $charset, string $robots, string $title, string $message, string $links): string",
+                    "doc": "The whole page: $languageAttributes go inside <html> unless the direction\nis 'rtl'; $robots is the printed robots tag.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "languageAttributes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "direction",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "charset",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "robots",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "links",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 125,
+                    "end": 133
+                },
+                {
+                    "routes": [],
+                    "name": "styles",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "styles(): string",
+                    "doc": "The stylesheet with its tabs back.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 136,
+                    "end": 139
                 }
             ]
         },
@@ -66391,6 +66495,54 @@
                     ],
                     "line": 266,
                     "end": 273
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\StatusText",
+            "short": "StatusText",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/StatusText.php",
+            "lines": 16,
+            "doc": "The reason phrase a status line carries for each code, as the reference's\ntable has them (probe functions-remaining): its own wording where it\ndiffers from today's RFCs (\"Request Entity Too Large\", \"Reserved\" for 306).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "PHRASES",
+                    "value": "array (   100 => 'Continue',   101 => 'Switching Protocols',   102 => 'Processing',   103 => 'Early Hints',   200 => 'OK',   201 => 'Created',   202 => 'Accepted',   203 => 'Non-Authoritative Information',   204 => 'No Content',   205 => 'Reset Content',   206 => 'Partial Content',   207 => 'Multi-Status',   226 => 'IM Used',   300 => 'Multiple Choices',   301 => 'Moved Permanently',   302 => 'Found',   303 => 'See Other',   304 => 'Not Modified',   305 => 'Use Proxy',   306 => 'Reserved',   307 => 'Temporary Redirect',   308 => 'Permanent Redirect',   400 => 'Bad Request',   401 => 'Unauthorized',   402 => 'Payment Required',   403 => 'Forbidden',   404 => 'Not Found',   405 => 'Method Not Allowed',   406 => 'Not Acceptable',   407 => 'Proxy Authentication Required',   408 => 'Request Timeout',   409 => 'Conflict',   410 => 'Gone',   411 => 'Length Required',   412 => 'Precondition Failed',   413 => 'Request Entity Too Large',   414 => 'Request-URI Too Long',   415 => 'Unsupported Media Type',   416 => 'Requested Range Not Satisfiable',   417 => 'Expectation Failed',   418 => 'I\\'m a teapot',   421 => 'Misdirected Request',   422 => 'Unprocessable Entity',   423 => 'Locked',   424 => 'Failed Dependency',   425 => 'Too Early',   426 => 'Upgrade Required',   428 => 'Precondition Required',   429 => 'Too Many Requests',   431 => 'Request Header Fields Too Large',   451 => 'Unavailable For Legal Reasons',   500 => 'Internal Server Error',   501 => 'Not Implemented',   502 => 'Bad Gateway',   503 => 'Service Unavailable',   504 => 'Gateway Timeout',   505 => 'HTTP Version Not Supported',   506 => 'Variant Also Negotiates',   507 => 'Insufficient Storage',   510 => 'Not Extended',   511 => 'Network Authentication Required', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(int $code): string",
+                    "doc": "The phrase for a code, or empty for one the table does not know.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 26
                 }
             ]
         },

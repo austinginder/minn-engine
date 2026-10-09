@@ -79,7 +79,7 @@ final class MoFile
     /** "V" for a little-endian file, "N" for a big-endian one, null for anything else. */
     private static function byteOrder(string $bytes): ?string
     {
-        $magic = unpack('V', substr($bytes, 0, 4))[1] ?? 0;
+        $magic = strlen($bytes) >= 4 ? unpack('V', $bytes)[1] : 0;
         return match ($magic) {
             self::MAGIC => 'V',
             0xde120495 => 'N',

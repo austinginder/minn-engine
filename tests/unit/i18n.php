@@ -34,5 +34,5 @@ return [
             && $catalog->headerValue('plural-forms') === 'nplurals=2; plural=(n != 1);';
     },
     'bytes that are not a .mo read as nothing' => static fn () => MoFile::read('not a catalog at all, just text') === null && MoFile::read('') === null,
-    'an empty translation is no translation' => static fn () => Catalog::from([], ['x' => ['translations' => [''], 'plural' => null]])->translate('x') === null,
+    'an empty translation is still a translation, as on the reference; a missing one is null' => static fn () => Catalog::from([], ['x' => ['translations' => [''], 'plural' => null]])->translate('x') === '' && Catalog::from([], [])->translate('x') === null,
 ];
