@@ -46,16 +46,17 @@ foreach ($files as $file) {
     foreach ($m[1] as $name) {
         $defined['functions'][strtolower($name)] = $kind;
     }
-    preg_match_all('/^(?:#\[[^\]]*\]\s*)?(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+(\w+)(?:\s+extends\s+(\w+))?[^{]*\{(.*?)^\}/ms', $src, $found, PREG_SET_ORDER);
+    // A class may sit inside an if (!class_exists()) guard, indented: its closing brace is at its own indent.
+    preg_match_all('/^([ \t]*)(?:#\[[^\]]*\]\s*)?(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+(\w+)(?:\s+extends\s+(\w+))?[^{]*\{(.*?)^\1\}/ms', $src, $found, PREG_SET_ORDER);
     foreach ($found as $class) {
-        $lower = strtolower($class[1]);
+        $lower = strtolower($class[2]);
         $defined['classes'][$lower] = $kind;
-        if (($class[2] ?? '') !== '') {
-            $parents[$lower] = strtolower($class[2]);
+        if (($class[3] ?? '') !== '') {
+            $parents[$lower] = strtolower($class[3]);
         }
-        preg_match_all('/function\s+&?(\w+)\s*\(/', $class[3], $mm);
+        preg_match_all('/function\s+&?(\w+)\s*\(/', $class[4], $mm);
         $methods[$lower] = array_fill_keys(array_map('strtolower', $mm[1]), true);
-        if (str_contains($class[3], 'DeadEndCalls') || isset($methods[$lower]['__call'])) {
+        if (str_contains($class[4], 'DeadEndCalls') || isset($methods[$lower]['__call'])) {
             $catchAll[$lower] = true;
         }
     }
