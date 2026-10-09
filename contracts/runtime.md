@@ -7023,3 +7023,37 @@ away with the connection; protected methods are called through reflection.
   - `__get`, `__set`, `__isset` and `__unset` reach protected members.
   - `get_caller` and `check_database_version` (null while the server is new
     enough).
+
+## The theme class (2026-10-08)
+
+Probe `wp-theme` (`tests/tools/wp-theme-probe.php`) proves `WP_Theme` across
+Twenty Twenty-Five, Twenty Twenty-Four, Twenty Twenty-Three and a theme that
+is not there, and adds its missing methods. Paths are masked to the theme
+root and the host. `display('Tags')` is left out: the reference names
+feature tags only where wp-admin's feature list is loaded (WP-CLI loads it),
+and the rest-themes probe covers the admin and REST sides.
+
+- **Headers.** `Status` reads "publish" when an existing theme leaves it
+  out. A theme that is not there has only its `Name` (its folder name) and
+  false for every other header. The legacy `author` property and `Author`
+  key are the marked-up link, while `Author Name` stays plain. The array
+  keys now include `Template Dir`, `Stylesheet Dir`, `Template Files` (its
+  PHP files one folder deep, parent's too) and `Stylesheet Files` (its CSS
+  files at the top).
+- **Templates.** A theme that is not there has none. Any existing theme,
+  classic or block, also lists the active block theme's custom templates.
+- **Allowed.** `get_allowed()` is `get_allowed_on_network()` (the
+  `allowedthemes` site option as a list, so `[false]` on a single site) plus
+  `get_allowed_on_site()` (the site's option when it is a list, else `[]`).
+  `network_enable_theme` and `network_disable_theme` add to or take from
+  that site option.
+- **Patterns.** `get_block_patterns()` (`Theme\PatternHeaders`) lists the
+  patterns directory by file name: title, slug, description, then whatever
+  of viewportWidth, inserter (false for "no"), categories, keywords,
+  blockTypes, postTypes and templateTypes the header declares.
+  `delete_pattern_cache` and `cache_delete` have nothing to clear.
+- **The rest.**
+  - `get_core_default_theme` returns WP_DEFAULT_THEME, else the newest
+    installed core theme.
+  - `load_textdomain` is false for a theme without a Text Domain.
+  - `__wakeup` lets a theme be read back from a serialized copy.

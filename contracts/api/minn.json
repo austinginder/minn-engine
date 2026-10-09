@@ -142684,6 +142684,76 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\PatternHeaders",
+            "short": "PatternHeaders",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/PatternHeaders.php",
+            "lines": 51,
+            "doc": "A theme's pattern files read by their headers, as WP_Theme::get_block_patterns\nlists them (probe wp-theme). Each one gives title, slug and description\n(empty when the header has none), then whatever of viewportWidth (a\nnumber), inserter (false for \"no\"), and the comma lists categories,\nkeywords, blockTypes, postTypes and templateTypes it declares. A file\nwithout a title and a slug is not a pattern.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "LISTS",
+                    "value": "array (   'categories' => 'Categories',   'keywords' => 'Keywords',   'blockTypes' => 'Block Types',   'postTypes' => 'Post Types',   'templateTypes' => 'Template Types', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(string $themeDir): array",
+                    "doc": "The patterns directory's files by file name, in name order.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "themeDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(string $head): ?array",
+                    "doc": "One file's record from the start of its text, or null when it names no title or slug.",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "head",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 64
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\PatternText",
             "short": "PatternText",
             "namespace": "Minn\\Theme",

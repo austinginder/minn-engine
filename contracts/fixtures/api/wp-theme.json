@@ -1,0 +1,725 @@
+[
+    [
+        "headers",
+        {
+            "twentytwentyfive": [
+                "Twenty Twenty-Five",
+                true,
+                false,
+                false,
+                [
+                    "Twenty Twenty-Five",
+                    "https://wordpress.org/themes/twentytwentyfive/",
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide.",
+                    "the WordPress team",
+                    "https://wordpress.org",
+                    "1.5",
+                    "",
+                    "publish",
+                    [
+                        "one-column",
+                        "custom-colors",
+                        "custom-menu",
+                        "custom-logo",
+                        "editor-style",
+                        "featured-images",
+                        "full-site-editing",
+                        "block-patterns",
+                        "rtl-language-support",
+                        "sticky-post",
+                        "threaded-comments",
+                        "translation-ready",
+                        "wide-blocks",
+                        "block-styles",
+                        "style-variations",
+                        "accessibility-ready",
+                        "blog",
+                        "portfolio",
+                        "news"
+                    ],
+                    "twentytwentyfive",
+                    "",
+                    "6.7",
+                    "7.2",
+                    "",
+                    false
+                ],
+                "Twenty Twenty-Five",
+                "<a href=\"https://wordpress.org\">the WordPress team</a>",
+                "the WordPress team",
+                "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide.",
+                "https://wordpress.org/themes/twentytwentyfive/",
+                false
+            ],
+            "twentytwentyfour": [
+                "Twenty Twenty-Four",
+                true,
+                false,
+                false,
+                [
+                    "Twenty Twenty-Four",
+                    "https://wordpress.org/themes/twentytwentyfour/",
+                    "Twenty Twenty-Four is designed to be flexible, versatile and applicable to any website. Its collection of templates and patterns tailor to different needs, such as presenting a business, blogging and writing or showcasing work. A multitude of possibilities open up with just a few adjustments to color and typography. Twenty Twenty-Four comes with style variations and full page designs to help speed up the site building process, is fully compatible with the site editor, and takes advantage of new design tools introduced in WordPress 6.4.",
+                    "the WordPress team",
+                    "https://wordpress.org",
+                    "1.6",
+                    "",
+                    "publish",
+                    [
+                        "one-column",
+                        "custom-colors",
+                        "custom-menu",
+                        "custom-logo",
+                        "editor-style",
+                        "featured-images",
+                        "full-site-editing",
+                        "block-patterns",
+                        "rtl-language-support",
+                        "sticky-post",
+                        "threaded-comments",
+                        "translation-ready",
+                        "wide-blocks",
+                        "block-styles",
+                        "style-variations",
+                        "accessibility-ready",
+                        "blog",
+                        "portfolio",
+                        "news"
+                    ],
+                    "twentytwentyfour",
+                    "",
+                    "6.4",
+                    "7.0",
+                    "",
+                    false
+                ],
+                "Twenty Twenty-Four",
+                "<a href=\"https://wordpress.org\">the WordPress team</a>",
+                "the WordPress team",
+                "Twenty Twenty-Four is designed to be flexible, versatile and applicable to any website. Its collection of templates and patterns tailor to different needs, such as presenting a business, blogging and writing or showcasing work. A multitude of possibilities open up with just a few adjustments to color and typography. Twenty Twenty-Four comes with style variations and full page designs to help speed up the site building process, is fully compatible with the site editor, and takes advantage of new design tools introduced in WordPress 6.4.",
+                "https://wordpress.org/themes/twentytwentyfour/",
+                false
+            ],
+            "twentytwentythree": [
+                "Twenty Twenty-Three",
+                true,
+                false,
+                false,
+                [
+                    "Twenty Twenty-Three",
+                    "https://wordpress.org/themes/twentytwentythree",
+                    "Twenty Twenty-Three is designed to take advantage of the new design tools introduced in WordPress 6.1. With a clean, blank base as a starting point, this default theme includes ten diverse style variations created by members of the WordPress community. Whether you want to build a complex or incredibly simple website, you can do it quickly and intuitively through the bundled styles or dive into creation and full customization yourself.",
+                    "the WordPress team",
+                    "https://wordpress.org",
+                    "1.7",
+                    "",
+                    "publish",
+                    [
+                        "one-column",
+                        "custom-colors",
+                        "custom-menu",
+                        "custom-logo",
+                        "editor-style",
+                        "featured-images",
+                        "full-site-editing",
+                        "block-patterns",
+                        "rtl-language-support",
+                        "sticky-post",
+                        "threaded-comments",
+                        "translation-ready",
+                        "wide-blocks",
+                        "block-styles",
+                        "style-variations",
+                        "accessibility-ready",
+                        "blog",
+                        "portfolio",
+                        "news"
+                    ],
+                    "twentytwentythree",
+                    "",
+                    "6.1",
+                    "5.6",
+                    "",
+                    false
+                ],
+                "Twenty Twenty-Three",
+                "<a href=\"https://wordpress.org\">the WordPress team</a>",
+                "the WordPress team",
+                "Twenty Twenty-Three is designed to take advantage of the new design tools introduced in WordPress 6.1. With a clean, blank base as a starting point, this default theme includes ten diverse style variations created by members of the WordPress community. Whether you want to build a complex or incredibly simple website, you can do it quickly and intuitively through the bundled styles or dive into creation and full customization yourself.",
+                "https://wordpress.org/themes/twentytwentythree",
+                false
+            ],
+            "missing": [
+                "zz-no-such-theme",
+                false,
+                [
+                    "error",
+                    [
+                        "theme_not_found"
+                    ],
+                    [
+                        "The theme directory \"zz-no-such-theme\" does not exist."
+                    ]
+                ],
+                false,
+                [
+                    "zz-no-such-theme",
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false
+                ],
+                "zz-no-such-theme",
+                false,
+                false,
+                false,
+                false,
+                false
+            ]
+        }
+    ],
+    [
+        "legacy properties and keys",
+        [
+            {
+                "name": [
+                    true,
+                    "Twenty Twenty-Five"
+                ],
+                "title": [
+                    true,
+                    "Twenty Twenty-Five"
+                ],
+                "version": [
+                    true,
+                    "1.5"
+                ],
+                "parent_theme": [
+                    true,
+                    ""
+                ],
+                "template": [
+                    true,
+                    "twentytwentyfive"
+                ],
+                "stylesheet": [
+                    true,
+                    "twentytwentyfive"
+                ],
+                "screenshot": [
+                    true,
+                    "screenshot.png"
+                ],
+                "description": [
+                    true,
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ],
+                "author": [
+                    true,
+                    "<a href=\"https://wordpress.org\">the WordPress team</a>"
+                ],
+                "tags": [
+                    true,
+                    [
+                        "one-column",
+                        "custom-colors",
+                        "custom-menu",
+                        "custom-logo",
+                        "editor-style",
+                        "featured-images",
+                        "full-site-editing",
+                        "block-patterns",
+                        "rtl-language-support",
+                        "sticky-post",
+                        "threaded-comments",
+                        "translation-ready",
+                        "wide-blocks",
+                        "block-styles",
+                        "style-variations",
+                        "accessibility-ready",
+                        "blog",
+                        "portfolio",
+                        "news"
+                    ]
+                ],
+                "theme_root": [
+                    true,
+                    "{root}"
+                ],
+                "theme_root_uri": [
+                    true,
+                    "{site}/wp-content/themes"
+                ],
+                "template_dir": [
+                    true,
+                    "{root}/twentytwentyfive"
+                ],
+                "stylesheet_dir": [
+                    true,
+                    "{root}/twentytwentyfive"
+                ],
+                "nonsense": [
+                    false,
+                    null
+                ]
+            },
+            {
+                "Name": [
+                    true,
+                    "Twenty Twenty-Five"
+                ],
+                "Title": [
+                    true,
+                    "Twenty Twenty-Five"
+                ],
+                "Version": [
+                    true,
+                    "1.5"
+                ],
+                "Parent Theme": [
+                    true,
+                    ""
+                ],
+                "Template Dir": [
+                    true,
+                    "{root}/twentytwentyfive"
+                ],
+                "Stylesheet Dir": [
+                    true,
+                    "{root}/twentytwentyfive"
+                ],
+                "Template": [
+                    true,
+                    "twentytwentyfive"
+                ],
+                "Stylesheet": [
+                    true,
+                    "twentytwentyfive"
+                ],
+                "Screenshot": [
+                    true,
+                    "screenshot.png"
+                ],
+                "Description": [
+                    true,
+                    "Twenty Twenty-Five emphasizes simplicity and adaptability. It offers flexible design options, supported by a variety of patterns for different page types, such as services and landing pages, making it ideal for building personal blogs, professional portfolios, online magazines, or business websites. Its templates cater to various blog styles, from text-focused to image-heavy layouts. Additionally, it supports international typography and diverse color palettes, ensuring accessibility and customization for users worldwide."
+                ],
+                "Author": [
+                    true,
+                    "<a href=\"https://wordpress.org\">the WordPress team</a>"
+                ],
+                "Author Name": [
+                    true,
+                    "the WordPress team"
+                ],
+                "Author URI": [
+                    true,
+                    "https://wordpress.org"
+                ],
+                "Tags": [
+                    true,
+                    19
+                ],
+                "Theme Root": [
+                    true,
+                    "{root}"
+                ],
+                "Theme Root URI": [
+                    true,
+                    "{site}/wp-content/themes"
+                ],
+                "Status": [
+                    true,
+                    "publish"
+                ],
+                "Template Files": [
+                    true,
+                    99
+                ],
+                "Stylesheet Files": [
+                    true,
+                    2
+                ],
+                "nonsense": [
+                    false,
+                    null
+                ]
+            },
+            "Twenty Twenty-Five",
+            "1.5"
+        ]
+    ],
+    [
+        "places",
+        {
+            "twentytwentyfive": [
+                "twentytwentyfive",
+                "twentytwentyfive",
+                "{root}/twentytwentyfive",
+                "{root}/twentytwentyfive",
+                "{site}/wp-content/themes/twentytwentyfive",
+                "{site}/wp-content/themes/twentytwentyfive",
+                "{root}",
+                "{site}/wp-content/themes",
+                "{site}/wp-content/themes/twentytwentyfive/screenshot.png",
+                "screenshot.png",
+                "{root}/twentytwentyfive",
+                "{root}/twentytwentyfive/style.css",
+                "{root}/twentytwentyfive/theme.json",
+                true,
+                {
+                    "wp_template": "templates",
+                    "wp_template_part": "parts"
+                }
+            ],
+            "twentytwentyfour": [
+                "twentytwentyfour",
+                "twentytwentyfour",
+                "{root}/twentytwentyfour",
+                "{root}/twentytwentyfour",
+                "{site}/wp-content/themes/twentytwentyfour",
+                "{site}/wp-content/themes/twentytwentyfour",
+                "{root}",
+                "{site}/wp-content/themes",
+                "{site}/wp-content/themes/twentytwentyfour/screenshot.png",
+                "screenshot.png",
+                "{root}/twentytwentyfour",
+                "{root}/twentytwentyfour/style.css",
+                "{root}/twentytwentyfour/theme.json",
+                true,
+                {
+                    "wp_template": "templates",
+                    "wp_template_part": "parts"
+                }
+            ],
+            "twentytwentythree": [
+                "twentytwentythree",
+                "twentytwentythree",
+                "{root}/twentytwentythree",
+                "{root}/twentytwentythree",
+                "{site}/wp-content/themes/twentytwentythree",
+                "{site}/wp-content/themes/twentytwentythree",
+                "{root}",
+                "{site}/wp-content/themes",
+                "{site}/wp-content/themes/twentytwentythree/screenshot.png",
+                "screenshot.png",
+                "{root}/twentytwentythree",
+                "{root}/twentytwentythree/style.css",
+                "{root}/twentytwentythree/theme.json",
+                true,
+                {
+                    "wp_template": "templates",
+                    "wp_template_part": "parts"
+                }
+            ],
+            "missing": [
+                "zz-no-such-theme",
+                "zz-no-such-theme",
+                "{root}/zz-no-such-theme",
+                "{root}/zz-no-such-theme",
+                "{site}/wp-content/themes/zz-no-such-theme",
+                "{site}/wp-content/themes/zz-no-such-theme",
+                "{root}",
+                "{site}/wp-content/themes",
+                false,
+                false,
+                "{root}/zz-no-such-theme",
+                "{root}/zz-no-such-theme/style.css",
+                "{root}/zz-no-such-theme/theme.json",
+                false,
+                {
+                    "wp_template": "templates",
+                    "wp_template_part": "parts"
+                }
+            ]
+        }
+    ],
+    [
+        "files",
+        {
+            "twentytwentyfive": [
+                {
+                    "functions.php": "{root}/twentytwentyfive/functions.php",
+                    "patterns/banner-about-book.php": "{root}/twentytwentyfive/patterns/banner-about-book.php",
+                    "patterns/banner-cover-big-heading.php": "{root}/twentytwentyfive/patterns/banner-cover-big-heading.php",
+                    "patterns/banner-intro-image.php": "{root}/twentytwentyfive/patterns/banner-intro-image.php",
+                    "patterns/banner-intro.php": "{root}/twentytwentyfive/patterns/banner-intro.php",
+                    "patterns/banner-poster.php": "{root}/twentytwentyfive/patterns/banner-poster.php",
+                    "patterns/banner-with-description-and-images-grid.php": "{root}/twentytwentyfive/patterns/banner-with-description-and-images-grid.php",
+                    "patterns/binding-format.php": "{root}/twentytwentyfive/patterns/binding-format.php",
+                    "patterns/comments.php": "{root}/twentytwentyfive/patterns/comments.php",
+                    "patterns/contact-centered-social-link.php": "{root}/twentytwentyfive/patterns/contact-centered-social-link.php",
+                    "patterns/contact-info-locations.php": "{root}/twentytwentyfive/patterns/contact-info-locations.php",
+                    "patterns/contact-location-and-link.php": "{root}/twentytwentyfive/patterns/contact-location-and-link.php",
+                    "patterns/cta-book-links.php": "{root}/twentytwentyfive/patterns/cta-book-links.php",
+                    "patterns/cta-book-locations.php": "{root}/twentytwentyfive/patterns/cta-book-locations.php",
+                    "patterns/cta-centered-heading.php": "{root}/twentytwentyfive/patterns/cta-centered-heading.php",
+                    "patterns/cta-events-list.php": "{root}/twentytwentyfive/patterns/cta-events-list.php",
+                    "patterns/cta-grid-products-link.php": "{root}/twentytwentyfive/patterns/cta-grid-products-link.php",
+                    "patterns/cta-heading-search.php": "{root}/twentytwentyfive/patterns/cta-heading-search.php",
+                    "patterns/cta-newsletter.php": "{root}/twentytwentyfive/patterns/cta-newsletter.php",
+                    "patterns/event-3-col.php": "{root}/twentytwentyfive/patterns/event-3-col.php",
+                    "patterns/event-rsvp.php": "{root}/twentytwentyfive/patterns/event-rsvp.php",
+                    "patterns/event-schedule.php": "{root}/twentytwentyfive/patterns/event-schedule.php",
+                    "patterns/footer-centered.php": "{root}/twentytwentyfive/patterns/footer-centered.php",
+                    "patterns/footer-columns.php": "{root}/twentytwentyfive/patterns/footer-columns.php",
+                    "patterns/footer-newsletter.php": "{root}/twentytwentyfive/patterns/footer-newsletter.php",
+                    "patterns/footer-social.php": "{root}/twentytwentyfive/patterns/footer-social.php",
+                    "patterns/footer.php": "{root}/twentytwentyfive/patterns/footer.php",
+                    "patterns/format-audio.php": "{root}/twentytwentyfive/patterns/format-audio.php",
+                    "patterns/format-link.php": "{root}/twentytwentyfive/patterns/format-link.php",
+                    "patterns/grid-videos.php": "{root}/twentytwentyfive/patterns/grid-videos.php",
+                    "patterns/grid-with-categories.php": "{root}/twentytwentyfive/patterns/grid-with-categories.php",
+                    "patterns/header-centered.php": "{root}/twentytwentyfive/patterns/header-centered.php",
+                    "patterns/header-columns.php": "{root}/twentytwentyfive/patterns/header-columns.php",
+                    "patterns/header-large-title.php": "{root}/twentytwentyfive/patterns/header-large-title.php",
+                    "patterns/header.php": "{root}/twentytwentyfive/patterns/header.php",
+                    "patterns/heading-and-paragraph-with-image.php": "{root}/twentytwentyfive/patterns/heading-and-paragraph-with-image.php",
+                    "patterns/hero-book.php": "{root}/twentytwentyfive/patterns/hero-book.php",
+                    "patterns/hero-full-width-image.php": "{root}/twentytwentyfive/patterns/hero-full-width-image.php",
+                    "patterns/hero-overlapped-book-cover-with-links.php": "{root}/twentytwentyfive/patterns/hero-overlapped-book-cover-with-links.php",
+                    "patterns/hero-podcast.php": "{root}/twentytwentyfive/patterns/hero-podcast.php",
+                    "patterns/hidden-404.php": "{root}/twentytwentyfive/patterns/hidden-404.php",
+                    "patterns/hidden-blog-heading.php": "{root}/twentytwentyfive/patterns/hidden-blog-heading.php",
+                    "patterns/hidden-search.php": "{root}/twentytwentyfive/patterns/hidden-search.php",
+                    "patterns/hidden-sidebar.php": "{root}/twentytwentyfive/patterns/hidden-sidebar.php",
+                    "patterns/hidden-written-by.php": "{root}/twentytwentyfive/patterns/hidden-written-by.php",
+                    "patterns/logos.php": "{root}/twentytwentyfive/patterns/logos.php",
+                    "patterns/media-instagram-grid.php": "{root}/twentytwentyfive/patterns/media-instagram-grid.php",
+                    "patterns/more-posts.php": "{root}/twentytwentyfive/patterns/more-posts.php",
+                    "patterns/overlapped-images.php": "{root}/twentytwentyfive/patterns/overlapped-images.php",
+                    "patterns/page-business-home.php": "{root}/twentytwentyfive/patterns/page-business-home.php",
+                    "patterns/page-coming-soon.php": "{root}/twentytwentyfive/patterns/page-coming-soon.php",
+                    "patterns/page-cv-bio.php": "{root}/twentytwentyfive/patterns/page-cv-bio.php",
+                    "patterns/page-landing-book.php": "{root}/twentytwentyfive/patterns/page-landing-book.php",
+                    "patterns/page-landing-event.php": "{root}/twentytwentyfive/patterns/page-landing-event.php",
+                    "patterns/page-landing-podcast.php": "{root}/twentytwentyfive/patterns/page-landing-podcast.php",
+                    "patterns/page-link-in-bio-heading-paragraph-links-image.php": "{root}/twentytwentyfive/patterns/page-link-in-bio-heading-paragraph-links-image.php",
+                    "patterns/page-link-in-bio-wide-margins.php": "{root}/twentytwentyfive/patterns/page-link-in-bio-wide-margins.php",
+                    "patterns/page-link-in-bio-with-tight-margins.php": "{root}/twentytwentyfive/patterns/page-link-in-bio-with-tight-margins.php",
+                    "patterns/page-portfolio-home.php": "{root}/twentytwentyfive/patterns/page-portfolio-home.php",
+                    "patterns/page-shop-home.php": "{root}/twentytwentyfive/patterns/page-shop-home.php",
+                    "patterns/post-navigation.php": "{root}/twentytwentyfive/patterns/post-navigation.php",
+                    "patterns/pricing-2-col.php": "{root}/twentytwentyfive/patterns/pricing-2-col.php",
+                    "patterns/pricing-3-col.php": "{root}/twentytwentyfive/patterns/pricing-3-col.php",
+                    "patterns/services-3-col.php": "{root}/twentytwentyfive/patterns/services-3-col.php",
+                    "patterns/services-subscriber-only-section.php": "{root}/twentytwentyfive/patterns/services-subscriber-only-section.php",
+                    "patterns/services-team-photos.php": "{root}/twentytwentyfive/patterns/services-team-photos.php",
+                    "patterns/template-404-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-404-vertical-header-blog.php",
+                    "patterns/template-archive-news-blog.php": "{root}/twentytwentyfive/patterns/template-archive-news-blog.php",
+                    "patterns/template-archive-photo-blog.php": "{root}/twentytwentyfive/patterns/template-archive-photo-blog.php",
+                    "patterns/template-archive-text-blog.php": "{root}/twentytwentyfive/patterns/template-archive-text-blog.php",
+                    "patterns/template-archive-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-archive-vertical-header-blog.php",
+                    "patterns/template-home-news-blog.php": "{root}/twentytwentyfive/patterns/template-home-news-blog.php",
+                    "patterns/template-home-photo-blog.php": "{root}/twentytwentyfive/patterns/template-home-photo-blog.php",
+                    "patterns/template-home-posts-grid-news-blog.php": "{root}/twentytwentyfive/patterns/template-home-posts-grid-news-blog.php",
+                    "patterns/template-home-text-blog.php": "{root}/twentytwentyfive/patterns/template-home-text-blog.php",
+                    "patterns/template-home-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-home-vertical-header-blog.php",
+                    "patterns/template-home-with-sidebar-news-blog.php": "{root}/twentytwentyfive/patterns/template-home-with-sidebar-news-blog.php",
+                    "patterns/template-page-photo-blog.php": "{root}/twentytwentyfive/patterns/template-page-photo-blog.php",
+                    "patterns/template-page-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-page-vertical-header-blog.php",
+                    "patterns/template-query-loop-news-blog.php": "{root}/twentytwentyfive/patterns/template-query-loop-news-blog.php",
+                    "patterns/template-query-loop-photo-blog.php": "{root}/twentytwentyfive/patterns/template-query-loop-photo-blog.php",
+                    "patterns/template-query-loop-text-blog.php": "{root}/twentytwentyfive/patterns/template-query-loop-text-blog.php",
+                    "patterns/template-query-loop-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-query-loop-vertical-header-blog.php",
+                    "patterns/template-query-loop.php": "{root}/twentytwentyfive/patterns/template-query-loop.php",
+                    "patterns/template-search-news-blog.php": "{root}/twentytwentyfive/patterns/template-search-news-blog.php",
+                    "patterns/template-search-photo-blog.php": "{root}/twentytwentyfive/patterns/template-search-photo-blog.php",
+                    "patterns/template-search-text-blog.php": "{root}/twentytwentyfive/patterns/template-search-text-blog.php",
+                    "patterns/template-search-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-search-vertical-header-blog.php",
+                    "patterns/template-single-left-aligned-content.php": "{root}/twentytwentyfive/patterns/template-single-left-aligned-content.php",
+                    "patterns/template-single-news-blog.php": "{root}/twentytwentyfive/patterns/template-single-news-blog.php",
+                    "patterns/template-single-offset.php": "{root}/twentytwentyfive/patterns/template-single-offset.php",
+                    "patterns/template-single-photo-blog.php": "{root}/twentytwentyfive/patterns/template-single-photo-blog.php",
+                    "patterns/template-single-text-blog.php": "{root}/twentytwentyfive/patterns/template-single-text-blog.php",
+                    "patterns/template-single-vertical-header-blog.php": "{root}/twentytwentyfive/patterns/template-single-vertical-header-blog.php",
+                    "patterns/testimonials-2-col.php": "{root}/twentytwentyfive/patterns/testimonials-2-col.php",
+                    "patterns/testimonials-6-col.php": "{root}/twentytwentyfive/patterns/testimonials-6-col.php",
+                    "patterns/testimonials-large.php": "{root}/twentytwentyfive/patterns/testimonials-large.php",
+                    "patterns/text-faqs.php": "{root}/twentytwentyfive/patterns/text-faqs.php",
+                    "patterns/vertical-header.php": "{root}/twentytwentyfive/patterns/vertical-header.php"
+                },
+                [
+                    "package-lock.json",
+                    "package.json",
+                    "styles/01-evening.json",
+                    "styles/02-noon.json",
+                    "styles/03-dusk.json",
+                    "styles/04-afternoon.json",
+                    "styles/05-twilight.json",
+                    "styles/06-morning.json",
+                    "styles/07-sunrise.json",
+                    "styles/08-midnight.json",
+                    "styles/blocks/01-display.json",
+                    "styles/blocks/02-subtitle.json",
+                    "styles/blocks/03-annotation.json",
+                    "styles/blocks/post-terms-1.json",
+                    "styles/colors/01-evening.json",
+                    "styles/colors/02-noon.json",
+                    "styles/colors/03-dusk.json",
+                    "styles/colors/04-afternoon.json",
+                    "styles/colors/05-twilight.json",
+                    "styles/colors/06-morning.json",
+                    "styles/colors/07-sunrise.json",
+                    "styles/colors/08-midnight.json",
+                    "styles/sections/section-1.json",
+                    "styles/sections/section-2.json",
+                    "styles/sections/section-3.json",
+                    "styles/sections/section-4.json",
+                    "styles/sections/section-5.json",
+                    "styles/typography/typography-preset-1.json",
+                    "styles/typography/typography-preset-2.json",
+                    "styles/typography/typography-preset-3.json",
+                    "styles/typography/typography-preset-4.json",
+                    "styles/typography/typography-preset-5.json",
+                    "styles/typography/typography-preset-6.json",
+                    "styles/typography/typography-preset-7.json",
+                    "theme.json"
+                ],
+                [
+                    "contributing.txt",
+                    "functions.php",
+                    "package-lock.json",
+                    "package.json",
+                    "readme.txt",
+                    "screenshot.png",
+                    "style.css",
+                    "style.min.css",
+                    "theme.json"
+                ],
+                {
+                    "functions.php": "{root}/twentytwentyfive/functions.php"
+                }
+            ],
+            "missing": [
+                [],
+                [],
+                [],
+                []
+            ]
+        }
+    ],
+    [
+        "templates",
+        [
+            {
+                "page": {
+                    "page-no-title": "Page No Title"
+                }
+            },
+            {
+                "page-no-title": "Page No Title"
+            },
+            [],
+            [],
+            {
+                "page-no-title": "Page No Title"
+            },
+            {
+                "page": {
+                    "page-no-title": "Page No Title"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "allowed and text domain",
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            [
+                false
+            ],
+            [
+                false
+            ],
+            true,
+            false
+        ]
+    ],
+    [
+        "statics and caches",
+        [
+            [
+                false
+            ],
+            [],
+            [],
+            "twentytwentyfive",
+            true,
+            true,
+            [
+                "banner-about-book.php",
+                "banner-cover-big-heading.php",
+                "banner-intro-image.php"
+            ],
+            {
+                "title": "Banner with book description",
+                "slug": "twentytwentyfive/banner-about-book",
+                "description": "Banner with book description and accompanying image for promotion.",
+                "categories": [
+                    "banner"
+                ]
+            },
+            {
+                "title": "404",
+                "slug": "twentytwentyfive/hidden-404",
+                "description": "",
+                "inserter": false
+            },
+            {
+                "title": "Header",
+                "slug": "twentytwentyfive/header",
+                "description": "Site header with site title and navigation.",
+                "categories": [
+                    "header"
+                ],
+                "blockTypes": [
+                    "core/template-part/header"
+                ]
+            },
+            {
+                "title": "Text blog home",
+                "slug": "twentytwentyfive/template-home-text-blog",
+                "description": "",
+                "viewportWidth": 1400,
+                "inserter": false,
+                "templateTypes": [
+                    "front-page",
+                    "home"
+                ]
+            },
+            null,
+            null,
+            [
+                "WP_Theme",
+                "twentytwentyfour",
+                "Twenty Twenty-Four",
+                true
+            ],
+            []
+        ]
+    ],
+    [
+        "sorted by name",
+        {
+            "2": "twentytwentyfive",
+            "0": "twentytwentyfour",
+            "1": "twentytwentythree"
+        }
+    ]
+]

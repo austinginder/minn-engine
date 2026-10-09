@@ -1,0 +1,65 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Minn\Theme;
+
+/**
+ * A theme's pattern files read by their headers, as WP_Theme::get_block_patterns
+ * lists them (probe wp-theme). Each one gives title, slug and description
+ * (empty when the header has none), then whatever of viewportWidth (a
+ * number), inserter (false for "no"), and the comma lists categories,
+ * keywords, blockTypes, postTypes and templateTypes it declares. A file
+ * without a title and a slug is not a pattern.
+ */
+final class PatternHeaders
+{
+    private const LISTS = ['categories' => 'Categories', 'keywords' => 'Keywords', 'blockTypes' => 'Block Types', 'postTypes' => 'Post Types', 'templateTypes' => 'Template Types'];
+
+    /**
+     * The patterns directory's files by file name, in name order.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function all(string $themeDir): array
+    {
+        $found = [];
+        foreach (glob($themeDir . '/patterns/*.php') ?: [] as $file) {
+            $record = self::read((string) file_get_contents($file, false, null, 0, 8192));
+            if ($record !== null) {
+                $found[basename($file)] = $record;
+            }
+        }
+        return $found;
+    }
+
+    /**
+     * One file's record from the start of its text, or null when it names no title or slug.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function read(string $head): ?array
+    {
+        $field = static fn (string $name): ?string => preg_match('/^[ \t\/*#@]*' . preg_quote($name, '/') . ':(.*)$/mi', $head, $m) === 1 ? trim($m[1]) : null;
+        [$title, $slug] = [$field('Title'), $field('Slug')];
+        if ($title === null || $title === '' || $slug === null || $slug === '') {
+            return null;
+        }
+        $record = ['title' => $title, 'slug' => $slug, 'description' => (string) $field('Description')];
+        $width = $field('Viewport Width');
+        if ($width !== null && $width !== '') {
+            $record['viewportWidth'] = (int) $width;
+        }
+        $inserter = $field('Inserter');
+        if ($inserter !== null && $inserter !== '') {
+            $record['inserter'] = in_array(strtolower($inserter), ['yes', 'true'], true);
+        }
+        foreach (self::LISTS as $key => $name) {
+            $list = array_values(array_filter(array_map('trim', explode(',', (string) $field($name))), static fn (string $item): bool => $item !== ''));
+            if ($list !== []) {
+                $record[$key] = $list;
+            }
+        }
+        return $record;
+    }
+}

@@ -48,7 +48,7 @@ class WP_Theme implements ArrayAccess
             'stylesheet' => $this->get_stylesheet(),
             'screenshot' => $this->get_screenshot('relative'),
             'description' => $this->get('Description'),
-            'author' => $this->get('Author'),
+            'author' => $this->display('Author'),
             'tags' => $this->get('Tags'),
             'theme_root' => $this->get_theme_root(),
             'theme_root_uri' => $this->get_theme_root_uri(),
@@ -86,11 +86,18 @@ class WP_Theme implements ArrayAccess
         return $this->parent ?? false;
     }
 
+    /** A header as written; Tags as a list, and Status "publish" when an existing theme leaves it out. A theme that is not there has only its Name (its folder). */
     public function get($header)
     {
+        if (!$this->exists() && $header !== 'Name') {
+            return false;
+        }
         $value = $this->headersData[$header] ?? false;
         if ($header === 'Tags' && is_string($value)) {
             return $value === '' ? [] : array_map('trim', explode(',', $value));
+        }
+        if ($header === 'Status' && $value === '' && $this->exists()) {
+            return 'publish';
         }
         return $value;
     }
@@ -193,6 +200,9 @@ class WP_Theme implements ArrayAccess
      */
     public function get_post_templates()
     {
+        if ($this->errors()) {
+            return [];
+        }
         $templates = [];
         foreach ($this->php_files() as $relative => $path) {
             $headers = get_file_data($path, ['Name' => 'Template Name', 'PostType' => 'Template Post Type']);
@@ -269,9 +279,10 @@ class WP_Theme implements ArrayAccess
         return array_values($byName);
     }
 
+    /** The theme's translations loaded under its Text Domain; false for a theme that names none. */
     public function load_textdomain()
     {
-        return true;
+        return (bool) $this->get('TextDomain');
     }
 
     public function is_allowed($check = 'both', $blog_id = null)
@@ -289,9 +300,76 @@ class WP_Theme implements ArrayAccess
         return Folder::filePath($this->get_stylesheet_directory(), $this->get_template_directory(), (string) $file);
     }
 
+    /** The theme's patterns by file name, read from their headers (Minn\Theme\PatternHeaders); [] for a theme that is not there. */
+    public function get_block_patterns()
+    {
+        return $this->exists() ? \Minn\Theme\PatternHeaders::all($this->get_stylesheet_directory()) : [];
+    }
+
+    /** Nothing is cached of a theme's patterns here. */
+    public function delete_pattern_cache()
+    {
+    }
+
+    /** Nothing is cached of a theme here. */
+    public function cache_delete()
+    {
+    }
+
+    /** A theme read back from a serialized copy. */
+    public function __wakeup()
+    {
+    }
+
+    /** The themes allowed for a site: the network's list, then the site's (probe wp-theme). */
     public static function get_allowed($blog_id = null)
     {
-        return [];
+        return array_merge(self::get_allowed_on_network(), self::get_allowed_on_site($blog_id));
+    }
+
+    /** The network's allowedthemes site option, as a list (false read as [false], as the reference reads it). */
+    public static function get_allowed_on_network()
+    {
+        return (array) get_site_option('allowedthemes');
+    }
+
+    /** The site's allowedthemes option when it is a list; [] otherwise. */
+    public static function get_allowed_on_site($blog_id = null)
+    {
+        $allowed = get_option('allowedthemes');
+        return is_array($allowed) ? $allowed : [];
+    }
+
+    /** Themes allowed across the network: the stylesheets added to the allowedthemes site option. */
+    public static function network_enable_theme($stylesheets)
+    {
+        $allowed = array_filter((array) get_site_option('allowedthemes'));
+        foreach ((array) $stylesheets as $stylesheet) {
+            $allowed[$stylesheet] = true;
+        }
+        update_site_option('allowedthemes', $allowed);
+    }
+
+    /** Themes no longer allowed across the network: the stylesheets taken out of the allowedthemes site option. */
+    public static function network_disable_theme($stylesheets)
+    {
+        $allowed = array_filter((array) get_site_option('allowedthemes'));
+        foreach ((array) $stylesheets as $stylesheet) {
+            unset($allowed[$stylesheet]);
+        }
+        update_site_option('allowedthemes', $allowed);
+    }
+
+    /** The default theme (WP_DEFAULT_THEME) when it is installed, else the newest core theme there is; false for none. */
+    public static function get_core_default_theme()
+    {
+        foreach (array_filter([defined('WP_DEFAULT_THEME') ? (string) WP_DEFAULT_THEME : '', 'twentytwentyfive', 'twentytwentyfour', 'twentytwentythree', 'twentytwentytwo', 'twentytwentyone', 'twentytwenty']) as $slug) {
+            $theme = wp_get_theme($slug);
+            if ($theme->exists()) {
+                return $theme;
+            }
+        }
+        return false;
     }
 
     public static function sort_by_name(&$themes)
@@ -299,19 +377,12 @@ class WP_Theme implements ArrayAccess
         uasort($themes, static fn (WP_Theme $a, WP_Theme $b) => strnatcasecmp($a->get('Name'), $b->get('Name')));
     }
 
-    /**
-     * Theme headers by their display names. Themes read these as array
-     * offsets (Storefront's functions.php does `wp_get_theme()['Version']`),
-     * so the class is ArrayAccess as well as an object; captured offsets
-     * are the display forms, not the internal header keys. Writes are
-     * ignored, as the reference ignores them.
-     */
     public function offsetExists($offset): bool
     {
         return in_array($offset, [
             'Name', 'Version', 'Title', 'Author', 'Author Name', 'Author URI', 'Description',
             'Template', 'Stylesheet', 'Screenshot', 'Tags', 'Theme Root', 'Theme Root URI',
-            'Parent Theme', 'Status',
+            'Parent Theme', 'Status', 'Template Dir', 'Stylesheet Dir', 'Template Files', 'Stylesheet Files',
         ], true);
     }
 
@@ -333,7 +404,7 @@ class WP_Theme implements ArrayAccess
     private function offsetComputed(string $offset)
     {
         return match ($offset) {
-            'Author' => $this->display('Author', false),
+            'Author' => $this->display('Author'),
             'Author Name' => $this->display('Author', false, false),
             'Description' => $this->display('Description', false),
             'Template' => $this->get_template(),
@@ -342,6 +413,18 @@ class WP_Theme implements ArrayAccess
             'Theme Root' => $this->get_theme_root(),
             'Theme Root URI' => $this->get_theme_root_uri(),
             'Parent Theme' => $this->parent() ? $this->parent()->get('Name') : '',
+            default => $this->offsetPlace($offset),
+        };
+    }
+
+    /** The legacy keys for the theme's folders and files. */
+    private function offsetPlace(string $offset)
+    {
+        return match ($offset) {
+            'Template Dir' => $this->get_template_directory(),
+            'Stylesheet Dir' => $this->get_stylesheet_directory(),
+            'Template Files' => array_values($this->get_files('php', 1, true)),
+            'Stylesheet Files' => array_values($this->get_files('css', 0)),
             default => null,
         };
     }

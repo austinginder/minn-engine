@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 753,
-        "composes": 1608,
-        "leaf": 777,
-        "noop": 2463,
+        "composes": 1612,
+        "leaf": 778,
+        "noop": 2468,
         "placeholder": 279,
         "deadend": 1659,
-        "functions": 7461,
-        "minnMethods": 904,
+        "functions": 7471,
+        "minnMethods": 905,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -21006,6 +21006,20 @@
             "minn": [],
             "composes": []
         },
+        "WP_Theme::__wakeup": {
+            "file": "classes/WP_Theme.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Theme::cache_delete": {
+            "file": "classes/WP_Theme.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Theme::custom_block_templates": {
             "file": "classes/WP_Theme.php",
             "lines": 10,
@@ -21015,6 +21029,13 @@
                 "get_stylesheet_directory",
                 "get_template_directory"
             ]
+        },
+        "WP_Theme::delete_pattern_cache": {
+            "file": "classes/WP_Theme.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "WP_Theme::display": {
             "file": "classes/WP_Theme.php",
@@ -21043,7 +21064,7 @@
         },
         "WP_Theme::get": {
             "file": "classes/WP_Theme.php",
-            "lines": 5,
+            "lines": 11,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -21055,12 +21076,48 @@
             "minn": [],
             "composes": []
         },
+        "WP_Theme::get_allowed_on_network": {
+            "file": "classes/WP_Theme.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_site_option"
+            ]
+        },
+        "WP_Theme::get_allowed_on_site": {
+            "file": "classes/WP_Theme.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option"
+            ]
+        },
+        "WP_Theme::get_block_patterns": {
+            "file": "classes/WP_Theme.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Theme\\PatternHeaders::all"
+            ],
+            "composes": []
+        },
         "WP_Theme::get_block_template_folders": {
             "file": "classes/WP_Theme.php",
             "lines": 5,
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_Theme::get_core_default_theme": {
+            "file": "classes/WP_Theme.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_theme"
+            ]
         },
         "WP_Theme::get_file_path": {
             "file": "classes/WP_Theme.php",
@@ -21092,7 +21149,7 @@
         },
         "WP_Theme::get_post_templates": {
             "file": "classes/WP_Theme.php",
-            "lines": 19,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -21189,6 +21246,26 @@
             "minn": [],
             "composes": []
         },
+        "WP_Theme::network_disable_theme": {
+            "file": "classes/WP_Theme.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_site_option",
+                "update_site_option"
+            ]
+        },
+        "WP_Theme::network_enable_theme": {
+            "file": "classes/WP_Theme.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_site_option",
+                "update_site_option"
+            ]
+        },
         "WP_Theme::offsetComputed": {
             "file": "classes/WP_Theme.php",
             "lines": 12,
@@ -21206,6 +21283,13 @@
         "WP_Theme::offsetGet": {
             "file": "classes/WP_Theme.php",
             "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Theme::offsetPlace": {
+            "file": "classes/WP_Theme.php",
+            "lines": 7,
             "kind": "leaf",
             "minn": [],
             "composes": []

@@ -21,6 +21,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 179 | A whole page from the active block theme: the template the resolution |
+| [`PatternHeaders`](#patternheaders) | final class | 51 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 120 | The body-class tokens the main query stands for, in the reference's |
@@ -643,6 +644,32 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 The page for a resolution, or null when the theme has no template for it.
 
 Internals: `pluginTemplate()` (private, line 159), `skipLinkTarget()` (private, line 177), `head()` (private, line 191)
+
+
+## PatternHeaders
+
+`final class Minn\Theme\PatternHeaders` · `public/minn/src/Minn/Theme/PatternHeaders.php`
+
+A theme's pattern files read by their headers, as WP_Theme::get_block_patterns
+lists them (probe wp-theme). Each one gives title, slug and description
+(empty when the header has none), then whatever of viewportWidth (a
+number), inserter (false for "no"), and the comma lists categories,
+keywords, blockTypes, postTypes and templateTypes it declares. A file
+without a title and a slug is not a pattern.
+
+- const `LISTS` = `array (   'categories' => 'Categories',   'keywords' => 'Keywords',   'blockTypes' => 'Block Types',   'postTypes' => 'Post Types',   'templateTypes' => 'Template Types', )`
+
+### static `all(string $themeDir): array`
+
+The patterns directory's files by file name, in name order.
+
+- `@return array<string, array<string, mixed>>`
+
+### static `read(string $head): ?array`
+
+One file's record from the start of its text, or null when it names no title or slug.
+
+- `@return array<string, mixed>|null`
 
 
 ## PatternText
