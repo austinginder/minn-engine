@@ -1,0 +1,533 @@
+[
+    [
+        "a bindings source registered",
+        [
+            [
+                "WP_Block_Bindings_Registry",
+                true
+            ],
+            [
+                [
+                    "WP_Block_Bindings_Source",
+                    "zz-probe/source",
+                    "Zz Source",
+                    [
+                        "postId"
+                    ]
+                ],
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "Block bindings source \"zz-probe/source\" already registered.",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "Block bindings source names must contain a namespace prefix. Example: my-plugin/my-custom-source",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "Block bindings source names must not contain uppercase characters.",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "Block bindings source names must contain a namespace prefix. Example: my-plugin/my-custom-source",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "The $source_properties must contain a \"label\".",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "The $source_properties must contain a \"get_value_callback\".",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "The \"get_value_callback\" parameter must be a valid callback.",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "The \"uses_context\" parameter must be an array.",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::register",
+                        "The $source_properties array contains invalid properties.",
+                        "6.5.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "a bindings source looked up",
+        [
+            [
+                "WP_Block_Bindings_Source",
+                "zz-probe/source",
+                "Zz Source",
+                [
+                    "postId"
+                ]
+            ],
+            null,
+            [
+                true,
+                false,
+                false
+            ],
+            [
+                "zz-probe/source"
+            ]
+        ]
+    ],
+    [
+        "a bindings source's value",
+        [
+            "value:k:content",
+            "value:k2:url|filtered",
+            [
+                [
+                    "value:k2:url",
+                    4,
+                    "zz-probe/source",
+                    "array",
+                    null
+                ]
+            ],
+            [
+                "zz-probe/own",
+                "Own",
+                [
+                    "zz"
+                ],
+                42
+            ],
+            "woke",
+            [
+                "LogicException",
+                "WP_Block_Bindings_Source should never be unserialized"
+            ]
+        ]
+    ],
+    [
+        "a bindings source removed",
+        [
+            [
+                [
+                    "WP_Block_Bindings_Source",
+                    "zz-probe/source",
+                    "Zz Source",
+                    [
+                        "postId"
+                    ]
+                ],
+                false,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::unregister",
+                        "Block binding \"zz-probe/source\" not found.",
+                        "6.5.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Bindings_Registry::unregister",
+                        "Block binding \"zz-probe/extra\" not found.",
+                        "6.5.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "a plugin template registered",
+        [
+            [
+                "WP_Block_Templates_Registry",
+                true
+            ],
+            [
+                {
+                    "type": "wp_template",
+                    "theme": "twentytwentyfive",
+                    "slug": "zz-tpl",
+                    "id": "twentytwentyfive//zz-tpl",
+                    "title": "Zz Tpl",
+                    "content": "<!-- wp:paragraph --><p>zz</p><!-- /wp:paragraph -->",
+                    "description": "Zz described",
+                    "source": "plugin",
+                    "origin": "plugin",
+                    "wp_id": null,
+                    "status": "publish",
+                    "has_theme_file": null,
+                    "is_custom": true,
+                    "author": null,
+                    "plugin": "zz-plugin",
+                    "post_types": [
+                        "page"
+                    ],
+                    "area": null,
+                    "modified": null,
+                    "date": null
+                },
+                []
+            ],
+            [
+                [
+                    "WP_Error",
+                    "template_already_registered",
+                    "Template \"zz-plugin//zz-tpl\" is already registered."
+                ],
+                [
+                    [
+                        "WP_Block_Templates_Registry::register",
+                        "Template \"zz-plugin//zz-tpl\" is already registered.",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "type": "wp_template",
+                    "theme": "twentytwentyfive",
+                    "slug": "zz-bare",
+                    "id": "twentytwentyfive//zz-bare",
+                    "title": "zz-plugin//zz-bare",
+                    "content": "",
+                    "description": "",
+                    "source": "plugin",
+                    "origin": "plugin",
+                    "wp_id": null,
+                    "status": "publish",
+                    "has_theme_file": null,
+                    "is_custom": true,
+                    "author": null,
+                    "plugin": "zz-plugin",
+                    "post_types": [],
+                    "area": null,
+                    "modified": null,
+                    "date": null
+                },
+                []
+            ],
+            [
+                [
+                    "WP_Error",
+                    "template_no_prefix",
+                    "Template names must contain a namespace prefix. Example: my-plugin//my-custom-template"
+                ],
+                [
+                    [
+                        "WP_Block_Templates_Registry::register",
+                        "Template names must contain a namespace prefix. Example: my-plugin//my-custom-template",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                [
+                    "WP_Error",
+                    "template_name_no_uppercase",
+                    "Template names must not contain uppercase characters."
+                ],
+                [
+                    [
+                        "WP_Block_Templates_Registry::register",
+                        "Template names must not contain uppercase characters.",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                [
+                    "WP_Error",
+                    "template_no_prefix",
+                    "Template names must contain a namespace prefix. Example: my-plugin//my-custom-template"
+                ],
+                [
+                    [
+                        "WP_Block_Templates_Registry::register",
+                        "Template names must contain a namespace prefix. Example: my-plugin//my-custom-template",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                [
+                    "WP_Error",
+                    "template_name_no_string",
+                    "Template names must be strings."
+                ],
+                [
+                    [
+                        "WP_Block_Templates_Registry::register",
+                        "Template names must be strings.",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "type": "wp_template",
+                    "theme": "twentytwentyfive",
+                    "slug": "zz-other",
+                    "id": "twentytwentyfive//zz-other",
+                    "title": "Other",
+                    "content": "",
+                    "description": "",
+                    "source": "plugin",
+                    "origin": "plugin",
+                    "wp_id": null,
+                    "status": "publish",
+                    "has_theme_file": null,
+                    "is_custom": true,
+                    "author": null,
+                    "plugin": "zz-plugin",
+                    "post_types": [
+                        "post",
+                        "page"
+                    ],
+                    "area": null,
+                    "modified": null,
+                    "date": null
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "plugin templates found",
+        [
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "zz-tpl",
+                "id": "twentytwentyfive//zz-tpl",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>zz</p><!-- /wp:paragraph -->",
+                "description": "Zz described",
+                "source": "plugin",
+                "origin": "plugin",
+                "wp_id": null,
+                "status": "publish",
+                "has_theme_file": null,
+                "is_custom": true,
+                "author": null,
+                "plugin": "zz-plugin",
+                "post_types": [
+                    "page"
+                ],
+                "area": null,
+                "modified": null,
+                "date": null
+            },
+            null,
+            {
+                "type": "wp_template",
+                "theme": "twentytwentyfive",
+                "slug": "zz-tpl",
+                "id": "twentytwentyfive//zz-tpl",
+                "title": "Zz Tpl",
+                "content": "<!-- wp:paragraph --><p>zz</p><!-- /wp:paragraph -->",
+                "description": "Zz described",
+                "source": "plugin",
+                "origin": "plugin",
+                "wp_id": null,
+                "status": "publish",
+                "has_theme_file": null,
+                "is_custom": true,
+                "author": null,
+                "plugin": "zz-plugin",
+                "post_types": [
+                    "page"
+                ],
+                "area": null,
+                "modified": null,
+                "date": null
+            },
+            null,
+            [
+                "zz-plugin//zz-tpl",
+                "zz-plugin//zz-bare",
+                "zz-plugin//zz-other"
+            ],
+            [
+                "zz-plugin//zz-bare",
+                "zz-plugin//zz-other"
+            ],
+            [
+                "zz-plugin//zz-other"
+            ],
+            [
+                "zz-plugin//zz-other"
+            ],
+            [
+                "zz-plugin//zz-tpl",
+                "zz-plugin//zz-bare",
+                "zz-plugin//zz-other"
+            ],
+            [
+                true,
+                false,
+                false
+            ],
+            [
+                "zz-plugin//zz-tpl",
+                "zz-plugin//zz-bare",
+                "zz-plugin//zz-other"
+            ]
+        ]
+    ],
+    [
+        "plugin templates removed",
+        [
+            [
+                {
+                    "type": "wp_template",
+                    "theme": "twentytwentyfive",
+                    "slug": "zz-tpl",
+                    "id": "twentytwentyfive//zz-tpl",
+                    "title": "Zz Tpl",
+                    "content": "<!-- wp:paragraph --><p>zz</p><!-- /wp:paragraph -->",
+                    "description": "Zz described",
+                    "source": "plugin",
+                    "origin": "plugin",
+                    "wp_id": null,
+                    "status": "publish",
+                    "has_theme_file": null,
+                    "is_custom": true,
+                    "author": null,
+                    "plugin": "zz-plugin",
+                    "post_types": [
+                        "page"
+                    ],
+                    "area": null,
+                    "modified": null,
+                    "date": null
+                },
+                false,
+                []
+            ],
+            [
+                [
+                    "WP_Error",
+                    "template_not_registered",
+                    "Template \"zz-plugin//zz-tpl\" is not registered."
+                ],
+                [
+                    [
+                        "WP_Block_Templates_Registry::unregister",
+                        "Template \"zz-plugin//zz-tpl\" is not registered.",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "type": "wp_template",
+                    "theme": "twentytwentyfive",
+                    "slug": "zz-bare",
+                    "id": "twentytwentyfive//zz-bare",
+                    "title": "zz-plugin//zz-bare",
+                    "content": "",
+                    "description": "",
+                    "source": "plugin",
+                    "origin": "plugin",
+                    "wp_id": null,
+                    "status": "publish",
+                    "has_theme_file": null,
+                    "is_custom": true,
+                    "author": null,
+                    "plugin": "zz-plugin",
+                    "post_types": [],
+                    "area": null,
+                    "modified": null,
+                    "date": null
+                },
+                {
+                    "type": "wp_template",
+                    "theme": "twentytwentyfive",
+                    "slug": "zz-other",
+                    "id": "twentytwentyfive//zz-other",
+                    "title": "Other",
+                    "content": "",
+                    "description": "",
+                    "source": "plugin",
+                    "origin": "plugin",
+                    "wp_id": null,
+                    "status": "publish",
+                    "has_theme_file": null,
+                    "is_custom": true,
+                    "author": null,
+                    "plugin": "zz-plugin",
+                    "post_types": [
+                        "post",
+                        "page"
+                    ],
+                    "area": null,
+                    "modified": null,
+                    "date": null
+                },
+                []
+            ]
+        ]
+    ]
+]

@@ -8441,23 +8441,27 @@
         },
         "WP_Block_Templates_Registry::register": {
             "file": "classes/WP_Block_Template.php",
-            "lines": 6,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::blockTemplates"
             ],
             "composes": [
+                "__",
+                "_doing_it_wrong",
                 "_minn_registered_block_template"
             ]
         },
         "WP_Block_Templates_Registry::unregister": {
             "file": "classes/WP_Block_Template.php",
-            "lines": 5,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::blockTemplates"
             ],
             "composes": [
+                "__",
+                "_doing_it_wrong",
                 "_minn_registered_block_template"
             ]
         },
@@ -29577,7 +29581,7 @@
         },
         "_minn_block_bindings_refusal": {
             "file": "classes/WP_Block_Bindings_Registry.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [

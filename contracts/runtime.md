@@ -9014,3 +9014,30 @@ through a subclass.
   - Before, declarations were filtered as they were added, so
     `get_declarations()` lost an unknown property that the reference keeps.
   - A non-array given to the constructor adds nothing.
+
+## The block bindings and block templates registries (2026-10-09)
+
+Probe `block-registries`. Everything the probe registers it removes again.
+
+- **`WP_Block_Bindings_Registry`.**
+  - A name that is not `namespace/name` (a number, or with no slash) is
+    refused with "Block bindings source names must contain a namespace
+    prefix. Example: my-plugin/my-custom-source". Capitals are refused
+    with "… must not contain uppercase characters.", and an unknown
+    property with "The $source_properties array contains invalid
+    properties." All are doing it wrong at 6.5.0. Before, the engine had
+    one combined name message and listed the unknown properties.
+  - The rest is now proven: refusals for a missing label, a missing or
+    uncallable callback, and a `uses_context` that is not an array; the
+    lookups; unregistering; and `__wakeup` refusing.
+- **`WP_Block_Bindings_Source`.** `get_value` gives the callback's answer
+  through `block_bindings_source_value(value, name, args, block,
+  attribute)`.
+- **`WP_Block_Templates_Registry`.**
+  - Every refusal now also raises doing it wrong (6.7.0), with the same
+    message as its WP_Error. A name that is not a string has its own
+    error, `template_name_no_string` ("Template names must be strings.").
+  - A template registered with no title takes its name as the title, and
+    with no post types has `[]` (before, `''` and null).
+  - `get_by_query(['post_type' => …])` finds only templates that list that
+    post type. Before, a template listing none was found too.

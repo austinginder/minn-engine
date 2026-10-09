@@ -31,10 +31,11 @@ final class BlockTemplates
             'name' => $name,
             'plugin' => $plugin,
             'slug' => $slug,
-            'title' => (string) ($args['title'] ?? ''),
+            // With no title the name stands in; with no post types there are none (probe block-registries).
+            'title' => (string) ($args['title'] ?? $name),
             'description' => (string) ($args['description'] ?? ''),
             'content' => (string) ($args['content'] ?? ''),
-            'post_types' => isset($args['post_types']) ? array_values(array_map('strval', (array) $args['post_types'])) : null,
+            'post_types' => array_values(array_map('strval', (array) ($args['post_types'] ?? []))),
         ];
         $this->templates[$name] = $row;
         return $row;

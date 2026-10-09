@@ -39,11 +39,13 @@ final class WP_Block_Templates_Registry
         return self::$instance ??= new self();
     }
 
+    /** A plugin template, or a WP_Error (with a notice) for a name that is not a string, lacks a namespace, has capitals, or is taken. */
     public function register($template_name, $args = [])
     {
-        $row = \Minn\Runtime\Runtime::blockTemplates()->register((string) $template_name, (array) $args);
+        $row = is_string($template_name) ? \Minn\Runtime\Runtime::blockTemplates()->register($template_name, (array) $args) : 'template_name_no_string';
         if (is_string($row)) {
-            $messages = ['template_no_prefix' => 'Template names must contain a namespace prefix. Example: my-plugin//my-custom-template', 'template_name_no_uppercase' => 'Template names must not contain uppercase characters.', 'template_already_registered' => sprintf('Template "%s" is already registered.', $template_name)];
+            $messages = ['template_name_no_string' => __('Template names must be strings.'), 'template_no_prefix' => __('Template names must contain a namespace prefix. Example: my-plugin//my-custom-template'), 'template_name_no_uppercase' => __('Template names must not contain uppercase characters.'), 'template_already_registered' => sprintf(__('Template "%s" is already registered.'), $template_name)];
+            _doing_it_wrong(__METHOD__, $messages[$row], '6.7.0');
             return new WP_Error($row, $messages[$row]);
         }
         return _minn_registered_block_template($row);
@@ -76,7 +78,7 @@ final class WP_Block_Templates_Registry
             if (!empty($query['slug__not_in']) && in_array($template->slug, (array) $query['slug__not_in'], true)) {
                 continue;
             }
-            if (!empty($query['post_type']) && is_array($template->post_types) && !in_array($query['post_type'], $template->post_types, true)) {
+            if (!empty($query['post_type']) && !in_array($query['post_type'], (array) $template->post_types, true)) {
                 continue;
             }
             $out[$name] = $template;
@@ -93,7 +95,9 @@ final class WP_Block_Templates_Registry
     {
         $row = \Minn\Runtime\Runtime::blockTemplates()->unregister((string) $template_name);
         if ($row === null) {
-            return new WP_Error('template_not_registered', sprintf('Template "%s" is not registered.', $template_name));
+            $message = sprintf(__('Template "%s" is not registered.'), $template_name);
+            _doing_it_wrong(__METHOD__, $message, '6.7.0');
+            return new WP_Error('template_not_registered', $message);
         }
         return _minn_registered_block_template($row);
     }

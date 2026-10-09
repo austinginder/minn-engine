@@ -70,13 +70,14 @@ final class WP_Block_Bindings_Registry
 function _minn_block_bindings_refusal(string $name, array $properties, bool $taken, array $allowed): ?string
 {
     return match (true) {
-        !preg_match('/^[a-z0-9-]+\/[a-z0-9-]+$/', $name) => __('Block bindings source names must contain a namespace prefix and only lowercase alphanumeric characters or dashes. Example: my-plugin/my-custom-source'),
+        !preg_match('/^[a-z0-9-]+\/[a-z0-9-]+$/i', $name) => __('Block bindings source names must contain a namespace prefix. Example: my-plugin/my-custom-source'),
+        preg_match('/[A-Z]+/', $name) === 1 => __('Block bindings source names must not contain uppercase characters.'),
         $taken => sprintf(__('Block bindings source "%s" already registered.'), $name),
         !isset($properties['label']) => __('The $source_properties must contain a "label".'),
         !isset($properties['get_value_callback']) => __('The $source_properties must contain a "get_value_callback".'),
         !is_callable($properties['get_value_callback']) => __('The "get_value_callback" parameter must be a valid callback.'),
         isset($properties['uses_context']) && !is_array($properties['uses_context']) => __('The "uses_context" parameter must be an array.'),
-        array_diff(array_keys($properties), $allowed) !== [] => sprintf(__('The following properties are not allowed for a block bindings source: "%s".'), implode('", "', array_diff(array_keys($properties), $allowed))),
+        array_diff(array_keys($properties), $allowed) !== [] => __('The $source_properties array contains invalid properties.'),
         default => null,
     };
 }

@@ -111755,7 +111755,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/BlockTemplates.php",
-            "lines": 66,
+            "lines": 67,
             "doc": "Block templates plugins register at runtime, by their namespaced name\n(\"plugin//slug\"). A theme file or a saved template of the same slug\nwins; otherwise the registered content renders for that slug.",
             "implements": [],
             "extends": null,
@@ -111805,7 +111805,7 @@
                         }
                     ],
                     "line": 18,
-                    "end": 41
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -111824,8 +111824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 49
+                    "line": 45,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -111838,8 +111838,8 @@
                         "@return array<string, array<string, mixed>> by registered name"
                     ],
                     "params": [],
-                    "line": 56,
-                    "end": 59
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -111858,8 +111858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -111878,8 +111878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 76
+                    "line": 69,
+                    "end": 77
                 }
             ]
         },
