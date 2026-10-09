@@ -302,6 +302,11 @@ function _minn_bind_hook_globals(): void
     // A fresh roles object for each boot; wp_roles() hands it out from then on.
     $GLOBALS['wp_roles'] = new WP_Roles();
     $GLOBALS['wp_embed'] ??= new WP_Embed();
+    // The widget factory and the widget registries exist from boot, as the reference makes them before plugins load (probe widget-factory).
+    _minn_widget_factory();
+    foreach (['wp_registered_sidebars', 'wp_registered_widgets', 'wp_registered_widget_controls', 'wp_registered_widget_updates'] as $registry) {
+        $GLOBALS[$registry] ??= [];
+    }
 }
 
 function get_plugin_updates()

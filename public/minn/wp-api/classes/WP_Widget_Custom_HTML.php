@@ -26,12 +26,14 @@ class WP_Widget_Custom_HTML extends WP_Widget
     {
         $instance = wp_parse_args($instance, $this->default_instance);
         $title = apply_filters('widget_title', (string) $instance['title'], $instance, $this->id_base);
-        // The text widget's class rides along so themes style both alike.
-        echo str_replace('widget_custom_html', 'widget_text widget_custom_html', (string) ($args['before_widget'] ?? ''));
+        // The text widget's class goes first in the wrapper's class, so themes style both alike.
+        echo preg_replace('/(?<=\sclass=["\'])/', 'widget_text ', (string) ($args['before_widget'] ?? ''));
         if ($title !== '') {
             echo ($args['before_title'] ?? '') . $title . ($args['after_title'] ?? '');
         }
-        echo '<div class="textwidget custom-html-widget">' . apply_filters('widget_custom_html_content', (string) $instance['content'], $instance, $this) . '</div>';
+        // The text widget's filter first, then the Custom HTML widget's own.
+        $content = apply_filters('widget_text', (string) $instance['content'], $instance, $this);
+        echo '<div class="textwidget custom-html-widget">' . apply_filters('widget_custom_html_content', $content, $instance, $this) . '</div>';
         echo $args['after_widget'] ?? '';
     }
 
@@ -41,8 +43,13 @@ class WP_Widget_Custom_HTML extends WP_Widget
         echo WidgetForms::customHtml($this, (array) $instance);
     }
 
+    /** The old settings with a sanitized title and the content, kses'd for a user who may not post unfiltered HTML (probe widget-factory). */
     public function update($new_instance, $old_instance)
     {
-        return ['title' => (string) ($new_instance['title'] ?? ''), 'content' => (string) ($new_instance['content'] ?? '')];
+        $instance = (array) $old_instance;
+        $instance['title'] = sanitize_text_field((string) ($new_instance['title'] ?? ''));
+        $content = (string) ($new_instance['content'] ?? '');
+        $instance['content'] = current_user_can('unfiltered_html') ? $content : wp_kses_post($content);
+        return $instance;
     }
 }

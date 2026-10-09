@@ -44,8 +44,10 @@ class WP_Widget_Block extends WP_Widget
 
     public function update($new_instance, $old_instance)
     {
+        // A user who may not post unfiltered HTML has the content kses'd (probe widget-factory).
         $instance = (array) $old_instance;
-        $instance['content'] = (string) ($new_instance['content'] ?? '');
+        $content = (string) ($new_instance['content'] ?? '');
+        $instance['content'] = current_user_can('unfiltered_html') ? $content : wp_kses_post($content);
         return $instance;
     }
 

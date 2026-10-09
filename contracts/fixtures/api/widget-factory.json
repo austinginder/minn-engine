@@ -1,0 +1,138 @@
+[
+    [
+        "the factory",
+        [
+            "WP_Widget_Factory",
+            [],
+            [
+                [
+                    "Zz_Probe_Factory_Widget"
+                ],
+                "Zz_Probe_Factory_Widget",
+                "Zz_Probe_Factory_Widget",
+                null,
+                ""
+            ],
+            [
+                2,
+                "Zz_Probe_Factory_Widget",
+                false,
+                true
+            ],
+            2,
+            [
+                [],
+                [
+                    "zz_factory_probe-1"
+                ],
+                1
+            ],
+            [
+                "Zz_Probe_Factory_Widget"
+            ],
+            [],
+            []
+        ]
+    ],
+    [
+        "the Custom HTML widget",
+        [
+            "custom_html",
+            "Custom HTML",
+            {
+                "classname": "widget_custom_html",
+                "customize_selective_refresh": true,
+                "description": "Arbitrary HTML code.",
+                "show_instance_in_rest": true
+            },
+            {
+                "id_base": "custom_html",
+                "width": 400,
+                "height": 350
+            },
+            [
+                "<section id=\"%1$s\" class=\"widget_text widget %2$s\"><h2>Zz &lt;b&gt;Title&lt;/b&gt;</h2><div class=\"textwidget custom-html-widget\"><p>Hello \"world\" -- <script>x()</script></p></div></section>",
+                null
+            ],
+            [
+                "<section id=\"%1$s\" class=\"widget_text widget %2$s\"><div class=\"textwidget custom-html-widget\">plain</div></section>",
+                null
+            ],
+            [
+                "<section id=\"%1$s\" class=\"widget_text widget %2$s\"><div class=\"textwidget custom-html-widget\"></div></section>",
+                null
+            ],
+            [
+                "<section id=\"%1$s\" class=\"widget_text widget %2$s\"><h2>T</h2><div class=\"textwidget custom-html-widget\">c|widget_text|widget_custom_html_content</div></section>",
+                [
+                    [
+                        "widget_text",
+                        "c",
+                        2
+                    ],
+                    [
+                        "widget_custom_html_content",
+                        "c|widget_text",
+                        2
+                    ]
+                ]
+            ],
+            {
+                "title": "New",
+                "content": "<p>c</p>y()",
+                "zz": "kept"
+            },
+            {
+                "title": "New",
+                "content": "<p onclick=\"x\">c</p><script>y()</script>"
+            },
+            true
+        ]
+    ],
+    [
+        "the Block widget",
+        [
+            "block",
+            "Block",
+            {
+                "classname": "widget_block",
+                "customize_selective_refresh": true,
+                "description": "A widget containing a block.",
+                "show_instance_in_rest": true
+            },
+            {
+                "id_base": "block",
+                "width": 400,
+                "height": 350
+            },
+            [
+                "<section id=\"%1$s\" class=\"widget %2$s\"><p class=\"wp-block-paragraph\">Para</p></section>",
+                null
+            ],
+            true,
+            [
+                "<section id=\"%1$s\" class=\"widget %2$s\">plain text</section>",
+                null
+            ],
+            [
+                "<section id=\"%1$s\" class=\"widget %2$s\"></section>",
+                null
+            ],
+            [
+                "<section id=\"%1$s\" class=\"widget %2$s\"></section>",
+                null
+            ],
+            [
+                "<div class=\"widget %2$s\"><h2 class=\"wp-block-heading\">H</h2></div>",
+                null
+            ],
+            {
+                "content": "<!-- wp:paragraph --><p>c</p><!-- /wp:paragraph -->y()"
+            },
+            {
+                "content": "<script>y()</script>"
+            },
+            true
+        ]
+    ]
+]

@@ -9041,3 +9041,34 @@ Probe `block-registries`. Everything the probe registers it removes again.
     with no post types has `[]` (before, `''` and null).
   - `get_by_query(['post_type' => …])` finds only templates that list that
     post type. Before, a template listing none was found too.
+
+## The widget factory and two core widgets (2026-10-09)
+
+Probe `widget-factory`. Registering the factory's widgets saves the probe
+widget's empty settings; the probe deletes them at the end.
+
+- **Shared fix: widget globals from boot.** `$wp_widget_factory` and the
+  widget registries (`$wp_registered_sidebars`, `$wp_registered_widgets`,
+  and the widget controls and updates) now exist from boot
+  (`_minn_bind_hook_globals`), as the reference creates them before plugins
+  load. Before, the factory appeared only with the first registered widget,
+  and the registries only with their first entry, so a plugin reading them
+  early got null.
+- **`WP_Widget_Factory`.** A widget registered as an instance is keyed by
+  `spl_object_id` (an integer), as the reference keys it; before,
+  `spl_object_hash`. Registering by class twice keeps one. Also proven:
+  `get_widget_object`, `get_widget_key`, `unregister` (by class or
+  instance), and `_register_widgets` numbering the widget.
+- **Shared fix: `widget_title`** has the reference's `wptexturize`,
+  `convert_chars` and `esc_html`. Before, a widget's title was printed raw.
+- **`WP_Widget_Custom_HTML`.**
+  - `widget_text ` goes first in the wrapper's class attribute (after
+    `class="`), where the engine had put it before `widget_custom_html`.
+  - The content goes through `widget_text`, then
+    `widget_custom_html_content`.
+  - `update` keeps the old settings, sanitizes the title, and runs kses on
+    the content for a user without `unfiltered_html`. Before, it returned
+    the new title and content raw.
+- **`WP_Widget_Block`.** `update` runs kses on the content for a user
+  without `unfiltered_html`. Before, it was raw for everyone. Its display
+  is proven too.

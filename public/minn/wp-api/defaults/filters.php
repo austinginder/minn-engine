@@ -447,6 +447,10 @@ foreach (['nav_menu_attr_title', 'nav_menu_description'] as $minnMenuText) {
     add_filter($minnMenuText, 'strip_tags');
 }
 unset($minnMenuText);
+// A widget's title is texturized, its characters converted and escaped (probe widget-factory).
+add_filter('widget_title', 'wptexturize');
+add_filter('widget_title', 'convert_chars');
+add_filter('widget_title', 'esc_html');
 // A tabs block gives its inner blocks its id and its tabs' ids (probe tabs-and-parts).
 add_filter('render_block_context', 'block_core_tabs_provide_context', 10, 2);
 add_action('update_option_home', 'wp_update_https_migration_required', 10, 2);

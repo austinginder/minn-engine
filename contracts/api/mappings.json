@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1829,
-        "leaf": 874,
-        "noop": 2657,
+        "composes": 1831,
+        "leaf": 873,
+        "noop": 2656,
         "placeholder": 242,
         "deadend": 1664,
         "functions": 7961,
@@ -26355,10 +26355,13 @@
         },
         "WP_Widget_Block::update": {
             "file": "classes/WP_Widget_Block.php",
-            "lines": 3,
-            "kind": "leaf",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can",
+                "wp_kses_post"
+            ]
         },
         "WP_Widget_Block::widget": {
             "file": "classes/WP_Widget_Block.php",
@@ -26466,14 +26469,18 @@
         },
         "WP_Widget_Custom_HTML::update": {
             "file": "classes/WP_Widget_Custom_HTML.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can",
+                "sanitize_text_field",
+                "wp_kses_post"
+            ]
         },
         "WP_Widget_Custom_HTML::widget": {
             "file": "classes/WP_Widget_Custom_HTML.php",
-            "lines": 9,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -26513,7 +26520,7 @@
         },
         "WP_Widget_Factory::register": {
             "file": "classes/WP_Widget.php",
-            "lines": 5,
+            "lines": 6,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -29551,7 +29558,7 @@
         },
         "_minn_bind_hook_globals": {
             "file": "plugin.php",
-            "lines": 29,
+            "lines": 34,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::actionCounters",
@@ -29562,7 +29569,9 @@
                 "Minn\\Runtime\\Runtime::stackRef"
             ],
             "composes": [
+                "_minn_widget_factory",
                 "add_filter",
+                "load",
                 "timer_start",
                 "wp_initial_constants",
                 "wp_roles"

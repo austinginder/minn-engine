@@ -228,8 +228,9 @@ final class WP_Widget_Factory
 
     public function register($widget)
     {
+        // An instance is keyed by its object id, as the reference keys it (probe widget-factory).
         if ($widget instanceof WP_Widget) {
-            $this->widgets[spl_object_hash($widget)] = $widget;
+            $this->widgets[spl_object_id($widget)] = $widget;
         } else {
             $this->widgets[$widget] = new $widget();
         }
@@ -238,7 +239,7 @@ final class WP_Widget_Factory
     public function unregister($widget)
     {
         if ($widget instanceof WP_Widget) {
-            unset($this->widgets[spl_object_hash($widget)]);
+            unset($this->widgets[spl_object_id($widget)]);
         } else {
             unset($this->widgets[$widget]);
         }
