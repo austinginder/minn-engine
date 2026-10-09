@@ -63,9 +63,14 @@ function network_admin_url($path = '', $scheme = 'admin')
     return admin_url($path, $scheme);
 }
 
+/** The user admin's address under wp-admin/user/ (probe link-template-remaining). */
 function user_admin_url($path = '', $scheme = 'admin')
 {
-    return admin_url($path, $scheme);
+    $url = network_site_url('wp-admin/user/', $scheme);
+    if ($path && is_string($path)) {
+        $url .= ltrim($path, '/');
+    }
+    return apply_filters('user_admin_url', $url, $path, $scheme);
 }
 
 function network_site_url($path = '', $scheme = null)
@@ -421,27 +426,39 @@ function get_search_link($query = '')
     if (get_option('permalink_structure') === '') {
         $link = home_url('?s=' . urlencode($search));
     } else {
-        $search = str_replace('/', '%2F', urlencode($search));
+        // A slash in the terms stays a slash (probe link-template-remaining).
+        $search = str_replace('%2F', '/', urlencode($search));
         $link = home_url(user_trailingslashit('/search/' . $search, 'search'));
     }
     return apply_filters('search_link', $link, $search);
 }
 
-/** A page number's link on the CURRENT request: the request path with its page/N segment swapped, the query string kept. */
+/**
+ * A page number's link on the current request (probe link-template-remaining):
+ * the request address with its paged query var dropped and the rest of the
+ * query rebuilt. With pretty permalinks a leading /index.php and a trailing
+ * page/N go and page/N is added for pages after the first, slashed as the
+ * structure is; with plain permalinks the path stays as it was and the page
+ * goes in paged.
+ */
 function get_pagenum_link($pagenum = 1, $escape = true)
 {
     $pagenum = max(1, (int) $pagenum);
-    $request = Runtime::booted() ? Runtime::current()->request : null;
-    $path = (string) ($request?->path ?? '/');
-    $path = (string) preg_replace('#/page/\d+/?$#', '/', $path);
-    if ($path === '' || $path[0] !== '/') {
-        $path = '/';
+    [$path, $query] = array_pad(explode('?', (string) ($_SERVER['REQUEST_URI'] ?? ''), 2), 2, '');
+    $homePath = rtrim((string) parse_url(home_url(), PHP_URL_PATH), '/');
+    if ($homePath !== '' && str_starts_with($path, $homePath)) {
+        $path = substr($path, strlen($homePath));
     }
-    if ($pagenum > 1) {
-        $path = trailingslashit($path) . user_trailingslashit('page/' . $pagenum, 'paged');
+    parse_str($query, $vars);
+    unset($vars['paged']);
+    $query = $vars === [] ? '' : '?' . http_build_query($vars);
+    if (get_option('permalink_structure') === '') {
+        $url = home_url($path === '' ? '/' : $path) . $query;
+        $url = $pagenum > 1 ? add_query_arg('paged', $pagenum, $url) : $url;
+    } else {
+        $path = (string) preg_replace(['#^/index\.php#', '#/page/\d+/?$#'], '', $path);
+        $url = ($pagenum > 1 ? trailingslashit(home_url($path)) . user_trailingslashit('page/' . $pagenum, 'paged') : home_url(user_trailingslashit($path, 'paged'))) . $query;
     }
-    $query = array_diff_key($request?->query ?? [], ['paged' => 1, 'page' => 1]);
-    $url = home_url($path) . ($query === [] ? '' : '?' . http_build_query($query));
     $result = apply_filters('get_pagenum_link', $url, $pagenum);
     return $escape ? esc_url($result) : esc_url_raw($result);
 }
@@ -622,14 +639,14 @@ function wp_get_canonical_url($post = null)
     return apply_filters('get_canonical_url', $url, $post);
 }
 
-/** The shortlink head tag on singular views, after the canonical in the reference's order. */
+/** The shortlink head tag for the current query, nothing when it has no short link (probe link-template-remaining). */
 function wp_shortlink_wp_head()
 {
-    $head = Runtime::current()->get('classic_head');
-    $resolution = Runtime::current()->get('classic_resolution');
-    if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution) {
-        echo $head->shortlink($resolution);
+    $shortlink = wp_get_shortlink(0, 'query');
+    if (empty($shortlink)) {
+        return;
     }
+    echo "<link rel='shortlink' href='" . esc_url($shortlink) . "' />\n";
 }
 
 /**

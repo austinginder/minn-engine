@@ -124,19 +124,6 @@ final readonly class HeadLinks
         return '<link rel="alternate" title="JSON" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
     }
 
-    /** Singular views only; posts and pages alike shortlink as ?p={id}, in the reference's single quotes. */
-    public function shortlink(Resolution $resolution): string
-    {
-        if ($resolution->kind !== Kind::Single && $resolution->kind !== Kind::Page) {
-            return '';
-        }
-        $id = (int) (($resolution->record ?? [])['ID'] ?? 0);
-        if ($id < 1) {
-            return '';
-        }
-        return "<link rel='shortlink' href='" . Html::attr($this->permalinks->url('/?p=' . $id)) . "' />" . "\n";
-    }
-
     /** The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image. */
     public function icons(): string
     {

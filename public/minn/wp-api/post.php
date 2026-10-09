@@ -51,7 +51,8 @@ function _minn_post_writer(): PostWriter
 function get_post($post = null, $output = OBJECT, $filter = 'raw')
 {
     if ($post === null || $post === 0 || $post === '' || $post === false) {
-        $post = $GLOBALS['post'] ?? Runtime::current()->get('post');
+        // Only the global post: once a caller clears it there is no current post (probe link-template-remaining).
+        $post = $GLOBALS['post'] ?? null;
         if ($post === null) {
             return null;
         }
@@ -706,7 +707,9 @@ function wp_shortlink_header()
  * link-template-tags): published posts, and private ones a signed-in reader
  * may read (every one with read_private_posts, else their own); kept to the
  * current post's terms in $taxonomy when asked, and out of the excluded
- * terms (get_{previous|next}_post_excluded_terms).
+ * terms (get_{previous|next}_post_excluded_terms). Null with no current post
+ * or no such taxonomy, an empty string when no post qualifies (probe
+ * link-template-remaining).
  */
 function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
 {
@@ -719,12 +722,15 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
     $excluded = array_values(array_filter(array_map('intval', (array) apply_filters("get_{$adjacent}_post_excluded_terms", $excluded))));
     $same = [];
     if ($in_same_term) {
-        if (!taxonomy_exists($taxonomy) || !is_object_in_taxonomy($post->post_type, $taxonomy)) {
+        if (!taxonomy_exists($taxonomy)) {
             return null;
+        }
+        if (!is_object_in_taxonomy($post->post_type, $taxonomy)) {
+            return '';
         }
         $same = array_values(array_diff(array_map('intval', (array) wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids'])), $excluded));
         if ($same === []) {
-            return null;
+            return '';
         }
     }
     $private = 'none';
@@ -735,7 +741,7 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
     $scope = new Minn\Content\AdjacentScope($private, get_current_user_id(), $same, $excluded, (string) $taxonomy);
     $record = Minn\Content\PostRecord::fromRow($post->to_array());
     $row = $previous ? _minn_posts()->previous($record, $scope) : _minn_posts()->next($record, $scope);
-    return $row === null ? null : get_post((int) $row['ID']);
+    return $row === null ? '' : get_post((int) $row['ID']);
 }
 
 /**

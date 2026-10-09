@@ -9379,3 +9379,48 @@ Fixed to match:
 
 Kept on purpose: `_wp_iso_convert` with a non-hex escape raises PHP's
 "Invalid characters" deprecation on both stacks.
+
+## The rest of link-template.php (2026-10-09)
+
+Probe `link-template-remaining` proves 31 link-template.php functions:
+- the site, network, user and dashboard addresses and their filters;
+- feed and search links, with pretty and plain permalinks;
+- attachment, custom type and delete links;
+- comment edit links;
+- `get_adjacent_post` and its link tags;
+- page number links and the paging tags;
+- the posts pagination and post navigation markup;
+- the comment paging links;
+- short links in the head and the Link header.
+
+Under WP-CLI the reference keeps its own address on https, and makes
+`'relative'` absolute, through priority-0 filters the engine's probe runner
+does not have. The probe therefore masks the scheme of the site's address and
+leaves out the relative cases.
+
+Fixed to match:
+
+- **`user_admin_url`** is `wp-admin/user/` plus the path, with its own
+  `user_admin_url` filter ($url, $path, $scheme). It was the admin address.
+- **`get_search_link`** keeps a slash in the terms as a slash.
+- **`get_pagenum_link`** reads `$_SERVER['REQUEST_URI']`, as the
+  reference does. It drops the `paged` query var and rebuilds the rest of
+  the query (`a[]` comes back as `a%5B0%5D`; a fragment stays in the path).
+  - Pretty permalinks: a leading `/index.php` and a trailing `page/N` go.
+    The first page is the path slashed as the structure is. Later pages add
+    `page/N`.
+  - Plain permalinks: the path stays as it was and the page goes in `paged`.
+
+  `page` is kept. It used to read the engine's request and dropped `page`
+  too.
+- **`get_adjacent_post`** returns null with no current post or no such
+  taxonomy. It returns an empty string when the post's type is not in the
+  taxonomy, when it has no terms to stay in, or when no post qualifies.
+- **`wp_shortlink_wp_head`** prints the short link of the current query
+  (`wp_get_shortlink(0, 'query')`), so it runs `pre_get_shortlink` and
+  `get_shortlink` and gives the front page its home address.
+  `Theme\HeadLinks::shortlink`, which built the tag from the resolution
+  alone, is gone.
+- **Shared fix: `get_post()` with no argument** reads only the global
+  post. It no longer falls back to the runtime's copy, so once a caller
+  clears `$post` there is no current post, as on the reference.

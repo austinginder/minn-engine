@@ -144528,7 +144528,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 120,
+            "lines": 107,
             "doc": "The links the reference puts in every head: the site and comments\nfeeds (plus the archive's own feed), the REST discovery link, the\nJSON alternate for the queried object, and the site icon set. The\nblock path prints them as one run; the classic path prints the same\npieces from the reference's wp_head hooks.",
             "implements": [],
             "extends": null,
@@ -144732,26 +144732,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "shortlink",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "shortlink(Minn\\Front\\Resolution $resolution): string",
-                    "doc": "Singular views only; posts and pages alike shortlink as ?p={id}, in the reference's single quotes.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 128,
-                    "end": 138
-                },
-                {
-                    "routes": [],
                     "name": "icons",
                     "static": false,
                     "visibility": "public",
@@ -144759,8 +144739,8 @@
                     "doc": "The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.",
                     "shapes": [],
                     "params": [],
-                    "line": 141,
-                    "end": 144
+                    "line": 128,
+                    "end": 131
                 }
             ]
         },
