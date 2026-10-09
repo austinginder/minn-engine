@@ -205,6 +205,24 @@ function set_post_format($post, $format)
     return wp_set_post_terms($post->ID, $format, 'post_format');
 }
 
+/**
+ * A post format's term link (on term_link) named by the format alone: with
+ * the post_format permastruct, each "/post-format-{slug}" becomes
+ * "/{slug}"; without it, the post_format query argument is set to the slug.
+ */
+function _post_format_link($link, $term, $taxonomy)
+{
+    global $wp_rewrite;
+    if ($taxonomy !== 'post_format') {
+        return $link;
+    }
+    $slug = str_replace('post-format-', '', $term->slug);
+    if ($wp_rewrite->get_extra_permastruct($taxonomy)) {
+        return str_replace('/' . $term->slug, '/' . $slug, $link);
+    }
+    return add_query_arg('post_format', $slug, remove_query_arg('post_format', $link));
+}
+
 function get_post_format_link($format)
 {
     $term = get_term_by('slug', 'post-format-' . $format, 'post_format');
@@ -262,7 +280,8 @@ function wp_insert_user($userdata)
 function _minn_user_row_filtered(array $account, array $userdata): array
 {
     $row = ['user_pass' => (string) wp_hash_password((string) $account['password']), 'user_nicename' => (string) $account['nicename'], 'user_email' => (string) $account['email'], 'user_url' => (string) $account['url'], 'user_registered' => (string) ($userdata['user_registered'] ?? gmdate('Y-m-d H:i:s')), 'user_activation_key' => '', 'display_name' => (string) $account['display_name'], 'user_login' => (string) $account['login']];
-    $data = \Minn\Runtime\UserSave::data($row, 0, $userdata);
+    // The pre_user_* filters hand back slashed text (wp_filter_kses); the row is written unslashed, as the reference writes it.
+    $data = \Minn\Runtime\UserSave::data(wp_unslash($row), 0, $userdata);
     $map = ['login' => 'user_login', 'nicename' => 'user_nicename', 'email' => 'user_email', 'url' => 'user_url', 'display_name' => 'display_name'];
     foreach ($map as $field => $column) {
         if (array_key_exists($column, $data)) {
@@ -301,7 +320,8 @@ function _minn_update_user_profile(WP_User $existing, array $userdata, array $re
 {
     $id = $existing->ID;
     $stored = $existing->to_array();
-    $columns = UserInsert::changes($userdata, $stored, $resolved, static fn (string $url): string => Minn\Support\Kses::url($url), static fn (string $password): string => (string) wp_hash_password($password));
+    // Unslashed, as for a new account: the pre_user_* filters hand back slashed text.
+    $columns = wp_unslash(UserInsert::changes($userdata, $stored, $resolved, static fn (string $url): string => Minn\Support\Kses::url($url), static fn (string $password): string => (string) wp_hash_password($password)));
     // The whole row through wp_pre_insert_user_data; what it changes is written too.
     $row = array_intersect_key(array_replace($stored, $columns), array_flip(['user_pass', 'user_nicename', 'user_email', 'user_url', 'user_registered', 'user_activation_key', 'display_name']));
     foreach (\Minn\Runtime\UserSave::data($row, $id, $given ?: $userdata) as $column => $value) {

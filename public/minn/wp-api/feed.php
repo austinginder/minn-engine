@@ -132,6 +132,26 @@ function the_permalink_rss()
 }
 
 /** The address of the feed being read: the site's host (and port) with the path the request asked for. */
+/**
+ * A feed text as an Atom text construct, [type, data]: "text" as given when
+ * it is plain or reads as XML without markup; "xhtml" wrapped in an XHTML
+ * div when it reads as XML; otherwise "html", in CDATA (escaped instead when
+ * it holds "]]>").
+ */
+function prep_atom_text_construct($data)
+{
+    if (!str_contains($data, '<') && !str_contains($data, '&')) {
+        return ['text', $data];
+    }
+    $parser = xml_parser_create();
+    $wellFormed = xml_parse($parser, '<div>' . $data . '</div>', true) === 1;
+    xml_parser_free($parser);
+    if ($wellFormed) {
+        return str_contains($data, '<') ? ['xhtml', "<div xmlns='http://www.w3.org/1999/xhtml'>{$data}</div>"] : ['text', $data];
+    }
+    return ['html', str_contains($data, ']]>') ? htmlspecialchars($data) : "<![CDATA[{$data}]]>"];
+}
+
 function get_self_link()
 {
     $home = wp_parse_url(home_url());

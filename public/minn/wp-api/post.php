@@ -2075,9 +2075,32 @@ function count_user_posts($userid, $post_type = 'post', $public_only = false)
     return apply_filters('get_usernumposts', (string) $count, $userid, $post_type, $public_only);
 }
 
+/**
+ * The author's website as a link (rel="author external", titled "Visit
+ * {name}'s website" unless asked not to), or just the name when the author
+ * has no website, through the_author_link.
+ */
 function get_the_author_link($use_title_attr = true)
 {
-    return get_the_author_posts_link();
+    $url = get_the_author_meta('url');
+    if (!$url) {
+        return get_the_author();
+    }
+    $title = $use_title_attr ? ' title="' . esc_attr(sprintf(__('Visit %s&#8217;s website'), get_the_author())) . '"' : '';
+    $link = sprintf('<a href="%1$s"%2$s rel="author external">%3$s</a>', esc_url($url), $title, get_the_author());
+    return apply_filters('the_author_link', $link, $url, $GLOBALS['authordata'] ?? null);
+}
+
+/** Prints the author's website link, or the name. */
+function the_author_link($use_title_attr = true)
+{
+    echo get_the_author_link($use_title_attr);
+}
+
+/** Prints how many posts of its type the current post's author has published. */
+function the_author_posts()
+{
+    echo get_the_author_posts();
 }
 
 /** Whether more than one author has published posts (kept in the is_multi_author transient until a post changes status). */

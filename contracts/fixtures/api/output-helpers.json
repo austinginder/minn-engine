@@ -1,0 +1,291 @@
+[
+    [
+        "the author's link",
+        [
+            [
+                "<a href=\"https://zz.example/me?a=1&#038;b=2\" title=\"Visit Zz &quot;Site&quot; Owner&#8217;s website\" rel=\"author external\">Zz \"Site\" Owner</a>",
+                "<a href=\"https://zz.example/me?a=1&#038;b=2\" rel=\"author external\">Zz \"Site\" Owner</a>",
+                "<a href=\"https://zz.example/me?a=1&#038;b=2\" title=\"Visit Zz &quot;Site&quot; Owner&#8217;s website\" rel=\"author external\">Zz \"Site\" Owner</a>",
+                "<a href=\"https://zz.example/me?a=1&#038;b=2\" rel=\"author external\">Zz \"Site\" Owner</a>"
+            ],
+            [
+                "Zz Bare",
+                "Zz Bare"
+            ],
+            [
+                "Zz Odd",
+                "Zz Odd"
+            ],
+            [
+                "",
+                ""
+            ],
+            [
+                "[<a href=\"https://zz.example/me?a=1&#038;b=2\" title=\"Visit Zz &quot;Site&quot; Owner&#8217;s website\" rel=\"author external\">Zz \"Site\" Owner</a>]",
+                "[<a href=\"https://zz.example/me?a=1&#038;b=2\" title=\"Visit Zz &quot;Site&quot; Owner&#8217;s website\" rel=\"author external\">Zz \"Site\" Owner</a>]",
+                [
+                    [
+                        "<a href=\"https://zz.example/me?a=1&#038;b=2\" title=\"Visit Zz &quot;Site&quot; Owner&#8217;s website\" rel=\"author external\">Zz \"Site\" Owner</a>",
+                        2,
+                        "https://zz.example/me?a=1&amp;b=2",
+                        [
+                            "WP_User",
+                            "zz_link_site"
+                        ]
+                    ],
+                    [
+                        "<a href=\"https://zz.example/me?a=1&#038;b=2\" title=\"Visit Zz &quot;Site&quot; Owner&#8217;s website\" rel=\"author external\">Zz \"Site\" Owner</a>",
+                        2,
+                        "https://zz.example/me?a=1&amp;b=2",
+                        [
+                            "WP_User",
+                            "zz_link_site"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the author's post count printed",
+        [
+            [
+                "2",
+                2
+            ],
+            [
+                "0"
+            ],
+            "2"
+        ]
+    ],
+    [
+        "an Atom text construct",
+        [
+            [
+                "text",
+                "plain text"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'>a <b>bold</b> word</div>"
+            ],
+            [
+                "html",
+                "<![CDATA[<p>unclosed]]>"
+            ],
+            [
+                "html",
+                "<![CDATA[a & b]]>"
+            ],
+            [
+                "text",
+                "a &amp; b"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><div>wrapped</div></div>"
+            ],
+            [
+                "html",
+                "<![CDATA[<br>]]>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><br/></div>"
+            ],
+            [
+                "text",
+                ""
+            ],
+            [
+                "text",
+                "x]]>y"
+            ],
+            [
+                "html",
+                "&lt;b&gt;x]]&gt;y&lt;/b&gt;"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><p>one</p><p>two</p></div>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'>text <em>x</em> tail</div>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><img src=\"x\" alt=\"y\" /></div>"
+            ],
+            [
+                "html",
+                "<![CDATA[&nbsp;]]>"
+            ],
+            [
+                "html",
+                "<![CDATA[<b>&nbsp;</b>]]>"
+            ],
+            [
+                "html",
+                "<![CDATA[<b>a & b</b>]]>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><x:y>ns</x:y></div>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><p>line\nbreak</p></div>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><!-- c --> t</div>"
+            ],
+            [
+                "xhtml",
+                "<div xmlns='http://www.w3.org/1999/xhtml'><?pi x?></div>"
+            ]
+        ]
+    ],
+    [
+        "a post format's link",
+        [
+            10,
+            [
+                "//{host}/type/aside/",
+                "//{host}/type/aside/",
+                "//{host}/type/gallery/",
+                false
+            ],
+            [
+                "https://zz.example/x",
+                "https://zz.example/x",
+                "https://zz.example/x"
+            ],
+            [
+                "https://zz.example/x",
+                "https://zz.example/x"
+            ],
+            [
+                "https://zz.example/type/aside/",
+                "https://zz.example/aside/aside/",
+                "https://zz.example/type/asidex/",
+                "https://zz.example/aside",
+                "https://zz.example/?post_format=post-format-aside&post_format=post-format-aside",
+                "https://zz.example/?zz=1"
+            ],
+            [
+                "https://zz.example/type/post-format-aside/?post_format=aside",
+                "https://zz.example/post-format-aside/post-format-aside/?post_format=aside",
+                "https://zz.example/type/post-format-asidex/?post_format=aside",
+                "https://zz.example/post-format-aside?post_format=aside",
+                "https://zz.example/?post_format=aside",
+                "https://zz.example/?zz=1&post_format=aside"
+            ],
+            [
+                "https://zz.example/?post_format=post-format-aside&post_format=post-format-aside",
+                "https://zz.example/?post_format=post-format-asidex",
+                "https://zz.example/?post_format=aside",
+                "https://zz.example/?post_format=post-format-aside&post_format=post-format-aside",
+                "https://zz.example/?post_format=post-format-zz",
+                "https://zz.example/?post_format=plain"
+            ]
+        ]
+    ],
+    [
+        "crossorigin attributes",
+        [
+            "<img src=\"https://zz.example/a.png\">",
+            "<img src=\"//{host}/a.png\">",
+            "<img src=\"/a.png\">",
+            "<script crossorigin=\"anonymous\" src=\"https://zz.example/a.js\"></script>",
+            "<link crossorigin=\"anonymous\" rel=\"stylesheet\" href=\"https://zz.example/a.css\">",
+            "<link crossorigin=\"anonymous\" rel=\"preconnect\" href=\"https://zz.example\">",
+            "<img src=\"https://zz.example/a.png\" crossorigin=\"use-credentials\">",
+            "<audio crossorigin=\"anonymous\" src=\"https://zz.example/a.mp3\"></audio>",
+            "<video crossorigin=\"anonymous\" src=\"https://zz.example/a.mp4\" poster=\"https://zz.example/p.png\"></video>",
+            "<source src=\"https://zz.example/a.mp4\">",
+            "<iframe src=\"https://zz.example/\"></iframe>",
+            "<a href=\"https://zz.example/\">link</a>",
+            "<img srcset=\"https://zz.example/a.png 1x\">",
+            "<IMG SRC=\"https://zz.example/a.png\">",
+            "<img src=\"//zz.example/a.png\">",
+            "<img src=\"data:image/png;base64,AAAA\">",
+            "<p>none</p>",
+            "<script src=\"//{host}/a.js\"></script>",
+            "<script src=\"/a.js\"></script>",
+            "<script src=\"//zz.example/a.js\"></script>",
+            "<script crossorigin=\"anonymous\" src=\"http://zz.example/a.js\"></script>",
+            "<script>inline()</script>",
+            "<script src=\"https://zz.example/a.js\" crossorigin></script>",
+            "<script src=\"https://zz.example/a.js\" crossorigin=\"use-credentials\"></script>",
+            "<SCRIPT crossorigin=\"anonymous\" SRC=\"https://zz.example/a.js\"></SCRIPT>",
+            "<link rel=\"stylesheet\" href=\"//{host}/a.css\">",
+            "<link rel=\"stylesheet\" href=\"/a.css\">",
+            "<link crossorigin=\"anonymous\" rel=\"icon\" href=\"https://zz.example/i.png\">",
+            "<link rel=\"stylesheet\">",
+            "<audio crossorigin=\"anonymous\"><source src=\"https://zz.example/a.mp3\"></audio>",
+            "<video src=\"/a.mp4\"></video>",
+            "<script crossorigin=\"anonymous\" src=\"https://zz.example/a.js\"></script><script crossorigin=\"anonymous\" src=\"https://zz.example/b.js\"></script><link crossorigin=\"anonymous\" rel=\"stylesheet\" href=\"https://zz.example/c.css\">",
+            "<script crossorigin=\"anonymous\" src=\"https://{host}/a.js\"></script>",
+            "<script src=\"//{host}:8443/a.js\"></script>",
+            "<script crossorigin=\"anonymous\" src=\"https://sub.{host}/a.js\"></script>",
+            "<script crossorigin=\"anonymous\" src=\"javascript:x\"></script>",
+            "<script crossorigin=\"anonymous\" src=\"\"></script>",
+            "<script crossorigin=\"anonymous\" src=\"//{host}/a.js\"></script>",
+            "<audio><source src=\"/a.mp3\"></audio>",
+            "<audio></audio>",
+            "<video crossorigin=\"anonymous\"><source src=\"/a.mp4\"><source src=\"https://zz.example/b.mp4\"></video>",
+            "<video crossorigin=\"anonymous\" src=\"https://zz.example/a.mp4\"><source src=\"/b.mp4\"></video>",
+            "<track src=\"https://zz.example/a.vtt\">",
+            "<link href=\"https://zz.example/a.css\" rel=\"stylesheet\" crossorigin=\"anonymous\">",
+            "<video crossorigin=\"use-credentials\"><source src=\"https://zz.example/a.mp4\"></video>",
+            "<audio crossorigin=\"anonymous\"><source src=\"https://zz.example/a.mp3\"></audio><video><source src=\"/b.mp4\"></video>",
+            "<audio crossorigin=\"anonymous\" src=\"/a.mp3\"><source src=\"https://zz.example/b.mp3\"></audio>",
+            "<video crossorigin=\"anonymous\"><source src=\"https://zz.example/a.mp4\"><source src=\"https://zz.example/b.mp4\"></video>",
+            "<audio crossorigin=\"anonymous\"><p><source src=\"https://zz.example/a.mp3\"></p></audio>",
+            "<video crossorigin=\"anonymous\"></video><source src=\"https://zz.example/a.mp4\">",
+            "<script src></script>",
+            ""
+        ]
+    ],
+    [
+        "crossorigin against which address",
+        [
+            [
+                "home_url",
+                "<script src=\"//{host}/a.js\"></script>",
+                "<script crossorigin=\"anonymous\" src=\"//zz-other.example/a.js\"></script>"
+            ],
+            [
+                "site_url",
+                "<script src=\"//zz-moved.example/a.js\"></script>",
+                "<script crossorigin=\"anonymous\" src=\"//{host}/a.js\"></script>"
+            ]
+        ]
+    ],
+    [
+        "UTF-8 in a redirect",
+        [
+            [
+                "%C3%A9",
+                "%E6%97%A5%E6%9C%AC",
+                "a+b",
+                "%C3%A9",
+                ""
+            ],
+            [
+                "https://zz.example/%C3%A9",
+                "https://zz.example/%E6%97%A5%E6%9C%AC?q=%C3%BC",
+                "https://zz.example/a%20b",
+                "https://zz.example/%C3%A9",
+                "https://zz.example/",
+                "https://zz.example/",
+                "https://zz.example/%E2%82%AC",
+                "https://zz.example/ab",
+                "https://zz.example/"
+            ]
+        ]
+    ]
+]

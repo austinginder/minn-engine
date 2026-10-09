@@ -96,10 +96,22 @@ function wp_validate_redirect($location, $fallback_url = '')
 }
 endif;
 
+if (!function_exists('_wp_sanitize_utf8_in_redirect')) :
+/** One UTF-8 sequence of a redirect's address, URL-encoded. */
+function _wp_sanitize_utf8_in_redirect($matches)
+{
+    return urlencode($matches[0]);
+}
+endif;
+
 if (!function_exists('wp_sanitize_redirect')) :
+/** A redirect's address made safe: spaces as %20, UTF-8 URL-encoded, any other character outside the URL set (and an encoded control character) dropped. */
 function wp_sanitize_redirect($location)
 {
-    $location = (string) $location;
+    $location = str_replace(' ', '%20', (string) $location);
+    // Whole UTF-8 sequences only (RFC 3629); a stray byte is dropped with the rest below.
+    $utf8 = '/(?:[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2})+/';
+    $location = (string) preg_replace_callback($utf8, '_wp_sanitize_utf8_in_redirect', $location);
     $location = preg_replace('|[^a-z0-9-~+_.?#=&;,/:%!*\[\]()@]|i', '', $location);
     return preg_replace('|%0[0-9a-f]|i', '', $location);
 }

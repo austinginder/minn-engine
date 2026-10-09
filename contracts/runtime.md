@@ -8592,3 +8592,60 @@ so the probe prints its log as the run shuts down.
   `wp_is_json_request` reads the request's headers as received, not
   `$_SERVER` at call time, so the JSON-over-JSONP precedence is set in
   code but not probed.
+
+## Small output helpers (2026-10-09)
+
+Probe `output-helpers`.
+
+- **The author's link.**
+  - With a website, `get_the_author_link` gives
+    `<a href="{esc_url}" title="Visit {name}&#8217;s website" rel="author external">{name}</a>`:
+    the title goes through esc_attr, the name is raw, and the title is
+    left out when asked. Without a website it gives the name alone (a
+    `javascript:` URL was emptied on save), and with no author it gives
+    `''`.
+  - The `the_author_link` filter gets `(link, url, authordata)` and is
+    applied on the website path only. Before, the engine returned the
+    author posts link.
+  - `the_author_link` and `the_author_posts` print what the getters
+    return (the post count cast to int, 0 with no post).
+- **Shared fix: user rows are written unslashed.** The `pre_user_*`
+  filters (`wp_filter_kses`) hand back slashed text. The meta fields were
+  unslashed by the meta API, but `display_name` (and email, url, nicename)
+  went into the users table with backslashes (`O\'Brien`). Inserts and
+  updates now unslash the row before `wp_pre_insert_user_data`, as the
+  reference does.
+- **`prep_atom_text_construct`.**
+  - Text with neither `<` nor `&` is `text`, as given.
+  - Otherwise it is parsed as XML inside a div (predefined entities only).
+    Well formed with a `<` gives `xhtml`, wrapped in
+    `<div xmlns='http://www.w3.org/1999/xhtml'>`; well formed with no `<`
+    (`a &amp; b`) gives `text`.
+  - Anything else is `html` in CDATA, or htmlspecialchars'd when it holds
+    `]]>`.
+- **`_post_format_link`** (on `term_link`, 10, 3) leaves other taxonomies
+  alone. With the post_format permastruct, every `/post-format-{slug}`
+  becomes `/{slug}`. Without it, the `post_format` query argument is
+  replaced by the slug, duplicates included.
+- **`wp_add_crossorigin_attributes`.**
+  - `crossorigin="anonymous"` goes first among a tag's attributes. It is
+    added to SCRIPT (src), LINK (href), AUDIO and VIDEO (src) whose address
+    is present and starts with neither `/` nor `site_url()` (a plain,
+    case-kept prefix: an empty src counts, a port after the site's host
+    does not).
+  - A cross-origin SOURCE marks the last AUDIO or VIDEO opened, even one
+    already closed. With none, the reference raises a notice (seek to an
+    unknown bookmark) and changes nothing. An element that already names
+    crossorigin is left alone; IMG, IFRAME and TRACK never get one.
+- **Redirects.** `wp_sanitize_redirect` now makes spaces `%20` and
+  URL-encodes whole UTF-8 sequences (`_wp_sanitize_utf8_in_redirect`,
+  urlencode) before dropping characters outside the URL set. Stray bytes
+  are dropped. Before, UTF-8 was dropped too (`/é` became `/`).
+- **Left open.**
+  - `wp_filter_global_styles_post` waits for
+    `WP_Theme_JSON::remove_insecure_properties`, still a placeholder.
+  - `_print_emoji_detection_script` goes with the engine's decision to
+    print no emoji plumbing (for Austin).
+  - The engine's `get_term_link` builds format links from its own
+    permalinks, so a post_format permastruct removed at runtime does not
+    change them.

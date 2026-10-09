@@ -431,6 +431,8 @@ add_action('update_option_admin_email', 'wp_site_admin_email_change_notification
 // A request to the site's own host or an allowed redirect host is let through; a home moved to https flags the
 // content for migration (probe https-helpers).
 add_filter('http_request_host_is_external', 'allowed_http_request_hosts', 10, 2);
+// A post format's term link names the format alone (probe output-helpers).
+add_filter('term_link', '_post_format_link', 10, 3);
 add_action('update_option_home', 'wp_update_https_migration_required', 10, 2);
 // oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
 add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);

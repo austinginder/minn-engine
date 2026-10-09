@@ -352,6 +352,46 @@ function wp_sizes_attribute_includes_valid_auto($sizes_attr)
  * eager image, one with no width or no sizes, and the filter turned off
  * leave it alone).
  */
+/**
+ * crossorigin="anonymous" on the scripts, links, audio and video whose
+ * address is not this site's (not starting with "/" or the site URL, so an
+ * empty one counts); a source of another site marks the audio or video
+ * before it. An element that names crossorigin is left alone.
+ */
+function wp_add_crossorigin_attributes($html)
+{
+    $site = site_url();
+    $processor = new WP_HTML_Tag_Processor($html);
+    $media = false;
+    while ($processor->next_tag()) {
+        $tag = $processor->get_tag();
+        $url = $processor->get_attribute($tag === 'LINK' ? 'href' : 'src');
+        if (!in_array($tag, ['SCRIPT', 'LINK', 'AUDIO', 'VIDEO', 'SOURCE'], true)) {
+            continue;
+        }
+        if ($tag === 'AUDIO' || $tag === 'VIDEO') {
+            $media = $processor->set_bookmark('media');
+        }
+        if (!is_string($url) || str_starts_with($url, '/') || str_starts_with($url, $site)) {
+            continue;
+        }
+        if ($tag === 'SOURCE') {
+            if (!$media) {
+                continue;
+            }
+            $processor->set_bookmark('source');
+            $processor->seek('media');
+        }
+        if ($processor->get_attribute('crossorigin') === null) {
+            $processor->set_attribute('crossorigin', 'anonymous');
+        }
+        if ($tag === 'SOURCE') {
+            $processor->seek('source');
+        }
+    }
+    return $processor->get_updated_html();
+}
+
 function wp_img_tag_add_auto_sizes($image)
 {
     if (!apply_filters('wp_img_tag_add_auto_sizes', true)) {

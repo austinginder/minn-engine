@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1790,
-        "leaf": 855,
-        "noop": 2649,
+        "composes": 1793,
+        "leaf": 856,
+        "noop": 2651,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7892,
+        "functions": 7898,
         "minnMethods": 933,
         "leafLinesOver15": 12
     },
@@ -31482,7 +31482,7 @@
         },
         "_minn_update_user_profile": {
             "file": "misc.php",
-            "lines": 27,
+            "lines": 28,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Users::__construct",
@@ -31497,7 +31497,8 @@
                 "clean_user_cache",
                 "do_action",
                 "update_user_meta",
-                "wp_hash_password"
+                "wp_hash_password",
+                "wp_unslash"
             ]
         },
         "_minn_upgrader_line": {
@@ -31587,13 +31588,14 @@
         },
         "_minn_user_row_filtered": {
             "file": "misc.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\UserSave::data"
             ],
             "composes": [
-                "wp_hash_password"
+                "wp_hash_password",
+                "wp_unslash"
             ]
         },
         "_minn_user_styles": {
@@ -31826,6 +31828,16 @@
             "composes": [
                 "_post_format_get_term",
                 "get_post_format_string"
+            ]
+        },
+        "_post_format_link": {
+            "file": "misc.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "remove_query_arg"
             ]
         },
         "_post_format_request": {
@@ -33625,6 +33637,13 @@
                 "current_theme_supports",
                 "wp_get_document_title"
             ]
+        },
+        "_wp_sanitize_utf8_in_redirect": {
+            "file": "pluggable.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "_wp_scan_utf8": {
             "file": "formatting.php",
@@ -43994,11 +44013,16 @@
         },
         "get_the_author_link": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "get_the_author_posts_link"
+                "__",
+                "apply_filters",
+                "esc_attr",
+                "esc_url",
+                "get_the_author",
+                "get_the_author_meta"
             ]
         },
         "get_the_author_login": {
@@ -48815,6 +48839,13 @@
             "composes": [],
             "deadend": "admin"
         },
+        "prep_atom_text_construct": {
+            "file": "feed.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "prepend_attachment": {
             "file": "post.php",
             "lines": 7,
@@ -53616,6 +53647,15 @@
                 "the_author_meta"
             ]
         },
+        "the_author_link": {
+            "file": "post.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_the_author_link"
+            ]
+        },
         "the_author_login": {
             "file": "deprecated.php",
             "lines": 2,
@@ -53654,6 +53694,15 @@
             "composes": [
                 "_deprecated_function",
                 "the_author_meta"
+            ]
+        },
+        "the_author_posts": {
+            "file": "post.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_the_author_posts"
             ]
         },
         "the_author_posts_link": {
@@ -56073,6 +56122,15 @@
             "minn": [],
             "composes": [
                 "wp_style_engine_get_styles"
+            ]
+        },
+        "wp_add_crossorigin_attributes": {
+            "file": "media.php",
+            "lines": 30,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "site_url"
             ]
         },
         "wp_add_dashboard_widget": {
@@ -66859,7 +66917,7 @@
         },
         "wp_sanitize_redirect": {
             "file": "pluggable.php",
-            "lines": 3,
+            "lines": 6,
             "kind": "leaf",
             "minn": [],
             "composes": []
