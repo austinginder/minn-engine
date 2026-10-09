@@ -203,11 +203,8 @@ class WP_Dependencies
     private function line_up(string $handle, bool $recursion, $group): ?bool
     {
         [$name, $args] = array_pad(explode('?', $handle, 2), 2, null);
-        if (in_array($name, $this->done, true)) {
-            return null;
-        }
         $queued = in_array($name, $this->to_do, true);
-        if (!$this->set_group($name, $recursion, $group) && $queued) {
+        if (in_array($name, $this->done, true) || (!$this->set_group($name, $recursion, $group) && $queued)) {
             return null;
         }
         if (!$this->loadable($name)) {

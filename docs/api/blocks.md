@@ -8,6 +8,7 @@ the block parser and renderer
 | [`Bindings`](#bindings) | final class | 138 | Block bindings (probe block-bindings): a block attribute bound to a |
 | [`Block`](#block) | final readonly class | 63 | One parsed block. A null name is freeform HTML between blocks. The |
 | [`BlockName`](#blockname) | final class | 17 | The block name rules: a string, lower-case, `namespace/name`. |
+| [`BlockStream`](#blockstream) | final class | 285 | Block markup read one token at a time, as the reference's streaming |
 | [`Context`](#context) | final class | 76 | What the template blocks render against: the resolution, the main |
 | [`CoreBlocks`](#coreblocks) | final class | 26 | The core block types' metadata as the reference registers them |
 | [`Duotone`](#duotone) | final class | 79 | Duotone filters (probe block-supports): a CSS color read into its red, |
@@ -148,6 +149,120 @@ The block name rules: a string, lower-case, `namespace/name`.
 ### static `refuse(mixed $name): ?Minn\Runtime\Refusal`
 
 Why a block name is invalid, or null when it is fine.
+
+
+## BlockStream
+
+`final class Minn\Blocks\BlockStream` · `public/minn/src/Minn/Blocks/BlockStream.php`
+
+Block markup read one token at a time, as the reference's streaming
+block processor reads it (probe block-processor). A delimiter is an HTML
+comment: whitespace after "<!--", an optional "/" (the closing flag),
+"wp:", a name (lowercase, an optional namespace), whitespace, optional
+JSON object attributes followed by whitespace, then "-->" or "/-->"
+(void). Any other comment is HTML. The HTML between delimiters comes out
+as its own token, reported as void (freeform at the top, inner HTML in a
+block) before the delimiter that ends it, which is already read, so the
+closing flag shows that delimiter's. Quirks kept on purpose:
+- trailing HTML after the last delimiter is dropped when it holds a
+comment;
+- an unterminated comment is incomplete input only when it could
+still become a delimiter, otherwise reading just stops;
+- attributes are parsed only when asked, and only that sets the JSON
+error.
+
+- const `CLOSER` = `'closer'`
+- const `OPENER` = `'opener'`
+- const `VOID` = `'void'`
+- const `READY` = `'processor-ready'`
+- const `MATCHED` = `'processor-matched'`
+- const `HTML_SPAN` = `'processor-html-span'`
+- const `INCOMPLETE_INPUT` = `'incomplete-input'`
+- const `COMPLETE` = `'processor-complete'`
+- const `WHITESPACE` = `' 	 '`
+- const `DELIMITER` = `'#^[ \\t\\n\\r\\f]+(/)?wp:([a-z][a-z0-9_-]*(?:/[a-z][a-z0-9_-]*)?)[ \\t\\n\\r\\f]+(?:(\\{.*\\})[ \\t\\n\\r\\f]+)?(/)?$#s'`
+
+```php
+__construct(string $text)
+```
+A stream over block markup, before its first token.
+
+
+### static `normalize(string $name): string`
+
+The name with core/ in front when it has no namespace.
+
+### `next(): bool`
+
+Moves to the next token, HTML or delimiter; false at the end or on incomplete input.
+
+### `state(): string`
+
+The current token's state: one of the class constants.
+
+### `error(): ?string`
+
+incomplete-input when the text ran out inside what could be a delimiter, else null.
+
+### `jsonError(): int`
+
+The JSON error from the last time attributes were asked for.
+
+### `delimiterType(): ?string`
+
+opener, closer or void for a delimiter, void for HTML, null otherwise.
+
+### `closing(): bool`
+
+The last delimiter read had the closing flag.
+
+### `blockType(): ?string`
+
+The delimiter's block type, null for anything else.
+
+### `printableType(): ?string`
+
+The block type, or core/freeform for top-level HTML and #innerHTML for HTML inside a block.
+
+### `isHtml(): bool`
+
+Whether the token is HTML between delimiters.
+
+### `htmlContent(): ?string`
+
+The HTML span's text, null for anything else.
+
+### `nonWhitespaceHtml(): bool`
+
+Whether the token is HTML with something other than whitespace in it.
+
+### `breadcrumbs(): array`
+
+The open block types, outermost first, with #html for an HTML span. @return list<string>
+
+- `@return list<string>`
+
+### `opens(?string $type): bool`
+
+Whether this token opens a block (of the type, when given): never after a closer, and HTML only at the top.
+
+### `isType(string $type): bool`
+
+Whether the token is of the type; * matches anything.
+
+### `span(): ?array`
+
+The token's start and length in the text, null when there is no token. @return array{0: int, 1: int}|null
+
+- `@return array{0: int, 1: int}|null`
+
+### `attributes(): ?array`
+
+The delimiter's attributes, parsed now (setting the JSON error), or null. @return array<mixed>|null
+
+- `@return array<mixed>|null`
+
+Internals: `scan()` (private, line 206), `emitHtml()` (private, line 224), `matchDelimiter()` (private, line 234), `finish()` (private, line 247), `nextDelimiter()` (private, line 262), `commentEnd()` (private, line 282), `couldBeDelimiter()` (private, line 294)
 
 
 ## Context

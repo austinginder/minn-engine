@@ -1,0 +1,4285 @@
+[
+    [
+        "tokens: plain",
+        [
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    21
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "<p>Hi</p>",
+                "depth": 2,
+                "crumbs": [
+                    "core/paragraph",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    21,
+                    9
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    30,
+                    22
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: nested",
+        [
+            {
+                "type": "opener",
+                "block": "core/group",
+                "printable": "core/group",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/group"
+                ],
+                "attributes": {
+                    "layout": {
+                        "type": "flex"
+                    }
+                },
+                "opens": [
+                    true,
+                    false,
+                    true
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    44
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<div>",
+                "depth": 2,
+                "crumbs": [
+                    "core/group",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    44,
+                    5
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 2,
+                "crumbs": [
+                    "core/group",
+                    "core/paragraph"
+                ],
+                "attributes": {
+                    "align": "center"
+                },
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    49,
+                    40
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "<p>A</p>",
+                "depth": 3,
+                "crumbs": [
+                    "core/group",
+                    "core/paragraph",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    89,
+                    8
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/group"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    97,
+                    22
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/image",
+                "printable": "core/image",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 2,
+                "crumbs": [
+                    "core/group",
+                    "core/image"
+                ],
+                "attributes": {
+                    "id": 5
+                },
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    119,
+                    27
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "</div>",
+                "depth": 2,
+                "crumbs": [
+                    "core/group",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    146,
+                    6
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/group",
+                "printable": "core/group",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    152,
+                    18
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: namespaced",
+        [
+            {
+                "type": "void",
+                "block": "my-plugin/thing",
+                "printable": "my-plugin/thing",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "my-plugin/thing"
+                ],
+                "attributes": {
+                    "a": [
+                        1,
+                        2
+                    ],
+                    "b": "<x>"
+                },
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    50
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: freeform",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "before ",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    7
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/spacer",
+                "printable": "core/spacer",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/spacer"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    7,
+                    19
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": " middle\n\n",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    26,
+                    9
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "opener",
+                "block": "core/separator",
+                "printable": "core/separator",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/separator"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    35,
+                    21
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "<hr/>",
+                "depth": 2,
+                "crumbs": [
+                    "core/separator",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    56,
+                    5
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/separator",
+                "printable": "core/separator",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    61,
+                    22
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": " after",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    83,
+                    6
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: whitespace between",
+        [
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": false,
+                "content": "\n\n",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    14,
+                    2
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/b",
+                "printable": "core/b",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/b"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    16,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: broken json",
+        [
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    29
+                ],
+                "errors": [
+                    null,
+                    4
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "<p>x</p>",
+                "depth": 2,
+                "crumbs": [
+                    "core/paragraph",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    29,
+                    8
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    37,
+                    22
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: unfinished",
+        [
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    21
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                "incomplete-input",
+                1,
+                [
+                    "core/paragraph"
+                ],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: unclosed",
+        [
+            {
+                "type": "opener",
+                "block": "core/group",
+                "printable": "core/group",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/group"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    true
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    17
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<p>x</p>",
+                "depth": 2,
+                "crumbs": [
+                    "core/group",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    17,
+                    8
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                1,
+                [
+                    "core/group"
+                ],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: stray closer",
+        [
+            {
+                "type": "closer",
+                "block": "core/group",
+                "printable": "core/group",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    18
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "text",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    18,
+                    4
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: mismatched closer",
+        [
+            {
+                "type": "opener",
+                "block": "core/group",
+                "printable": "core/group",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/group"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    true
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    17
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/columns",
+                "printable": "core/columns",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    17,
+                    20
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: refused names",
+        [
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: ordinary comment",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!-- just a comment -->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    23
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    23,
+                    21
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "x",
+                "depth": 2,
+                "crumbs": [
+                    "core/paragraph",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    44,
+                    1
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    45,
+                    22
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: tight and spaced",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!--wp:paragraph-->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    19
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": {
+                    "x": 1
+                },
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    19,
+                    34
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: empty",
+        [
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: core prefix",
+        [
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    26
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    26,
+                    27
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: closer with void flag",
+        [
+            {
+                "type": "void",
+                "block": "core/image",
+                "printable": "core/image",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/image"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    19
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: json with tricky strings",
+        [
+            {
+                "type": "opener",
+                "block": "core/code",
+                "printable": "core/code",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/code"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    30
+                ],
+                "errors": [
+                    null,
+                    3
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": " not the end\"} /-->",
+                "depth": 2,
+                "crumbs": [
+                    "core/code",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    30,
+                    19
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                1,
+                [
+                    "core/code"
+                ],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: unfinished comment",
+        [
+            [
+                "ended",
+                "incomplete-input",
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: unfinished json",
+        [
+            [
+                "ended",
+                "incomplete-input",
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: refused name alone",
+        [
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: refused name between",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "text<!-- wp:Paragraph -->more",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    29
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/spacer",
+                "printable": "core/spacer",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/spacer"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    29,
+                    19
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: refused name inside",
+        [
+            {
+                "type": "opener",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/paragraph"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    true,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    21
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "#innerHTML",
+                "closing": true,
+                "html": true,
+                "text": true,
+                "content": "x<!-- wp:Bad -->y",
+                "depth": 2,
+                "crumbs": [
+                    "core/paragraph",
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    21,
+                    17
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "closer",
+                "block": "core/paragraph",
+                "printable": "core/paragraph",
+                "closing": true,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 0,
+                "crumbs": [],
+                "attributes": null,
+                "opens": [
+                    false,
+                    false,
+                    false
+                ],
+                "is": [
+                    true,
+                    true,
+                    true,
+                    false
+                ],
+                "span": [
+                    38,
+                    22
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                false,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: name shapes",
+        [
+            {
+                "type": "void",
+                "block": "core/a_b-c",
+                "printable": "core/a_b-c",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a_b-c"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    18
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!-- wp:ns/a/b /--><!-- wp:para graph -->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    18,
+                    41
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/x",
+                "printable": "core/x",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/x"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    59,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: json spacing",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!-- wp:paragraph{\"a\":1} --><!-- wp:paragraph {\"a\":1}-->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    56
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/x",
+                "printable": "core/x",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/x"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    56,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: void flag spacing",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!-- wp:paragraph /  -->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    24
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/x",
+                "printable": "core/x",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/x"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    24,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: whitespace kinds",
+        [
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    15
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/b",
+                "printable": "core/b",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/b"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    15,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/c",
+                "printable": "core/c",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/c"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    29,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/d",
+                "printable": "core/d",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/d"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    43,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: unfinished plain comment",
+        [
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: abrupt comments",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!--> <!---> ",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    13
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    13,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: json not an object",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!-- wp:a [1,2] /--><!-- wp:b \"x\" /-->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    38
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/c",
+                "printable": "core/c",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/c"
+                ],
+                "attributes": [],
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    38,
+                    17
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: dashes in comment",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<!-- wp:a -- /-->",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    17
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/b",
+                "printable": "core/b",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/b"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    17,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: just html",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<p>Hello</p>",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    12
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: html then a block",
+        [
+            {
+                "type": "void",
+                "block": null,
+                "printable": "core/freeform",
+                "closing": false,
+                "html": true,
+                "text": true,
+                "content": "<p>Hello</p>",
+                "depth": 1,
+                "crumbs": [
+                    "#html"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    true
+                ],
+                "span": [
+                    0,
+                    12
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    12,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: cut after opener",
+        [
+            [
+                "ended",
+                "incomplete-input",
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: cut in w",
+        [
+            [
+                "ended",
+                "incomplete-input",
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: cut in closer",
+        [
+            [
+                "ended",
+                "incomplete-input",
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: block then cut plain comment",
+        [
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: block then cut delimiter",
+        [
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                "incomplete-input",
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "tokens: block then plain comment",
+        [
+            {
+                "type": "void",
+                "block": "core/a",
+                "printable": "core/a",
+                "closing": false,
+                "html": false,
+                "text": false,
+                "content": null,
+                "depth": 1,
+                "crumbs": [
+                    "core/a"
+                ],
+                "attributes": null,
+                "opens": [
+                    true,
+                    false,
+                    false
+                ],
+                "is": [
+                    false,
+                    false,
+                    true,
+                    false
+                ],
+                "span": [
+                    0,
+                    14
+                ],
+                "errors": [
+                    null,
+                    0
+                ]
+            },
+            [
+                "ended",
+                null,
+                0,
+                [],
+                null,
+                true,
+                true,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "narrower walks",
+        [
+            [
+                {
+                    "type": "opener",
+                    "block": "core/group",
+                    "printable": "core/group",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/group"
+                    ],
+                    "attributes": {
+                        "layout": {
+                            "type": "flex"
+                        }
+                    },
+                    "opens": [
+                        true,
+                        false,
+                        true
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        0,
+                        44
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "opener",
+                    "block": "core/paragraph",
+                    "printable": "core/paragraph",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 2,
+                    "crumbs": [
+                        "core/group",
+                        "core/paragraph"
+                    ],
+                    "attributes": {
+                        "align": "center"
+                    },
+                    "opens": [
+                        true,
+                        true,
+                        false
+                    ],
+                    "is": [
+                        true,
+                        true,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        49,
+                        40
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "closer",
+                    "block": "core/paragraph",
+                    "printable": "core/paragraph",
+                    "closing": true,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/group"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        true,
+                        true,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        97,
+                        22
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": "core/image",
+                    "printable": "core/image",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 2,
+                    "crumbs": [
+                        "core/group",
+                        "core/image"
+                    ],
+                    "attributes": {
+                        "id": 5
+                    },
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        119,
+                        27
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "closer",
+                    "block": "core/group",
+                    "printable": "core/group",
+                    "closing": true,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 0,
+                    "crumbs": [],
+                    "attributes": null,
+                    "opens": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        152,
+                        18
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                [
+                    "ended",
+                    null,
+                    0,
+                    [],
+                    null,
+                    false,
+                    true,
+                    null,
+                    false,
+                    true
+                ]
+            ],
+            [
+                {
+                    "type": "opener",
+                    "block": "core/paragraph",
+                    "printable": "core/paragraph",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 2,
+                    "crumbs": [
+                        "core/group",
+                        "core/paragraph"
+                    ],
+                    "attributes": {
+                        "align": "center"
+                    },
+                    "opens": [
+                        true,
+                        true,
+                        false
+                    ],
+                    "is": [
+                        true,
+                        true,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        49,
+                        40
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "closer",
+                    "block": "core/paragraph",
+                    "printable": "core/paragraph",
+                    "closing": true,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/group"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        true,
+                        true,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        97,
+                        22
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                [
+                    "ended",
+                    null,
+                    0,
+                    [],
+                    null,
+                    false,
+                    true,
+                    null,
+                    false,
+                    true
+                ]
+            ],
+            [
+                {
+                    "type": "opener",
+                    "block": "core/group",
+                    "printable": "core/group",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/group"
+                    ],
+                    "attributes": {
+                        "layout": {
+                            "type": "flex"
+                        }
+                    },
+                    "opens": [
+                        true,
+                        false,
+                        true
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        0,
+                        44
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "opener",
+                    "block": "core/paragraph",
+                    "printable": "core/paragraph",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 2,
+                    "crumbs": [
+                        "core/group",
+                        "core/paragraph"
+                    ],
+                    "attributes": {
+                        "align": "center"
+                    },
+                    "opens": [
+                        true,
+                        true,
+                        false
+                    ],
+                    "is": [
+                        true,
+                        true,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        49,
+                        40
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": "core/image",
+                    "printable": "core/image",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 2,
+                    "crumbs": [
+                        "core/group",
+                        "core/image"
+                    ],
+                    "attributes": {
+                        "id": 5
+                    },
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        119,
+                        27
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                [
+                    "ended",
+                    null,
+                    0,
+                    [],
+                    null,
+                    false,
+                    true,
+                    null,
+                    false,
+                    true
+                ]
+            ],
+            [
+                {
+                    "type": "void",
+                    "block": "core/image",
+                    "printable": "core/image",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 2,
+                    "crumbs": [
+                        "core/group",
+                        "core/image"
+                    ],
+                    "attributes": {
+                        "id": 5
+                    },
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        119,
+                        27
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                [
+                    "ended",
+                    null,
+                    0,
+                    [],
+                    null,
+                    false,
+                    true,
+                    null,
+                    false,
+                    true
+                ]
+            ],
+            [
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "core/freeform",
+                    "closing": false,
+                    "html": true,
+                    "text": true,
+                    "content": "before ",
+                    "depth": 1,
+                    "crumbs": [
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        true
+                    ],
+                    "span": [
+                        0,
+                        7
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": "core/spacer",
+                    "printable": "core/spacer",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/spacer"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        7,
+                        19
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "core/freeform",
+                    "closing": false,
+                    "html": true,
+                    "text": true,
+                    "content": " middle\n\n",
+                    "depth": 1,
+                    "crumbs": [
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        true
+                    ],
+                    "span": [
+                        26,
+                        9
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "opener",
+                    "block": "core/separator",
+                    "printable": "core/separator",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/separator"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        35,
+                        21
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "#innerHTML",
+                    "closing": true,
+                    "html": true,
+                    "text": true,
+                    "content": "<hr/>",
+                    "depth": 2,
+                    "crumbs": [
+                        "core/separator",
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        56,
+                        5
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "core/freeform",
+                    "closing": true,
+                    "html": true,
+                    "text": true,
+                    "content": " after",
+                    "depth": 1,
+                    "crumbs": [
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        true
+                    ],
+                    "span": [
+                        83,
+                        6
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                [
+                    "ended",
+                    null,
+                    0,
+                    [],
+                    null,
+                    false,
+                    true,
+                    null,
+                    false,
+                    true
+                ]
+            ],
+            [
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "core/freeform",
+                    "closing": false,
+                    "html": true,
+                    "text": true,
+                    "content": "before ",
+                    "depth": 1,
+                    "crumbs": [
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        true
+                    ],
+                    "span": [
+                        0,
+                        7
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": "core/spacer",
+                    "printable": "core/spacer",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/spacer"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        7,
+                        19
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "core/freeform",
+                    "closing": false,
+                    "html": true,
+                    "text": true,
+                    "content": " middle\n\n",
+                    "depth": 1,
+                    "crumbs": [
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        true
+                    ],
+                    "span": [
+                        26,
+                        9
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "opener",
+                    "block": "core/separator",
+                    "printable": "core/separator",
+                    "closing": false,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 1,
+                    "crumbs": [
+                        "core/separator"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        35,
+                        21
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "#innerHTML",
+                    "closing": true,
+                    "html": true,
+                    "text": true,
+                    "content": "<hr/>",
+                    "depth": 2,
+                    "crumbs": [
+                        "core/separator",
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        56,
+                        5
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "closer",
+                    "block": "core/separator",
+                    "printable": "core/separator",
+                    "closing": true,
+                    "html": false,
+                    "text": false,
+                    "content": null,
+                    "depth": 0,
+                    "crumbs": [],
+                    "attributes": null,
+                    "opens": [
+                        false,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        false
+                    ],
+                    "span": [
+                        61,
+                        22
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                {
+                    "type": "void",
+                    "block": null,
+                    "printable": "core/freeform",
+                    "closing": true,
+                    "html": true,
+                    "text": true,
+                    "content": " after",
+                    "depth": 1,
+                    "crumbs": [
+                        "#html"
+                    ],
+                    "attributes": null,
+                    "opens": [
+                        true,
+                        false,
+                        false
+                    ],
+                    "is": [
+                        false,
+                        false,
+                        true,
+                        true
+                    ],
+                    "span": [
+                        83,
+                        6
+                    ],
+                    "errors": [
+                        null,
+                        0
+                    ]
+                },
+                [
+                    "ended",
+                    null,
+                    0,
+                    [],
+                    null,
+                    false,
+                    true,
+                    null,
+                    false,
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "whole blocks extracted",
+        [
+            [
+                {
+                    "blockName": "core/group",
+                    "attrs": {
+                        "layout": {
+                            "type": "flex"
+                        }
+                    },
+                    "innerBlocks": [
+                        {
+                            "blockName": "core/paragraph",
+                            "attrs": {
+                                "align": "center"
+                            },
+                            "innerBlocks": [],
+                            "innerHTML": "<p>A</p>",
+                            "innerContent": [
+                                "<p>A</p>"
+                            ]
+                        },
+                        {
+                            "blockName": "core/image",
+                            "attrs": {
+                                "id": 5
+                            },
+                            "innerBlocks": [],
+                            "innerHTML": "",
+                            "innerContent": []
+                        }
+                    ],
+                    "innerHTML": "<div></div>",
+                    "innerContent": [
+                        "<div>",
+                        null,
+                        null,
+                        "</div>"
+                    ]
+                },
+                [
+                    "closer",
+                    "core/group",
+                    0
+                ],
+                {
+                    "blockName": "core/group",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                },
+                null
+            ],
+            [
+                {
+                    "blockName": "core/paragraph",
+                    "attrs": {
+                        "align": "center"
+                    },
+                    "innerBlocks": [],
+                    "innerHTML": "<p>A</p>",
+                    "innerContent": [
+                        "<p>A</p>"
+                    ]
+                },
+                [
+                    "closer",
+                    "core/paragraph",
+                    1
+                ],
+                {
+                    "blockName": "core/paragraph",
+                    "attrs": [],
+                    "innerBlocks": [
+                        {
+                            "blockName": "core/image",
+                            "attrs": {
+                                "id": 5
+                            },
+                            "innerBlocks": [],
+                            "innerHTML": "",
+                            "innerContent": []
+                        }
+                    ],
+                    "innerHTML": "</div>",
+                    "innerContent": [
+                        null,
+                        "</div>"
+                    ]
+                },
+                null
+            ],
+            [
+                {
+                    "blockName": "core/spacer",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                },
+                [
+                    "void",
+                    null,
+                    1
+                ],
+                {
+                    "blockName": null,
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": " middle\n\n",
+                    "innerContent": [
+                        " middle\n\n"
+                    ]
+                },
+                null
+            ],
+            [
+                {
+                    "blockName": "core/a",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                },
+                [
+                    "opener",
+                    "core/b",
+                    1
+                ],
+                {
+                    "blockName": "core/b",
+                    "attrs": {
+                        "n": 1
+                    },
+                    "innerBlocks": [
+                        {
+                            "blockName": "core/c",
+                            "attrs": [],
+                            "innerBlocks": [],
+                            "innerHTML": "",
+                            "innerContent": []
+                        }
+                    ],
+                    "innerHTML": "inside",
+                    "innerContent": [
+                        "in",
+                        null,
+                        "side"
+                    ]
+                },
+                null
+            ],
+            [
+                {
+                    "blockName": "core/group",
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "<p>x</p>",
+                    "innerContent": [
+                        "<p>x</p>"
+                    ]
+                },
+                [
+                    null,
+                    null,
+                    1
+                ],
+                {
+                    "blockName": null,
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "",
+                    "innerContent": []
+                },
+                null
+            ],
+            [
+                {
+                    "blockName": null,
+                    "attrs": [],
+                    "innerBlocks": [],
+                    "innerHTML": "before ",
+                    "innerContent": [
+                        "before "
+                    ]
+                },
+                "void"
+            ]
+        ]
+    ],
+    [
+        "attributes",
+        {
+            "nested": [
+                [
+                    "core/group",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    {
+                        "layout": {
+                            "type": "flex"
+                        }
+                    },
+                    0
+                ],
+                [
+                    "core/paragraph",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    {
+                        "align": "center"
+                    },
+                    0
+                ],
+                [
+                    "core/paragraph",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    null,
+                    0
+                ],
+                [
+                    "core/image",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    {
+                        "id": 5
+                    },
+                    0
+                ],
+                [
+                    "core/group",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    null,
+                    0
+                ]
+            ],
+            "namespaced": [
+                [
+                    "my-plugin/thing",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    {
+                        "a": [
+                            1,
+                            2
+                        ],
+                        "b": "<x>"
+                    },
+                    0
+                ]
+            ],
+            "broken json": [
+                [
+                    "core/paragraph",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    null,
+                    4
+                ],
+                [
+                    "core/paragraph",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    null,
+                    0
+                ]
+            ],
+            "tight and spaced": [
+                [
+                    "core/paragraph",
+                    [
+                        "Exception",
+                        "Lazy attribute parsing not yet supported"
+                    ],
+                    {
+                        "x": 1
+                    },
+                    0
+                ]
+            ]
+        }
+    ],
+    [
+        "json parsed when asked",
+        [
+            0,
+            null,
+            4,
+            [
+                4,
+                null,
+                0
+            ],
+            0,
+            true
+        ]
+    ],
+    [
+        "names",
+        [
+            "core/paragraph",
+            "core/paragraph",
+            "my/thing",
+            "core/",
+            true,
+            true,
+            false,
+            false,
+            true,
+            [
+                "closer",
+                "opener",
+                "void",
+                "processor-ready",
+                "processor-matched",
+                "processor-html-span",
+                "incomplete-input",
+                "processor-complete"
+            ]
+        ]
+    ],
+    [
+        "before the first step",
+        {
+            "type": null,
+            "block": null,
+            "printable": null,
+            "closing": false,
+            "html": false,
+            "text": false,
+            "content": null,
+            "depth": 0,
+            "crumbs": [],
+            "attributes": null,
+            "opens": [
+                true,
+                false,
+                false
+            ],
+            "is": [
+                false,
+                false,
+                true,
+                false
+            ],
+            "span": null,
+            "errors": [
+                null,
+                0
+            ]
+        }
+    ]
+]

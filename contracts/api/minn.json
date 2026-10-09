@@ -11975,6 +11975,562 @@
             ]
         },
         {
+            "name": "Minn\\Blocks\\BlockStream",
+            "short": "BlockStream",
+            "namespace": "Minn\\Blocks",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Blocks/BlockStream.php",
+            "lines": 285,
+            "doc": "Block markup read one token at a time, as the reference's streaming\nblock processor reads it (probe block-processor). A delimiter is an HTML\ncomment: whitespace after \"<!--\", an optional \"/\" (the closing flag),\n\"wp:\", a name (lowercase, an optional namespace), whitespace, optional\nJSON object attributes followed by whitespace, then \"-->\" or \"/-->\"\n(void). Any other comment is HTML. The HTML between delimiters comes out\nas its own token, reported as void (freeform at the top, inner HTML in a\nblock) before the delimiter that ends it, which is already read, so the\nclosing flag shows that delimiter's. Quirks kept on purpose:\n- trailing HTML after the last delimiter is dropped when it holds a\ncomment;\n- an unterminated comment is incomplete input only when it could\nstill become a delimiter, otherwise reading just stops;\n- attributes are parsed only when asked, and only that sets the JSON\nerror.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Json"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(string $text)",
+                "doc": "A stream over block markup, before its first token.",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "text",
+                        "type": "string",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 54,
+                "end": 56
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CLOSER",
+                    "value": "'closer'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "OPENER",
+                    "value": "'opener'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "VOID",
+                    "value": "'void'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "READY",
+                    "value": "'processor-ready'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MATCHED",
+                    "value": "'processor-matched'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "HTML_SPAN",
+                    "value": "'processor-html-span'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "INCOMPLETE_INPUT",
+                    "value": "'incomplete-input'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "COMPLETE",
+                    "value": "'processor-complete'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "WHITESPACE",
+                    "value": "' \t \r\f'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DELIMITER",
+                    "value": "'#^[ \\\\t\\\\n\\\\r\\\\f]+(/)?wp:([a-z][a-z0-9_-]*(?:/[a-z][a-z0-9_-]*)?)[ \\\\t\\\\n\\\\r\\\\f]+(?:(\\\\{.*\\\\})[ \\\\t\\\\n\\\\r\\\\f]+)?(/)?$#s'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "state",
+                    "type": "string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "error",
+                    "type": "?string",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "jsonError",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "cursor",
+                    "type": "int",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "delimiter",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "html",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "delimiterWaiting",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "popNext",
+                    "type": "bool",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "open",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "text",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "normalize",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "normalize(string $name): string",
+                    "doc": "The name with core/ in front when it has no namespace.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "next",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "next(): bool",
+                    "doc": "Moves to the next token, HTML or delimiter; false at the end or on incomplete input.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 65,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "state",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "state(): string",
+                    "doc": "The current token's state: one of the class constants.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 82,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "error",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "error(): ?string",
+                    "doc": "incomplete-input when the text ran out inside what could be a delimiter, else null.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 88,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "jsonError",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "jsonError(): int",
+                    "doc": "The JSON error from the last time attributes were asked for.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 94,
+                    "end": 97
+                },
+                {
+                    "routes": [],
+                    "name": "delimiterType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delimiterType(): ?string",
+                    "doc": "opener, closer or void for a delimiter, void for HTML, null otherwise.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 100,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "closing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "closing(): bool",
+                    "doc": "The last delimiter read had the closing flag.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 110,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "blockType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockType(): ?string",
+                    "doc": "The delimiter's block type, null for anything else.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 116,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "printableType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "printableType(): ?string",
+                    "doc": "The block type, or core/freeform for top-level HTML and #innerHTML for HTML inside a block.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 122,
+                    "end": 129
+                },
+                {
+                    "routes": [],
+                    "name": "isHtml",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "isHtml(): bool",
+                    "doc": "Whether the token is HTML between delimiters.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 132,
+                    "end": 135
+                },
+                {
+                    "routes": [],
+                    "name": "htmlContent",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "htmlContent(): ?string",
+                    "doc": "The HTML span's text, null for anything else.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 138,
+                    "end": 141
+                },
+                {
+                    "routes": [],
+                    "name": "nonWhitespaceHtml",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "nonWhitespaceHtml(): bool",
+                    "doc": "Whether the token is HTML with something other than whitespace in it.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 144,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "breadcrumbs",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "breadcrumbs(): array",
+                    "doc": "The open block types, outermost first, with #html for an HTML span. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [],
+                    "line": 150,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "opens",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "opens(?string $type): bool",
+                    "doc": "Whether this token opens a block (of the type, when given): never after a closer, and HTML only at the top.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 156,
+                    "end": 165
+                },
+                {
+                    "routes": [],
+                    "name": "isType",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "isType(string $type): bool",
+                    "doc": "Whether the token is of the type; * matches anything.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 168,
+                    "end": 175
+                },
+                {
+                    "routes": [],
+                    "name": "span",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "span(): ?array",
+                    "doc": "The token's start and length in the text, null when there is no token. @return array{0: int, 1: int}|null",
+                    "shapes": [
+                        "@return array{0: int, 1: int}|null"
+                    ],
+                    "params": [],
+                    "line": 178,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "attributes",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attributes(): ?array",
+                    "doc": "The delimiter's attributes, parsed now (setting the JSON error), or null. @return array<mixed>|null",
+                    "shapes": [
+                        "@return array<mixed>|null"
+                    ],
+                    "params": [],
+                    "line": 188,
+                    "end": 203
+                },
+                {
+                    "routes": [],
+                    "name": "scan",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "scan(): bool",
+                    "doc": "From where the last token ended: the HTML before the next delimiter, the delimiter, or the end.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 206,
+                    "end": 222
+                },
+                {
+                    "routes": [],
+                    "name": "emitHtml",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "emitHtml(int $at, int $length): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "length",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 224,
+                    "end": 232
+                },
+                {
+                    "routes": [],
+                    "name": "matchDelimiter",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "matchDelimiter(): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 234,
+                    "end": 245
+                },
+                {
+                    "routes": [],
+                    "name": "finish",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "finish(?string $error): bool",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "error",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 247,
+                    "end": 252
+                },
+                {
+                    "routes": [],
+                    "name": "nextDelimiter",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "nextDelimiter(int $from): array|false|null",
+                    "doc": "The next delimiter from a position; null when there is none and no\ncomment came first (the rest is HTML), false when reading stops there\n(a comment came first, or one is cut off; cut off where a delimiter\ncould still begin is incomplete input).",
+                    "shapes": [
+                        "@return array{at: int, length: int, type: string, closing: bool, name: string, json: ?string}|false|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "from",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 262,
+                    "end": 279
+                },
+                {
+                    "routes": [],
+                    "name": "commentEnd",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "commentEnd(int $at): ?int",
+                    "doc": "Where a comment starting here ends (just past it), or null when it never does.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 282,
+                    "end": 291
+                },
+                {
+                    "routes": [],
+                    "name": "couldBeDelimiter",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "couldBeDelimiter(int $at): bool",
+                    "doc": "Whether a comment cut off by the end of the text could still have become a delimiter.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 294,
+                    "end": 310
+                }
+            ]
+        },
+        {
             "name": "Minn\\Blocks\\Context",
             "short": "Context",
             "namespace": "Minn\\Blocks",
@@ -68114,6 +68670,7 @@
                 "Minn\\Admin\\StructureController",
                 "Minn\\Admin\\Translations",
                 "Minn\\Auth\\Roles",
+                "Minn\\Blocks\\BlockStream",
                 "Minn\\Blocks\\CoreBlocks",
                 "Minn\\Blocks\\Dynamic\\SocialLinks",
                 "Minn\\Blocks\\Parser",

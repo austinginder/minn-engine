@@ -162,7 +162,7 @@ $check('facade map: contracts/api/mappings.json is current', is_array($mapping) 
 $catalogue = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/route-catalogue.php') . ' --check 2>/dev/null'), true);
 $check('route catalogue: tests/tools/route-catalogue.php runs', is_array($catalogue));
 $check('route catalogue: contracts/api/routes.json is current', is_array($catalogue) && ($catalogue['stale'] ?? true) === false, 'run php tests/tools/route-catalogue.php');
-$leafCeiling = 13;
+$leafCeiling = 12;
 $check("facade map: leaf functions over fifteen lines stay at or under {$leafCeiling}", is_array($mapping) && ($mapping['leafLinesOver15'] ?? PHP_INT_MAX) <= $leafCeiling, (string) ($mapping['leafLinesOver15'] ?? '?'));
 
 // The app reads each capability flag by name, and a flag the boot payload lacks reads as false (an
@@ -194,8 +194,8 @@ $check('dead ends: public/minn/data/deadend-symbols.json is current', $deadEndsS
 $status = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check 2>/dev/null'), true);
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check', $ignored, $statusStale);
 $check('compat status: contracts/api/compat-status.json is current', is_array($status) && $statusStale === 0, 'run php tests/tools/compat-status.php');
-$missingCeiling = ['functions' => 239, 'classes' => 64, 'methods' => 553];
-$verifiedFloor = ['functions' => 1947, 'classes' => 117, 'methods' => 1356];
+$missingCeiling = ['functions' => 239, 'classes' => 63, 'methods' => 530];
+$verifiedFloor = ['functions' => 1947, 'classes' => 120, 'methods' => 1388];
 foreach ($missingCeiling as $group => $ceiling) {
     $check("compat status: missing {$group} stay at or under {$ceiling}", is_array($status) && ($status[$group]['missing'] ?? PHP_INT_MAX) <= $ceiling, (string) ($status[$group]['missing'] ?? '?'));
     $check("compat status: verified {$group} stay at or over {$verifiedFloor[$group]}", is_array($status) && ($status[$group]['verified'] ?? 0) >= $verifiedFloor[$group], (string) ($status[$group]['verified'] ?? '?'));

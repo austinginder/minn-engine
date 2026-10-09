@@ -7391,3 +7391,54 @@ into one file each.
 - **Edits are handed back.** The view now hands a plugin's direct edits to
   `$queue` and `$done` back to the registry before it refreshes. Before,
   `$scripts->done = []` followed by `enqueue()` put the old done list back.
+
+## The streaming block processor (2026-10-09)
+
+Probe `block-processor` (`tests/tools/block-processor-probe.php`) proves
+`WP_Block_Processor`. It walks 38 block documents token by token, then
+checks the narrower walks, extraction, attributes and the name helpers.
+The reading is `Minn\Blocks\BlockStream`; the facade class adds the walks
+and extraction.
+
+- **What counts as a delimiter.** An HTML comment of the form: whitespace
+  after `<!--`, an optional `/` (the closing flag), `wp:`, then a name.
+  - The name is lowercase, starts with a letter, may contain `_` and `-`,
+    and has at most one namespace (`a/b`).
+  - Whitespace follows the name, then optional JSON-object attributes
+    followed by whitespace, then `-->` or `/-->`, with the `/` right
+    before `-->`.
+  - Anything else is HTML: `<!--wp:x-->`, an uppercase name, `ns/a/b`,
+    `[1,2]` as attributes, `-- /-->`.
+  - A closer with the void flag is void, with the closing flag set.
+  - The comment ends at its first `-->`, so `"} -->"` inside a JSON
+    string ends the delimiter there (JSON error 3, and the rest is HTML).
+    `<!-->` and `<!--->` are complete comments.
+- **HTML tokens.** HTML between delimiters is a token of its own. It
+  reports type void and block type null. Its printable type is
+  `core/freeform` at the top level and `#innerHTML` inside a block, and it
+  pushes `#html` onto the breadcrumbs. It comes out before the delimiter
+  that ends it, which has already been read, so `has_closing_flag()` shows
+  that delimiter's flag (at the end, the last one's).
+- **Quirks kept on purpose:**
+  - Trailing HTML after the last delimiter is dropped when it contains a
+    comment. A document that is only HTML comes out whole.
+  - An unterminated comment is incomplete input only while it could still
+    become a delimiter: `<!--`, then whitespace, then a prefix of `wp:` or
+    `/wp:`, or a cut-off delimiter. Any other unterminated comment just
+    ends the stream, with no error and without the HTML before it.
+  - `get_attributes()` throws ("Lazy attribute parsing not yet
+    supported"). `allocate_and_return_parsed_attributes()` parses on each
+    call, and only it sets `get_last_json_error()`.
+  - `opens_block()` with no type is true unless the last delimiter read
+    was a closer, even before the first token. HTML opens a block only at
+    the top level.
+- **Walks.**
+  - `next_delimiter()` skips HTML; given `*`, it stops at everything.
+  - `next_block()` also skips closers; given `*`, it stops at HTML too,
+    inner HTML included.
+- **Extraction.** `extract_full_block_and_advance()` returns the block in
+  `parse_blocks` shape.
+  - HTML (as a freeform block) or a void block moves on to the next token.
+  - Anything else gathers tokens until a closer drops below its depth, and
+    stops on that closer. This also applies when called on a closer or at
+    the end, which gives a block named after the closer or a null block.
