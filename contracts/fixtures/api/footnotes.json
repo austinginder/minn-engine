@@ -1,0 +1,85 @@
+[
+    [
+        "the hooks",
+        [
+            10,
+            10,
+            999,
+            10
+        ]
+    ],
+    [
+        "footnotes kept safe",
+        [
+            "[{\"id\":\"a1\",\"content\":\"Note x()<strong>b<\\/strong> <a href=\\\"https:\\/\\/zz.example\\\">l<\\/a>\"},{\"id\":\"a2\",\"content\":\"<em>two<\\/em>\"}]",
+            "",
+            "",
+            "[]",
+            "[]",
+            "[{\"id\":\"ab-c_d\",\"content\":\"id sanitized?\"}]",
+            "[{\"id\":\"e1\",\"content\":\"extra\"}]",
+            "[{\"id\":\"q1\",\"content\":\"He said \\\"hi\\\" &amp; it's \\\\ back \\\\\\\\ slash \\u00e9 \\u2713\"}]",
+            "[{\"id\":\"7\",\"content\":\"int id\"}]",
+            "[{\"id\":\"l1\",\"content\":\"Line\\nbreak <p>para<\\/p> <img src=\\\"x\\\">\"}]",
+            "",
+            "[]"
+        ]
+    ],
+    [
+        "the filter follows the user",
+        [
+            [
+                false
+            ],
+            [
+                null,
+                10
+            ],
+            [
+                null,
+                false
+            ],
+            [
+                null,
+                10
+            ],
+            [
+                false
+            ],
+            [
+                null,
+                false
+            ],
+            [
+                "zz-arg",
+                10
+            ],
+            [
+                false,
+                false
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                10
+            ]
+        ]
+    ],
+    [
+        "stored as the user may",
+        [
+            "[{\"id\":\"f1\",\"content\":\"Kept gone()<em>em<\\/em>\"}]",
+            "[{\"id\":\"f1\",\"content\":\"Kept <script>gone()<\\/script><em>em<\\/em>\"}]"
+        ]
+    ],
+    [
+        "a revision's footnotes",
+        [
+            "[{\"id\":\"r1\",\"content\":\"From the revision\"}]",
+            "",
+            "[{\"id\":\"r1\",\"content\":\"From the revision\"}]"
+        ]
+    ]
+]

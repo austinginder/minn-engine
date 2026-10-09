@@ -8225,3 +8225,31 @@ removes them.
     even after a main query, so its effect is unknown.
   - `_wp_timezone_choice_usort_callback` sorts `Etc` zones by a rule no
     single comparison explains yet.
+
+## Footnotes kept safe (2026-10-09)
+
+Probe `footnotes`.
+
+- **_wp_filter_post_meta_footnotes** (`sanitize_post_meta_footnotes`).
+  - The meta is decoded as JSON. Anything that is not a list (invalid
+    JSON, a string) gives `''`.
+  - Each note keeps only `id` (through `sanitize_key`, so `7` becomes
+    `"7"`) and `content` (through post kses). Notes with an empty id or
+    content, or that are not arrays, are dropped; extra keys go.
+  - The list is re-encoded with `wp_json_encode`'s defaults, so unicode
+    and slashes are escaped. Backslashes in content survive.
+- **When it applies.**
+  - `_wp_footnotes_kses_init` runs at `init` and `set_current_user`. It
+    removes the filter, then adds it back unless the user can
+    `unfiltered_html`. An admin's footnotes are stored as given; an
+    anonymous or lower user's are cleaned.
+  - `_wp_footnotes_force_filtered_html_on_import_filter`
+    (`force_filtered_html_on_import` 999) adds it for a truthy argument
+    and returns the argument as given.
+  - `_wp_footnotes_kses_init_filters` and `_wp_footnotes_remove_filters`
+    add and remove it.
+  - REST writes with plugins loaded go through the registered meta, so
+    they are filtered; the plugin-less fallback writes core meta directly.
+- **Revisions.** `wp_get_footnotes_from_revision`
+  (`_wp_post_revision_field_footnotes`, 3 arguments) answers the
+  revision's own `footnotes` meta (single), `''` when it has none.

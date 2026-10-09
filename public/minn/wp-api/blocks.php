@@ -518,6 +518,60 @@ function register_block_core_footnotes_post_meta()
     }
 }
 
+// Footnotes kept safe (probe footnotes): a user without unfiltered_html saves footnotes with ids and kses'd content only.
+
+/** The footnotes JSON with each note's id through sanitize_key and its content through post kses; notes missing either are dropped; '' for anything not a JSON list. */
+function _wp_filter_post_meta_footnotes($footnotes)
+{
+    $notes = json_decode((string) $footnotes, true);
+    if (!is_array($notes)) {
+        return '';
+    }
+    $kept = [];
+    foreach ($notes as $note) {
+        if (is_array($note) && !empty($note['content']) && !empty($note['id'])) {
+            $kept[] = ['id' => sanitize_key((string) $note['id']), 'content' => wp_kses_post((string) $note['content'])];
+        }
+    }
+    return wp_json_encode($kept);
+}
+
+/** The footnotes meta filtered on save. */
+function _wp_footnotes_kses_init_filters()
+{
+    add_filter('sanitize_post_meta_footnotes', '_wp_filter_post_meta_footnotes');
+}
+
+/** The footnotes meta saved as given. */
+function _wp_footnotes_remove_filters()
+{
+    remove_filter('sanitize_post_meta_footnotes', '_wp_filter_post_meta_footnotes');
+}
+
+/** The footnotes filter set for the current user (init, set_current_user): on unless they may post unfiltered HTML. */
+function _wp_footnotes_kses_init()
+{
+    _wp_footnotes_remove_filters();
+    if (!current_user_can('unfiltered_html')) {
+        _wp_footnotes_kses_init_filters();
+    }
+}
+
+/** An import forcing filtered HTML (force_filtered_html_on_import 999) filters footnotes too; the argument comes back as it was. */
+function _wp_footnotes_force_filtered_html_on_import_filter($arg)
+{
+    if ($arg) {
+        _wp_footnotes_kses_init_filters();
+    }
+    return $arg;
+}
+
+/** A revision's footnotes, from its own meta (_wp_post_revision_field_footnotes). */
+function wp_get_footnotes_from_revision($revision_field, $field, $revision)
+{
+    return get_metadata('post', $revision->ID, $field, true);
+}
+
 function excerpt_remove_footnotes($content)
 {
     return preg_replace('_<sup data-fn="[^"]+" class="fn"><a href="[^"]+" id="[^"]+">\d+</a></sup>_', '', (string) $content);

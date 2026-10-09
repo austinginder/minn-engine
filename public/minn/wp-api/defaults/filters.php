@@ -437,6 +437,11 @@ add_action('rest_api_init', 'wp_oembed_register_route');
 add_action('post_updated', 'wp_save_post_revision', 10, 1);
 // What a revision keeps beside its fields: footnotes, and the revisioned meta (probe revisions).
 add_filter('_wp_post_revision_fields', 'wp_add_footnotes_to_revision');
+add_filter('_wp_post_revision_field_footnotes', 'wp_get_footnotes_from_revision', 10, 3);
+// Footnotes kept safe for users without unfiltered_html, and on imports that force filtered HTML (probe footnotes).
+add_action('init', '_wp_footnotes_kses_init');
+add_action('set_current_user', '_wp_footnotes_kses_init');
+add_filter('force_filtered_html_on_import', '_wp_footnotes_force_filtered_html_on_import_filter', 999);
 add_filter('wp_save_post_revision_post_has_changed', 'wp_check_revisioned_meta_fields_have_changed', 10, 3);
 add_action('_wp_put_post_revision', 'wp_save_revisioned_meta_fields', 10, 2);
 add_action('post_updated', 'wp_check_for_changed_slugs', 12, 3);
