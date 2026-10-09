@@ -8045,3 +8045,31 @@ Probe `post-template-more`. post-template.php owes nothing now.
     with one tab-indented `<li>` per revision the reader can read.
   - `revision` leaves out the autosave and `autosave` keeps only it; any
     other type lists all. An anonymous reader gets the empty list.
+
+## The site logo and the custom logo (2026-10-09)
+
+Probe `site-logo`. It writes `site_logo` and the theme mods option, then
+puts both rows back byte for byte, autoload included, updating in place
+so the option id holds.
+
+- **The mod read through the option.** `theme_mod_custom_logo` answers
+  the `site_logo` option whenever it exists, raw (`''` and `'0'`
+  included), otherwise the mod's own value.
+- **Setting.** `pre_set_theme_mod_custom_logo` writes the value to
+  `site_logo`, or deletes the option for an empty value (`0`, `''`,
+  `false`). The value is returned unchanged.
+- **Removing.**
+  - At `setup_theme` 11, the active theme's
+    `update_option_theme_mods_{stylesheet}` gets a hook: when the old
+    mods had `custom_logo` (any value, even 0) and the new ones do not,
+    `site_logo` is deleted. `delete_option_theme_mods_{stylesheet}` gets
+    another: `site_logo` is deleted when the theme supports
+    `custom-logo`.
+  - Deleting `site_logo` removes the `custom_logo` mod. While it does, it
+    holds back the theme-mods update hook, so the option is not deleted
+    in turn. Called on its own, it leaves `site_logo` in place.
+- **Header text beside a logo** (`wp_head`). When the theme's
+  `custom-logo` support names `header-text` classes (cast to a list, each
+  through `sanitize_html_class`) and the `header_text` mod is falsy, it
+  prints a tab-indented `<style id="custom-logo-css">` that clips them,
+  after an HTML comment. It never has a `type` attribute.

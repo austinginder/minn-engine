@@ -875,6 +875,62 @@ function register_block_core_widget_group()
 }
 
 /** The site logo setting, shown in REST under its own name. */
+// The site logo and the custom logo kept in step (probe site-logo).
+
+/** The custom logo theme mod read as the site_logo option has it, when that option is set. */
+function _override_custom_logo_theme_mod($custom_logo)
+{
+    $site_logo = get_option('site_logo');
+    return $site_logo === false ? $custom_logo : $site_logo;
+}
+
+/** A custom logo set as a theme mod is kept in the site_logo option too; an empty one deletes the option. */
+function _sync_custom_logo_to_site_logo($value)
+{
+    if (empty($value)) {
+        delete_option('site_logo');
+    } else {
+        update_option('site_logo', $value);
+    }
+    return $value;
+}
+
+/** When the theme mods are updated without a custom logo they had, the site_logo option goes too. */
+function _delete_site_logo_on_remove_custom_logo($old_value, $value)
+{
+    if (isset($old_value['custom_logo']) && !isset($value['custom_logo'])) {
+        delete_option('site_logo');
+    }
+}
+
+/** When the theme mods are deleted, the site_logo option goes too, where the theme supports custom logos. */
+function _delete_site_logo_on_remove_theme_mods()
+{
+    if (get_theme_support('custom-logo') !== false) {
+        delete_option('site_logo');
+    }
+}
+
+/** The two hooks above, on the active theme's theme mods option (at setup_theme). */
+function _delete_site_logo_on_remove_custom_logo_on_setup_theme()
+{
+    $theme = get_option('stylesheet');
+    add_action("update_option_theme_mods_{$theme}", '_delete_site_logo_on_remove_custom_logo', 10, 2);
+    add_action("delete_option_theme_mods_{$theme}", '_delete_site_logo_on_remove_theme_mods');
+}
+
+/** Deleting the site_logo option removes the custom logo theme mod, holding back the hook that would delete the option in turn. */
+function _delete_custom_logo_on_remove_site_logo()
+{
+    $hook = 'update_option_theme_mods_' . get_option('stylesheet');
+    $priority = has_action($hook, '_delete_site_logo_on_remove_custom_logo');
+    remove_action($hook, '_delete_site_logo_on_remove_custom_logo', $priority === false ? 10 : $priority);
+    remove_theme_mod('custom_logo');
+    if ($priority !== false) {
+        add_action($hook, '_delete_site_logo_on_remove_custom_logo', $priority, 2);
+    }
+}
+
 function register_block_core_site_logo_setting()
 {
     register_setting('general', 'site_logo', ['show_in_rest' => ['name' => 'site_logo'], 'type' => 'integer', 'label' => __('Logo'), 'description' => __('Site logo.')]);

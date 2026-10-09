@@ -392,6 +392,17 @@ function wp_get_global_stylesheet($types = [])
     return (new Minn\Theme\GlobalStyles($theme, $templates->userStyles()))->stylesheet($types);
 }
 
+/** Beside a custom logo whose theme names header text classes, with the header text turned off, a style that hides those classes (probe site-logo). */
+function _custom_logo_header_styles()
+{
+    $classes = get_theme_support('custom-logo', 'header-text');
+    if (!$classes || get_theme_mod('header_text', true)) {
+        return;
+    }
+    $selector = '.' . implode(', .', array_map('sanitize_html_class', (array) $classes));
+    echo "\t\t<!-- Custom Logo: hide header text -->\n\t\t<style id=\"custom-logo-css\">\n\t\t\t{$selector} {\n\t\t\t\tposition: absolute;\n\t\t\t\tclip-path: inset(50%);\n\t\t\t}\n\t\t</style>\n\t\t";
+}
+
 function the_custom_logo($blog_id = 0)
 {
     echo get_custom_logo($blog_id);

@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 775,
-        "composes": 1727,
+        "composes": 1734,
         "leaf": 849,
         "noop": 2630,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7806,
+        "functions": 7813,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -28014,6 +28014,16 @@
             ],
             "composes": []
         },
+        "_custom_logo_header_styles": {
+            "file": "theme.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_theme_mod",
+                "get_theme_support"
+            ]
+        },
         "_customizer_mobile_viewport_meta": {
             "file": "deadends.php",
             "lines": 2,
@@ -28052,6 +28062,19 @@
                 "remove_theme_mod"
             ]
         },
+        "_delete_custom_logo_on_remove_site_logo": {
+            "file": "core-blocks.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "get_option",
+                "has_action",
+                "remove_action",
+                "remove_theme_mod"
+            ]
+        },
         "_delete_option_fresh_site": {
             "file": "post.php",
             "lines": 1,
@@ -28059,6 +28082,35 @@
             "minn": [],
             "composes": [
                 "update_option"
+            ]
+        },
+        "_delete_site_logo_on_remove_custom_logo": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "delete_option"
+            ]
+        },
+        "_delete_site_logo_on_remove_custom_logo_on_setup_theme": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "get_option"
+            ]
+        },
+        "_delete_site_logo_on_remove_theme_mods": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "delete_option",
+                "get_theme_support"
             ]
         },
         "_deprecated_argument": {
@@ -31564,6 +31616,15 @@
             "minn": [],
             "composes": []
         },
+        "_override_custom_logo_theme_mod": {
+            "file": "core-blocks.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option"
+            ]
+        },
         "_pad_term_counts": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -31971,6 +32032,16 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "_sync_custom_logo_to_site_logo": {
+            "file": "core-blocks.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "delete_option",
+                "update_option"
+            ]
         },
         "_thickbox_path_admin_subfolder": {
             "file": "deadends.php",
