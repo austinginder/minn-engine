@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 756,
-        "composes": 1628,
-        "leaf": 788,
-        "noop": 2501,
+        "minn": 759,
+        "composes": 1642,
+        "leaf": 794,
+        "noop": 2511,
         "placeholder": 250,
         "deadend": 1659,
-        "functions": 7504,
-        "minnMethods": 916,
+        "functions": 7537,
+        "minnMethods": 917,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -16241,6 +16241,309 @@
                 "do_action_ref_array"
             ]
         },
+        "WP_REST_Abilities_V1_Categories_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::get_item": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_ability_category",
+                "wp_has_ability_category"
+            ]
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_user_logged_in"
+            ]
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::get_items": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_ability_categories"
+            ]
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_user_logged_in"
+            ]
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::paged": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "rest_ensure_response",
+                "rest_url",
+                "urlencode_deep"
+            ]
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "rest_ensure_response",
+                "rest_is_field_included",
+                "rest_url"
+            ]
+        },
+        "WP_REST_Abilities_V1_Categories_Controller::register_routes": {
+            "file": "classes/WP_REST_Abilities_V1_Categories_Controller.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": [
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_List_Controller::get_item": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_ability",
+                "wp_has_ability"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_user_logged_in"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_List_Controller::get_items": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_abilities"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "is_user_logged_in"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::listed": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_List_Controller::matches": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_List_Controller::paged": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "rest_ensure_response",
+                "rest_url",
+                "urlencode_deep"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response",
+                "rest_is_field_included",
+                "rest_url"
+            ]
+        },
+        "WP_REST_Abilities_V1_List_Controller::register_routes": {
+            "file": "classes/WP_REST_Abilities_V1_List_Controller.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": [
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::ability": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_ability",
+                "wp_has_ability"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::check_ability_permissions": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::coerce_input_to_schema": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "rest_sanitize_value_from_schema",
+                "rest_validate_value_from_schema"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::ensure_error_status": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_Run_Controller::execute_ability": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::get_input_from_request": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_Run_Controller::get_run_args": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_Run_Controller::get_run_schema": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Abilities_V1_Run_Controller::input_contains_error": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::register_routes": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": [
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::sanitize_input_for_ability": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_ability",
+                "wp_has_ability"
+            ]
+        },
+        "WP_REST_Abilities_V1_Run_Controller::validate_request_method": {
+            "file": "classes/WP_REST_Abilities_V1_Run_Controller.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_REST_Attachments_Controller::check_upload_size": {
             "file": "classes/placeholders/Placeholders.php",
             "lines": 2,
@@ -17579,6 +17882,13 @@
             "file": "classes/WP_REST_Request.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Request::checked_args": {
+            "file": "classes/WP_REST_Request.php",
+            "lines": 7,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -34148,8 +34458,8 @@
         },
         "create_initial_rest_routes": {
             "file": "rest-api.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

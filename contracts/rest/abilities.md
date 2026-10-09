@@ -16,7 +16,7 @@ speaks it rather than inventing its own.
 |---|---|---|
 | `/wp-abilities/v1/abilities` | GET | every registered ability; `?category=` narrows |
 | `/wp-abilities/v1/abilities/{name}` | GET | one, by its `namespace/name` |
-| `/wp-abilities/v1/abilities/{name}/run` | GET or POST | runs it and returns its output |
+| `/wp-abilities/v1/abilities/{name}/run` | GET, POST or DELETE | runs it and returns its output |
 | `/wp-abilities/v1/categories` | GET | every category |
 | `/wp-abilities/v1/categories/{slug}` | GET | one category |
 
@@ -35,7 +35,8 @@ speaks it rather than inventing its own.
 
 An ability whose `meta.annotations.readonly` is true runs on **GET**, with
 its input in the `input` query parameter (`input[fields][0]=name`), because
-running it changes nothing. Anything else runs on **POST** with `{"input":
+running it changes nothing. One that is both destructive and idempotent
+runs on **DELETE**. Anything else runs on **POST** with `{"input":
 {...}}` as the body. The wrong method is `rest_ability_invalid_method` at
 405, worded as the reference words it ("Read-only abilities require GET
 method.").
@@ -57,6 +58,20 @@ Each takes an optional `fields` list and returns every field when it is
 absent. Registrations live in `wp-api/defaults/abilities.php`; a plugin adds
 its own with `wp_register_ability()` exactly as on the reference.
 
+## Who serves it
+
+The reference's own controller classes do:
+`WP_REST_Abilities_V1_Categories_Controller`,
+`WP_REST_Abilities_V1_Run_Controller` and
+`WP_REST_Abilities_V1_List_Controller` in `wp-api/classes/`.
+`create_initial_rest_routes()` registers them on `rest_api_init`, in the
+reference's order. They are served through the runtime's REST server, like
+any plugin's routes, and there is no engine controller for this namespace.
+Their schemas, collection parameters and route arguments are the
+reference's, captured in `data/rest-schemas.json` and read through
+`Minn\Rest\SchemaData`. Probe `abilities-rest-controllers` calls each
+class directly, and the HTTP suite still diffs every route.
+
 ## Why this matters
 
 The WordPress MCP adapter is built on this namespace. An engine that serves
@@ -66,8 +81,6 @@ interface rather than rebuilt.
 
 ## Known gaps
 
-- `output_schema` is published but not enforced on the way out, and
-  `input_schema` is not validated before a callback runs; the reference
-  validates both. `Rest\Schema` already has the validator this needs.
-- The catalogue is not paged, since core registers three abilities and a
-  site with hundreds is not a shape anyone has yet.
+- A run on DELETE (an ability that is destructive and idempotent) takes
+  its input from the JSON body, as POST does; no probe has pinned where
+  the reference reads it from.

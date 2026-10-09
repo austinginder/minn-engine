@@ -59682,7 +59682,6 @@
                 "Minn\\Front\\SitemapController",
                 "Minn\\Http\\Policy",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockRendererController",
@@ -59773,7 +59772,6 @@
             "usedBy": [
                 "Minn\\Http\\Route",
                 "Minn\\Http\\RouteRow",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlockRendererController",
@@ -62303,7 +62301,6 @@
                 "Minn\\Http\\Route",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
@@ -62789,7 +62786,6 @@
                 "Minn\\Http\\RouteRow",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockRendererController",
@@ -63560,7 +63556,6 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Media\\Upload",
                 "Minn\\Ops\\Diagnostics",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
@@ -64162,7 +64157,6 @@
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
@@ -64585,7 +64579,6 @@
                 "Minn\\Http\\RouteRow",
                 "Minn\\Http\\Router",
                 "Minn\\Login\\LoginController",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
@@ -68154,6 +68147,7 @@
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Schema",
+                "Minn\\Rest\\SchemaData",
                 "Minn\\Rest\\Taxonomies",
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\Assets",
@@ -85552,7 +85546,6 @@
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Updates",
                 "Minn\\Ops\\UpgraderRun",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
@@ -85817,308 +85810,12 @@
             ]
         },
         {
-            "name": "Minn\\Rest\\AbilitiesController",
-            "short": "AbilitiesController",
-            "namespace": "Minn\\Rest",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Rest/AbilitiesController.php",
-            "lines": 150,
-            "doc": "wp-abilities/v1: what this site can be asked to do, and the doing of it.\n\nAn ability is a named unit of work with an input schema, an output\nschema, and a permission callback, registered by core or by a plugin.\nThe catalogue is what an agent reads first, so the shapes here are the\nreference's, captured; the engine's own registry answers them.\n\nReading the catalogue needs only a session. Running one is the ability's\nown decision, through its permission callback, and a read-only ability\nruns on GET, since running it changes nothing.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Http\\Access",
-                "Minn\\Http\\Args",
-                "Minn\\Http\\Method",
-                "Minn\\Http\\Policy",
-                "Minn\\Http\\Request",
-                "Minn\\Http\\Response",
-                "Minn\\Http\\Route",
-                "Minn\\RestError",
-                "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Reply",
-                "Minn\\Rest\\RestUrl",
-                "Minn\\Runtime\\Abilities",
-                "Minn\\Runtime\\Runtime"
-            ],
-            "usedBy": [
-                "Minn\\Rest\\Api"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "url",
-                        "type": "Minn\\Rest\\RestUrl",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "caller",
-                        "type": "Minn\\Rest\\Caller",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 34,
-                "end": 36
-            },
-            "cases": [],
-            "constants": [
-                {
-                    "name": "SIGNED_IN",
-                    "value": "array (   0 => 'rest_forbidden',   1 => 'Sorry, you are not allowed to do that.', )",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [
-                {
-                    "name": "url",
-                    "type": "Minn\\Rest\\RestUrl",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "caller",
-                    "type": "Minn\\Rest\\Caller",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [
-                        "GET /wp-abilities/v1/abilities (signed in)"
-                    ],
-                    "name": "abilities",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "abilities(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Every registered ability, narrowed to one category when asked.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 40,
-                    "end": 53
-                },
-                {
-                    "routes": [
-                        "GET /wp-abilities/v1/abilities/{name:[a-zA-Z0-9\\-\\/]+?}/run (signed in)",
-                        "POST /wp-abilities/v1/abilities/{name:[a-zA-Z0-9\\-\\/]+?}/run (signed in)"
-                    ],
-                    "name": "run",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "run(Minn\\Http\\Request $request, string $name): Minn\\Http\\Response",
-                    "doc": "Runs an ability. A read-only one takes GET and its input from the\nquery; anything else takes POST and its input from the body. The\nability's own permission callback decides who may.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 62,
-                    "end": 85
-                },
-                {
-                    "routes": [
-                        "GET /wp-abilities/v1/abilities/{name:[a-zA-Z0-9\\-\\/]+} (signed in)"
-                    ],
-                    "name": "ability",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "ability(Minn\\Http\\Request $request, string $name): Minn\\Http\\Response",
-                    "doc": "One ability by name.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 89,
-                    "end": 93
-                },
-                {
-                    "routes": [
-                        "GET /wp-abilities/v1/categories (signed in)"
-                    ],
-                    "name": "categories",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "categories(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Every ability category.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 97,
-                    "end": 101
-                },
-                {
-                    "routes": [
-                        "GET /wp-abilities/v1/categories/{slug:[a-z0-9]+(?:-[a-z0-9]+)*} (signed in)"
-                    ],
-                    "name": "category_",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "category_(Minn\\Http\\Request $request, string $slug): Minn\\Http\\Response",
-                    "doc": "One category by slug.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "slug",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 105,
-                    "end": 113
-                },
-                {
-                    "routes": [],
-                    "name": "boot",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "boot(): void",
-                    "doc": "Registrations land at the abilities init, which the registry fires once.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 116,
-                    "end": 121
-                },
-                {
-                    "routes": [],
-                    "name": "find",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "find(string $name): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array<string, mixed>"
-                    ],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 124,
-                    "end": 131
-                },
-                {
-                    "routes": [],
-                    "name": "object",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "object(array $ability): array",
-                    "doc": "One ability as the catalogue lists it.",
-                    "shapes": [
-                        "@param array<string, mixed> $ability",
-                        "@return array<string, mixed>"
-                    ],
-                    "params": [
-                        {
-                            "name": "ability",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 139,
-                    "end": 156
-                },
-                {
-                    "routes": [],
-                    "name": "category",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "category(array $category): array",
-                    "doc": "One category as the catalogue lists it.",
-                    "shapes": [
-                        "@param array<string, mixed> $category",
-                        "@return array<string, mixed>"
-                    ],
-                    "params": [
-                        {
-                            "name": "category",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 164,
-                    "end": 178
-                }
-            ]
-        },
-        {
             "name": "Minn\\Rest\\Api",
             "short": "Api",
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 281,
+            "lines": 280,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -86145,7 +85842,6 @@
                 "Minn\\Http\\Response",
                 "Minn\\Http\\Router",
                 "Minn\\RestError",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
@@ -86331,8 +86027,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 137
+                    "line": 133,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -86343,8 +86039,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 143
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -86355,8 +86051,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 146,
-                    "end": 149
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -86367,8 +86063,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 152,
-                    "end": 155
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -86379,8 +86075,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -86406,8 +86102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 178
+                    "line": 168,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -86426,8 +86122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 208
+                    "line": 180,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -86446,8 +86142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 215
+                    "line": 210,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -86473,8 +86169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 236
+                    "line": 223,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -86502,8 +86198,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 251
+                    "line": 243,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -86532,7 +86228,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 131
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -86551,8 +86247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 260
+                    "line": 252,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -86578,8 +86274,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 289
+                    "line": 266,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -86598,8 +86294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 305
+                    "line": 297,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -86625,8 +86321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 315
+                    "line": 310,
+                    "end": 314
                 }
             ]
         },
@@ -88456,7 +88152,6 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BlockRendererController",
@@ -98051,7 +97746,6 @@
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BatchController",
@@ -98845,7 +98539,6 @@
             ],
             "usedBy": [
                 "Minn\\Engine",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\CommentObject",
@@ -99371,7 +99064,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RouteArgs.php",
-            "lines": 36,
+            "lines": 34,
             "doc": "The argument groups a route registers with, filled the way register_rest_route fills them.",
             "implements": [],
             "extends": null,
@@ -99403,7 +99096,7 @@
                         }
                     ],
                     "line": 16,
-                    "end": 42
+                    "end": 40
                 }
             ]
         },
@@ -101617,6 +101310,59 @@
                     ],
                     "line": 308,
                     "end": 311
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\SchemaData",
+            "short": "SchemaData",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/SchemaData.php",
+            "lines": 12,
+            "doc": "REST schemas captured from the reference for the facade's controller\nclasses (data/rest-schemas.json): an item schema, a collection's\nparameters or a route argument, by name. Callbacks are not data, so a\ncontroller adds its own.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Json"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "all",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(string $name): array",
+                    "doc": "One captured schema by name; an empty array when there is none. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 25
                 }
             ]
         },
@@ -107947,16 +107693,14 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Abilities.php",
-            "lines": 223,
+            "lines": 217,
             "doc": "The abilities registry behind WP_Abilities_Registry,\nWP_Ability_Categories_Registry and the wp_*_ability facade, as the\nreference keeps it (probes abilities-registry, abilities-classes). The\ncategories init and then the abilities init fire once each, lazily, on\nthe first lookup of their kind, each handed its registry. The registries\nthemselves take a registration at any time; only the wp_register_*\nfunctions insist on the init action. A registration is checked as the\nreference checks it (name shape, duplicates, a known category, then the\nproperties the ability and category classes check) and refused with its\nnotice. An ability's meta gains the default annotations, show_in_rest\n(public's value when unset) and public.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Runtime"
             ],
-            "usedBy": [
-                "Minn\\Rest\\AbilitiesController"
-            ],
+            "usedBy": [],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -108243,26 +107987,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "isReadOnly",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "isReadOnly(string $name): bool",
-                    "doc": "Whether an ability is marked read-only, which decides the method its run endpoint takes.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 176,
-                    "end": 179
-                },
-                {
-                    "routes": [],
                     "name": "abilityRefusal",
                     "static": true,
                     "visibility": "public",
@@ -108280,8 +108004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 201
+                    "line": 176,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -108302,8 +108026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 212
+                    "line": 198,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -108324,8 +108048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 226
+                    "line": 214,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -108401,8 +108125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 241
+                    "line": 223,
+                    "end": 235
                 }
             ]
         },
@@ -126454,7 +126178,6 @@
                 "Minn\\Media\\Icons",
                 "Minn\\Media\\Images",
                 "Minn\\Ops\\UpgraderRun",
-                "Minn\\Rest\\AbilitiesController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockRendererController",

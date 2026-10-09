@@ -30,11 +30,9 @@ final class RouteArgs
             if (!isset($group['permission_callback'])) {
                 $missingPermission = true;
             }
+            // The route table keeps each argument as given; the default callbacks join at dispatch (WP_REST_Request), as the reference's do.
             foreach ($group['args'] as $name => $options) {
-                $options = is_array($options) ? $options : [];
-                $options['validate_callback'] ??= 'rest_validate_request_arg';
-                $options['sanitize_callback'] ??= 'rest_sanitize_request_arg';
-                $group['args'][$name] = $options;
+                $group['args'][$name] = is_array($options) ? $options : [];
             }
             $args[$key] = $group;
         }

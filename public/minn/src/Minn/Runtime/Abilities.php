@@ -172,12 +172,6 @@ final class Abilities
         return self::state()['categories'];
     }
 
-    /** Whether an ability is marked read-only, which decides the method its run endpoint takes. */
-    public static function isReadOnly(string $name): bool
-    {
-        return (bool) (self::ability($name)['meta']['annotations']['readonly'] ?? false);
-    }
-
     /** Why an ability's properties are refused, as WP_Ability::prepare_properties says it, or null. @param array<string, mixed> $args */
     public static function abilityRefusal(array $args): ?string
     {

@@ -1,0 +1,2064 @@
+[
+    [
+        "schemas",
+        [
+            "WP_REST_Controller",
+            "WP_REST_Controller",
+            "WP_REST_Controller",
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "ability",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Unique identifier for the ability.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    },
+                    "label": {
+                        "description": "Display label for the ability.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    },
+                    "description": {
+                        "description": "Description of the ability.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    },
+                    "category": {
+                        "description": "Ability category this ability belongs to.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    },
+                    "input_schema": {
+                        "description": "JSON Schema for the ability input.",
+                        "type": "object",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    },
+                    "output_schema": {
+                        "description": "JSON Schema for the ability output.",
+                        "type": "object",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    },
+                    "meta": {
+                        "description": "Meta information about the ability.",
+                        "type": "object",
+                        "properties": {
+                            "annotations": {
+                                "description": "Behavioral annotations for the ability.",
+                                "type": "object",
+                                "properties": {
+                                    "readonly": {
+                                        "description": "Whether the ability does not modify its environment.",
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ]
+                                    },
+                                    "destructive": {
+                                        "description": "Whether the ability may perform destructive updates to its environment.",
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ]
+                                    },
+                                    "idempotent": {
+                                        "description": "Whether repeated calls with the same arguments have no additional effect.",
+                                        "type": [
+                                            "boolean",
+                                            "null"
+                                        ]
+                                    }
+                                },
+                                "additionalProperties": true
+                            },
+                            "public": {
+                                "description": "Whether the ability is meant to be available to clients such as the REST API, MCP, or AI agents. Defaults to false, but individual channel settings such as show_in_rest can override it.",
+                                "type": "boolean"
+                            }
+                        },
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    }
+                }
+            },
+            {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view"
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "maximum": 100
+                },
+                "category": {
+                    "description": "Limit results to abilities in specific ability category.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "namespace": {
+                    "description": "Limit results to abilities in a specific namespace.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "meta": {
+                    "description": "Limit results to abilities matching all of the given meta fields.",
+                    "type": "object",
+                    "properties": {
+                        "annotations": {
+                            "description": "Limit results to abilities matching the given behavioral annotations.",
+                            "type": "object",
+                            "properties": {
+                                "readonly": {
+                                    "description": "Whether the ability does not modify its environment.",
+                                    "type": [
+                                        "boolean",
+                                        "null"
+                                    ]
+                                },
+                                "destructive": {
+                                    "description": "Whether the ability may perform destructive updates to its environment.",
+                                    "type": [
+                                        "boolean",
+                                        "null"
+                                    ]
+                                },
+                                "idempotent": {
+                                    "description": "Whether repeated calls with the same arguments have no additional effect.",
+                                    "type": [
+                                        "boolean",
+                                        "null"
+                                    ]
+                                }
+                            },
+                            "additionalProperties": true
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "ability-category",
+                "type": "object",
+                "properties": {
+                    "slug": {
+                        "description": "Unique identifier for the ability category.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    },
+                    "label": {
+                        "description": "Display label for the category.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    },
+                    "description": {
+                        "description": "Description of the category.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    },
+                    "meta": {
+                        "description": "Meta information about the category.",
+                        "type": "object",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    }
+                }
+            },
+            {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view"
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "maximum": 100
+                }
+            },
+            {
+                "input": {
+                    "description": "Input parameters for the ability execution.",
+                    "type": [
+                        "integer",
+                        "number",
+                        "boolean",
+                        "string",
+                        "array",
+                        "object",
+                        "null"
+                    ],
+                    "default": null,
+                    "sanitize_callback": [
+                        [],
+                        "sanitize_input_for_ability"
+                    ]
+                }
+            },
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "ability-execution",
+                "type": "object",
+                "properties": {
+                    "result": {
+                        "description": "The result of the ability execution.",
+                        "type": [
+                            "integer",
+                            "number",
+                            "boolean",
+                            "string",
+                            "array",
+                            "object",
+                            "null"
+                        ],
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "readonly": true
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "permission, nobody",
+        [
+            [
+                "not a response",
+                false
+            ],
+            [
+                "not a response",
+                false
+            ],
+            [
+                "not a response",
+                false
+            ],
+            [
+                "not a response",
+                false
+            ],
+            [
+                "error",
+                "ability_invalid_input",
+                "Ability \"zz/rest-echo\" has invalid input. Reason: input is not of type object.",
+                {
+                    "status": 400
+                }
+            ],
+            [
+                "not a response",
+                true
+            ],
+            [
+                "error",
+                "rest_ability_cannot_execute",
+                "Sorry, you are not allowed to execute this ability.",
+                {
+                    "status": 401
+                }
+            ],
+            [
+                "error",
+                "ability_invalid_input",
+                "Ability \"zz/rest-echo\" has invalid input. Reason: input[times] must be greater than or equal to 1",
+                {
+                    "status": 400
+                }
+            ],
+            [
+                "error",
+                "zz_nope",
+                "Nope.",
+                {
+                    "status": 401
+                }
+            ]
+        ]
+    ],
+    [
+        "permission, an administrator",
+        [
+            [
+                "not a response",
+                true
+            ],
+            [
+                "not a response",
+                true
+            ],
+            [
+                "not a response",
+                true
+            ],
+            [
+                "error",
+                "ability_invalid_input",
+                "Ability \"zz/rest-echo\" has invalid input. Reason: input is not of type object.",
+                {
+                    "status": 400
+                }
+            ],
+            [
+                "error",
+                "rest_ability_not_found",
+                "Ability not found.",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                "error",
+                "rest_ability_not_found",
+                "Ability not found.",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                "not a response",
+                true
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Read-only abilities require GET method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform updates require POST method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "ability_missing_input_schema",
+                "Ability \"zz/rest-read\" does not define an input schema required to validate the provided input.",
+                {
+                    "status": 400
+                }
+            ],
+            [
+                "error",
+                "zz_nope",
+                "Nope.",
+                {
+                    "status": 403
+                }
+            ],
+            [
+                "error",
+                "ability_invalid_permissions",
+                "Ability \"zz/rest-erring\" does not have necessary permission.",
+                null
+            ]
+        ]
+    ],
+    [
+        "the abilities list",
+        [
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-echo",
+                        "label": "Zz Echo",
+                        "description": "Echoes text.",
+                        "category": "zz-rest",
+                        "input_schema": {
+                            "type": "object",
+                            "properties": {
+                                "text": {
+                                    "type": "string"
+                                },
+                                "times": {
+                                    "type": "integer",
+                                    "default": 1,
+                                    "minimum": 1
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "output_schema": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "description": "Reads.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": true,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-erring",
+                        "label": "Zz Erring",
+                        "description": "Refuses with an error.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "6",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-echo",
+                        "label": "Zz Echo",
+                        "description": "Echoes text.",
+                        "category": "zz-rest",
+                        "input_schema": {
+                            "type": "object",
+                            "properties": {
+                                "text": {
+                                    "type": "string"
+                                },
+                                "times": {
+                                    "type": "integer",
+                                    "default": 1,
+                                    "minimum": 1
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "output_schema": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "description": "Reads.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": true,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-erring",
+                        "label": "Zz Erring",
+                        "description": "Refuses with an error.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "X-WP-Total": "0",
+                    "X-WP-TotalPages": "0"
+                }
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "description": "Reads.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": true,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "Link": "<https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest&per_page=1&page=1>; rel=\"prev\", <https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest&per_page=1&page=3>; rel=\"next\"",
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "3"
+                }
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-echo",
+                        "label": "Zz Echo",
+                        "category": "zz-rest",
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "category": "zz-rest",
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-erring",
+                        "label": "Zz Erring",
+                        "category": "zz-rest",
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-echo",
+                        "label": "Zz Echo",
+                        "description": "Echoes text.",
+                        "category": "zz-rest",
+                        "input_schema": {
+                            "type": "object",
+                            "properties": {
+                                "text": {
+                                    "type": "string"
+                                },
+                                "times": {
+                                    "type": "integer",
+                                    "default": 1,
+                                    "minimum": 1
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "output_schema": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "description": "Reads.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": true,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-erring",
+                        "label": "Zz Erring",
+                        "description": "Refuses with an error.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "description": "Reads.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": true,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "4",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz/rest-echo",
+                        "label": "Zz Echo",
+                        "description": "Echoes text.",
+                        "category": "zz-rest",
+                        "input_schema": {
+                            "type": "object",
+                            "properties": {
+                                "text": {
+                                    "type": "string"
+                                },
+                                "times": {
+                                    "type": "integer",
+                                    "default": 1,
+                                    "minimum": 1
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "output_schema": {
+                            "type": "string"
+                        },
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-read",
+                        "label": "Zz Read",
+                        "description": "Reads.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": true,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "name": "zz/rest-erring",
+                        "label": "Zz Erring",
+                        "description": "Refuses with an error.",
+                        "category": "zz-rest",
+                        "input_schema": [],
+                        "output_schema": [],
+                        "meta": {
+                            "annotations": {
+                                "readonly": null,
+                                "destructive": null,
+                                "idempotent": null
+                            },
+                            "show_in_rest": true,
+                            "public": false
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities"
+                                }
+                            ],
+                            "wp:action-run": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-erring/run"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "Link": "<https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest&page=4>; rel=\"prev\"",
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "X-WP-Total": "0",
+                    "X-WP-TotalPages": "0"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "X-WP-Total": "0",
+                    "X-WP-TotalPages": "0"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "X-WP-Total": "0",
+                    "X-WP-TotalPages": "0"
+                }
+            ]
+        ]
+    ],
+    [
+        "one ability",
+        [
+            [
+                200,
+                {
+                    "name": "zz/rest-echo",
+                    "label": "Zz Echo",
+                    "description": "Echoes text.",
+                    "category": "zz-rest",
+                    "input_schema": {
+                        "type": "object",
+                        "properties": {
+                            "text": {
+                                "type": "string"
+                            },
+                            "times": {
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "output_schema": {
+                        "type": "string"
+                    },
+                    "meta": {
+                        "annotations": {
+                            "readonly": null,
+                            "destructive": null,
+                            "idempotent": null
+                        },
+                        "show_in_rest": true,
+                        "public": false
+                    }
+                },
+                {
+                    "self": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo",
+                            "attributes": []
+                        }
+                    ],
+                    "collection": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities",
+                            "attributes": []
+                        }
+                    ],
+                    "wp:action-run": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-echo/run",
+                            "attributes": []
+                        }
+                    ]
+                },
+                []
+            ],
+            [
+                "error",
+                "rest_ability_not_found",
+                "Ability not found.",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                "error",
+                "rest_ability_not_found",
+                "Ability not found.",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                200,
+                {
+                    "name": "zz/rest-read",
+                    "label": "Zz Read",
+                    "description": "Reads.",
+                    "category": "zz-rest",
+                    "input_schema": [],
+                    "output_schema": [],
+                    "meta": {
+                        "annotations": {
+                            "readonly": true,
+                            "destructive": null,
+                            "idempotent": null
+                        },
+                        "show_in_rest": true,
+                        "public": false
+                    }
+                },
+                {
+                    "self": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read",
+                            "attributes": []
+                        }
+                    ],
+                    "collection": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities",
+                            "attributes": []
+                        }
+                    ],
+                    "wp:action-run": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-read/run",
+                            "attributes": []
+                        }
+                    ]
+                },
+                []
+            ],
+            [
+                200,
+                {
+                    "name": "zz/rest-read",
+                    "label": "Zz Read",
+                    "description": "Reads.",
+                    "category": "zz-rest",
+                    "input_schema": [],
+                    "output_schema": [],
+                    "meta": {
+                        "annotations": {
+                            "readonly": true,
+                            "destructive": null,
+                            "idempotent": null
+                        },
+                        "show_in_rest": true,
+                        "public": false
+                    }
+                },
+                [],
+                []
+            ],
+            [
+                200,
+                {
+                    "name": "zz/rest-hidden",
+                    "label": "Zz Hidden",
+                    "category": "zz-rest"
+                },
+                {
+                    "self": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-hidden",
+                            "attributes": []
+                        }
+                    ],
+                    "collection": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities",
+                            "attributes": []
+                        }
+                    ],
+                    "wp:action-run": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities/zz/rest-hidden/run",
+                            "attributes": []
+                        }
+                    ]
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "the categories",
+        [
+            [
+                200,
+                [
+                    {
+                        "slug": "zz-rest",
+                        "label": "Zz Rest",
+                        "description": "A probe category.",
+                        "meta": {
+                            "zz": 1
+                        },
+                        "_links": {
+                            "self": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/categories/zz-rest",
+                                    "targetHints": {
+                                        "allow": [
+                                            "GET"
+                                        ]
+                                    }
+                                }
+                            ],
+                            "collection": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/categories"
+                                }
+                            ],
+                            "abilities": [
+                                {
+                                    "href": "https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                {
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "1"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "Link": "<https://{host}/wp-json/wp-abilities/v1/categories?per_page=1&page=2>; rel=\"next\"",
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "3"
+                }
+            ],
+            [
+                200,
+                [],
+                {
+                    "Link": "<https://{host}/wp-json/wp-abilities/v1/categories?per_page=1&page=1>; rel=\"prev\", <https://{host}/wp-json/wp-abilities/v1/categories?per_page=1&page=3>; rel=\"next\"",
+                    "X-WP-Total": "3",
+                    "X-WP-TotalPages": "3"
+                }
+            ],
+            [
+                200,
+                {
+                    "slug": "zz-rest",
+                    "label": "Zz Rest",
+                    "description": "A probe category.",
+                    "meta": {
+                        "zz": 1
+                    }
+                },
+                {
+                    "self": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/categories/zz-rest",
+                            "attributes": []
+                        }
+                    ],
+                    "collection": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/categories",
+                            "attributes": []
+                        }
+                    ],
+                    "abilities": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest",
+                            "attributes": []
+                        }
+                    ]
+                },
+                []
+            ],
+            [
+                "error",
+                "rest_ability_category_not_found",
+                "Ability category not found.",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                200,
+                {
+                    "slug": "zz-rest",
+                    "label": "Zz Rest",
+                    "description": "A probe category.",
+                    "meta": {
+                        "zz": 1
+                    }
+                },
+                {
+                    "self": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/categories/zz-rest",
+                            "attributes": []
+                        }
+                    ],
+                    "collection": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/categories",
+                            "attributes": []
+                        }
+                    ],
+                    "abilities": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest",
+                            "attributes": []
+                        }
+                    ]
+                },
+                []
+            ],
+            [
+                200,
+                {
+                    "slug": "zz-rest",
+                    "label": "Zz Rest"
+                },
+                {
+                    "self": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/categories/zz-rest",
+                            "attributes": []
+                        }
+                    ],
+                    "collection": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/categories",
+                            "attributes": []
+                        }
+                    ],
+                    "abilities": [
+                        {
+                            "href": "https://{host}/wp-json/wp-abilities/v1/abilities?category=zz-rest",
+                            "attributes": []
+                        }
+                    ]
+                },
+                []
+            ]
+        ]
+    ],
+    [
+        "the method a run takes",
+        [
+            [
+                "not a response",
+                true
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Read-only abilities require GET method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "not a response",
+                true
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform updates require POST method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform updates require POST method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "not a response",
+                true
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform updates require POST method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform destructive actions require DELETE method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform destructive actions require DELETE method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Read-only abilities require GET method.",
+                {
+                    "status": 405
+                }
+            ],
+            [
+                "error",
+                "rest_ability_invalid_method",
+                "Abilities that perform updates require POST method.",
+                {
+                    "status": 405
+                }
+            ]
+        ]
+    ],
+    [
+        "input sanitized",
+        [
+            {
+                "text": "a",
+                "times": 2
+            },
+            {
+                "text": "a",
+                "times": "x"
+            },
+            null,
+            "raw",
+            {
+                "a": 1
+            },
+            {
+                "text": 5,
+                "times": "2"
+            },
+            {
+                "text": "a",
+                "extra": 1
+            },
+            {
+                "text": "a"
+            }
+        ]
+    ],
+    [
+        "a run",
+        [
+            [
+                "error",
+                "ability_invalid_input",
+                "Ability \"zz/rest-echo\" has invalid input. Reason: input is not of type object.",
+                null
+            ],
+            [
+                "error",
+                "ability_invalid_input",
+                "Ability \"zz/rest-echo\" has invalid input. Reason: input is not of type object.",
+                null
+            ],
+            [
+                200,
+                "ab",
+                [],
+                []
+            ],
+            [
+                200,
+                "read",
+                [],
+                []
+            ],
+            [
+                200,
+                "read",
+                [],
+                []
+            ],
+            [
+                "error",
+                "rest_ability_not_found",
+                "Ability not found.",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                200,
+                "hidden",
+                [],
+                []
+            ],
+            [
+                200,
+                "cdcd",
+                [],
+                []
+            ],
+            [
+                "error",
+                "ability_invalid_input",
+                "Ability \"zz/rest-echo\" has invalid input. Reason: input[times] must be greater than or equal to 1",
+                null
+            ]
+        ]
+    ],
+    [
+        "the routes registered",
+        [
+            {
+                "/wp-abilities/v1": [
+                    {
+                        "methods": {
+                            "GET": true
+                        },
+                        "accept_json": false,
+                        "accept_raw": false,
+                        "show_in_index": true,
+                        "args": {
+                            "namespace": {
+                                "default": "wp-abilities/v1"
+                            },
+                            "context": {
+                                "default": "view"
+                            }
+                        },
+                        "callback": [
+                            "WP_REST_Server",
+                            "get_namespace_index"
+                        ]
+                    }
+                ],
+                "/wp-abilities/v1/abilities": [
+                    {
+                        "methods": {
+                            "GET": true
+                        },
+                        "accept_json": false,
+                        "accept_raw": false,
+                        "show_in_index": true,
+                        "args": {
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "sanitize_callback": "sanitize_key",
+                                "validate_callback": "rest_validate_request_arg",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            },
+                            "page": {
+                                "description": "Current page of the collection.",
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1
+                            },
+                            "per_page": {
+                                "description": "Maximum number of items to be returned in result set.",
+                                "type": "integer",
+                                "default": 50,
+                                "minimum": 1,
+                                "maximum": 100
+                            },
+                            "category": {
+                                "description": "Limit results to abilities in specific ability category.",
+                                "type": "string",
+                                "sanitize_callback": "sanitize_key",
+                                "validate_callback": "rest_validate_request_arg"
+                            },
+                            "namespace": {
+                                "description": "Limit results to abilities in a specific namespace.",
+                                "type": "string",
+                                "sanitize_callback": "sanitize_key",
+                                "validate_callback": "rest_validate_request_arg"
+                            },
+                            "meta": {
+                                "description": "Limit results to abilities matching all of the given meta fields.",
+                                "type": "object",
+                                "properties": {
+                                    "annotations": {
+                                        "description": "Limit results to abilities matching the given behavioral annotations.",
+                                        "type": "object",
+                                        "properties": {
+                                            "readonly": {
+                                                "description": "Whether the ability does not modify its environment.",
+                                                "type": [
+                                                    "boolean",
+                                                    "null"
+                                                ]
+                                            },
+                                            "destructive": {
+                                                "description": "Whether the ability may perform destructive updates to its environment.",
+                                                "type": [
+                                                    "boolean",
+                                                    "null"
+                                                ]
+                                            },
+                                            "idempotent": {
+                                                "description": "Whether repeated calls with the same arguments have no additional effect.",
+                                                "type": [
+                                                    "boolean",
+                                                    "null"
+                                                ]
+                                            }
+                                        },
+                                        "additionalProperties": true
+                                    }
+                                },
+                                "additionalProperties": true
+                            }
+                        },
+                        "callback": [
+                            "WP_REST_Abilities_V1_List_Controller",
+                            "get_items"
+                        ],
+                        "permission_callback": [
+                            "WP_REST_Abilities_V1_List_Controller",
+                            "get_items_permissions_check"
+                        ]
+                    }
+                ],
+                "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+)": [
+                    {
+                        "methods": {
+                            "GET": true
+                        },
+                        "accept_json": false,
+                        "accept_raw": false,
+                        "show_in_index": true,
+                        "args": {
+                            "name": {
+                                "description": "Unique identifier for the ability.",
+                                "type": "string",
+                                "pattern": "^[a-zA-Z0-9\\-\\/]+$"
+                            }
+                        },
+                        "callback": [
+                            "WP_REST_Abilities_V1_List_Controller",
+                            "get_item"
+                        ],
+                        "permission_callback": [
+                            "WP_REST_Abilities_V1_List_Controller",
+                            "get_item_permissions_check"
+                        ]
+                    }
+                ],
+                "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+?)/run": [
+                    {
+                        "methods": {
+                            "GET": true,
+                            "POST": true,
+                            "PUT": true,
+                            "PATCH": true,
+                            "DELETE": true
+                        },
+                        "accept_json": false,
+                        "accept_raw": false,
+                        "show_in_index": true,
+                        "args": {
+                            "name": {
+                                "description": "Unique identifier for the ability.",
+                                "type": "string",
+                                "pattern": "^[a-zA-Z0-9\\-\\/]+$"
+                            },
+                            "input": {
+                                "description": "Input parameters for the ability execution.",
+                                "type": [
+                                    "integer",
+                                    "number",
+                                    "boolean",
+                                    "string",
+                                    "array",
+                                    "object",
+                                    "null"
+                                ],
+                                "default": null,
+                                "sanitize_callback": [
+                                    "WP_REST_Abilities_V1_Run_Controller",
+                                    "sanitize_input_for_ability"
+                                ]
+                            }
+                        },
+                        "callback": [
+                            "WP_REST_Abilities_V1_Run_Controller",
+                            "execute_ability"
+                        ],
+                        "permission_callback": [
+                            "WP_REST_Abilities_V1_Run_Controller",
+                            "check_ability_permissions"
+                        ]
+                    }
+                ],
+                "/wp-abilities/v1/categories": [
+                    {
+                        "methods": {
+                            "GET": true
+                        },
+                        "accept_json": false,
+                        "accept_raw": false,
+                        "show_in_index": true,
+                        "args": {
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "sanitize_callback": "sanitize_key",
+                                "validate_callback": "rest_validate_request_arg",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            },
+                            "page": {
+                                "description": "Current page of the collection.",
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1
+                            },
+                            "per_page": {
+                                "description": "Maximum number of items to be returned in result set.",
+                                "type": "integer",
+                                "default": 50,
+                                "minimum": 1,
+                                "maximum": 100
+                            }
+                        },
+                        "callback": [
+                            "WP_REST_Abilities_V1_Categories_Controller",
+                            "get_items"
+                        ],
+                        "permission_callback": [
+                            "WP_REST_Abilities_V1_Categories_Controller",
+                            "get_items_permissions_check"
+                        ]
+                    }
+                ],
+                "/wp-abilities/v1/categories/(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)": [
+                    {
+                        "methods": {
+                            "GET": true
+                        },
+                        "accept_json": false,
+                        "accept_raw": false,
+                        "show_in_index": true,
+                        "args": {
+                            "slug": {
+                                "description": "Unique identifier for the ability category.",
+                                "type": "string",
+                                "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+                            }
+                        },
+                        "callback": [
+                            "WP_REST_Abilities_V1_Categories_Controller",
+                            "get_item"
+                        ],
+                        "permission_callback": [
+                            "WP_REST_Abilities_V1_Categories_Controller",
+                            "get_item_permissions_check"
+                        ]
+                    }
+                ]
+            },
+            {
+                "/wp-abilities/v1": {
+                    "namespace": "wp-abilities/v1"
+                },
+                "/wp-abilities/v1/abilities": {
+                    "schema": [
+                        "WP_REST_Abilities_V1_List_Controller",
+                        "get_public_item_schema"
+                    ],
+                    "namespace": "wp-abilities/v1"
+                },
+                "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+)": {
+                    "schema": [
+                        "WP_REST_Abilities_V1_List_Controller",
+                        "get_public_item_schema"
+                    ],
+                    "namespace": "wp-abilities/v1"
+                },
+                "/wp-abilities/v1/abilities/(?P<name>[a-zA-Z0-9\\-\\/]+?)/run": {
+                    "schema": [
+                        "WP_REST_Abilities_V1_Run_Controller",
+                        "get_run_schema"
+                    ],
+                    "namespace": "wp-abilities/v1"
+                },
+                "/wp-abilities/v1/categories": {
+                    "schema": [
+                        "WP_REST_Abilities_V1_Categories_Controller",
+                        "get_public_item_schema"
+                    ],
+                    "namespace": "wp-abilities/v1"
+                },
+                "/wp-abilities/v1/categories/(?P<slug>[a-z0-9]+(?:-[a-z0-9]+)*)": {
+                    "schema": [
+                        "WP_REST_Abilities_V1_Categories_Controller",
+                        "get_public_item_schema"
+                    ],
+                    "namespace": "wp-abilities/v1"
+                }
+            }
+        ]
+    ],
+    [
+        "notices",
+        [
+            [
+                "WP_Ability::execute",
+                "Nope."
+            ]
+        ]
+    ]
+]

@@ -7267,3 +7267,59 @@ only; the probe writes nothing.
 - All four classes refuse `serialize()` and `unserialize()` with a
   `LogicException` naming the class. `has_permission()`, which the
   reference doesn't define, was removed.
+
+## The abilities REST controllers (2026-10-09)
+
+Probe `abilities-rest-controllers`
+(`tests/tools/abilities-rest-controllers-probe.php`) calls
+`WP_REST_Abilities_V1_List_Controller`,
+`WP_REST_Abilities_V1_Categories_Controller` and
+`WP_REST_Abilities_V1_Run_Controller` directly, as a plugin would. It also
+reads the routes they register.
+
+- **Who serves the namespace.** The three classes now serve
+  `wp-abilities/v1` over HTTP. `create_initial_rest_routes()` registers
+  them on `rest_api_init`, in the reference's order: categories, run,
+  list. The run route has to come before the item route, because the
+  item route's name pattern would also match `.../run`.
+  `Minn\Rest\AbilitiesController` is gone, and the routes now go through
+  the runtime's server like any plugin's. The namespace index and the run
+  route's OPTIONS answer are byte-identical to the reference.
+- **Schemas** are captured data (`data/rest-schemas.json`, read through
+  `Minn\Rest\SchemaData`), and each controller adds its own callbacks. The
+  run route's `input` argument is sanitized by
+  `sanitize_input_for_ability`.
+- **Lists.** Only abilities shown in REST are listed. They narrow by
+  `category`, `namespace` (the name's prefix) and `meta`, where every field
+  given must match exactly with `===` (`'true'` doesn't match `true`).
+  Lists are paged with `X-WP-Total` and `X-WP-TotalPages` (as strings)
+  and a `Link` header that rebuilds the request's query with the page
+  replaced. A page past the end returns an empty list, still with `prev`
+  set to page − 1. A direct call without `per_page` would divide by zero
+  on the reference; the engine treats it as 1.
+- **Items.** `get_item` refuses an ability hidden from REST
+  (`rest_ability_not_found`). An item's links travel on the response, not
+  in its data. `_fields` doesn't narrow an item's data; it only drops the
+  links unless it names `_links`. Unknown names get no
+  `_doing_it_wrong`.
+- **Reading** needs a signed-in caller: the permission checks return a
+  bare `false` for nobody.
+- **A run is judged in the permission check**, in this order:
+  1. the ability, which must be shown in REST (404);
+  2. the method: GET when read-only, DELETE when destructive and
+     idempotent, otherwise POST (405);
+  3. the input, normalized and validated (400);
+  4. the ability's permission. `false` becomes `rest_ability_cannot_execute`
+     and an error is kept, both at `rest_authorization_required_code()`.
+
+  `execute_ability` only finds the ability (shown in REST or not) and runs
+  it, returning its error unchanged. Input comes from the query on GET
+  and from the JSON body otherwise. `sanitize_input_for_ability` coerces
+  input to the schema only when the input validates; otherwise it leaves
+  the input as given.
+- **Route arguments as registered.** `register_rest_route` no longer
+  writes the default `validate_callback` and `sanitize_callback` into the
+  route table: the reference's table shows an argument as given. The
+  defaults now apply at dispatch (`WP_REST_Request::has_valid_params` and
+  `sanitize_params`), where the reference applies them. This affects
+  every plugin route.

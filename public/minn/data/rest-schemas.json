@@ -1,0 +1,302 @@
+{
+    "ability": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "ability",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "Unique identifier for the ability.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "label": {
+                "description": "Display label for the ability.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "Description of the ability.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "category": {
+                "description": "Ability category this ability belongs to.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "input_schema": {
+                "description": "JSON Schema for the ability input.",
+                "type": "object",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "output_schema": {
+                "description": "JSON Schema for the ability output.",
+                "type": "object",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "meta": {
+                "description": "Meta information about the ability.",
+                "type": "object",
+                "properties": {
+                    "annotations": {
+                        "description": "Behavioral annotations for the ability.",
+                        "type": "object",
+                        "properties": {
+                            "readonly": {
+                                "description": "Whether the ability does not modify its environment.",
+                                "type": [
+                                    "boolean",
+                                    "null"
+                                ]
+                            },
+                            "destructive": {
+                                "description": "Whether the ability may perform destructive updates to its environment.",
+                                "type": [
+                                    "boolean",
+                                    "null"
+                                ]
+                            },
+                            "idempotent": {
+                                "description": "Whether repeated calls with the same arguments have no additional effect.",
+                                "type": [
+                                    "boolean",
+                                    "null"
+                                ]
+                            }
+                        },
+                        "additionalProperties": true
+                    },
+                    "public": {
+                        "description": "Whether the ability is meant to be available to clients such as the REST API, MCP, or AI agents. Defaults to false, but individual channel settings such as show_in_rest can override it.",
+                        "type": "boolean"
+                    }
+                },
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "ability-collection": {
+        "context": {
+            "description": "Scope under which the request is made; determines fields present in response.",
+            "type": "string",
+            "sanitize_callback": "sanitize_key",
+            "validate_callback": "rest_validate_request_arg",
+            "enum": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "default": "view"
+        },
+        "page": {
+            "description": "Current page of the collection.",
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+        },
+        "per_page": {
+            "description": "Maximum number of items to be returned in result set.",
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 100
+        },
+        "category": {
+            "description": "Limit results to abilities in specific ability category.",
+            "type": "string",
+            "sanitize_callback": "sanitize_key",
+            "validate_callback": "rest_validate_request_arg"
+        },
+        "namespace": {
+            "description": "Limit results to abilities in a specific namespace.",
+            "type": "string",
+            "sanitize_callback": "sanitize_key",
+            "validate_callback": "rest_validate_request_arg"
+        },
+        "meta": {
+            "description": "Limit results to abilities matching all of the given meta fields.",
+            "type": "object",
+            "properties": {
+                "annotations": {
+                    "description": "Limit results to abilities matching the given behavioral annotations.",
+                    "type": "object",
+                    "properties": {
+                        "readonly": {
+                            "description": "Whether the ability does not modify its environment.",
+                            "type": [
+                                "boolean",
+                                "null"
+                            ]
+                        },
+                        "destructive": {
+                            "description": "Whether the ability may perform destructive updates to its environment.",
+                            "type": [
+                                "boolean",
+                                "null"
+                            ]
+                        },
+                        "idempotent": {
+                            "description": "Whether repeated calls with the same arguments have no additional effect.",
+                            "type": [
+                                "boolean",
+                                "null"
+                            ]
+                        }
+                    },
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true
+        }
+    },
+    "ability-name": {
+        "description": "Unique identifier for the ability.",
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9\\-\\/]+$"
+    },
+    "ability-category": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "ability-category",
+        "type": "object",
+        "properties": {
+            "slug": {
+                "description": "Unique identifier for the ability category.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "label": {
+                "description": "Display label for the category.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "Description of the category.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "meta": {
+                "description": "Meta information about the category.",
+                "type": "object",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "ability-category-collection": {
+        "context": {
+            "description": "Scope under which the request is made; determines fields present in response.",
+            "type": "string",
+            "sanitize_callback": "sanitize_key",
+            "validate_callback": "rest_validate_request_arg",
+            "enum": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "default": "view"
+        },
+        "page": {
+            "description": "Current page of the collection.",
+            "type": "integer",
+            "default": 1,
+            "minimum": 1
+        },
+        "per_page": {
+            "description": "Maximum number of items to be returned in result set.",
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 100
+        }
+    },
+    "ability-category-slug": {
+        "description": "Unique identifier for the ability category.",
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "ability-execution": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "ability-execution",
+        "type": "object",
+        "properties": {
+            "result": {
+                "description": "The result of the ability execution.",
+                "type": [
+                    "integer",
+                    "number",
+                    "boolean",
+                    "string",
+                    "array",
+                    "object",
+                    "null"
+                ],
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "ability-run-input": {
+        "description": "Input parameters for the ability execution.",
+        "type": [
+            "integer",
+            "number",
+            "boolean",
+            "string",
+            "array",
+            "object",
+            "null"
+        ],
+        "default": null
+    }
+}

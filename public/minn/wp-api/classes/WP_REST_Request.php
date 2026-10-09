@@ -318,7 +318,7 @@ class WP_REST_Request implements ArrayAccess
         if (empty($attributes['args'])) {
             return true;
         }
-        $args = $attributes['args'];
+        $args = self::checked_args($attributes['args']);
         $ordered = [];
         foreach ($this->get_parameter_order() as $type) {
             if (!empty($this->params[$type])) {
@@ -344,7 +344,7 @@ class WP_REST_Request implements ArrayAccess
             }
         }
         $attributes = $this->get_attributes();
-        $args = empty($attributes['args']) ? [] : $attributes['args'];
+        $args = empty($attributes['args']) ? [] : self::checked_args($attributes['args']);
         $refusal = ParamCheck::validate($args, fn (string $key) => $this->get_param($key), function (string $key, $value) use ($args) {
             $verdict = call_user_func($args[$key]['validate_callback'], $value, $this, $key);
             return is_wp_error($verdict) ? [implode(' ', $verdict->get_error_messages()), rest_convert_error_to_response($verdict)->get_data()] : $verdict !== false;
@@ -362,6 +362,18 @@ class WP_REST_Request implements ArrayAccess
             }
         }
         return true;
+    }
+
+    /** The route's arguments as dispatch checks them: an argument without its own callbacks validates and sanitizes by its schema. */
+    private static function checked_args(array $args): array
+    {
+        foreach ($args as $key => $arg) {
+            $arg = (array) $arg;
+            $arg['validate_callback'] ??= 'rest_validate_request_arg';
+            $arg['sanitize_callback'] ??= 'rest_sanitize_request_arg';
+            $args[$key] = $arg;
+        }
+        return $args;
     }
 
     public function offsetExists($offset): bool

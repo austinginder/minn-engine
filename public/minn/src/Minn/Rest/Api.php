@@ -77,7 +77,6 @@ final readonly class Api
         $postsWrite = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $caller);
         $controllers = [
             new IndexController($s->site(), $s->permalinks(), $s->url(), new RouteCatalogue($router, $s->types(), $s->url())),
-            new AbilitiesController($s->url(), $caller),
             new V1Controller($s->db(), $s->notifications(), $s->coreStatus(), new AdminTypes($s->types(), $s->capabilities()), $caller),
             new OverviewController($s->db(), $s->site(), $s->dashboard(), $s->users(), $caller),
             new EditorController($s->writer(), $caller),
