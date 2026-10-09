@@ -686,6 +686,12 @@ class WP_REST_Comments_Controller extends WP_REST_Controller
         return null;
     }
 
+    protected function check_target_post_permission($post_id, $request, $is_note = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_target_post_permission');
+        return null;
+    }
+
     private function check_post_type_supports_notes($post_type)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Comments_Controller::check_post_type_supports_notes');

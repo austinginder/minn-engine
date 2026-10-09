@@ -99,10 +99,6 @@
         "https://embed.spotify.com/oembed/",
         true
     ],
-    "#https?://(.+\\.)?imgur\\.com/.*#i": [
-        "https://api.imgur.com/oembed",
-        true
-    ],
     "#https?://(www\\.)?issuu\\.com/.+/docs/.+#i": [
         "https://issuu.com/oembed_wp",
         true
@@ -135,12 +131,12 @@
         "https://cloudup.com/oembed",
         true
     ],
-    "#https?://(www\\.)?reverbnation\\.com/.*#i": [
-        "https://www.reverbnation.com/oembed",
+    "#https?://((legacy|www)\\.)?reverbnation\\.com/.*#i": [
+        "https://legacy.reverbnation.com/oembed",
         true
     ],
     "#https?://videopress\\.com/v/.*#": [
-        "https://public-api.wordpress.com/oembed/?for=https%3A%2F%2Fminn-engine.localhost",
+        "https://public-api.wordpress.com/oembed/?for={home}",
         true
     ],
     "#https?://(www\\.)?reddit\\.com/r/[^/]+/comments/.*#i": [
@@ -189,18 +185,6 @@
     ],
     "#https?://(www\\.)?z\\.cn/.*#i": [
         "https://read.amazon.cn/kp/api/oembed",
-        true
-    ],
-    "#https?://www\\.someecards\\.com/.+-cards/.+#i": [
-        "https://www.someecards.com/v2/oembed/",
-        true
-    ],
-    "#https?://www\\.someecards\\.com/usercards/viewcard/.+#i": [
-        "https://www.someecards.com/v2/oembed/",
-        true
-    ],
-    "#https?://some\\.ly\\/.+#i": [
-        "https://www.someecards.com/v2/oembed/",
         true
     ],
     "#https?://(www\\.)?tiktok\\.com/.*/video/.*#i": [

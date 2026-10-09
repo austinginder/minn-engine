@@ -15,7 +15,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 103 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 105 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 493 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 120 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
@@ -29,7 +29,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`StylePresets`](#stylepresets) | final class | 161 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 300 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 310 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
@@ -951,6 +951,12 @@ the theme has no such file.
 
 - `@return array<string, mixed>|null`
 
+### `postTypes(string $slug): array`
+
+The post types a custom template declares; none for any other template.
+
+- `@return list<string>`
+
 ### `themeSlug(): string`
 
 The theme the index reads.
@@ -987,7 +993,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 202), `pluginRows()` (private, line 217), `fromRow()` (private, line 226), `fromFile()` (private, line 252), `fromPlugin()` (private, line 274), `fileTitle()` (private, line 299), `savedArea()` (private, line 308)
+Internals: `savedRows()` (private, line 212), `pluginRows()` (private, line 227), `fromRow()` (private, line 236), `fromFile()` (private, line 262), `fromPlugin()` (private, line 284), `fileTitle()` (private, line 309), `savedArea()` (private, line 318)
 
 
 ## TemplatePartTheme

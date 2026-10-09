@@ -198,6 +198,9 @@ final class Router
         if ($this->check !== null) {
             ($this->check)($route, $request, $captures);
         }
+        if ($route->refuse !== null) {
+            ($route->refuse)::refuse($request);
+        }
         if ($route->policy !== null && !$route->policy->isPublic()) {
             ($this->gate)($route->policy, $request, $captures);
         }
@@ -223,6 +226,9 @@ final class Router
         }
         $refusal = null;
         try {
+            if ($matched->route->refuse !== null) {
+                ($matched->route->refuse)::refuse($request);
+            }
             if ($matched->route->policy !== null && !$matched->route->policy->isPublic()) {
                 ($this->gate)($matched->route->policy, $request, $matched->captures);
             }

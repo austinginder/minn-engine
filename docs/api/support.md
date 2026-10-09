@@ -228,7 +228,7 @@ every step as the result), and the symbolic-to-octal permission string
 conversion. The facade class keeps the reference's argument handling and
 maps each operation here.
 
-Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`
+Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`
 
 ### static `octalFromSymbolic(string $mode): string`
 

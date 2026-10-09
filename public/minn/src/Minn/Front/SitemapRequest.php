@@ -10,10 +10,12 @@ use Minn\Theme\Printed;
 /**
  * A sitemap request at template_redirect, as the reference's sitemaps
  * server answers it: a sitemap address asked for another way (the query
- * form, page 0) moves to its own; with the sitemaps off, or a subtype or
- * page that has nothing, the request is a 404 the theme renders; otherwise
- * the stylesheet, the index or the provider's page is printed and the
- * request ends. A provider nobody registered leaves the request alone.
+ * form, page 0) moves to its own; with the sitemaps off, a provider nobody
+ * registered, or a subtype or page that has nothing, the request is a 404
+ * the theme renders; otherwise the stylesheet, the index or the provider's
+ * page is printed and the request ends. Since 7.1.3 this is where a
+ * sitemap page is judged: the main query no longer makes an empty page a
+ * 404 first, so a page a plugin fills past the page count still prints.
  */
 final class SitemapRequest
 {
@@ -63,6 +65,7 @@ final class SitemapRequest
     {
         $provider = $server->registry->get_provider($sitemap);
         if (!$provider instanceof \WP_Sitemaps_Provider) {
+            self::notFound();
             return;
         }
         if ($subtype !== '' && !isset($provider->get_object_subtypes()[$subtype])) {

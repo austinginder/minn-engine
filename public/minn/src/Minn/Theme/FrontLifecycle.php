@@ -68,7 +68,9 @@ final class FrontLifecycle
         }
         $empty = empty($query->posts) && !$query->is_robots() && !$query->is_favicon();
         $bareDate = $query->is_date() && !$query->is_search() && $query->get_queried_object() === null;
-        if (!$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {
+        // A sitemap request is the sitemaps server's to judge at template_redirect, since 7.1.3 (suite sitemap-hooks).
+        $sitemap = (string) $query->get('sitemap') !== '';
+        if (!$sitemap && !$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {
             $query->set_404();
             \status_header(404);
             \nocache_headers();

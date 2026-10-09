@@ -219,6 +219,8 @@ class WP_Widget
 #[AllowDynamicProperties]
 final class WP_Widget_Factory
 {
+    const INSTANCE_KEY_PREFIX = 'spl_object_id:';
+
     public $widgets = [];
 
     public function __construct()
@@ -228,9 +230,9 @@ final class WP_Widget_Factory
 
     public function register($widget)
     {
-        // An instance is keyed by its object id, as the reference keys it (probe widget-factory).
+        // An instance is keyed by its object id behind INSTANCE_KEY_PREFIX, as the reference keys it since 7.1.3 (probe widget-factory).
         if ($widget instanceof WP_Widget) {
-            $this->widgets[spl_object_id($widget)] = $widget;
+            $this->widgets[self::INSTANCE_KEY_PREFIX . spl_object_id($widget)] = $widget;
         } else {
             $this->widgets[$widget] = new $widget();
         }
@@ -239,7 +241,7 @@ final class WP_Widget_Factory
     public function unregister($widget)
     {
         if ($widget instanceof WP_Widget) {
-            unset($this->widgets[spl_object_id($widget)]);
+            unset($this->widgets[self::INSTANCE_KEY_PREFIX . spl_object_id($widget)]);
         } else {
             unset($this->widgets[$widget]);
         }

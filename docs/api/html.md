@@ -5,7 +5,7 @@ the HTML tag processor
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Decoder`](#decoder) | final class | 129 | Character reference decoding for text and attribute values: numeric and |
-| [`Edits`](#edits) | final class | 329 | The edits pending on the current token: attribute sets and removals, |
+| [`Edits`](#edits) | final class | 336 | The edits pending on the current token: attribute sets and removals, |
 | [`Escaped`](#escaped) | final readonly class | 6 | An attribute value that comes already escaped (a URL through esc_url), written as it is. |
 | [`Scanner`](#scanner) | final class | 291 | Reads one token's shape out of raw HTML at an offset: a tag with its |
 | [`TagQuery`](#tagquery) | final readonly class | 37 | A tag processor's next_tag() query: a tag name (any case), a class, the |
@@ -109,6 +109,10 @@ removals gone.
 - `@param list<string> $base`
 - `@return list<string>`
 
+### static `closesComment(string $text): bool`
+
+Whether text holds a comment closer, "-->" or "--!>".
+
 ### `setTextFor(?string $type, ?string $tagName, ?string $commentType, string $text): bool`
 
 Records a text replacement for a token of a kind that takes one: text
@@ -158,7 +162,7 @@ The class names before class edits.
 - `@param list<array{lower: string, value: ?string}> $attributes`
 - `@return list<string>`
 
-Internals: `rebuiltClassValue()` (private, line 238), `existingName()` (private, line 265), `escape()` (private, line 275)
+Internals: `rebuiltClassValue()` (private, line 245), `existingName()` (private, line 272), `escape()` (private, line 282)
 
 
 ## Escaped

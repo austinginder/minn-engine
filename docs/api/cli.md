@@ -6,12 +6,13 @@ the wp verbs the engine answers itself
 |---|---|---|---|
 | [`AssetUpdate`](#assetupdate) | final class | 329 | Shared wording for `wp plugin update` and `wp theme update`. Captured |
 | [`CacheCommand`](#cachecommand) | final class | 15 | `wp cache flush`: the engine has no object cache, so this is a no-op success. |
-| [`Commands`](#commands) | final class | 94 | The verbs the engine answers to. Every one is registered for the |
+| [`Commands`](#commands) | final class | 100 | The verbs the engine answers to. Every one is registered for the |
+| [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
 | [`Installer`](#installer) | final class | 339 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
-| [`MinnCommand`](#minncommand) | final class | 304 | Identifies the engine. |
+| [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
 | [`PluginCommand`](#plugincommand) | final class | 405 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
@@ -81,7 +82,82 @@ addition lands after the bundle and overrides its leaf).
 
 Registers every engine verb with WP-CLI in the phase it runs in.
 
-Internals: `leaf()` (private, line 78), `replace()` (private, line 94)
+Internals: `leaf()` (private, line 84), `replace()` (private, line 100)
+
+
+## CoreCommand
+
+`final class Minn\Cli\CoreCommand` · `public/minn/src/Minn/Cli/CoreCommand.php`
+
+WP-CLI's core verbs where a host's automation meets a Minn site. A Minn
+site has none of WordPress's core files, so a WordPress core update
+neither applies nor may pretend to: `core update` says the site is up to
+date (Minn reports the latest release it speaks) and refuses outright
+when asked for a version or a package, and `core download` is held back
+over a Minn install, since it would put WordPress's files over the
+engine. `core verify-checksums` checks the engine's own files against
+its signed release. Minn's own updater is `wp minn update`.
+
+- const `REFUSAL` = `'This site runs Minn Engine, which keeps WordPress\'s API but none of its core files, so a WordPress core update does not apply. Update Minn instead: wp minn update.'`
+
+Used by: `Minn\Cli\Commands`
+
+### static `update(array $args, array $assocArgs): void`
+
+Says whether WordPress core is up to date; on Minn it always is, and an asked-for version or package is refused.
+
+## OPTIONS
+
+[<zip>]
+: A WordPress package; refused on Minn.
+
+[--minor]
+: Only a minor release.
+
+[--version=<version>]
+: A WordPress version; refused on Minn.
+
+[--force]
+: Refused on Minn.
+
+[--locale=<locale>]
+: Ignored.
+
+[--insecure]
+: Ignored.
+
+- `@param list<string> $args`
+- `@param array<string, string|bool> $assocArgs`
+
+### static `verifyChecksums(array $args, array $assocArgs): void`
+
+Checks the install's files against its signed Minn release, in WP-CLI's own words for the result.
+
+## OPTIONS
+
+[--include-root]
+: Ignored; the webroot's shape files are always checked.
+
+[--version=<version>]
+: Ignored; the running Minn's release is the one checked.
+
+[--locale=<locale>]
+: Ignored.
+
+[--insecure]
+: Ignored.
+
+[--exclude=<files>]
+: Comma-separated paths to leave out of the result.
+
+- `@param list<string> $args`
+- `@param array<string, string|bool> $assocArgs`
+
+### static `guardDownload(): void`
+
+Holds back `core download` over a Minn install unless MINN_ALLOW_CORE_DOWNLOAD is set; `wp minn eject` is the way back to WordPress.
+
+Internals: `root()` (private, line 120), `runsMinn()` (private, line 127)
 
 
 ## CronCommand
@@ -352,6 +428,15 @@ Parks WordPress and installs the engine into a webroot.
 [--force]
 : Install even when preflight is RED.
 
+### `update(array $args, array $assocArgs): void`
+
+Replaces this engine with the latest Minn release from the update service, checked against its signature.
+
+## OPTIONS
+
+[--check]
+: Only say whether a newer release is out.
+
 ### `eject(array $args, array $assocArgs): void`
 
 Removes the engine and puts WordPress's files back.
@@ -406,7 +491,7 @@ resumed here.
 [--theme]
 : Treat the name as a theme rather than a plugin.
 
-Internals: `installer()` (private, line 204), `parkedTree()` (private, line 320), `engineVersion()` (private, line 327)
+Internals: `installer()` (private, line 219), `parkedTree()` (private, line 335), `engineVersion()` (private, line 342)
 
 
 ## OptionCommand

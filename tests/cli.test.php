@@ -259,7 +259,7 @@ foreach (explode("\n", $out) as $line) {
 }
 $check('minn probe plugins is json', isset($probe['plugins']) && is_array(json_decode($probe['plugins'], true)), $probe['plugins'] ?? '');
 $check('minn probe themes is json', isset($probe['themes']) && is_array(json_decode($probe['themes'], true)), $probe['themes'] ?? '');
-$check('minn probe core is the version.php release', ($probe['core'] ?? '') === '7.1', $probe['core'] ?? '');
+$check('minn probe core is the version.php release', ($probe['core'] ?? '') === '7.1.3', $probe['core'] ?? '');
 
 $login = 'minncli' . getmypid();
 [$out, $code] = $run($ENGINE_DIR, "user create {$login} {$login}@example.test --role=author --first_name=Ada --last_name=Lovelace --user_pass=TestPass123! --porcelain");

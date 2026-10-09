@@ -184,6 +184,11 @@ $write = static function (string $name, array $data) use ($out): void {
     if ($json === false || json_last_error() !== JSON_ERROR_NONE) {
         fwrite(STDERR, "{$name}: " . json_last_error_msg() . "\n");
     }
+    // The home folder in a path default is written as ~, so no machine's path lands in the repository.
+    $home = rtrim((string) (getenv('HOME') ?: ''), '/');
+    if ($home !== '') {
+        $json = str_replace(str_replace('/', '\\/', $home) . '\\/', '~\\/', str_replace($home . '/', '~/', (string) $json));
+    }
     file_put_contents("{$out}/{$name}.json", $json . "\n");
     fwrite(STDERR, sprintf("%-14s %6d\n", $name, count($data)));
 };

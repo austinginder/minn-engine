@@ -238,7 +238,12 @@ add_filter('the_permalink_rss', static fn ($p) => $p . '?rss=1');
 $say('the_permalink_rss filtered', $rel($capture(static fn () => the_permalink_rss())));
 wp_reset_postdata();
 $say('wp_validate_boolean', array_map('wp_validate_boolean', [true, false, 'true', 'false', 'FALSE', 'False', '1', '0', 1, 0, '', null, 'yes', 'no', 'off', [], [0], 'null']));
+// Whether Imagick passes its test depends on the host's ImageMagick (7.1.3 accepts this machine's, 7.1 did not),
+// so the case keeps to GD and stays about the chooser.
+$gdOnly = static fn () => ['WP_Image_Editor_GD'];
+add_filter('wp_image_editors', $gdOnly);
 $say('_wp_image_editor_choose', [_wp_image_editor_choose(), _wp_image_editor_choose(['mime_type' => 'image/jpeg']), _wp_image_editor_choose(['mime_type' => 'image/nope']), _wp_image_editor_choose(['methods' => ['nope']])]);
+remove_filter('wp_image_editors', $gdOnly);
 $attachment = get_posts(['post_type' => 'attachment', 'post_status' => 'inherit', 'numberposts' => 1, 'orderby' => 'ID', 'order' => 'ASC', 'post_mime_type' => 'image']);
 $say('wp_image_src_get_dimensions', (static function () use ($attachment) {
     if ($attachment === []) {

@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 773,
-        "composes": 1840,
+        "minn": 774,
+        "composes": 1841,
         "leaf": 876,
-        "noop": 2647,
+        "noop": 2651,
         "placeholder": 242,
-        "deadend": 1664,
-        "functions": 7964,
-        "minnMethods": 938,
+        "deadend": 1662,
+        "functions": 7968,
+        "minnMethods": 939,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -386,33 +386,35 @@
             "composes": []
         },
         "Core_Upgrader::check_files": {
-            "file": "classes/deadends/DeadEnds.php",
-            "lines": 2,
-            "kind": "deadend",
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [],
             "deadend": "admin"
         },
         "Core_Upgrader::should_update_to_version": {
-            "file": "classes/deadends/DeadEnds.php",
-            "lines": 2,
-            "kind": "deadend",
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [],
             "deadend": "admin"
         },
         "Core_Upgrader::upgrade": {
-            "file": "classes/deadends/DeadEnds.php",
-            "lines": 2,
-            "kind": "deadend",
+            "file": "classes/WP_Upgrader.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
-            "composes": [],
+            "composes": [
+                "__"
+            ],
             "deadend": "admin"
         },
         "Core_Upgrader::upgrade_strings": {
-            "file": "classes/deadends/DeadEnds.php",
-            "lines": 2,
-            "kind": "deadend",
+            "file": "classes/WP_Upgrader.php",
+            "lines": 0,
+            "kind": "noop",
             "minn": [],
             "composes": [],
             "deadend": "admin"
@@ -9269,6 +9271,22 @@
             "composes": [],
             "deadend": "customizer"
         },
+        "WP_Customize_Header_Image_Setting::sanitize": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "customizer"
+        },
+        "WP_Customize_Header_Image_Setting::sanitize_choice": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "customizer"
+        },
         "WP_Customize_Header_Image_Setting::update": {
             "file": "classes/deadends/DeadEnds.php",
             "lines": 2,
@@ -13217,10 +13235,15 @@
         },
         "WP_HTML_Tag_Processor::set_modifiable_text": {
             "file": "classes/WP_HTML_Tag_Processor.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Edits::closesComment"
+            ],
+            "composes": [
+                "__",
+                "_doing_it_wrong"
+            ]
         },
         "WP_HTML_Tag_Processor::subdivide_text_appropriately": {
             "file": "classes/WP_HTML_Tag_Processor.php",
@@ -18025,6 +18048,13 @@
             "composes": []
         },
         "WP_REST_Comments_Controller::check_read_post_permission": {
+            "file": "classes/placeholders/Placeholders.php",
+            "lines": 2,
+            "kind": "placeholder",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Comments_Controller::check_target_post_permission": {
             "file": "classes/placeholders/Placeholders.php",
             "lines": 2,
             "kind": "placeholder",
@@ -27193,12 +27223,13 @@
         },
         "WP_oEmbed::__construct": {
             "file": "classes/WP_oEmbed.php",
-            "lines": 14,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "add_filter",
-                "apply_filters"
+                "apply_filters",
+                "home_url"
             ]
         },
         "WP_oEmbed::_add_provider_early": {
@@ -33540,6 +33571,13 @@
                 "wp_filesize"
             ],
             "deadend": "admin"
+        },
+        "_wp_is_template_path_allowed": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "_wp_is_valid_utf8_fallback": {
             "file": "formatting.php",
@@ -41320,7 +41358,7 @@
         },
         "get_custom_header": {
             "file": "custom-header.php",
-            "lines": 23,
+            "lines": 27,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -47683,10 +47721,11 @@
         },
         "locate_template": {
             "file": "template.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_wp_is_template_path_allowed",
                 "get_stylesheet_directory",
                 "get_template_directory",
                 "load_template"
@@ -53826,10 +53865,11 @@
         },
         "stick_post": {
             "file": "post.php",
-            "lines": 7,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "do_action",
                 "get_option",
                 "update_option"
             ]
@@ -55370,10 +55410,11 @@
         },
         "unstick_post": {
             "file": "post.php",
-            "lines": 3,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "do_action",
                 "get_option",
                 "update_option"
             ]
@@ -59792,7 +59833,7 @@
         },
         "wp_delete_post": {
             "file": "post.php",
-            "lines": 27,
+            "lines": 29,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Comments::idsOf",
@@ -59808,6 +59849,7 @@
                 "do_action",
                 "get_object_taxonomies",
                 "get_post",
+                "unstick_post",
                 "wp_delete_attachment",
                 "wp_delete_comment",
                 "wp_delete_object_term_relationships",
@@ -68936,11 +68978,13 @@
         },
         "wp_transition_post_status": {
             "file": "post.php",
-            "lines": 3,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action"
+                "do_action",
+                "get_post_status_object",
+                "post_type_exists"
             ]
         },
         "wp_trash_comment": {
@@ -68955,7 +68999,7 @@
         },
         "wp_trash_post": {
             "file": "post.php",
-            "lines": 23,
+            "lines": 25,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::trash",
@@ -68972,6 +69016,7 @@
                 "clean_post_cache",
                 "do_action",
                 "get_post",
+                "unstick_post",
                 "wp_after_insert_post",
                 "wp_trash_post_comments"
             ]
@@ -69794,11 +69839,16 @@
             ]
         },
         "wp_version_check": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "admin.php",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_locale",
+                "get_site_transient",
+                "set_site_transient",
+                "wp_get_wp_version"
+            ]
         },
         "wp_video_shortcode": {
             "file": "media.php",

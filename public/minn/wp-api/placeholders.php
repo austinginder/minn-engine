@@ -132,9 +132,3 @@ function wp_update_php_annotation($before = '<p class="description">', $after = 
     \Minn\Runtime\PlaceholderTrace::hit('wp_update_php_annotation');
     return null;
 }
-
-function wp_version_check($extra_stats = [], $force_check = false)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_version_check');
-    return null;
-}

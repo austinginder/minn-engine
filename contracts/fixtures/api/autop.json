@@ -1,0 +1,2372 @@
+[
+    [
+        "single fragments",
+        [
+            [
+                "x <pre> y\n\nw",
+                "<p>x </p>\n<pre> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<pre> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </pre> y\n\nw",
+                "<p>x </pre>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </pre>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <pre class=\"x\"> y\n\nw",
+                "<p>x </p>\n<pre class=\"x\"> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<pre class=\"x\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <script> y\n\nw",
+                "<p>x <script> y</p>\n<p>w</p>\n",
+                "<p>x <script> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </script> y\n\nw",
+                "<p>x </script> y</p>\n<p>w</p>\n",
+                "<p>x </script> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <style> y\n\nw",
+                "<p>x </p>\n<style> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<style> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </style> y\n\nw",
+                "<p>x </style>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </style>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <textarea> y\n\nw",
+                "<p>x <textarea> y</p>\n<p>w</p>\n",
+                "<p>x <textarea> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </textarea> y\n\nw",
+                "<p>x </textarea> y</p>\n<p>w</p>\n",
+                "<p>x </textarea> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <!-- y\n\nw",
+                "<p>x <!-- y\n\nw\n</p>\n",
+                "<p>x <!-- y\n\nw\n</p>\n"
+            ],
+            [
+                "x --> y\n\nw",
+                "<p>x --> y</p>\n<p>w</p>\n",
+                "<p>x --> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x --!> y\n\nw",
+                "<p>x --!> y</p>\n<p>w</p>\n",
+                "<p>x --!> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <!-- c --> y\n\nw",
+                "<p>x <!-- c --> y</p>\n<p>w</p>\n",
+                "<p>x <!-- c --> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <!-- wp:paragraph --> y\n\nw",
+                "<p>x <!-- wp:paragraph --> y</p>\n<p>w</p>\n",
+                "<p>x <!-- wp:paragraph --> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <![CDATA[ y\n\nw",
+                "<p>x <![CDATA[ y\n\nw\n</p>\n",
+                "<p>x <![CDATA[ y\n\nw\n</p>\n"
+            ],
+            [
+                "x ]]> y\n\nw",
+                "<p>x ]]> y</p>\n<p>w</p>\n",
+                "<p>x ]]> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <p> y\n\nw",
+                "<p>x </p>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </p> y\n\nw",
+                "<p>x </p>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <br> y\n\nw",
+                "<p>x <br /> y</p>\n<p>w</p>\n",
+                "<p>x <br> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <br/> y\n\nw",
+                "<p>x <br /> y</p>\n<p>w</p>\n",
+                "<p>x <br/> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <br /> y\n\nw",
+                "<p>x <br /> y</p>\n<p>w</p>\n",
+                "<p>x <br /> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <BR> y\n\nw",
+                "<p>x <BR> y</p>\n<p>w</p>\n",
+                "<p>x <BR> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <div> y\n\nw",
+                "<p>x </p>\n<div> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<div> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </div> y\n\nw",
+                "<p>x </p></div>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p></div>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <blockquote> y\n\nw",
+                "<p>x </p>\n<blockquote><p> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<blockquote><p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </blockquote> y\n\nw",
+                "<p>x </p></blockquote>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p></blockquote>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <BLOCKQUOTE> y\n\nw",
+                "<p>x <BLOCKQUOTE> y</p>\n<p>w</p>\n",
+                "<p>x <BLOCKQUOTE> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <ul> y\n\nw",
+                "<p>x </p>\n<ul> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<ul> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </ul> y\n\nw",
+                "<p>x </ul>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </ul>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <li> y\n\nw",
+                "<p>x </p>\n<li> y\n<p>w</p>\n",
+                "<p>x </p>\n<li> y\n<p>w</p>\n"
+            ],
+            [
+                "x </li> y\n\nw",
+                "<p>x </li>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </li>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <h2> y\n\nw",
+                "<p>x </p>\n<h2> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<h2> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </h2> y\n\nw",
+                "<p>x </h2>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </h2>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <table> y\n\nw",
+                "<p>x </p>\n<table> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<table> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </table> y\n\nw",
+                "<p>x </table>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </table>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <tr> y\n\nw",
+                "<p>x </p>\n<tr> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<tr> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <td> y\n\nw",
+                "<p>x </p>\n<td> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<td> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </td> y\n\nw",
+                "<p>x </td>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </td>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <select> y\n\nw",
+                "<p>x <select> y</p>\n<p>w</p>\n",
+                "<p>x <select> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <option> y\n\nw",
+                "<p>x<option> y</p>\n<p>w</p>\n",
+                "<p>x<option> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </option> y\n\nw",
+                "<p>x </option> y</p>\n<p>w</p>\n",
+                "<p>x </option> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <hr> y\n\nw",
+                "<p>x </p>\n<hr>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<hr>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <hr /> y\n\nw",
+                "<p>x </p>\n<hr />\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<hr />\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <figure> y\n\nw",
+                "<p>x </p>\n<figure> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<figure> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <figcaption> y\n\nw",
+                "<p>x<figcaption> y</p>\n<p>w</p>\n",
+                "<p>x<figcaption> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </figcaption> y\n\nw",
+                "<p>x </figcaption>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </figcaption>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <object> y\n\nw",
+                "<p>x <object> y</p>\n<p>w</p>\n",
+                "<p>x <object> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </object> y\n\nw",
+                "<p>x</object> y</p>\n<p>w</p>\n",
+                "<p>x</object> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <param name=\"a\"> y\n\nw",
+                "<p>x <param name=\"a\"> y</p>\n<p>w</p>\n",
+                "<p>x <param name=\"a\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <embed src=\"x\"> y\n\nw",
+                "<p>x <embed src=\"x\"> y</p>\n<p>w</p>\n",
+                "<p>x <embed src=\"x\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <svg> y\n\nw",
+                "<p>x <svg> y</p>\n<p>w</p>\n",
+                "<p>x <svg> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </svg> y\n\nw",
+                "<p>x </svg> y</p>\n<p>w</p>\n",
+                "<p>x </svg> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <math> y\n\nw",
+                "<p>x <math> y</p>\n<p>w</p>\n",
+                "<p>x <math> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </math> y\n\nw",
+                "<p>x </math> y</p>\n<p>w</p>\n",
+                "<p>x </math> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <source src=\"a\"> y\n\nw",
+                "<p>x<source src=\"a\">y</p>\n<p>w</p>\n",
+                "<p>x<source src=\"a\">y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <audio> y\n\nw",
+                "<p>x <audio> y</p>\n<p>w</p>\n",
+                "<p>x <audio> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </audio> y\n\nw",
+                "<p>x </audio> y</p>\n<p>w</p>\n",
+                "<p>x </audio> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <img src=\"i.png\"> y\n\nw",
+                "<p>x <img src=\"i.png\"> y</p>\n<p>w</p>\n",
+                "<p>x <img src=\"i.png\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <a href=\"#\"> y\n\nw",
+                "<p>x <a href=\"#\"> y</p>\n<p>w</p>\n",
+                "<p>x <a href=\"#\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </a> y\n\nw",
+                "<p>x </a> y</p>\n<p>w</p>\n",
+                "<p>x </a> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <a title=\"x\n\ny\"> y\n\nw",
+                "<p>x <a title=\"x\n\ny\"> y</p>\n<p>w</p>\n",
+                "<p>x <a title=\"x\n\ny\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <span> y\n\nw",
+                "<p>x <span> y</p>\n<p>w</p>\n",
+                "<p>x <span> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </span> y\n\nw",
+                "<p>x </span> y</p>\n<p>w</p>\n",
+                "<p>x </span> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x [caption] y\n\nw",
+                "<p>x [caption] y</p>\n<p>w</p>\n",
+                "<p>x [caption] y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x [/caption] y\n\nw",
+                "<p>x [/caption] y</p>\n<p>w</p>\n",
+                "<p>x [/caption] y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x &nbsp; y\n\nw",
+                "<p>x &nbsp; y</p>\n<p>w</p>\n",
+                "<p>x &nbsp; y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x < y\n\nw",
+                "<p>x < y\n\nw\n</p>\n",
+                "<p>x < y\n\nw\n</p>\n"
+            ],
+            [
+                "x > y\n\nw",
+                "<p>x > y</p>\n<p>w</p>\n",
+                "<p>x > y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x \" y\n\nw",
+                "<p>x \" y</p>\n<p>w</p>\n",
+                "<p>x \" y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x text y\n\nw",
+                "<p>x text y</p>\n<p>w</p>\n",
+                "<p>x text y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x Hello world. y\n\nw",
+                "<p>x Hello world. y</p>\n<p>w</p>\n",
+                "<p>x Hello world. y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x \t y\n\nw",
+                "<p>x \t y</p>\n<p>w</p>\n",
+                "<p>x \t y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <p\n\n> y\n\nw",
+                "<p>x </p>\n<p\n\n> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<p\n\n> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <div\nclass=\"z\"> y\n\nw",
+                "<p>x </p>\n<div\nclass=\"z\"> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<div\nclass=\"z\"> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <address> y\n\nw",
+                "<p>x </p>\n<address> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<address> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x </form> y\n\nw",
+                "<p>x </p></form>\n<p> y</p>\n<p>w</p>\n",
+                "<p>x </p></form>\n<p> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <path/> y\n\nw",
+                "<p>x <path/> y</p>\n<p>w</p>\n",
+                "<p>x <path/> y</p>\n<p>w</p>\n"
+            ],
+            [
+                "x <thead> y\n\nw",
+                "<p>x </p>\n<thead> y</p>\n<p>w</p>\n",
+                "<p>x </p>\n<thead> y</p>\n<p>w</p>\n"
+            ]
+        ]
+    ],
+    [
+        "fragments on their own lines",
+        [
+            [
+                "a\n<pre>\nb",
+                "<p>a</p>\n<pre>\nb</p>\n",
+                "<p>a</p>\n<pre>\nb</p>\n"
+            ],
+            [
+                "a\n</pre>\nb",
+                "<p>a\n</pre>\n<p>b</p>\n",
+                "<p>a\n</pre>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<pre class=\"x\">\nb",
+                "<p>a</p>\n<pre class=\"x\">\nb</p>\n",
+                "<p>a</p>\n<pre class=\"x\">\nb</p>\n"
+            ],
+            [
+                "a\n<script>\nb",
+                "<p>a<br />\n<script><br />\nb</p>\n",
+                "<p>a\n<script>\nb</p>\n"
+            ],
+            [
+                "a\n</script>\nb",
+                "<p>a<br />\n</script><br />\nb</p>\n",
+                "<p>a\n</script>\nb</p>\n"
+            ],
+            [
+                "a\n<style>\nb",
+                "<p>a</p>\n<style>\nb</p>\n",
+                "<p>a</p>\n<style>\nb</p>\n"
+            ],
+            [
+                "a\n</style>\nb",
+                "<p>a<br />\n</style>\n<p>b</p>\n",
+                "<p>a\n</style>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<textarea>\nb",
+                "<p>a<br />\n<textarea><br />\nb</p>\n",
+                "<p>a\n<textarea>\nb</p>\n"
+            ],
+            [
+                "a\n</textarea>\nb",
+                "<p>a<br />\n</textarea><br />\nb</p>\n",
+                "<p>a\n</textarea>\nb</p>\n"
+            ],
+            [
+                "a\n<!--\nb",
+                "<p>a<br />\n<!--\nb\n</p>\n",
+                "<p>a\n<!--\nb\n</p>\n"
+            ],
+            [
+                "a\n-->\nb",
+                "<p>a<br />\n--><br />\nb</p>\n",
+                "<p>a\n-->\nb</p>\n"
+            ],
+            [
+                "a\n--!>\nb",
+                "<p>a<br />\n--!><br />\nb</p>\n",
+                "<p>a\n--!>\nb</p>\n"
+            ],
+            [
+                "a\n<!-- c -->\nb",
+                "<p>a<br />\n<!-- c --><br />\nb</p>\n",
+                "<p>a\n<!-- c -->\nb</p>\n"
+            ],
+            [
+                "a\n<!-- wp:paragraph -->\nb",
+                "<p>a<br />\n<!-- wp:paragraph --><br />\nb</p>\n",
+                "<p>a\n<!-- wp:paragraph -->\nb</p>\n"
+            ],
+            [
+                "a\n<![CDATA[\nb",
+                "<p>a<br />\n<![CDATA[\nb\n</p>\n",
+                "<p>a\n<![CDATA[\nb\n</p>\n"
+            ],
+            [
+                "a\n]]>\nb",
+                "<p>a<br />\n]]><br />\nb</p>\n",
+                "<p>a\n]]>\nb</p>\n"
+            ],
+            [
+                "a\n<p>\nb",
+                "<p>a</p>\n<p>\nb</p>\n",
+                "<p>a</p>\n<p>\nb</p>\n"
+            ],
+            [
+                "a\n</p>\nb",
+                "<p>a\n</p>\n<p>b</p>\n",
+                "<p>a\n</p>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<br>\nb",
+                "<p>a<br />\n<br />\nb</p>\n",
+                "<p>a\n<br>\nb</p>\n"
+            ],
+            [
+                "a\n<br/>\nb",
+                "<p>a<br />\n<br />\nb</p>\n",
+                "<p>a\n<br/>\nb</p>\n"
+            ],
+            [
+                "a\n<br />\nb",
+                "<p>a<br />\n<br />\nb</p>\n",
+                "<p>a\n<br />\nb</p>\n"
+            ],
+            [
+                "a\n<BR>\nb",
+                "<p>a<br />\n<BR><br />\nb</p>\n",
+                "<p>a\n<BR>\nb</p>\n"
+            ],
+            [
+                "a\n<div>\nb",
+                "<p>a</p>\n<div>\nb</p>\n",
+                "<p>a</p>\n<div>\nb</p>\n"
+            ],
+            [
+                "a\n</div>\nb",
+                "<p>a\n</p></div>\n<p>b</p>\n",
+                "<p>a\n</p></div>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<blockquote>\nb",
+                "<p>a</p>\n<blockquote><p>\nb</p>\n",
+                "<p>a</p>\n<blockquote><p>\nb</p>\n"
+            ],
+            [
+                "a\n</blockquote>\nb",
+                "<p>a\n</p></blockquote>\n<p>b</p>\n",
+                "<p>a\n</p></blockquote>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<BLOCKQUOTE>\nb",
+                "<p>a<br />\n<BLOCKQUOTE><br />\nb</p>\n",
+                "<p>a\n<BLOCKQUOTE>\nb</p>\n"
+            ],
+            [
+                "a\n<ul>\nb",
+                "<p>a</p>\n<ul>\nb</p>\n",
+                "<p>a</p>\n<ul>\nb</p>\n"
+            ],
+            [
+                "a\n</ul>\nb",
+                "<p>a\n</ul>\n<p>b</p>\n",
+                "<p>a\n</ul>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<li>\nb",
+                "<p>a</p>\n<li>\nb</p>\n",
+                "<p>a</p>\n<li>\nb</p>\n"
+            ],
+            [
+                "a\n</li>\nb",
+                "<p>a\n</li>\n<p>b</p>\n",
+                "<p>a\n</li>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<h2>\nb",
+                "<p>a</p>\n<h2>\nb</p>\n",
+                "<p>a</p>\n<h2>\nb</p>\n"
+            ],
+            [
+                "a\n</h2>\nb",
+                "<p>a<br />\n</h2>\n<p>b</p>\n",
+                "<p>a\n</h2>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<table>\nb",
+                "<p>a</p>\n<table>\nb</p>\n",
+                "<p>a</p>\n<table>\nb</p>\n"
+            ],
+            [
+                "a\n</table>\nb",
+                "<p>a<br />\n</table>\n<p>b</p>\n",
+                "<p>a\n</table>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<tr>\nb",
+                "<p>a</p>\n<tr>\nb</p>\n",
+                "<p>a</p>\n<tr>\nb</p>\n"
+            ],
+            [
+                "a\n<td>\nb",
+                "<p>a</p>\n<td>\nb</p>\n",
+                "<p>a</p>\n<td>\nb</p>\n"
+            ],
+            [
+                "a\n</td>\nb",
+                "<p>a\n</td>\n<p>b</p>\n",
+                "<p>a\n</td>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<select>\nb",
+                "<p>a<br />\n<select><br />\nb</p>\n",
+                "<p>a\n<select>\nb</p>\n"
+            ],
+            [
+                "a\n<option>\nb",
+                "<p>a<option><br />\nb</p>\n",
+                "<p>a<option>\nb</p>\n"
+            ],
+            [
+                "a\n</option>\nb",
+                "<p>a<br />\n</option><br />\nb</p>\n",
+                "<p>a\n</option>\nb</p>\n"
+            ],
+            [
+                "a\n<hr>\nb",
+                "<p>a</p>\n<hr>\n<p>b</p>\n",
+                "<p>a</p>\n<hr>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<hr />\nb",
+                "<p>a</p>\n<hr />\n<p>b</p>\n",
+                "<p>a</p>\n<hr />\n<p>b</p>\n"
+            ],
+            [
+                "a\n<figure>\nb",
+                "<p>a</p>\n<figure>\nb</p>\n",
+                "<p>a</p>\n<figure>\nb</p>\n"
+            ],
+            [
+                "a\n<figcaption>\nb",
+                "<p>a<figcaption>\nb</p>\n",
+                "<p>a<figcaption>\nb</p>\n"
+            ],
+            [
+                "a\n</figcaption>\nb",
+                "<p>a<br />\n</figcaption>\n<p>b</p>\n",
+                "<p>a\n</figcaption>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<object>\nb",
+                "<p>a<br />\n<object><br />\nb</p>\n",
+                "<p>a\n<object>\nb</p>\n"
+            ],
+            [
+                "a\n</object>\nb",
+                "<p>a</object><br />\nb</p>\n",
+                "<p>a</object>\nb</p>\n"
+            ],
+            [
+                "a\n<param name=\"a\">\nb",
+                "<p>a\n<param name=\"a\">\nb</p>\n",
+                "<p>a\n<param name=\"a\">\nb</p>\n"
+            ],
+            [
+                "a\n<embed src=\"x\">\nb",
+                "<p>a<br />\n<embed src=\"x\"><br />\nb</p>\n",
+                "<p>a\n<embed src=\"x\">\nb</p>\n"
+            ],
+            [
+                "a\n<svg>\nb",
+                "<p>a<br />\n<svg><br />\nb</p>\n",
+                "<p>a\n<svg>\nb</p>\n"
+            ],
+            [
+                "a\n</svg>\nb",
+                "<p>a<br />\n</svg><br />\nb</p>\n",
+                "<p>a\n</svg>\nb</p>\n"
+            ],
+            [
+                "a\n<math>\nb",
+                "<p>a<br />\n<math><br />\nb</p>\n",
+                "<p>a\n<math>\nb</p>\n"
+            ],
+            [
+                "a\n</math>\nb",
+                "<p>a<br />\n</math><br />\nb</p>\n",
+                "<p>a\n</math>\nb</p>\n"
+            ],
+            [
+                "a\n<source src=\"a\">\nb",
+                "<p>a<source src=\"a\">b</p>\n",
+                "<p>a<source src=\"a\">b</p>\n"
+            ],
+            [
+                "a\n<audio>\nb",
+                "<p>a<br />\n<audio><br />\nb</p>\n",
+                "<p>a\n<audio>\nb</p>\n"
+            ],
+            [
+                "a\n</audio>\nb",
+                "<p>a<br />\n</audio><br />\nb</p>\n",
+                "<p>a\n</audio>\nb</p>\n"
+            ],
+            [
+                "a\n<img src=\"i.png\">\nb",
+                "<p>a<br />\n<img src=\"i.png\"><br />\nb</p>\n",
+                "<p>a\n<img src=\"i.png\">\nb</p>\n"
+            ],
+            [
+                "a\n<a href=\"#\">\nb",
+                "<p>a<br />\n<a href=\"#\"><br />\nb</p>\n",
+                "<p>a\n<a href=\"#\">\nb</p>\n"
+            ],
+            [
+                "a\n</a>\nb",
+                "<p>a<br />\n</a><br />\nb</p>\n",
+                "<p>a\n</a>\nb</p>\n"
+            ],
+            [
+                "a\n<a title=\"x\n\ny\">\nb",
+                "<p>a<br />\n<a title=\"x\n\ny\"><br />\nb</p>\n",
+                "<p>a\n<a title=\"x\n\ny\">\nb</p>\n"
+            ],
+            [
+                "a\n<span>\nb",
+                "<p>a<br />\n<span><br />\nb</p>\n",
+                "<p>a\n<span>\nb</p>\n"
+            ],
+            [
+                "a\n</span>\nb",
+                "<p>a<br />\n</span><br />\nb</p>\n",
+                "<p>a\n</span>\nb</p>\n"
+            ],
+            [
+                "a\n[caption]\nb",
+                "<p>a<br />\n[caption]<br />\nb</p>\n",
+                "<p>a\n[caption]\nb</p>\n"
+            ],
+            [
+                "a\n[/caption]\nb",
+                "<p>a<br />\n[/caption]<br />\nb</p>\n",
+                "<p>a\n[/caption]\nb</p>\n"
+            ],
+            [
+                "a\n&nbsp;\nb",
+                "<p>a<br />\n&nbsp;<br />\nb</p>\n",
+                "<p>a\n&nbsp;\nb</p>\n"
+            ],
+            [
+                "a\n<\nb",
+                "<p>a<br />\n<\nb\n</p>\n",
+                "<p>a\n<\nb\n</p>\n"
+            ],
+            [
+                "a\n>\nb",
+                "<p>a<br />\n><br />\nb</p>\n",
+                "<p>a\n>\nb</p>\n"
+            ],
+            [
+                "a\n\"\nb",
+                "<p>a<br />\n\"<br />\nb</p>\n",
+                "<p>a\n\"\nb</p>\n"
+            ],
+            [
+                "a\ntext\nb",
+                "<p>a<br />\ntext<br />\nb</p>\n",
+                "<p>a\ntext\nb</p>\n"
+            ],
+            [
+                "a\nHello world.\nb",
+                "<p>a<br />\nHello world.<br />\nb</p>\n",
+                "<p>a\nHello world.\nb</p>\n"
+            ],
+            [
+                "a\n\t\nb",
+                "<p>a</p>\n<p>b</p>\n",
+                "<p>a</p>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<p\n\n>\nb",
+                "<p>a</p>\n<p\n\n><br />\nb</p>\n",
+                "<p>a</p>\n<p\n\n>\nb</p>\n"
+            ],
+            [
+                "a\n<div\nclass=\"z\">\nb",
+                "<p>a</p>\n<div\nclass=\"z\"><br />\nb</p>\n",
+                "<p>a</p>\n<div\nclass=\"z\">\nb</p>\n"
+            ],
+            [
+                "a\n<address>\nb",
+                "<p>a</p>\n<address>\nb</p>\n",
+                "<p>a</p>\n<address>\nb</p>\n"
+            ],
+            [
+                "a\n</form>\nb",
+                "<p>a\n</p></form>\n<p>b</p>\n",
+                "<p>a\n</p></form>\n<p>b</p>\n"
+            ],
+            [
+                "a\n<path/>\nb",
+                "<p>a\n<path/>\nb</p>\n",
+                "<p>a\n<path/>\nb</p>\n"
+            ],
+            [
+                "a\n<thead>\nb",
+                "<p>a</p>\n<thead>\nb</p>\n",
+                "<p>a</p>\n<thead>\nb</p>\n"
+            ]
+        ]
+    ],
+    [
+        "seeded mixes",
+        [
+            [
+                "\r\n<param name=\"a\">",
+                "<param name=\"a\">\n",
+                "<param name=\"a\">\n"
+            ],
+            [
+                "\n<a href=\"#\">\n\n\n<math>word<br/>\n\n\n>\n--!>",
+                "<p><a href=\"#\"></p>\n<p><math>word</p>\n<p>><br />\n--!></p>\n",
+                "<p><a href=\"#\"></p>\n<p><math>word<br/></p>\n<p>>\n--!></p>\n"
+            ],
+            [
+                "\n\n<td>\ntext",
+                "<td>\ntext</p>\n",
+                "<td>\ntext</p>\n"
+            ],
+            [
+                "\n<table> <pre><param name=\"a\">word <div> <figure>\n \n<source src=\"a\">",
+                "<table>\n<pre><param name=\"a\">word </p>\n<div>\n<figure><source src=\"a\"></p>\n",
+                "<table>\n<pre><param name=\"a\">word </p>\n<div>\n<figure><source src=\"a\"></p>\n"
+            ],
+            [
+                "\r\n</object>\n \n</object><svg>",
+                "<p></object></object><svg></p>\n",
+                "<p></object></object><svg></p>\n"
+            ],
+            [
+                "\n \n<br/>word\n\n<ul>word\r\n<audio>word </span>",
+                "<p>word</p>\n<ul>word<br />\n<audio>word </span></p>\n",
+                "<p><br/>word</p>\n<ul>word\n<audio>word </span></p>\n"
+            ],
+            [
+                "\r\n\r\n<object>word\n\n<embed src=\"x\">\n \n</script>word\n \n<path/>\n \n<br />\r\n<param name=\"a\">",
+                "<p><object>word</p>\n<p><embed src=\"x\"></p>\n<p></script>word</p>\n<path/>\n<p>\n<param name=\"a\">\n",
+                "<p><object>word</p>\n<p><embed src=\"x\"></p>\n<p></script>word</p>\n<path/>\n<p>\n<param name=\"a\">\n"
+            ],
+            [
+                "\n \n<pre>word\n\n\n<div\nclass=\"z\">word\n \n<hr>word<textarea>\n]]>word\r\n\r\n<!-- wp:paragraph -->\n\n\n</span>\n\n-->",
+                "<pre>word</p>\n<div\nclass=\"z\">word</p>\n<hr>\n<p>word<textarea><br />\n]]>word</p>\n<p><!-- wp:paragraph --></p>\n<p></span></p>\n<p>--></p>\n",
+                "<pre>word</p>\n<div\nclass=\"z\">word</p>\n<hr>\n<p>word<textarea>\n]]>word</p>\n<p><!-- wp:paragraph --></p>\n<p></span></p>\n<p>--></p>\n"
+            ],
+            [
+                "\n\n[caption]\r\n\r\n<table>word\n\n<!-- wp:paragraph --> <select>word\n\n\n<svg>\r\n<BR>",
+                "<p>[caption]</p>\n<table>word</p>\n<p><!-- wp:paragraph --> <select>word</p>\n<p><svg><br />\n<BR></p>\n",
+                "<p>[caption]</p>\n<table>word</p>\n<p><!-- wp:paragraph --> <select>word</p>\n<p><svg>\n<BR></p>\n"
+            ],
+            [
+                "\n \n</pre><math>\n\n\n</li>\n</table></audio>word\n \n<svg>word\r\n\r\nHello world.word\n\n\n<img src=\"i.png\">",
+                "</pre>\n<p><math></p>\n</li>\n</table>\n<p></audio>word</p>\n<p><svg>word</p>\n<p>Hello world.word</p>\n<p><img src=\"i.png\"></p>\n",
+                "</pre>\n<p><math></p>\n</li>\n</table>\n<p></audio>word</p>\n<p><svg>word</p>\n<p>Hello world.word</p>\n<p><img src=\"i.png\"></p>\n"
+            ],
+            [
+                "\n\n\n<!-- c -->word\n \n<thead>\n \n<pre>\n \n<option>\n\n\n<p\n\n>word </figcaption>",
+                "<p><!-- c -->word</p>\n<thead>\n<pre><option></p>\n<p\n\n>word </figcaption>\n",
+                "<p><!-- c -->word</p>\n<thead>\n<pre><option></p>\n<p\n\n>word </figcaption>\n"
+            ],
+            [
+                "\r\n[/caption]word\r\n[/caption]</script>\n<style>word </table>\n<div>\r\n<img src=\"i.png\">word",
+                "<p>[/caption]word<br />\n[/caption]</script></p>\n<style>word </table>\n<div>\n<img src=\"i.png\">word</p>\n",
+                "<p>[/caption]word\n[/caption]</script></p>\n<style>word </table>\n<div>\n<img src=\"i.png\">word</p>\n"
+            ],
+            [
+                "\r\n\r\n<div> </textarea>\n<p>\r\n<math>word\n\n\n<!-- c -->\n \n<BLOCKQUOTE>\n\n\n<![CDATA[word\nHello world.",
+                "<div> </textarea></p>\n<p>\n<math>word</p>\n<p><!-- c --></p>\n<blockquote>\n<p><![CDATA[word\nHello world.\n</p>\n",
+                "<div> </textarea></p>\n<p>\n<math>word</p>\n<p><!-- c --></p>\n<blockquote>\n<p><![CDATA[word\nHello world.\n</p>\n"
+            ],
+            [
+                "\n<blockquote>\n \n</style>word",
+                "<blockquote>\n</style>\n<p>word</p>\n",
+                "<blockquote>\n</style>\n<p>word</p>\n"
+            ],
+            [
+                "\n\n</li>word",
+                "</li>\n<p>word</p>\n",
+                "</li>\n<p>word</p>\n"
+            ],
+            [
+                "\n \n<li>",
+                "<li>\n",
+                "<li>\n"
+            ],
+            [
+                "\n<select>",
+                "<p><select></p>\n",
+                "<p><select></p>\n"
+            ],
+            [
+                "\n\n<object>",
+                "<p><object></p>\n",
+                "<p><object></p>\n"
+            ],
+            [
+                "\r\n\r\n<source src=\"a\">\n\n\n<li>\n\n<h2>\r\n\r\n<figcaption>word </a>word\r\n\r\n<blockquote>",
+                "<p><source src=\"a\"><li>\n<h2><figcaption>word </a>word</p>\n<blockquote>\n",
+                "<p><source src=\"a\"><li>\n<h2><figcaption>word </a>word</p>\n<blockquote>\n"
+            ],
+            [
+                "\n\n</td>word\n\n\n<BLOCKQUOTE>\r\n<a href=\"#\">word\n<hr />\n\n<br /> </style>word\r\n\r\n</option>",
+                "</td>\n<p>word</p>\n<blockquote><p>\n<a href=\"#\">word</p>\n<hr />\n<p> </style>\n<p>word</p>\n<p></option></p>\n",
+                "</td>\n<p>word</p>\n<blockquote><p>\n<a href=\"#\">word</p>\n<hr />\n<p> </style>\n<p>word</p>\n<p></option></p>\n"
+            ],
+            [
+                "\r\n\r\n</p>\n<\n\n-->word\n<path/>word\n\n\n<!-- wp:paragraph -->\r\n\r\n</li>",
+                "</p>\n<p><\n\n-->word\n<path/>word</p>\n<p><!-- wp:paragraph --></p>\n</li>\n",
+                "</p>\n<p><\n\n-->word\n<path/>word</p>\n<p><!-- wp:paragraph --></p>\n</li>\n"
+            ],
+            [
+                "\r\n\r\n</h2>word <ul>\n \n<h2>\n\n\n</form>\r\n</span>\n<pre class=\"x\">",
+                "</h2>\n<p>word </p>\n<ul>\n<h2>\n</form>\n<p></span></p>\n<pre class=\"x\">\n",
+                "</h2>\n<p>word </p>\n<ul>\n<h2>\n</form>\n<p></span></p>\n<pre class=\"x\">\n"
+            ],
+            [
+                "\n \n<svg>\n\nHello world.word",
+                "<p><svg></p>\n<p>Hello world.word</p>\n",
+                "<p><svg></p>\n<p>Hello world.word</p>\n"
+            ],
+            [
+                "\n\n\n<figcaption>textword\n\n<br/>",
+                "<figcaption>textword</p>\n<p></p>\n",
+                "<figcaption>textword</p>\n<p><br/></p>\n"
+            ],
+            [
+                "\n</textarea>word--!>word\n\n\n<a title=\"x\n\ny\">word\n\n</a>word<div>word",
+                "<p></textarea>word--!>word</p>\n<p><a title=\"x\n\ny\">word</p>\n<p></a>word</p>\n<div>word</p>\n",
+                "<p></textarea>word--!>word</p>\n<p><a title=\"x\n\ny\">word</p>\n<p></a>word</p>\n<div>word</p>\n"
+            ],
+            [
+                "\n\n<path/>word\n \ntext\n\n<source src=\"a\">\n \n</object>word\n<param name=\"a\">\n<li>",
+                "<path/>word</p>\n<p>text<source src=\"a\"></object>word<param name=\"a\"><li>\n",
+                "<path/>word</p>\n<p>text<source src=\"a\"></object>word<param name=\"a\"><li>\n"
+            ],
+            [
+                "\n\n\n<pre class=\"x\">",
+                "<pre class=\"x\">\n",
+                "<pre class=\"x\">\n"
+            ],
+            [
+                "\r\n<!-- c -->\r\n\r\n<BLOCKQUOTE>\n \n<script>\n\n\n<word\n \n--!>\n\n\n</option>",
+                "<p><!-- c --></p>\n<blockquote>\n<p><script></p>\n<p><word\n \n--!></p>\n<p></option></p>\n",
+                "<p><!-- c --></p>\n<blockquote>\n<p><script></p>\n<p><word\n \n--!></p>\n<p></option></p>\n"
+            ],
+            [
+                "\r\n-->",
+                "<p>--></p>\n",
+                "<p>--></p>\n"
+            ],
+            [
+                "\n<ul>word <select>\n\n<pre class=\"x\">\n<p>\r\n<object>\r\n<select>\r\n\r\n<address>word",
+                "<ul>word <select></p>\n<pre class=\"x\">\n<p>\n<object><br />\n<select></p>\n<address>word</p>\n",
+                "<ul>word <select></p>\n<pre class=\"x\">\n<p>\n<object>\n<select></p>\n<address>word</p>\n"
+            ],
+            [
+                "\n\n\n<style>\r\n\r\nHello world.",
+                "<style>\n<p>Hello world.</p>\n",
+                "<style>\n<p>Hello world.</p>\n"
+            ],
+            [
+                "\n-->word\n \n\"\r\n]]>",
+                "<p>-->word</p>\n<p>\"<br />\n]]></p>\n",
+                "<p>-->word</p>\n<p>\"\n]]></p>\n"
+            ],
+            [
+                "\n\n\n</table>\n \n<table>word",
+                "</table>\n<table>word</p>\n",
+                "</table>\n<table>word</p>\n"
+            ],
+            [
+                "\n\n\n<br/>\n\n</svg>",
+                "<p></p>\n<p></svg></p>\n",
+                "<p><br/></p>\n<p></svg></p>\n"
+            ],
+            [
+                "\r\n[/caption]\n\n\n</script>]]>word\r\n\r\n<div>\n \n<table> \"word",
+                "<p>[/caption]</p>\n<p></script>]]>word</p>\n<div>\n<table> \"word</p>\n",
+                "<p>[/caption]</p>\n<p></script>]]>word</p>\n<div>\n<table> \"word</p>\n"
+            ],
+            [
+                "\n<![CDATA[\r\n<hr />\r\n\r\n<path/>word\n\n<!--\n\n\n<div\nclass=\"z\">",
+                "<p><![CDATA[\n\n\n<hr />\n\n\n\n<path/>word\n\n<!--\n\n\n\n\n<div\nclass=\"z\">\n</p>\n",
+                "<p><![CDATA[\n\n\n<hr />\n\n\n\n<path/>word\n\n<!--\n\n\n\n\n<div\nclass=\"z\">\n</p>\n"
+            ],
+            [
+                "\n \n<object>word\n<math>",
+                "<p><object>word<br />\n<math></p>\n",
+                "<p><object>word\n<math></p>\n"
+            ],
+            [
+                "Hello world.\n\n\n<word<br />\n<p>",
+                "<p>Hello world.</p>\n<p><word</p>\n<p>\n",
+                "<p>Hello world.</p>\n<p><word</p>\n<p>\n"
+            ],
+            [
+                "\n]]>word\r\n\r\n<param name=\"a\">word\r\n<tr>\n\n]]>word\n\n<param name=\"a\">word",
+                "<p>]]>word</p>\n<param name=\"a\">word</p>\n<tr>\n<p>]]>word</p>\n<param name=\"a\">word</p>\n",
+                "<p>]]>word</p>\n<param name=\"a\">word</p>\n<tr>\n<p>]]>word</p>\n<param name=\"a\">word</p>\n"
+            ],
+            [
+                "\n\n<div\nclass=\"z\">word\n</li>\n<audio>",
+                "<div\nclass=\"z\">word\n</li>\n<p><audio></p>\n",
+                "<div\nclass=\"z\">word\n</li>\n<p><audio></p>\n"
+            ],
+            [
+                "</style>\n\n</form>word <style>\r\n<path/>word",
+                "</style>\n</form>\n<p>word </p>\n<style>\n<path/>word</p>\n",
+                "</style>\n</form>\n<p>word </p>\n<style>\n<path/>word</p>\n"
+            ],
+            [
+                "\r\n</blockquote>\r\n<img src=\"i.png\">word <thead>word\n\n\n</textarea>word <thead>\r\n\r\n<li>word",
+                "</blockquote>\n<p><img src=\"i.png\">word </p>\n<thead>word</p>\n<p></textarea>word </p>\n<thead>\n<li>word<br />\n",
+                "</blockquote>\n<p><img src=\"i.png\">word </p>\n<thead>word</p>\n<p></textarea>word </p>\n<thead>\n<li>word\n"
+            ],
+            [
+                " <hr>\n\n--!>word\n\n</figcaption> <table>\r\n\r\n<pre>word\n\n<div\nclass=\"z\">",
+                "<br />\n<hr>\n<p>--!>word</p>\n</figcaption>\n<table>\n<pre>word</p>\n<div\nclass=\"z\"></p>\n",
+                "\n<hr>\n<p>--!>word</p>\n</figcaption>\n<table>\n<pre>word</p>\n<div\nclass=\"z\"></p>\n"
+            ],
+            [
+                "\n\n<img src=\"i.png\">word\"word\n\n\n<object>\n \n<thead>",
+                "<p><img src=\"i.png\">word\"word</p>\n<p><object></p>\n<thead>\n",
+                "<p><img src=\"i.png\">word\"word</p>\n<p><object></p>\n<thead>\n"
+            ],
+            [
+                "\n \n<math>\r\n\r\n</option>",
+                "<p><math></p>\n<p></option></p>\n",
+                "<p><math></p>\n<p></option></p>\n"
+            ],
+            [
+                "\n\n\n<li>\n \n</p>word <tr>word",
+                "<li>\n<p>word </p>\n<tr>word</p>\n",
+                "<li>\n<p>word </p>\n<tr>word</p>\n"
+            ],
+            [
+                "\r\n\r\n</textarea>word\n\n</audio>\n</script>word",
+                "<p></textarea>word</p>\n<p></audio><br />\n</script>word</p>\n",
+                "<p></textarea>word</p>\n<p></audio>\n</script>word</p>\n"
+            ],
+            [
+                "[/caption]word\n \n<table>\r\n\r\n<param name=\"a\">word\n\n<script>word <source src=\"a\">",
+                "<p>[/caption]word</p>\n<table>\n<param name=\"a\">word</p>\n<p><script>word<source src=\"a\"></p>\n",
+                "<p>[/caption]word</p>\n<table>\n<param name=\"a\">word</p>\n<p><script>word<source src=\"a\"></p>\n"
+            ],
+            [
+                "\n\n<style>\n<!-- c -->\n\n\n]]>word\r\n\r\n<div>\n\n\n<pre class=\"x\">word\r\n\r\n<script>\r\n</table>\n\"",
+                "<style>\n<!-- c --></p>\n<p>]]>word</p>\n<div>\n<pre class=\"x\">word</p>\n<p><script><br />\n</table>\n<p>\"</p>\n",
+                "<style>\n<!-- c --></p>\n<p>]]>word</p>\n<div>\n<pre class=\"x\">word</p>\n<p><script>\n</table>\n<p>\"</p>\n"
+            ],
+            [
+                "\n \n<\r\n\r\n<embed src=\"x\">word\r\n</li><p\n\n>\r\n\r\n<object>\n\n</math>",
+                "<p><\n\n<embed src=\"x\">word\n</li>\n<p\n\n></p>\n<p><object></p>\n<p></math></p>\n",
+                "<p><\n\n<embed src=\"x\">word\n</li>\n<p\n\n></p>\n<p><object></p>\n<p></math></p>\n"
+            ],
+            [
+                "\n \n[/caption]\r\n\r\n</style><td>\r\n\r\n-->\n\n<a title=\"x\n\ny\">word",
+                "<p>[/caption]</p>\n</style>\n<td>\n<p>--></p>\n<p><a title=\"x\n\ny\">word</p>\n",
+                "<p>[/caption]</p>\n</style>\n<td>\n<p>--></p>\n<p><a title=\"x\n\ny\">word</p>\n"
+            ],
+            [
+                "\r\n</a>\n&nbsp;\r\n\r\n<img src=\"i.png\">word\n\n<div>",
+                "<p></a><br />\n&nbsp;</p>\n<p><img src=\"i.png\">word</p>\n<div>\n",
+                "<p></a>\n&nbsp;</p>\n<p><img src=\"i.png\">word</p>\n<div>\n"
+            ],
+            [
+                "\r\n<select>word <!--word\r\n\r\n<img src=\"i.png\"><h2>\r\n\r\n</span> <path/>word\r\n</option>",
+                "<p><select>word <!--word\n\n<img src=\"i.png\">\n\n<h2>\n\n</span> <path/>word\n</option>\n</p>\n",
+                "<p><select>word <!--word\n\n<img src=\"i.png\">\n\n<h2>\n\n</span> <path/>word\n</option>\n</p>\n"
+            ],
+            [
+                "\n]]> </li>word\n \n</figcaption>\n\n</li>\n\n\n<thead>\n\n<script>\n \n<br>word",
+                "<p>]]> </li>\n<p>word</p>\n</figcaption>\n</li>\n<thead>\n<p><script></p>\n<p>word</p>\n",
+                "<p>]]> </li>\n<p>word</p>\n</figcaption>\n</li>\n<thead>\n<p><script></p>\n<p><br>word</p>\n"
+            ],
+            [
+                "\n \n<hr />",
+                "<hr />\n",
+                "<hr />\n"
+            ],
+            [
+                "\n\n\n<a title=\"x\n\ny\">\n</h2>\n\n</script>word\n\n><figcaption>word\r\n</blockquote> <br /><select>word",
+                "<p><a title=\"x\n\ny\"><br />\n</h2>\n<p></script>word</p>\n<p>><figcaption>word\n</p></blockquote>\n<p><select>word</p>\n",
+                "<p><a title=\"x\n\ny\">\n</h2>\n<p></script>word</p>\n<p>><figcaption>word\n</p></blockquote>\n<p><select>word</p>\n"
+            ],
+            [
+                " &nbsp;word\n-->\r\n</td> <audio>\n \n</ul>\r\n\r\n</p>word\n\n</textarea> \"word",
+                "<p> &nbsp;word<br />\n-->\n</td>\n<p> <audio></p>\n</ul>\n<p>word</p>\n<p></textarea> \"word</p>\n",
+                "<p> &nbsp;word\n-->\n</td>\n<p> <audio></p>\n</ul>\n<p>word</p>\n<p></textarea> \"word</p>\n"
+            ],
+            [
+                "\r\n\r\n[caption] <pre class=\"x\"><thead>word\n\n<figcaption> <![CDATA[word\n</pre>\r\n\r\n<![CDATA[\r\n<!-- wp:paragraph -->",
+                "<p>[caption] </p>\n<pre class=\"x\"><thead>word\n\n<figcaption> <![CDATA[word\n</pre>\n<p><![CDATA[\n<!-- wp:paragraph -->\n</p>\n",
+                "<p>[caption] </p>\n<pre class=\"x\"><thead>word\n\n<figcaption> <![CDATA[word\n</pre>\n<p><![CDATA[\n<!-- wp:paragraph -->\n</p>\n"
+            ],
+            [
+                "\n\n<p\n\n>\n<path/>word\n\n</object>\r\n[caption]word </li> <select> <source src=\"a\">\r\n\r\n<figcaption>word",
+                "<p\n\n>\n<path/>word</object><br />\n[caption]word </li>\n<p> <select><source src=\"a\"><figcaption>word</p>\n",
+                "<p\n\n>\n<path/>word</object>\n[caption]word </li>\n<p> <select><source src=\"a\"><figcaption>word</p>\n"
+            ],
+            [
+                " <script>\n\n<figcaption>",
+                "<p> <script><figcaption>\n",
+                "<p> <script><figcaption>\n"
+            ],
+            [
+                "\n \n\" <embed src=\"x\">",
+                "<p>\" <embed src=\"x\"></p>\n",
+                "<p>\" <embed src=\"x\"></p>\n"
+            ],
+            [
+                "\n \n<pre class=\"x\">-->",
+                "<pre class=\"x\">--></p>\n",
+                "<pre class=\"x\">--></p>\n"
+            ],
+            [
+                "\n \n]]>Hello world.word <p\n\n>\n\n<h2>",
+                "<p>]]>Hello world.word </p>\n<p\n\n></p>\n<h2>\n",
+                "<p>]]>Hello world.word </p>\n<p\n\n></p>\n<h2>\n"
+            ],
+            [
+                "\n\n[/caption]word\r\n<hr>word <hr>\n<br />word\n\n<option>word\r\n<path/>\n<style>",
+                "<p>[/caption]word</p>\n<hr>\n<p>word </p>\n<hr>\n<p>word<option>word\n<path/>\n<style>\n",
+                "<p>[/caption]word</p>\n<hr>\n<p>word </p>\n<hr>\n<p>word<option>word\n<path/>\n<style>\n"
+            ],
+            [
+                "<hr>",
+                "<hr>\n",
+                "<hr>\n"
+            ],
+            [
+                "<svg> <!-- <audio>\n\n</pre>\r\n</a>\n<hr>word",
+                "<p><svg> <!-- <audio>\n\n</pre>\n\n\n</a>\n\n\n<hr>\n\nword\n</p>\n",
+                "<p><svg> <!-- <audio>\n\n</pre>\n\n\n</a>\n\n\n<hr>\n\nword\n</p>\n"
+            ],
+            [
+                " <hr />word",
+                "<br />\n<hr />\n<p>word</p>\n",
+                "\n<hr />\n<p>word</p>\n"
+            ],
+            [
+                "\r\n\r\n<div\nclass=\"z\">word\n \n<!-- wp:paragraph -->",
+                "<div\nclass=\"z\">word</p>\n<p><!-- wp:paragraph --></p>\n",
+                "<div\nclass=\"z\">word</p>\n<p><!-- wp:paragraph --></p>\n"
+            ],
+            [
+                "\n \n<figure>word\n \n<p>word",
+                "<figure>word</p>\n<p>word</p>\n",
+                "<figure>word</p>\n<p>word</p>\n"
+            ],
+            [
+                "\n \n<param name=\"a\">\ntext\n \n<li>word <\n \n<td>\n\n<p>",
+                "<param name=\"a\">\ntext</p>\n<li>word <\n \n\n\n<td>\n<p>\n",
+                "<param name=\"a\">\ntext</p>\n<li>word <\n \n\n\n<td>\n<p>\n"
+            ],
+            [
+                "\n\n</p>word\n\n\n<td>word\n</figcaption>\n\n\n<object>word\r\n\r\n<script>\n\n-->word",
+                "</p>\n<p>word</p>\n<td>word<br />\n</figcaption>\n<p><object>word</p>\n<p><script></p>\n<p>-->word</p>\n",
+                "</p>\n<p>word</p>\n<td>word\n</figcaption>\n<p><object>word</p>\n<p><script></p>\n<p>-->word</p>\n"
+            ],
+            [
+                "\n \n<option></p>word",
+                "<p><option></p>\n<p>word</p>\n",
+                "<p><option></p>\n<p>word</p>\n"
+            ],
+            [
+                "\n<br />word <![CDATA[ <pre>",
+                "<p>word <![CDATA[ \n\n<pre>\n</p>\n",
+                "<p>word <![CDATA[ \n\n<pre>\n</p>\n"
+            ],
+            [
+                "\n \n\t\n<span>",
+                "<p><span></p>\n",
+                "<p><span></p>\n"
+            ],
+            [
+                "\n\n\n<figure> <table>\r\n\r\n</p>word &nbsp;\r\n<ul>\r\n</audio>word--!>",
+                "<figure>\n<table>\n<p>word &nbsp;</p>\n<ul>\n</audio>word--!></p>\n",
+                "<figure>\n<table>\n<p>word &nbsp;</p>\n<ul>\n</audio>word--!></p>\n"
+            ],
+            [
+                "<option>\n<p\n\n>\n[/caption]\n<path/>\n\n\n<p>\n<a href=\"#\">word",
+                "<p><option></p>\n<p\n\n><br />\n[/caption]\n<path/>\n<p>\n<a href=\"#\">word</p>\n",
+                "<p><option></p>\n<p\n\n>\n[/caption]\n<path/>\n<p>\n<a href=\"#\">word</p>\n"
+            ],
+            [
+                "\n</form><select>word\n<textarea>word <pre class=\"x\">\r\n[/caption]word\t\n \n<figcaption>word",
+                "</form>\n<p><select>word<br />\n<textarea>word </p>\n<pre class=\"x\">\n[/caption]word<figcaption>word</p>\n",
+                "</form>\n<p><select>word\n<textarea>word </p>\n<pre class=\"x\">\n[/caption]word<figcaption>word</p>\n"
+            ],
+            [
+                " <img src=\"i.png\"></table>",
+                "<p> <img src=\"i.png\"></table>\n",
+                "<p> <img src=\"i.png\"></table>\n"
+            ],
+            [
+                "\n\n<h2>\n\n\n</form>",
+                "<h2>\n</form>\n",
+                "<h2>\n</form>\n"
+            ],
+            [
+                "\r\n\r\n[caption]\n\n</ul>",
+                "<p>[caption]</p>\n</ul>\n",
+                "<p>[caption]</p>\n</ul>\n"
+            ],
+            [
+                "\n<a href=\"#\">\n\n<style>\r\n</pre>",
+                "<p><a href=\"#\"></p>\n<style>\n</pre>\n",
+                "<p><a href=\"#\"></p>\n<style>\n</pre>\n"
+            ],
+            [
+                "\n</svg>word",
+                "<p></svg>word</p>\n",
+                "<p></svg>word</p>\n"
+            ],
+            [
+                "\n\n\n<figure>\n\n<math>",
+                "<figure>\n<p><math></p>\n",
+                "<figure>\n<p><math></p>\n"
+            ],
+            [
+                "\n\n[caption]</script>word\n\n\n<!-- wp:paragraph -->word\r\n<span>\n</span>word\r\n</table>\n</textarea>\r\n<!--",
+                "<p>[caption]</script>word</p>\n<p><!-- wp:paragraph -->word<br />\n<span><br />\n</span>word<br />\n</table>\n<p></textarea><br />\n<!--\n</p>\n",
+                "<p>[caption]</script>word</p>\n<p><!-- wp:paragraph -->word\n<span>\n</span>word\n</table>\n<p></textarea>\n<!--\n</p>\n"
+            ],
+            [
+                "<a href=\"#\">\n\n\n<source src=\"a\"> </span>word\n \n</a>word</h2>word <!-- c -->\n \n<thead>\r\n\r\n<tr>",
+                "<p><a href=\"#\"><source src=\"a\"></span>word</p>\n<p></a>word</h2>\n<p>word <!-- c --></p>\n<thead>\n<tr>\n",
+                "<p><a href=\"#\"><source src=\"a\"></span>word</p>\n<p></a>word</h2>\n<p>word <!-- c --></p>\n<thead>\n<tr>\n"
+            ],
+            [
+                "\n\n\n<blockquote>\r\n</figcaption> <pre> <thead>\n \n<figure>word <\n\n</h2> <p\n\n>word",
+                "<blockquote></figcaption>\n<pre>\n<thead>\n<figure>word <\n\n</h2>\n<p\n\n>word</p>\n",
+                "<blockquote></figcaption>\n<pre>\n<thead>\n<figure>word <\n\n</h2>\n<p\n\n>word</p>\n"
+            ],
+            [
+                "\r\n</ul>\n<pre class=\"x\"></blockquote>\n\n</option>word --!>word\n\n<blockquote>word",
+                "</ul>\n<pre class=\"x\"></blockquote>\n<p></option>word --!>word</p>\n<blockquote><p>word</p>\n",
+                "</ul>\n<pre class=\"x\"></blockquote>\n<p></option>word --!>word</p>\n<blockquote><p>word</p>\n"
+            ],
+            [
+                " -->word\nHello world.\r\n\r\n<figcaption>word\n\n\n--!> </option>word\n</svg>\r\n\r\n</script>",
+                "<p> -->word<br />\nHello world.<figcaption>word</p>\n<p>--!> </option>word<br />\n</svg></p>\n<p></script></p>\n",
+                "<p> -->word\nHello world.<figcaption>word</p>\n<p>--!> </option>word\n</svg></p>\n<p></script></p>\n"
+            ],
+            [
+                "\n</span>",
+                "<p></span></p>\n",
+                "<p></span></p>\n"
+            ],
+            [
+                "\r\n\r\n<hr />word\n \n<param name=\"a\">word\n\n\n</span>word\r\n\r\n<script>word\n\n</ul>word\n \n</form>",
+                "<hr />\n<p>word</p>\n<param name=\"a\">word</p>\n<p></span>word</p>\n<p><script>word</p>\n</ul>\n<p>word</p>\n</form>\n",
+                "<hr />\n<p>word</p>\n<param name=\"a\">word</p>\n<p></span>word</p>\n<p><script>word</p>\n</ul>\n<p>word</p>\n</form>\n"
+            ],
+            [
+                "\n\n</pre>\n<math>\r\n\r\n<style>\r\n<path/>word",
+                "</pre>\n<p><math></p>\n<style>\n<path/>word</p>\n",
+                "</pre>\n<p><math></p>\n<style>\n<path/>word</p>\n"
+            ],
+            [
+                "\n\nHello world.word <pre class=\"x\">\r\n\r\n</math>\n \n]]>word\n \n<hr />word",
+                "<p>Hello world.word </p>\n<pre class=\"x\">\n<p></math></p>\n<p>]]>word</p>\n<hr />\n<p>word</p>\n",
+                "<p>Hello world.word </p>\n<pre class=\"x\">\n<p></math></p>\n<p>]]>word</p>\n<hr />\n<p>word</p>\n"
+            ],
+            [
+                " <BR> <embed src=\"x\">word\n\n\n<span>\n\n</math>word",
+                "<p> <BR> <embed src=\"x\">word</p>\n<p><span></p>\n<p></math>word</p>\n",
+                "<p> <BR> <embed src=\"x\">word</p>\n<p><span></p>\n<p></math>word</p>\n"
+            ],
+            [
+                "<svg>\r\n</style>word\r\n\r\n>\n<div\nclass=\"z\">word\n\n</td>\r\n\r\n<hr />\r\n\r\n</span>",
+                "<p><svg><br />\n</style>\n<p>word</p>\n<p>></p>\n<div\nclass=\"z\">word</p>\n</td>\n<hr />\n<p></span></p>\n",
+                "<p><svg>\n</style>\n<p>word</p>\n<p>></p>\n<div\nclass=\"z\">word</p>\n</td>\n<hr />\n<p></span></p>\n"
+            ],
+            [
+                "\n\n\nHello world.word </li> \tword",
+                "<p>Hello world.word </li>\n<p> \tword</p>\n",
+                "<p>Hello world.word </li>\n<p> \tword</p>\n"
+            ],
+            [
+                "</object>\r\n\tword\n\n<div\nclass=\"z\">\n<math>\n\n<td>\n\n\n\"",
+                "<p></object><br />\n\tword</p>\n<div\nclass=\"z\"><br />\n<math></p>\n<td>\n<p>\"</p>\n",
+                "<p></object>\n\tword</p>\n<div\nclass=\"z\">\n<math></p>\n<td>\n<p>\"</p>\n"
+            ],
+            [
+                "\r\n</audio> </textarea>word\r\n</blockquote> <div\nclass=\"z\">word\n \n</div>",
+                "<p></audio> </textarea>word\n</p></blockquote>\n<div\nclass=\"z\">word</p>\n</div>\n",
+                "<p></audio> </textarea>word\n</p></blockquote>\n<div\nclass=\"z\">word</p>\n</div>\n"
+            ],
+            [
+                "<p\n\n>word\r\n\r\n<a href=\"#\">\n \n<h2><a href=\"#\">\n\n\n<blockquote>\n\n\n<figcaption>",
+                "<p\n\n>word</p>\n<p><a href=\"#\"></p>\n<h2><a href=\"#\"></p>\n<blockquote><figcaption>\n",
+                "<p\n\n>word</p>\n<p><a href=\"#\"></p>\n<h2><a href=\"#\"></p>\n<blockquote><figcaption>\n"
+            ],
+            [
+                "\n\n\n<style>\n \n<p> <math>\n\n<BLOCKQUOTE>word <a href=\"#\">\n \n</style>Hello world.\n\n<li>",
+                "<style>\n<p> <math></p>\n<blockquote><p>word <a href=\"#\"></p>\n</style>\n<p>Hello world.</p>\n<li>\n",
+                "<style>\n<p> <math></p>\n<blockquote><p>word <a href=\"#\"></p>\n</style>\n<p>Hello world.</p>\n<li>\n"
+            ],
+            [
+                "\r\n\r\n<br> <p>word\n<p\n\n>\n \n>word\n\n</li>",
+                "<p> </p>\n<p>word</p>\n<p\n\n></p>\n<p>>word</p>\n</li>\n",
+                "<p><br> </p>\n<p>word</p>\n<p\n\n></p>\n<p>>word</p>\n</li>\n"
+            ],
+            [
+                "\n\n\n<audio>",
+                "<p><audio></p>\n",
+                "<p><audio></p>\n"
+            ],
+            [
+                "\n \n<path/>\r\n\r\n</div><object>word\n</a>",
+                "<path/>\n</div>\n<p><object>word<br />\n</a></p>\n",
+                "<path/>\n</div>\n<p><object>word\n</a></p>\n"
+            ],
+            [
+                "\n\n\n<div>",
+                "<div>\n",
+                "<div>\n"
+            ],
+            [
+                "\r\n</span>\r\n\r\n</li>\r\n\r\n</div> </style>\n\n<figcaption>word",
+                "<p></span></p>\n</li>\n</div>\n</style><figcaption>word</p>\n",
+                "<p></span></p>\n</li>\n</div>\n</style><figcaption>word</p>\n"
+            ],
+            [
+                "\r\n<style> <thead>\r\n\r\n>word\n<pre class=\"x\">\n<object>\n\n<!-- c -->word\r\n\r\n<!-- wp:paragraph -->",
+                "<style>\n<thead>\n<p>>word</p>\n<pre class=\"x\">\n<object></p>\n<p><!-- c -->word</p>\n<p><!-- wp:paragraph --></p>\n",
+                "<style>\n<thead>\n<p>>word</p>\n<pre class=\"x\">\n<object></p>\n<p><!-- c -->word</p>\n<p><!-- wp:paragraph --></p>\n"
+            ],
+            [
+                "\n \n[/caption]",
+                "<p>[/caption]</p>\n",
+                "<p>[/caption]</p>\n"
+            ],
+            [
+                "\r\n\r\n</p>\r\n\t\n \n<img src=\"i.png\"><p\n\n>word",
+                "</p>\n<p><img src=\"i.png\"></p>\n<p\n\n>word</p>\n",
+                "</p>\n<p><img src=\"i.png\"></p>\n<p\n\n>word</p>\n"
+            ],
+            [
+                "\r\n\r\n<",
+                "<p><\n</p>\n",
+                "<p><\n</p>\n"
+            ],
+            [
+                "<div></object>\n \n</option>\r\n<br/>\n\n<p\n\n><path/>\r\n\r\n<div\nclass=\"z\">\n \n&nbsp;word",
+                "<div></object></p>\n<p></option><br />\n</p>\n<p\n\n><path/>\n<div\nclass=\"z\"></p>\n<p>&nbsp;word</p>\n",
+                "<div></object></p>\n<p></option>\n<br/></p>\n<p\n\n><path/>\n<div\nclass=\"z\"></p>\n<p>&nbsp;word</p>\n"
+            ],
+            [
+                "</td>\n</ul>word\r\n</object><svg>\n\n\n<select>\n\n</span>\n\n</svg>\r\n</span>",
+                "</td>\n</ul>\n<p>word</object><svg></p>\n<p><select></p>\n<p></span></p>\n<p></svg><br />\n</span></p>\n",
+                "</td>\n</ul>\n<p>word</object><svg></p>\n<p><select></p>\n<p></span></p>\n<p></svg>\n</span></p>\n"
+            ],
+            [
+                "\n</math>\n\n</object> <embed src=\"x\">word<p\n\n><li>",
+                "<p></math></object><embed src=\"x\">word</p>\n<p\n\n></p>\n<li>\n",
+                "<p></math></object><embed src=\"x\">word</p>\n<p\n\n></p>\n<li>\n"
+            ],
+            [
+                "\n\n\n<ul>word\n<BR>word<path/>\r\n\r\n<script>\r\n<pre class=\"x\">\n<![CDATA[",
+                "<ul>word<br />\n<BR>word<path/>\n<p><script></p>\n<pre class=\"x\">\n<![CDATA[\n</p>\n",
+                "<ul>word\n<BR>word<path/>\n<p><script></p>\n<pre class=\"x\">\n<![CDATA[\n</p>\n"
+            ],
+            [
+                "\n</span></blockquote>",
+                "<p></span></p></blockquote>\n",
+                "<p></span></p></blockquote>\n"
+            ],
+            [
+                "\n<script>\n</script>\r\n\r\n<table>\n\n\n<address>\n\n\"",
+                "<p><script>\n</script></p>\n<table>\n<address>\n<p>\"</p>\n",
+                "<p><script>\n</script></p>\n<table>\n<address>\n<p>\"</p>\n"
+            ],
+            [
+                "\r\n</blockquote>\n<param name=\"a\">\n<table>word\r\n\r\n<p\n\n>\r\n\r\n<![CDATA[\r\n\r\n</table>\n \n</a> </object>",
+                "</blockquote><param name=\"a\"><table>word</p>\n<p\n\n></p>\n<p><![CDATA[\n\n</table>\n\n\n \n</a></object>\n</p>\n",
+                "</blockquote><param name=\"a\"><table>word</p>\n<p\n\n></p>\n<p><![CDATA[\n\n</table>\n\n\n \n</a></object>\n</p>\n"
+            ],
+            [
+                "\r\n<select>word\n \n<pre>\n\n<thead>word\n \n[caption]\n\n[/caption]\r\n]]><span>",
+                "<p><select>word</p>\n<pre>\n<thead>word</p>\n<p>[caption]</p>\n<p>[/caption]<br />\n]]><span></p>\n",
+                "<p><select>word</p>\n<pre>\n<thead>word</p>\n<p>[caption]</p>\n<p>[/caption]\n]]><span></p>\n"
+            ],
+            [
+                "\n<path/>word\"\n\n\n[caption]word",
+                "<path/>word\"</p>\n<p>[caption]word</p>\n",
+                "<path/>word\"</p>\n<p>[caption]word</p>\n"
+            ],
+            [
+                "\n<BLOCKQUOTE>word <svg>\n \n<figure>\n \n<address>--!> </blockquote>\n\n\n<br/>",
+                "<blockquote><p>word <svg></p>\n<figure>\n<address>--!> </p></blockquote>\n<p></p>\n",
+                "<blockquote><p>word <svg></p>\n<figure>\n<address>--!> </p></blockquote>\n<p><br/></p>\n"
+            ],
+            [
+                "\r\n<td>\n\n<thead>word\n\n[/caption]\r\n<br>\r\n</div>",
+                "<td>\n<thead>word</p>\n<p>[/caption]<br />\n\n</div>\n",
+                "<td>\n<thead>word</p>\n<p>[/caption]\n<br>\n</div>\n"
+            ],
+            [
+                "\n\n</div>word <tr>\r\n\r\n<pre class=\"x\"> &nbsp;\n \n<a href=\"#\">\n \n]]>",
+                "</div>\n<p>word </p>\n<tr>\n<pre class=\"x\"> &nbsp;</p>\n<p><a href=\"#\"></p>\n<p>]]></p>\n",
+                "</div>\n<p>word </p>\n<tr>\n<pre class=\"x\"> &nbsp;</p>\n<p><a href=\"#\"></p>\n<p>]]></p>\n"
+            ],
+            [
+                "<img src=\"i.png\">word\n\n\n]]> <BLOCKQUOTE><\n\n<tr>word\n \n</option>word",
+                "<p><img src=\"i.png\">word</p>\n<p>]]> <BLOCKQUOTE><\n\n\n\n<tr>word</p>\n<p></option>word</p>\n",
+                "<p><img src=\"i.png\">word</p>\n<p>]]> <BLOCKQUOTE><\n\n\n\n<tr>word</p>\n<p></option>word</p>\n"
+            ],
+            [
+                "\n\nHello world.word",
+                "<p>Hello world.word</p>\n",
+                "<p>Hello world.word</p>\n"
+            ],
+            [
+                "\r\n</blockquote>",
+                "</blockquote>\n",
+                "</blockquote>\n"
+            ],
+            [
+                "\n<tr>",
+                "<tr>\n",
+                "<tr>\n"
+            ],
+            [
+                "\n\n\n<div\nclass=\"z\">\n-->word\r\n\r\n</pre>word<tr>word\r\n<param name=\"a\">\n\n\n<!--\n</script>",
+                "<div\nclass=\"z\"><br />\n-->word</p>\n</pre>\n<p>word</p>\n<tr>word\n<param name=\"a\">\n<p><!--\n</script>\n</p>\n",
+                "<div\nclass=\"z\">\n-->word</p>\n</pre>\n<p>word</p>\n<tr>word\n<param name=\"a\">\n<p><!--\n</script>\n</p>\n"
+            ],
+            [
+                "\n \n<div>\n \n<object>word</a>word\n \n<object>\r\n\"\r\n\r\n[/caption]\n \n<pre>",
+                "<div>\n<p><object>word</a>word</p>\n<p><object><br />\n\"</p>\n<p>[/caption]</p>\n<pre>\n",
+                "<div>\n<p><object>word</a>word</p>\n<p><object>\n\"</p>\n<p>[/caption]</p>\n<pre>\n"
+            ],
+            [
+                "\r\n\r\n<pre class=\"x\">\n</style><img src=\"i.png\">\n \nHello world. </textarea>\n\n<ul>word\ntext <![CDATA[",
+                "<pre class=\"x\">\n</style>\n<p><img src=\"i.png\"></p>\n<p>Hello world. </textarea></p>\n<ul>word<br />\ntext <![CDATA[\n</p>\n",
+                "<pre class=\"x\">\n</style>\n<p><img src=\"i.png\"></p>\n<p>Hello world. </textarea></p>\n<ul>word\ntext <![CDATA[\n</p>\n"
+            ],
+            [
+                " <style>word<span>\r\n\r\n<img src=\"i.png\">\n\ntext\r\nHello world.",
+                "<br />\n<style>word<span></p>\n<p><img src=\"i.png\"></p>\n<p>text<br />\nHello world.</p>\n",
+                "\n<style>word<span></p>\n<p><img src=\"i.png\"></p>\n<p>text\nHello world.</p>\n"
+            ],
+            [
+                "\n\n<a title=\"x\n\ny\">word <p\n\n>\r\n\r\n<!--word\n\n\n<table>\n</figcaption>word\r\n\r\n<br>\n<textarea>word",
+                "<p><a title=\"x\n\ny\">word </p>\n<p\n\n></p>\n<p><!--word\n\n\n\n\n<table>\n</figcaption>\n\nword\n\n<br />\n<textarea>word\n</p>\n",
+                "<p><a title=\"x\n\ny\">word </p>\n<p\n\n></p>\n<p><!--word\n\n\n\n\n<table>\n</figcaption>\n\nword\n\n<br>\n<textarea>word\n</p>\n"
+            ],
+            [
+                " <ul>word\r\n<div\nclass=\"z\"> <style> <a title=\"x\n\ny\">word\n\n\n</pre>word<br />\n\n\n-->word",
+                "\n<ul>word</p>\n<div\nclass=\"z\"> </p>\n<style> <a title=\"x\n\ny\">word</p>\n</pre>\n<p>word</p>\n<p>-->word</p>\n",
+                "\n<ul>word</p>\n<div\nclass=\"z\"> </p>\n<style> <a title=\"x\n\ny\">word</p>\n</pre>\n<p>word</p>\n<p>-->word</p>\n"
+            ],
+            [
+                "<p>\n\n<p>\r\n\r\n<address>\r\n\r\n</object>word<td>word\n<pre>word\r\n<figure> </svg>",
+                "<p>\n<address></object>word</p>\n<td>word</p>\n<pre>word</p>\n<figure> </svg></p>\n",
+                "<p>\n<address></object>word</p>\n<td>word</p>\n<pre>word</p>\n<figure> </svg></p>\n"
+            ],
+            [
+                " </textarea>word\n \n<script><style>word\n<svg>\n\n--!> <svg>\n&nbsp;",
+                "<p> </textarea>word</p>\n<p><script></p>\n<style>word<br />\n<svg></p>\n<p>--!> <svg><br />\n&nbsp;</p>\n",
+                "<p> </textarea>word</p>\n<p><script></p>\n<style>word\n<svg></p>\n<p>--!> <svg>\n&nbsp;</p>\n"
+            ],
+            [
+                "\n\n<!-- c -->\n\n\n<style>word &nbsp;\r\n</a>word",
+                "<p><!-- c --></p>\n<style>word &nbsp;<br />\n</a>word</p>\n",
+                "<p><!-- c --></p>\n<style>word &nbsp;\n</a>word</p>\n"
+            ],
+            [
+                "\n\n<br>\r\n<p>\r\n<div\nclass=\"z\">\n\n&nbsp;word",
+                "<p></p>\n<p><div\nclass=\"z\"></p>\n<p>&nbsp;word</p>\n",
+                "<p><br></p>\n<p><div\nclass=\"z\"></p>\n<p>&nbsp;word</p>\n"
+            ],
+            [
+                "\r\n<div\nclass=\"z\">",
+                "<div\nclass=\"z\"></p>\n",
+                "<div\nclass=\"z\"></p>\n"
+            ],
+            [
+                "\r\n</li>\n<BR>\n \n<object>\r\n\r\n<br></textarea>word </style>word\r\n\r\n<td>",
+                "</li>\n<p><BR></p>\n<p><object></p>\n<p></textarea>word </style>\n<p>word</p>\n<td>\n",
+                "</li>\n<p><BR></p>\n<p><object></p>\n<p><br></textarea>word </style>\n<p>word</p>\n<td>\n"
+            ],
+            [
+                "\n\n</form>\r\n</h2>\n\n</option>\n\n<figure>word <a href=\"#\">word<script>\n\n<div\nclass=\"z\">",
+                "</form>\n</h2>\n<p></option></p>\n<figure>word <a href=\"#\">word<script></p>\n<div\nclass=\"z\"></p>\n",
+                "</form>\n</h2>\n<p></option></p>\n<figure>word <a href=\"#\">word<script></p>\n<div\nclass=\"z\"></p>\n"
+            ],
+            [
+                "\r\n\r\nHello world.\r\n<!-- wp:paragraph -->word\n<option>\n</p>",
+                "<p>Hello world.<br />\n<!-- wp:paragraph -->word<option></p>\n",
+                "<p>Hello world.\n<!-- wp:paragraph -->word<option></p>\n"
+            ],
+            [
+                "</script>word\r\n<thead>\n<!-- c -->\n<br/>",
+                "<p></script>word</p>\n<thead>\n<!-- c --><br /></p>\n",
+                "<p></script>word</p>\n<thead>\n<!-- c -->\n<br/></p>\n"
+            ],
+            [
+                "\r\n<object>\r\n</li>word\r\n\r\n<h2>word\r\n\r\n<hr> </textarea>word\n\n\n]]>\n \n<BLOCKQUOTE>word",
+                "<p><object>\n</li>\n<p>word</p>\n<h2>word</p>\n<hr>\n<p> </textarea>word</p>\n<p>]]></p>\n<blockquote><p>word</p>\n",
+                "<p><object>\n</li>\n<p>word</p>\n<h2>word</p>\n<hr>\n<p> </textarea>word</p>\n<p>]]></p>\n<blockquote><p>word</p>\n"
+            ],
+            [
+                "\n \n</div>\n\n\n<!-- wp:paragraph -->word\n \n</script>\n \n<ul>word\n<address>word\r\n\r\n</p>\n</textarea>word\n\n\n<option>",
+                "</div>\n<p><!-- wp:paragraph -->word</p>\n<p></script></p>\n<ul>word</p>\n<address>word</p>\n<p></textarea>word<option></p>\n",
+                "</div>\n<p><!-- wp:paragraph -->word</p>\n<p></script></p>\n<ul>word</p>\n<address>word</p>\n<p></textarea>word<option></p>\n"
+            ],
+            [
+                "\n<div\nclass=\"z\">\n\n\n<br/>word\n<span>\r\n<textarea>\r\n</pre>",
+                "<div\nclass=\"z\"></p>\n<p>word<br />\n<span><br />\n<textarea>\n</pre>\n",
+                "<div\nclass=\"z\"></p>\n<p><br/>word\n<span>\n<textarea>\n</pre>\n"
+            ],
+            [
+                "</style> <img src=\"i.png\">\r\n\r\n<option>word </li>word\n<div>",
+                "</style>\n<p> <img src=\"i.png\"><option>word </li>\n<p>word</p>\n<div>\n",
+                "</style>\n<p> <img src=\"i.png\"><option>word </li>\n<p>word</p>\n<div>\n"
+            ],
+            [
+                "\r\n\r\n<a title=\"x\n\ny\">\n</math></span>",
+                "<p><a title=\"x\n\ny\"><br />\n</math></span></p>\n",
+                "<p><a title=\"x\n\ny\">\n</math></span></p>\n"
+            ],
+            [
+                "\n\n</textarea>\n\n\n<li>word",
+                "<p></textarea></p>\n<li>word<br />\n",
+                "<p></textarea></p>\n<li>word\n"
+            ],
+            [
+                "\n\n<div>word\n \n</script>\r\n\r\n<audio>word <param name=\"a\">\n\n\n-->\r\n\r\n</textarea>word<object>\r\n\r\n</table>",
+                "<div>word</p>\n<p></script></p>\n<p><audio>word <param name=\"a\">\n<p>--></p>\n<p></textarea>word<object></p>\n</table>\n",
+                "<div>word</p>\n<p></script></p>\n<p><audio>word <param name=\"a\">\n<p>--></p>\n<p></textarea>word<object></p>\n</table>\n"
+            ],
+            [
+                "\n\n<p>\n \n<!-- c -->word\n\n\n<object>\n<a title=\"x\n\ny\"></ul>word\n \n<",
+                "<p><!-- c -->word</p>\n<p><object><br />\n<a title=\"x\n\ny\"></ul>\n<p>word</p>\n<p><\n</p>\n",
+                "<p><!-- c -->word</p>\n<p><object>\n<a title=\"x\n\ny\"></ul>\n<p>word</p>\n<p><\n</p>\n"
+            ],
+            [
+                " <span>word<svg>word\n\n\n<address>word\n \n<br/>\r\n\r\n</textarea>",
+                "<p> <span>word<svg>word</p>\n<address>word</p>\n<p></p>\n<p></textarea></p>\n",
+                "<p> <span>word<svg>word</p>\n<address>word</p>\n<p><br/></p>\n<p></textarea></p>\n"
+            ],
+            [
+                "\r\n\r\n--> <textarea>\n \n<div\nclass=\"z\">\r\n</pre>\n\n\t\r\n\r\n</blockquote>word",
+                "<p>--> <textarea></p>\n<div\nclass=\"z\">\n</pre>\n</blockquote>\n<p>word</p>\n",
+                "<p>--> <textarea></p>\n<div\nclass=\"z\">\n</pre>\n</blockquote>\n<p>word</p>\n"
+            ],
+            [
+                "\r\n<div\nclass=\"z\">word\n\n<blockquote>\n\n\n<svg> </textarea>",
+                "<div\nclass=\"z\">word</p>\n<blockquote>\n<p><svg> </textarea></p>\n",
+                "<div\nclass=\"z\">word</p>\n<blockquote>\n<p><svg> </textarea></p>\n"
+            ],
+            [
+                "<script>\r\n\r\n<div\nclass=\"z\">\n\n\n<select> </textarea>word\r\n<style>\n \n</ul>",
+                "<p><script></p>\n<div\nclass=\"z\"></p>\n<p><select> </textarea>word</p>\n<style>\n</ul>\n",
+                "<p><script></p>\n<div\nclass=\"z\"></p>\n<p><select> </textarea>word</p>\n<style>\n</ul>\n"
+            ],
+            [
+                "\n<math> <![CDATA[\r\n</blockquote>word\r\n<img src=\"i.png\">",
+                "<p><math> <![CDATA[\n</blockquote>\n\nword\n<img src=\"i.png\">\n</p>\n",
+                "<p><math> <![CDATA[\n</blockquote>\n\nword\n<img src=\"i.png\">\n</p>\n"
+            ],
+            [
+                "\n \n\"\n\n<option>\n\n\n<blockquote>",
+                "<p>\"<option></p>\n<blockquote>\n",
+                "<p>\"<option></p>\n<blockquote>\n"
+            ],
+            [
+                "\n\n<\n\n\n\"",
+                "<p><\n\n\n\"\n</p>\n",
+                "<p><\n\n\n\"\n</p>\n"
+            ],
+            [
+                "\r\n<audio>\r\n<ul>\n\n<script>word\n\n\n<li>word\r\n\r\n<select>\r\n\r\n</span>\n\n\ntext",
+                "<p><audio></p>\n<ul>\n<p><script>word</p>\n<li>word\n<p><select></p>\n<p></span></p>\n<p>text</p>\n",
+                "<p><audio></p>\n<ul>\n<p><script>word</p>\n<li>word\n<p><select></p>\n<p></span></p>\n<p>text</p>\n"
+            ],
+            [
+                "\n<!-- c -->word\n\n<span>word >\n\n<math>\n</a>word\r\ntext<script></ul>",
+                "<p><!-- c -->word</p>\n<p><span>word ></p>\n<p><math><br />\n</a>word<br />\ntext<script></ul>\n",
+                "<p><!-- c -->word</p>\n<p><span>word ></p>\n<p><math>\n</a>word\ntext<script></ul>\n"
+            ],
+            [
+                "</object>\n\n<pre class=\"x\">word\n\n<object>word\n\n<embed src=\"x\">word\n \n<hr />word </object>",
+                "<p></object></p>\n<pre class=\"x\">word</p>\n<p><object>word<embed src=\"x\">word</p>\n<hr />\n<p>word</object></p>\n",
+                "<p></object></p>\n<pre class=\"x\">word</p>\n<p><object>word<embed src=\"x\">word</p>\n<hr />\n<p>word</object></p>\n"
+            ],
+            [
+                "\n\n<script>",
+                "<p><script></p>\n",
+                "<p><script></p>\n"
+            ],
+            [
+                "\n \n</audio>",
+                "<p></audio></p>\n",
+                "<p></audio></p>\n"
+            ],
+            [
+                "\n \n><hr>\n \nHello world.",
+                "<p>></p>\n<hr>\n<p>Hello world.</p>\n",
+                "<p>></p>\n<hr>\n<p>Hello world.</p>\n"
+            ],
+            [
+                "\r\n<audio>\r\n\r\n<div\nclass=\"z\">\r\n<li>\n\n<p>word\n\n\n</ul> <hr />",
+                "<p><audio></p>\n<div\nclass=\"z\"></p>\n<li>\n<p>word</p>\n</ul>\n<hr />\n",
+                "<p><audio></p>\n<div\nclass=\"z\"></p>\n<li>\n<p>word</p>\n</ul>\n<hr />\n"
+            ],
+            [
+                "\n\n<img src=\"i.png\">\n \n</script>\r\n>\r\n\r\n<br>",
+                "<p><img src=\"i.png\"></p>\n<p></script><br />\n></p>\n<p></p>\n",
+                "<p><img src=\"i.png\"></p>\n<p></script>\n></p>\n<p><br></p>\n"
+            ],
+            [
+                "]]> <!--word\n \n<path/>\r\n</p>\r\n<h2>word\n\ntextword\n>\n\n<select>word",
+                "<p>]]> <!--word\n \n<path/>\n</p>\n\n\n\n\n<h2>word\n\ntextword\n>\n\n<select>word\n</p>\n",
+                "<p>]]> <!--word\n \n<path/>\n</p>\n\n\n\n\n<h2>word\n\ntextword\n>\n\n<select>word\n</p>\n"
+            ],
+            [
+                "\r\n<select>\r\n\r\n<br>word\n \n</style> <style>word\r\n</a>word",
+                "<p><select></p>\n<p>word</p>\n</style>\n<style>word<br />\n</a>word</p>\n",
+                "<p><select></p>\n<p><br>word</p>\n</style>\n<style>word\n</a>word</p>\n"
+            ],
+            [
+                "\r\n\r\n<source src=\"a\">\n<!--\n \nHello world. </script>\n \n</script>word\n\n\n</style>word",
+                "<p><source src=\"a\"><!--\n \nHello world. </script>\n \n</script>word\n\n\n</style>\n\nword\n</p>\n",
+                "<p><source src=\"a\"><!--\n \nHello world. </script>\n \n</script>word\n\n\n</style>\n\nword\n</p>\n"
+            ],
+            [
+                " <object>\n\n<blockquote>word</div>\n\n<a href=\"#\">word",
+                "<p> <object></p>\n<blockquote><p>word</div>\n<p><a href=\"#\">word</p>\n",
+                "<p> <object></p>\n<blockquote><p>word</div>\n<p><a href=\"#\">word</p>\n"
+            ],
+            [
+                "\n \n\"\n<thead>",
+                "<p>\"</p>\n<thead>\n",
+                "<p>\"</p>\n<thead>\n"
+            ],
+            [
+                " <thead>",
+                "\n<thead>\n",
+                "\n<thead>\n"
+            ],
+            [
+                "\n \n<audio>\r\n<thead>\r\n<script>word</math> <a title=\"x\n\ny\">word",
+                "<p><audio></p>\n<thead>\n<script>word</math> <a title=\"x\n\ny\">word</p>\n",
+                "<p><audio></p>\n<thead>\n<script>word</math> <a title=\"x\n\ny\">word</p>\n"
+            ],
+            [
+                "\n\n\n</textarea>",
+                "<p></textarea></p>\n",
+                "<p></textarea></p>\n"
+            ],
+            [
+                " </figcaption>\r\n<td> </math>word\n\n\n<\r\n</option>word <img src=\"i.png\">word\n\n< <hr>",
+                "</figcaption>\n<td> </math>word</p>\n<p><\n</option>word <img src=\"i.png\">word</p>\n<p>< \n\n<hr>\n",
+                "</figcaption>\n<td> </math>word</p>\n<p><\n</option>word <img src=\"i.png\">word</p>\n<p>< \n\n<hr>\n"
+            ],
+            [
+                " <pre>\n \n</form>\n\n<span>word",
+                "\n<pre>\n</form>\n<p><span>word</p>\n",
+                "\n<pre>\n</form>\n<p><span>word</p>\n"
+            ],
+            [
+                "<li>word\n<embed src=\"x\">",
+                "<li>word<br />\n<embed src=\"x\"></p>\n",
+                "<li>word\n<embed src=\"x\"></p>\n"
+            ],
+            [
+                " </blockquote>",
+                "</blockquote>\n",
+                "</blockquote>\n"
+            ],
+            [
+                "</span><h2> </math>\n\n<!-- c -->\n\n\n<tr>\n\n<object>",
+                "<p></span></p>\n<h2> </math></p>\n<p><!-- c --></p>\n<tr>\n<p><object></p>\n",
+                "<p></span></p>\n<h2> </math></p>\n<p><!-- c --></p>\n<tr>\n<p><object></p>\n"
+            ],
+            [
+                " <tr>\n\n<object>word\n\n\n<figure> <table>\r\n\r\n<audio>\r\n\r\n</figcaption>\n\n\nHello world.word <style>",
+                "<br />\n<tr>\n<p><object>word</p>\n<figure>\n<table>\n<p><audio></p>\n</figcaption>\n<p>Hello world.word </p>\n<style>\n",
+                "\n<tr>\n<p><object>word</p>\n<figure>\n<table>\n<p><audio></p>\n</figcaption>\n<p>Hello world.word </p>\n<style>\n"
+            ],
+            [
+                "\r\n\r\n</svg>[caption] </textarea>word\r\n\r\n<textarea><param name=\"a\">",
+                "<p></svg>[caption] </textarea>word</p>\n<p><textarea><param name=\"a\">\n",
+                "<p></svg>[caption] </textarea>word</p>\n<p><textarea><param name=\"a\">\n"
+            ],
+            [
+                "\n\n\n&nbsp;\n \n<select>\n\n\n<![CDATA[word\r\n\r\n>word\n\n\n<figure>\n\n\n<li>",
+                "<p>&nbsp;</p>\n<p><select></p>\n<p><![CDATA[word\n\n>word\n\n\n\n\n<figure>\n\n\n\n\n<li>\n</p>\n",
+                "<p>&nbsp;</p>\n<p><select></p>\n<p><![CDATA[word\n\n>word\n\n\n\n\n<figure>\n\n\n\n\n<li>\n</p>\n"
+            ],
+            [
+                " <textarea>\r\n<textarea> <div>",
+                "<p> <textarea><br />\n<textarea> </p>\n<div>\n",
+                "<p> <textarea>\n<textarea> </p>\n<div>\n"
+            ],
+            [
+                "\n \n<select>word\r\n<path/>\n\n<div\nclass=\"z\">word\n\n\n<",
+                "<p><select>word\n<path/>\n<div\nclass=\"z\">word</p>\n<p><\n</p>\n",
+                "<p><select>word\n<path/>\n<div\nclass=\"z\">word</p>\n<p><\n</p>\n"
+            ],
+            [
+                "<ul>word\n\n\n<option>\n\n<style>\r\n\r\n</style>\n \n<!-- wp:paragraph -->\n</td>word\n \n</form>",
+                "<ul>word<option></p>\n<style>\n</style>\n<p><!-- wp:paragraph -->\n</td>\n<p>word</p>\n</form>\n",
+                "<ul>word<option></p>\n<style>\n</style>\n<p><!-- wp:paragraph -->\n</td>\n<p>word</p>\n</form>\n"
+            ],
+            [
+                " </form>\n\n<!-- wp:paragraph -->word",
+                "</p></form>\n<p><!-- wp:paragraph -->word</p>\n",
+                "</p></form>\n<p><!-- wp:paragraph -->word</p>\n"
+            ],
+            [
+                "\n\n<script>\n\n\n</div>\n\n\n<blockquote>\r\n\r\n[caption]\n \n<source src=\"a\">\r\n<textarea>textword",
+                "<p><script></p>\n</div>\n<blockquote>\n<p>[caption]<source src=\"a\"><textarea>textword</p>\n",
+                "<p><script></p>\n</div>\n<blockquote>\n<p>[caption]<source src=\"a\"><textarea>textword</p>\n"
+            ],
+            [
+                " <param name=\"a\">\n<ul>[caption]\r\n<embed src=\"x\">",
+                "<param name=\"a\">\n<ul>[caption]<br />\n<embed src=\"x\"></p>\n",
+                "<param name=\"a\">\n<ul>[caption]\n<embed src=\"x\"></p>\n"
+            ],
+            [
+                "\n\n<select>>word\n\n<BLOCKQUOTE>word\n<br> [/caption]word",
+                "<p><select>>word</p>\n<blockquote><p>word<br />\n<br /> [/caption]word</p>\n",
+                "<p><select>>word</p>\n<blockquote><p>word\n<br> [/caption]word</p>\n"
+            ],
+            [
+                "<script>word\n>word",
+                "<p><script>word<br />\n>word</p>\n",
+                "<p><script>word\n>word</p>\n"
+            ],
+            [
+                "\r\n\r\n<br>word\n\n]]>\n\n<div>",
+                "<p>word</p>\n<p>]]></p>\n<div>\n",
+                "<p><br>word</p>\n<p>]]></p>\n<div>\n"
+            ],
+            [
+                "\n\n<source src=\"a\">word\r\n</table> </object>\r\n\r\n<textarea>word\n\n</h2>",
+                "<p><source src=\"a\">word<br />\n</table></object></p>\n<p><textarea>word</p>\n</h2>\n",
+                "<p><source src=\"a\">word\n</table></object></p>\n<p><textarea>word</p>\n</h2>\n"
+            ],
+            [
+                "\nHello world.\n\n<!--",
+                "<p>Hello world.</p>\n<p><!--\n</p>\n",
+                "<p>Hello world.</p>\n<p><!--\n</p>\n"
+            ],
+            [
+                "\n\n\ntext<source src=\"a\"><tr>",
+                "<p>text<source src=\"a\"><tr>\n",
+                "<p>text<source src=\"a\"><tr>\n"
+            ],
+            [
+                "\n \n<hr />\n \n<a title=\"x\n\ny\">word\r\n\r\n<a href=\"#\">\r\n<p\n\n>word\n</option>",
+                "<hr />\n<p><a title=\"x\n\ny\">word</p>\n<p><a href=\"#\"></p>\n<p\n\n>word<br />\n</option></p>\n",
+                "<hr />\n<p><a title=\"x\n\ny\">word</p>\n<p><a href=\"#\"></p>\n<p\n\n>word\n</option></p>\n"
+            ],
+            [
+                " <hr>\n\n\n<div>\n\n\n<embed src=\"x\">word\n\n</style>",
+                "<br />\n<hr>\n<div>\n<p><embed src=\"x\">word</p>\n</style>\n",
+                "\n<hr>\n<div>\n<p><embed src=\"x\">word</p>\n</style>\n"
+            ],
+            [
+                "\n</pre>\r\n\r\n<hr>",
+                "</pre>\n<hr>\n",
+                "</pre>\n<hr>\n"
+            ],
+            [
+                "\n \n<br>\n\n\n<select>word\n\n\n<br/>\n\n<figure>",
+                "<p></p>\n<p><select>word</p>\n<p></p>\n<figure>\n",
+                "<p><br></p>\n<p><select>word</p>\n<p><br/></p>\n<figure>\n"
+            ],
+            [
+                "\r\n\r\n<address>\n<svg>",
+                "<address>\n<svg></p>\n",
+                "<address>\n<svg></p>\n"
+            ],
+            [
+                "\n\n</figcaption>\n\n\n<style>word\n \n\tword\r\n<table> <svg>\n \n</div>&nbsp;\n \n<blockquote>",
+                "</figcaption>\n<style>word</p>\n<p>\tword</p>\n<table> <svg></p>\n</div>\n<p>&nbsp;</p>\n<blockquote>\n",
+                "</figcaption>\n<style>word</p>\n<p>\tword</p>\n<table> <svg></p>\n</div>\n<p>&nbsp;</p>\n<blockquote>\n"
+            ],
+            [
+                "<script></object>\n[caption]\n<option> </h2>word\r\n\r\n<tr> <![CDATA[",
+                "<p><script></object><br />\n[caption]<option> </h2>\n<p>word</p>\n<tr> <![CDATA[\n</p>\n",
+                "<p><script></object>\n[caption]<option> </h2>\n<p>word</p>\n<tr> <![CDATA[\n</p>\n"
+            ],
+            [
+                " &nbsp;\n</a>\n \n</script>\r\n\r\n</textarea>",
+                "<p> &nbsp;<br />\n</a></p>\n<p></script></p>\n<p></textarea></p>\n",
+                "<p> &nbsp;\n</a></p>\n<p></script></p>\n<p></textarea></p>\n"
+            ],
+            [
+                "</span></div>",
+                "<p></span></div>\n",
+                "<p></span></div>\n"
+            ],
+            [
+                "\r\n</h2>\n \n<option>\n\n\n<![CDATA[\n\n</h2> <ul>\n\n<p\n\n><pre class=\"x\">word",
+                "</h2><option></p>\n<p><![CDATA[\n\n</h2>\n\n \n\n<ul>\n\n\n\n<p\n\n>\n\n<pre class=\"x\">word\n</p>\n",
+                "</h2><option></p>\n<p><![CDATA[\n\n</h2>\n\n \n\n<ul>\n\n\n\n<p\n\n>\n\n<pre class=\"x\">word\n</p>\n"
+            ],
+            [
+                "\r\n\r\n<path/>\n\n\n</a>word\r\n\r\n]]>word\n<p>",
+                "<path/>\n<p></a>word</p>\n<p>]]>word</p>\n<p>\n",
+                "<path/>\n<p></a>word</p>\n<p>]]>word</p>\n<p>\n"
+            ],
+            [
+                "\n \n<audio> --!>\r\n<ul>",
+                "<p><audio> --!></p>\n<ul>\n",
+                "<p><audio> --!></p>\n<ul>\n"
+            ],
+            [
+                "\n<!-- wp:paragraph -->word\n\n\n--> <hr />word\n</a>word\r\n<thead>word\r\n</li>word\r\n<p>\r\n\r\n<hr />",
+                "<p><!-- wp:paragraph -->word</p>\n<p>--> </p>\n<hr />\n<p>word<br />\n</a>word</p>\n<thead>word\n</li>\n<p>word</p>\n<hr />\n",
+                "<p><!-- wp:paragraph -->word</p>\n<p>--> </p>\n<hr />\n<p>word\n</a>word</p>\n<thead>word\n</li>\n<p>word</p>\n<hr />\n"
+            ],
+            [
+                "\n\n\n<div> </figcaption>word\r\n\r\n<thead>\n \n\t\n\n\n<span>\r\n\r\n</pre>",
+                "<div> </figcaption>\n<p>word</p>\n<thead>\n<p><span></p>\n</pre>\n",
+                "<div> </figcaption>\n<p>word</p>\n<thead>\n<p><span></p>\n</pre>\n"
+            ],
+            [
+                "\n<!-- c -->\n\n\n<br>word\r\n\r\n<math>word",
+                "<p><!-- c --></p>\n<p>word</p>\n<p><math>word</p>\n",
+                "<p><!-- c --></p>\n<p><br>word</p>\n<p><math>word</p>\n"
+            ],
+            [
+                "\n</ul>word\n\n\n<path/>word\n\n<!-- ]]>\r\n<script>word\r\n\r\n</form>\n\n</li><path/>",
+                "</ul>\n<p>word</p>\n<path/>word</p>\n<p><!-- ]]>\n<script>word\n\n</form>\n\n\n\n</li>\n\n<path/>\n</p>\n",
+                "</ul>\n<p>word</p>\n<path/>word</p>\n<p><!-- ]]>\n<script>word\n\n</form>\n\n\n\n</li>\n\n<path/>\n</p>\n"
+            ],
+            [
+                " <br />\r\n<!--word",
+                "<p>\n<!--word\n</p>\n",
+                "<p>\n<!--word\n</p>\n"
+            ],
+            [
+                "\r\n<option>\r\n\r\n</math>word<textarea></option><object>\n \n<thead>word</script>",
+                "<p><option></p>\n<p></math>word<textarea></option><object></p>\n<thead>word</script></p>\n",
+                "<p><option></p>\n<p></math>word<textarea></option><object></p>\n<thead>word</script></p>\n"
+            ],
+            [
+                " </td>\n\n\n&nbsp;\n\n</h2>word",
+                "</td>\n<p>&nbsp;</p>\n</h2>\n<p>word</p>\n",
+                "</td>\n<p>&nbsp;</p>\n</h2>\n<p>word</p>\n"
+            ],
+            [
+                "\n \n--!> <p\n\n>word\n<br />word\n \n<h2>",
+                "<p>--!> </p>\n<p\n\n>word<br />\n<br />word</p>\n<h2>\n",
+                "<p>--!> </p>\n<p\n\n>word\n<br />word</p>\n<h2>\n"
+            ],
+            [
+                " <p>\r\n</blockquote>\r\n\r\n<script><div\nclass=\"z\">\n \n<br />word <select>\n\n\n<",
+                "<br />\n</blockquote>\n<p><script></p>\n<div\nclass=\"z\"></p>\n<p>word <select></p>\n<p><\n</p>\n",
+                "\n</blockquote>\n<p><script></p>\n<div\nclass=\"z\"></p>\n<p>word <select></p>\n<p><\n</p>\n"
+            ],
+            [
+                "</a>\n\n\n<td>\r\n\r\n</textarea>word</table>word",
+                "<p></a></p>\n<td>\n<p></textarea>word</table>\n<p>word</p>\n",
+                "<p></a></p>\n<td>\n<p></textarea>word</table>\n<p>word</p>\n"
+            ],
+            [
+                "\n\n</blockquote>word\n<style> [caption]word\n\n\n<p>word\r\n\r\n</table>word\r\n</object>",
+                "</blockquote>\n<p>word</p>\n<style> [caption]word</p>\n<p>word</p>\n</table>\n<p>word</object></p>\n",
+                "</blockquote>\n<p>word</p>\n<style> [caption]word</p>\n<p>word</p>\n</table>\n<p>word</object></p>\n"
+            ],
+            [
+                "\r\n>\r\n\r\n\"word\r\n\r\n<address>word\n\n\n<script>\n\n</span></table>\n\n<span>\r\n<param name=\"a\">",
+                "<p>></p>\n<p>\"word</p>\n<address>word</p>\n<p><script></p>\n<p></span></table>\n<p><span>\n<param name=\"a\">\n",
+                "<p>></p>\n<p>\"word</p>\n<address>word</p>\n<p><script></p>\n<p></span></table>\n<p><span>\n<param name=\"a\">\n"
+            ],
+            [
+                "[/caption]word\n\n<figure>",
+                "<p>[/caption]word</p>\n<figure>\n",
+                "<p>[/caption]word</p>\n<figure>\n"
+            ],
+            [
+                "\n<BR>\r\n\r\n<blockquote>\n\n\n</option>\n \n<table>word\r\n<BLOCKQUOTE>word\r\n\r\n<style>\n \n<pre>word\r\n<audio>",
+                "<p><BR></p>\n<blockquote>\n<p></option></p>\n<table>word<br />\n<BLOCKQUOTE>word</p>\n<style>\n<pre>word<br />\n<audio></p>\n",
+                "<p><BR></p>\n<blockquote>\n<p></option></p>\n<table>word\n<BLOCKQUOTE>word</p>\n<style>\n<pre>word\n<audio></p>\n"
+            ],
+            [
+                "</figcaption>word\r\n<param name=\"a\"><hr /> <embed src=\"x\">\n\n\n<address>word\n \n<embed src=\"x\">\r\n<embed src=\"x\">",
+                "</figcaption>\n<p>word\n<param name=\"a\">\n<hr />\n<p> <embed src=\"x\"></p>\n<address>word</p>\n<p><embed src=\"x\"><br />\n<embed src=\"x\"></p>\n",
+                "</figcaption>\n<p>word\n<param name=\"a\">\n<hr />\n<p> <embed src=\"x\"></p>\n<address>word</p>\n<p><embed src=\"x\">\n<embed src=\"x\"></p>\n"
+            ],
+            [
+                "\n\n<select>\r\n</option>\n\n<BLOCKQUOTE>",
+                "<p><select><br />\n</option></p>\n<blockquote>\n",
+                "<p><select>\n</option></p>\n<blockquote>\n"
+            ],
+            [
+                "\n\n]]>word\n\t\n\n\n<br>word\n\n\n<address>\r\n\r\n</span> <thead>\n\n\n</table>",
+                "<p>]]>word</p>\n<p>word</p>\n<address>\n<p></span> </p>\n<thead>\n</table>\n",
+                "<p>]]>word</p>\n<p><br>word</p>\n<address>\n<p></span> </p>\n<thead>\n</table>\n"
+            ],
+            [
+                "<br>word",
+                "<p>word</p>\n",
+                "<p><br>word</p>\n"
+            ],
+            [
+                " <object><embed src=\"x\">\n<figure>\n<select>\n</span>\n</table>word\r\n\r\n</table>word",
+                "<p> <object><embed src=\"x\"></p>\n<figure>\n<select><br />\n</span><br />\n</table>\n<p>word</p>\n</table>\n<p>word</p>\n",
+                "<p> <object><embed src=\"x\"></p>\n<figure>\n<select>\n</span>\n</table>\n<p>word</p>\n</table>\n<p>word</p>\n"
+            ],
+            [
+                " <math>word\n\n<table>\n\n<img src=\"i.png\">word </h2>\n<div>word",
+                "<p> <math>word</p>\n<table>\n<p><img src=\"i.png\">word </h2>\n<div>word</p>\n",
+                "<p> <math>word</p>\n<table>\n<p><img src=\"i.png\">word </h2>\n<div>word</p>\n"
+            ],
+            [
+                "\n\n<math>\n \n</object>word<br>word\n \n<BR>\r\n\r\n\"word\n \n</ul>word\n\n\n</div>word",
+                "<p><math></object>word<br />word</p>\n<p><BR></p>\n<p>\"word</p>\n</ul>\n<p>word</p>\n</div>\n<p>word</p>\n",
+                "<p><math></object>word<br>word</p>\n<p><BR></p>\n<p>\"word</p>\n</ul>\n<p>word</p>\n</div>\n<p>word</p>\n"
+            ],
+            [
+                "\n\n<div>",
+                "<div>\n",
+                "<div>\n"
+            ],
+            [
+                "\n\n\n<hr />\n\t\n</audio>word\n\n<hr />word <source src=\"a\">word <td>word<blockquote>",
+                "<hr /></audio>word</p>\n<hr />\n<p>word<source src=\"a\">word </p>\n<td>word</p>\n<blockquote>\n",
+                "<hr /></audio>word</p>\n<hr />\n<p>word<source src=\"a\">word </p>\n<td>word</p>\n<blockquote>\n"
+            ],
+            [
+                "\n</textarea>word\n\n\n<br/>\r\n<span>word\n\n[/caption]\n\n<script>word",
+                "<p></textarea>word</p>\n<p>\n<span>word</p>\n<p>[/caption]</p>\n<p><script>word</p>\n",
+                "<p></textarea>word</p>\n<p><br/>\n<span>word</p>\n<p>[/caption]</p>\n<p><script>word</p>\n"
+            ],
+            [
+                "\n</style>word <audio>\n\n<h2>word\n \n<!--",
+                "</style>\n<p>word <audio></p>\n<h2>word</p>\n<p><!--\n</p>\n",
+                "</style>\n<p>word <audio></p>\n<h2>word</p>\n<p><!--\n</p>\n"
+            ],
+            [
+                "\n<li>\r\n--!>\n \n<figcaption>\n\n\n<address>word\r\n\r\n<BLOCKQUOTE>word\n\n\n<blockquote>\n \n<option>\r\n\r\n<object>word",
+                "<li>\n--!><figcaption>\n<address>word</p>\n<blockquote><p>word</p>\n<blockquote><p><option></p>\n<p><object>word</p>\n",
+                "<li>\n--!><figcaption>\n<address>word</p>\n<blockquote><p>word</p>\n<blockquote><p><option></p>\n<p><object>word</p>\n"
+            ],
+            [
+                "<object>\r\n<textarea>\r\n\r\n<table>word",
+                "<p><object><br />\n<textarea></p>\n<table>word</p>\n",
+                "<p><object>\n<textarea></p>\n<table>word</p>\n"
+            ],
+            [
+                "\r\n\r\n<source src=\"a\">word\r\n\r\n--!>word\n</figcaption>word\n\n\n</ul>\n</textarea>\n \n<!--word\n \n-->word",
+                "<p><source src=\"a\">word</p>\n<p>--!>word<br />\n</figcaption>\n<p>word</p>\n</ul>\n<p></textarea></p>\n<p><!--word\n \n-->word</p>\n",
+                "<p><source src=\"a\">word</p>\n<p>--!>word\n</figcaption>\n<p>word</p>\n</ul>\n<p></textarea></p>\n<p><!--word\n \n-->word</p>\n"
+            ],
+            [
+                "\r\n<<BLOCKQUOTE>\r\n<source src=\"a\">\r\n\r\n</option>",
+                "<p><<BLOCKQUOTE><source src=\"a\"></option></p>\n",
+                "<p><<BLOCKQUOTE><source src=\"a\"></option></p>\n"
+            ],
+            [
+                " <figcaption>word\n\n</div>",
+                "<figcaption>word</p>\n</div>\n",
+                "<figcaption>word</p>\n</div>\n"
+            ],
+            [
+                "\n \n<option>word</blockquote>",
+                "<p><option>word</p></blockquote>\n",
+                "<p><option>word</p></blockquote>\n"
+            ],
+            [
+                "-->\n\n<span>word<!-- c -->\n\n\n<![CDATA[\r\n<object>\n\n\n<!--\r\n\r\n<hr>Hello world.word",
+                "<p>--></p>\n<p><span>word<!-- c --></p>\n<p><![CDATA[\n<object>\n\n\n<!--\n\n\n\n<hr>\n\nHello world.word\n</p>\n",
+                "<p>--></p>\n<p><span>word<!-- c --></p>\n<p><![CDATA[\n<object>\n\n\n<!--\n\n\n\n<hr>\n\nHello world.word\n</p>\n"
+            ],
+            [
+                " </li>\n \n</textarea> <!-- wp:paragraph -->word\r\n\r\n<table>\r\n<BR>\r\n\r\n<hr />",
+                "</li>\n<p></textarea> <!-- wp:paragraph -->word</p>\n<table>\n<BR></p>\n<hr />\n",
+                "</li>\n<p></textarea> <!-- wp:paragraph -->word</p>\n<table>\n<BR></p>\n<hr />\n"
+            ],
+            [
+                "\n\n\n<figure>word </table>\n<td>\r\n\r\n<!-- c -->word",
+                "<figure>word </table>\n<td>\n<p><!-- c -->word</p>\n",
+                "<figure>word </table>\n<td>\n<p><!-- c -->word</p>\n"
+            ],
+            [
+                "\n\n<a title=\"x\n\ny\">word\n \n</a>\n \n</span>word <!--\r\n\r\n<script>word\n</pre>",
+                "<p><a title=\"x\n\ny\">word</p>\n<p></a></p>\n<p></span>word <!--\n\n<script>word\n</pre>\n\n\n</p>\n",
+                "<p><a title=\"x\n\ny\">word</p>\n<p></a></p>\n<p></span>word <!--\n\n<script>word\n</pre>\n\n\n</p>\n"
+            ],
+            [
+                "\n\n[caption]",
+                "<p>[caption]</p>\n",
+                "<p>[caption]</p>\n"
+            ],
+            [
+                "\r\n\r\n<source src=\"a\">\r\n</table>word <p> </object>\n\n<br/>\n\n<!--\r\n\r\n<hr />word\n<select>word",
+                "<p><source src=\"a\"></table>\n<p>word </p>\n<p></object></p>\n<p></p>\n<p><!--\n\n\n\n<hr />\n\nword\n<select>word\n</p>\n",
+                "<p><source src=\"a\"></table>\n<p>word </p>\n<p></object></p>\n<p><br/></p>\n<p><!--\n\n\n\n<hr />\n\nword\n<select>word\n</p>\n"
+            ],
+            [
+                " <pre class=\"x\">\"\n<a href=\"#\">\n \n<address>\r\n\r\nHello world.word\n\n<\n \n<option>word\r\n<param name=\"a\">",
+                "\n<pre class=\"x\">\"<br />\n<a href=\"#\"></p>\n<address>\n<p>Hello world.word</p>\n<p><\n  \n<option>word\n<param name=\"a\">\n",
+                "\n<pre class=\"x\">\"\n<a href=\"#\"></p>\n<address>\n<p>Hello world.word</p>\n<p><\n  \n<option>word\n<param name=\"a\">\n"
+            ],
+            [
+                "\r\n\r\n</style>\n\n\n<tr>word<address>\n</p>\n\n\n<a href=\"#\">\n \n</blockquote>word\n\n<figcaption>word",
+                "</style>\n<tr>word</p>\n<address>\n<p><a href=\"#\"></p>\n</blockquote>\n<p>word<figcaption>word</p>\n",
+                "</style>\n<tr>word</p>\n<address>\n<p><a href=\"#\"></p>\n</blockquote>\n<p>word<figcaption>word</p>\n"
+            ],
+            [
+                "\n\n\n<li>\n\n<li>\n<textarea>\r\n<object>\r\n\r\n<figure>\r\n</span>\n\n\n</form>word",
+                "<li>\n<li>\n<textarea><br />\n<object></p>\n<figure>\n</span></p>\n</form>\n<p>word</p>\n",
+                "<li>\n<li>\n<textarea>\n<object></p>\n<figure>\n</span></p>\n</form>\n<p>word</p>\n"
+            ],
+            [
+                "\n \n<p\n\n>word\r\n\r\n</li>\n\n\n<img src=\"i.png\"><param name=\"a\"><h2>word<div>word",
+                "<p\n\n>word</p>\n</li>\n<p><img src=\"i.png\"><param name=\"a\">\n<h2>word</p>\n<div>word</p>\n",
+                "<p\n\n>word</p>\n</li>\n<p><img src=\"i.png\"><param name=\"a\">\n<h2>word</p>\n<div>word</p>\n"
+            ],
+            [
+                "\n \n<figcaption>word</form>word\n \n<audio>word\r\n</object>\r\n\r\n<script>word",
+                "<figcaption>word</form>\n<p>word</p>\n<p><audio>word</object></p>\n<p><script>word</p>\n",
+                "<figcaption>word</form>\n<p>word</p>\n<p><audio>word</object></p>\n<p><script>word</p>\n"
+            ],
+            [
+                "</ul>word\n\n<!-- c -->\n\n<BLOCKQUOTE>word\n<td>\n<div\nclass=\"z\">word<blockquote>",
+                "</ul>\n<p>word</p>\n<p><!-- c --></p>\n<blockquote><p>word</p>\n<td>\n<div\nclass=\"z\">word</p>\n<blockquote>\n",
+                "</ul>\n<p>word</p>\n<p><!-- c --></p>\n<blockquote><p>word</p>\n<td>\n<div\nclass=\"z\">word</p>\n<blockquote>\n"
+            ],
+            [
+                "\r\n\r\n<pre class=\"x\">word<br/>\r\n<math>word\n \n<h2>\n\n</pre>",
+                "<pre class=\"x\">word<br/>\r\n<math>word\n \n<h2>\n\n</pre>\n",
+                "<pre class=\"x\">word<br/>\r\n<math>word\n \n<h2>\n\n</pre>\n"
+            ],
+            [
+                "\n<path/>\r\n<embed src=\"x\">word\r\n<script></math>\n[/caption]word\n<style>\n\n\"",
+                "<path/>\n<embed src=\"x\">word<br />\n<script></math><br />\n[/caption]word</p>\n<style>\n<p>\"</p>\n",
+                "<path/>\n<embed src=\"x\">word\n<script></math>\n[/caption]word</p>\n<style>\n<p>\"</p>\n"
+            ],
+            [
+                "\n<tr>word",
+                "<tr>word</p>\n",
+                "<tr>word</p>\n"
+            ],
+            [
+                "\n \n<pre class=\"x\">\n\n<!-- wp:paragraph -->word",
+                "<pre class=\"x\">\n<p><!-- wp:paragraph -->word</p>\n",
+                "<pre class=\"x\">\n<p><!-- wp:paragraph -->word</p>\n"
+            ],
+            [
+                "\r\n\r\n</td>\n\n[/caption]\n \n<br/><math>",
+                "</td>\n<p>[/caption]</p>\n<p><math></p>\n",
+                "</td>\n<p>[/caption]</p>\n<p><br/><math></p>\n"
+            ],
+            [
+                " </object>word\n \n<!-- c -->\r\n<div\nclass=\"z\">word\n \n<param name=\"a\">word\r\n</li>\n<ul>\r\n\r\n</div>",
+                "<p></object>word</p>\n<p><!-- c --></p>\n<div\nclass=\"z\">word<param name=\"a\">word\n</li>\n<ul>\n</div>\n",
+                "<p></object>word</p>\n<p><!-- c --></p>\n<div\nclass=\"z\">word<param name=\"a\">word\n</li>\n<ul>\n</div>\n"
+            ],
+            [
+                "\n \n<h2>\n \n</pre>",
+                "<h2>\n</pre>\n",
+                "<h2>\n</pre>\n"
+            ],
+            [
+                " </form>word\n\n\n<hr />word </li>word\n\n\n<a href=\"#\">\r\n</p>\n\n<pre class=\"x\">\r\n\r\n]]>",
+                "</p></form>\n<p>word</p>\n<hr />\n<p>word </li>\n<p>word</p>\n<p><a href=\"#\">\n</p>\n<pre class=\"x\">\n<p>]]></p>\n",
+                "</p></form>\n<p>word</p>\n<hr />\n<p>word </li>\n<p>word</p>\n<p><a href=\"#\">\n</p>\n<pre class=\"x\">\n<p>]]></p>\n"
+            ],
+            [
+                "\n\n\n-->\r\n<span>\n\n<style>[caption] </span>\n\n<embed src=\"x\">\n<textarea>",
+                "<p>--><br />\n<span></p>\n<style>[caption] </span></p>\n<p><embed src=\"x\"><br />\n<textarea></p>\n",
+                "<p>-->\n<span></p>\n<style>[caption] </span></p>\n<p><embed src=\"x\">\n<textarea></p>\n"
+            ],
+            [
+                "\n\n\n</audio>\n\n<embed src=\"x\">\n\n</object>word\n \n<svg>",
+                "<p></audio><embed src=\"x\"></object>word</p>\n<p><svg></p>\n",
+                "<p></audio><embed src=\"x\"></object>word</p>\n<p><svg></p>\n"
+            ],
+            [
+                " </object>\n\n--!>\"",
+                "<p></object></p>\n<p>--!>\"</p>\n",
+                "<p></object></p>\n<p>--!>\"</p>\n"
+            ],
+            [
+                "\r\n<table> >\r\n</style>word\n\n\n<![CDATA[\n\n\n]]>word",
+                "<table> ><br />\n</style>\n<p>word</p>\n<p><![CDATA[\n\n\n]]>word</p>\n",
+                "<table> >\n</style>\n<p>word</p>\n<p><![CDATA[\n\n\n]]>word</p>\n"
+            ],
+            [
+                "\n</span>word<!-- c -->\n\n\n>word</ul>",
+                "<p></span>word<!-- c --></p>\n<p>>word</ul>\n",
+                "<p></span>word<!-- c --></p>\n<p>>word</ul>\n"
+            ],
+            [
+                "\r\n\r\n</li>word<![CDATA[word\n \ntext",
+                "</li>\n<p>word<![CDATA[word\n \ntext\n</p>\n",
+                "</li>\n<p>word<![CDATA[word\n \ntext\n</p>\n"
+            ],
+            [
+                "\n\n\n>\n\n[caption]word\n \n--!>word\r\n\r\n]]>\n \n<embed src=\"x\">",
+                "<p>></p>\n<p>[caption]word</p>\n<p>--!>word</p>\n<p>]]></p>\n<p><embed src=\"x\"></p>\n",
+                "<p>></p>\n<p>[caption]word</p>\n<p>--!>word</p>\n<p>]]></p>\n<p><embed src=\"x\"></p>\n"
+            ],
+            [
+                "\r\n</a>\r\n\r\n<figcaption>\n \n<!-- c -->word<BR>word\r\n\r\n<a href=\"#\">\n\n\n<h2>word",
+                "<p></a><figcaption>\n<p><!-- c -->word<BR>word</p>\n<p><a href=\"#\"></p>\n<h2>word</p>\n",
+                "<p></a><figcaption>\n<p><!-- c -->word<BR>word</p>\n<p><a href=\"#\"></p>\n<h2>word</p>\n"
+            ],
+            [
+                "\n\n<img src=\"i.png\">\n\n\ntext\r\n\r\n--!>\n<figure>\r\n\r\n<br>\r\ntext <address>",
+                "<p><img src=\"i.png\"></p>\n<p>text</p>\n<p>--!></p>\n<figure>\n<p>\ntext </p>\n<address>\n",
+                "<p><img src=\"i.png\"></p>\n<p>text</p>\n<p>--!></p>\n<figure>\n<p><br>\ntext </p>\n<address>\n"
+            ],
+            [
+                " <path/>word\r\n</option>word\n\n\n<pre class=\"x\">word<thead>\r\n\r\n</style>word\n \n<ul>\n\n\n</div><svg>word",
+                "<path/>word<br />\n</option>word</p>\n<pre class=\"x\">word</p>\n<thead>\n</style>\n<p>word</p>\n<ul>\n</div>\n<p><svg>word</p>\n",
+                "<path/>word\n</option>word</p>\n<pre class=\"x\">word</p>\n<thead>\n</style>\n<p>word</p>\n<ul>\n</div>\n<p><svg>word</p>\n"
+            ],
+            [
+                " </span>word\n\n\n<figcaption>\r\n<word\n\n<br />word\n<math>\r\n<audio>word\n\n<span>word",
+                "<p> </span>word<figcaption>\n<word\n\n<br />word<br />\n<math><br />\n<audio>word</p>\n<p><span>word</p>\n",
+                "<p> </span>word<figcaption>\n<word\n\n<br />word\n<math>\n<audio>word</p>\n<p><span>word</p>\n"
+            ],
+            [
+                "\n\n&nbsp;word\n\n\n</figcaption>\n \n>word\n\n\n-->\r\n<p\n\n>word\n<</script>\r\n<pre>",
+                "<p>&nbsp;word</p>\n</figcaption>\n<p>>word</p>\n<p>--></p>\n<p\n\n>word<br />\n<</script></p>\n<pre>\n",
+                "<p>&nbsp;word</p>\n</figcaption>\n<p>>word</p>\n<p>--></p>\n<p\n\n>word\n<</script></p>\n<pre>\n"
+            ],
+            [
+                "\n<a title=\"x\n\ny\">word\r\n<div>",
+                "<p><a title=\"x\n\ny\">word</p>\n<div>\n",
+                "<p><a title=\"x\n\ny\">word</p>\n<div>\n"
+            ],
+            [
+                "\n\n<embed src=\"x\">\n&nbsp;\n\n\n<style>",
+                "<p><embed src=\"x\"><br />\n&nbsp;</p>\n<style>\n",
+                "<p><embed src=\"x\">\n&nbsp;</p>\n<style>\n"
+            ],
+            [
+                "\r\n<textarea>word\r\n<figure>word\n>\r\n<style>\n\n\n<div>word\r\n</ul>",
+                "<p><textarea>word</p>\n<figure>word<br />\n></p>\n<style>\n<div>word\n</ul>\n",
+                "<p><textarea>word</p>\n<figure>word\n></p>\n<style>\n<div>word\n</ul>\n"
+            ],
+            [
+                "\r\n\r\nHello world.</a>\n\n</span>\n \n<tr>\r\n\r\n<!-- wp:paragraph -->\n\n</p>word </audio>\r\n\r\n<",
+                "<p>Hello world.</a></p>\n<p></span></p>\n<tr>\n<p><!-- wp:paragraph --></p>\n<p>word </audio></p>\n<p><\n</p>\n",
+                "<p>Hello world.</a></p>\n<p></span></p>\n<tr>\n<p><!-- wp:paragraph --></p>\n<p>word </audio></p>\n<p><\n</p>\n"
+            ],
+            [
+                "\n\n<figcaption> <ul>",
+                "<figcaption>\n<ul>\n",
+                "<figcaption>\n<ul>\n"
+            ],
+            [
+                "\r\n<figure></object>\n \n<blockquote>\n</span>word</ul>word\r\n<hr />\r\n</textarea>\n</a>word",
+                "<figure></object></p>\n<blockquote><p>\n</span>word</ul>\n<p>word</p>\n<hr />\n<p></textarea><br />\n</a>word</p>\n",
+                "<figure></object></p>\n<blockquote><p>\n</span>word</ul>\n<p>word</p>\n<hr />\n<p></textarea>\n</a>word</p>\n"
+            ],
+            [
+                "\n<pre class=\"x\">word\r\n\r\n<BLOCKQUOTE>\r\n\r\n]]></math>\n \n</math>\n\n<svg>word",
+                "<pre class=\"x\">word</p>\n<blockquote>\n<p>]]></math></p>\n<p></math></p>\n<p><svg>word</p>\n",
+                "<pre class=\"x\">word</p>\n<blockquote>\n<p>]]></math></p>\n<p></math></p>\n<p><svg>word</p>\n"
+            ],
+            [
+                "\n<figure>\n\n\n</blockquote>word\r\n<div>\n</form>word]]></math>word",
+                "<figure>\n</blockquote>\n<p>word</p>\n<div>\n</form>\n<p>word]]></math>word</p>\n",
+                "<figure>\n</blockquote>\n<p>word</p>\n<div>\n</form>\n<p>word]]></math>word</p>\n"
+            ],
+            [
+                "<!-- c -->word\n</p>word<table>word\r\n<a href=\"#\">word\n \n</style>word\n\n</ul>text\r\n\r\n<param name=\"a\">",
+                "<p><!-- c -->word\n</p>\n<p>word</p>\n<table>word<br />\n<a href=\"#\">word</p>\n</style>\n<p>word</p>\n</ul>\n<p>text</p>\n<param name=\"a\">\n",
+                "<p><!-- c -->word\n</p>\n<p>word</p>\n<table>word\n<a href=\"#\">word</p>\n</style>\n<p>word</p>\n</ul>\n<p>text</p>\n<param name=\"a\">\n"
+            ],
+            [
+                "</option>\n\n\n<pre class=\"x\">\n \n</form><address>word\n</span>\n \n</object>word",
+                "<p></option></p>\n<pre class=\"x\">\n</form>\n<address>word<br />\n</span></object>word</p>\n",
+                "<p></option></p>\n<pre class=\"x\">\n</form>\n<address>word\n</span></object>word</p>\n"
+            ],
+            [
+                "\n\n\n</textarea>\n<word\n \n<br>",
+                "<p></textarea><br />\n<word\n \n</p>\n",
+                "<p></textarea>\n<word\n \n<br></p>\n"
+            ],
+            [
+                "<table>\r\n\r\n</audio>\n \n[/caption]word <pre>\r\n<br />\n\n\n-->word",
+                "<table>\n<p></audio></p>\n<p>[/caption]word </p>\n<pre>\n</p>\n<p>-->word</p>\n",
+                "<table>\n<p></audio></p>\n<p>[/caption]word </p>\n<pre></p>\n<p>-->word</p>\n"
+            ],
+            [
+                "\r\n\r\n<\n<a title=\"x\n\ny\">\n\n<span>\n<BLOCKQUOTE>\r\n[/caption]word <style>",
+                "<p><\n<a title=\"x\n\ny\"></p>\n<p><span><br />\n<BLOCKQUOTE><br />\n[/caption]word </p>\n<style>\n",
+                "<p><\n<a title=\"x\n\ny\"></p>\n<p><span>\n<BLOCKQUOTE>\n[/caption]word </p>\n<style>\n"
+            ],
+            [
+                "\n</textarea> <figcaption>\n \n<table> </span>\r\n<td>word\r\n\r\n</figcaption>word <td>",
+                "<p></textarea><figcaption>\n<table> </span></p>\n<td>word</p>\n</figcaption>word </p>\n<td>\n",
+                "<p></textarea><figcaption>\n<table> </span></p>\n<td>word</p>\n</figcaption>word </p>\n<td>\n"
+            ],
+            [
+                "\r\n\r\n<math>word\n\n\n<embed src=\"x\">\r\n\"",
+                "<p><math>word</p>\n<p><embed src=\"x\"><br />\n\"</p>\n",
+                "<p><math>word</p>\n<p><embed src=\"x\">\n\"</p>\n"
+            ],
+            [
+                "<p\n\n>",
+                "<p\n\n></p>\n",
+                "<p\n\n></p>\n"
+            ],
+            [
+                "\r\n\r\n<hr /> >\n\n\n<select>\n\n<BR>word</form>\n\n\n<td></ul>\r\n<BLOCKQUOTE>",
+                "<hr />\n<p> ></p>\n<p><select></p>\n<p><BR>word</form>\n<td></ul>\n<blockquote>\n",
+                "<hr />\n<p> ></p>\n<p><select></p>\n<p><BR>word</form>\n<td></ul>\n<blockquote>\n"
+            ],
+            [
+                "\n\n\n</form>\n \n<option>\n\n\n<embed src=\"x\">word",
+                "</form><option></p>\n<p><embed src=\"x\">word</p>\n",
+                "</form><option></p>\n<p><embed src=\"x\">word</p>\n"
+            ],
+            [
+                " </textarea>\r\n\r\n</form>\r\n-->\r\n\r\n<span>\n \n<h2>\r\n<li>\r\n<a title=\"x\n\ny\">--!>",
+                "<p> </textarea></p>\n</form>\n<p>--></p>\n<p><span></p>\n<h2>\n<li>\n<a title=\"x\n\ny\">--!></p>\n",
+                "<p> </textarea></p>\n</form>\n<p>--></p>\n<p><span></p>\n<h2>\n<li>\n<a title=\"x\n\ny\">--!></p>\n"
+            ],
+            [
+                "\r\n<object> </script>\n<address>\n\n\n<figure><path/>word\r\n\r\n</li>",
+                "<p><object> </script></p>\n<address>\n<figure><path/>word</p>\n</li>\n",
+                "<p><object> </script></p>\n<address>\n<figure><path/>word</p>\n</li>\n"
+            ],
+            [
+                "\n\n\n</td>\r\n\r\n<math>\n\n\n<math>\r\n</figcaption>word <option>word\n<td>word",
+                "</td>\n<p><math></p>\n<p><math><br />\n</figcaption>\n<p>word<option>word</p>\n<td>word</p>\n",
+                "</td>\n<p><math></p>\n<p><math>\n</figcaption>\n<p>word<option>word</p>\n<td>word</p>\n"
+            ],
+            [
+                "\n\n<blockquote>\n \n<figcaption>word\n\n\n<BR>\n[caption]word",
+                "<blockquote><figcaption>word</p>\n<p><BR><br />\n[caption]word</p>\n",
+                "<blockquote><figcaption>word</p>\n<p><BR>\n[caption]word</p>\n"
+            ],
+            [
+                "\n \n</td>\r\n\r\n<audio>\n</div>word",
+                "</td>\n<p><audio>\n</div>\n<p>word</p>\n",
+                "</td>\n<p><audio>\n</div>\n<p>word</p>\n"
+            ],
+            [
+                "\r\n\r\n<math>\n</audio></audio>\n\n<p\n\n>",
+                "<p><math><br />\n</audio></audio></p>\n<p\n\n></p>\n",
+                "<p><math>\n</audio></audio></p>\n<p\n\n></p>\n"
+            ],
+            [
+                " textword\n\n</object>word",
+                "<p> textword</object>word</p>\n",
+                "<p> textword</object>word</p>\n"
+            ],
+            [
+                "\r\n<address>word <address>\r\n\r\n</pre>\n\n<![CDATA[",
+                "<address>word </p>\n<address>\n</pre>\n<p><![CDATA[\n</p>\n",
+                "<address>word </p>\n<address>\n</pre>\n<p><![CDATA[\n</p>\n"
+            ],
+            [
+                "<thead>\r\n</a>word\n\n<object>\n\n\n<table>word\r\n\r\n</a>\n>word",
+                "<thead>\n</a>word</p>\n<p><object></p>\n<table>word</p>\n<p></a><br />\n>word</p>\n",
+                "<thead>\n</a>word</p>\n<p><object></p>\n<table>word</p>\n<p></a>\n>word</p>\n"
+            ],
+            [
+                "\n</li><a href=\"#\">word\n\n<thead>\n \n<a href=\"#\">",
+                "</li>\n<p><a href=\"#\">word</p>\n<thead>\n<p><a href=\"#\"></p>\n",
+                "</li>\n<p><a href=\"#\">word</p>\n<thead>\n<p><a href=\"#\"></p>\n"
+            ],
+            [
+                "\n\n\n</table>word\n \n-->word\r\n<a title=\"x\n\ny\">\n\n<option>word",
+                "</table>\n<p>word</p>\n<p>-->word<br />\n<a title=\"x\n\ny\"><option>word</p>\n",
+                "</table>\n<p>word</p>\n<p>-->word\n<a title=\"x\n\ny\"><option>word</p>\n"
+            ],
+            [
+                "\r\n\r\ntextword\r\n\r\n\"word\n</svg>word\r\n\r\n</pre>\r\n</svg>\n \n<tr>\r\n<figure>",
+                "<p>textword</p>\n<p>\"word<br />\n</svg>word</p>\n</pre>\n<p></svg></p>\n<tr>\n<figure>\n",
+                "<p>textword</p>\n<p>\"word\n</svg>word</p>\n</pre>\n<p></svg></p>\n<tr>\n<figure>\n"
+            ],
+            [
+                "<script>\n\n\n\t",
+                "<p><script></p>\n",
+                "<p><script></p>\n"
+            ],
+            [
+                "&nbsp;word\r\n]]>word\n<p>word",
+                "<p>&nbsp;word<br />\n]]>word</p>\n<p>word</p>\n",
+                "<p>&nbsp;word\n]]>word</p>\n<p>word</p>\n"
+            ],
+            [
+                ">",
+                "<p>></p>\n",
+                "<p>></p>\n"
+            ],
+            [
+                " <p>word\n \n</svg>word",
+                "\n<p>word</p>\n<p></svg>word</p>\n",
+                "\n<p>word</p>\n<p></svg>word</p>\n"
+            ],
+            [
+                "\r\n<style>word",
+                "<style>word</p>\n",
+                "<style>word</p>\n"
+            ]
+        ]
+    ],
+    [
+        "posts",
+        [
+            [
+                "First paragraph.\n\nSecond paragraph with a\nline break.\n\n<ul>\n<li>One</li>\n<li>Two</li>\n</ul>\n\nAfter list.",
+                "<p>First paragraph.</p>\n<p>Second paragraph with a<br />\nline break.</p>\n<ul>\n<li>One</li>\n<li>Two</li>\n</ul>\n<p>After list.</p>\n",
+                "<p>First paragraph.</p>\n<p>Second paragraph with a\nline break.</p>\n<ul>\n<li>One</li>\n<li>Two</li>\n</ul>\n<p>After list.</p>\n"
+            ],
+            [
+                "<h2>Heading</h2>\nText under heading.\n\n<blockquote>Quoted\n\nTwo paras</blockquote>\n\nEnd.",
+                "<h2>Heading</h2>\n<p>Text under heading.</p>\n<blockquote><p>Quoted</p>\n<p>Two paras</p></blockquote>\n<p>End.</p>\n",
+                "<h2>Heading</h2>\n<p>Text under heading.</p>\n<blockquote><p>Quoted</p>\n<p>Two paras</p></blockquote>\n<p>End.</p>\n"
+            ],
+            [
+                "[caption id=\"attachment_1\" width=\"300\"]<img src=\"a.jpg\" alt=\"\" width=\"300\" height=\"200\" /> A caption[/caption]\n\nText after.",
+                "<p>[caption id=\"attachment_1\" width=\"300\"]<img src=\"a.jpg\" alt=\"\" width=\"300\" height=\"200\" /> A caption[/caption]</p>\n<p>Text after.</p>\n",
+                "<p>[caption id=\"attachment_1\" width=\"300\"]<img src=\"a.jpg\" alt=\"\" width=\"300\" height=\"200\" /> A caption[/caption]</p>\n<p>Text after.</p>\n"
+            ],
+            [
+                "<pre>code line 1\n\ncode line 3\n  indented</pre>\n\nAfter pre.\n\n<pre class=\"x\">a\nb</pre>",
+                "<pre>code line 1\n\ncode line 3\n  indented</pre>\n<p>After pre.</p>\n<pre class=\"x\">a\nb</pre>\n",
+                "<pre>code line 1\n\ncode line 3\n  indented</pre>\n<p>After pre.</p>\n<pre class=\"x\">a\nb</pre>\n"
+            ],
+            [
+                "<script>var a = 1;\n\nvar b = 2;</script>\nText\n\n<style>p {\n\ncolor: red; }</style>",
+                "<p><script>var a = 1;</p>\n<p>var b = 2;</script><br />\nText</p>\n<style>p {</p>\n<p>color: red; }</style>\n",
+                "<p><script>var a = 1;</p>\n<p>var b = 2;</script>\nText</p>\n<style>p {</p>\n<p>color: red; }</style>\n"
+            ],
+            [
+                "Line one<br>\nLine two<br />\n\nPara two<br><br>Para three",
+                "<p>Line one<br />\nLine two</p>\n<p>Para two</p>\n<p>Para three</p>\n",
+                "<p>Line one<br>\nLine two</p>\n<p>Para two</p>\n<p>Para three</p>\n"
+            ],
+            [
+                "<select name=\"s\">\n<option value=\"1\">One</option>\n\n<option>Two</option>\n</select>\n\nText",
+                "<p><select name=\"s\"><option value=\"1\">One</option><option>Two</option></select></p>\n<p>Text</p>\n",
+                "<p><select name=\"s\"><option value=\"1\">One</option><option>Two</option></select></p>\n<p>Text</p>\n"
+            ],
+            [
+                "<object width=\"400\">\n<param name=\"movie\" value=\"x\">\n<embed src=\"x\" width=\"400\">\n</embed>\n</object>\n\nAfter",
+                "<p><object width=\"400\"><param name=\"movie\" value=\"x\"><embed src=\"x\" width=\"400\"></embed></object></p>\n<p>After</p>\n",
+                "<p><object width=\"400\"><param name=\"movie\" value=\"x\"><embed src=\"x\" width=\"400\"></embed></object></p>\n<p>After</p>\n"
+            ],
+            [
+                "Text with <a href=\"x\">link\n\nacross</a> paragraphs.",
+                "<p>Text with <a href=\"x\">link</p>\n<p>across</a> paragraphs.</p>\n",
+                "<p>Text with <a href=\"x\">link</p>\n<p>across</a> paragraphs.</p>\n"
+            ],
+            [
+                "<div class=\"wrap\">\nInside div\n\nSecond inside\n</div>\nOutside",
+                "<div class=\"wrap\">\nInside div</p>\n<p>Second inside\n</p></div>\n<p>Outside</p>\n",
+                "<div class=\"wrap\">\nInside div</p>\n<p>Second inside\n</p></div>\n<p>Outside</p>\n"
+            ],
+            [
+                "<svg viewBox=\"0 0 10 10\">\n<path d=\"M0 0\"/>\n\n<path d=\"M1 1\"/>\n</svg>\n\nText",
+                "<p><svg viewBox=\"0 0 10 10\">\n<path d=\"M0 0\"/>\n<path d=\"M1 1\"/>\n</svg></p>\n<p>Text</p>\n",
+                "<p><svg viewBox=\"0 0 10 10\">\n<path d=\"M0 0\"/>\n<path d=\"M1 1\"/>\n</svg></p>\n<p>Text</p>\n"
+            ],
+            [
+                "<!-- a\n\ncomment -->\n\nText",
+                "<p><!-- a\n\ncomment --></p>\n<p>Text</p>\n",
+                "<p><!-- a\n\ncomment --></p>\n<p>Text</p>\n"
+            ],
+            [
+                "First line\r\nSecond line\r\n\r\nThird",
+                "<p>First line<br />\nSecond line</p>\n<p>Third</p>\n",
+                "<p>First line\nSecond line</p>\n<p>Third</p>\n"
+            ],
+            [
+                "   \n\n  ",
+                "",
+                ""
+            ]
+        ]
+    ]
+]

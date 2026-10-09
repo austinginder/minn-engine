@@ -44,7 +44,7 @@ final readonly class NavigationController
     }
 
     /** Creates a navigation post. */
-    #[Route(Method::Post, '/wp/v2/navigation')]
+    #[Route(Method::Post, '/wp/v2/navigation', refuse: ExistingPost::class)]
     public function create(Request $request): Response
     {
         return $this->writes->serveCreate($request, self::TYPE, self::BASE);

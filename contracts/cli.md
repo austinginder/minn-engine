@@ -67,16 +67,18 @@ reaches `minn/bootstrap.php`, which under WP-CLI only registers the autoloader.
 | `rewrite flush [--hard]` | `Success: Rewrite rules flushed.` The engine resolves URLs from options; `--hard` does not write `.htaccess`. |
 | `rewrite structure <permastruct> [--category-base] [--tag-base] [--hard]` | Writes `permalink_structure` (and the optional bases), then `Success: Rewrite structure set.` plus `Success: Rewrite rules flushed.` |
 | `maintenance-mode activate\|deactivate\|status\|is-active` | Writes or removes `{ABSPATH}/.maintenance`. Activate: `Enabling Maintenance mode...` then `Success: Activated Maintenance mode.` Already on: `Error: Maintenance mode already activated.` Deactivate mirrors that (`Disabling` / `Deactivated` / already deactivated). Status: `Maintenance mode is active.` or `… is not active.` `is-active` is exit 0/1 with no output. The public site stays up while the file is present; fleet scripts bookend updates with these verbs. |
+| `core update [<zip>] [--minor] [--version] [--force]` | Alias `upgrade`. No WordPress core files to replace: `Success: WordPress is up to date.` (`--minor`: `Success: WordPress is at the latest minor release.`). A package, `--version` or `--force`: `Error: This site runs Minn Engine, which keeps WordPress's API but none of its core files, so a WordPress core update does not apply. Update Minn instead: wp minn update.` (exit 1). |
+| `core verify-checksums [--exclude=<files>]` | Downloads the running Minn's release (`/v1/minn/releases/<version>`, then its `minn.zip`), checks its sha256 and Ed25519 signature, and compares every engine file and every webroot shape file with it: `Warning: File doesn't verify against checksum: …`, `Warning: File doesn't exist: …`, `Warning: File should not exist: …`, then `Error: WordPress installation doesn't verify against checksums.`, or `Success: WordPress installation verifies against checksums.` No release for the version: `Error: No Minn <version> release is published to check this install against.` The install record (`minn/.install.json`) is the site's own and is not compared. `--include-root`, `--version`, `--locale`, `--insecure` are ignored. |
+| `core download` | Held back over a Minn install: `Error: This site runs Minn Engine. wp core download would put WordPress's files over it. To go back to WordPress, run wp minn eject. To download anyway, set MINN_ALLOW_CORE_DOWNLOAD=1.` Anywhere else it is WP-CLI's own. |
+| `wp minn update [--check]` | The engine's updater (the same as `php minn/bin/minn update`): asks the update service, says whether a newer Minn is out, and with no `--check` installs it after its checks. |
 | `wp minn probe` | `key:value` lines for `engine`, `engine_version`, `core`, `home_url`, `php_version`, `plugins`, `themes`, `mu_plugins`. JSON values have no newlines; split on the first colon. This is the engine-native stand-in for the inventory `fetch-site-data` currently gathers via `wp plugin list` / `wp theme list` / `wp core version` inside WordPress. |
 
 ## Not yet
 
 - `wp db …` and `wp config …` are WP-CLI's own and read `wp-config.php` directly.
-- `wp core update` and `wp core verify-checksums` wait until Minn has a release
-  of its own. They become the engine's updater and integrity check, not a
-  rewrite of WordPress core commands. Until then the bundle's copies run on
-  the engine's runtime (`contracts/layout.md`), where `core update` has no
-  WordPress to update.
+- `wp core check-update` is still the bundle's, on the engine's runtime; the
+  engine's `wp_version_check` makes it answer "WordPress is at the latest
+  version." (`contracts/layout.md`, "What a host sees").
 - WP-CLI's bundled commands that load WordPress (`post`, `term`, `comment`,
   `menu`, `eval`, …) run on the engine's runtime rather than as engine verbs;
   so do a plugin's own commands. Their output is the facade's, diffed in the

@@ -819,6 +819,27 @@ function wp_get_update_data()
 }
 
 /** Minn's own check: the update service asked when the last answer is old, the offers left in update_plugins. */
+/**
+ * The core update check, answered by Minn itself and asking no one: the
+ * WordPress release Minn speaks is the latest a Minn site can have (newer
+ * WordPress releases reach it as Minn releases), so update_core holds one
+ * "latest" offer in the shape the reference stores when it is current, its
+ * package addresses empty (there is no WordPress package for a Minn site).
+ * A stored answer that is not Minn's (one WordPress left behind) is replaced
+ * at once; Minn's own is refreshed twice a day, or when forced.
+ */
+function wp_version_check($extra_stats = [], $force_check = false)
+{
+    $version = wp_get_wp_version();
+    $stored = get_site_transient('update_core');
+    $minns = is_object($stored) && ($stored->version_checked ?? '') === $version && count((array) ($stored->updates ?? [])) === 1 && (($stored->updates[0]->response ?? '') === 'latest');
+    if ($minns && !$force_check && time() - (int) ($stored->last_checked ?? 0) < 12 * HOUR_IN_SECONDS) {
+        return;
+    }
+    $offer = (object) ['response' => 'latest', 'download' => '', 'locale' => get_locale(), 'packages' => (object) ['full' => '', 'no_content' => '', 'new_bundled' => '', 'partial' => '', 'rollback' => ''], 'current' => $version, 'version' => $version, 'php_version' => (string) ($GLOBALS['required_php_version'] ?? '7.4'), 'mysql_version' => (string) ($GLOBALS['required_mysql_version'] ?? '5.5.5'), 'new_bundled' => '6.7', 'partial_version' => ''];
+    set_site_transient('update_core', (object) ['updates' => [$offer], 'last_checked' => time(), 'version_checked' => $version, 'translations' => []]);
+}
+
 function wp_update_plugins($extra_stats = [])
 {
     Minn\Ops\Updates::forSite(Runtime::current()->site, Runtime::current()->contentDir())->checkForWordPress('update_plugins', (array) $extra_stats);

@@ -383,6 +383,35 @@ class Plugin_Upgrader extends WP_Upgrader
     }
 }
 
+/**
+ * WordPress's core updater, a dead end on Minn written by hand so it never
+ * reports a success it did not have: there are no WordPress core files to
+ * replace. upgrade() answers with an error naming Minn's own updater (a
+ * plugin or WP-CLI reading it as success would otherwise believe a core
+ * update happened), and no WordPress version is ever one to update to.
+ */
+class Core_Upgrader extends WP_Upgrader
+{
+    public function upgrade_strings()
+    {
+    }
+
+    public function upgrade($current, $args = [])
+    {
+        return new WP_Error('minn_core_update', __('This site runs Minn Engine, which keeps WordPress\'s API but none of its core files, so a WordPress core update does not apply. Update Minn instead: wp minn update.'));
+    }
+
+    public static function should_update_to_version($offered_ver)
+    {
+        return false;
+    }
+
+    public function check_files()
+    {
+        return false;
+    }
+}
+
 class Theme_Upgrader extends WP_Upgrader
 {
     public $result;

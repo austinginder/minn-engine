@@ -12,7 +12,9 @@ class WP_oEmbed
 
     public function __construct()
     {
-        $providers = json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/oembed-providers.json'), true) ?: [];
+        // The table names the site itself as {home} (VideoPress asks who the embed is for).
+        $table = str_replace('{home}', urlencode(home_url()), (string) file_get_contents(MINN_ENGINE_DIR . '/data/oembed-providers.json'));
+        $providers = json_decode($table, true) ?: [];
         if (!empty(self::$early_providers['add'])) {
             foreach (self::$early_providers['add'] as $format => $data) {
                 $providers[$format] = $data;

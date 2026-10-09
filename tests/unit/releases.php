@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Minn\Http\Fake;
 use Minn\Ops\Changelog;
 use Minn\Ops\Directory;
+use Minn\Ops\EngineChecksums;
 use Minn\Ops\EngineUpdate;
 use Minn\Ops\Release;
 use Minn\Ops\Releases;
@@ -248,6 +249,57 @@ return [
                 }
             }
             return $refused === 2 && EngineUpdate::versionOf("{$root}/repo/public/minn") === '0.1.0' ?: (string) $refused;
+        } finally {
+            $clean($root);
+        }
+    },
+    'the install\'s files are checked against its signed release: a changed, a missing and an extra file are named, the install record is not' => static function () use ($webroot, $clean, $public, $sign, $answer) {
+        $root = $webroot('0.1.0');
+        try {
+            $file = tempnam(sys_get_temp_dir(), 'minn-zip-');
+            $zip = new ZipArchive();
+            $zip->open($file, ZipArchive::OVERWRITE);
+            $zip->addFromString('minn/bootstrap.php', (string) file_get_contents("{$root}/minn/bootstrap.php"));
+            $zip->addFromString('minn/bin/minn', 'changed later');
+            $zip->addFromString('minn/src/Gone.php', '<?php');
+            $zip->addFromString('minn/layout/index.php', '<?php // shape');
+            $zip->close();
+            $bytes = (string) file_get_contents($file);
+            unlink($file);
+            mkdir("{$root}/minn/layout");
+            file_put_contents("{$root}/minn/layout/index.php", '<?php // shape');
+            file_put_contents("{$root}/minn/bin/minn", 'not what the release has');
+            file_put_contents("{$root}/minn/extra.php", '<?php');
+            file_put_contents("{$root}/index.php", '<?php // edited shape');
+            $fake = new Fake([
+                'updates.minn.run/v1/minn/releases/0.1.0' => $answer(['version' => '0.1.0', 'package' => Directory::BASE . 'minn/download/0.1.0/minn.zip', 'sha256' => hash('sha256', $bytes), 'signature' => $sign($bytes)]),
+                'updates.minn.run/v1/minn/download/0.1.0/minn.zip' => $bytes,
+            ]);
+            $result = (new EngineChecksums("{$root}/minn", [$public], $fake->http()))->check($root);
+            $want = ['version' => '0.1.0', 'changed' => ['minn/bin/minn', 'index.php'], 'missing' => ['minn/src/Gone.php'], 'extra' => ['minn/extra.php']];
+            return $result === $want ?: json_encode($result);
+        } finally {
+            $clean($root);
+        }
+    },
+    'an install is not checked against a release that is missing, of another version, or signed by a key it does not trust' => static function () use ($webroot, $clean, $public, $answer) {
+        $root = $webroot('0.1.0');
+        $bytes = 'not even a zip';
+        $said = [];
+        try {
+            foreach ([
+                new Fake(['updates.minn.run/*' => Fake::reply('{"error":"not_found"}', 404)]),
+                new Fake(['updates.minn.run/v1/minn/releases/*' => $answer()]),
+                new Fake(['updates.minn.run/v1/minn/releases/*' => $answer(['version' => '0.1.0', 'package' => Directory::BASE . 'minn/download/0.1.0/minn.zip', 'sha256' => hash('sha256', $bytes)]), 'updates.minn.run/v1/minn/download/*' => $bytes]),
+            ] as $fake) {
+                try {
+                    (new EngineChecksums("{$root}/minn", [$public], $fake->http()))->check($root);
+                    $said[] = 'checked';
+                } catch (RuntimeException $e) {
+                    $said[] = $e->getMessage();
+                }
+            }
+            return str_contains($said[0], 'No Minn 0.1.0 release') && str_contains($said[1], 'did not describe Minn 0.1.0') && str_contains($said[2], 'not signed by a key') ?: json_encode($said);
         } finally {
             $clean($root);
         }

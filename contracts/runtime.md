@@ -9196,3 +9196,101 @@ old trashed post on the shared database) and the `do_feed_*` functions.
     `clean_post_cache` waits while it is on.
   - `wp_guess_url` guesses from the request.
   - `wp_auth_check_html` matches the reference's whitespace.
+
+## WordPress 7.1.3 (2026-10-09)
+
+The references (all six Cove copies) moved from 7.1 to 7.1.3, and the
+engine reports 7.1.3 (`Engine::WP_VERSION`, the `version.php` shape file;
+`contracts/layout.md`, "What a host sees", says why it is the latest patch
+of the branch and not the newest WordPress). The database revision is still
+61833. 7.1.3 adds `_wp_is_template_path_allowed`, four methods
+(`WP_Customize_Header_Image_Setting::sanitize` and `sanitize_choice`,
+`WP_REST_Comments_Controller::check_target_post_permission`,
+`WP_Sitemaps::send_404`) and `WP_Widget_Factory::INSTANCE_KEY_PREFIX`.
+Every probe was rerun on 7.1.3: 110 fixtures kept their content, 7 only
+moved the version, and 4 changed for real.
+
+- **Sitemaps (suite sitemap-hooks).** The main query no longer makes a
+  sitemap request a 404 before template_redirect; the sitemaps server
+  judges it there. A page with nothing on it, or a provider nobody
+  registered, is a 404; a page a plugin fills past the page count prints.
+- **Fixtures that changed:** the widget factory keys instances
+  `spl_object_id:N`; the tooltip helpers write their toggle's attributes in
+  name order; `get_custom_header` gives whole-number width and height (0,
+  not false, without header support); and the version moves the dependency
+  ETags and module `ver` strings. The image editor cases now keep to GD:
+  whether Imagick passes its test depends on the host's ImageMagick (7.1.3
+  accepts this machine's, 7.1 did not). `WP_Image_Editor_Imagick` is still a
+  placeholder.
+
+### The security releases, checked against Minn
+
+7.1.1, 7.1.2 and 7.1.3 carry 19 security fixes. Those in wp-admin, the
+Customizer, XML-RPC or multisite land in Minn's dead ends. The rest were
+probed against the 7.1.3 reference (`patch-security`), and these were Minn's
+too, now fixed:
+
+- **Template path traversal (7.1.2, critical).** `locate_template` followed
+  `../` out of the theme: a page name under a theme's `page-*` folder could
+  reach any PHP file. A name with a dot-only segment now counts only when
+  the file it reaches is really inside the folder
+  (`_wp_is_template_path_allowed` judges the name).
+- **Sticky posts (7.1.3).** Authors and contributors could make posts sticky
+  through REST. Changing whether a post is sticky now takes
+  `edit_others_posts` (`rest_cannot_assign_sticky`, after parameter
+  validation); asking for what it already is does not.
+- **Creating a post with an id.** Refused with `rest_post_exists` before the
+  caller is judged, even signed out; an id of 0 is `rest_post_invalid_id`.
+  The engine had made a new post. Routes can now name a refusal judged
+  after their arguments and before their policy (`Route::$refuse`,
+  `Rest\ExistingPost`); every post-type create route uses it.
+- **HTML API comment text (7.1.1).** `--!>` could break out of a comment;
+  both closers are now refused, done wrong.
+- **Imgur embeds (7.1.3).** Imgur's oEmbed HTML was trusted and printed raw.
+  The provider table is reseeded from 7.1.3 (Imgur, Someecards and the old
+  ReverbNation pattern gone). Its VideoPress entry had the development host
+  baked in; it now names each site's own address.
+- **Custom header (7.1.1).** Width and height are cast to whole numbers,
+  the stored data's too, so neither carries markup into an attribute.
+- **Status hooks (7.1.3).** `{old}_to_{new}` fires only when the new status
+  is registered and the old one is too (or is `new`); `{new}_{type}` only
+  when the status and the post type are registered. A stored status could
+  forge another action's name (status `wp_insert` fired `wp_insert_post`).
+
+- **`wpautop` (7.1.1 class).** The engine split paragraphs inside a tag's
+  attribute values, the break-out 7.1.1 fixed. `Minn\Content\Autop` was
+  rebuilt from the reference's output alone: 8,911 fuzzed and real inputs,
+  plus two independent fuzz sets of about 20,000 each, all matching in both
+  line-break modes (probe `autop` pins a seeded sample). Kept on purpose, as
+  observed: an unclosed tag, comment or CDATA section runs to the end and
+  keeps its newlines; `<pre>` is cut out and put back untouched; a stray
+  `</pre>` is dropped; block names match as prefixes in the cleanup rules
+  (`<param>`, `<path/>`, `<thead>` count); `<p><blockquote>` turns inside
+  out and the tag comes back lower-cased; whitespace around media, option
+  and figcaption tags is squeezed only when the text uses them; newlines
+  inside script, style, svg and math never become `<br />`. The rebuild
+  holds its own markers (two private-use characters and a `<pre>` stand-in);
+  input that already holds them is changed by the restore.
+
+Found along the way and fixed: deleting or trashing a post unsticks it
+first, `stick_post`/`unstick_post` fire `post_stuck`/`post_unstuck`, the
+REST sticky write drops the request's cached option, and the REST template
+lists take `post_type`, `wp_id` and `area` (declared and validated).
+
+Checked and already matching: comments on private and unpublished posts
+through REST, comment reparenting, contributors editing or autosaving
+others' posts, and draft slugs through REST lists and search.
+
+Owed: `make_absolute_url` resolves some relative paths differently from
+7.1.3; and Minn Admin's comment screen should be checked for the stored
+cross-site scripting 7.1.3 fixed in WordPress's (a Minn Admin task).
+
+### Update checks and WP-CLI
+
+`wp_version_check` is real: Minn answers `update_core` with one `latest`
+offer for its version, asking no one. `Core_Upgrader` is a hand-written dead
+end whose `upgrade()` is an error naming `wp minn update`. WP-CLI gets the
+engine's `core update`, `core verify-checksums` (against the signed release:
+`Ops\EngineChecksums`, which needs the update service's
+`/v1/minn/releases/<version>`), a guard on `core download`, and
+`wp minn update`. `contracts/cli.md` has the wording.

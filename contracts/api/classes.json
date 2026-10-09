@@ -12772,6 +12772,21 @@
                         "name": "value"
                     }
                 ]
+            },
+            "sanitize": {
+                "params": [
+                    {
+                        "name": "value"
+                    }
+                ]
+            },
+            "sanitize_choice": {
+                "visibility": "private",
+                "params": [
+                    {
+                        "name": "value"
+                    }
+                ]
             }
         }
     },
@@ -28930,6 +28945,25 @@
                     }
                 ]
             },
+            "check_target_post_permission": {
+                "visibility": "protected",
+                "params": [
+                    {
+                        "name": "post_id",
+                        "type": "int"
+                    },
+                    {
+                        "name": "request",
+                        "type": "WP_REST_Request"
+                    },
+                    {
+                        "name": "is_note",
+                        "type": "bool",
+                        "optional": true,
+                        "default": false
+                    }
+                ]
+            },
             "check_post_type_supports_notes": {
                 "visibility": "private",
                 "params": [
@@ -36776,6 +36810,11 @@
             "render_sitemaps": {
                 "params": []
             },
+            "send_404": {
+                "visibility": "private",
+                "params": [],
+                "returns": "void"
+            },
             "redirect_sitemapxml": {
                 "params": [
                     {
@@ -44223,6 +44262,9 @@
     },
     "WP_Widget_Factory": {
         "file": "wp-includes/class-wp-widget-factory.php",
+        "constants": {
+            "INSTANCE_KEY_PREFIX": "spl_object_id:"
+        },
         "properties": {
             "widgets": {
                 "default": []

@@ -24,7 +24,7 @@ Minn\Autoloader::register();
 $db = Minn\Db::shared();
 $site = new Minn\Content\Site($db);
 $capabilities = Minn\Auth\Capabilities::fromDb($db);
-$context = new Minn\Context($db, $site, null, Minn\Content\Reader::anonymous(), $capabilities, MINN_ENGINE_DIR, ABSPATH, '7.1');
+$context = new Minn\Context($db, $site, null, Minn\Content\Reader::anonymous(), $capabilities, MINN_ENGINE_DIR, ABSPATH, Minn\Engine::WP_VERSION);
 $runtime = new Minn\Runtime\Runtime($context);
 Minn\Runtime\Runtime::boot($runtime);
 // No plugins load here, so the pluggable functions are defined at once.

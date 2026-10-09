@@ -10,7 +10,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Blocks`](blocks.md) | 23 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 8 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 6 | the template blocks a block theme composes with |
-| [`Minn\Cli`](cli.md) | 17 | the wp verbs the engine answers itself |
+| [`Minn\Cli`](cli.md) | 18 | the wp verbs the engine answers itself |
 | [`Minn\Content`](content.md) | 43 | the repositories and records: posts, users, terms, comments, and the render pipeline |
 | [`Minn\Cron`](cron.md) | 1 | scheduled publishing |
 | [`Minn\Extension`](extension.md) | 8 | the extension contract and its seams |
@@ -18,14 +18,14 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Front`](front.md) | 44 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 7 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
-| [`Minn\Http`](http.md) | 35 | request, response, routing, and the outgoing client |
+| [`Minn\Http`](http.md) | 36 | request, response, routing, and the outgoing client |
 | [`Minn\I18n`](i18n.md) | 11 |  |
 | [`Minn\Login`](login.md) | 5 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
 | [`Minn\Media`](media.md) | 14 | uploads, image sizes and attachment metadata |
-| [`Minn\Ops`](ops.md) | 16 |  |
+| [`Minn\Ops`](ops.md) | 17 |  |
 | [`Minn\Query`](query.md) | 9 | shared SQL fragments |
-| [`Minn\Rest`](rest.md) | 84 | the wp/v2 surface: shapes and controllers |
+| [`Minn\Rest`](rest.md) | 85 | the wp/v2 surface: shapes and controllers |
 | [`Minn\Runtime`](runtime.md) | 108 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 31 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 36 | the block-theme reader, templates, global styles and the page renderer |

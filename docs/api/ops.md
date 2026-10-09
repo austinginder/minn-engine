@@ -11,7 +11,8 @@
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
-| [`EngineUpdate`](#engineupdate) | final readonly class | 129 | Replaces the running engine with a published release. The release's |
+| [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 135 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
@@ -223,7 +224,7 @@ least"), never the site's address.
 - const `BASE` = `'https://updates.minn.run/v1/'`
 - const `PACKAGES` = `'https://updates.minn.run/v1/download/'` — Where plugin, theme and translation packages download from.
 
-Used by: `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`
+Used by: `Minn\Cli\PackageInstaller`, `Minn\Ops\Changelog`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Ops\Release`, `Minn\Ops\Releases`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`
 
 ### static `url(string $path): string`
 
@@ -268,6 +269,43 @@ The answer for an action (plugin_information, query_themes, ...): an object, a W
 Internals: `directory()` (private, line 42), `unexpected()` (private, line 68)
 
 
+## EngineChecksums
+
+`final readonly class Minn\Ops\EngineChecksums` · `public/minn/src/Minn/Ops/EngineChecksums.php`
+
+Checks a Minn install's files against the release they claim to be, the
+way `wp core verify-checksums` checks WordPress's against wordpress.org:
+the update service describes the running version's release, its minn.zip
+is downloaded from the service alone and must match its published sha256
+and carry a signature from a key this engine trusts (EngineUpdate), and
+then every file of the engine is compared with the archive's, as are the
+shape files at the webroot with the archive's layout templates. A file
+that differs, one the archive has and the install lacks, and one the
+install has beyond the archive are all named. The install record
+(.install.json) is the site's own and is not compared.
+
+- const `SOURCE` = `'https://updates.minn.run/v1/minn/releases/'` — Where a version's release record is asked for.
+- const `MAX_DOWNLOAD` = `67108864`
+- const `OWN` = `array (   0 => '.install.json', )`
+
+Used by: `Minn\Cli\CoreCommand`
+
+```php
+__construct(string $engineDir, array $keys = Minn\Ops\EngineUpdate::KEYS, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
+```
+- `@param list<string> $keys the release keys to trust (tests pass their own)`
+
+
+### `check(string $webroot): array`
+
+The comparison: the version checked, and the paths (under minn/, or at
+the webroot for shape files) that differ, are missing, or are extra.
+
+- `@return array{version: string, changed: list<string>, missing: list<string>, extra: list<string>}`
+
+Internals: `release()` (private, line 60), `archiveHashes()` (private, line 82), `treeHashes()` (private, line 110), `layoutOf()` (private, line 129), `shapeHashes()` (private, line 146), `compare()` (private, line 164)
+
+
 ## EngineUpdate
 
 `final readonly class Minn\Ops\EngineUpdate` · `public/minn/src/Minn/Ops/EngineUpdate.php`
@@ -293,7 +331,7 @@ scripts/release-key.php). A new key ships here in a release signed by
 an old one before it signs anything.
 - const `MAX_DOWNLOAD` = `67108864`
 
-Used by: `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Rest\Services`
+Used by: `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Ops\EngineChecksums`, `Minn\Rest\Services`
 
 ```php
 __construct(string $engineDir, array $keys = self::KEYS, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
@@ -309,11 +347,15 @@ Downloads, checks and installs a release; the version now in place.
 
 Installs an archive in hand once it matches its checksum and signature and holds the version named; the version now in place.
 
+### `verify(string $zip, string $sha256, string $signature, string $version, string $use = 'used'): void`
+
+Throws unless an archive matches the checksum its release publishes and carries a signature from a trusted key; $use says what would not happen.
+
 ### static `versionOf(string $engineDir): string`
 
 The version a bootstrap.php names; "0.0.0" when it names none.
 
-Internals: `swap()` (private, line 83), `signed()` (private, line 121), `refuseCheckout()` (private, line 147)
+Internals: `swap()` (private, line 78), `signed()` (private, line 127), `refuseCheckout()` (private, line 153)
 
 
 ## InstalledSoftware
@@ -542,7 +584,7 @@ downloads, a missing checksum, or a missing signature.
 - const `ASSET` = `'minn.zip'` — The archive every release ships: the public/minn/ tree with Minn Admin bundled at minn/admin.
 - const `DOWNLOADS` = `'https://updates.minn.run/v1/minn/download/'` — Where release packages download from; EngineUpdate fetches nothing else.
 
-Used by: `Minn\Ops\EngineUpdate`, `Minn\Ops\Releases`
+Used by: `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Releases`
 
 ```php
 __construct(string $version, string $url, string $published, string $notes, string $package, string $sha256, string $signature)

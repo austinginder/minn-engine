@@ -6,7 +6,7 @@
  * contains none of that release's code.
  */
 
-$wp_version = '7.1';
+$wp_version = '7.1.3';
 $wp_db_version = 61833;
 $tinymce_version = '49110-20250317';
 $required_php_version = '7.4';

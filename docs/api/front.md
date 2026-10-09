@@ -41,7 +41,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 100 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
-| [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
+| [`SitemapRequest`](#sitemaprequest) | final class | 71 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`TermLists`](#termlists) | final class | 71 | A term's parent chain and the tag cloud, built from term rows the caller |
@@ -1371,10 +1371,12 @@ Internals: `served()` (private, line 80)
 
 A sitemap request at template_redirect, as the reference's sitemaps
 server answers it: a sitemap address asked for another way (the query
-form, page 0) moves to its own; with the sitemaps off, or a subtype or
-page that has nothing, the request is a 404 the theme renders; otherwise
-the stylesheet, the index or the provider's page is printed and the
-request ends. A provider nobody registered leaves the request alone.
+form, page 0) moves to its own; with the sitemaps off, a provider nobody
+registered, or a subtype or page that has nothing, the request is a 404
+the theme renders; otherwise the stylesheet, the index or the provider's
+page is printed and the request ends. Since 7.1.3 this is where a
+sitemap page is judged: the main query no longer makes an empty page a
+404 first, so a page a plugin fills past the page count still prints.
 
 Used by: `Minn\Front\SitemapController`
 
@@ -1386,7 +1388,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 62), `notFound()` (private, line 82)
+Internals: `page()` (private, line 64), `notFound()` (private, line 85)
 
 
 ## SitemapXml

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Db;
+use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
 /**
@@ -245,20 +246,36 @@ final readonly class PostWriter
         return in_array($id, Serialized::intList($this->site->option('sticky_posts')), true);
     }
 
-    /** Rewrites the sticky_posts option with or without one id. */
+    /** Puts a post on the sticky list, then post_stuck when it was not on it (probe rest-sticky). */
     public function stick(int $id): void
     {
         $ids = Serialized::intList($this->site->option('sticky_posts'));
-        if (!in_array($id, $ids, true)) {
-            $ids[] = $id;
+        if (in_array($id, $ids, true)) {
+            return;
         }
+        $ids[] = $id;
         $this->saveSticky($ids);
+        $this->announceSticky('post_stuck', $id);
     }
 
-    /** Takes a post off the sticky list. */
+    /** Takes a post off the sticky list, then post_unstuck when it was on it (probe rest-sticky). */
     public function unstick(int $id): void
     {
-        $this->saveSticky(array_values(array_diff(Serialized::intList($this->site->option('sticky_posts')), [$id])));
+        $ids = Serialized::intList($this->site->option('sticky_posts'));
+        if (!in_array($id, $ids, true)) {
+            return;
+        }
+        $this->saveSticky(array_values(array_diff($ids, [$id])));
+        $this->announceSticky('post_unstuck', $id);
+    }
+
+    /** Inside a request: drops the request's copy of sticky_posts (the row was written directly) and fires post_stuck or post_unstuck. */
+    private function announceSticky(string $hook, int $id): void
+    {
+        if (Runtime::booted()) {
+            Runtime::options()->forget('sticky_posts');
+            \do_action($hook, $id);
+        }
     }
 
     /** @param list<int> $ids */

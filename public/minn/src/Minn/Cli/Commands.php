@@ -64,6 +64,12 @@ final class Commands
         self::leaf('maintenance-mode deactivate', [MaintenanceCommand::class, 'deactivate'], $early);
         self::leaf('maintenance-mode status', [MaintenanceCommand::class, 'status'], $early);
         self::leaf('maintenance-mode is-active', [MaintenanceCommand::class, 'is_active'], $early);
+        self::leaf('core update', [CoreCommand::class, 'update'], $early);
+        self::leaf('core upgrade', [CoreCommand::class, 'update'], $early);
+        self::leaf('core verify-checksums', [CoreCommand::class, 'verifyChecksums'], $early);
+        // WP-CLI's checksum package adds this subcommand on its own, after core; ours goes back on top of it.
+        self::replace('core verify-checksums', [CoreCommand::class, 'verifyChecksums'], $early);
+        WP_CLI::add_hook('before_invoke:core download', [CoreCommand::class, 'guardDownload']);
         WP_CLI::add_command('minn', MinnCommand::class, $early);
     }
 

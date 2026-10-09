@@ -77,13 +77,17 @@ function get_custom_header()
             }
         }
     }
-    return (object) wp_parse_args($data, [
+    $header = wp_parse_args($data, [
         'url' => '',
         'thumbnail_url' => '',
         'width' => get_theme_support('custom-header', 'width'),
         'height' => get_theme_support('custom-header', 'height'),
         'video' => get_theme_support('custom-header', 'video'),
     ]);
+    // Whole numbers since 7.1.x, the stored data's as well, so neither can carry markup into an attribute (probe custom-header, patch-security).
+    $header['width'] = (int) $header['width'];
+    $header['height'] = (int) $header['height'];
+    return (object) $header;
 }
 
 /** The header image as an img tag, its size from the header data, the loading attributes a header image earns; '' when there is none. */

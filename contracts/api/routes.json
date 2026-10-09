@@ -5162,7 +5162,7 @@
             "pattern": "/wp/v2/{base:posts}",
             "name": "Minn\\Rest\\PostsWriteController::create",
             "handler": "Minn\\Rest\\PostsWriteController::create",
-            "summary": "Creates a post or page.",
+            "summary": "Creates a post or page; one asked for with an id is refused before the caller is judged (patch-security).",
             "policy": {
                 "access": "Cap",
                 "describe": "cap edit_posts",
@@ -5185,7 +5185,7 @@
             "pattern": "/wp/v2/{base:pages}",
             "name": "Minn\\Rest\\PostsWriteController::create",
             "handler": "Minn\\Rest\\PostsWriteController::create",
-            "summary": "Creates a post or page.",
+            "summary": "Creates a post or page; one asked for with an id is refused before the caller is judged (patch-security).",
             "policy": {
                 "access": "Cap",
                 "describe": "cap edit_pages",
@@ -6505,7 +6505,31 @@
                     "message": "Sorry, you are not allowed to access the templates on this site."
                 }
             },
-            "args": [],
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "wp_id": {
+                    "description": "Limit to the specified post id.",
+                    "type": "integer"
+                },
+                "area": {
+                    "description": "Limit to the specified template part area.",
+                    "type": "string"
+                },
+                "post_type": {
+                    "description": "Post type to get the templates for.",
+                    "type": "string"
+                }
+            },
             "body": [],
             "index": true
         },
@@ -6528,7 +6552,31 @@
                     "message": "Sorry, you are not allowed to access the templates on this site."
                 }
             },
-            "args": [],
+            "args": {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view",
+                    "required": false
+                },
+                "wp_id": {
+                    "description": "Limit to the specified post id.",
+                    "type": "integer"
+                },
+                "area": {
+                    "description": "Limit to the specified template part area.",
+                    "type": "string"
+                },
+                "post_type": {
+                    "description": "Post type to get the templates for.",
+                    "type": "string"
+                }
+            },
             "body": [],
             "index": true
         },

@@ -16,7 +16,7 @@ copies them over; `minn eject` reverses it (`docs/install.md`, `tests/install.te
 | `wp-config.php` | Every backup/migration tool (regex), WP-CLI (`config` and `db` commands eval it with the trailing require stripped) | Never shipped, never edited: the file WordPress generated stays. |
 | `wp-settings.php` | `wp-config.php` (its last line), WP-CLI when loading WordPress | Two lines: `require minn/bootstrap.php`. Under WP-CLI the boot stops after the autoloader for the engine's own verbs; reached for a command the engine does not answer, it boots the engine's WordPress runtime in WordPress's place (below). |
 | `wp-cli.yml` | WP-CLI (project config) | `require: minn/cli.php`, the engine's verbs. |
-| `wp-includes/version.php` | WP-CLI (`wp_exists()` is `file_exists` on it; `check_wp_version()` includes it and wants `$wp_version >= 3.7`; `core version` parses `$wp_version`, `$wp_db_version`, `$tinymce_version`, `$wp_local_package` by string search), hosting panels, backup tools | The release whose contracts the engine speaks (`7.1`, db revision `61833`), as plain assignments in the shape readers expect. No WordPress code. |
+| `wp-includes/version.php` | WP-CLI (`wp_exists()` is `file_exists` on it; `check_wp_version()` includes it and wants `$wp_version >= 3.7`; `core version` parses `$wp_version`, `$wp_db_version`, `$tinymce_version`, `$wp_local_package` by string search), hosting panels, backup tools | The release whose contracts the engine speaks (`7.1.3`, db revision `61833`), as plain assignments in the shape readers expect. No WordPress code. It follows the latest patch release of that branch (see "What a host sees" below). |
 | `wp-login.php` | nginx (a missing `.php` is a 404 before PHP runs), hide-login plugins that `require ABSPATH . 'wp-login.php'` | Boots the engine the way `index.php` does, or throws `ServeLogin` when required mid-request. |
 | `wp-admin/index.php` | nginx (a directory without an index is a 403 before PHP runs) | Boots the engine the way `index.php` does; the router 302s `/wp-admin/` to `/minn-admin/`. Required mid-request, does nothing. |
 
@@ -52,10 +52,44 @@ missing files through `index.php`. Nothing extra is copied to the webroot.
   `wp-admin/includes/*.php` resolve to empty placeholders (the engine already
   provides the symbols). There is no WordPress admin code here.
 - `wp-includes/` holds `version.php` plus the same empty placeholders for
-  `wp-includes/*.php`. A tool that lists or checksums core files
-  (`wp core verify-checksums`, CaptainCore's `core_file_hashes`) sees an install
-  that is not WordPress; that is the truthful signal, and `minn preflight`
-  (Track C) is where it is explained to an operator.
+  `wp-includes/*.php`. A tool that lists or checksums core files by
+  wordpress.org's list (CaptainCore's `core_file_hashes`) sees an install that
+  is not WordPress; that is the truthful signal, and `minn preflight` (Track C)
+  is where it is explained to an operator. `wp core verify-checksums` itself
+  is the engine's: it checks Minn's own files against its signed release.
+
+## What a host sees (2026-10-09)
+
+A host decides whether a site is current from `wp-includes/version.php`,
+`wp core version`, `wp core check-update` and the `update_core` transient.
+On Minn they all say the same thing:
+
+- **The version** is the latest patch release of the WordPress branch the
+  engine is proven against (7.1.3 now), not the newest WordPress overall.
+  Plugins choose code paths by `$wp_version`, so a version the engine does
+  not speak would send them to functions it lacks. Each patch release moves
+  the references, reruns every probe, and bumps `Engine::WP_VERSION` and
+  the shape file in a Minn release; its security notes are checked for the
+  same class of bug in the engine (`contracts/runtime.md`, "WordPress 7.1.3").
+- **Update checks** are answered by the engine itself (`wp_version_check`):
+  `update_core` holds one `latest` offer for that version, in the shape the
+  reference stores when it is current, and nothing is asked of wordpress.org.
+  An answer WordPress left behind is replaced at once. So `wp core
+  check-update` says "WordPress is at the latest version."
+- **`wp core update`** is the engine's: "WordPress is up to date." with no
+  arguments, and an error naming `wp minn update` when asked for a version,
+  a package or `--force`. `Core_Upgrader` (a dead end, written by hand)
+  answers `upgrade()` with that error too, so a plugin such as a remote
+  management client never reads a core update as done.
+- **`wp core verify-checksums`** downloads the running Minn's release from
+  the update service, checks its sha256 and Ed25519 signature, and compares
+  every engine file and every shape file with it, in WP-CLI's own words.
+- **`wp core download`** is held back over a Minn install (it would put
+  WordPress's files over the engine; `wp minn eject` is the way back).
+  `MINN_ALLOW_CORE_DOWNLOAD=1` lets it through. The guard only applies when
+  WP-CLI finds the site's `wp-cli.yml`; a host that copies core files
+  without WP-CLI cannot be stopped from inside, and the site then runs as
+  WordPress with its data intact.
 
 ## What the fleet tooling was found to read
 

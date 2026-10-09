@@ -91,6 +91,23 @@ function wp_set_template_globals()
     $wp_template_path = get_template_directory();
 }
 
+/**
+ * Whether a template path stays where it points (probe template-paths): a
+ * segment made only of dots ("..", "..."), between slashes or backslashes,
+ * would walk out, so it is refused. Nothing else is checked.
+ */
+function _wp_is_template_path_allowed($path)
+{
+    return preg_match('#(?:^|[/\\\\])\.{2,}(?:[/\\\\]|$)#', (string) $path) !== 1;
+}
+
+/**
+ * The first template name found in the child theme, the parent, then the
+ * engine's theme-compat. Since 7.1.2 a name with a dot-only segment counts
+ * only when the file it reaches is really inside that folder: a page name
+ * under a theme's page-* folder could otherwise reach any PHP file (probe
+ * patch-security).
+ */
 function locate_template($template_names, $load = false, $load_once = true, $args = [])
 {
     $located = '';
@@ -100,8 +117,9 @@ function locate_template($template_names, $load = false, $load_once = true, $arg
         }
         // The engine's own theme-compat stands where the reference's wp-includes/theme-compat would.
         foreach ([get_stylesheet_directory(), get_template_directory(), MINN_ENGINE_DIR . '/wp-api/theme-compat'] as $dir) {
-            if (file_exists($dir . '/' . $template_name)) {
-                $located = $dir . '/' . $template_name;
+            $file = $dir . '/' . $template_name;
+            if (file_exists($file) && (_wp_is_template_path_allowed($template_name) || str_starts_with((string) realpath($file), realpath($dir) . '/'))) {
+                $located = $file;
                 break 2;
             }
         }
@@ -1058,7 +1076,8 @@ function _minn_tooltip_id(array $args): string
 
 /**
  * A hover tooltip (probe general-template-more): a help button labelled with
- * the text (tags stripped) and a hint popover holding it, escaped. args:
+ * the text (tags stripped; its attributes in name order since 7.1.3) and a
+ * hint popover holding it, escaped. args:
  * icon (after "dashicons "), class, id. Nothing for no text.
  */
 function wp_get_tooltip($content, $args = [])
@@ -1070,7 +1089,7 @@ function wp_get_tooltip($content, $args = [])
     $args = (array) $args;
     $id = _minn_tooltip_id($args);
     return '<span class="wp-tooltip wp-is-tooltip' . (!empty($args['class']) ? ' ' . esc_attr((string) $args['class']) : '') . '">' . "\n\t\t\t\t"
-        . '<button class="wp-tooltip__toggle" type="button" aria-label="' . esc_attr(wp_strip_all_tags($content)) . '"><span class="' . esc_attr('dashicons ' . ($args['icon'] ?? 'dashicons-editor-help')) . '" aria-hidden="true"></span></button>' . "\n\t\t\t\t"
+        . '<button aria-label="' . esc_attr(wp_strip_all_tags($content)) . '" class="wp-tooltip__toggle" type="button"><span aria-hidden="true" class="' . esc_attr('dashicons ' . ($args['icon'] ?? 'dashicons-editor-help')) . '"></span></button>' . "\n\t\t\t\t"
         . '<span popover="hint" id="' . esc_attr($id) . '" class="wp-tooltip__bubble" role="tooltip"><span id="' . esc_attr($id . '-text') . '" class="wp-tooltip__text">' . esc_html($content) . '</span></span></span>';
 }
 
@@ -1095,7 +1114,7 @@ function wp_get_toggletip($content, $args = [])
     $id = esc_attr(_minn_tooltip_id($args));
     $label = esc_attr((string) ($args['label'] ?? __('Help')));
     return '<span class="wp-tooltip wp-is-toggletip' . (!empty($args['class']) ? ' ' . esc_attr((string) $args['class']) : '') . '">' . "\n\t\t\t\t"
-        . '<button aria-haspopup="dialog" class="wp-tooltip__toggle" popovertarget="' . $id . '" type="button" aria-label="' . $label . '"><span class="' . esc_attr('dashicons ' . ($args['icon'] ?? 'dashicons-editor-help')) . '" aria-hidden="true"></span></button>' . "\n\t\t\t\t"
+        . '<button aria-haspopup="dialog" aria-label="' . $label . '" class="wp-tooltip__toggle" popovertarget="' . $id . '" type="button"><span aria-hidden="true" class="' . esc_attr('dashicons ' . ($args['icon'] ?? 'dashicons-editor-help')) . '"></span></button>' . "\n\t\t\t\t"
         . '<span popover="auto" id="' . $id . '" class="wp-tooltip__bubble" role="dialog" aria-label="' . $label . '" tabindex="-1" autofocus><span id="' . $id . '-text" class="wp-tooltip__text">' . esc_html($content) . '</span>'
         . '<button type="button" class="wp-tooltip__close" popovertarget="' . $id . '" popovertargetaction="hide" aria-label="' . esc_attr__('Close') . '"><span class="dashicons dashicons-no-alt" aria-hidden="true"></span></button></span></span>';
 }

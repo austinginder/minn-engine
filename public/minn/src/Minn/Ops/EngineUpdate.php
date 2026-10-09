@@ -57,12 +57,7 @@ final readonly class EngineUpdate
     public function install(string $zip, string $sha256, string $signature, string $version): string
     {
         $this->refuseCheckout();
-        if (!hash_equals(strtolower($sha256), hash('sha256', $zip))) {
-            throw new RuntimeException('The minn.zip downloaded does not match the checksum its release publishes, so it is not installed.');
-        }
-        if (!$this->signed($zip, $signature)) {
-            throw new RuntimeException("Minn {$version}'s minn.zip is not signed by a key this Minn trusts, so it is not installed.");
-        }
+        $this->verify($zip, $sha256, $signature, $version, 'installed');
         $parent = dirname($this->engineDir);
         if (!is_writable($parent)) {
             throw new RuntimeException("Minn cannot write to {$parent}, the folder it lives in. Update it from the command line instead: php " . basename($this->engineDir) . '/bin/minn update');
@@ -115,6 +110,17 @@ final readonly class EngineUpdate
             @opcache_reset();
         }
         return $version;
+    }
+
+    /** Throws unless an archive matches the checksum its release publishes and carries a signature from a trusted key; $use says what would not happen. */
+    public function verify(string $zip, string $sha256, string $signature, string $version, string $use = 'used'): void
+    {
+        if (!hash_equals(strtolower($sha256), hash('sha256', $zip))) {
+            throw new RuntimeException("The minn.zip downloaded does not match the checksum its release publishes, so it is not {$use}.");
+        }
+        if (!$this->signed($zip, $signature)) {
+            throw new RuntimeException("Minn {$version}'s minn.zip is not signed by a key this Minn trusts, so it is not {$use}.");
+        }
     }
 
     /** Whether one of the trusted keys made this signature over the archive. */

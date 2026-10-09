@@ -131,7 +131,7 @@ $check('a second install is refused', $code === 1, $out);
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp option get home 2>&1', $home, $c1);
 $check('wp option get home works in the installed webroot', $c1 === 0 && implode('', $home) === 'https://minn.localhost', implode("\n", $home));
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp core version 2>&1', $version, $c2);
-$check('wp core version reads the shape file', $c2 === 0 && implode('', $version) === '7.1', implode("\n", $version));
+$check('wp core version reads the shape file', $c2 === 0 && implode('', $version) === '7.1.3', implode("\n", $version));
 exec('cd ' . escapeshellarg($WEBROOT) . ' && wp minn info 2>&1', $info, $c3);
 $check('wp minn info reports the installed engine dir', $c3 === 0 && str_contains(implode("\n", $info), 'Engine dir: ' . realpath("$WEBROOT/minn")), implode("\n", $info));
 

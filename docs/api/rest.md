@@ -23,6 +23,7 @@ the wp/v2 surface: shapes and controllers
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
 | [`Embed`](#embed) | final class | 201 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
+| [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
@@ -44,7 +45,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 421 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 451 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -74,7 +75,7 @@ the wp/v2 surface: shapes and controllers
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TaxonomiesController`](#taxonomiescontroller) | final readonly class | 48 | wp/v2 taxonomies: the registry, whole or per type, in view or edit context. |
 | [`TemplateObject`](#templateobject) | final readonly class | 100 | The wp/v2/templates and wp/v2/template-parts resource. |
-| [`TemplatesController`](#templatescontroller) | final readonly class | 249 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TemplatesController`](#templatescontroller) | final readonly class | 275 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
@@ -903,6 +904,22 @@ declared, so nothing listed answers no-route.
 
 - `@param list<string> $declaredBases`
 - `@return list<string>`
+
+
+## ExistingPost
+
+`final class Minn\Rest\ExistingPost` · `public/minn/src/Minn/Rest/ExistingPost.php` · implements `Minn\Http\Refusal`
+
+A post created with an id names one that exists: refused with
+rest_post_exists before the caller is judged, even signed out (probe
+patch-security). An id of 0 passes here and is refused later, as an
+invalid post id.
+
+Used by: `Minn\Rest\BlocksController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\NavigationController`, `Minn\Rest\PostsWriteController`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws rest_post_exists for a non-empty id in the body or the query.
 
 
 ## Fields
@@ -1814,7 +1831,7 @@ Route: `POST /wp/v2/{base:posts} (cap edit_posts)`
 
 Route: `POST /wp/v2/{base:pages} (cap edit_pages)`
 
-Creates a post or page.
+Creates a post or page; one asked for with an id is refused before the caller is judged (patch-security).
 
 ### `serveCreate(Minn\Http\Request $request, string $type, string $base): Minn\Http\Response`
 
@@ -1854,7 +1871,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 130), `hasOrder()` (private, line 136), `events()` (private, line 142), `newColumns()` (private, line 153), `writeNewPost()` (private, line 187), `rememberOld()` (private, line 293), `floatingDate()` (private, line 307), `scheduledIfFuture()` (private, line 317), `fieldColumns()` (private, line 336), `statusColumns()` (private, line 379), `checkStickyPasswordConflict()` (private, line 409), `validStatus()` (private, line 429), `clean()` (private, line 438)
+Internals: `hasParent()` (private, line 137), `hasOrder()` (private, line 143), `events()` (private, line 149), `newColumns()` (private, line 160), `writeNewPost()` (private, line 194), `rememberOld()` (private, line 305), `floatingDate()` (private, line 319), `scheduledIfFuture()` (private, line 329), `fieldColumns()` (private, line 348), `statusColumns()` (private, line 391), `checkStickyChange()` (private, line 427), `checkStickyPasswordConflict()` (private, line 439), `validStatus()` (private, line 459), `clean()` (private, line 468)
 
 
 ## RegisteredFields
@@ -3189,6 +3206,7 @@ reference lets an editor or author see the layout); changing anything
 needs edit_theme_options.
 
 - const `LOOKUP` = `array (   'slug' =>    array (     'description' => 'The slug of the template to get the fallback for',     'type' => 'string',     'required' => true,   ),   'is_custom' =>    array (     'description' => 'Indicates if a template is custom or part of the template hierarchy',     'type' => 'boolean',     'required' => false,   ),   'template_prefix' =>    array (     'description' => 'The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy`',     'type' => 'string',     'required' => false,   ), )`
+- const `LIST` = `array (   'wp_id' =>    array (     'description' => 'Limit to the specified post id.',     'type' => 'integer',   ),   'area' =>    array (     'description' => 'Limit to the specified template part area.',     'type' => 'string',   ),   'post_type' =>    array (     'description' => 'Post type to get the templates for.',     'type' => 'string',   ), )` — The list filters both routes take, as the reference declares them.
 - const `READ_CAP` = `'edit_posts'`
 - const `WRITE_CAP` = `'edit_theme_options'`
 - const `REFUSAL` = `'Sorry, you are not allowed to access the templates on this site.'`
@@ -3268,7 +3286,7 @@ Route: `DELETE /wp/v2/template-parts/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 120), `lookup()` (private, line 144), `single()` (private, line 162), `save()` (private, line 171), `delete()` (private, line 198), `trashed()` (private, line 215), `record()` (private, line 237), `readable()` (private, line 247), `requireWrite()` (private, line 258), `text()` (private, line 267)
+Internals: `listing()` (private, line 128), `listed()` (private, line 154), `lookup()` (private, line 171), `single()` (private, line 189), `save()` (private, line 198), `delete()` (private, line 225), `trashed()` (private, line 242), `record()` (private, line 264), `readable()` (private, line 274), `requireWrite()` (private, line 285), `text()` (private, line 294)
 
 
 ## TermCollectionParams

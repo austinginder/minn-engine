@@ -122,6 +122,12 @@ final class Edits
         return $list;
     }
 
+    /** Whether text holds a comment closer, "-->" or "--!>". */
+    public static function closesComment(string $text): bool
+    {
+        return str_contains($text, '-->') || str_contains($text, '--!>');
+    }
+
     /**
      * Records a text replacement for a token of a kind that takes one: text
      * (escaped), an ordinary HTML comment, or a raw-text element's body
@@ -137,7 +143,8 @@ final class Edits
             return true;
         }
         if ($type === Tags::COMMENT) {
-            if ($commentType !== Tags::COMMENT_HTML || str_contains($text, '-->')) {
+            // Either closer would end the comment early: "-->", and "--!>" too since 7.1.1 (probe patch-security).
+            if ($commentType !== Tags::COMMENT_HTML || self::closesComment($text)) {
                 return false;
             }
             $this->text = $text;

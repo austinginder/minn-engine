@@ -27,6 +27,7 @@ final readonly class Route
      * @param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them
      * @param string|null $name the route's name in the catalogue; the handler's Class::method when null
      * @param class-string<RouteParams>|null $params the parameters' source when they depend on the captures; $args otherwise
+     * @param class-string<Refusal>|null $refuse a refusal judged after the arguments and before the policy
      */
     public function __construct(
         public Method $method,
@@ -37,6 +38,7 @@ final readonly class Route
         public array $body = [],
         public ?string $name = null,
         public ?string $params = null,
+        public ?string $refuse = null,
     ) {
     }
 

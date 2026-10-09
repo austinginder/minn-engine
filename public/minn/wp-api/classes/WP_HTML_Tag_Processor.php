@@ -173,8 +173,13 @@ class WP_HTML_Tag_Processor
         return $this->tags->modifiableText();
     }
 
+    /** The token's text replaced; an HTML comment refuses a closer in it, done wrong (probe patch-security). */
     public function set_modifiable_text(string $plaintext_content): bool
     {
+        if ($this->get_token_type() === '#comment' && $this->get_comment_type() === self::COMMENT_AS_HTML_COMMENT && Minn\Html\Edits::closesComment($plaintext_content)) {
+            _doing_it_wrong(__METHOD__, __('Comment text cannot contain a comment closer.'), '7.1.0');
+            return false;
+        }
         return $this->tags->setModifiableText($plaintext_content);
     }
 

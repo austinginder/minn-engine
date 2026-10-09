@@ -1,0 +1,626 @@
+[
+    [
+        "template paths",
+        [
+            [
+                [
+                    "index.php",
+                    true
+                ],
+                [
+                    "templates/single.html",
+                    true
+                ],
+                [
+                    "../twentytwentyfour/index.php",
+                    false
+                ],
+                [
+                    "x/../y",
+                    false
+                ],
+                [
+                    "x/..",
+                    false
+                ],
+                [
+                    "..",
+                    false
+                ],
+                [
+                    "...",
+                    false
+                ],
+                [
+                    "a/.../b",
+                    false
+                ],
+                [
+                    "a..b/c",
+                    true
+                ],
+                [
+                    "..b/c",
+                    true
+                ],
+                [
+                    "b../c",
+                    true
+                ],
+                [
+                    "./a",
+                    true
+                ],
+                [
+                    "a/./b",
+                    true
+                ],
+                [
+                    "..\\x",
+                    false
+                ],
+                [
+                    "a\\..\\b",
+                    false
+                ],
+                [
+                    "a\\..b",
+                    true
+                ],
+                [
+                    "/etc/passwd",
+                    true
+                ],
+                [
+                    "C:/x",
+                    true
+                ],
+                [
+                    "",
+                    true
+                ],
+                [
+                    "phar://x.phar/a",
+                    true
+                ]
+            ],
+            "{theme}/functions.php",
+            "",
+            "{theme}/templates/../functions.php",
+            "{theme}/functions.php",
+            "{theme}/./functions.php"
+        ]
+    ],
+    [
+        "sticky through REST",
+        [
+            [
+                403,
+                [
+                    "rest_cannot_assign_sticky",
+                    "Sorry, you are not allowed to make posts sticky."
+                ]
+            ],
+            [
+                200,
+                {
+                    "sticky": false
+                }
+            ],
+            [
+                403,
+                [
+                    "rest_cannot_assign_sticky",
+                    "Sorry, you are not allowed to make posts sticky."
+                ]
+            ],
+            [
+                200,
+                {
+                    "sticky": true
+                }
+            ],
+            [
+                200,
+                {
+                    "sticky": true
+                }
+            ],
+            [
+                403,
+                [
+                    "rest_cannot_assign_sticky",
+                    "Sorry, you are not allowed to make posts sticky."
+                ]
+            ],
+            [
+                201,
+                {
+                    "sticky": false
+                }
+            ],
+            [
+                400,
+                [
+                    "rest_invalid_param",
+                    "Invalid parameter(s): status"
+                ]
+            ],
+            [
+                200,
+                {
+                    "sticky": true
+                }
+            ],
+            [
+                403,
+                [
+                    "rest_cannot_assign_sticky",
+                    "Sorry, you are not allowed to make posts sticky."
+                ]
+            ],
+            [
+                true,
+                true
+            ]
+        ]
+    ],
+    [
+        "creating a post with an id",
+        [
+            [
+                400,
+                [
+                    "rest_post_exists",
+                    "Cannot create existing post."
+                ]
+            ],
+            [
+                400,
+                [
+                    "rest_post_exists",
+                    "Cannot create existing post."
+                ]
+            ],
+            [
+                404,
+                [
+                    "rest_post_invalid_id",
+                    "Invalid post ID."
+                ]
+            ],
+            [
+                400,
+                [
+                    "rest_post_exists",
+                    "Cannot create existing post."
+                ]
+            ],
+            [
+                401,
+                [
+                    "rest_cannot_create",
+                    "Sorry, you are not allowed to create posts as this user."
+                ]
+            ]
+        ]
+    ],
+    [
+        "the stuck hooks",
+        [
+            [
+                [
+                    "post_stuck",
+                    true
+                ],
+                [
+                    "post_unstuck",
+                    true
+                ],
+                [
+                    "post_stuck",
+                    true
+                ],
+                [
+                    "post_unstuck",
+                    true
+                ],
+                [
+                    "post_stuck",
+                    true
+                ],
+                [
+                    "post_unstuck",
+                    true
+                ]
+            ],
+            false,
+            false
+        ]
+    ],
+    [
+        "comment text in the HTML API",
+        [
+            [
+                "a-->",
+                false,
+                "<p>1</p><!-- old --><p>2</p>",
+                [
+                    [
+                        "WP_HTML_Tag_Processor::set_modifiable_text",
+                        "Comment text cannot contain a comment closer.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                "a--!>",
+                false,
+                "<p>1</p><!-- old --><p>2</p>",
+                [
+                    [
+                        "WP_HTML_Tag_Processor::set_modifiable_text",
+                        "Comment text cannot contain a comment closer.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                "a--!><img src=x onerror=alert(1)>",
+                false,
+                "<p>1</p><!-- old --><p>2</p>",
+                [
+                    [
+                        "WP_HTML_Tag_Processor::set_modifiable_text",
+                        "Comment text cannot contain a comment closer.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                "a --!> b",
+                false,
+                "<p>1</p><!-- old --><p>2</p>",
+                [
+                    [
+                        "WP_HTML_Tag_Processor::set_modifiable_text",
+                        "Comment text cannot contain a comment closer.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                "a--!",
+                true,
+                "<p>1</p><!--a--!--><p>2</p>",
+                []
+            ],
+            [
+                "a--",
+                true,
+                "<p>1</p><!--a----><p>2</p>",
+                []
+            ],
+            [
+                "<!-- x -->",
+                false,
+                "<p>1</p><!-- old --><p>2</p>",
+                [
+                    [
+                        "WP_HTML_Tag_Processor::set_modifiable_text",
+                        "Comment text cannot contain a comment closer.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                "a-- >",
+                true,
+                "<p>1</p><!--a-- >--><p>2</p>",
+                []
+            ]
+        ]
+    ],
+    [
+        "oEmbed providers",
+        [
+            57,
+            [
+                "#https?://((legacy|www)\\.)?reverbnation\\.com/.*#i"
+            ],
+            false,
+            false
+        ]
+    ],
+    [
+        "a custom header's size",
+        [
+            {
+                "url": "https://zz.example/h.jpg",
+                "thumbnail_url": "https://zz.example/t.jpg",
+                "width": 1,
+                "height": 0,
+                "video": false,
+                "attachment_id": 0
+            },
+            "<img src=\"http://zz.example/h.jpg\" width=\"1\" height=\"0\" alt=\"\" decoding=\"async\" />",
+            {
+                "url": "https://zz.example/h.jpg",
+                "thumbnail_url": "https://zz.example/t.jpg",
+                "width": 1,
+                "height": 0,
+                "video": false,
+                "attachment_id": 0
+            }
+        ]
+    ],
+    [
+        "status transition hooks",
+        [
+            [
+                "draft",
+                "draft",
+                [
+                    "draft_post"
+                ]
+            ],
+            [
+                "publish",
+                "draft",
+                [
+                    "draft_to_publish",
+                    "publish_post"
+                ]
+            ],
+            [
+                "zz_patch_reg",
+                "draft",
+                [
+                    "zz_patch_reg_post"
+                ]
+            ],
+            [
+                "wp_insert",
+                "draft",
+                [
+                    "wp_insert_post"
+                ]
+            ],
+            [
+                "zz",
+                "draft",
+                []
+            ],
+            [
+                "zz-odd",
+                "draft",
+                []
+            ],
+            [
+                "new",
+                "draft",
+                []
+            ],
+            [
+                "delete",
+                "draft",
+                []
+            ],
+            [
+                "draft",
+                "zz",
+                [
+                    "draft_post"
+                ]
+            ],
+            [
+                "publish",
+                "new",
+                [
+                    "new_to_publish",
+                    "publish_post"
+                ]
+            ],
+            [
+                "zz",
+                "new",
+                []
+            ],
+            [
+                "publish",
+                "auto-draft",
+                [
+                    "auto-draft_to_publish",
+                    "publish_post"
+                ]
+            ],
+            [
+                "inherit",
+                "new",
+                [
+                    "new_to_inherit"
+                ]
+            ],
+            [
+                "zz_patch_type",
+                [
+                    "draft_to_publish",
+                    "publish_zz_patch_type"
+                ],
+                []
+            ],
+            [
+                "zz_unregistered",
+                [
+                    "draft_to_publish"
+                ],
+                []
+            ],
+            [
+                "post_type",
+                [
+                    "draft_to_publish"
+                ],
+                []
+            ]
+        ]
+    ],
+    [
+        "the REST template lists",
+        [
+            [
+                [],
+                [
+                    200,
+                    [
+                        "single",
+                        "page",
+                        "index",
+                        "home",
+                        "404",
+                        "page-no-title",
+                        "search",
+                        "archive"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "post_type": "page"
+                },
+                [
+                    200,
+                    [
+                        "page-no-title"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "post_type": "post"
+                },
+                [
+                    200,
+                    []
+                ]
+            ],
+            [
+                {
+                    "post_type": "../x"
+                },
+                [
+                    200,
+                    []
+                ]
+            ],
+            [
+                {
+                    "wp_id": 0
+                },
+                [
+                    200,
+                    []
+                ]
+            ],
+            [
+                {
+                    "wp_id": 5
+                },
+                [
+                    200,
+                    []
+                ]
+            ],
+            [
+                {
+                    "wp_id": "abc"
+                },
+                [
+                    400,
+                    "rest_invalid_param"
+                ]
+            ],
+            [
+                {
+                    "post_type": [
+                        "page"
+                    ]
+                },
+                [
+                    400,
+                    "rest_invalid_param"
+                ]
+            ],
+            [
+                {
+                    "area": "header"
+                },
+                [
+                    200,
+                    [
+                        "single",
+                        "page",
+                        "index",
+                        "home",
+                        "404",
+                        "page-no-title",
+                        "search",
+                        "archive"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "area": "header"
+                },
+                [
+                    200,
+                    [
+                        "vertical-header",
+                        "header-large-title",
+                        "header"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "area": "zz"
+                },
+                [
+                    200,
+                    []
+                ]
+            ],
+            [
+                {
+                    "post_type": "page"
+                },
+                [
+                    200,
+                    [
+                        "vertical-header",
+                        "footer-columns",
+                        "footer-newsletter",
+                        "header-large-title",
+                        "footer",
+                        "sidebar",
+                        "header"
+                    ]
+                ]
+            ],
+            [
+                {
+                    "wp_id": 0
+                },
+                [
+                    200,
+                    []
+                ]
+            ]
+        ]
+    ],
+    [
+        "calls done wrong along the way",
+        []
+    ]
+]

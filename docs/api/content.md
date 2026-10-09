@@ -5,7 +5,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AdjacentScope`](#adjacentscope) | final readonly class | 16 | Which posts count as a post's neighbours (get_adjacent_post, probe |
-| [`Autop`](#autop) | final class | 34 | Classic-content paragraphing: blank lines become paragraphs, single |
+| [`Autop`](#autop) | final class | 168 | Classic-content paragraphing (wpautop): blank lines become paragraphs, |
 | [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
@@ -32,7 +32,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 482 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 498 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 406 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
@@ -76,15 +76,40 @@ __construct(string $private = 'none', int $reader = 0, array $sameTerms = array 
 
 `final class Minn\Content\Autop` · `public/minn/src/Minn/Content/Autop.php`
 
-Classic-content paragraphing: blank lines become paragraphs, single
-newlines become line breaks, and block-level tags are never wrapped.
-The behaviour is pinned by the api suite row for row.
+Classic-content paragraphing (wpautop): blank lines become paragraphs,
+single newlines become line breaks when asked, and block-level tags are
+never wrapped. Rebuilt against the reference's output on a corpus of
+fuzzed and real content plus targeted experiments (probe autop); every
+rule below is one that corpus demanded, written as the behaviour seen,
+in the order it applies:
 
-- const `BLOCKS` = `'(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)'`
+- <pre> elements are cut out first and put back untouched at the end.
+- A pair of <br> tags is a paragraph break; block tags get blank lines
+around them, so they always sit outside paragraphs.
+- Newlines inside a tag, comment or CDATA section (an unclosed one runs
+to the end) are held aside, so they never split a paragraph and come
+back as plain newlines. While held, such a newline ends the tag as far
+as the block rules can tell.
+- Whitespace around object, param, embed, audio, video, source, track,
+figcaption and option tags is squeezed out when those tags are used.
+- Blank-line separated runs become <p> paragraphs, then paragraphs that
+only hold a block tag lose their <p> and </p>.
+- With line breaks on, remaining newlines become <br />, except inside
+script, style, svg and math elements, and breaks next to block tags go.
+
+- const `BLOCK` = `'(?:table|thead|tfoot|caption|col|colgroup|tbody|tr|td|th|div|dl|dd|dt|ul|ol|li|pre|form|map|area|blockquote|address|style|p|h[1-6]|hr|fieldset|legend|section|article|aside|hgroup|header|footer|nav|figure|figcaption|details|menu|summary)'` — Tag names that open and close blocks; the cleanup rules match them as name prefixes, case-sensitively.
+- const `BREAK_DROPPERS` = `'(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)'` — Tags (again by name prefix) that drop a <br /> written just before them.
+- const `HELD_CORE` = `'<>'` — Core of a held newline. It reads as a tag of its own: a run of plain
+text stops at its "<" and a tag match ends at its ">", which is how a
+held newline keeps the block rules from reaching past it.
+- const `HELD_NEWLINE` = `' <> '` — A newline inside a tag, comment or CDATA section while paragraphs are made.
+- const `RAW_NEWLINE` = `''` — A newline inside script, style, svg or math while line breaks are added.
 
 ### static `apply(string $text, bool $lineBreaks = true): string`
 
 The classic paragraph rules: a blank line makes a paragraph, a single newline a line break when asked.
+
+Internals: `stashPre()` (private, line 76), `spaceBlocks()` (private, line 102), `holdTagNewlines()` (private, line 111), `squeezeMedia()` (private, line 124), `squeezeFormParts()` (private, line 140), `wrapParagraphs()` (private, line 154), `tidyParagraphs()` (private, line 164), `addLineBreaks()` (private, line 178), `tidyBreaks()` (private, line 191)
 
 
 ## Blocks
@@ -1328,11 +1353,11 @@ Whether the post is in the sticky_posts option.
 
 ### `stick(int $id): void`
 
-Rewrites the sticky_posts option with or without one id.
+Puts a post on the sticky list, then post_stuck when it was not on it (probe rest-sticky).
 
 ### `unstick(int $id): void`
 
-Takes a post off the sticky list.
+Takes a post off the sticky list, then post_unstuck when it was on it (probe rest-sticky).
 
 ### `setFormat(int $id, string $format): void`
 
@@ -1398,7 +1423,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 171), `saveSticky()` (private, line 265), `revisionsToKeep()` (private, line 373), `pruneRevisions()` (private, line 380)
+Internals: `fit()` (private, line 172), `announceSticky()` (private, line 273), `saveSticky()` (private, line 282), `revisionsToKeep()` (private, line 390), `pruneRevisions()` (private, line 397)
 
 
 ## Posts

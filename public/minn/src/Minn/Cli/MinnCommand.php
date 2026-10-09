@@ -172,6 +172,21 @@ final class MinnCommand
     }
 
     /**
+     * Replaces this engine with the latest Minn release from the update service, checked against its signature.
+     *
+     * ## OPTIONS
+     *
+     * [--check]
+     * : Only say whether a newer release is out.
+     *
+     * @when before_wp_load
+     */
+    public function update(array $args, array $assocArgs): void
+    {
+        self::installer('update', [], $assocArgs);
+    }
+
+    /**
      * Removes the engine and puts WordPress's files back.
      *
      * ## OPTIONS

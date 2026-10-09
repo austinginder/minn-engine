@@ -950,22 +950,31 @@ function is_sticky($post_id = 0)
     return is_array($stickies) && in_array((int) $post_id, array_map('intval', $stickies), true);
 }
 
+/** Adds the post to sticky_posts, then post_stuck with its id; nothing when it already is sticky (probe rest-sticky). */
 function stick_post($post_id)
 {
+    $post_id = (int) $post_id;
     $stickies = get_option('sticky_posts');
     $stickies = is_array($stickies) ? array_map('intval', $stickies) : [];
-    if (in_array((int) $post_id, $stickies, true)) {
+    if (in_array($post_id, $stickies, true)) {
         return;
     }
-    $stickies[] = (int) $post_id;
+    $stickies[] = $post_id;
     update_option('sticky_posts', $stickies);
+    do_action('post_stuck', $post_id);
 }
 
+/** Takes the post out of sticky_posts, then post_unstuck with its id; nothing when it was not sticky (probe rest-sticky). */
 function unstick_post($post_id)
 {
+    $post_id = (int) $post_id;
     $stickies = get_option('sticky_posts');
     $stickies = is_array($stickies) ? array_map('intval', $stickies) : [];
-    update_option('sticky_posts', array_values(array_diff($stickies, [(int) $post_id])));
+    if (!in_array($post_id, $stickies, true)) {
+        return;
+    }
+    update_option('sticky_posts', array_values(array_diff($stickies, [$post_id])));
+    do_action('post_unstuck', $post_id);
 }
 
 function get_post_thumbnail_id($post = null)
@@ -1333,11 +1342,23 @@ function wp_check_for_changed_dates($post_id, $post, $post_before)
     wp_cache_delete((int) $post_id, 'post_meta');
 }
 
+/**
+ * The status change announced (probe patch-security). Since 7.1.3 the named
+ * hooks fire only for names that exist, so a stored status cannot forge
+ * another action's name: {old}_to_{new} when the new status is registered
+ * and the old one is too (or is "new"), {new}_{type} when the new status and
+ * the post type are registered.
+ */
 function wp_transition_post_status($new_status, $old_status, $post)
 {
     do_action('transition_post_status', $new_status, $old_status, $post);
-    do_action("{$old_status}_to_{$new_status}", $post);
-    do_action("{$new_status}_{$post->post_type}", $post->ID, $post, $old_status);
+    $known = get_post_status_object($new_status) !== null;
+    if ($known && ($old_status === 'new' || get_post_status_object($old_status) !== null)) {
+        do_action("{$old_status}_to_{$new_status}", $post);
+    }
+    if ($known && post_type_exists($post->post_type)) {
+        do_action("{$new_status}_{$post->post_type}", $post->ID, $post, $old_status);
+    }
 }
 
 /**
@@ -1656,6 +1677,8 @@ function wp_trash_post($post_id = 0)
     if ($check !== null) {
         return $check;
     }
+    // A trashed post stops being sticky first (probe rest-sticky).
+    unstick_post($post->ID);
     do_action('wp_trash_post', $post->ID, $post->post_status);
     // The status, the time and the slug it had are kept for the way back; then the save itself, as wp_update_post makes it.
     add_post_meta($post->ID, '_wp_trash_meta_status', $post->post_status);
@@ -1721,6 +1744,8 @@ function wp_delete_post($post_id = 0, $force_delete = false)
     if ($check !== null) {
         return $check;
     }
+    // A deleted post stops being sticky first (probe rest-sticky).
+    unstick_post($post->ID);
     do_action('before_delete_post', $post->ID, $post);
     delete_post_meta($post->ID, '_wp_trash_meta_status');
     delete_post_meta($post->ID, '_wp_trash_meta_time');

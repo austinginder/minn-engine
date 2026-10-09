@@ -43,9 +43,9 @@ final readonly class PostsWriteController
     ) {
     }
 
-    /** Creates a post or page. */
-    #[Route(Method::Post, '/wp/v2/{base:posts}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create posts as this user.'))]
-    #[Route(Method::Post, '/wp/v2/{base:pages}', policy: new Policy(Access::Cap, 'edit_pages', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create posts as this user.'))]
+    /** Creates a post or page; one asked for with an id is refused before the caller is judged (patch-security). */
+    #[Route(Method::Post, '/wp/v2/{base:posts}', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create posts as this user.'), refuse: ExistingPost::class)]
+    #[Route(Method::Post, '/wp/v2/{base:pages}', policy: new Policy(Access::Cap, 'edit_pages', signIn: 'rest_cannot_create', signInMessage: 'Sorry, you are not allowed to create posts as this user.', refuse: 'rest_cannot_create', message: 'Sorry, you are not allowed to create posts as this user.'), refuse: ExistingPost::class)]
     public function create(Request $request, string $base): Response
     {
         return $this->serveCreate($request, $base === 'pages' ? 'page' : 'post', $base);
@@ -54,9 +54,15 @@ final readonly class PostsWriteController
     /** Creates a post of any type from the body. */
     public function serveCreate(Request $request, string $type, string $base): Response
     {
+        // A non-empty id was refused at the route (ExistingPost); an empty one is an invalid post id, once the caller may create.
+        ExistingPost::refuse($request);
+        $given = $request->json()['id'] ?? $request->query['id'] ?? null;
         $userId = $this->caller->require('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.')->id();
         if (!$this->caller->can(TypeCapabilities::create($type))) {
             throw new RestError('rest_cannot_create', 'Sorry, you are not allowed to create posts as this user.', 403);
+        }
+        if ($given !== null) {
+            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
 
         $body = $request->json();
@@ -70,6 +76,7 @@ final readonly class PostsWriteController
             }
             $author = (int) $body['author'];
         }
+        $this->checkStickyChange($body, null, $type);
         if (in_array($status, self::LIVE, true) && !$this->caller->can(TypeCapabilities::publish($type))) {
             throw new RestError('rest_cannot_publish', 'Sorry, you are not allowed to create private posts in this post type.', 403);
         }
@@ -220,6 +227,11 @@ final readonly class PostsWriteController
 
         $body = $this->scheduledIfFuture($request->json(), $post);
         self::checkMeta($body);
+        // The status is a parameter, checked before the caller is judged on sticky (rest-sticky).
+        if (isset($body['status'])) {
+            self::validStatus((string) $body['status']);
+        }
+        $this->checkStickyChange($body, $post, $type);
         $this->checkStickyPasswordConflict($body, $post);
         $columns = [...$this->floatingDate($body, $post), ...$this->fieldColumns($body, $post, $type), ...$this->statusColumns($body, $post, $type)];
         $columns['post_modified'] = $this->site->localNow();
@@ -403,6 +415,24 @@ final readonly class PostsWriteController
             $columns['post_date_gmt'] = gmdate('Y-m-d H:i:s');
         }
         return $columns;
+    }
+
+    /**
+     * Making a post sticky, or no longer sticky, takes the type's
+     * edit_others_posts since 7.1.3; asking for what it already is does not
+     * (rest-sticky). Only posts are sticky.
+     *
+     * @param array<string, mixed> $body
+     */
+    private function checkStickyChange(array $body, ?PostRecord $post, string $type): void
+    {
+        if ($type !== 'post' || !array_key_exists('sticky', $body)) {
+            return;
+        }
+        $current = $post !== null && $this->writer->isSticky($post->id);
+        if ((bool) $body['sticky'] !== $current && !$this->caller->can(TypeCapabilities::editOthers($type))) {
+            throw new RestError('rest_cannot_assign_sticky', 'Sorry, you are not allowed to make posts sticky.', 403);
+        }
     }
 
     /** The reference refuses a sticky and password combination outright. */

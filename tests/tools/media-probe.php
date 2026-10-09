@@ -81,7 +81,12 @@ $say('original path', [basename(wp_get_original_image_path($aid)), basename(get_
 $say('wp_get_image_mime', [wp_get_image_mime(get_attached_file($aid)), wp_get_image_mime('/nope.png')]);
 $say('file_is_valid_image', [file_is_valid_image(get_attached_file($aid)), file_is_valid_image('/nope'), file_is_displayable_image(get_attached_file($aid))]);
 $say('site icon', [get_site_icon_url(), has_site_icon(), get_site_icon_url(32, 'fallback')]);
+// Whether Imagick passes its test depends on the host's ImageMagick (7.1.3 accepts this machine's, 7.1 did not),
+// so the case keeps to GD and stays about the chooser.
+$gdOnly = static fn () => ['WP_Image_Editor_GD'];
+add_filter('wp_image_editors', $gdOnly);
 $say('wp_get_image_editor', [$kind(wp_get_image_editor(get_attached_file($aid))), $kind(wp_get_image_editor('/nope.png'))]);
+remove_filter('wp_image_editors', $gdOnly);
 $say('get_the_post_thumbnail', [$rel(get_the_post_thumbnail(5)), $rel(get_the_post_thumbnail(1)), $rel(get_the_post_thumbnail_url(5, 'thumbnail')), get_the_post_thumbnail_url(1)]);
 $say('prepare_attachment_for_js keys', array_keys(wp_prepare_attachment_for_js($aid)));
 $say('prepare_attachment_for_js sizes', array_keys(wp_prepare_attachment_for_js($aid)['sizes']));

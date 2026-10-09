@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Http\Access;
+use Minn\Http\Args;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -31,6 +32,13 @@ final readonly class TemplatesController
         'template_prefix' => ['description' => 'The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy`', 'type' => 'string', 'required' => false],
     ];
 
+    /** The list filters both routes take, as the reference declares them. */
+    private const LIST = [
+        'wp_id' => ['description' => 'Limit to the specified post id.', 'type' => 'integer'],
+        'area' => ['description' => 'Limit to the specified template part area.', 'type' => 'string'],
+        'post_type' => ['description' => 'Post type to get the templates for.', 'type' => 'string'],
+    ];
+
     private const READ_CAP = 'edit_posts';
     private const WRITE_CAP = 'edit_theme_options';
     private const REFUSAL = 'Sorry, you are not allowed to access the templates on this site.';
@@ -44,14 +52,14 @@ final readonly class TemplatesController
     }
 
     /** The templates list. */
-    #[Route(Method::Get, '/wp/v2/templates', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
+    #[Route(Method::Get, '/wp/v2/templates', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL), args: [Args::CONTEXT, self::LIST])]
     public function templates(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::TEMPLATE);
     }
 
     /** The template parts list. */
-    #[Route(Method::Get, '/wp/v2/template-parts', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL))]
+    #[Route(Method::Get, '/wp/v2/template-parts', policy: new Policy(Access::Cap, self::READ_CAP, signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL), args: [Args::CONTEXT, self::LIST])]
     public function parts(Request $request): Response
     {
         return $this->listing($request, TemplateIndex::PART);
@@ -121,18 +129,37 @@ final readonly class TemplatesController
     {
         $index = $this->readable();
         $context = Context::of($request);
-        $edit = $context->isEdit();
         $fields = Fields::fromQuery($request->query);
         $rows = array_map(
             function (TemplateRecord $record) use ($context, $fields): array {
                 $row = $this->object->view($record, $context);
                 return $fields === null ? $row : $fields->apply($row);
             },
-            $index->all($type),
+            array_values(array_filter($index->all($type), fn (TemplateRecord $record): bool => $this->listed($record, $request->query, $index))),
         );
         // The reference paginates neither list, so neither carries the
         // X-WP-Total pair its paginated collections do.
         return Reply::item($rows, null);
+    }
+
+    /**
+     * Whether a record passes the list's filters (probe patch-security):
+     * wp_id matches only a stored one with that id, so a theme file (wp_id 0)
+     * never does; post_type keeps templates that declare that type; area
+     * keeps parts in that area. Each filter applies only where it means
+     * something.
+     *
+     * @param array<string, mixed> $query
+     */
+    private function listed(TemplateRecord $record, array $query, TemplateIndex $index): bool
+    {
+        if (isset($query['wp_id']) && ($record->wpId === 0 || $record->wpId !== (int) $query['wp_id'])) {
+            return false;
+        }
+        if (isset($query['post_type']) && !$record->isPart() && !in_array((string) $query['post_type'], $index->postTypes($record->slug), true)) {
+            return false;
+        }
+        return !isset($query['area']) || !$record->isPart() || $record->area === (string) $query['area'];
     }
 
     /**

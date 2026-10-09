@@ -26,15 +26,16 @@ request, response, routing, and the outgoing client
 | [`Policy`](#policy) | final readonly class | 108 | What a route requires of its caller, as data on the route: the router |
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 105 | An HTTP response as text, the way the Requests library hands it from |
+| [`Refusal`](#refusal) | interface | 5 | A refusal a route judges after its arguments and before its policy: the |
 | [`Request`](#request) | final readonly class | 139 | An immutable picture of the incoming request. Built once from the PHP |
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 123 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 72 | Declares a handler method as a route. The policy lives here, as |
+| [`Route`](#route) | final readonly class | 74 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`RouteParams`](#routeparams) | interface | 10 | The parameters a route takes when they depend on what its captures name |
 | [`RouteRow`](#routerow) | final readonly class | 81 | One line of the route table: what a route is, who it is for, and what it |
-| [`Router`](#router) | final class | 254 | Matches a request to a #[Route] on one of the registered handler |
+| [`Router`](#router) | final class | 260 | Matches a request to a #[Route] on one of the registered handler |
 | [`StatusText`](#statustext) | final class | 16 | The reason phrase a status line carries for each code, as the reference's |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
 | [`Transport`](#transport) | final class | 138 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
@@ -86,7 +87,7 @@ string here; the reference's enum is the site's installed languages, which is no
 - const `APPLICATION_PASSWORD` = `array (   'app_id' =>    array (     'description' => 'A UUID provided by the application to uniquely identify it. It is recommended to use an UUID v5 with the URL or DNS namespace.',     'type' => 'string',     'oneOf' =>      array (       0 =>        array (         'type' => 'string',         'format' => 'uuid',       ),       1 =>        array (         'type' => 'string',         'enum' =>          array (           0 => '',         ),       ),     ),     'required' => false,   ),   'name' =>    array (     'description' => 'The name of the application password.',     'type' => 'string',     'minLength' => 1,     'pattern' => '.*\\S.*',     'required' => true,   ), )` — Read by Rest\ApplicationPasswordsController::create(): the body of a new application password.
 - const `SEARCH` = `array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'post',     'description' => 'Limit results to items of an object type.',     'type' => 'string',     'enum' =>      array (       0 => 'post',       1 => 'term',       2 => 'post-format',     ),     'required' => false,   ),   'subtype' =>    array (     'default' => 'any',     'description' => 'Limit results to items of one or more object subtypes.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'post',         1 => 'page',         2 => 'category',         3 => 'post_tag',         4 => 'any',       ),       'type' => 'string',     ),     'required' => false,   ), )` — Read by Rest\SearchController::list(): the search collection, whose context has no edit view.
 
-Used by: `Minn\Http\Route`, `Minn\Http\RouteRow`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Http\Route`, `Minn\Http\RouteRow`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentsController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermCollectionParams`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `merge(array $sets): array`
 
@@ -229,7 +230,7 @@ one of the caller's host prefixes when given, no private address, and a
 body over the cap fails rather than being truncated. The messages are
 written for the person who asked for the download.
 
-Used by: `Minn\Admin\Translations`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`
+Used by: `Minn\Admin\Translations`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`
 
 ```php
 __construct(Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
@@ -820,6 +821,21 @@ inflates.
 A gzip or zlib body inflated; anything else (raw deflate included) comes back as it was.
 
 
+## Refusal
+
+`interface Minn\Http\Refusal` · `public/minn/src/Minn/Http/Refusal.php`
+
+A refusal a route judges after its arguments and before its policy: the
+reference turns some requests away at the head of its permission check,
+before it looks at the caller at all (a post created with an id).
+
+Used by: `Minn\Rest\ExistingPost`
+
+### static `refuse(Minn\Http\Request $request): void`
+
+Throws the refusal when the request earns it; returns quietly otherwise.
+
+
 ## Request
 
 `final readonly class Minn\Http\Request` · `public/minn/src/Minn/Http/Request.php`
@@ -827,7 +843,7 @@ A gzip or zlib body inflated; anything else (raw deflate included) comes back as
 An immutable picture of the incoming request. Built once from the PHP
 globals at the edge; handlers only ever see this object.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\Authenticator`, `Minn\Auth\SignIn`, `Minn\Autoloader`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\AssetsController`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\Redirects`, `Minn\Front\Resolver`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Http\Envelope`, `Minn\Http\Kernel`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Media\Upload`, `Minn\Ops\Diagnostics`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\Caller`, `Minn\Rest\CommentsController`, `Minn\Rest\Context`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AjaxController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Auth\Authenticator`, `Minn\Auth\SignIn`, `Minn\Autoloader`, `Minn\Context`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\AssetsController`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\CommentPostController`, `Minn\Front\FeedController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\Redirects`, `Minn\Front\Resolver`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapController`, `Minn\Http\Envelope`, `Minn\Http\Kernel`, `Minn\Http\Refusal`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Media\Upload`, `Minn\Ops\Diagnostics`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\Caller`, `Minn\Rest\CommentsController`, `Minn\Rest\Context`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\Embed`, `Minn\Rest\ExistingPost`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AjaxController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`
 
 ```php
 __construct(Minn\Http\Method $method, string $path, array $query, array $headers, array $cookies, string $body, bool $secure, string $host, array $form = array ( ), array $files = array ( ), string $remoteAddress = '', array $server = array ( ))
@@ -1018,7 +1034,7 @@ it, and "/{path*}" captures the rest of the path (slashes included).
 Used by: `Minn\Admin\AppController`, `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Front\AssetsController`, `Minn\Front\CommentPostController`, `Minn\Front\FrontController`, `Minn\Front\ProbeController`, `Minn\Front\SitemapController`, `Minn\Http\Matched`, `Minn\Http\RouteRow`, `Minn\Http\Router`, `Minn\Login\LoginController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\Catalogue`, `Minn\Rest\CommentsController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\DeclaredTermsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\NavigationController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TaxonomiesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\TypesController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AjaxController`
 
 ```php
-__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL, ?string $params = NULL)
+__construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy = NULL, array $args = array ( ), bool $index = true, array $body = array ( ), ?string $name = NULL, ?string $params = NULL, ?string $refuse = NULL)
 ```
 - `@param list<array<string, array<string, mixed>>> $args the parameter sets this route reads, from Args`
 - `@param list<array<string, array<string, mixed>>> $body the parameter sets this route reads from the JSON body, from Args or the shape that owns them`
@@ -1031,6 +1047,7 @@ __construct(Minn\Http\Method $method, string $pattern, ?Minn\Http\Policy $policy
 - readonly `array $body`
 - readonly `?string $name`
 - readonly `?string $params`
+- readonly `?string $refuse`
 
 ### `arguments(array $captures = array ( )): array`
 
@@ -1193,7 +1210,7 @@ reads to tell a route that does not take part from no route at all.
 
 Null when nothing matched, so the caller can fall through.
 
-Internals: `admits()` (private, line 118), `arguments()` (private, line 179), `answer()` (private, line 196), `enveloped()` (private, line 214), `methodsOf()` (private, line 242), `literal()` (private, line 255), `spells()` (private, line 266)
+Internals: `admits()` (private, line 118), `arguments()` (private, line 179), `answer()` (private, line 196), `enveloped()` (private, line 217), `methodsOf()` (private, line 248), `literal()` (private, line 261), `spells()` (private, line 272)
 
 
 ## StatusText

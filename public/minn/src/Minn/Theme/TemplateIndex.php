@@ -128,6 +128,16 @@ final class TemplateIndex
         return $info;
     }
 
+    /**
+     * The post types a custom template declares; none for any other template.
+     *
+     * @return list<string>
+     */
+    public function postTypes(string $slug): array
+    {
+        return array_values(array_map('strval', (array) ($this->theme->customTemplate($slug)['postTypes'] ?? [])));
+    }
+
     /** The theme the index reads. */
     public function themeSlug(): string
     {

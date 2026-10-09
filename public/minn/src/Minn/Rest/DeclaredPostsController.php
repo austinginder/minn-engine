@@ -42,7 +42,7 @@ final readonly class DeclaredPostsController
     }
 
     /** Creates a post of a declared type. */
-    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base', verb: 'create'))]
+    #[Route(Method::Post, '/wp/v2/{base:[a-z0-9_-]+}', policy: new Policy(Access::Type, param: 'base', verb: 'create'), refuse: ExistingPost::class)]
     public function create(Request $request, string $base): Response
     {
         $slug = $this->slug($base);
