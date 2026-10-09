@@ -1,0 +1,263 @@
+[
+    [
+        "dependents and dependencies",
+        [
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true,
+            false,
+            [
+                "zz-deps-a/zz-deps-a.php",
+                "zz-deps-c/zz-deps-c.php"
+            ],
+            [
+                "zz-deps-bad/zz-deps-bad.php",
+                "zz-deps-single.php"
+            ],
+            [],
+            [
+                "zz-deps-b",
+                "zz-deps-missing"
+            ],
+            [
+                "zz-deps-c"
+            ],
+            [],
+            "zz-deps-a/zz-deps-a.php",
+            "zz-deps-single.php",
+            false,
+            "zz-deps-b/zz-deps-b.php",
+            false,
+            false
+        ]
+    ],
+    [
+        "unmet and circular",
+        [
+            true,
+            false,
+            false,
+            false,
+            true,
+            false,
+            [
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ],
+                [
+                    "zz-deps-c2",
+                    "zz-deps-c1"
+                ],
+                [
+                    "zz-deps-c3",
+                    "zz-deps-c2"
+                ],
+                [
+                    "zz-deps-l1",
+                    "zz-deps-l2"
+                ],
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ],
+                [
+                    "zz-deps-l1",
+                    "zz-deps-l2"
+                ],
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ],
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ],
+                [
+                    "zz-deps-l2",
+                    "zz-deps-l1"
+                ],
+                [
+                    "zz-deps-loop1",
+                    "zz-deps-loop2"
+                ],
+                [
+                    "zz-deps-loop2",
+                    "zz-deps-loop1"
+                ],
+                [
+                    "zz-deps-self",
+                    "zz-deps-self"
+                ]
+            ],
+            [],
+            [
+                [
+                    "zz-y",
+                    "zz-y"
+                ]
+            ],
+            [
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ]
+            ],
+            [
+                [
+                    "zz-deps-l1",
+                    "zz-deps-l2"
+                ],
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ]
+            ],
+            [
+                [
+                    "zz-deps-l1",
+                    "zz-deps-l2"
+                ],
+                [
+                    "zz-deps-c1",
+                    "zz-deps-c3"
+                ]
+            ],
+            [
+                [
+                    "zz-x",
+                    "zz-x"
+                ],
+                [
+                    "zz-y",
+                    "zz-y"
+                ]
+            ],
+            [
+                true,
+                true,
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "names and data",
+        [
+            [
+                "Zz Deps A",
+                "Zz Deps C"
+            ],
+            [
+                "Zz Deps Bad",
+                "Zz Deps Single"
+            ],
+            {
+                "zz-deps-b": "Zz Deps B",
+                "zz-deps-missing": "zz-deps-missing"
+            },
+            {
+                "zz-deps-c": "Zz Deps C"
+            },
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "the steps",
+        [
+            {
+                "zz-deps-a/zz-deps-a.php": [],
+                "zz-deps-b/zz-deps-b.php": [],
+                "zz-deps-bad/zz-deps-bad.php": [],
+                "zz-deps-c/zz-deps-c.php": [],
+                "zz-deps-c1/zz-deps-c1.php": [],
+                "zz-deps-c2/zz-deps-c2.php": [],
+                "zz-deps-c3/zz-deps-c3.php": [],
+                "zz-deps-d/zz-deps-d.php": [],
+                "zz-deps-l1/zz-deps-l1.php": [],
+                "zz-deps-l2/zz-deps-l2.php": [],
+                "zz-deps-loop1/zz-deps-loop1.php": [],
+                "zz-deps-loop2/zz-deps-loop2.php": [],
+                "zz-deps-self/zz-deps-self.php": [],
+                "zz-deps-single.php": []
+            },
+            {
+                "zz-deps-a": "zz-deps-a/zz-deps-a.php",
+                "zz-deps-b": "zz-deps-b/zz-deps-b.php",
+                "zz-deps-bad": "zz-deps-bad/zz-deps-bad.php",
+                "zz-deps-c": "zz-deps-c/zz-deps-c.php",
+                "zz-deps-c1": "zz-deps-c1/zz-deps-c1.php",
+                "zz-deps-c2": "zz-deps-c2/zz-deps-c2.php",
+                "zz-deps-c3": "zz-deps-c3/zz-deps-c3.php",
+                "zz-deps-d": "zz-deps-d/zz-deps-d.php",
+                "zz-deps-l1": "zz-deps-l1/zz-deps-l1.php",
+                "zz-deps-l2": "zz-deps-l2/zz-deps-l2.php",
+                "zz-deps-loop1": "zz-deps-loop1/zz-deps-loop1.php",
+                "zz-deps-loop2": "zz-deps-loop2/zz-deps-loop2.php",
+                "zz-deps-self": "zz-deps-self/zz-deps-self.php",
+                "zz-deps-single": "zz-deps-single.php"
+            },
+            {
+                "zz-deps-b": "zz-deps-b/zz-deps-b.php",
+                "zz-deps-missing": false,
+                "zz-deps-c": "zz-deps-c/zz-deps-c.php",
+                "zz-deps-c2": "zz-deps-c2/zz-deps-c2.php",
+                "zz-deps-c3": "zz-deps-c3/zz-deps-c3.php",
+                "zz-deps-c1": "zz-deps-c1/zz-deps-c1.php",
+                "zz-deps-l1": "zz-deps-l1/zz-deps-l1.php",
+                "zz-deps-l2": "zz-deps-l2/zz-deps-l2.php",
+                "zz-deps-loop2": "zz-deps-loop2/zz-deps-loop2.php",
+                "zz-deps-loop1": "zz-deps-loop1/zz-deps-loop1.php",
+                "zz-deps-self": "zz-deps-self/zz-deps-self.php"
+            },
+            [
+                "zz-b",
+                "zz-c"
+            ],
+            [],
+            "zz-deps-a",
+            "hello-dolly",
+            "hello-dolly",
+            {
+                "zz-deps-b": "zz-deps-b/zz-deps-b.php",
+                "zz-deps-missing": false,
+                "zz-deps-c": "zz-deps-c/zz-deps-c.php",
+                "zz-deps-c2": "zz-deps-c2/zz-deps-c2.php",
+                "zz-deps-c3": "zz-deps-c3/zz-deps-c3.php",
+                "zz-deps-c1": "zz-deps-c1/zz-deps-c1.php",
+                "zz-deps-l1": "zz-deps-l1/zz-deps-l1.php",
+                "zz-deps-l2": "zz-deps-l2/zz-deps-l2.php",
+                "zz-deps-loop2": "zz-deps-loop2/zz-deps-loop2.php",
+                "zz-deps-loop1": "zz-deps-loop1/zz-deps-loop1.php",
+                "zz-deps-self": "zz-deps-self/zz-deps-self.php"
+            }
+        ]
+    ],
+    [
+        "dependency data from the plugins API",
+        [
+            null,
+            false,
+            false,
+            {
+                "zz-deps-b": "Zz Deps B",
+                "zz-deps-missing": "zz-deps-missing"
+            }
+        ]
+    ],
+    [
+        "admin notices",
+        [
+            "<div class=\"notice notice-warning\"><p>Some required plugins are missing or inactive. <a href=\"https://minn.localhost/wp-admin/plugins.php\">Manage plugins</a>.</p></div>",
+            "<div class=\"notice notice-warning\"><p>Some required plugins are missing or inactive.</p></div>",
+            "<div class=\"notice notice-warning\"><p>These plugins cannot be activated because their requirements are invalid.</p><ul><li><strong>Zz Deps C1</strong> requires <strong>Zz Deps C3</strong></li><li><strong>Zz Deps C2</strong> requires <strong>Zz Deps C1</strong></li><li><strong>Zz Deps C3</strong> requires <strong>Zz Deps C2</strong></li><li><strong>Zz Deps L1</strong> requires <strong>Zz Deps L2</strong></li><li><strong>Zz Deps L2</strong> requires <strong>Zz Deps L1</strong></li><li><strong>Zz Deps Loop One</strong> requires <strong>Zz Deps Loop Two</strong></li><li><strong>Zz Deps Loop Two</strong> requires <strong>Zz Deps Loop One</strong></li><li><strong>Zz Deps Self</strong> requires <strong>Zz Deps Self</strong></li></ul><p>Please contact the plugin authors for more information.</p></div>",
+            "<div class=\"notice notice-warning\"><p>These plugins cannot be activated because their requirements are invalid.</p><ul><li><strong>Zz Deps C1</strong> requires <strong>Zz Deps C3</strong></li><li><strong>Zz Deps C2</strong> requires <strong>Zz Deps C1</strong></li><li><strong>Zz Deps C3</strong> requires <strong>Zz Deps C2</strong></li><li><strong>Zz Deps L1</strong> requires <strong>Zz Deps L2</strong></li><li><strong>Zz Deps L2</strong> requires <strong>Zz Deps L1</strong></li><li><strong>Zz Deps Loop One</strong> requires <strong>Zz Deps Loop Two</strong></li><li><strong>Zz Deps Loop Two</strong> requires <strong>Zz Deps Loop One</strong></li><li><strong>Zz Deps Self</strong> requires <strong>Zz Deps Self</strong></li></ul><p>Please contact the plugin authors for more information.</p></div>"
+        ]
+    ]
+]

@@ -7638,3 +7638,49 @@ face, file and collection file it makes.
     or object given a single sanitizer.
 - `wp_register_font_library_page_routes` (editor) and
   `wp_register_font_library_wp_admin_page_routes` (admin) are dead ends.
+
+## Plugin dependencies (2026-10-09)
+
+Probe `plugin-dependencies` (`tests/tools/plugin-dependencies-probe.php`)
+proves `WP_Plugin_Dependencies`.
+- **The setup.** The probe writes fourteen probe plugins whose Requires
+  Plugins headers name each other: one missing, two loops, a
+  three-plugin cycle, a plugin that requires itself, and slugs that are
+  not slugs. It removes them afterwards.
+- **Isolation.** A filter answers which plugins are active, and another
+  answers the plugins API. A subclass resets the class's protected
+  statics between steps.
+
+- **Headers.**
+  - A header's slugs are lowercase words joined by single hyphens. Each
+    goes through `wp_plugin_dependencies_slug`, then they are made
+    unique and sorted. `Bad Slug`, `ZZ-Upper`, `zz_under`, `-zz` and
+    `zz--two` are dropped.
+  - A plugin's slug is its folder, or its file name without `.php`;
+    `hello.php` is `hello-dolly`.
+- **Both directions.**
+  - `has_dependents` and `get_dependents` read the dependency slugs.
+  - The dependency file paths follow the order the slugs were first seen
+    in, with false for a missing plugin.
+  - A dependency is unmet when it is missing or inactive.
+  - `get_dependent_names` sorts the dependents' names.
+    `get_dependency_names` maps each slug to the installed plugin's
+    name, else the API's, else the slug itself.
+- **Loops.**
+  - From each dependent, the walk follows each dependency's own
+    dependencies, leaving out slugs already on the path. It records
+    `[dependent, dependency]` where the dependency needs the dependent
+    back, and `[slug, slug]` for a slug that requires itself.
+  - The pairs repeat as the reference's do; the cycle experiment gives
+    the same output byte for byte. Each pair also adds its slugs to the
+    circular list that `has_circular_dependency` reads.
+  - The admin notice lists each loop once, in first-seen order.
+- **The plugins API.** `get_dependency_api_data` asks only on admin
+  screens; elsewhere it returns nothing and `get_dependency_data` is
+  false. On the engine, Minn's update service would answer, never
+  wordpress.org.
+- **Notices.** The unmet-dependencies notice links to the plugins screen
+  except on that screen.
+- **The AJAX check.** `check_plugin_dependencies_during_ajax` answers the
+  plugin install screen's JSON check. It sends and exits, so the probe
+  leaves it out.

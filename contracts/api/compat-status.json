@@ -12,21 +12,21 @@
         },
         "classes": {
             "total": 380,
-            "real": 171,
+            "real": 172,
             "deadend": 131,
             "placeholder": 23,
-            "missing": 55,
-            "verified": 129,
-            "resolved": 325
+            "missing": 54,
+            "verified": 130,
+            "resolved": 326
         },
         "methods": {
             "total": 4073,
-            "real": 1659,
+            "real": 1684,
             "deadend": 1615,
             "placeholder": 353,
-            "missing": 446,
-            "verified": 1474,
-            "resolved": 3627
+            "missing": 421,
+            "verified": 1499,
+            "resolved": 3652
         }
     }
 }

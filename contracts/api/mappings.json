@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1685,
-        "leaf": 830,
-        "noop": 2596,
+        "composes": 1692,
+        "leaf": 841,
+        "noop": 2604,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7709,
+        "functions": 7735,
         "minnMethods": 932,
         "leafLinesOver15": 12
     },
@@ -15497,6 +15497,215 @@
             ],
             "composes": [
                 "__"
+            ]
+        },
+        "WP_Plugin_Dependencies::check_for_circular_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::check_plugin_dependencies_during_ajax": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "check_ajax_referer",
+                "is_plugin_active",
+                "sanitize_key",
+                "wp_send_json_error",
+                "wp_send_json_success",
+                "wp_unslash"
+            ]
+        },
+        "WP_Plugin_Dependencies::convert_to_slug": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::display_admin_notice_for_circular_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_html",
+                "wp_admin_notice"
+            ]
+        },
+        "WP_Plugin_Dependencies::display_admin_notice_for_unmet_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "admin_url",
+                "esc_url",
+                "get_current_screen",
+                "wp_admin_notice"
+            ]
+        },
+        "WP_Plugin_Dependencies::get_circular_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependency_api_data": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_site_transient",
+                "is_admin",
+                "is_wp_error",
+                "plugins_api",
+                "set_site_transient"
+            ]
+        },
+        "WP_Plugin_Dependencies::get_dependency_data": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependency_filepath": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependency_filepaths": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependency_names": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependent_filepath": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependent_names": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_dependents": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_plugin_dirnames": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::get_plugins": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::has_active_dependents": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_plugin_active"
+            ]
+        },
+        "WP_Plugin_Dependencies::has_circular_dependency": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::has_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::has_dependents": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::has_unmet_dependencies": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_plugin_active"
+            ]
+        },
+        "WP_Plugin_Dependencies::initialize": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::loops_through": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::read_dependencies_from_plugin_headers": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Plugin_Dependencies::sanitize_dependency_slugs": {
+            "file": "classes/WP_Plugin_Dependencies.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
             ]
         },
         "WP_Plugin_Install_List_Table::ajax_user_can": {
