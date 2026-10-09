@@ -9496,3 +9496,36 @@ Fixed to match:
 Owed: `register_post_type` does not run `post_type_labels_{$name}`, and the
 built-in types' labels are never filtered. On the reference a plugin can
 rename Posts this way.
+
+## The rest of theme.php (2026-10-09)
+
+Probe `theme-remaining` proves the 27 theme.php functions that were left:
+- theme mods, read and removed;
+- the custom header and background tags and callbacks: the header image
+  and text colour, random default headers, the video address, the header
+  markup, and the background style;
+- the theme feature registry and the default supports;
+- theme roots and directories, stylesheet addresses, and the child theme and
+  current theme checks;
+- a deleted attachment leaving the theme mods;
+- the custom CSS post.
+
+`remove_theme_mods()` deletes the theme's mods option, so the probe puts
+back its autoload as well as its value. An earlier run restored only the
+value, and the re-created option came back as `auto`. That broke the
+theme-switch probe until the option was repaired.
+
+Fixed to match:
+
+- **`_delete_attachment_theme_mod`** also removes `background_image` when it
+  is exactly the attachment's address. The header image and its data stay,
+  and so does `background_image_thumb`.
+- **`wp_get_custom_css_post`** remembers the active theme's lookup in
+  `custom_css_post_id`, as the reference does. A post id is trusted as it is
+  (its name is not checked), and -1 means there is none, with no lookup. A
+  missing value is looked up and recorded, as the found id or -1. Any other
+  stylesheet is simply looked up.
+
+Kept: the engine's probe runner has not run `init`. So the header markup's
+`wp-custom-header` enqueue raises the "too early" notice there and not under
+WP-CLI. That is the runner's doing, not the engine's.

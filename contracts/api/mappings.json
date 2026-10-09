@@ -28475,12 +28475,13 @@
         },
         "_delete_attachment_theme_mod": {
             "file": "theme.php",
-            "lines": 3,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "get_theme_mod",
-                "remove_theme_mod"
+                "remove_theme_mod",
+                "wp_get_attachment_url"
             ]
         },
         "_delete_custom_logo_on_remove_site_logo": {
@@ -61490,7 +61491,7 @@
         },
         "wp_get_custom_css_post": {
             "file": "misc.php",
-            "lines": 12,
+            "lines": 21,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -61498,7 +61499,8 @@
                 "get_post_stati",
                 "get_posts",
                 "get_stylesheet",
-                "get_theme_mod"
+                "get_theme_mod",
+                "set_theme_mod"
             ]
         },
         "wp_get_db_schema": {

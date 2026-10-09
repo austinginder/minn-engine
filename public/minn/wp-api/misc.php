@@ -488,15 +488,24 @@ function wp_get_custom_css_post($stylesheet = '')
     if ($stylesheet === '') {
         $stylesheet = get_stylesheet();
     }
-    $post_id = $stylesheet === get_stylesheet() ? (int) get_theme_mod('custom_css_post_id', -1) : -1;
-    if ($post_id > 0) {
-        $post = get_post($post_id);
-        if ($post !== null && $post->post_type === 'custom_css' && $post->post_name === $stylesheet) {
+    // The active theme's lookup is remembered in custom_css_post_id: a post id is trusted as it is, -1 means
+    // there is none, and a missing value is looked up and recorded (probe theme-remaining).
+    $current = $stylesheet === get_stylesheet();
+    if ($current) {
+        $post_id = get_theme_mod('custom_css_post_id');
+        if ((int) $post_id > 0 && ($post = get_post((int) $post_id)) !== null) {
             return $post;
+        }
+        if ((int) $post_id === -1) {
+            return null;
         }
     }
     $posts = get_posts(['post_type' => 'custom_css', 'post_status' => get_post_stati(), 'name' => $stylesheet, 'numberposts' => 1, 'orderby' => 'ID', 'order' => 'DESC', 'suppress_filters' => true]);
-    return $posts === [] ? null : $posts[0];
+    $post = $posts === [] ? null : $posts[0];
+    if ($current) {
+        set_theme_mod('custom_css_post_id', $post === null ? -1 : $post->ID);
+    }
+    return $post;
 }
 
 function wp_get_custom_css($stylesheet = '')

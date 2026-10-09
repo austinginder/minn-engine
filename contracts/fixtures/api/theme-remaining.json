@@ -1,0 +1,386 @@
+[
+    [
+        "theme mods",
+        [
+            {
+                "zz_a": "one",
+                "zz_b": {
+                    "x": 1
+                }
+            },
+            [
+                [],
+                "gone",
+                "default"
+            ]
+        ]
+    ],
+    [
+        "header and background tags, unset",
+        [
+            "333333",
+            "",
+            "ffffff",
+            "",
+            "",
+            "",
+            ""
+        ]
+    ],
+    [
+        "header and background tags, set",
+        [
+            "ff0000",
+            "{site}/wp-content/uploads/2026/10/zz-th-header.jpg",
+            "abcdef",
+            "https://zz.example/bg \"one\".png",
+            "http://www.youtube.com/watch?v=zzzzzzzzzzz",
+            "<div id=\"wp-custom-header\" class=\"wp-custom-header\"><img src=\"{site}/wp-content/uploads/2026/10/zz-th-header.jpg\" width=\"1200\" height=\"280\" alt=\"\" decoding=\"async\" fetchpriority=\"high\" /></div>",
+            "<style id=\"custom-background-css\">\nbody.custom-background { background-color: #abcdef; background-image: url(\"http://zz.example/bg%20one.png\"); background-position: center top; background-size: auto; background-repeat: no-repeat; background-attachment: fixed; }\n</style>\n"
+        ]
+    ],
+    [
+        "header and background tags, removed",
+        [
+            "blank",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+        ]
+    ],
+    [
+        "random default header",
+        [
+            "{site}/wp-content/themes/twentytwentyfive/zz-one.jpg",
+            {
+                "url": "{site}/wp-content/themes/twentytwentyfive/zz-one.jpg",
+                "thumbnail_url": "{site}/wp-content/themes/twentytwentyfive/zz-one-thumb.jpg",
+                "description": "Zz one"
+            },
+            "{site}/wp-content/themes/twentytwentyfive/zz-one.jpg",
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "random uploaded header with none uploaded",
+        [
+            "{site}/wp-content/themes/twentytwentyfive/zz-one.jpg",
+            {
+                "url": "{site}/wp-content/themes/twentytwentyfive/zz-one.jpg",
+                "thumbnail_url": "{site}/wp-content/themes/twentytwentyfive/zz-one-thumb.jpg",
+                "description": "Zz one"
+            }
+        ]
+    ],
+    [
+        "custom header and background just in time",
+        [
+            [
+                false,
+                10
+            ],
+            [
+                10,
+                10
+            ],
+            [
+                {
+                    "default-image": "",
+                    "default-preset": "default",
+                    "default-position-x": "left",
+                    "default-position-y": "top",
+                    "default-size": "auto",
+                    "default-repeat": "repeat",
+                    "default-attachment": "scroll",
+                    "default-color": "ffffff",
+                    "wp-head-callback": "_custom_background_cb",
+                    "admin-head-callback": "",
+                    "admin-preview-callback": ""
+                }
+            ]
+        ]
+    ],
+    [
+        "theme feature registry",
+        [
+            [
+                "align-wide",
+                "automatic-feed-links",
+                "block-templates",
+                "block-template-parts",
+                "custom-background",
+                "custom-header",
+                "custom-logo",
+                "customize-selective-refresh-widgets",
+                "dark-editor-style",
+                "disable-custom-colors",
+                "disable-custom-font-sizes",
+                "disable-custom-gradients",
+                "disable-layout-styles",
+                "editor-color-palette",
+                "editor-font-sizes",
+                "editor-gradient-presets",
+                "editor-spacing-sizes",
+                "editor-styles",
+                "html5",
+                "post-formats",
+                "post-thumbnails",
+                "responsive-embeds",
+                "title-tag",
+                "wp-block-styles"
+            ],
+            {
+                "type": "boolean",
+                "variadic": false,
+                "description": "Whether the theme can manage the document title tag.",
+                "show_in_rest": {
+                    "schema": {
+                        "description": "Whether the theme can manage the document title tag.",
+                        "type": "boolean",
+                        "default": false
+                    },
+                    "name": "title-tag",
+                    "prepare_callback": null
+                }
+            },
+            {
+                "type": "array",
+                "variadic": false,
+                "description": "Custom color palette if defined by the theme.",
+                "show_in_rest": {
+                    "schema": {
+                        "description": "Custom color palette if defined by the theme.",
+                        "type": [
+                            "boolean",
+                            "array"
+                        ],
+                        "default": false,
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "slug": {
+                                    "type": "string"
+                                },
+                                "color": {
+                                    "type": "string"
+                                }
+                            },
+                            "additionalProperties": false
+                        }
+                    },
+                    "name": "editor-color-palette",
+                    "prepare_callback": null
+                }
+            },
+            null,
+            true
+        ]
+    ],
+    [
+        "default theme supports",
+        [
+            [
+                true,
+                false,
+                false
+            ],
+            [
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                [
+                    "comment-form",
+                    "comment-list",
+                    "search-form",
+                    "gallery",
+                    "caption",
+                    "style",
+                    "script"
+                ]
+            ]
+        ]
+    ],
+    [
+        "theme roots and directories",
+        [
+            "/themes",
+            "/themes",
+            "/themes",
+            "/themes",
+            "/themes",
+            false,
+            true,
+            true,
+            [
+                "{content}/themes"
+            ]
+        ]
+    ],
+    [
+        "stylesheet addresses and checks",
+        [
+            "{site}/wp-content/themes/twentytwentyfive/style.css",
+            "",
+            "",
+            false,
+            true
+        ]
+    ],
+    [
+        "a deleted attachment leaves the theme mods",
+        [
+            [
+                "{logo}",
+                "{site}/wp-content/uploads/2026/10/zz-th-header.jpg",
+                {
+                    "attachment_id": "{header}",
+                    "url": "{site}/wp-content/uploads/2026/10/zz-th-header.jpg"
+                },
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg",
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg"
+            ],
+            [
+                "(none)",
+                "{site}/wp-content/uploads/2026/10/zz-th-header.jpg",
+                {
+                    "attachment_id": "{header}",
+                    "url": "{site}/wp-content/uploads/2026/10/zz-th-header.jpg"
+                },
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg",
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg"
+            ],
+            [
+                "(none)",
+                "{site}/wp-content/uploads/2026/10/zz-th-header.jpg",
+                {
+                    "attachment_id": "{header}",
+                    "url": "{site}/wp-content/uploads/2026/10/zz-th-header.jpg"
+                },
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg",
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg"
+            ],
+            [
+                "(none)",
+                "{site}/wp-content/uploads/2026/10/zz-th-header.jpg",
+                {
+                    "attachment_id": "{header}",
+                    "url": "{site}/wp-content/uploads/2026/10/zz-th-header.jpg"
+                },
+                "(none)",
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg"
+            ],
+            [
+                "(none)",
+                "{site}/wp-content/uploads/2026/10/zz-th-header.jpg",
+                {
+                    "attachment_id": "{header}",
+                    "url": "{site}/wp-content/uploads/2026/10/zz-th-header.jpg"
+                },
+                "(none)",
+                "{site}/wp-content/uploads/2026/10/zz-th-background.jpg"
+            ]
+        ]
+    ],
+    [
+        "custom CSS post",
+        [
+            [
+                "{css}",
+                "custom_css",
+                "zz-th-theme"
+            ],
+            null,
+            null,
+            -1,
+            "body { color: red; }"
+        ]
+    ],
+    [
+        "the active theme's CSS post",
+        [
+            [
+                null,
+                -1
+            ],
+            [
+                null,
+                -1
+            ],
+            [
+                [
+                    "{own-css}",
+                    "custom_css",
+                    "twentytwentyfive"
+                ],
+                "{own-css}",
+                "p { margin: 0; }"
+            ],
+            [
+                [
+                    "{css}",
+                    "custom_css",
+                    "zz-th-theme"
+                ],
+                "{css}"
+            ],
+            [
+                [
+                    "{css}",
+                    "custom_css",
+                    "zz-th-theme"
+                ],
+                "{css}"
+            ]
+        ]
+    ]
+]

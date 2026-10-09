@@ -434,11 +434,16 @@ function get_theme_updates()
     return $out;
 }
 
-/** The default on delete_attachment: a deleted image stops being the site's logo. */
+/** The default on delete_attachment: a deleted image stops being the site's logo, and its background when it was that exactly. */
 function _delete_attachment_theme_mod($id)
 {
     if ((int) get_theme_mod('custom_logo') === (int) $id) {
         remove_theme_mod('custom_logo');
+    }
+    // The background image goes when it is the attachment's address exactly; the header stays (probe theme-remaining).
+    $url = wp_get_attachment_url($id);
+    if ($url && get_theme_mod('background_image') === $url) {
+        remove_theme_mod('background_image');
     }
 }
 
