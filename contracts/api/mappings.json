@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 759,
-        "composes": 1642,
-        "leaf": 794,
-        "noop": 2511,
+        "minn": 766,
+        "composes": 1650,
+        "leaf": 806,
+        "noop": 2517,
         "placeholder": 250,
         "deadend": 1659,
-        "functions": 7537,
-        "minnMethods": 917,
+        "functions": 7570,
+        "minnMethods": 922,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -10473,63 +10473,116 @@
             "deadend": "admin"
         },
         "WP_Dependencies::__construct": {
-            "file": "classes/WP_Scripts.php",
-            "lines": 7,
-            "kind": "leaf",
-            "minn": [],
+            "file": "classes/WP_Dependencies.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Assets::__construct"
+            ],
             "composes": []
         },
         "WP_Dependencies::add": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_Dependencies::add_data": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
         },
+        "WP_Dependencies::all_deps": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Dependencies::dequeue": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
+        "WP_Dependencies::do_item": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Dependencies::do_items": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Dependencies::enqueue": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Dependencies::get_data": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
         },
+        "WP_Dependencies::get_dependency_warning_message": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Dependencies::get_etag": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Dependencies::line_up": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 16,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Dependencies::loadable": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
         "WP_Dependencies::push": {
-            "file": "classes/WP_Scripts.php",
-            "lines": 7,
+            "file": "classes/WP_Dependencies.php",
+            "lines": 8,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Dependencies::query": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 6,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Dependencies::reconcile": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 9,
             "kind": "minn",
             "minn": [
@@ -10537,16 +10590,30 @@
             ],
             "composes": []
         },
+        "WP_Dependencies::recurse_deps": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Dependencies::remove": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
+        "WP_Dependencies::set_group": {
+            "file": "classes/WP_Dependencies.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Dependencies::sync": {
-            "file": "classes/WP_Scripts.php",
-            "lines": 16,
+            "file": "classes/WP_Dependencies.php",
+            "lines": 14,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -19785,11 +19852,22 @@
         },
         "WP_Scripts::__construct": {
             "file": "classes/WP_Scripts.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Assets::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Scripts::add_data": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\ScriptLoading::refusal"
+            ],
             "composes": [
-                "site_url"
+                "_doing_it_wrong"
             ]
         },
         "WP_Scripts::add_inline_script": {
@@ -19799,12 +19877,83 @@
             "minn": [],
             "composes": []
         },
-        "WP_Scripts::get_inline_script_data": {
+        "WP_Scripts::all_deps": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Scripts::do_footer_items": {
             "file": "classes/WP_Scripts.php",
             "lines": 2,
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_Scripts::do_head_items": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::do_item": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\ScriptLoading::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Scripts::get_dependency_warning_message": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::get_inline_script_data": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_source_url"
+            ]
+        },
+        "WP_Scripts::get_inline_script_tag": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_inline_script_tag"
+            ]
+        },
+        "WP_Scripts::in_default_dir": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::init": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::version"
+            ],
+            "composes": [
+                "do_action_ref_array",
+                "get_option"
+            ]
         },
         "WP_Scripts::localize": {
             "file": "classes/WP_Scripts.php",
@@ -19812,6 +19961,52 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Scripts::markup": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "wp_get_inline_script_tag",
+                "wp_get_script_tag"
+            ]
+        },
+        "WP_Scripts::print_extra_script": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_source_url",
+                "wp_get_inline_script_tag"
+            ]
+        },
+        "WP_Scripts::print_inline_script": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
+        "WP_Scripts::print_scripts": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::print_scripts_l10n": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "WP_Scripts::print_translations": {
             "file": "classes/WP_Scripts.php",
@@ -19822,11 +20017,47 @@
                 "_minn_script_translations_block"
             ]
         },
+        "WP_Scripts::reset": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::set_group": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Scripts::set_translations": {
             "file": "classes/WP_Scripts.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "WP_Scripts::source": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "apply_filters",
+                "esc_url"
+            ]
+        },
+        "WP_Scripts::tag_attributes": {
+            "file": "classes/WP_Scripts.php",
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\ScriptLoading::__construct",
+                "Minn\\Runtime\\ScriptLoading::priority",
+                "Minn\\Runtime\\ScriptLoading::strategy"
+            ],
             "composes": []
         },
         "WP_Session_Tokens::__construct": {
@@ -21279,18 +21510,108 @@
             ]
         },
         "WP_Styles::__construct": {
-            "file": "classes/WP_Scripts.php",
-            "lines": 4,
+            "file": "classes/WP_Styles.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Assets::__construct",
+                "Minn\\Runtime\\Runtime::booted",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::version"
+            ],
+            "composes": [
+                "do_action_ref_array",
+                "get_option"
+            ]
+        },
+        "WP_Styles::_css_href": {
+            "file": "classes/WP_Styles.php",
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "site_url"
+                "add_query_arg",
+                "apply_filters",
+                "esc_url"
             ]
         },
         "WP_Styles::add_inline_style": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Styles.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Styles::all_deps": {
+            "file": "classes/WP_Styles.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Styles::do_footer_items": {
+            "file": "classes/WP_Styles.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Styles::do_item": {
+            "file": "classes/WP_Styles.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr"
+            ]
+        },
+        "WP_Styles::get_dependency_warning_message": {
+            "file": "classes/WP_Styles.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Styles::in_default_dir": {
+            "file": "classes/WP_Styles.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Styles::link": {
+            "file": "classes/WP_Styles.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "esc_attr"
+            ]
+        },
+        "WP_Styles::links": {
+            "file": "classes/WP_Styles.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Styles::print_inline_style": {
+            "file": "classes/WP_Styles.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_inline_style_sources",
+                "esc_attr"
+            ]
+        },
+        "WP_Styles::reset": {
+            "file": "classes/WP_Styles.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -25759,21 +26080,21 @@
             ]
         },
         "_WP_Dependency::__construct": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "_WP_Dependency::add_data": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 5,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "_WP_Dependency::set_translations": {
-            "file": "classes/WP_Scripts.php",
+            "file": "classes/WP_Dependencies.php",
             "lines": 3,
             "kind": "leaf",
             "minn": [],
@@ -28068,7 +28389,7 @@
         },
         "_minn_default_dependencies": {
             "file": "script-loader.php",
-            "lines": 8,
+            "lines": 7,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -28291,16 +28612,6 @@
                 "post_type_supports",
                 "wp_get_object_terms",
                 "wp_list_pluck"
-            ]
-        },
-        "_minn_inline_script_block": {
-            "file": "script-loader.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_source_url",
-                "wp_get_inline_script_tag"
             ]
         },
         "_minn_inline_style_sources": {
@@ -28879,48 +29190,6 @@
                 "Minn\\Runtime\\Runtime::get"
             ],
             "composes": []
-        },
-        "_minn_print_script_list": {
-            "file": "script-loader.php",
-            "lines": 22,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_asset_url",
-                "_minn_assets",
-                "_minn_inline_script_block",
-                "_minn_script_translations_block",
-                "_minn_source_url",
-                "apply_filters",
-                "wp_get_inline_script_tag",
-                "wp_get_script_tag"
-            ]
-        },
-        "_minn_print_scripts": {
-            "file": "script-loader.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_assets",
-                "_minn_print_script_list",
-                "wp_scripts"
-            ]
-        },
-        "_minn_print_styles": {
-            "file": "script-loader.php",
-            "lines": 22,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_asset_url",
-                "_minn_assets",
-                "_minn_inline_style_sources",
-                "apply_filters",
-                "esc_attr",
-                "esc_url",
-                "wp_styles"
-            ]
         },
         "_minn_query_title_parts": {
             "file": "query.php",
@@ -46510,8 +46779,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_print_styles",
-                "apply_filters"
+                "apply_filters",
+                "wp_styles"
             ]
         },
         "print_column_headers": {
@@ -46590,7 +46859,7 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_print_scripts"
+                "wp_scripts"
             ]
         },
         "print_head_scripts": {
@@ -62222,8 +62491,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_print_scripts",
-                "do_action"
+                "do_action",
+                "wp_scripts"
             ]
         },
         "wp_print_inline_script_tag": {
@@ -62270,13 +62539,10 @@
         },
         "wp_print_scripts": {
             "file": "script-loader.php",
-            "lines": 7,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_assets",
-                "_minn_print_script_list",
-                "_minn_print_scripts",
                 "do_action",
                 "wp_scripts"
             ]
@@ -62302,8 +62568,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_print_styles",
-                "do_action"
+                "do_action",
+                "wp_styles"
             ]
         },
         "wp_print_theme_file_tree": {
@@ -62899,12 +63165,13 @@
         },
         "wp_register_script": {
             "file": "script-loader.php",
-            "lines": 10,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_assets",
-                "_minn_dep_list"
+                "_minn_dep_list",
+                "wp_scripts"
             ]
         },
         "wp_register_script_module": {
@@ -63961,7 +64228,7 @@
         },
         "wp_scripts": {
             "file": "script-loader.php",
-            "lines": 5,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [

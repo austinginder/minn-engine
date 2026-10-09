@@ -58,8 +58,11 @@ function wp_register_script($handle, $src, $deps = [], $ver = false, $args = [])
     if (!empty($args['in_footer'])) {
         $assets->addData((string) $handle, 'group', 1);
     }
-    if (!empty($args['strategy'])) {
-        $assets->addData((string) $handle, 'strategy', $args['strategy']);
+    // Through the registry, which refuses a strategy or fetch priority the reference refuses (probe dependencies-classes).
+    foreach (['strategy', 'fetchpriority'] as $key) {
+        if (!empty($args[$key])) {
+            wp_scripts()->add_data($handle, $key, $args[$key]);
+        }
     }
     return $ok;
 }
@@ -175,34 +178,7 @@ function wp_print_styles($handles = false)
         $handles = false;
     }
     do_action('wp_print_styles');
-    return _minn_print_styles($handles);
-}
-
-/** @internal the queued styles (or the handles given) printed as link and inline style tags; the handles printed */
-function _minn_print_styles($handles = false)
-{
-    $assets = _minn_assets('style');
-    wp_styles()->push();
-    $list = $handles === false ? $assets->toPrint() : (array) $handles;
-    foreach ($list as $handle) {
-        $item = $assets->item($handle);
-        if ($item === null) {
-            continue;
-        }
-        if ($item['src'] !== false && $item['src'] !== '') {
-            $href = apply_filters('style_loader_src', _minn_asset_url($item['src'], $item['ver']), $handle);
-            $tag = "<link rel='stylesheet' id='" . esc_attr($handle) . "-css' href='" . esc_url($href) . "' media='" . esc_attr((string) $item['extra']) . "' />\n";
-            echo apply_filters('style_loader_tag', $tag, $handle, $href, (string) $item['extra']);
-        }
-        if ($item['inline']['after'] !== []) {
-            // One tag for the handle, its additions a line apart. A style inlined from a file names that
-            // file as its source, so a browser's devtools still point at the stylesheet on disk.
-            $source = _minn_inline_style_sources()[$handle] ?? ($handle . '-inline-css');
-            echo '<style id="' . esc_attr($handle) . '-inline-css">' . "\n" . implode("\n", $item['inline']['after']) . (defined('WP_DEBUG') && WP_DEBUG ? "\n/*# sourceURL=" . esc_attr($source) . ' */' : '') . "\n</style>\n";
-        }
-        $assets->markDone($handle);
-    }
-    return $list;
+    return wp_styles()->do_items($handles);
 }
 
 /** @internal the translations a script was given, as the block printed before it, or null when it has none */
@@ -220,51 +196,6 @@ function _minn_script_translations_block(string $handle): ?string
     return wp_get_inline_script_tag(ScriptTranslations::block($item['translations']['domain'], $json) . _minn_source_url($id), ['id' => $id]);
 }
 
-/** @internal prints the scripts of one group */
-function _minn_print_scripts(bool $footer): array
-{
-    wp_scripts()->push();
-    return _minn_print_script_list(_minn_assets('script')->toPrint($footer));
-}
-
-/** @internal prints the given scripts, each with its inline blocks, and marks them done */
-function _minn_print_script_list(array $list): array
-{
-    $assets = _minn_assets('script');
-    foreach ($list as $handle) {
-        $item = $assets->item($handle);
-        if ($item === null) {
-            continue;
-        }
-        // The blocks are built in the reference's order (before, after, translations, the localized data), printed in the page's.
-        $before = _minn_inline_script_block($handle, 'before', $item['inline']['before']);
-        $after = _minn_inline_script_block($handle, 'after', $item['inline']['after']);
-        $translations = _minn_script_translations_block($handle) ?? '';
-        echo $item['localized'] === [] ? '' : wp_get_inline_script_tag(implode("\n", $item['localized']) . _minn_source_url($handle . '-js-extra'), ['id' => $handle . '-js-extra']);
-        echo $translations . $before;
-        if ($item['src'] !== false && $item['src'] !== '') {
-            $src = apply_filters('script_loader_src', _minn_asset_url($item['src'], $item['ver']), $handle);
-            $strategy = (string) ($item['data']['strategy'] ?? '');
-            $attributes = ['src' => $src, 'id' => $handle . '-js'] + (in_array($strategy, ['defer', 'async'], true) ? [$strategy => true, 'data-wp-strategy' => $strategy] : []);
-            echo apply_filters('script_loader_tag', wp_get_script_tag($attributes), $handle, $src);
-        }
-        echo $after;
-        $assets->markDone($handle);
-    }
-    return $list;
-}
-
-/** @internal a script's inline code at one position as its one element (each piece trimmed, joined by lines), or '' when it has none */
-function _minn_inline_script_block(string $handle, string $position, array $code): string
-{
-    if ($code === []) {
-        return '';
-    }
-    $id = "{$handle}-js-{$position}";
-    $joined = implode("\n", array_map(static fn ($piece): string => trim((string) $piece, "\n\r "), $code));
-    return wp_get_inline_script_tag($joined . _minn_source_url($id), ['id' => $id]);
-}
-
 /** @internal the engine's own stylesheets, printed where a theme's would be */
 function _minn_print_engine_styles()
 {
@@ -274,18 +205,14 @@ function _minn_print_engine_styles()
 function wp_print_head_scripts()
 {
     do_action('wp_print_scripts');
-    return _minn_print_scripts(false);
+    return wp_scripts()->do_head_items();
 }
 
+/** Every queued script, the footer's too, or the handles given with what they depend on, queued or not (probe dependencies-classes). */
 function wp_print_scripts($handles = false)
 {
     do_action('wp_print_scripts');
-    if ($handles === false || $handles === '' || $handles === []) {
-        return _minn_print_scripts(false);
-    }
-    // Named handles print now, with what they depend on, whether or not they were queued.
-    wp_scripts()->push();
-    return _minn_print_script_list(_minn_assets('script')->toPrintHandles((array) $handles));
+    return wp_scripts()->do_items($handles === '' ? false : $handles);
 }
 
 /**
@@ -309,7 +236,7 @@ function _wp_footer_scripts()
 
 function print_footer_scripts()
 {
-    return _minn_print_scripts(true);
+    return wp_scripts()->do_footer_items();
 }
 
 function print_late_styles()
@@ -381,6 +308,7 @@ function wp_default_styles($styles)
 function wp_scripts()
 {
     if (!isset($GLOBALS['wp_scripts']) || !$GLOBALS['wp_scripts'] instanceof WP_Scripts) {
+        // Made, it tells wp_default_scripts itself (WP_Scripts::init).
         $GLOBALS['wp_scripts'] = new WP_Scripts(_minn_assets('script'));
         _minn_default_dependencies('wp_default_scripts', $GLOBALS['wp_scripts']);
     }
@@ -397,17 +325,16 @@ function wp_styles()
     return $GLOBALS['wp_styles'];
 }
 
-/** @internal a registry's defaults action, now and at init 0 (the engine registered the defaults themselves), its edits handed back */
+/** @internal a registry's defaults action told again at init 0 (the registry told it when made), its edits handed back */
 function _minn_default_dependencies(string $action, WP_Dependencies $registry): void
 {
-    $tell = static function () use ($action, $registry): void {
+    if (did_action('init')) {
+        return;
+    }
+    add_action('init', static function () use ($action, $registry): void {
         do_action_ref_array($action, [&$registry]);
         $registry->push();
-    };
-    $tell();
-    if (!did_action('init')) {
-        add_action('init', $tell, 0);
-    }
+    }, 0);
 }
 
 /**

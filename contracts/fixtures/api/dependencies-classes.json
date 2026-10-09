@@ -1,0 +1,746 @@
+[
+    [
+        "a fresh scripts registry",
+        [
+            "WP_Dependencies",
+            [
+                "/wp-admin/js/",
+                "/wp-includes/js/"
+            ],
+            "https://{host}",
+            true,
+            [],
+            [],
+            [],
+            true
+        ]
+    ],
+    [
+        "dependencies resolved",
+        [
+            true,
+            [
+                "zz-a",
+                "zz-b"
+            ],
+            {
+                "zz-b": 0,
+                "zz-a": 0
+            },
+            [
+                true,
+                [],
+                {
+                    "zz-c": 0
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-a",
+                    "zz-f",
+                    "zz-g",
+                    "zz-b",
+                    "zz-alias"
+                ],
+                {
+                    "zz-g": 0,
+                    "zz-f": 0,
+                    "zz-a": 0,
+                    "zz-alias": 0,
+                    "zz-b": 0
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-a",
+                    "zz-b"
+                ],
+                true,
+                [
+                    "zz-a",
+                    "zz-b"
+                ],
+                {
+                    "zz-b": 0,
+                    "zz-a": 0,
+                    "zz-nothing": 0
+                }
+            ],
+            [
+                true,
+                [],
+                {
+                    "zz-h": 0,
+                    "zz-c": 0
+                },
+                false,
+                true,
+                [
+                    "zz-a",
+                    "zz-b"
+                ],
+                {
+                    "zz-a": "ver=5"
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-b",
+                    "zz-a"
+                ],
+                {
+                    "zz-b": 0,
+                    "zz-a": 0
+                }
+            ],
+            [
+                true,
+                [
+                    "zz-a",
+                    "zz-f",
+                    "zz-g"
+                ],
+                {
+                    "zz-g": 0,
+                    "zz-f": 0,
+                    "zz-a": 0
+                }
+            ],
+            true,
+            false,
+            true,
+            "The script with the handle \"zz-c\" was enqueued with dependencies that are not registered: zz-missing, zz-other."
+        ]
+    ],
+    [
+        "groups",
+        [
+            true,
+            {
+                "zz-a": 0
+            },
+            false,
+            {
+                "zz-a": 0
+            },
+            true,
+            {
+                "zz-a": 0,
+                "zz-f": 1
+            },
+            true,
+            {
+                "zz-a": 0,
+                "zz-f": 1,
+                "zz-g": 0
+            }
+        ]
+    ],
+    [
+        "extra and inline code",
+        [
+            [
+                "<script id=\"zz-a-js-extra\">\nvar zzData = {\"one\":\"1\",\"two\":\"second\"};\n//# sourceURL=zz-a-js-extra\n</script>\n",
+                true
+            ],
+            [
+                "",
+                "var zzData = {\"one\":\"1\",\"two\":\"second\"};\n//# sourceURL=zz-a-js-extra"
+            ],
+            [
+                "",
+                null
+            ],
+            [
+                "",
+                "var zzData = {\"one\":\"1\",\"two\":\"second\"};\n//# sourceURL=zz-a-js-extra"
+            ],
+            "<script id=\"zz-b-js-before\">\nwindow.zzBefore = 1;\n//# sourceURL=zz-b-js-before\n</script>\n",
+            "<script id=\"zz-b-js-after\">\nwindow.zzAfter = 2;\nwindow.zzAfter2 = 3;\n//# sourceURL=zz-b-js-after\n</script>\n",
+            "",
+            "window.zzAfter = 2;\nwindow.zzAfter2 = 3;\n//# sourceURL=zz-b-js-after",
+            [
+                "",
+                "window.zzAfter = 2;\nwindow.zzAfter2 = 3;\n//# sourceURL=zz-b-js-after"
+            ],
+            [
+                "<script id=\"zz-b-js-before\">\nwindow.zzBefore = 1;\n//# sourceURL=zz-b-js-before\n</script>\n",
+                "window.zzBefore = 1;\n//# sourceURL=zz-b-js-before"
+            ]
+        ]
+    ],
+    [
+        "items printed",
+        [
+            [
+                "<script id=\"zz-a-js-extra\">\nvar zzData = {\"one\":\"1\",\"two\":\"second\"};\n//# sourceURL=zz-a-js-extra\n</script>\n<script id=\"zz-a-js\" src=\"https://cdn.example/a.js?ver=1.0&#038;ver=5\"></script>\n<script id=\"zz-b-js-before\">\nwindow.zzBefore = 1;\n//# sourceURL=zz-b-js-before\n</script>\n<script id=\"zz-b-js\" src=\"https://{host}/wp-content/zz/b.js?ver={wp}\"></script>\n<script id=\"zz-b-js-after\">\nwindow.zzAfter = 2;\nwindow.zzAfter2 = 3;\n//# sourceURL=zz-b-js-after\n</script>\n",
+                [
+                    "zz-a",
+                    "zz-b"
+                ]
+            ],
+            [
+                "zz-a",
+                "zz-b"
+            ],
+            [],
+            [
+                "",
+                [
+                    "zz-a",
+                    "zz-b"
+                ]
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                "",
+                true
+            ],
+            [
+                "",
+                [
+                    "zz-a",
+                    "zz-b"
+                ]
+            ],
+            [
+                "",
+                [
+                    "zz-a",
+                    "zz-b",
+                    "zz-alias"
+                ]
+            ],
+            [
+                "<script id=\"zz-empty-js\" src=\"https://cdn.example/empty.js?ver={wp}\"></script>\n<script id=\"zz-alias2-js-after\">\nwindow.zzAlias = 1;\n//# sourceURL=zz-alias2-js-after\n</script>\n",
+                [
+                    "zz-a",
+                    "zz-b",
+                    "zz-alias",
+                    "zz-empty",
+                    "zz-alias2"
+                ]
+            ],
+            [
+                "",
+                [
+                    "zz-a",
+                    "zz-b",
+                    "zz-alias",
+                    "zz-empty",
+                    "zz-alias2"
+                ]
+            ]
+        ]
+    ],
+    [
+        "head and footer",
+        [
+            [
+                "<script id=\"zz-a-js-extra\">\nvar zzData = {\"one\":\"1\",\"two\":\"second\"};\n//# sourceURL=zz-a-js-extra\n</script>\n<script id=\"zz-a-js\" src=\"https://cdn.example/a.js?ver=1.0&#038;ver=5\"></script>\n<script id=\"zz-f-js\" src=\"https://cdn.example/f.js?ver=2\"></script>\n<script id=\"zz-g-js\" src=\"https://cdn.example/g.js?ver=3\"></script>\n<script id=\"zz-b-js-before\">\nwindow.zzBefore = 1;\n//# sourceURL=zz-b-js-before\n</script>\n<script id=\"zz-b-js\" src=\"https://{host}/wp-content/zz/b.js?ver={wp}\"></script>\n<script id=\"zz-b-js-after\">\nwindow.zzAfter = 2;\nwindow.zzAfter2 = 3;\n//# sourceURL=zz-b-js-after\n</script>\n",
+                [
+                    "zz-a",
+                    "zz-f",
+                    "zz-g",
+                    "zz-b"
+                ]
+            ],
+            [],
+            [
+                "zz-a",
+                "zz-f",
+                "zz-g",
+                "zz-b"
+            ],
+            [
+                "",
+                [
+                    "zz-a",
+                    "zz-f",
+                    "zz-g",
+                    "zz-b"
+                ]
+            ],
+            [],
+            [
+                "zz-a",
+                "zz-f",
+                "zz-g",
+                "zz-b"
+            ],
+            [
+                false,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                []
+            ]
+        ]
+    ],
+    [
+        "a footer pass",
+        [
+            true,
+            [
+                "zz-a",
+                "zz-f"
+            ],
+            {
+                "zz-f": 0,
+                "zz-a": 0
+            },
+            null,
+            [
+                "<script id=\"zz-a-js\" src=\"https://cdn.example/a.js?ver=1\"></script>\n",
+                [
+                    "zz-a"
+                ]
+            ],
+            [
+                "zz-f",
+                "zz-k"
+            ],
+            {
+                "zz-f": 1,
+                "zz-a": 0,
+                "zz-k": 1
+            },
+            [],
+            [
+                "zz-f",
+                "zz-k"
+            ],
+            [
+                "<script id=\"zz-f-js\" src=\"https://cdn.example/f.js?ver=2\"></script>\n<script id=\"zz-k-js\" src=\"https://cdn.example/k.js?ver=3\"></script>\n",
+                [
+                    "zz-a",
+                    "zz-f",
+                    "zz-k"
+                ]
+            ],
+            [
+                "zz-f",
+                "zz-k"
+            ],
+            [
+                "zz-a",
+                "zz-f",
+                "zz-k"
+            ],
+            [
+                "",
+                false
+            ]
+        ]
+    ],
+    [
+        "default directories and etags",
+        [
+            true,
+            false,
+            false,
+            true,
+            "W/\"ebc9c847ec6c3730a7e8b7c8ec9eb5a1\"",
+            "W/\"fa2cf5850406bc1270c69d0124b90188\""
+        ]
+    ],
+    [
+        "loading strategies",
+        [
+            false,
+            "defer",
+            [
+                "<script data-wp-strategy=\"defer\" defer id=\"zz-s1-js\" src=\"https://cdn.example/s1.js?ver=1\"></script>\n",
+                [
+                    "zz-s1"
+                ]
+            ],
+            [
+                "<script data-wp-strategy=\"defer\" defer id=\"zz-s1-js\" src=\"https://cdn.example/s1.js?ver=1\"></script>\n<script id=\"zz-s2-js\" src=\"https://cdn.example/s2.js?ver=1\"></script>\n",
+                [
+                    "zz-s1",
+                    "zz-s2"
+                ]
+            ],
+            [
+                "<script async data-wp-strategy=\"async\" id=\"zz-s3-js\" src=\"https://cdn.example/s3.js?ver=1\"></script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-s4-js\" src=\"https://cdn.example/s4.js?ver=1\"></script>\n",
+                [
+                    "zz-s3",
+                    "zz-s4"
+                ]
+            ],
+            [
+                "<script id=\"zz-s5-js-before\">\nwindow.zzS5 = 1;\n//# sourceURL=zz-s5-js-before\n</script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-s5-js\" src=\"https://cdn.example/s5.js?ver=1\"></script>\n",
+                [
+                    "zz-s5"
+                ]
+            ],
+            [
+                "<script fetchpriority=\"low\" id=\"zz-p1-js\" src=\"https://cdn.example/p1.js?ver=1\"></script>\n<script fetchpriority=\"high\" id=\"zz-p2-js\" src=\"https://cdn.example/p2.js?ver=1\"></script>\n<script id=\"zz-p3-js\" src=\"https://cdn.example/p3.js?ver=1\"></script>\n",
+                [
+                    "zz-p1",
+                    "zz-p2",
+                    "zz-p3"
+                ]
+            ],
+            [
+                "<script data-wp-strategy=\"defer\" id=\"zz-s1-js\" src=\"https://cdn.example/s1.js?ver=1\"></script>\n<script id=\"zz-s2-js\" src=\"https://cdn.example/s2.js?ver=1\"></script>\n<script data-wp-fetchpriority=\"low\" fetchpriority=\"high\" id=\"zz-p1-js\" src=\"https://cdn.example/p1.js?ver=1\"></script>\n<script fetchpriority=\"high\" id=\"zz-p2-js\" src=\"https://cdn.example/p2.js?ver=1\"></script>\n",
+                [
+                    "zz-s1",
+                    "zz-s2",
+                    "zz-p1",
+                    "zz-p2"
+                ]
+            ],
+            [
+                [
+                    "<script data-wp-strategy=\"async\" defer id=\"zz-s6-js\" src=\"https://cdn.example/s6.js?ver=1\"></script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-s7-js\" src=\"https://cdn.example/s7.js?ver=1\"></script>\n",
+                    [
+                        "zz-s6",
+                        "zz-s7"
+                    ]
+                ],
+                [
+                    "<script data-wp-strategy=\"defer\" id=\"zz-s8-js\" src=\"https://cdn.example/s8.js?ver=1\"></script>\n<script id=\"zz-s8-js-after\">\nwindow.zzS8 = 1;\n//# sourceURL=zz-s8-js-after\n</script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-s9-js\" src=\"https://cdn.example/s9.js?ver=1\"></script>\n",
+                    [
+                        "zz-s6",
+                        "zz-s7",
+                        "zz-s8",
+                        "zz-s9"
+                    ]
+                ]
+            ],
+            [
+                "<script data-wp-fetchpriority=\"low\" data-wp-strategy=\"defer\" fetchpriority=\"high\" id=\"zz-q1-js\" src=\"https://cdn.example/zz-q1.js?ver=1\"></script>\n<script data-wp-fetchpriority=\"auto\" fetchpriority=\"high\" id=\"zz-q2-js\" src=\"https://cdn.example/zz-q2.js?ver=1\"></script>\n<script data-wp-strategy=\"defer\" defer fetchpriority=\"high\" id=\"zz-q3-js\" src=\"https://cdn.example/zz-q3.js?ver=1\"></script>\n<script async data-wp-fetchpriority=\"low\" data-wp-strategy=\"async\" id=\"zz-r1-js\" src=\"https://cdn.example/zz-r1.js?ver=1\"></script>\n<script async data-wp-strategy=\"async\" id=\"zz-r2-js\" src=\"https://cdn.example/zz-r2.js?ver=1\"></script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-t1-js\" src=\"https://cdn.example/zz-t1.js?ver=1\"></script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-t2-js\" src=\"https://cdn.example/zz-t2.js?ver=1\"></script>\n<script async data-wp-strategy=\"async\" id=\"zz-t3-js\" src=\"https://cdn.example/zz-t3.js?ver=1\"></script>\n",
+                [
+                    "zz-q1",
+                    "zz-q2",
+                    "zz-q3",
+                    "zz-r1",
+                    "zz-r2",
+                    "zz-t1",
+                    "zz-t2",
+                    "zz-t3"
+                ]
+            ]
+        ]
+    ],
+    [
+        "held for the footer",
+        [
+            [
+                "",
+                [
+                    "zz-a"
+                ],
+                "<script data-wp-strategy=\"defer\" id=\"zz-a-js\" src=\"https://cdn.example/zz-a.js?ver=1\"></script>\n<script id=\"zz-a-js-after\">\n/*zz-a*/\n//# sourceURL=zz-a-js-after\n</script>\n"
+            ],
+            [
+                "",
+                [
+                    "zz-a"
+                ],
+                "<script data-wp-strategy=\"async\" id=\"zz-a-js\" src=\"https://cdn.example/zz-a.js?ver=1\"></script>\n<script id=\"zz-a-js-after\">\n/*zz-a*/\n//# sourceURL=zz-a-js-after\n</script>\n"
+            ],
+            [
+                "<script id=\"zz-a-js\" src=\"https://cdn.example/zz-a.js?ver=1\"></script>\n<script id=\"zz-a-js-after\">\n/*zz-a*/\n//# sourceURL=zz-a-js-after\n</script>\n",
+                [],
+                ""
+            ],
+            [
+                "<script data-wp-strategy=\"defer\" id=\"zz-a-js\" src=\"https://cdn.example/zz-a.js?ver=1\"></script>\n<script id=\"zz-a-js-after\">\n/*zz-a*/\n//# sourceURL=zz-a-js-after\n</script>\n<script id=\"zz-b-js\" src=\"https://cdn.example/zz-b.js?ver=1\"></script>\n",
+                [],
+                ""
+            ],
+            [
+                "<script data-wp-strategy=\"defer\" id=\"zz-a-js\" src=\"https://cdn.example/zz-a.js?ver=1\"></script>\n<script id=\"zz-a-js-after\">\n/*zz-a*/\n//# sourceURL=zz-a-js-after\n</script>\n<script data-wp-strategy=\"defer\" defer id=\"zz-b-js\" src=\"https://cdn.example/zz-b.js?ver=1\"></script>\n",
+                [],
+                ""
+            ],
+            [
+                "",
+                [
+                    "zz-a"
+                ],
+                "<script data-wp-strategy=\"defer\" id=\"zz-a-js\" src=\"https://cdn.example/zz-a.js?ver=1\"></script>\n<script id=\"zz-a-js-after\">\n/*zz-a*/\n//# sourceURL=zz-a-js-after\n</script>\n"
+            ]
+        ]
+    ],
+    [
+        "a fresh styles registry",
+        [
+            "WP_Dependencies",
+            [
+                "/wp-admin/",
+                "/wp-includes/css/"
+            ],
+            "ltr",
+            "https://{host}",
+            true
+        ]
+    ],
+    [
+        "styles printed",
+        [
+            [
+                "",
+                ".zz { color: red; }\n.zz2 { color: blue; }\n/*# sourceURL=zz-st1-inline-css */"
+            ],
+            [
+                "<style id=\"zz-st1-inline-css\">\n.zz { color: red; }\n.zz2 { color: blue; }\n/*# sourceURL=zz-st1-inline-css */\n</style>\n",
+                true
+            ],
+            [
+                "",
+                false
+            ],
+            "https://cdn.example/x.css?ver=9",
+            "https://{host}/wp-content/x.css?ver={wp}",
+            "https://{host}/wp-content/x.css",
+            "//cdn.example/x.css?ver={wp}",
+            true,
+            [
+                "zz-st1",
+                "zz-st2"
+            ],
+            [
+                "<link rel='stylesheet' id='zz-st1-css' href='https://cdn.example/one.css?ver=1' media='screen' />\n<style id=\"zz-st1-inline-css\">\n.zz { color: red; }\n.zz2 { color: blue; }\n/*# sourceURL=zz-st1-inline-css */\n</style>\n<link rel='alternate stylesheet' id='zz-st2-css' title='Zz Title' href='https://{host}/wp-content/zz/two.css?ver={wp}' media='all' />\n",
+                [
+                    "zz-st1",
+                    "zz-st2"
+                ]
+            ],
+            [
+                "<style id=\"zz-st3-inline-css\">\n.zz3 { margin: 0; }\n/*# sourceURL=zz-st3-inline-css */\n</style>\n",
+                [
+                    "zz-st1",
+                    "zz-st2",
+                    "zz-st3"
+                ]
+            ],
+            [
+                "",
+                [
+                    "zz-st1",
+                    "zz-st2",
+                    "zz-st3"
+                ]
+            ],
+            [
+                "",
+                false
+            ],
+            true,
+            false,
+            [
+                "<link rel='stylesheet' id='zz-rtl-rtl-css' href='https://cdn.example/rtl-rtl.css?ver=1' media='all' />\n",
+                [
+                    "zz-rtl"
+                ]
+            ],
+            [
+                "<link rel='stylesheet' id='zz-rtl2-css' href='https://cdn.example/two.css?ver=1' media='all' />\n<link rel='stylesheet' id='zz-rtl2-rtl-css' href='https://cdn.example/other-rtl.css?ver=1' media='all' />\n",
+                [
+                    "zz-rtl2"
+                ]
+            ],
+            [
+                false,
+                "",
+                "",
+                "",
+                ""
+            ],
+            [
+                "",
+                [
+                    "zz-rtl2"
+                ]
+            ]
+        ]
+    ],
+    [
+        "print array filters",
+        [
+            [
+                "scripts",
+                []
+            ],
+            [
+                "styles",
+                [
+                    "zz-st1",
+                    "zz-st2"
+                ]
+            ]
+        ]
+    ],
+    [
+        "strategy and priority values",
+        [
+            true,
+            "",
+            true,
+            true,
+            true,
+            true,
+            false,
+            "auto",
+            true,
+            false,
+            "high",
+            1,
+            true,
+            false
+        ]
+    ],
+    [
+        "the base class",
+        [
+            "The handle \"zz-x\" was enqueued with dependencies that are not registered: zz-y, zz-z.",
+            false,
+            true,
+            {
+                "zz-x": 0
+            },
+            false,
+            {
+                "zz-x": 0
+            }
+        ]
+    ],
+    [
+        "the global printers",
+        [
+            [
+                "<script id=\"zz-dep-js\" src=\"https://cdn.example/dep.js?ver=1\"></script>\n<script id=\"zz-head-js\" src=\"https://cdn.example/head.js?ver=1\"></script>\n<script id=\"zz-foot-js\" src=\"https://cdn.example/foot.js?ver=1\"></script>\n",
+                [
+                    "zz-dep",
+                    "zz-head",
+                    "zz-foot"
+                ]
+            ],
+            [],
+            [
+                "",
+                [
+                    "zz-dep",
+                    "zz-head",
+                    "zz-foot"
+                ]
+            ],
+            [
+                "<link rel='stylesheet' id='zz-gs-css' href='https://cdn.example/gs.css?ver=1' media='all' />\n<style id=\"zz-gs-inline-css\">\n.zzgs { color: green; }\n/*# sourceURL=zz-gs-inline-css */\n</style>\n",
+                [
+                    "zz-gs"
+                ]
+            ],
+            [
+                "",
+                [
+                    "zz-gs"
+                ]
+            ]
+        ]
+    ],
+    [
+        "attributes in the order the filter hears them",
+        [
+            [
+                "src",
+                "id",
+                "data-wp-strategy",
+                "fetchpriority",
+                "data-wp-fetchpriority"
+            ],
+            [
+                "src",
+                "id",
+                "fetchpriority",
+                "data-wp-fetchpriority"
+            ],
+            [
+                "src",
+                "id",
+                "defer",
+                "data-wp-strategy",
+                "fetchpriority"
+            ],
+            [
+                "src",
+                "id",
+                "async",
+                "data-wp-strategy",
+                "data-wp-fetchpriority"
+            ]
+        ]
+    ],
+    [
+        "notices",
+        [
+            [
+                [
+                    "WP_Scripts::add",
+                    "The script with the handle \"zz-c\" was enqueued with dependencies that are not registered: zz-missing.",
+                    "6.9.1"
+                ],
+                [
+                    "WP_Scripts::add_data",
+                    "Invalid fetchpriority `urgent` defined for `zz-p3` during script registration.",
+                    "6.9.0"
+                ],
+                [
+                    "WP_Scripts::add_data",
+                    "Invalid strategy `later` defined for `zz-s1` during script registration.",
+                    "6.3.0"
+                ],
+                [
+                    "WP_Styles::add",
+                    "The style with the handle \"zz-st4\" was enqueued with dependencies that are not registered: zz-st-missing.",
+                    "6.9.1"
+                ],
+                [
+                    "WP_Scripts::add_data",
+                    "Invalid fetchpriority `HIGH` defined for `zz-v1` during script registration.",
+                    "6.9.0"
+                ],
+                [
+                    "WP_Scripts::add_data",
+                    "Invalid strategy `eventually` defined for `zz-v2` during script registration.",
+                    "6.3.0"
+                ],
+                [
+                    "WP_Scripts::add_data",
+                    "Invalid fetchpriority `urgent` defined for `zz-v3` during script registration.",
+                    "6.9.0"
+                ]
+            ],
+            [
+                [
+                    "print_scripts_l10n",
+                    "WP_Scripts::print_extra_script()",
+                    "3.3.0"
+                ],
+                [
+                    "WP_Scripts::print_inline_script",
+                    "WP_Scripts::get_inline_script_data() or WP_Scripts::get_inline_script_tag()",
+                    "6.3.0"
+                ],
+                [
+                    "WP_Scripts::print_inline_script",
+                    "WP_Scripts::get_inline_script_data() or WP_Scripts::get_inline_script_tag()",
+                    "6.3.0"
+                ]
+            ]
+        ]
+    ]
+]

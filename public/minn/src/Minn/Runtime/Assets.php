@@ -145,9 +145,44 @@ final class Assets
     }
 
     /** A handle's dependencies: as registered, or as the reference registers it. @return list<string> */
-    private function depsOf(string $handle): array
+    public function dependencies(string $handle): array
     {
-        return isset($this->items[$handle]) ? (array) $this->items[$handle]['deps'] : (self::defaults()[$this->kind][$handle] ?? []);
+        return array_values(array_map('strval', isset($this->items[$handle]) ? (array) $this->items[$handle]['deps'] : (self::defaults()[$this->kind][$handle] ?? [])));
+    }
+
+    /** The registered handles that name a handle among their dependencies. @return list<string> */
+    public function dependents(string $handle): array
+    {
+        return array_keys(array_filter($this->items, static fn (array $item): bool => in_array($handle, (array) $item['deps'], true)));
+    }
+
+    /**
+     * Whether a handle is a dependency, however deep, of any of the given
+     * handles.
+     *
+     * @param list<string> $from
+     */
+    public function reaches(array $from, string $handle): bool
+    {
+        $seen = [];
+        $walk = function (string $at) use (&$walk, &$seen, $handle): bool {
+            if (isset($seen[$at])) {
+                return false;
+            }
+            $seen[$at] = true;
+            foreach ($this->dependencies($at) as $dep) {
+                if ($dep === $handle || $walk($dep)) {
+                    return true;
+                }
+            }
+            return false;
+        };
+        foreach ($from as $start) {
+            if ($walk((string) $start)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** @return array<string, array<string, list<string>>> */
@@ -169,28 +204,7 @@ final class Assets
      */
     public function enqueued(string $handle): bool
     {
-        if (in_array($handle, $this->queue, true)) {
-            return true;
-        }
-        $seen = [];
-        $reaches = function (string $from) use (&$reaches, &$seen, $handle): bool {
-            if (isset($seen[$from])) {
-                return false;
-            }
-            $seen[$from] = true;
-            foreach ($this->depsOf($from) as $dep) {
-                if ($dep === $handle || $reaches($dep)) {
-                    return true;
-                }
-            }
-            return false;
-        };
-        foreach ($this->queue as $queued) {
-            if ($reaches($queued)) {
-                return true;
-            }
-        }
-        return false;
+        return in_array($handle, $this->queue, true) || $this->reaches($this->queue, $handle);
     }
 
     /**
@@ -302,26 +316,10 @@ final class Assets
         return true;
     }
 
-    /** Every queued handle not yet printed, dependencies first, filtered to the group (footer or not). */
-    public function toPrint(?bool $footer = null): array
+    /** Every queued handle not yet printed, dependencies first. @return list<string> */
+    public function toPrint(): array
     {
-        $order = $this->ordered($this->queue);
-        if ($footer === null) {
-            return $order;
-        }
-        return array_values(array_filter($order, fn (string $h) => (bool) ($this->items[$h]['data']['group'] ?? false) === $footer));
-    }
-
-    /**
-     * Named handles and everything they depend on, in printing order, whether
-     * or not they were queued; what already printed is left out.
-     *
-     * @param list<string> $handles
-     * @return list<string>
-     */
-    public function toPrintHandles(array $handles): array
-    {
-        return $this->ordered(array_map('strval', $handles));
+        return $this->ordered($this->queue);
     }
 
     /**
@@ -341,7 +339,7 @@ final class Assets
                 if (!$this->registered($handle)) {
                     return false;
                 }
-                foreach ($this->depsOf($handle) as $dep) {
+                foreach ($this->dependencies($handle) as $dep) {
                     $visit($dep);
                 }
                 return true;

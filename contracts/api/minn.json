@@ -108976,7 +108976,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 415,
+            "lines": 413,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -108984,7 +108984,8 @@
                 "Minn\\Json"
             ],
             "usedBy": [
-                "Minn\\Runtime\\AssetEdits"
+                "Minn\\Runtime\\AssetEdits",
+                "Minn\\Runtime\\ScriptLoading"
             ],
             "constructor": {
                 "signature": "__construct(string $kind)",
@@ -109311,6 +109312,79 @@
                 },
                 {
                     "routes": [],
+                    "name": "dependencies",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dependencies(string $handle): array",
+                    "doc": "A handle's dependencies: as registered, or as the reference registers it. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 151
+                },
+                {
+                    "routes": [],
+                    "name": "dependents",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "dependents(string $handle): array",
+                    "doc": "The registered handles that name a handle among their dependencies. @return list<string>",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 154,
+                    "end": 157
+                },
+                {
+                    "routes": [],
+                    "name": "reaches",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "reaches(array $from, string $handle): bool",
+                    "doc": "Whether a handle is a dependency, however deep, of any of the given\nhandles.",
+                    "shapes": [
+                        "@param list<string> $from"
+                    ],
+                    "params": [
+                        {
+                            "name": "from",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 186
+                },
+                {
+                    "routes": [],
                     "name": "enqueued",
                     "static": false,
                     "visibility": "public",
@@ -109326,8 +109400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 194
+                    "line": 205,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -109340,8 +109414,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 201,
-                    "end": 204
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -109360,8 +109434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 210
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -109380,8 +109454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 216
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -109414,8 +109488,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 249
+                    "line": 249,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -109448,8 +109522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 265
+                    "line": 266,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -109482,8 +109556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 279
+                    "line": 282,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -109509,8 +109583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 285
+                    "line": 296,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -109543,51 +109617,22 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 303
+                    "line": 302,
+                    "end": 317
                 },
                 {
                     "routes": [],
                     "name": "toPrint",
                     "static": false,
                     "visibility": "public",
-                    "signature": "toPrint(?bool $footer = NULL): array",
-                    "doc": "Every queued handle not yet printed, dependencies first, filtered to the group (footer or not).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "footer",
-                            "type": "?bool",
-                            "shape": "",
-                            "default": "NULL",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 306,
-                    "end": 313
-                },
-                {
-                    "routes": [],
-                    "name": "toPrintHandles",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "toPrintHandles(array $handles): array",
-                    "doc": "Named handles and everything they depend on, in printing order, whether\nor not they were queued; what already printed is left out.",
+                    "signature": "toPrint(): array",
+                    "doc": "Every queued handle not yet printed, dependencies first. @return list<string>",
                     "shapes": [
-                        "@param list<string> $handles",
                         "@return list<string>"
                     ],
-                    "params": [
-                        {
-                            "name": "handles",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 322,
-                    "end": 325
+                    "params": [],
+                    "line": 320,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -109600,8 +109645,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 370,
-                    "end": 380
+                    "line": 368,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -109620,8 +109665,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 389
+                    "line": 381,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -109640,8 +109685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 396
+                    "line": 390,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -109660,8 +109705,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 402
+                    "line": 397,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -109674,8 +109719,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 409,
-                    "end": 412
+                    "line": 407,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -109688,8 +109733,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 419,
-                    "end": 422
+                    "line": 417,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -109700,8 +109745,8 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 425,
-                    "end": 428
+                    "line": 423,
+                    "end": 426
                 },
                 {
                     "routes": [],
@@ -109717,28 +109762,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "depsOf",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "depsOf(string $handle): array",
-                    "doc": "A handle's dependencies: as registered, or as the reference registers it. @return list<string>",
-                    "shapes": [
-                        "@return list<string>"
-                    ],
-                    "params": [
-                        {
-                            "name": "handle",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 148,
-                    "end": 151
-                },
-                {
-                    "routes": [],
                     "name": "defaults",
                     "static": true,
                     "visibility": "private",
@@ -109748,8 +109771,8 @@
                         "@return array<string, array<string, list<string>>>"
                     ],
                     "params": [],
-                    "line": 154,
-                    "end": 161
+                    "line": 189,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -109768,8 +109791,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 232
+                    "line": 239,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -109791,8 +109814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 361
+                    "line": 329,
+                    "end": 359
                 }
             ]
         },
@@ -126995,6 +127018,258 @@
                     ],
                     "line": 354,
                     "end": 365
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\ScriptLoading",
+            "short": "ScriptLoading",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ScriptLoading.php",
+            "lines": 82,
+            "doc": "How a script may load, as the reference decides it (probe\ndependencies-classes). A script keeps its own strategy (defer or async)\nunless it has inline code after it, which makes it blocking, or an\nenqueued dependent (however deep, through dependents that are themselves\nenqueued) loads more strictly: blocking before defer before async. Its\nfetch priority rises to the highest among those dependents: low, then\nauto, then high. A delayed script that cannot be delayed (inline code\nafter it) waits for the footer when nothing enqueued depends on it. The\nvalues a script may be given are checked here too.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Assets"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(Minn\\Runtime\\Assets $assets)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "assets",
+                        "type": "Minn\\Runtime\\Assets",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 23,
+                "end": 25
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "STRATEGIES",
+                    "value": "array (   '' => 0,   'defer' => 1,   'async' => 2, )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PRIORITIES",
+                    "value": "array (   'low' => 0,   'auto' => 1,   'high' => 2, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "assets",
+                    "type": "Minn\\Runtime\\Assets",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refusal(string $handle, string $key, mixed $value): ?array",
+                    "doc": "Why a strategy or fetch priority value is refused, as the notice the\nreference gives; null when the value is fine (empty is fine).",
+                    "shapes": [
+                        "@return array{0: string, 1: string}|null the message and the version"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "strategy",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "strategy(string $handle, array $checked = array ( )): string",
+                    "doc": "The strategy a script loads with: 'defer', 'async', or '' for blocking. @param array<string, true> $checked",
+                    "shapes": [
+                        "@param array<string, true> $checked"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "checked",
+                            "type": "array",
+                            "shape": "array<string, true>",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 43,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "heldForFooter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "heldForFooter(string $handle): bool",
+                    "doc": "Whether the head pass holds a script for the footer: one that asked to\nbe delayed but has inline code after it, with nothing enqueued that\ndepends on it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "priority",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "priority(string $handle): array",
+                    "doc": "A script's own fetch priority and the one it loads with. @return array{0: string, 1: string}",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "raised",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "raised(string $handle, string $priority, array $checked): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, true> $checked"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "priority",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "checked",
+                            "type": "array",
+                            "shape": "array<string, true>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "ownPriority",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "ownPriority(string $handle): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 92
+                },
+                {
+                    "routes": [],
+                    "name": "enqueuedDependents",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "enqueuedDependents(string $handle, array $checked): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, true> $checked @return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "handle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "checked",
+                            "type": "array",
+                            "shape": "array<string, true>",
+                            "default": null,
+                            "doc": "@return list<string>"
+                        }
+                    ],
+                    "line": 95,
+                    "end": 98
                 }
             ]
         },

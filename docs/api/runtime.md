@@ -13,7 +13,7 @@ the WordPress runtime plugins load against
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 85 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
 | [`AssetEdits`](#assetedits) | final class | 29 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
-| [`Assets`](#assets) | final class | 415 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`Assets`](#assets) | final class | 413 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 127 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -83,6 +83,7 @@ the WordPress runtime plugins load against
 | [`Registry`](#registry) | final class | 392 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 373 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
@@ -454,7 +455,7 @@ handles, sources, dependencies, versions, inline additions, localized
 data, and the head/footer split. Printing follows the reference's tag
 shapes as far as captured; see contracts/runtime.md.
 
-Used by: `Minn\Runtime\AssetEdits`
+Used by: `Minn\Runtime\AssetEdits`, `Minn\Runtime\ScriptLoading`
 
 ```php
 __construct(string $kind)
@@ -502,6 +503,25 @@ Removes an asset from the queue, or from the handles waiting for registration.
 
 Whether a handle is registered, by the site or as one the reference registers itself (data/default-assets.json).
 
+### `dependencies(string $handle): array`
+
+A handle's dependencies: as registered, or as the reference registers it. @return list<string>
+
+- `@return list<string>`
+
+### `dependents(string $handle): array`
+
+The registered handles that name a handle among their dependencies. @return list<string>
+
+- `@return list<string>`
+
+### `reaches(array $from, string $handle): bool`
+
+Whether a handle is a dependency, however deep, of any of the given
+handles.
+
+- `@param list<string> $from`
+
 ### `enqueued(string $handle): bool`
 
 Queued directly, or pulled in as the dependency of something queued,
@@ -544,16 +564,10 @@ A data key of an asset, or false.
 
 Attaches a localized object to a script.
 
-### `toPrint(?bool $footer = NULL): array`
+### `toPrint(): array`
 
-Every queued handle not yet printed, dependencies first, filtered to the group (footer or not).
+Every queued handle not yet printed, dependencies first. @return list<string>
 
-### `toPrintHandles(array $handles): array`
-
-Named handles and everything they depend on, in printing order, whether
-or not they were queued; what already printed is left out.
-
-- `@param list<string> $handles`
 - `@return list<string>`
 
 ### `withPath(): array`
@@ -592,7 +606,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 47), `depsOf()` (private, line 148), `defaults()` (private, line 154), `held()` (private, line 225), `ordered()` (private, line 331)
+Internals: `changed()` (private, line 47), `defaults()` (private, line 189), `held()` (private, line 239), `ordered()` (private, line 329)
 
 
 ## Avatar
@@ -3902,6 +3916,56 @@ calls it straight away.
 Fresh per-request state, for suites.
 
 Internals: `loadObjectCacheDropin()` (private, line 354)
+
+
+## ScriptLoading
+
+`final class Minn\Runtime\ScriptLoading` · `public/minn/src/Minn/Runtime/ScriptLoading.php`
+
+How a script may load, as the reference decides it (probe
+dependencies-classes). A script keeps its own strategy (defer or async)
+unless it has inline code after it, which makes it blocking, or an
+enqueued dependent (however deep, through dependents that are themselves
+enqueued) loads more strictly: blocking before defer before async. Its
+fetch priority rises to the highest among those dependents: low, then
+auto, then high. A delayed script that cannot be delayed (inline code
+after it) waits for the footer when nothing enqueued depends on it. The
+values a script may be given are checked here too.
+
+- const `STRATEGIES` = `array (   '' => 0,   'defer' => 1,   'async' => 2, )`
+- const `PRIORITIES` = `array (   'low' => 0,   'auto' => 1,   'high' => 2, )`
+
+```php
+__construct(Minn\Runtime\Assets $assets)
+```
+
+
+### static `refusal(string $handle, string $key, mixed $value): ?array`
+
+Why a strategy or fetch priority value is refused, as the notice the
+reference gives; null when the value is fine (empty is fine).
+
+- `@return array{0: string, 1: string}|null the message and the version`
+
+### `strategy(string $handle, array $checked = array ( )): string`
+
+The strategy a script loads with: 'defer', 'async', or '' for blocking. @param array<string, true> $checked
+
+- `@param array<string, true> $checked`
+
+### `heldForFooter(string $handle): bool`
+
+Whether the head pass holds a script for the footer: one that asked to
+be delayed but has inline code after it, with nothing enqueued that
+depends on it.
+
+### `priority(string $handle): array`
+
+A script's own fetch priority and the one it loads with. @return array{0: string, 1: string}
+
+- `@return array{0: string, 1: string}`
+
+Internals: `raised()` (private, line 78), `ownPriority()` (private, line 88), `enqueuedDependents()` (private, line 95)
 
 
 ## ScriptModules

@@ -16,17 +16,17 @@
             "deadend": 131,
             "placeholder": 24,
             "missing": 64,
-            "verified": 116,
+            "verified": 117,
             "resolved": 316
         },
         "methods": {
             "total": 4073,
-            "real": 1521,
+            "real": 1550,
             "deadend": 1615,
             "placeholder": 355,
-            "missing": 582,
-            "verified": 1320,
-            "resolved": 3491
+            "missing": 553,
+            "verified": 1356,
+            "resolved": 3520
         }
     }
 }

@@ -7323,3 +7323,71 @@ reads the routes they register.
   defaults now apply at dispatch (`WP_REST_Request::has_valid_params` and
   `sanitize_params`), where the reference applies them. This affects
   every plugin route.
+
+## The dependency classes (2026-10-09)
+
+Probe `dependencies-classes` (`tests/tools/dependencies-classes-probe.php`)
+proves `WP_Dependencies`, `WP_Scripts` and `WP_Styles`, mostly on fresh
+instances so the page's queues stay untouched. The classes are now split
+into one file each.
+
+- **Printing goes through the classes.** `wp_print_scripts`,
+  `wp_print_head_scripts`, `print_footer_scripts`, `wp_print_styles` and
+  `print_admin_styles` call `do_items`, `do_head_items` and
+  `do_footer_items`. The internal `_minn_print_*` helpers and
+  `Assets::toPrintHandles` are gone.
+- **`wp_print_scripts()` with no handles** now prints every queued script,
+  the footer's too, as the reference does. It used to print the head
+  group only.
+- **`all_deps`.**
+  - It puts each handle's dependencies before it in `$to_do`, and keeps
+    `handle?args` as `$args`.
+  - A handle is passed over when it is already done, or already lined up
+    in a group as low.
+  - A handle whose dependency is not registered is skipped, and so is
+    anything that depends on it. It still gets its group, and a notice
+    names it once (attributed to `WP_Scripts::add` / `WP_Styles::add`,
+    6.9.1). Inside recursion the walk returns false; at the top it returns
+    true.
+  - The engine's own default handles count as registered here
+    (`Assets::registered`), because the engine has no items for them.
+- **Groups.** A script's group is its own (1 for the footer), lowered to
+  the group of whatever depends on it. `set_group` refuses to raise a
+  group. In the head pass, `do_item` holds back a footer-group script in
+  `$in_footer`, and also a script that asked for `defer` or `async`, has
+  inline code after it, and has nothing enqueued that depends on it.
+  `reset()` leaves `$in_footer` alone.
+- **Loading strategy and fetch priority** (`Runtime\ScriptLoading`).
+  - Only enqueued dependents count: queued, or a dependency of something
+    queued, however deep.
+  - Strategy: a script keeps the one it asked for unless it has inline
+    code after it, or one of those dependents loads more strictly
+    (blocking, then defer, then async). The tag keeps what was asked for
+    in `data-wp-strategy`.
+  - Fetch priority rises to the highest among those dependents (low, then
+    auto, then high). The tag carries `fetchpriority` (left out for auto)
+    and the script's own value in `data-wp-fetchpriority` when it changed.
+  - The filter sees the attributes in this order: src, id, the strategy,
+    data-wp-strategy, fetchpriority, data-wp-fetchpriority.
+  - `add_data` refuses a strategy other than defer or async (6.3.0) and a
+    fetch priority other than auto, low or high (6.9.0), each with a
+    notice. An empty value is allowed, and an empty priority is stored as
+    auto. `wp_register_script` now passes `strategy` and `fetchpriority`
+    through `add_data`, so it gets the same refusals.
+- **Versions.** A version that is `false` or `''` prints as the WordPress
+  version, for scripts and styles alike; `null` prints none.
+  `wp_register_script(..., '')` used to print no version. The registries
+  are made while the facade loads, before `$wp_version` is set, so the
+  default version comes from the runtime.
+- **Styles.**
+  - An alt stylesheet gets rel `alternate stylesheet`, and a title gets a
+    `title` attribute.
+  - When the text direction is right to left, an rtl of `replace` prints
+    the `-rtl` file in its place (id `{handle}-rtl-css`). An rtl address
+    prints as a second link after the stylesheet's own.
+- **Etag.** `get_etag` is `W/"md5"` over `WP:{version};` followed by
+  `{handle}:{ver};` for each registered handle. A null version counts as
+  the WordPress version and `false` as empty.
+- **Edits are handed back.** The view now hands a plugin's direct edits to
+  `$queue` and `$done` back to the registry before it refreshes. Before,
+  `$scripts->done = []` followed by `enqueue()` put the old done list back.
