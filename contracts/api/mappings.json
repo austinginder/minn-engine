@@ -5,11 +5,11 @@
         "minn": 774,
         "composes": 1721,
         "leaf": 848,
-        "noop": 2626,
+        "noop": 2629,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7794,
-        "minnMethods": 932,
+        "functions": 7797,
+        "minnMethods": 934,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -33029,6 +33029,15 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_wp_prepare_json_schema_for_client_with_allowed_keywords": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\ClientSchema::trim"
+            ],
+            "composes": []
+        },
         "_wp_preview_meta_filter": {
             "file": "post.php",
             "lines": 6,
@@ -60356,6 +60365,15 @@
                 "get_file_data"
             ]
         },
+        "wp_get_json_schema_allowed_keywords": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\ClientSchema::keywords"
+            ],
+            "composes": []
+        },
         "wp_get_latest_revision_id_and_total_count": {
             "file": "post.php",
             "lines": 10,
@@ -64156,6 +64174,16 @@
                 "wp_basename",
                 "wp_get_attachment_metadata",
                 "wp_get_attachment_url"
+            ]
+        },
+        "wp_prepare_json_schema_for_client": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_wp_prepare_json_schema_for_client_with_allowed_keywords",
+                "wp_get_json_schema_allowed_keywords"
             ]
         },
         "wp_prepare_revisions_for_js": {

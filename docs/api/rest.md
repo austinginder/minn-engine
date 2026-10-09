@@ -14,6 +14,7 @@ the wp/v2 surface: shapes and controllers
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 143 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
+| [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 271 | wp/v2/comments: the status tabs with pagination headers, single, |
@@ -561,6 +562,44 @@ The rows as the JSON catalogue: a version line and one entry per route.
 - `@return array<string, mixed>`
 
 Internals: `classes()` (private, line 68)
+
+
+## ClientSchema
+
+`final class Minn\Rest\ClientSchema` · `public/minn/src/Minn/Rest/ClientSchema.php`
+
+A JSON schema trimmed for a client (probe json-schema): only the keywords
+a profile allows, in the order given, at every level a sub-schema sits.
+
+A property's boolean required becomes its object's required list (names
+whose required is true), kept where the object's own required is not a
+list, appended last otherwise, even where the profile drops required
+itself; an object's own list wins. A boolean required is always dropped.
+Sub-schemas are trimmed where they are objects: a keyword's value, a
+list's members, a map's entries; anything else stays as given.
+
+- const `DRAFT_04_FIRST` = `array (   0 => '$schema',   1 => 'id',   2 => '$ref', )`
+- const `DRAFT_04_LAST` = `array (   0 => 'required',   1 => 'allOf',   2 => 'not',   3 => 'definitions',   4 => 'dependencies',   5 => 'additionalItems', )`
+- const `MAPS` = `array (   0 => 'properties',   1 => 'patternProperties',   2 => 'definitions',   3 => 'dependencies', )` — Keywords whose value maps names to sub-schemas.
+- const `SCHEMAS` = `array (   0 => 'items',   1 => 'additionalProperties',   2 => 'additionalItems',   3 => 'not',   4 => 'anyOf',   5 => 'oneOf',   6 => 'allOf', )` — Keywords whose value is a sub-schema or a list of them.
+
+### static `keywords(string $profile): array`
+
+The keywords a profile keeps: draft-04's whole set, the REST API's for
+any other profile.
+
+- `@return list<string>`
+
+### static `trim(array $schema, array $allowed): array`
+
+A schema with only the allowed keywords, keyed by keyword (the values
+do not matter), trimmed all the way down.
+
+- `@param array<array-key, mixed> $schema`
+- `@param array<array-key, mixed> $allowed`
+- `@return array<array-key, mixed>`
+
+Internals: `position()` (private, line 73), `member()` (private, line 82), `requiredNames()` (private, line 88)
 
 
 ## CommentListArgs
@@ -2423,7 +2462,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)

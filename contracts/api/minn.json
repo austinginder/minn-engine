@@ -89365,6 +89365,181 @@
             ]
         },
         {
+            "name": "Minn\\Rest\\ClientSchema",
+            "short": "ClientSchema",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/ClientSchema.php",
+            "lines": 81,
+            "doc": "A JSON schema trimmed for a client (probe json-schema): only the keywords\na profile allows, in the order given, at every level a sub-schema sits.\n\nA property's boolean required becomes its object's required list (names\nwhose required is true), kept where the object's own required is not a\nlist, appended last otherwise, even where the profile drops required\nitself; an object's own list wins. A boolean required is always dropped.\nSub-schemas are trimmed where they are objects: a keyword's value, a\nlist's members, a map's entries; anything else stays as given.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Rest\\Schema"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DRAFT_04_FIRST",
+                    "value": "array (   0 => '$schema',   1 => 'id',   2 => '$ref', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DRAFT_04_LAST",
+                    "value": "array (   0 => 'required',   1 => 'allOf',   2 => 'not',   3 => 'definitions',   4 => 'dependencies',   5 => 'additionalItems', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MAPS",
+                    "value": "array (   0 => 'properties',   1 => 'patternProperties',   2 => 'definitions',   3 => 'dependencies', )",
+                    "doc": "Keywords whose value maps names to sub-schemas.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SCHEMAS",
+                    "value": "array (   0 => 'items',   1 => 'additionalProperties',   2 => 'additionalItems',   3 => 'not',   4 => 'anyOf',   5 => 'oneOf',   6 => 'allOf', )",
+                    "doc": "Keywords whose value is a sub-schema or a list of them.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "keywords",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "keywords(string $profile): array",
+                    "doc": "The keywords a profile keeps: draft-04's whole set, the REST API's for\nany other profile.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "profile",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 36
+                },
+                {
+                    "routes": [],
+                    "name": "trim",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "trim(array $schema, array $allowed): array",
+                    "doc": "A schema with only the allowed keywords, keyed by keyword (the values\ndo not matter), trimmed all the way down.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $schema",
+                        "@param array<array-key, mixed> $allowed",
+                        "@return array<array-key, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowed",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 46,
+                    "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "position",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "position(mixed $value, array $allowed): mixed",
+                    "doc": "A sub-schema's place: an object trimmed, a list's object members trimmed, anything else as given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowed",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "member",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "member(mixed $value, array $allowed): mixed",
+                    "doc": "A list member or map entry: trimmed when it is an object schema.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowed",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "requiredNames",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "requiredNames(array $schema): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string> the properties whose required is true"
+                    ],
+                    "params": [
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 97
+                }
+            ]
+        },
+        {
             "name": "Minn\\Rest\\CommentListArgs",
             "short": "CommentListArgs",
             "namespace": "Minn\\Rest",
@@ -101351,6 +101526,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BlockRendererController",
+                "Minn\\Rest\\ClientSchema",
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\SchemaValues",
                 "Minn\\Rest\\Services"

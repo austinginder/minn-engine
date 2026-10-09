@@ -404,6 +404,24 @@ function rest_get_allowed_schema_keywords()
     return Schema::KEYWORDS;
 }
 
+/** The JSON schema keywords a profile keeps for a client: draft-04's whole set, the REST API's for any other (probe json-schema). */
+function wp_get_json_schema_allowed_keywords(string $schema_profile = 'rest-api'): array
+{
+    return Minn\Rest\ClientSchema::keywords($schema_profile);
+}
+
+/** A schema trimmed to a profile's keywords for a client (Rest\ClientSchema). */
+function wp_prepare_json_schema_for_client(array $schema, string $schema_profile = 'draft-04'): array
+{
+    return _wp_prepare_json_schema_for_client_with_allowed_keywords($schema, array_flip(wp_get_json_schema_allowed_keywords($schema_profile)));
+}
+
+/** A schema trimmed to the keywords given as keys (Rest\ClientSchema). */
+function _wp_prepare_json_schema_for_client_with_allowed_keywords(array $schema, array $allowed_keywords): array
+{
+    return Minn\Rest\ClientSchema::trim($schema, $allowed_keywords);
+}
+
 function rest_get_endpoint_args_for_schema($schema, $method = WP_REST_Server::CREATABLE)
 {
     return Schema::endpointArgs((array) $schema, $method === WP_REST_Server::CREATABLE);

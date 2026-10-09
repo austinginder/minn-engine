@@ -7939,3 +7939,39 @@ entries, and the admin and login addresses a 404 redirects.
   the rule table. It misses a page address with a page number
   (`/zz-page/2/`, which the reference finds); its own batch should move it
   onto `Front\RuleTable`.
+
+## JSON schemas for a client (2026-10-09)
+
+Probe `json-schema`, behind `Rest\ClientSchema`.
+
+- **Keywords.**
+  - `wp_get_json_schema_allowed_keywords` gives the REST API's keyword
+    list (`rest_get_allowed_schema_keywords`) for any profile but
+    `draft-04`, which is case-sensitive.
+  - `draft-04` adds `$schema`, `id` and `$ref` before that list, and
+    `required`, `allOf`, `not`, `definitions`, `dependencies` and
+    `additionalItems` after it.
+- **Trimming.**
+  - `wp_prepare_json_schema_for_client` defaults to the draft-04 profile.
+    `_wp_prepare_json_schema_for_client_with_allowed_keywords` takes the
+    keywords as keys; a plain list allows nothing.
+  - Keys keep their order. Sub-schemas are trimmed where they are objects:
+    - each entry of `properties`, `patternProperties`, `definitions` and
+      `dependencies`;
+    - the value of `items`, `additionalProperties`, `additionalItems`,
+      `not`, `anyOf`, `oneOf` and `allOf`, or each object member when the
+      value is a list.
+  - Nested lists, strings and booleans stay as given. `enum` and `default`
+    are never looked into.
+- **required.**
+  - A boolean `required` is always dropped.
+  - When `properties` is allowed, the names whose `required` is `true`
+    (strictly) become the object's list. An object's own `required` list
+    wins, and a non-list, non-boolean `required` is replaced where it
+    stands.
+  - Otherwise the list is appended last, even under a profile that drops
+    `required` itself (rest-api).
+- **Still owed.** `rest_handle_deprecated_argument`,
+  `rest_handle_deprecated_function` and `rest_handle_doing_it_wrong`
+  answer with response headers, which a CLI probe cannot see. They wait
+  for an HTTP check under `WP_DEBUG`.

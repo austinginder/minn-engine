@@ -1,0 +1,839 @@
+[
+    [
+        "the keywords each profile allows",
+        [
+            [
+                "title",
+                "description",
+                "default",
+                "type",
+                "format",
+                "enum",
+                "items",
+                "properties",
+                "additionalProperties",
+                "patternProperties",
+                "minProperties",
+                "maxProperties",
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "multipleOf",
+                "minLength",
+                "maxLength",
+                "pattern",
+                "minItems",
+                "maxItems",
+                "uniqueItems",
+                "anyOf",
+                "oneOf"
+            ],
+            [
+                "title",
+                "description",
+                "default",
+                "type",
+                "format",
+                "enum",
+                "items",
+                "properties",
+                "additionalProperties",
+                "patternProperties",
+                "minProperties",
+                "maxProperties",
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "multipleOf",
+                "minLength",
+                "maxLength",
+                "pattern",
+                "minItems",
+                "maxItems",
+                "uniqueItems",
+                "anyOf",
+                "oneOf"
+            ],
+            [
+                "$schema",
+                "id",
+                "$ref",
+                "title",
+                "description",
+                "default",
+                "type",
+                "format",
+                "enum",
+                "items",
+                "properties",
+                "additionalProperties",
+                "patternProperties",
+                "minProperties",
+                "maxProperties",
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "multipleOf",
+                "minLength",
+                "maxLength",
+                "pattern",
+                "minItems",
+                "maxItems",
+                "uniqueItems",
+                "anyOf",
+                "oneOf",
+                "required",
+                "allOf",
+                "not",
+                "definitions",
+                "dependencies",
+                "additionalItems"
+            ],
+            [
+                "title",
+                "description",
+                "default",
+                "type",
+                "format",
+                "enum",
+                "items",
+                "properties",
+                "additionalProperties",
+                "patternProperties",
+                "minProperties",
+                "maxProperties",
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "multipleOf",
+                "minLength",
+                "maxLength",
+                "pattern",
+                "minItems",
+                "maxItems",
+                "uniqueItems",
+                "anyOf",
+                "oneOf"
+            ],
+            [
+                "title",
+                "description",
+                "default",
+                "type",
+                "format",
+                "enum",
+                "items",
+                "properties",
+                "additionalProperties",
+                "patternProperties",
+                "minProperties",
+                "maxProperties",
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "multipleOf",
+                "minLength",
+                "maxLength",
+                "pattern",
+                "minItems",
+                "maxItems",
+                "uniqueItems",
+                "anyOf",
+                "oneOf"
+            ],
+            [
+                "title",
+                "description",
+                "default",
+                "type",
+                "format",
+                "enum",
+                "items",
+                "properties",
+                "additionalProperties",
+                "patternProperties",
+                "minProperties",
+                "maxProperties",
+                "minimum",
+                "maximum",
+                "exclusiveMinimum",
+                "exclusiveMaximum",
+                "multipleOf",
+                "minLength",
+                "maxLength",
+                "pattern",
+                "minItems",
+                "maxItems",
+                "uniqueItems",
+                "anyOf",
+                "oneOf"
+            ]
+        ]
+    ],
+    [
+        "a whole schema",
+        [
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "zz",
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "string",
+                        "enum": [
+                            "p"
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "b": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "c": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "c"
+                            ]
+                        }
+                    }
+                },
+                "additionalProperties": false,
+                "patternProperties": {
+                    "^z": {
+                        "type": "string"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "type": "string"
+                    }
+                ],
+                "anyOf": [
+                    {
+                        "type": "null"
+                    }
+                ],
+                "required": [
+                    "a"
+                ],
+                "default": "q",
+                "description": "d",
+                "format": "uri",
+                "minimum": 1
+            },
+            {
+                "title": "zz",
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "string",
+                        "enum": [
+                            "p"
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "b": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "c": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "c"
+                            ]
+                        }
+                    }
+                },
+                "additionalProperties": false,
+                "patternProperties": {
+                    "^z": {
+                        "type": "string"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "type": "string"
+                    }
+                ],
+                "anyOf": [
+                    {
+                        "type": "null"
+                    }
+                ],
+                "default": "q",
+                "description": "d",
+                "format": "uri",
+                "minimum": 1
+            },
+            {
+                "title": "zz",
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "string",
+                        "enum": [
+                            "p"
+                        ],
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "b": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "c": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "c"
+                            ]
+                        }
+                    }
+                },
+                "additionalProperties": false,
+                "patternProperties": {
+                    "^z": {
+                        "type": "string"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "type": "string"
+                    }
+                ],
+                "anyOf": [
+                    {
+                        "type": "null"
+                    }
+                ],
+                "default": "q",
+                "description": "d",
+                "format": "uri",
+                "minimum": 1
+            },
+            []
+        ]
+    ],
+    [
+        "schemas trimmed per profile",
+        [
+            [
+                {
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            ],
+            [
+                {
+                    "items": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ]
+                },
+                {
+                    "items": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ]
+                }
+            ],
+            [
+                {
+                    "allOf": [
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "not": {
+                        "type": "null"
+                    },
+                    "definitions": {
+                        "d": {
+                            "type": "string"
+                        }
+                    },
+                    "dependencies": {
+                        "a": [
+                            "b"
+                        ],
+                        "c": {
+                            "type": "object"
+                        }
+                    },
+                    "additionalItems": {
+                        "type": "string"
+                    }
+                },
+                []
+            ],
+            [
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": {
+                            "type": "string"
+                        },
+                        "b": [],
+                        "c": {
+                            "required": "yes"
+                        },
+                        "d": {
+                            "required": 1
+                        }
+                    },
+                    "required": [
+                        "b"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": {
+                            "type": "string"
+                        },
+                        "b": [],
+                        "c": [],
+                        "d": []
+                    },
+                    "required": [
+                        "b"
+                    ]
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "required": [
+                        "x"
+                    ],
+                    "properties": {
+                        "a": []
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    },
+                    "required": [
+                        "a"
+                    ]
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "required": [
+                        "a"
+                    ],
+                    "properties": {
+                        "a": []
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    },
+                    "required": [
+                        "a"
+                    ]
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                        "a": []
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    },
+                    "required": [
+                        "a"
+                    ]
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    }
+                }
+            ],
+            [
+                [],
+                []
+            ],
+            [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "required": "yes",
+                    "type": "string"
+                },
+                {
+                    "type": "string"
+                }
+            ],
+            [
+                {
+                    "properties": {
+                        "a": [],
+                        "b": []
+                    },
+                    "type": "object",
+                    "required": [
+                        "a",
+                        "b"
+                    ]
+                },
+                {
+                    "properties": {
+                        "a": [],
+                        "b": []
+                    },
+                    "type": "object",
+                    "required": [
+                        "a",
+                        "b"
+                    ]
+                }
+            ],
+            [
+                {
+                    "patternProperties": {
+                        "^a": {
+                            "type": "string"
+                        }
+                    }
+                },
+                {
+                    "patternProperties": {
+                        "^a": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ],
+            [
+                {
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "q"
+                        ],
+                        "properties": {
+                            "q": []
+                        }
+                    }
+                },
+                {
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "q": []
+                        },
+                        "required": [
+                            "q"
+                        ]
+                    }
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    },
+                    "title": "t",
+                    "required": [
+                        "a"
+                    ]
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": []
+                    },
+                    "title": "t",
+                    "required": [
+                        "a"
+                    ]
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "properties": "notarray"
+                },
+                {
+                    "type": "object",
+                    "properties": "notarray"
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": "notarray",
+                        "b": {
+                            "type": "string"
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "a": "notarray",
+                        "b": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ],
+            [
+                {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "enum": [
+                        {
+                            "zz": 1
+                        }
+                    ],
+                    "default": {
+                        "zz": 1,
+                        "type": "q"
+                    }
+                },
+                {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "enum": [
+                        {
+                            "zz": 1
+                        }
+                    ],
+                    "default": {
+                        "zz": 1,
+                        "type": "q"
+                    }
+                }
+            ],
+            [
+                {
+                    "properties": {
+                        "a": {
+                            "type": "object",
+                            "properties": {
+                                "b": {
+                                    "type": "object",
+                                    "properties": {
+                                        "c": []
+                                    },
+                                    "required": [
+                                        "c"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "properties": {
+                        "a": {
+                            "type": "object",
+                            "properties": {
+                                "b": {
+                                    "type": "object",
+                                    "properties": {
+                                        "c": []
+                                    },
+                                    "required": [
+                                        "c"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            ],
+            [
+                {
+                    "patternProperties": "x",
+                    "anyOf": "y",
+                    "oneOf": [
+                        "z",
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "items": "q"
+                },
+                {
+                    "patternProperties": "x",
+                    "anyOf": "y",
+                    "oneOf": [
+                        "z",
+                        {
+                            "type": "string"
+                        }
+                    ],
+                    "items": "q"
+                }
+            ],
+            [
+                {
+                    "type": "object",
+                    "properties": []
+                },
+                {
+                    "type": "object",
+                    "properties": []
+                }
+            ],
+            [
+                {
+                    "$ref": "#/definitions/x",
+                    "id": "zz",
+                    "$schema": "x"
+                },
+                []
+            ],
+            [
+                {
+                    "type": "x"
+                },
+                {
+                    "type": "x"
+                }
+            ],
+            [
+                {
+                    "items": [
+                        [
+                            {
+                                "type": "string",
+                                "zz": 1
+                            }
+                        ]
+                    ],
+                    "anyOf": [
+                        [
+                            {
+                                "zz": 1
+                            }
+                        ],
+                        []
+                    ]
+                },
+                {
+                    "items": [
+                        [
+                            {
+                                "type": "string",
+                                "zz": 1
+                            }
+                        ]
+                    ],
+                    "anyOf": [
+                        [
+                            {
+                                "zz": 1
+                            }
+                        ],
+                        []
+                    ]
+                }
+            ]
+        ]
+    ],
+    [
+        "schemas trimmed to given keywords",
+        [
+            {
+                "type": "object",
+                "properties": {
+                    "c": {
+                        "type": "string"
+                    }
+                },
+                "items": {
+                    "type": "x"
+                },
+                "required": [
+                    "c"
+                ]
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "c": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "c"
+                ]
+            },
+            [],
+            [],
+            {
+                "title": "kept?"
+            }
+        ]
+    ]
+]
