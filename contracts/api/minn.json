@@ -67217,7 +67217,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/I18n/PluralRule.php",
-            "lines": 35,
+            "lines": 36,
             "doc": "A language's plural rule from its Plural-Forms header: how many forms it\nhas and which form a number takes. A file without the header follows\nEnglish (two forms, n != 1); an expression that does not parse sends\nevery number to the first form, as the reference does.",
             "implements": [],
             "extends": null,
@@ -67322,7 +67322,7 @@
                         }
                     ],
                     "line": 27,
-                    "end": 34
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -67348,8 +67348,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -67368,8 +67368,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 44,
+                    "end": 47
                 }
             ]
         },

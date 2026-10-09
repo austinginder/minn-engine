@@ -55,10 +55,10 @@ class WP_Translation_File
         return $this->entries;
     }
 
+    /** The error parsing ran into: null until the file is read (headers, entries or a translation read it), and null when it read cleanly. */
     public function error()
     {
-        $this->parse_file();
-        return $this->error ?? false;
+        return $this->error ?? null;
     }
 
     public function get_file(): string
@@ -95,7 +95,7 @@ class WP_Translation_File
         $this->headers = $source->headers();
         $this->entries = $source->entries();
         $this->error = $source->error() ?: null;
-        $this->parsed = true;
+        // Not marked read: the file's own headers and entries are laid over these when it is (probe translation-classes).
         return $this->error === null;
     }
 
@@ -105,6 +105,9 @@ class WP_Translation_File
             return;
         }
         $this->parsed = true;
+        if ($this->file === '') {
+            return;
+        }
         $catalog = TranslationFiles::read($this->file);
         if ($catalog === null) {
             $this->error = 'Invalid data';

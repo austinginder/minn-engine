@@ -29,14 +29,15 @@ final readonly class PluralRule
         if ($header === null || preg_match('/nplurals\s*=\s*(\d+)/i', $header, $count) !== 1) {
             return self::english();
         }
-        $expression = preg_match('/plural\s*=\s*(.*?)\s*;?\s*$/is', $header, $m) === 1 ? $m[1] : '';
+        // The expression as the header writes it, a closing semicolon included; it is parsed without one.
+        $expression = preg_match('/plural\s*=\s*(.*?)\s*$/is', $header, $m) === 1 ? $m[1] : '';
         return self::fromExpression(max(1, (int) $count[1]), $expression);
     }
 
     /** A rule from a form count and an expression in n. */
     public static function fromExpression(int $count, string $expression): self
     {
-        return new self($count, $expression, PluralExpression::parse($expression));
+        return new self($count, $expression, PluralExpression::parse(rtrim($expression, "; \t\r\n")));
     }
 
     /** The form a number takes. */

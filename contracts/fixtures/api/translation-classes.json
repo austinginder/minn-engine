@@ -1,0 +1,331 @@
+[
+    [
+        "files read",
+        [
+            true,
+            {
+                "mo": [
+                    "WP_Translation_File_MO",
+                    "{dir}/zz-probe-de_DE.mo",
+                    null,
+                    {
+                        "project-id-version": "Zz Probe",
+                        "language": "de_DE",
+                        "plural-forms": "nplurals=2; plural=(n != 1);",
+                        "content-type": "text/plain; charset=UTF-8"
+                    },
+                    {
+                        "%d apple": "%d Apfel\u0000%d Äpfel",
+                        "Hello": "Hallo",
+                        "noun\u0004Post": "Beitrag"
+                    },
+                    "Hallo",
+                    false,
+                    false,
+                    [
+                        1,
+                        0,
+                        1,
+                        1,
+                        1
+                    ]
+                ],
+                "php": [
+                    "WP_Translation_File_PHP",
+                    "{dir}/zz-probe-php-de_DE.l10n.php",
+                    null,
+                    {
+                        "project-id-version": "Zz PHP",
+                        "plural-forms": "nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);"
+                    },
+                    {
+                        "Hello": "Ahoj",
+                        "Post\u0004noun": "Příspěvek",
+                        "%d apple": "%d jablko\u0000%d jablka\u0000%d jablek"
+                    },
+                    "Ahoj",
+                    "Příspěvek",
+                    false,
+                    [
+                        2,
+                        0,
+                        1,
+                        2,
+                        2
+                    ]
+                ],
+                "broken": [
+                    "WP_Translation_File_MO",
+                    "{dir}/zz-broken-de_DE.mo",
+                    null,
+                    [],
+                    [],
+                    false,
+                    false,
+                    false,
+                    [
+                        1,
+                        0,
+                        1,
+                        1,
+                        1
+                    ]
+                ],
+                "missing": false,
+                "other extension": false
+            }
+        ]
+    ],
+    [
+        "files transformed",
+        [
+            true,
+            {
+                "project-id-version": "Zz Probe",
+                "language": "de_DE",
+                "plural-forms": "nplurals=2; plural=(n != 1);",
+                "content-type": "text/plain; charset=UTF-8",
+                "messages": {
+                    "%d apple": "%d Apfel\u0000%d Äpfel",
+                    "Hello": "Hallo",
+                    "noun\u0004Post": "Beitrag"
+                }
+            },
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "the controller",
+        [
+            true,
+            "en_US",
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            "Hallo",
+            "Beitrag",
+            false,
+            false,
+            "%d Apfel",
+            "%d Äpfel",
+            [
+                "%d jablko",
+                "%d jablka",
+                "%d jablek"
+            ],
+            [],
+            [],
+            true,
+            false,
+            [
+                [
+                    "WP_Translation_File_MO",
+                    "zz-probe-de_DE.mo"
+                ]
+            ],
+            [
+                "entries",
+                "source"
+            ],
+            false,
+            null,
+            "de_DE",
+            "Hallo",
+            null,
+            true,
+            false,
+            true,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "headers normalized",
+        [
+            "Project-Id-Version",
+            "Plural-Forms",
+            "X-Generator",
+            "Po-Revision-Date",
+            "Language"
+        ]
+    ],
+    [
+        "file internals",
+        [
+            "(n != 1);",
+            "n != 1",
+            [
+                1,
+                0,
+                1
+            ],
+            "V",
+            false,
+            [
+                {
+                    "project-id-version": "Zz Probe",
+                    "plural-forms": "nplurals=2; plural=(n != 1);",
+                    "language": "de_DE",
+                    "content-type": "text/plain; charset=UTF-8"
+                },
+                4,
+                "Hallo"
+            ]
+        ]
+    ],
+    [
+        "translations",
+        [
+            [
+                "One",
+                "Two",
+                ""
+            ],
+            {
+                "X-Zz": "yes",
+                "Plural-Forms": "nplurals=3; plural=n%10==1 ? 0 : 1;",
+                "X-More": "more"
+            },
+            "yes",
+            false,
+            "Eins",
+            "Zwei",
+            "Absent",
+            "One",
+            true,
+            false,
+            0,
+            1,
+            2,
+            "%d one",
+            "%d many",
+            [
+                "a.php:1"
+            ],
+            [
+                [
+                    "One",
+                    "Two",
+                    "",
+                    "Three"
+                ],
+                "Ein",
+                [
+                    "One",
+                    "Two",
+                    "",
+                    "Three"
+                ],
+                "Eins"
+            ]
+        ]
+    ],
+    [
+        "gettext plurals",
+        [
+            [
+                0,
+                1,
+                2,
+                2,
+                0,
+                1,
+                2,
+                2
+            ],
+            [
+                2,
+                "n != 1;"
+            ],
+            [
+                2,
+                "n != 1"
+            ],
+            "n==1  ? ( 0 ) : ( n>=2 && n<=4  ? ( 1 ) : ( 2))",
+            [
+                1,
+                0,
+                1
+            ],
+            {
+                "Project-Id-Version": "Zz",
+                "Plural-Forms": "nplurals=1; plural=0;",
+                "X-Folded": "a"
+            },
+            2,
+            "Same"
+        ]
+    ],
+    [
+        "the locale",
+        [
+            true,
+            [
+                "Sunday",
+                "Wednesday",
+                "Saturday"
+            ],
+            "S",
+            "Wed",
+            [
+                "January",
+                "February",
+                "December",
+                "July"
+            ],
+            "Mar",
+            "May",
+            [
+                "am",
+                "pm",
+                "AM",
+                "PM"
+            ],
+            false,
+            ", ",
+            "words",
+            "ltr",
+            {
+                "thousands_sep": ",",
+                "decimal_point": "."
+            },
+            [
+                "Monday",
+                "April",
+                "Apr",
+                "M"
+            ]
+        ]
+    ],
+    [
+        "the registry",
+        [
+            true,
+            true,
+            false,
+            [
+                true,
+                "{dir}/",
+                false,
+                true,
+                "{dir}/",
+                false
+            ],
+            [
+                false,
+                "{dir}/zz-broken-de_DE.mo",
+                "{dir}/zz-probe-de_DE.mo",
+                "{dir}/zz-probe-php-de_DE.l10n.php"
+            ],
+            [],
+            null
+        ]
+    ]
+]

@@ -7141,3 +7141,37 @@ widget.
 - The `wp-query-sql` case "parents in their order" can flake under the api
   suite. Posts tied on `FIELD(post_parent, …)` have no defined order in
   MySQL; it passes alone.
+
+## The translation classes (2026-10-09)
+
+Probe `translation-classes` (`tests/tools/translation-classes-probe.php`)
+proves six classes:
+- `WP_Translation_Controller`, `WP_Translation_File` (and its MO and PHP
+  readers), on a `.mo` and a `.l10n.php` file the probe writes;
+- `Translations` and `Gettext_Translations`, in memory;
+- `WP_Locale` and `WP_Textdomain_Registry`.
+
+Protected methods go through reflection.
+
+- **Loading.** `load_file` refuses only a file that isn't readable or isn't
+  `.mo` or `.php`. One that will not parse reports true but is kept out,
+  since the reference drops it the first time it is read.
+  `is_textdomain_loaded` answers for the locale the domain was loaded
+  under (the current one when none is given). A domain with no locale on
+  record answers for any. `get_headers` and `get_entries` take no locale:
+  they answer for the current one, so `[]` for a domain loaded only for
+  another. `unload_file` is true whether or not the file was loaded.
+- **Files.** `error()` returns the stored error without reading the file,
+  so null until something reads it. `import` doesn't mark the file read:
+  when it is read, the file's own headers and entries are laid over the
+  imported ones (so `transform`'s file-less target never reads).
+- **Plural rules.** A `Plural-Forms` expression keeps its closing semicolon
+  as written (`(n != 1);`) and is parsed without it.
+  `parenthesize_plural_exression` writes `?` as ` ? (` and `:` as `) : (`,
+  closing the parentheses at the end.
+- **Registry.**
+  - `has()` is true for a domain never looked up.
+  - `get()` falls back to a domain's custom path when no language file is
+    found.
+  - `get_language_files_from_path` lists `.l10n.php` files with the `.mo`
+    ones.

@@ -2,10 +2,10 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 755,
+        "minn": 759,
         "composes": 1618,
-        "leaf": 779,
-        "noop": 2466,
+        "leaf": 780,
+        "noop": 2461,
         "placeholder": 279,
         "deadend": 1659,
         "functions": 7478,
@@ -1226,8 +1226,8 @@
         },
         "Gettext_Translations::parenthesize_plural_exression": {
             "file": "classes/POMO.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -20941,8 +20941,8 @@
         },
         "WP_Textdomain_Registry::find": {
             "file": "classes/WP_Textdomain_Registry.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Support\\Paths::translationDir"
             ],
@@ -20957,8 +20957,8 @@
         },
         "WP_Textdomain_Registry::get_language_files_from_path": {
             "file": "classes/WP_Textdomain_Registry.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -22461,7 +22461,7 @@
         },
         "WP_Translation_Controller::get_entries": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 7,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
@@ -22479,7 +22479,7 @@
         },
         "WP_Translation_Controller::get_headers": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 7,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
@@ -22511,8 +22511,8 @@
         },
         "WP_Translation_Controller::is_textdomain_loaded": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
             ],
@@ -22520,7 +22520,7 @@
         },
         "WP_Translation_Controller::load_file": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 6,
+            "lines": 10,
             "kind": "minn",
             "minn": [
                 "Minn\\I18n\\TranslationFiles::read",
@@ -22573,8 +22573,8 @@
         },
         "WP_Translation_Controller::unload_file": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
             ],
@@ -22582,8 +22582,8 @@
         },
         "WP_Translation_Controller::unload_textdomain": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
             ],
@@ -22612,8 +22612,8 @@
         },
         "WP_Translation_File::error": {
             "file": "classes/WP_Translation_File.php",
-            "lines": 2,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -22673,7 +22673,7 @@
         },
         "WP_Translation_File::parse_file": {
             "file": "classes/WP_Translation_File.php",
-            "lines": 15,
+            "lines": 18,
             "kind": "minn",
             "minn": [
                 "Minn\\I18n\\TranslationFiles::read"

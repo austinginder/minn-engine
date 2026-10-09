@@ -188,9 +188,11 @@ class Gettext_Translations extends Translations
         return static fn ($n): int => $rule->index((int) $n);
     }
 
+    /** An expression with each ternary's branches parenthesized, as the reference writes it: "?" becomes " ? (", ":" becomes ") : (", the parentheses closed at the end. */
     public function parenthesize_plural_exression($expression)
     {
-        return '(' . trim((string) $expression) . ')';
+        $depth = substr_count((string) $expression, '?');
+        return str_replace(['?', ':'], [' ? (', ') : ('], (string) $expression) . str_repeat(')', $depth);
     }
 
     public function make_headers($translation)

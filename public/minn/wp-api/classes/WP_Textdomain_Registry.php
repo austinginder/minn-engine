@@ -28,9 +28,10 @@ class WP_Textdomain_Registry
         return $path;
     }
 
+    /** Whether a domain may have translations: one never looked up yet, default, a custom path, or a lookup that found a folder. */
     public function has($domain)
     {
-        return $domain === 'default' || isset($this->custom_paths[$domain]) || !empty(array_filter($this->all[$domain] ?? []));
+        return !isset($this->all[$domain]) || $domain === 'default' || isset($this->custom_paths[$domain]) || !empty(array_filter($this->all[$domain]));
     }
 
     public function set($domain, $locale, $path)
@@ -46,7 +47,8 @@ class WP_Textdomain_Registry
 
     public function get_language_files_from_path($path)
     {
-        return array_values(array_filter((array) glob(rtrim((string) $path, '/') . '/*.mo')));
+        $path = rtrim((string) $path, '/');
+        return array_values(array_filter(array_merge((array) glob($path . '/*.mo'), (array) glob($path . '/*.l10n.php'))));
     }
 
     public function invalidate_mo_files_cache($file, $translation)
@@ -69,8 +71,10 @@ class WP_Textdomain_Registry
     }
 
     /** @return string|false the trailing-slashed directory holding {domain}-{locale}.mo, or false */
+    /** The folder holding a domain's files for a locale; failing that, the domain's custom path; false for neither. */
     protected function find($domain, $locale)
     {
-        return \Minn\Support\Paths::translationDir((string) $domain, (string) $locale, defined('WP_LANG_DIR') ? WP_LANG_DIR : '', $this->custom_paths[$domain] ?? null);
+        $found = \Minn\Support\Paths::translationDir((string) $domain, (string) $locale, defined('WP_LANG_DIR') ? WP_LANG_DIR : '', $this->custom_paths[$domain] ?? null);
+        return $found ?: (isset($this->custom_paths[$domain]) ? rtrim($this->custom_paths[$domain], '/') . '/' : false);
     }
 }
