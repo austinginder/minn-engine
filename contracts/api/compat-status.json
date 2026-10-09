@@ -7,26 +7,26 @@
             "deadend": 903,
             "placeholder": 23,
             "missing": 61,
-            "verified": 2130,
+            "verified": 2132,
             "resolved": 3852
         },
         "classes": {
             "total": 380,
-            "real": 175,
-            "deadend": 131,
+            "real": 176,
+            "deadend": 132,
             "placeholder": 23,
-            "missing": 51,
-            "verified": 133,
-            "resolved": 329
+            "missing": 49,
+            "verified": 134,
+            "resolved": 331
         },
         "methods": {
             "total": 4073,
-            "real": 1699,
-            "deadend": 1615,
+            "real": 1703,
+            "deadend": 1617,
             "placeholder": 353,
-            "missing": 406,
-            "verified": 1514,
-            "resolved": 3667
+            "missing": 400,
+            "verified": 1518,
+            "resolved": 3673
         }
     }
 }

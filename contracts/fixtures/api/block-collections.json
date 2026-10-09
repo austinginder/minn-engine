@@ -1,0 +1,313 @@
+[
+    [
+        "collections registered",
+        [
+            [
+                true,
+                [],
+                [
+                    [
+                        [
+                            "{abspath}/wp-includes",
+                            "{content}",
+                            "{mu-plugins}",
+                            "{plugins}",
+                            "{themes}"
+                        ],
+                        0
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "The specified manifest file does not exist.",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "Block metadata collections cannot be registered as one of the following directories or their parent directories: {abspath}/wp-includes, {content}, {mu-plugins}, {plugins}, {themes}",
+                        "6.7.2"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "Block metadata collections cannot be registered as one of the following directories or their parent directories: {abspath}/wp-includes, {content}, {mu-plugins}, {plugins}, {themes}",
+                        "6.7.2"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "Block metadata collections cannot be registered as one of the following directories or their parent directories: {abspath}/wp-includes, {content}, {mu-plugins}, {plugins}, {themes}",
+                        "6.7.2"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "Block metadata collections cannot be registered as one of the following directories or their parent directories: {abspath}/wp-includes, {content}, {mu-plugins}, {plugins}, {themes}",
+                        "6.7.2"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "Block metadata collections cannot be registered as one of the following directories or their parent directories: {plugins}/zz-probe-collection",
+                        "6.7.2"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "metadata found",
+        [
+            {
+                "apiVersion": 3,
+                "name": "zz/one",
+                "title": "Zz One",
+                "category": "widgets",
+                "attributes": {
+                    "a": {
+                        "type": "string",
+                        "default": "x"
+                    }
+                }
+            },
+            {
+                "apiVersion": 3,
+                "name": "zz/two",
+                "title": "Zz Two",
+                "supports": {
+                    "html": false
+                }
+            },
+            null,
+            [
+                true,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                false,
+                false,
+                true,
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "the block.json files listed",
+        [
+            [
+                "{plugins}/zz-probe-collection/build/zz-one/block.json",
+                "{plugins}/zz-probe-collection/build/zz-two/block.json",
+                "{plugins}/zz-probe-collection/build/zz-one-extra/block.json"
+            ],
+            [
+                "{plugins}/zz-probe-collection/build/zz-one/block.json",
+                "{plugins}/zz-probe-collection/build/zz-two/block.json",
+                "{plugins}/zz-probe-collection/build/zz-one-extra/block.json"
+            ],
+            []
+        ]
+    ],
+    [
+        "collections inside collections",
+        [
+            true,
+            {
+                "apiVersion": 3,
+                "name": "zz/one",
+                "title": "Zz One",
+                "category": "widgets",
+                "attributes": {
+                    "a": {
+                        "type": "string",
+                        "default": "x"
+                    }
+                }
+            },
+            {
+                "apiVersion": 3,
+                "name": "zz/one",
+                "title": "Zz One",
+                "category": "widgets",
+                "attributes": {
+                    "a": {
+                        "type": "string",
+                        "default": "x"
+                    }
+                }
+            },
+            {
+                "apiVersion": 3,
+                "name": "zz/one",
+                "title": "Zz One",
+                "category": "widgets",
+                "attributes": {
+                    "a": {
+                        "type": "string",
+                        "default": "x"
+                    }
+                }
+            },
+            [
+                true,
+                {
+                    "name": "zz/again"
+                },
+                null
+            ]
+        ]
+    ],
+    [
+        "blocks registered from a collection",
+        [
+            [
+                [
+                    "zz/one",
+                    "Zz One",
+                    "widgets",
+                    {
+                        "a": {
+                            "type": "string",
+                            "default": "x"
+                        },
+                        "lock": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    null,
+                    3
+                ],
+                [
+                    [
+                        "WP_Block_Metadata_Registry::get_collection_block_metadata_files",
+                        "No registered block metadata collection was found for the provided path.",
+                        "6.8.0"
+                    ]
+                ],
+                [
+                    "zz/one",
+                    "Zz Given",
+                    "widgets",
+                    {
+                        "a": {
+                            "type": "string",
+                            "default": "x"
+                        },
+                        "lock": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    null,
+                    3
+                ],
+                [
+                    false,
+                    []
+                ]
+            ],
+            [
+                null,
+                [
+                    "zz/one",
+                    "Zz One",
+                    "widgets",
+                    {
+                        "a": {
+                            "type": "string",
+                            "default": "x"
+                        },
+                        "lock": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    null,
+                    3
+                ],
+                [
+                    "zz/two",
+                    "Zz Two",
+                    null,
+                    {
+                        "lock": {
+                            "type": "object"
+                        },
+                        "metadata": {
+                            "type": "object"
+                        }
+                    },
+                    {
+                        "html": false
+                    },
+                    3
+                ],
+                []
+            ],
+            [
+                null,
+                true,
+                []
+            ],
+            [
+                null,
+                [
+                    [
+                        "WP_Block_Metadata_Registry::register_collection",
+                        "The specified manifest file does not exist.",
+                        "6.7.0"
+                    ],
+                    [
+                        "WP_Block_Metadata_Registry::get_collection_block_metadata_files",
+                        "No registered block metadata collection was found for the provided path.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                null,
+                true,
+                []
+            ]
+        ]
+    ]
+]

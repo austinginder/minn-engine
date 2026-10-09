@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1821,
-        "leaf": 862,
+        "composes": 1827,
+        "leaf": 864,
         "noop": 2651,
         "placeholder": 242,
-        "deadend": 1662,
-        "functions": 7933,
+        "deadend": 1664,
+        "functions": 7943,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -5034,6 +5034,22 @@
             "composes": [],
             "deadend": "omitted"
         },
+        "Services_JSON_Error::Services_JSON_Error": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "Services_JSON_Error::__construct": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
         "SimplePie::__call": {
             "file": "simplepie/SimplePie.php",
             "lines": 2,
@@ -7824,6 +7840,78 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Block_Metadata_Registry::default_identifier_callback": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Metadata_Registry::find_collection_path": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_normalize_path"
+            ]
+        },
+        "WP_Block_Metadata_Registry::get_collection_block_metadata_files": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_doing_it_wrong",
+                "wp_normalize_path"
+            ]
+        },
+        "WP_Block_Metadata_Registry::get_default_collection_roots": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_theme_root",
+                "wp_normalize_path"
+            ]
+        },
+        "WP_Block_Metadata_Registry::get_metadata": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Metadata_Registry::has_metadata": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Metadata_Registry::is_valid_collection_path": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_normalize_path"
+            ]
+        },
+        "WP_Block_Metadata_Registry::register_collection": {
+            "file": "classes/WP_Block_Metadata_Registry.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_doing_it_wrong",
+                "apply_filters",
+                "wp_normalize_path"
+            ]
         },
         "WP_Block_Parser::add_block_from_stack": {
             "file": "classes/WP_Block_Parser.php",
@@ -50366,7 +50454,7 @@
         },
         "register_block_type_from_metadata": {
             "file": "blocks.php",
-            "lines": 30,
+            "lines": 34,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\BlockMetadata::settings"
@@ -66088,7 +66176,7 @@
         },
         "wp_register_block_metadata_collection": {
             "file": "blocks.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
@@ -66105,10 +66193,13 @@
         },
         "wp_register_block_types_from_metadata_collection": {
             "file": "blocks.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "register_block_type_from_metadata",
+                "wp_register_block_metadata_collection"
+            ]
         },
         "wp_register_border_support": {
             "file": "block-supports.php",

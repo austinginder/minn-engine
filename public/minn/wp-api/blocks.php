@@ -910,14 +910,18 @@ function register_block_type_from_metadata($file_or_folder, $args = [])
 {
     $file_or_folder = (string) $file_or_folder;
     $metadata_file = !str_ends_with($file_or_folder, 'block.json') ? trailingslashit($file_or_folder) . 'block.json' : $file_or_folder;
-    if (!file_exists($metadata_file)) {
-        return false;
+    // A registered collection's manifest answers first; the block.json need not be there.
+    $metadata = WP_Block_Metadata_Registry::get_metadata($file_or_folder);
+    if ($metadata === null) {
+        if (!file_exists($metadata_file)) {
+            return false;
+        }
+        $metadata = wp_json_file_decode($metadata_file, ['associative' => true]);
     }
-    $metadata = wp_json_file_decode($metadata_file, ['associative' => true]);
     if (!is_array($metadata) || empty($metadata['name'])) {
         return false;
     }
-    $metadata['file'] = wp_normalize_path(realpath($metadata_file));
+    $metadata['file'] = wp_normalize_path(realpath($metadata_file) ?: $metadata_file);
     $metadata = apply_filters('block_type_metadata', $metadata);
     $settings = BlockMetadata::settings(
         $metadata,
@@ -940,12 +944,21 @@ function register_block_type_from_metadata($file_or_folder, $args = [])
     return WP_Block_Type_Registry::get_instance()->register($settings['name'] ?? $metadata['name'], $settings);
 }
 
+/** Registers a blocks manifest for a directory (WP_Block_Metadata_Registry). */
 function wp_register_block_metadata_collection($path, $manifest)
 {
+    WP_Block_Metadata_Registry::register_collection($path, $manifest);
 }
 
+/** Registers every block a collection lists, the manifest registered first when one is given. */
 function wp_register_block_types_from_metadata_collection($path, $manifest = '')
 {
+    if ($manifest) {
+        wp_register_block_metadata_collection($path, $manifest);
+    }
+    foreach (WP_Block_Metadata_Registry::get_collection_block_metadata_files($path) as $file) {
+        register_block_type_from_metadata($file);
+    }
 }
 
 function wp_migrate_old_typography_shape($metadata)

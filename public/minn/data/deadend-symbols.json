@@ -931,6 +931,7 @@
         "Plugin_Upgrader": "admin",
         "Plugin_Upgrader_Skin": "admin",
         "Services_JSON": "omitted",
+        "Services_JSON_Error": "omitted",
         "Snoopy": "omitted",
         "Theme_Installer_Skin": "admin",
         "Theme_Upgrader": "admin",

@@ -11,6 +11,7 @@
     "classes": {
         "POP3": "The post-by-email mail client (wp-mail.php); Minn does not fetch mail to post it, and no catalogue plugin uses the class.",
         "Services_JSON": "A pure-PHP JSON library kept for PHP without ext/json; json_encode and json_decode replaced it, and no catalogue plugin uses it.",
+        "Services_JSON_Error": "A pure-PHP JSON library kept for PHP without ext/json; json_encode and json_decode replaced it, and no catalogue plugin uses it. Services_JSON_Error is its error class, from the same file.",
         "Snoopy": "An old HTTP client kept for back-compat; WP_Http and the Requests library replaced it, and no catalogue plugin uses it."
     }
 }

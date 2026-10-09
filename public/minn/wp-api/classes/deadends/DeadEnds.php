@@ -1331,6 +1331,22 @@ class Services_JSON
     }
 }
 
+class Services_JSON_Error
+{
+
+    public function __construct($message = 'unknown error', $code = NULL, $mode = NULL, $options = NULL, $userinfo = NULL)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON_Error::__construct');
+        return null;
+    }
+
+    public function Services_JSON_Error($message = 'unknown error', $code = NULL, $mode = NULL, $options = NULL, $userinfo = NULL)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('Services_JSON_Error::Services_JSON_Error');
+        return null;
+    }
+}
+
 class Snoopy
 {
     public $host = 'www.php.net';

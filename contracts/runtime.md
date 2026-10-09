@@ -8838,3 +8838,39 @@ Probe `template-loader-more`.
     `wp_get_global_styles_svg_filters` to print the duotone filters; the
     engine's answers `''`.
   - `wp_map_sidebars_widgets` goes in a widgets batch.
+
+## Block metadata collections (2026-10-09)
+
+Probe `block-collections`. The probe writes its manifests into a folder
+under the plugins directory and removes it, along with the block types it
+registers.
+
+- **`WP_Block_Metadata_Registry`**, a new facade class.
+  - `register_collection($path, $manifest)` normalizes the path and drops
+    a trailing slash. It first refuses (doing it wrong, 6.7.2, "Block
+    metadata collections cannot be registered as one of the following
+    directories or their parent directories: …", the list comma-separated)
+    a path that is one of the roots or a parent of one. The roots come from
+    `wp_allowed_block_metadata_collection_roots`, given wp-includes,
+    wp-content, mu-plugins, plugins and the theme root. Then it refuses a
+    manifest that is not there (6.7.0). Anywhere else is allowed, even
+    outside the site. Registering a path again replaces its manifest and
+    keeps its place.
+  - A path belongs to the first collection whose path it starts with as a
+    plain string, the last match tried first. So `build` holds `buildzz/…`,
+    and a collection registered inside another is never reached. The block
+    is named by the last segment, or the folder of a `block.json`.
+  - `get_collection_block_metadata_files` gives `{path}/{name}/block.json`
+    for each manifest entry. An unknown path gives `[]` with a notice
+    (6.8.0).
+- **`register_block_type_from_metadata`** reads a registered collection's
+  metadata first, so the block.json need not exist. A block with neither
+  gives false.
+- **Shared fix.** `wp_register_block_metadata_collection` and
+  `wp_register_block_types_from_metadata_collection` were empty, so a
+  plugin registering its blocks from a `blocks-manifest.php` (the shape
+  create-block scaffolds since WordPress 6.7) had none on the engine. Now
+  the collection is registered and each listed block is registered from
+  it. With no manifest given, an already-registered collection is used.
+- **Omitted.** `Services_JSON_Error` joins `Services_JSON`, the omission
+  Austin approved: it is the same library's error class.
