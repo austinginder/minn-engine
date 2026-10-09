@@ -147,41 +147,15 @@ final readonly class GlobalStyles
     }
 
     /**
-     * The @font-face rules for every family that declares font files, as
-     * the reference prints them in its own style element: family (quoted
-     * when it has a space), style, weight, display, then the sources with
-     * file:./ resolved against the theme that carries the file and the
-     * format named from the extension. Families without files print
-     * nothing.
+     * The @font-face rules for every family that declares font files
+     * (Theme\FontFaces), with file:./ resolved against the theme that
+     * carries the file. The page prints them through wp_print_font_faces on
+     * wp_head; the editor's styles read them here.
      */
     public function fontFaces(): string
     {
         $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
-        $out = '';
-        foreach (StylePresets::fontFamilies((array) ($json['settings'] ?? [])) as $family) {
-            foreach ((array) ($family['fontFace'] ?? []) as $face) {
-                if (!is_array($face) || !isset($face['fontFamily'])) {
-                    continue;
-                }
-                $sources = [];
-                foreach ((array) ($face['src'] ?? []) as $src) {
-                    $url = $this->fontUrl((string) $src);
-                    if ($url !== null) {
-                        $sources[] = "url('" . $url . "') format('" . StylePresets::fontFormat($url) . "')";
-                    }
-                }
-                if ($sources === []) {
-                    continue;
-                }
-                $name = (string) $face['fontFamily'];
-                $out .= '@font-face{font-family:' . (preg_match('/^[\w-]+$/', $name) ? $name : '"' . str_replace('"', '', $name) . '"')
-                    . ';font-style:' . Styles::value((string) ($face['fontStyle'] ?? 'normal'))
-                    . ';font-weight:' . Styles::value((string) ($face['fontWeight'] ?? '400'))
-                    . ';font-display:' . Styles::value((string) ($face['fontDisplay'] ?? 'fallback'))
-                    . ';src:' . implode(', ', $sources) . ";}\n";
-            }
-        }
-        return $out;
+        return FontFaces::css(FontFaces::fromSettings((array) ($json['settings'] ?? []), fn (string $path): string => $this->fontUrl('file:./' . $path) ?? ''));
     }
 
     private function fontUrl(string $src): ?string

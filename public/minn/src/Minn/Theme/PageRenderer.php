@@ -195,8 +195,8 @@ final readonly class PageRenderer
         // The engine's stylesheets print inside wp_head, where the reference prints a theme's.
         Runtime::current()->set('engine_head_styles', $this->headLinks->engineStylesheet()
             . '<style id="global-styles-inline-css">' . "\n" . $styles->css() . "\n" . '</style>' . "\n");
+        // The theme's @font-face rules print on wp_head, through wp_print_font_faces at 50, as the reference's do.
         $runtimeHead = Runtime::capture('wp_head');
-        $fontFaces = $styles->fontFaces();
         return '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
             . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
@@ -204,7 +204,6 @@ final readonly class PageRenderer
             . $this->headLinks->all($resolution)
             . $runtimeHead
             . (Extensions::runner()?->head() ?? '')
-            . ($fontFaces === '' ? '' : '<style class="wp-fonts-local">' . "\n" . $fontFaces . '</style>' . "\n")
             . ($bar === null ? '' : $bar->head())
             . '</head>' . "\n";
     }

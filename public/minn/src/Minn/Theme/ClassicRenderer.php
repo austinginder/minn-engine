@@ -150,11 +150,8 @@ final readonly class ClassicRenderer
         $styles = '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n";
         if ($this->styleTheme !== null) {
             $globalStyles = new GlobalStyles($this->styleTheme, null);
+            // Its @font-face rules print on wp_head, through wp_print_font_faces at 50.
             $styles .= '<style id="global-styles-inline-css">' . "\n" . $globalStyles->css() . $trailer . "\n" . '</style>' . "\n";
-            $fonts = $globalStyles->fontFaces();
-            if ($fonts !== '') {
-                $styles .= '<style class="wp-fonts-local">' . "\n" . $fonts . '</style>' . "\n";
-            }
         }
         Runtime::current()->set('engine_head_styles', $styles);
     }

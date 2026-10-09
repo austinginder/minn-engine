@@ -7585,3 +7585,56 @@ and removes it afterwards.
   - The cache key takes the vars the query knows, in their own order,
     leaves out the two cache switches, and reads every `fields` value
     except count and all_with_object_id as `all`.
+
+## The font library (2026-10-09)
+
+Probe `fonts` (`tests/tools/fonts-probe.php`) proves the font functions,
+`WP_Font_Face`, `WP_Font_Face_Resolver`, `WP_Font_Utils`,
+`WP_Font_Collection` and `WP_Font_Library`. It removes the font family,
+face, file and collection file it makes.
+
+- **One path for @font-face rules** (`Minn\Theme\FontFaces`).
+  - The page prints its theme's fonts through `wp_print_font_faces` on
+    `wp_head` at 50, as the reference does. The block and classic
+    renderers no longer print their own. The block (`<style
+    class="wp-fonts-local">`) is byte-identical to the reference's over
+    HTTP.
+  - A rule lists family, style, weight, display (fallback unless it is
+    auto, block, fallback, swap or optional), the sources, then any other
+    known face property in the order given.
+  - Sources: data URIs first, then woff2, woff, truetype,
+    embedded-opentype, opentype. An unknown extension (svg, `?v=1`, none)
+    is dropped.
+  - A family name is quoted unless it is one word or already carries
+    quotes. `font-variation-settings` given as an array runs together
+    (`wght 400wdth 100`), as on the reference.
+- **Fonts from theme.json.** `get_fonts_from_theme_json` reads the merged
+  settings, and `get_fonts_from_style_variations` reads every variation.
+  Each face is its sources (`file:./` through `get_theme_file_uri`), then
+  its family's first name unquoted, then its other properties in kebab
+  case.
+- **Collections.**
+  - A slug that sanitizes differently is fixed, with a notice.
+  - Data is read when first asked for: the args over a description of
+    `''` and no categories, with font families taken from a JSON file or
+    address when one is given in their place.
+  - The data is kept to the collection schema. A missing file, name or
+    font families gives a `WP_Error` with a notice, and the error is kept.
+  - Registering a duplicate is a `WP_Error`; unregistering an unknown
+    slug is false. Both give notices.
+- **The default collection is left out.** The reference registers Google
+  Fonts read from a wordpress.org address. The engine contacts no
+  wordpress.org address, so `_wp_register_default_font_collections`
+  registers nothing (flagged to Austin).
+- **The fonts directory** is uploads with `/fonts` as its base and no
+  dated subdirectory, through `font_dir`. Deleting a font family deletes
+  its faces, and deleting a face removes its file (`deleted_post` and
+  `before_delete_post`).
+- **Utilities.**
+  - `sanitize_font_family` quotes each name of more than one word.
+  - The face slug is family list, style, weight (`bold` read as 700),
+    stretch and unicode range.
+  - `sanitize_from_schema` keeps only the schema's keys, and drops a list
+    or object given a single sanitizer.
+- `wp_register_font_library_page_routes` (editor) and
+  `wp_register_font_library_wp_admin_page_routes` (admin) are dead ends.

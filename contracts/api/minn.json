@@ -140823,7 +140823,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ClassicRenderer.php",
-            "lines": 134,
+            "lines": 131,
             "doc": "A whole page from the active classic theme: the reference's PHP template\nloader. The main query stands, template_redirect fires, the hierarchy\npicks a PHP file, template_include filters it, and load_template() runs\nit as the response body. The theme prints its own document; the engine\ncontributes the reference's wp_head defaults (title tag, robots, feed\nlinks, REST and oEmbed discovery, canonical, site icon) as hooks the\ntheme's wp_head() call fires.",
             "implements": [],
             "extends": null,
@@ -141151,7 +141151,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 147,
-                    "end": 160
+                    "end": 157
                 }
             ]
         },
@@ -141853,6 +141853,202 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\FontFaces",
+            "short": "FontFaces",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FontFaces.php",
+            "lines": 119,
+            "doc": "fonts a theme.json declares in the shape they are printed from.\n\nA face needs a family and at least one source it can name a format for.\nIts rule lists family (quoted unless it is one word or already carries\nquotes), style (normal), weight (400), display (fallback unless it is\none the reference knows), the sources, then any other face property in\nthe order given. Sources go data URIs first, then woff2, woff,\ntruetype, embedded-opentype and opentype; anything else is dropped.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Theme\\StylePresets"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\GlobalStyles"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "DISPLAYS",
+                    "value": "array (   0 => 'auto',   1 => 'block',   2 => 'fallback',   3 => 'swap',   4 => 'optional', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PROPERTIES",
+                    "value": "array (   0 => 'ascent-override',   1 => 'descent-override',   2 => 'font-display',   3 => 'font-family',   4 => 'font-stretch',   5 => 'font-style',   6 => 'font-weight',   7 => 'font-variant',   8 => 'font-feature-settings',   9 => 'font-variation-settings',   10 => 'line-gap-override',   11 => 'size-adjust',   12 => 'src',   13 => 'unicode-range', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FORMATS",
+                    "value": "array (   'woff2' => 'woff2',   'woff' => 'woff',   'ttf' => 'truetype',   'eot' => 'embedded-opentype',   'otf' => 'opentype', )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "css",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "css(array $fonts): string",
+                    "doc": "The rules for fonts given as families of faces, one rule a line; ''\nwhen no face can be printed.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $fonts"
+                    ],
+                    "params": [
+                        {
+                            "name": "fonts",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "fromSettings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromSettings(array $settings, Closure $fileUri): array",
+                    "doc": "The fonts a theme.json's settings declare, one list of faces per\nfamily that has any: each face's sources first (file:./ ones through\n$fileUri), then its family (the first name of its own, or of the\nfamily's, unquoted), then its other properties in kebab case.",
+                    "shapes": [
+                        "@param Closure(string): string $fileUri a theme-relative path to its URL",
+                        "@return list<list<array<string, mixed>>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fileUri",
+                            "type": "Closure",
+                            "shape": "Closure(string): string",
+                            "default": null,
+                            "doc": "a theme-relative path to its URL"
+                        }
+                    ],
+                    "line": 53,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "rule",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rule(array $face): string",
+                    "doc": "One face's rule, or '' when it has no family or no source it can print.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "face",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "sources",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "sources(mixed $src): string",
+                    "doc": "The sources in the order the reference prints them: data URIs, then one each by format.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 119
+                },
+                {
+                    "routes": [],
+                    "name": "family",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "family(string $family): string",
+                    "doc": "A family name as printed: as given when it carries quotes or is one word, quoted otherwise.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "family",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "variations",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "variations(array $settings): string",
+                    "doc": "font-variation-settings given as axis => value, run together as the reference prints them. @param array<string, mixed> $settings",
+                    "shapes": [
+                        "@param array<string, mixed> $settings"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 128,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "firstName",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "firstName(string $family): string",
+                    "doc": "The first name in a comma-separated family list, without its quotes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "family",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 137
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\FrontLifecycle",
             "short": "FrontLifecycle",
             "namespace": "Minn\\Theme",
@@ -141976,7 +142172,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 519,
+            "lines": 493,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
@@ -141987,6 +142183,7 @@
                 "Minn\\Json",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Theme\\CustomCss",
+                "Minn\\Theme\\FontFaces",
                 "Minn\\Theme\\StylePresets",
                 "Minn\\Theme\\StyleSettings",
                 "Minn\\Theme\\Theme"
@@ -142127,11 +142324,11 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "fontFaces(): string",
-                    "doc": "The @font-face rules for every family that declares font files, as\nthe reference prints them in its own style element: family (quoted\nwhen it has a space), style, weight, display, then the sources with\nfile:./ resolved against the theme that carries the file and the\nformat named from the extension. Families without files print\nnothing.",
+                    "doc": "The @font-face rules for every family that declares font files\n(Theme\\FontFaces), with file:./ resolved against the theme that\ncarries the file. The page prints them through wp_print_font_faces on\nwp_head; the editor's styles read them here.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 185
+                    "line": 155,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -142150,8 +142347,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 342
+                    "line": 311,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -142191,8 +142388,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 426
+                    "line": 378,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -142225,8 +142422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 202
+                    "line": 161,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -142252,8 +142449,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 222
+                    "line": 179,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -142279,8 +142476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 234
+                    "line": 199,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -142299,8 +142496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 253
+                    "line": 215,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -142326,8 +142523,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 286
+                    "line": 229,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -142348,8 +142545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 301
+                    "line": 263,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -142375,8 +142572,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 334
+                    "line": 283,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -142397,8 +142594,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 345,
-                    "end": 348
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -142428,8 +142625,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 383
+                    "line": 332,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -142448,8 +142645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 385,
-                    "end": 395
+                    "line": 359,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -142460,8 +142657,8 @@
                     "doc": "The page's block-support rules (layouts, element styles, and the rest), which the facade keeps in the style engine's block-supports store.",
                     "shapes": [],
                     "params": [],
-                    "line": 429,
-                    "end": 436
+                    "line": 403,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -142489,8 +142686,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 444,
-                    "end": 511
+                    "line": 418,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -142512,8 +142709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 521,
-                    "end": 538
+                    "line": 495,
+                    "end": 512
                 }
             ]
         },
@@ -143276,7 +143473,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 179,
+            "lines": 178,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -143643,7 +143840,7 @@
                         }
                     ],
                     "line": 191,
-                    "end": 210
+                    "end": 209
                 }
             ]
         },
@@ -144173,7 +144370,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 174,
+            "lines": 161,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
@@ -144183,6 +144380,7 @@
                 "Minn\\Theme\\Typography"
             ],
             "usedBy": [
+                "Minn\\Theme\\FontFaces",
                 "Minn\\Theme\\GlobalStyles"
             ],
             "constructor": null,
@@ -144409,26 +144607,6 @@
                     ],
                     "line": 172,
                     "end": 175
-                },
-                {
-                    "routes": [],
-                    "name": "fontFormat",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "fontFormat(string $url): string",
-                    "doc": "The format() a font source is declared with, from its file extension.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "url",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 178,
-                    "end": 188
                 }
             ]
         },

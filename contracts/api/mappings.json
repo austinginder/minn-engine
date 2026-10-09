@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 771,
-        "composes": 1671,
-        "leaf": 825,
-        "noop": 2585,
-        "placeholder": 250,
-        "deadend": 1659,
-        "functions": 7683,
-        "minnMethods": 930,
+        "minn": 773,
+        "composes": 1685,
+        "leaf": 830,
+        "noop": 2596,
+        "placeholder": 242,
+        "deadend": 1661,
+        "functions": 7709,
+        "minnMethods": 932,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -11955,52 +11955,197 @@
             "composes": [],
             "deadend": "admin"
         },
-        "WP_Font_Face_Resolver::convert_font_face_properties": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Font_Collection::__construct": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
+            "composes": [
+                "_doing_it_wrong",
+                "sanitize_title"
+            ]
+        },
+        "WP_Font_Collection::get_data": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_Font_Collection::get_sanitization_schema": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Font_Collection::load_from_file": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Font_Collection::load_from_json": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong",
+                "wp_http_validate_url"
+            ]
+        },
+        "WP_Font_Collection::load_from_url": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "wp_remote_retrieve_body",
+                "wp_remote_retrieve_response_code",
+                "wp_safe_remote_get"
+            ]
+        },
+        "WP_Font_Collection::sanitize_and_validate_data": {
+            "file": "classes/WP_Font_Collection.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Font_Face::generate_and_print": {
+            "file": "classes/WP_Font_Face.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\FontFaces::css"
+            ],
             "composes": []
         },
         "WP_Font_Face_Resolver::get_fonts_from_style_variations": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
+            "file": "classes/WP_Font_Face_Resolver.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\FontFaces::fromSettings"
+            ],
+            "composes": [
+                "get_theme_file_uri"
+            ]
         },
         "WP_Font_Face_Resolver::get_fonts_from_theme_json": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Font_Face_Resolver.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Theme\\FontFaces::fromSettings"
+            ],
+            "composes": [
+                "get_theme_file_uri"
+            ]
+        },
+        "WP_Font_Library::get_font_collection": {
+            "file": "classes/WP_Font_Library.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
-        "WP_Font_Face_Resolver::maybe_parse_name_from_comma_separated_list": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Font_Library::get_font_collections": {
+            "file": "classes/WP_Font_Library.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
-        "WP_Font_Face_Resolver::parse_settings": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Font_Library::get_instance": {
+            "file": "classes/WP_Font_Library.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
-        "WP_Font_Face_Resolver::to_kebab_case": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Font_Library::is_collection_registered": {
+            "file": "classes/WP_Font_Library.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
-        "WP_Font_Face_Resolver::to_theme_file_uri": {
-            "file": "classes/placeholders/Placeholders.php",
+        "WP_Font_Library::register_font_collection": {
+            "file": "classes/WP_Font_Library.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Font_Library::unregister_font_collection": {
+            "file": "classes/WP_Font_Library.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Font_Utils::apply_sanitizer": {
+            "file": "classes/WP_Font_Utils.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Font_Utils::get_allowed_font_mime_types": {
+            "file": "classes/WP_Font_Utils.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Font_Utils::get_font_face_slug": {
+            "file": "classes/WP_Font_Utils.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "WP_Font_Utils::maybe_add_quotes": {
+            "file": "classes/WP_Font_Utils.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Font_Utils::sanitize_font_family": {
+            "file": "classes/WP_Font_Utils.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "sanitize_text_field"
+            ]
+        },
+        "WP_Font_Utils::sanitize_from_schema": {
+            "file": "classes/WP_Font_Utils.php",
+            "lines": 11,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Font_Utils::sanitize_value": {
+            "file": "classes/WP_Font_Utils.php",
+            "lines": 7,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -31577,6 +31722,16 @@
             ],
             "deadend": "admin"
         },
+        "_wp_after_delete_font_family": {
+            "file": "fonts.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_posts",
+                "wp_delete_post"
+            ]
+        },
         "_wp_ajax_add_hierarchical_term": {
             "file": "deadends.php",
             "lines": 2,
@@ -31647,6 +31802,18 @@
                 "clean_comment_cache",
                 "update_option",
                 "wp_schedule_single_event"
+            ]
+        },
+        "_wp_before_delete_font_face": {
+            "file": "fonts.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_meta",
+                "path_join",
+                "wp_delete_file",
+                "wp_font_dir"
             ]
         },
         "_wp_block_editor_posts_page_notice": {
@@ -31932,6 +32099,17 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_wp_filter_font_directory": {
+            "file": "fonts.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "doing_filter",
+                "untrailingslashit"
+            ]
         },
         "_wp_filter_taxonomy_base": {
             "file": "misc.php",
@@ -32526,6 +32704,13 @@
                 "register_setting",
                 "wp_get_connectors"
             ]
+        },
+        "_wp_register_default_font_collections": {
+            "file": "fonts.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "_wp_register_default_icon_collections": {
             "file": "icons.php",
@@ -58553,6 +58738,18 @@
                 "wp_populate_basic_auth_from_authorization_header"
             ]
         },
+        "wp_font_dir": {
+            "file": "fonts.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "remove_filter",
+                "wp_get_upload_dir",
+                "wp_upload_dir"
+            ]
+        },
         "wp_font_library_intercept_render": {
             "file": "deadends.php",
             "lines": 2,
@@ -63329,11 +63526,20 @@
             "deadend": "admin"
         },
         "wp_print_font_faces": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "fonts.php",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "wp_print_font_faces_from_style_variations": {
+            "file": "fonts.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_print_font_faces"
+            ]
         },
         "wp_print_footer_scripts": {
             "file": "script-loader.php",
@@ -63907,6 +64113,13 @@
                 "_deprecated_function"
             ]
         },
+        "wp_register_font_collection": {
+            "file": "fonts.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_register_font_library_menu_item": {
             "file": "deadends.php",
             "lines": 2,
@@ -63914,6 +64127,14 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "wp_register_font_library_page_routes": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "editor"
         },
         "wp_register_font_library_route": {
             "file": "deadends.php",
@@ -63924,6 +64145,14 @@
             "deadend": "admin"
         },
         "wp_register_font_library_wp_admin_menu_item": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "admin"
+        },
+        "wp_register_font_library_wp_admin_page_routes": {
             "file": "deadends.php",
             "lines": 2,
             "kind": "deadend",
@@ -66447,6 +66676,13 @@
         },
         "wp_unregister_ability_category": {
             "file": "abilities.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_unregister_font_collection": {
+            "file": "fonts.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],

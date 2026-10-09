@@ -173,17 +173,4 @@ final class StylePresets
     {
         return (string) Typography::fontSize($preset, $settings);
     }
-
-    /** The format() a font source is declared with, from its file extension. */
-    public static function fontFormat(string $url): string
-    {
-        return match (strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION))) {
-            'woff' => 'woff',
-            'ttf' => 'truetype',
-            'otf' => 'opentype',
-            'eot' => 'embedded-opentype',
-            'svg' => 'svg',
-            default => 'woff2',
-        };
-    }
 }

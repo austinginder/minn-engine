@@ -103,12 +103,6 @@ function wp_plupload_default_settings()
     return null;
 }
 
-function wp_print_font_faces($fonts = [])
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_print_font_faces');
-    return null;
-}
-
 function wp_register_tinymce_scripts($scripts, $force_uncompressed = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_register_tinymce_scripts');

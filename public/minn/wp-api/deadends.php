@@ -3936,6 +3936,12 @@ function wp_register_font_library_menu_item($id, $label, $to, $parent_id = '', $
     return null;
 }
 
+function wp_register_font_library_page_routes()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_font_library_page_routes');
+    return null;
+}
+
 function wp_register_font_library_route($path, $content_module = NULL, $route_module = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_register_font_library_route');
@@ -3945,6 +3951,12 @@ function wp_register_font_library_route($path, $content_module = NULL, $route_mo
 function wp_register_font_library_wp_admin_menu_item($id, $label, $to, $parent_id = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_register_font_library_wp_admin_menu_item');
+    return null;
+}
+
+function wp_register_font_library_wp_admin_page_routes()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_font_library_wp_admin_page_routes');
     return null;
 }
 

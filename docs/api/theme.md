@@ -8,24 +8,25 @@ the block-theme reader, templates, global styles and the page renderer
 | [`BodyClasses`](#bodyclasses) | final class | 59 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
-| [`ClassicRenderer`](#classicrenderer) | final readonly class | 134 | A whole page from the active classic theme: the reference's PHP template |
+| [`ClassicRenderer`](#classicrenderer) | final readonly class | 131 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
+| [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 103 | WordPress's front-end request steps around the main query, as WP::main |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 519 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 493 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 126 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 179 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 178 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 51 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 120 | The body-class tokens the main query stands for, in the reference's |
-| [`StylePresets`](#stylepresets) | final class | 174 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`StylePresets`](#stylepresets) | final class | 161 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 300 | Every block template and template part the site offers, in the order the |
@@ -305,6 +306,45 @@ Whether any of the folders ships a block template index.
 The first of the stylesheet and template directories that holds the file, or the template directory's path.
 
 
+## FontFaces
+
+`final class Minn\Theme\FontFaces` · `public/minn/src/Minn/Theme/FontFaces.php`
+
+fonts a theme.json declares in the shape they are printed from.
+
+A face needs a family and at least one source it can name a format for.
+Its rule lists family (quoted unless it is one word or already carries
+quotes), style (normal), weight (400), display (fallback unless it is
+one the reference knows), the sources, then any other face property in
+the order given. Sources go data URIs first, then woff2, woff,
+truetype, embedded-opentype and opentype; anything else is dropped.
+
+- const `DISPLAYS` = `array (   0 => 'auto',   1 => 'block',   2 => 'fallback',   3 => 'swap',   4 => 'optional', )`
+- const `PROPERTIES` = `array (   0 => 'ascent-override',   1 => 'descent-override',   2 => 'font-display',   3 => 'font-family',   4 => 'font-stretch',   5 => 'font-style',   6 => 'font-weight',   7 => 'font-variant',   8 => 'font-feature-settings',   9 => 'font-variation-settings',   10 => 'line-gap-override',   11 => 'size-adjust',   12 => 'src',   13 => 'unicode-range', )`
+- const `FORMATS` = `array (   'woff2' => 'woff2',   'woff' => 'woff',   'ttf' => 'truetype',   'eot' => 'embedded-opentype',   'otf' => 'opentype', )`
+
+Used by: `Minn\Theme\GlobalStyles`
+
+### static `css(array $fonts): string`
+
+The rules for fonts given as families of faces, one rule a line; ''
+when no face can be printed.
+
+- `@param array<array-key, mixed> $fonts`
+
+### static `fromSettings(array $settings, Closure $fileUri): array`
+
+The fonts a theme.json's settings declare, one list of faces per
+family that has any: each face's sources first (file:./ ones through
+$fileUri), then its family (the first name of its own, or of the
+family's, unquoted), then its other properties in kebab case.
+
+- `@param Closure(string): string $fileUri a theme-relative path to its URL`
+- `@return list<list<array<string, mixed>>>`
+
+Internals: `rule()` (private, line 78), `sources()` (private, line 102), `family()` (private, line 122), `variations()` (private, line 128), `firstName()` (private, line 134)
+
+
 ## FrontLifecycle
 
 `final class Minn\Theme\FrontLifecycle` · `public/minn/src/Minn/Theme/FrontLifecycle.php`
@@ -401,12 +441,10 @@ not), the preset classes; in that order.
 
 ### `fontFaces(): string`
 
-The @font-face rules for every family that declares font files, as
-the reference prints them in its own style element: family (quoted
-when it has a space), style, weight, display, then the sources with
-file:./ resolved against the theme that carries the file and the
-format named from the extension. Families without files print
-nothing.
+The @font-face rules for every family that declares font files
+(Theme\FontFaces), with file:./ resolved against the theme that
+carries the file. The page prints them through wp_print_font_faces on
+wp_head; the editor's styles read them here.
 
 ### static `rootSelector(string $name): string`
 
@@ -420,7 +458,7 @@ block's root selector (the class riding on the block's own class:
 .wp-block-button.is-style-outline--3 .wp-block-button__link), its own
 CSS, and the blocks styled inside it.
 
-Internals: `parts()` (private, line 130), `fontUrl()` (private, line 187), `structuralRules()` (private, line 205), `gapRules()` (private, line 225), `rootStyles()` (private, line 241), `elementStyles()` (private, line 255), `blockCustomProperties()` (private, line 289), `blockStyles()` (private, line 309), `selectorsOf()` (private, line 345), `byFeature()` (private, line 358), `withoutEmpty()` (private, line 385), `containerStyles()` (private, line 429), `declarations()` (private, line 444), `ordered()` (private, line 521)
+Internals: `parts()` (private, line 130), `fontUrl()` (private, line 161), `structuralRules()` (private, line 179), `gapRules()` (private, line 199), `rootStyles()` (private, line 215), `elementStyles()` (private, line 229), `blockCustomProperties()` (private, line 263), `blockStyles()` (private, line 283), `selectorsOf()` (private, line 319), `byFeature()` (private, line 332), `withoutEmpty()` (private, line 359), `containerStyles()` (private, line 403), `declarations()` (private, line 418), `ordered()` (private, line 495)
 
 
 ## HeadLinks
@@ -748,7 +786,7 @@ font-family, spacing, and shadow lists a theme declares over core's
 own, as the custom properties on :root and the has-* utility classes
 the reference prints for them. Pure: settings in, CSS fragments out.
 
-Used by: `Minn\Theme\GlobalStyles`
+Used by: `Minn\Theme\FontFaces`, `Minn\Theme\GlobalStyles`
 
 ### static `presets(array $settings): array`
 
@@ -805,10 +843,6 @@ default in place, and the theme's other sizes follow the scale.
 ### static `fluidFontSize(array $preset, array $settings): string`
 
 A font size preset as the global stylesheet writes it: fluid by the theme's settings (Typography::fontSize).
-
-### static `fontFormat(string $url): string`
-
-The format() a font source is declared with, from its file extension.
 
 
 ## StyleSettings
