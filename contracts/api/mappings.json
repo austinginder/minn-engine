@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1812,
+        "composes": 1816,
         "leaf": 861,
         "noop": 2651,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7923,
+        "functions": 7927,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -29095,6 +29095,15 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_minn_ability_matches": {
+            "file": "abilities.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_get_abilities_match_meta"
+            ]
+        },
         "_minn_add_layout_classes": {
             "file": "block-supports-layout.php",
             "lines": 3,
@@ -29960,6 +29969,17 @@
                 "sanitize_text_field",
                 "wp_unslash",
                 "wp_validate_user_request_key"
+            ]
+        },
+        "_minn_connector_answer": {
+            "file": "connectors.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_connectors_is_ai_api_key_valid",
+                "_wp_connectors_mask_api_key",
+                "update_option"
             ]
         },
         "_minn_content_img_tag": {
@@ -32845,6 +32865,16 @@
             "minn": [],
             "composes": []
         },
+        "_wp_connectors_rest_settings_dispatch": {
+            "file": "connectors.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_connector_answer",
+                "wp_get_connectors"
+            ]
+        },
         "_wp_copy_post_meta": {
             "file": "post.php",
             "lines": 3,
@@ -33076,6 +33106,13 @@
             "composes": [
                 "remove_filter"
             ]
+        },
+        "_wp_get_abilities_match_meta": {
+            "file": "abilities.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_wp_get_allowed_postdata": {
             "file": "deadends.php",
@@ -60559,10 +60596,13 @@
         },
         "wp_get_abilities": {
             "file": "abilities.php",
-            "lines": 3,
-            "kind": "leaf",
+            "lines": 17,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_ability_matches",
+                "apply_filters"
+            ]
         },
         "wp_get_ability": {
             "file": "abilities.php",

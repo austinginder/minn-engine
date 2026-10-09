@@ -60,7 +60,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 429 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 445 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 496 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
@@ -2344,6 +2344,7 @@ authentication refusal, a pre-dispatch answer, a removed endpoint);
 and the runtime's namespaces folded into the index.
 
 - const `DISPATCH_DONE` = `array (   'rest_filter_response_fields' => 10, )` — rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.
+- const `ROUTE_SCOPED` = `array (   '_wp_connectors_rest_settings_dispatch' =>    array (     0 => 10,     1 => '/wp/v2/settings',   ), )` — rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
@@ -2446,7 +2447,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 84), `oembedXml()` (private, line 340), `look()` (private, line 354), `remember()` (private, line 359), `decode()` (private, line 366), `expand()` (private, line 386), `newWpRequest()` (private, line 411), `toResponse()` (private, line 440)
+Internals: `allow()` (private, line 87), `dispatchDone()` (private, line 287), `oembedXml()` (private, line 356), `look()` (private, line 370), `remember()` (private, line 375), `decode()` (private, line 382), `expand()` (private, line 402), `newWpRequest()` (private, line 427), `toResponse()` (private, line 456)
 
 
 ## Schema

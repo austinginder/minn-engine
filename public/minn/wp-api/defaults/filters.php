@@ -436,6 +436,8 @@ add_action('update_option_admin_email', 'wp_site_admin_email_change_notification
 add_filter('http_request_host_is_external', 'allowed_http_request_hosts', 10, 2);
 // A post format's term link names the format alone (probe output-helpers).
 add_filter('term_link', '_post_format_link', 10, 3);
+// The settings answer masks connector credentials (probe abilities-lookup); the engine skips it on every other route.
+add_filter('rest_post_dispatch', '_wp_connectors_rest_settings_dispatch', 10, 3);
 // A tabs block gives its inner blocks its id and its tabs' ids (probe tabs-and-parts).
 add_filter('render_block_context', 'block_core_tabs_provide_context', 10, 2);
 add_action('update_option_home', 'wp_update_https_migration_required', 10, 2);

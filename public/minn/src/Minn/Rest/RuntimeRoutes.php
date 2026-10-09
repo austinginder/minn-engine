@@ -23,6 +23,9 @@ final class RuntimeRoutes
     /** rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served. */
     private const DISPATCH_DONE = ['rest_filter_response_fields' => 10];
 
+    /** rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there. */
+    private const ROUTE_SCOPED = ['_wp_connectors_rest_settings_dispatch' => [10, '/wp/v2/settings']];
+
     /** rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()). */
     private const SERVE_DONE = ['_oembed_rest_pre_serve_request' => 10];
 
@@ -280,6 +283,18 @@ final class RuntimeRoutes
         return self::toResponse(self::ensure($result));
     }
 
+    /** @return array<string, int> the rest_post_dispatch callbacks this request leaves out: the engine's own, and the route-scoped ones off their route */
+    private static function dispatchDone(Request $request): array
+    {
+        $done = self::DISPATCH_DONE;
+        foreach (self::ROUTE_SCOPED as $callback => [$priority, $route]) {
+            if (self::wpRequest($request)->get_route() !== $route) {
+                $done[$callback] = $priority;
+            }
+        }
+        return $done;
+    }
+
     /**
      * The server's last word on any REST answer, engine or plugin route,
      * as the reference serves one: rest_post_dispatch may change it,
@@ -293,7 +308,8 @@ final class RuntimeRoutes
         if ($xml !== null) {
             return $xml;
         }
-        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', self::DISPATCH_DONE) && !Runtime::hooks()->hasBeyond('rest_pre_serve_request', self::SERVE_DONE) && !Runtime::hooks()->has('rest_pre_echo_response')) {
+        $done = self::dispatchDone($request);
+        if (!Runtime::hooks()->hasBeyond('rest_post_dispatch', $done) && !Runtime::hooks()->hasBeyond('rest_pre_serve_request', self::SERVE_DONE) && !Runtime::hooks()->has('rest_pre_echo_response')) {
             return $response;
         }
         $data = self::decode($response->body);
@@ -312,7 +328,7 @@ final class RuntimeRoutes
         [$route, $handler] = self::$matches[$request] ?? [null, null];
         $result->set_matched_route($route);
         $result->set_matched_handler($handler);
-        $result = \rest_ensure_response(Runtime::hooks()->filterWithout('rest_post_dispatch', [\rest_ensure_response($result), $server, $wpRequest], self::DISPATCH_DONE));
+        $result = \rest_ensure_response(Runtime::hooks()->filterWithout('rest_post_dispatch', [\rest_ensure_response($result), $server, $wpRequest], $done));
         $result = $result instanceof \WP_Error ? \rest_convert_error_to_response($result) : $result;
         $headers = Reply::HEADERS;
         foreach ((array) $result->get_headers() as $name => $value) {

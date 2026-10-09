@@ -100863,7 +100863,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 429,
+            "lines": 445,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -100903,6 +100903,12 @@
                     "name": "DISPATCH_DONE",
                     "value": "array (   'rest_filter_response_fields' => 10, )",
                     "doc": "rest_post_dispatch's defaults the engine does itself: every answer is cut to its _fields before it is served.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "ROUTE_SCOPED",
+                    "value": "array (   '_wp_connectors_rest_settings_dispatch' =>    array (     0 => 10,     1 => '/wp/v2/settings',   ), )",
+                    "doc": "rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there.",
                     "visibility": "private"
                 },
                 {
@@ -100959,8 +100965,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 57
+                    "line": 39,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -100979,8 +100985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 76
+                    "line": 63,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -101008,8 +101014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 103
+                    "line": 96,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -101030,8 +101036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 121
+                    "line": 116,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -101050,8 +101056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 151
+                    "line": 127,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -101077,8 +101083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 167
+                    "line": 166,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -101106,8 +101112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 183
+                    "line": 178,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -101126,8 +101132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 190
+                    "line": 189,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -101162,8 +101168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 201
+                    "line": 200,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -101182,8 +101188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 210
+                    "line": 207,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -101202,8 +101208,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 233
+                    "line": 220,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -101232,8 +101238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 253
+                    "line": 245,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -101254,8 +101260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 268
+                    "line": 264,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -101274,8 +101280,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 281
+                    "line": 274,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -101301,8 +101307,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 333
+                    "line": 305,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -101321,8 +101327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 431
+                    "line": 443,
+                    "end": 447
                 },
                 {
                     "routes": [],
@@ -101333,8 +101339,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 435,
-                    "end": 438
+                    "line": 451,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -101367,8 +101373,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 90
+                    "line": 87,
+                    "end": 93
+                },
+                {
+                    "routes": [],
+                    "name": "dispatchDone",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "dispatchDone(Minn\\Http\\Request $request): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, int> the rest_post_dispatch callbacks this request leaves out: the engine's own, and the route-scoped ones off their route"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 287,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -101394,8 +101422,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 351
+                    "line": 356,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -101416,8 +101444,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 357
+                    "line": 370,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -101450,8 +101478,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 363
+                    "line": 375,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -101470,8 +101498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 376
+                    "line": 382,
+                    "end": 392
                 },
                 {
                     "routes": [],
@@ -101493,8 +101521,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 386,
-                    "end": 409
+                    "line": 402,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -101513,8 +101541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 411,
-                    "end": 424
+                    "line": 427,
+                    "end": 440
                 },
                 {
                     "routes": [],
@@ -101533,8 +101561,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 440,
-                    "end": 448
+                    "line": 456,
+                    "end": 464
                 }
             ]
         },

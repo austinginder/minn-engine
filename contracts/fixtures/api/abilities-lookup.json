@@ -1,0 +1,665 @@
+[
+    [
+        "meta matched",
+        [
+            true,
+            true,
+            true,
+            false,
+            false,
+            true,
+            false,
+            false,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            false,
+            true,
+            false,
+            true,
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "abilities found",
+        [
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ]
+            ],
+            [
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ]
+            ],
+            [
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ]
+            ],
+            [
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ]
+            ],
+            [
+                [
+                    "zz/two",
+                    "zz/two"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the per-item callback",
+        [
+            [
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [],
+            [],
+            [
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the result callback",
+        [
+            [
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zz/one",
+                    "zz/one"
+                ]
+            ],
+            [],
+            [
+                [
+                    0,
+                    "zz/one"
+                ],
+                [
+                    1,
+                    "zz/two"
+                ]
+            ],
+            [],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz/two",
+                    "zz/two"
+                ],
+                [
+                    "zzx/three",
+                    "zzx/three"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the filters",
+        [
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ],
+                [
+                    "zz-other/four",
+                    "zz-other/four"
+                ]
+            ],
+            [
+                [
+                    "zz/one",
+                    "zz/one"
+                ]
+            ],
+            [],
+            [
+                [
+                    "item",
+                    true,
+                    2,
+                    "zz/one",
+                    []
+                ],
+                [
+                    "item",
+                    true,
+                    2,
+                    "zz/two",
+                    []
+                ],
+                [
+                    "item",
+                    true,
+                    2,
+                    "zzx/three",
+                    []
+                ],
+                [
+                    "item",
+                    true,
+                    2,
+                    "zz-other/four",
+                    []
+                ],
+                [
+                    "result",
+                    [
+                        [
+                            "zz/one",
+                            "zz/one"
+                        ],
+                        [
+                            "zzx/three",
+                            "zzx/three"
+                        ],
+                        [
+                            "zz-other/four",
+                            "zz-other/four"
+                        ]
+                    ],
+                    [
+                        []
+                    ]
+                ],
+                [
+                    "item",
+                    true,
+                    2,
+                    "zz/one",
+                    {
+                        "category": "zz-a",
+                        "item_include_callback": []
+                    }
+                ],
+                [
+                    "item",
+                    true,
+                    2,
+                    "zzx/three",
+                    {
+                        "category": "zz-a",
+                        "item_include_callback": []
+                    }
+                ],
+                [
+                    "result",
+                    [
+                        [
+                            "zz/one",
+                            "zz/one"
+                        ],
+                        [
+                            "zzx/three",
+                            "zzx/three"
+                        ]
+                    ],
+                    [
+                        [
+                            "category",
+                            "item_include_callback"
+                        ]
+                    ]
+                ],
+                [
+                    "item",
+                    false,
+                    2,
+                    "zz/one",
+                    {
+                        "namespace": "zz",
+                        "item_include_callback": []
+                    }
+                ],
+                [
+                    "item",
+                    true,
+                    2,
+                    "zz/two",
+                    {
+                        "namespace": "zz",
+                        "item_include_callback": []
+                    }
+                ],
+                [
+                    "result",
+                    [],
+                    [
+                        [
+                            "namespace",
+                            "item_include_callback"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "application password credentials in the answer",
+        [
+            [
+                {
+                    "zz_probe_app_creds": {
+                        "username": "zz",
+                        "password": "••••••••••••••••"
+                    }
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "zz_probe_app_creds": "{\"username\":\"zz\",\"password\":\"abcd efgh ijkl mnop\"}"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "zz_probe_app_creds": {
+                        "username": "zz"
+                    }
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "zz_probe_app_creds": {
+                        "username": "zz",
+                        "password": "••••••••••••••••"
+                    }
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ]
+        ]
+    ],
+    [
+        "connector keys in the settings answer",
+        [
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "••••••••••••••••fXYZ",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "•hort",
+                    "wordpress_api_key": "••••••••••ey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "••••••••••••2345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "sk-zz-1234567890abcdefXYZ",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "short",
+                    "wordpress_api_key": "zzakismetkey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "cleantalkzz12345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                "not an array",
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "only"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "(unset)",
+                    "connectors_ai_openai_api_key": "(unset)",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "",
+                    "wordpress_api_key": "••••••••••ey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "••••••••••••2345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "",
+                    "wordpress_api_key": "••••••••••ey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "••••••••••••2345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "",
+                    "wordpress_api_key": "••••••••••ey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "••••••••••••2345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "sk-zz-1234567890abcdefXYZ",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "short",
+                    "wordpress_api_key": "zzakismetkey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "cleantalkzz12345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ],
+            [
+                {
+                    "title": "Zz",
+                    "connectors_ai_openai_api_key": "sk-zz-1234567890abcdefXYZ",
+                    "connectors_ai_anthropic_api_key": "",
+                    "connectors_ai_google_api_key": "short",
+                    "wordpress_api_key": "zzakismetkey99",
+                    "connectors_spam_filtering_cleantalk_api_key": "cleantalkzz12345",
+                    "zz_other": "sk-not-a-connector"
+                },
+                [],
+                {
+                    "connectors_ai_google_api_key": "",
+                    "connectors_ai_openai_api_key": "",
+                    "connectors_ai_anthropic_api_key": "(unset)"
+                }
+            ]
+        ]
+    ]
+]

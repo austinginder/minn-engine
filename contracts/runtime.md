@@ -8752,3 +8752,47 @@ Probe `tabs-and-parts`.
 - **Left open.** The engine still has no tabs renderer of its own (the
   block goes through the generic core path), so the context these helpers
   provide is not yet used in rendering.
+
+## Looking abilities up, and connector keys kept out of the settings answer (2026-10-09)
+
+Probe `abilities-lookup`. The probe loads the engine's plugin lifecycle
+first, as the connectors probe does: the CleanTalk plugin registers its
+connector there. It writes every connector option back as it was.
+
+- **`wp_get_abilities($args)`** runs the reference's pipeline every time,
+  with no arguments too.
+  - The category, namespace and meta conditions apply, each ignored when
+    empty. The namespace is a prefix before `/`, and a trailing slash is
+    ignored.
+  - Then `item_include_callback`, its answer as a boolean (a callback
+    that is not callable is ignored).
+  - Then `wp_get_abilities_item_include($include, $ability, $args)`. That
+    filter also hears a false from the callback.
+  - Then `result_callback`, where anything but an array means none, and
+    `wp_get_abilities_result($abilities, $args)`.
+  - Keys are the ability names. Meta is matched against `get_meta()`,
+    defaults included, so `show_in_rest => false` matches an ability that
+    never set it. Before, the engine filtered by category only.
+- **`_wp_get_abilities_match_meta`.** Every condition key must be present
+  (a null counts). An array condition needs an array value and recurses,
+  so a list matches position by position and `[]` matches any array.
+  Anything else compares strictly.
+- **`_wp_connectors_rest_settings_dispatch`** (on `rest_post_dispatch`, 10,
+  3) works on the `/wp/v2/settings` route only, exactly as written: a
+  trailing slash or capitals do not count.
+  - Each connector's string key is masked (`_wp_connectors_mask_api_key`).
+    An empty key stays empty.
+  - An application-password connector's array value has its `password`
+    replaced by sixteen bullets. As a JSON string it is left alone.
+  - On POST or PUT, each AI provider key in the answer that does not
+    validate (as one whose provider the AI client lacks does not) is
+    stored empty with `update_option` and answered empty. Spam-filtering
+    keys are only masked.
+- **The engine's REST fast path.** `RuntimeRoutes` treats this filter as
+  route-scoped: off `/wp/v2/settings` it hands the answer back unchanged,
+  so it is left out there. Hooking it does not send every REST answer
+  through the plugin path.
+- **Left for Austin.** `_wp_connectors_get_connector_script_module_data`
+  feeds only wp-admin's connectors screen
+  (`script_module_data_options-connectors-wp-admin`), next to the
+  build/routes admin pages: an admin dead end?

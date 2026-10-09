@@ -54,6 +54,48 @@ function _wp_connectors_pass_default_keys_to_ai_client(): void
 {
 }
 
+/**
+ * Connector credentials kept out of the settings answer (on
+ * rest_post_dispatch, the /wp/v2/settings route only): each connector's
+ * stored key is masked, and an application password's password field
+ * (sixteen bullets; only in the array form, a string is left alone). On POST or PUT, an AI provider's key that does
+ * not validate is stored empty and answered empty instead.
+ */
+function _wp_connectors_rest_settings_dispatch($response, $server, $request)
+{
+    if (!$response instanceof WP_REST_Response || $request->get_route() !== '/wp/v2/settings' || !is_array($data = $response->get_data())) {
+        return $response;
+    }
+    $writing = in_array($request->get_method(), ['POST', 'PUT'], true);
+    foreach (wp_get_connectors() as $id => $connector) {
+        $setting = $connector['authentication']['setting_name'] ?? '';
+        if ($setting !== '' && isset($data[$setting])) {
+            $data[$setting] = _minn_connector_answer($id, $connector, $setting, $data[$setting], $writing);
+        }
+    }
+    $response->set_data($data);
+    return $response;
+}
+
+/** @internal one connector setting as the settings answer shows it */
+function _minn_connector_answer(string $id, array $connector, string $setting, $value, bool $writing)
+{
+    if (($connector['authentication']['method'] ?? '') === 'application_password') {
+        if (is_array($value) && isset($value['password'])) {
+            $value['password'] = str_repeat('•', 16);
+        }
+        return $value;
+    }
+    if (!is_string($value) || $value === '') {
+        return $value;
+    }
+    if ($writing && ($connector['type'] ?? '') === 'ai_provider' && !_wp_connectors_is_ai_api_key_valid($value, $id)) {
+        update_option($setting, '');
+        return '';
+    }
+    return _wp_connectors_mask_api_key($value);
+}
+
 function _wp_connectors_mask_api_key(string $key): string
 {
     return Connectors::mask($key);
