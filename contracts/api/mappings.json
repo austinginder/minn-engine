@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 774,
-        "composes": 1756,
-        "leaf": 851,
-        "noop": 2641,
+        "composes": 1759,
+        "leaf": 853,
+        "noop": 2642,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7847,
+        "functions": 7853,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -29234,7 +29234,7 @@
         },
         "_minn_bind_hook_globals": {
             "file": "plugin.php",
-            "lines": 25,
+            "lines": 27,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::actionCounters",
@@ -29246,6 +29246,7 @@
             ],
             "composes": [
                 "add_filter",
+                "timer_start",
                 "wp_roles"
             ]
         },
@@ -52805,6 +52806,16 @@
             ],
             "deadend": "admin"
         },
+        "shutdown_action_hook": {
+            "file": "load.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "wp_cache_close"
+            ]
+        },
         "single_cat_title": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -54002,6 +54013,13 @@
             "file": "simplepie/Interfaces.php",
             "lines": 3,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "timer_float": {
+            "file": "load.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -59995,6 +60013,16 @@
                 "get_option"
             ]
         },
+        "wp_get_active_and_valid_themes": {
+            "file": "load.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_stylesheet_directory",
+                "get_template_directory"
+            ]
+        },
         "wp_get_additional_image_sizes": {
             "file": "media.php",
             "lines": 4,
@@ -62627,6 +62655,13 @@
                 "wp_internal_hosts",
                 "wp_parse_url"
             ]
+        },
+        "wp_is_json_media_type": {
+            "file": "load.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "wp_is_json_request": {
             "file": "load.php",
@@ -66789,6 +66824,22 @@
             "composes": [
                 "do_action"
             ]
+        },
+        "wp_set_internal_encoding": {
+            "file": "load.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_option"
+            ]
+        },
+        "wp_set_lang_dir": {
+            "file": "load.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "wp_set_link_cats": {
             "file": "bookmark.php",

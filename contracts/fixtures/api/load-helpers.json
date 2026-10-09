@@ -1,0 +1,166 @@
+[
+    [
+        "JSON media types",
+        [
+            [
+                "application/json",
+                true
+            ],
+            [
+                "application/ld+json",
+                true
+            ],
+            [
+                "application/vnd.api+json",
+                true
+            ],
+            [
+                "text/json",
+                false
+            ],
+            [
+                "application/json; charset=utf-8",
+                true
+            ],
+            [
+                "APPLICATION/JSON",
+                true
+            ],
+            [
+                "application/javascript",
+                false
+            ],
+            [
+                "json",
+                false
+            ],
+            [
+                "",
+                false
+            ],
+            [
+                "application/x-json",
+                false
+            ],
+            [
+                "application/jsonp",
+                false
+            ],
+            [
+                "application/problem+json; x=y",
+                true
+            ],
+            [
+                " application/json",
+                true
+            ],
+            [
+                "application/+json",
+                false
+            ],
+            [
+                "application/a+json+b",
+                false
+            ],
+            [
+                "application/json, text/html",
+                true
+            ],
+            [
+                "text/html, application/json",
+                true
+            ],
+            [
+                "application/json;",
+                true
+            ],
+            [
+                "application/json ; charset=utf-8",
+                true
+            ],
+            [
+                "Application/Vnd.Api+JSON",
+                true
+            ],
+            [
+                "application/json5",
+                false
+            ],
+            [
+                "application/xjson",
+                false
+            ],
+            [
+                "xapplication/json",
+                false
+            ],
+            [
+                "application/json\n",
+                true
+            ],
+            [
+                "application/ json",
+                false
+            ],
+            [
+                "application/json+xml",
+                false
+            ],
+            [
+                "image/svg+xml",
+                false
+            ],
+            [
+                "application//json",
+                false
+            ]
+        ]
+    ],
+    [
+        "the timer",
+        [
+            true,
+            true,
+            true,
+            true
+        ]
+    ],
+    [
+        "the internal encoding",
+        [
+            null,
+            "UTF-8",
+            "ISO-8859-1"
+        ]
+    ],
+    [
+        "the language folder",
+        [
+            true,
+            true,
+            null,
+            "{abs}wp-content/languages",
+            "wp-content/languages"
+        ]
+    ],
+    [
+        "the active themes",
+        [
+            "{themes}/twentytwentyfive"
+        ]
+    ],
+    [
+        "the shutdown action",
+        [
+            null,
+            [
+                [
+                    "shutdown",
+                    [
+                        ""
+                    ]
+                ]
+            ]
+        ]
+    ]
+]

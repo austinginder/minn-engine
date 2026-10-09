@@ -414,3 +414,60 @@ function wp_magic_quotes()
     $_SERVER = add_magic_quotes($_SERVER);
     $_REQUEST = array_merge($_GET, $_POST);
 }
+
+// Load helpers (probe load-helpers).
+
+/** Whether a media type (or any in a comma-separated list) is JSON: application/json or application/{something}+json, case and parameters aside. */
+function wp_is_json_media_type($media_type)
+{
+    foreach (explode(',', (string) $media_type) as $type) {
+        $type = strtolower(trim(explode(';', $type)[0]));
+        if (preg_match('#^application/(?:[^/]+\+)?json$#', $type) === 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/** Seconds since the request started ($timestart), as a float. */
+function timer_float()
+{
+    return microtime(true) - (float) ($GLOBALS['timestart'] ?? microtime(true));
+}
+
+/** The multibyte functions' encoding set to the site's charset. */
+function wp_set_internal_encoding()
+{
+    if (function_exists('mb_internal_encoding')) {
+        mb_internal_encoding((string) (get_option('blog_charset') ?: 'UTF-8'));
+    }
+}
+
+/** The language folder constants, defined when they are not yet. */
+function wp_set_lang_dir()
+{
+    if (!defined('WP_LANG_DIR')) {
+        define('WP_LANG_DIR', WP_CONTENT_DIR . '/languages');
+    }
+    if (!defined('LANGDIR')) {
+        define('LANGDIR', 'wp-content/languages');
+    }
+}
+
+/** The active theme's folder, after a child theme's own when there is one. */
+function wp_get_active_and_valid_themes()
+{
+    $themes = [];
+    if (get_stylesheet_directory() !== get_template_directory()) {
+        $themes[] = get_stylesheet_directory();
+    }
+    $themes[] = get_template_directory();
+    return $themes;
+}
+
+/** The end of a request: the shutdown action, then the object cache closed. */
+function shutdown_action_hook()
+{
+    do_action('shutdown');
+    wp_cache_close();
+}

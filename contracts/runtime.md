@@ -8296,3 +8296,34 @@ Probe `block-template-helpers`.
   Not done yet: `_resolve_template_for_new_post`,
   `inject_ignored_hooked_blocks_metadata_attributes` and
   `wp_generate_block_templates_export_file`.
+
+## Load helpers (2026-10-09)
+
+Probe `load-helpers`.
+
+- **wp_is_json_media_type.** It is true when any type in a
+  comma-separated list, lowercased, with parameters after `;` dropped and
+  trimmed, is `application/json` or `application/{something}+json`.
+  `application/+json`, `text/json`, `application/x-json`, `jsonp` and
+  `json5` are not.
+- **timer_float** is the seconds since `$timestart`, as a float. The
+  engine now sets `$timestart` when it binds its globals at boot, as the
+  reference's `timer_start()` does; before, it was never set and the
+  timer read 0.
+- **wp_set_internal_encoding** sets the multibyte encoding to the
+  `blog_charset` option (UTF-8 when empty).
+- **wp_set_lang_dir** defines `WP_LANG_DIR` and `LANGDIR` only when they
+  are missing.
+- **wp_get_active_and_valid_themes** answers the active theme's folder,
+  after a child theme's own.
+- **shutdown_action_hook** fires `shutdown` (its callbacks get one empty
+  string), then closes the object cache.
+- **Not done, deliberately.**
+  - `wp_check_php_mysql_versions`, `wp_favicon_request`, `wp_maintenance`
+    and `wp_not_installed` end the request, and the scraping-error pair
+    belongs to the admin file editor.
+  - The recovery-mode family (`WP_Recovery_Mode`, its services,
+    `WP_Paused_Extensions_Storage`, `wp_skip_paused_*`, the error-handler
+    functions) waits for a decision. The reference stores pauses only
+    inside a recovery-mode session, while the engine pauses on its own
+    (Runtime\Recovery).

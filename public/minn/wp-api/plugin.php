@@ -295,6 +295,8 @@ function _minn_bind_hook_globals(): void
     $GLOBALS['wp_filters'] = &$hooks->filterCounters();
     $GLOBALS['wp_current_filter'] = &$hooks->stackRef();
     $GLOBALS['shortcode_tags'] = &Runtime::shortcodes()->tags();
+    // The page timer runs from boot, as timer_start() starts it on the reference (timer_float, timer_stop).
+    $GLOBALS['timestart'] ??= microtime(true);
     // A fresh roles object for each boot; wp_roles() hands it out from then on.
     $GLOBALS['wp_roles'] = new WP_Roles();
     $GLOBALS['wp_embed'] ??= new WP_Embed();
