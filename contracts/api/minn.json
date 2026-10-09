@@ -100851,7 +100851,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 493,
+            "lines": 496,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
@@ -101231,7 +101231,7 @@
                         }
                     ],
                     "line": 463,
-                    "end": 492
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -101250,8 +101250,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 495,
-                    "end": 508
+                    "line": 498,
+                    "end": 511
                 },
                 {
                     "routes": [],

@@ -16420,7 +16420,7 @@
         },
         "WP_REST_Controller::get_fields_for_response": {
             "file": "classes/WP_REST_Controller.php",
-            "lines": 10,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\Fields::select"

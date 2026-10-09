@@ -16,7 +16,7 @@
             "deadend": 131,
             "placeholder": 29,
             "missing": 69,
-            "verified": 91,
+            "verified": 92,
             "resolved": 311
         },
         "methods": {
@@ -25,7 +25,7 @@
             "deadend": 1615,
             "placeholder": 384,
             "missing": 635,
-            "verified": 1030,
+            "verified": 1057,
             "resolved": 3438
         }
     }

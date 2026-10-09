@@ -474,6 +474,9 @@ final readonly class Schema
             if ($creatable && !empty($params['required'])) {
                 $arg['required'] = true;
             }
+            if (isset($params['description'])) {
+                $arg['description'] = $params['description'];
+            }
             foreach (self::ENDPOINT_KEYWORDS as $keyword) {
                 if (isset($params[$keyword])) {
                     $arg[$keyword] = $params[$keyword];

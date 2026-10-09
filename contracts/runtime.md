@@ -7057,3 +7057,22 @@ and the rest-themes probe covers the admin and REST sides.
     installed core theme.
   - `load_textdomain` is false for a theme without a Text Domain.
   - `__wakeup` lets a theme be read back from a serialized copy.
+
+## The REST controller base class (2026-10-08)
+
+Probe `rest-controller` (`tests/tools/rest-controller-probe.php`) proves
+`WP_REST_Controller` through a subclass with a schema. Protected methods go
+through a `call()` proxy on the subclass. The defaults, context filtering,
+the response for a collection, the public schema, the parameters and the
+slugs already matched; two things changed.
+
+- **`get_fields_for_response`** keeps the schema's properties whose
+  `context` includes the request's (all of them when the request names no
+  context). An additional field registered without a schema is always
+  kept; one with a schema is kept like a property. `_links` comes last.
+  `add_additional_fields_to_object` follows that list, so a field with no
+  schema is now added.
+- **Endpoint arguments** (`rest_get_endpoint_args_for_schema`, so every
+  controller's) now carry the property's `description`, after
+  `default`/`required` and before the type keywords. That matches the
+  reference's arguments in the route index.

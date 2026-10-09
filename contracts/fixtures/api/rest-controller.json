@@ -1,0 +1,710 @@
+[
+    [
+        "the class",
+        [
+            true,
+            true,
+            "zz-thing"
+        ]
+    ],
+    [
+        "defaults",
+        {
+            "get_items_permissions_check": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::get_items_permissions_check' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "get_items": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::get_items' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "get_item_permissions_check": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::get_item_permissions_check' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "get_item": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::get_item' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "create_item_permissions_check": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::create_item_permissions_check' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "create_item": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::create_item' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "update_item_permissions_check": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::update_item_permissions_check' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "update_item": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::update_item' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "delete_item_permissions_check": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::delete_item_permissions_check' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "delete_item": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::delete_item' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "prepare_item_for_database": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::prepare_item_for_database' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "prepare_item_for_response": [
+                "error",
+                "invalid-method",
+                "Method 'WP_REST_Controller::prepare_item_for_response' not implemented. Must be overridden in subclass.",
+                {
+                    "status": 405
+                }
+            ],
+            "register_routes": [
+                [
+                    "WP_REST_Controller::register_routes",
+                    "Method 'WP_REST_Controller::register_routes' must be overridden."
+                ]
+            ],
+            "base schema": [],
+            "base public schema": []
+        }
+    ],
+    [
+        "filtered by context",
+        [
+            {
+                "id": 7,
+                "title": "Zz",
+                "count": 3,
+                "meta": {
+                    "shown": "s"
+                },
+                "tags": [
+                    "a"
+                ],
+                "extra": "not in schema"
+            },
+            {
+                "id": 7,
+                "title": "Zz",
+                "secret": "x",
+                "count": 3,
+                "meta": {
+                    "inner": "i",
+                    "shown": "s"
+                },
+                "extra": "not in schema"
+            },
+            {
+                "id": 7,
+                "extra": "not in schema"
+            },
+            {
+                "extra": "not in schema"
+            }
+        ]
+    ],
+    [
+        "for a collection",
+        [
+            {
+                "id": 7,
+                "title": "Zz",
+                "count": 3,
+                "meta": {
+                    "shown": "s"
+                },
+                "tags": [
+                    "a"
+                ],
+                "extra": "not in schema",
+                "_links": {
+                    "self": [
+                        {
+                            "href": "https://minn.localhost/wp-json/zz-probe/v1/things/7"
+                        }
+                    ]
+                }
+            },
+            {
+                "not": "a response"
+            }
+        ]
+    ],
+    [
+        "public schema",
+        [
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "zz-thing",
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "description": "The id.",
+                        "type": "integer",
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ],
+                        "readonly": true
+                    },
+                    "title": {
+                        "description": "The title.",
+                        "type": "string",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "required": true
+                    },
+                    "secret": {
+                        "description": "Edit only.",
+                        "type": "string",
+                        "context": [
+                            "edit"
+                        ],
+                        "default": "shh"
+                    },
+                    "count": {
+                        "description": "A count.",
+                        "type": "integer",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "minimum": 1,
+                        "default": 1
+                    },
+                    "meta": {
+                        "description": "Nested.",
+                        "type": "object",
+                        "context": [
+                            "view",
+                            "edit"
+                        ],
+                        "properties": {
+                            "inner": {
+                                "type": "string",
+                                "context": [
+                                    "edit"
+                                ]
+                            },
+                            "shown": {
+                                "type": "string",
+                                "context": [
+                                    "view",
+                                    "edit"
+                                ]
+                            }
+                        }
+                    },
+                    "tags": {
+                        "description": "A list.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "context": [
+                            "view"
+                        ]
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "collection and context params",
+        [
+            {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ]
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg",
+                    "minimum": 1
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_text_field",
+                    "validate_callback": "rest_validate_request_arg"
+                }
+            },
+            {
+                "description": "Scope under which the request is made; determines fields present in response.",
+                "type": "string",
+                "sanitize_callback": "sanitize_key",
+                "validate_callback": "rest_validate_request_arg",
+                "enum": [
+                    "view",
+                    "embed",
+                    "edit"
+                ]
+            },
+            {
+                "description": "Scope under which the request is made; determines fields present in response.",
+                "type": "string",
+                "sanitize_callback": "sanitize_key",
+                "validate_callback": "rest_validate_request_arg",
+                "enum": [
+                    "view",
+                    "embed",
+                    "edit"
+                ],
+                "default": "view"
+            },
+            {
+                "description": "Overridden.",
+                "type": "string",
+                "sanitize_callback": "sanitize_key",
+                "validate_callback": "rest_validate_request_arg",
+                "enum": [
+                    "view",
+                    "embed",
+                    "edit"
+                ],
+                "default": "edit"
+            },
+            {
+                "description": "Scope under which the request is made; determines fields present in response.",
+                "type": "string",
+                "sanitize_callback": "sanitize_key",
+                "validate_callback": "rest_validate_request_arg",
+                "default": "view"
+            }
+        ]
+    ],
+    [
+        "additional fields",
+        [
+            [
+                "zz_extra",
+                "zz_readonly",
+                "zz_shared"
+            ],
+            {
+                "zz_shared": {
+                    "get_callback": null,
+                    "update_callback": null,
+                    "schema": null
+                }
+            },
+            [],
+            {
+                "id": 7,
+                "zz_extra": "extra for 7 as zz-thing",
+                "zz_readonly": "ro"
+            },
+            true,
+            [
+                "error",
+                "zz_refused",
+                "Refused.",
+                null
+            ],
+            [
+                [
+                    "value",
+                    7,
+                    "zz_extra",
+                    "zz-thing"
+                ],
+                [
+                    "refuse",
+                    7,
+                    "zz_extra",
+                    "zz-thing"
+                ]
+            ],
+            {
+                "description": "An extra.",
+                "type": "string",
+                "context": [
+                    "view"
+                ]
+            },
+            false,
+            [
+                "response",
+                200,
+                {
+                    "id": 7,
+                    "title": "Zz",
+                    "count": 3,
+                    "meta": {
+                        "shown": "s"
+                    },
+                    "tags": [
+                        "a"
+                    ],
+                    "extra": "not in schema",
+                    "zz_extra": "extra for 7 as zz-thing",
+                    "zz_readonly": "ro"
+                },
+                [
+                    "self"
+                ]
+            ]
+        ]
+    ],
+    [
+        "fields for a response",
+        [
+            [
+                "id",
+                "title",
+                "count",
+                "meta",
+                "tags",
+                "zz_extra",
+                "zz_readonly",
+                "zz_shared",
+                "_links"
+            ],
+            [
+                "id",
+                "title",
+                "secret",
+                "count",
+                "meta",
+                "zz_readonly",
+                "zz_shared",
+                "_links"
+            ],
+            [
+                "id",
+                "title",
+                "id"
+            ],
+            [
+                "meta.shown",
+                "zz_extra",
+                "id"
+            ],
+            [
+                "_links",
+                "id",
+                "id"
+            ]
+        ]
+    ],
+    [
+        "endpoint arguments",
+        [
+            {
+                "title": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "sanitize_text_field",
+                    "required": true,
+                    "description": "The title.",
+                    "type": "string"
+                },
+                "secret": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "default": "shh",
+                    "description": "Edit only.",
+                    "type": "string"
+                },
+                "count": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "default": 1,
+                    "description": "A count.",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "meta": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "Nested.",
+                    "type": "object",
+                    "properties": {
+                        "inner": {
+                            "type": "string",
+                            "context": [
+                                "edit"
+                            ]
+                        },
+                        "shown": {
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit"
+                            ]
+                        }
+                    }
+                },
+                "tags": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "A list.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "zz_extra": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "An extra.",
+                    "type": "string"
+                }
+            },
+            {
+                "title": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "sanitize_text_field",
+                    "required": true,
+                    "description": "The title.",
+                    "type": "string"
+                },
+                "secret": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "default": "shh",
+                    "description": "Edit only.",
+                    "type": "string"
+                },
+                "count": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "default": 1,
+                    "description": "A count.",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "meta": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "Nested.",
+                    "type": "object",
+                    "properties": {
+                        "inner": {
+                            "type": "string",
+                            "context": [
+                                "edit"
+                            ]
+                        },
+                        "shown": {
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit"
+                            ]
+                        }
+                    }
+                },
+                "tags": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "A list.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "zz_extra": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "An extra.",
+                    "type": "string"
+                }
+            },
+            {
+                "title": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "sanitize_text_field",
+                    "description": "The title.",
+                    "type": "string"
+                },
+                "secret": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "Edit only.",
+                    "type": "string"
+                },
+                "count": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "A count.",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "meta": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "Nested.",
+                    "type": "object",
+                    "properties": {
+                        "inner": {
+                            "type": "string",
+                            "context": [
+                                "edit"
+                            ]
+                        },
+                        "shown": {
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit"
+                            ]
+                        }
+                    }
+                },
+                "tags": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "A list.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "zz_extra": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "An extra.",
+                    "type": "string"
+                }
+            },
+            {
+                "title": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "sanitize_text_field",
+                    "description": "The title.",
+                    "type": "string"
+                },
+                "secret": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "Edit only.",
+                    "type": "string"
+                },
+                "count": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "A count.",
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "meta": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "Nested.",
+                    "type": "object",
+                    "properties": {
+                        "inner": {
+                            "type": "string",
+                            "context": [
+                                "edit"
+                            ]
+                        },
+                        "shown": {
+                            "type": "string",
+                            "context": [
+                                "view",
+                                "edit"
+                            ]
+                        }
+                    }
+                },
+                "tags": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "A list.",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "zz_extra": {
+                    "validate_callback": "rest_validate_request_arg",
+                    "sanitize_callback": "rest_sanitize_request_arg",
+                    "description": "An extra.",
+                    "type": "string"
+                }
+            }
+        ]
+    ],
+    [
+        "slugs sanitized",
+        [
+            "hello-world",
+            "already-a-slug",
+            "unicode",
+            "spaced",
+            "",
+            "a-b"
+        ]
+    ]
+]

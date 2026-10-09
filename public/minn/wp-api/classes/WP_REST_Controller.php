@@ -210,11 +210,19 @@ abstract class WP_REST_Controller
         return $schema['title'];
     }
 
+    /**
+     * The fields a response carries: the schema's properties and the
+     * additional fields (one with no schema always; any other, like a
+     * property, only when its context includes the request's), then _links;
+     * cut to the request's _fields when it names some (probe rest-controller).
+     */
     public function get_fields_for_response($request)
     {
-        $properties = $this->get_item_schema()['properties'] ?? [];
+        $context = $request['context'] ?? null;
+        $shown = static fn (array $schema): bool => $context === null || !isset($schema['context']) || in_array($context, (array) $schema['context'], true);
+        $properties = array_filter($this->get_item_schema()['properties'] ?? [], static fn ($schema) => $shown((array) $schema));
         foreach ($this->get_additional_fields() as $field_name => $field_options) {
-            if ($field_options['schema']) {
+            if (empty($field_options['schema']) || $shown((array) $field_options['schema'])) {
                 $properties[$field_name] = $field_options;
             }
         }
