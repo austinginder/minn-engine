@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 759,
-        "composes": 1618,
-        "leaf": 780,
-        "noop": 2461,
-        "placeholder": 279,
+        "composes": 1624,
+        "leaf": 788,
+        "noop": 2475,
+        "placeholder": 250,
         "deadend": 1659,
-        "functions": 7478,
+        "functions": 7477,
         "minnMethods": 909,
         "leafLinesOver15": 13
     },
@@ -3340,205 +3340,210 @@
             "composes": []
         },
         "POMO_CachedFileReader::POMO_CachedFileReader": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_constructor"
+            ]
         },
         "POMO_CachedFileReader::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 3,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_CachedIntFileReader::POMO_CachedIntFileReader": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
-        },
-        "POMO_CachedIntFileReader::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_constructor"
+            ]
         },
         "POMO_FileReader::POMO_FileReader": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_constructor"
+            ]
         },
         "POMO_FileReader::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_FileReader::close": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_FileReader::feof": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_FileReader::is_resource": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_FileReader::read": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_FileReader::read_all": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_FileReader::seekto": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::POMO_Reader": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_constructor"
+            ]
         },
         "POMO_Reader::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::close": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::is_resource": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::pos": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::readint32": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "reset"
+            ]
         },
         "POMO_Reader::readint32array": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::setEndian": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::str_split": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::strlen": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_Reader::substr": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_StringReader::POMO_StringReader": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_constructor"
+            ]
         },
         "POMO_StringReader::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 3,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_StringReader::length": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_StringReader::read": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 3,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "POMO_StringReader::read_all": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/POMO_Streams.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "POMO_StringReader::seekto": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/POMO_Streams.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

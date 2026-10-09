@@ -1,0 +1,142 @@
+[
+    [
+        "string reader",
+        [
+            true,
+            20,
+            0,
+            2500072158,
+            4,
+            null,
+            7,
+            null,
+            {
+                "1": 1,
+                "2": 2
+            },
+            16,
+            "746169",
+            "6c",
+            20,
+            false,
+            false,
+            4,
+            4,
+            "00000007",
+            20,
+            20,
+            "",
+            "",
+            true,
+            true,
+            "bcd",
+            5,
+            [
+                "abc",
+                "def",
+                "g"
+            ]
+        ]
+    ],
+    [
+        "empty string reader",
+        [
+            0,
+            false,
+            false,
+            "",
+            ""
+        ]
+    ],
+    [
+        "file reader",
+        [
+            true,
+            0,
+            false,
+            2500072158,
+            null,
+            7,
+            null,
+            {
+                "1": 1,
+                "2": 2
+            },
+            0,
+            "7461",
+            true,
+            0,
+            "de120495",
+            "0000000701000000020000007461696c",
+            true,
+            "",
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "file reader, no file",
+        [
+            false
+        ]
+    ],
+    [
+        "cached readers",
+        [
+            true,
+            20,
+            2500072158,
+            "00000007",
+            true,
+            20,
+            {
+                "1": 2500072158,
+                "2": 117440512,
+                "3": 1,
+                "4": 2
+            },
+            [
+                0,
+                ""
+            ]
+        ]
+    ],
+    [
+        "the PHP 4 constructors",
+        [
+            [
+                [
+                    4,
+                    "ab"
+                ],
+                0,
+                2500072158,
+                20,
+                20
+            ],
+            [
+                [
+                    "POMO_StringReader",
+                    "5.4.0"
+                ],
+                [
+                    "POMO_Reader",
+                    "5.4.0"
+                ],
+                [
+                    "POMO_FileReader",
+                    "5.4.0"
+                ],
+                [
+                    "POMO_CachedFileReader",
+                    "5.4.0"
+                ],
+                [
+                    "POMO_CachedIntFileReader",
+                    "5.4.0"
+                ]
+            ]
+        ]
+    ]
+]

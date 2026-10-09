@@ -7175,3 +7175,26 @@ Protected methods go through reflection.
     found.
   - `get_language_files_from_path` lists `.l10n.php` files with the `.mo`
     ones.
+
+## The POMO stream readers (2026-10-09)
+
+Probe `pomo-streams` (`tests/tools/pomo-streams-probe.php`). The five readers
+were generated placeholders and are now real (`classes/POMO_Streams.php`):
+- `POMO_Reader` (open to dynamic properties, as on the reference);
+- `POMO_StringReader`;
+- `POMO_FileReader`;
+- `POMO_CachedFileReader` and `POMO_CachedIntFileReader`.
+
+- **Integers.** `readint32` reads four bytes in the reader's byte order
+  (`setEndian`, little by default) and is false when fewer are left.
+  `readint32array` returns the list keyed from 1 (as `unpack` gives it), or
+  false when short.
+- **String readers.** A read stops at the end and moves the position no
+  further. `seekto` clamps to the length and returns the new position.
+  `read_all` returns the rest from where the reader stands. A cached reader
+  reads the file into a string up front; a missing file gives length 0.
+- **File reader.** It reads from an open handle and doesn't count, so
+  `pos()` stays 0. `seekto` returns whether it could move. `read_all` returns
+  the rest of the file. After `close()`, `is_resource()` is false.
+- Each class keeps its PHP 4 constructor, which runs the class's own
+  constructor and reports itself deprecated (5.4.0).
