@@ -191,10 +191,14 @@ function load_textdomain($domain, $mofile, $locale = null)
     do_action('load_textdomain', $domain, $mofile);
     $mofile = (string) apply_filters('load_textdomain_mofile', $mofile, $domain);
     $locale ??= determine_locale();
+    // Loading a domain makes its locale the one translations are looked up in (probe l10n-more).
+    WP_Translation_Controller::get_instance()->set_locale((string) $locale);
     $format = apply_filters('translation_file_format', 'php', $domain);
     foreach (TranslationFiles::candidates($mofile, $format === 'mo' ? 'mo' : 'php') as $candidate) {
         $file = (string) apply_filters('load_translation_file', $candidate, $domain, $locale);
         if (WP_Translation_Controller::get_instance()->load_file($file, (string) $domain, (string) $locale)) {
+            // The folder a domain loaded from is where its script translations are looked for when no folder is given.
+            $GLOBALS['wp_textdomain_registry']->set((string) $domain, (string) $locale, dirname($file));
             return true;
         }
     }
@@ -298,25 +302,38 @@ function wp_set_script_translations($handle, $domain = 'default', $path = '')
     return wp_scripts()->set_translations((string) $handle, (string) $domain, (string) $path);
 }
 
-/**
- * A registered script's JSON translations: by handle in the folder given,
- * then by the md5 of its path in that folder, then in the site's languages
- * folder for its plugin, theme or the site; false when none is found.
- */
+/** A registered script's JSON translations (_load_script_textdomain_from_src); false for a handle not registered. */
 function load_script_textdomain($handle, $domain = 'default', $path = '')
 {
     $item = _minn_assets('script')->item((string) $handle);
-    if ($item === null) {
-        return false;
-    }
-    $prefix = ScriptTranslations::prefix((string) $domain, determine_locale());
-    $path = rtrim((string) $path, '/');
+    // A script's root-relative source is read on the site's origin first; the lookup takes any other as given.
+    return $item === null ? false : _load_script_textdomain_from_src((string) $handle, ScriptTranslations::absolute((string) $item['src'], site_url()), (string) $domain, (string) $path, false);
+}
+
+/** A registered script module's JSON translations, found as a script's are (probe l10n-more); false for an id not registered. */
+function load_script_module_textdomain(string $id, string $domain = 'default', string $path = '')
+{
+    $module = wp_script_modules()->get_registered($id);
+    return $module === null ? false : _load_script_textdomain_from_src($id, (string) ($module['src'] ?? ''), $domain, $path, true);
+}
+
+/**
+ * The JSON translations for a script or module source: by handle in the
+ * folder given, then by the md5 of its path in that folder, then in the
+ * site's languages folder for its plugin, theme or the site; false when
+ * none is found. The relative path filter is told whether it is a module.
+ */
+function _load_script_textdomain_from_src(string $handle, string $src, string $domain, string $path, bool $is_module)
+{
+    $locale = determine_locale();
+    $prefix = ScriptTranslations::prefix($domain, $locale);
+    // No folder given: the one the domain loaded from for this locale, if any.
+    $path = rtrim($path !== '' ? $path : (string) $GLOBALS['wp_textdomain_registry']->get($domain, $locale), '/');
     if ($path !== '' && ($found = load_script_translations("{$path}/{$prefix}-{$handle}.json", $handle, $domain)) !== false) {
         return $found;
     }
-    $src = ScriptTranslations::absolute((string) $item['src'], site_url());
     [$relative, $folder] = ScriptTranslations::place($src, site_url(), plugins_url(), get_theme_root_uri());
-    $relative = apply_filters('load_script_textdomain_relative_path', $relative, $src, false);
+    $relative = apply_filters('load_script_textdomain_relative_path', $relative, $src, $is_module);
     if (!is_string($relative) || $relative === '') {
         return load_script_translations(false, $handle, $domain);
     }
@@ -478,4 +495,18 @@ function before_last_bar($text)
 {
     $last = strrpos((string) $text, '|');
     return $last === false ? $text : substr((string) $text, 0, $last);
+}
+
+/** Whether a text domain loaded for a locale (the controller's current one by default) translates a string; a context is its key's prefix and EOT. */
+function has_translation(string $singular, string $textdomain = 'default', ?string $locale = null): bool
+{
+    return WP_Translation_Controller::get_instance()->has_translation($singular, $textdomain, $locale);
+}
+
+/** A PHP translation file's headers (POT-Creation-Date, PO-Revision-Date, Project-Id-Version, X-Generator), read by including it, as given; '' for each it does not give. */
+function wp_get_l10n_php_file_data($php_file)
+{
+    $data = include $php_file;
+    $headers = ['POT-Creation-Date' => 'pot-creation-date', 'PO-Revision-Date' => 'po-revision-date', 'Project-Id-Version' => 'project-id-version', 'X-Generator' => 'x-generator'];
+    return array_map(static fn (string $key) => is_array($data) && isset($data[$key]) ? $data[$key] : '', $headers);
 }

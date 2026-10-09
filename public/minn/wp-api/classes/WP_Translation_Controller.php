@@ -126,8 +126,9 @@ class WP_Translation_Controller
         return array_values(array_filter(array_map(static fn (string $file) => WP_Translation_File::create($file), array_keys(Runtime::textDomains()->catalogs($textdomain)))));
     }
 
+    /** Whether the domain was loaded for the locale (the current one by default) and its catalog translates the string. */
     public function has_translation(string $singular, string $textdomain = 'default', ?string $locale = null): bool
     {
-        return Runtime::textDomains()->translate($textdomain, $singular) !== null;
+        return isset($this->loaded_translations[$locale ?? $this->current_locale][$textdomain]) && Runtime::textDomains()->translate($textdomain, $singular) !== null;
     }
 }

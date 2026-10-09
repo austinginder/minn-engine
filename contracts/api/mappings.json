@@ -2,13 +2,13 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 774,
-        "composes": 1721,
-        "leaf": 848,
-        "noop": 2629,
+        "minn": 775,
+        "composes": 1722,
+        "leaf": 849,
+        "noop": 2630,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7797,
+        "functions": 7801,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -28728,6 +28728,24 @@
             "composes": [],
             "deadend": "editor"
         },
+        "_load_script_textdomain_from_src": {
+            "file": "l10n.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\ScriptTranslations::fileHash",
+                "Minn\\I18n\\ScriptTranslations::place",
+                "Minn\\I18n\\ScriptTranslations::prefix"
+            ],
+            "composes": [
+                "apply_filters",
+                "determine_locale",
+                "get_theme_root_uri",
+                "load_script_translations",
+                "plugins_url",
+                "site_url"
+            ]
+        },
         "_load_textdomain_just_in_time": {
             "file": "l10n.php",
             "lines": 12,
@@ -44719,6 +44737,13 @@
                 "wp_check_term_meta_support_prefilter"
             ]
         },
+        "has_translation": {
+            "file": "l10n.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "have_comments": {
             "file": "query.php",
             "lines": 1,
@@ -46480,23 +46505,26 @@
                 "determine_locale"
             ]
         },
+        "load_script_module_textdomain": {
+            "file": "l10n.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_load_script_textdomain_from_src",
+                "wp_script_modules"
+            ]
+        },
         "load_script_textdomain": {
             "file": "l10n.php",
-            "lines": 22,
+            "lines": 3,
             "kind": "minn",
             "minn": [
-                "Minn\\I18n\\ScriptTranslations::absolute",
-                "Minn\\I18n\\ScriptTranslations::fileHash",
-                "Minn\\I18n\\ScriptTranslations::place",
-                "Minn\\I18n\\ScriptTranslations::prefix"
+                "Minn\\I18n\\ScriptTranslations::absolute"
             ],
             "composes": [
+                "_load_script_textdomain_from_src",
                 "_minn_assets",
-                "apply_filters",
-                "determine_locale",
-                "get_theme_root_uri",
-                "load_script_translations",
-                "plugins_url",
                 "site_url"
             ]
         },
@@ -46521,7 +46549,7 @@
         },
         "load_textdomain": {
             "file": "l10n.php",
-            "lines": 18,
+            "lines": 22,
             "kind": "minn",
             "minn": [
                 "Minn\\I18n\\TranslationFiles::candidates"
@@ -60372,6 +60400,13 @@
             "minn": [
                 "Minn\\Rest\\ClientSchema::keywords"
             ],
+            "composes": []
+        },
+        "wp_get_l10n_php_file_data": {
+            "file": "l10n.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "wp_get_latest_revision_id_and_total_count": {

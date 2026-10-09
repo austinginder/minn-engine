@@ -7975,3 +7975,39 @@ Probe `json-schema`, behind `Rest\ClientSchema`.
   `rest_handle_deprecated_function` and `rest_handle_doing_it_wrong`
   answer with response headers, which a CLI probe cannot see. They wait
   for an HTTP check under `WP_DEBUG`.
+
+## More translation helpers (2026-10-09)
+
+Probe `l10n-more`.
+
+- **PHP translation file headers.** `wp_get_l10n_php_file_data` includes
+  the file, so a missing file gives two include warnings and anything the
+  file prints is printed. It answers `POT-Creation-Date`,
+  `PO-Revision-Date`, `Project-Id-Version` and `X-Generator` from the
+  file's lowercase keys, values as given (an int stays an int), and `''`
+  for each the file does not give or when it returns no array.
+- **has_translation.**
+  - It is true when the domain was loaded for the locale (the
+    controller's current one by default) and its catalog translates the
+    string. A context is keyed `context\4text`, and a plural is keyed by
+    its singular.
+  - `load_textdomain` makes the locale it loaded for current: the one
+    given, or `determine_locale()`. The controller's own `load_file` does
+    not.
+  - A successful `load_textdomain` also records the folder in the
+    textdomain registry under that locale, trailing-slashed; a failed one
+    or a bare `load_file` records nothing.
+  - The engine's catalogs are still per domain, not per locale, so `__()`
+    keeps translating after the current locale moves. The reference stops.
+- **Script and module translations.**
+  - `_load_script_textdomain_from_src` is the old body of
+    `load_script_textdomain`. It looks by handle in the folder given, then
+    by the md5 of the source's path, then in the languages folder.
+  - It gives the relative path filter a third argument, true for a module,
+    and takes the source as given (`place` reads a root-relative one).
+  - With no folder given, it looks in the folder the domain loaded from
+    for the determined locale.
+  - `load_script_textdomain` reads a script's root-relative source on the
+    site's origin first. `load_script_module_textdomain` uses a registered
+    module's source, and is false with no filters run for an id not
+    registered.
