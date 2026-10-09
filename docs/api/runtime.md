@@ -4,8 +4,8 @@ the WordPress runtime plugins load against
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Abilities`](#abilities) | final class | 207 | The abilities registry behind the wp_*_ability facade, as the reference |
-| [`AbilityRun`](#abilityrun) | final class | 41 | Running an ability as the reference runs one (probe abilities-registry): |
+| [`Abilities`](#abilities) | final class | 223 | The abilities registry behind WP_Abilities_Registry, |
+| [`AbilityRun`](#abilityrun) | final class | 28 | The checks of an ability's run, as the reference makes them (probes |
 | [`AccountFlows`](#accountflows) | final class | 140 | The account functions a sign-in page and plugins call, with the |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 80 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
 | [`AllowedOptions`](#allowedoptions) | final class | 26 | The settings-page allowlist plugins extend: option group => the option |
@@ -116,20 +116,24 @@ the WordPress runtime plugins load against
 
 `final class Minn\Runtime\Abilities` · `public/minn/src/Minn/Runtime/Abilities.php`
 
-The abilities registry behind the wp_*_ability facade, as the reference
-keeps it (probe abilities-registry). Categories register only on
-wp_abilities_api_categories_init and abilities only on
-wp_abilities_api_init; each action fires once, lazily, on the first
-lookup of its kind (abilities after categories). A registration is
-checked as the reference checks it (slug or name shape, duplicates,
-required fields, a known category) and refused with its notice. An
-ability's meta gains the default annotations, show_in_rest and public.
+The abilities registry behind WP_Abilities_Registry,
+WP_Ability_Categories_Registry and the wp_*_ability facade, as the
+reference keeps it (probes abilities-registry, abilities-classes). The
+categories init and then the abilities init fire once each, lazily, on
+the first lookup of their kind, each handed its registry. The registries
+themselves take a registration at any time; only the wp_register_*
+functions insist on the init action. A registration is checked as the
+reference checks it (name shape, duplicates, a known category, then the
+properties the ability and category classes check) and refused with its
+notice. An ability's meta gains the default annotations, show_in_rest
+(public's value when unset) and public.
 
 - const `STATE` = `'abilities'`
 - const `CATEGORIES` = `'WP_Ability_Categories_Registry'`
 - const `ABILITIES` = `'WP_Abilities_Registry'`
 - const `NAME` = `'/^[a-z0-9-]+\\/[a-z0-9-]+$/'`
 - const `SLUG` = `'/^[a-z0-9]+(?:-[a-z0-9]+)*$/'`
+- const `ANNOTATIONS` = `array (   'readonly' => NULL,   'destructive' => NULL,   'idempotent' => NULL, )`
 
 Used by: `Minn\Rest\AbilitiesController`
 
@@ -205,18 +209,39 @@ Every category, by slug. @return array<string, array>
 
 Whether an ability is marked read-only, which decides the method its run endpoint takes.
 
-Internals: `state()` (private, line 26), `save()` (private, line 32), `refusal()` (private, line 185), `meta()` (private, line 201), `forget()` (private, line 210)
+### static `abilityRefusal(array $args): ?string`
+
+Why an ability's properties are refused, as WP_Ability::prepare_properties says it, or null. @param array<string, mixed> $args
+
+- `@param array<string, mixed> $args`
+
+### static `categoryRefusal(array $args): ?string`
+
+Why a category's properties are refused, as WP_Ability_Category::prepare_properties says it, or null. @param array<string, mixed> $args
+
+- `@param array<string, mixed> $args`
+
+### static `meta(array $meta): array`
+
+An ability's meta with the reference's defaults: the three annotations
+first, show_in_rest (public's value when unset), then public.
+
+- `@return array<string, mixed>`
+
+Internals: `state()` (private, line 30), `save()` (private, line 36), `forget()` (private, line 229)
 
 
 ## AbilityRun
 
 `final class Minn\Runtime\AbilityRun` · `public/minn/src/Minn/Runtime/AbilityRun.php`
 
-Running an ability as the reference runs one (probe abilities-registry):
-input given to an ability without an input schema is refused, input that
-its schema refuses is ability_invalid_input; a permission callback that
-does not answer true is ability_invalid_permissions (an error it returns
-is reported as a notice); then wp_before_execute_ability, the callback
+The checks of an ability's run, as the reference makes them (probes
+abilities-registry, abilities-classes); WP_Ability::execute strings them:
+input left out takes the input schema's default, input given to an ability
+without an input schema is refused, input that its schema refuses is
+ability_invalid_input; a permission callback that does not answer true is
+ability_invalid_permissions (an error it returns is reported as a notice);
+then wp_before_execute_ability, the callback
 (an error it returns is the answer), the output checked against the
 output schema (ability_invalid_output), and wp_after_execute_ability.
 
@@ -224,9 +249,13 @@ output schema (ability_invalid_output), and wp_after_execute_ability.
 
 True, or why the input does not fit.
 
-### static `execute(WP_Ability $ability, mixed $callback, mixed $input): mixed`
+### static `allowed(string $name, mixed $answer): WP_Error|true`
 
-The ability's answer, or the error that stopped it.
+True, or the error a permission answer other than true becomes (an error it returns is reported as a notice).
+
+### static `output(string $name, array $schema, mixed $output): WP_Error|true`
+
+True, or why the output does not fit the output schema.
 
 
 ## AccountFlows

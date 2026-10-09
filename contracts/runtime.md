@@ -7223,3 +7223,47 @@ Probe `embed-classes` (`tests/tools/embed-classes-probe.php`) proves
   `_oembed_time_` stamp; a URL that yields nothing gets `{{unknown}}` and
   then a plain link. The cache answers while `usecache` is on, or while it
   is younger than `oembed_ttl`. `embed_oembed_discover` decides discovery.
+
+## The abilities classes (2026-10-09)
+
+Probe `abilities-classes` (`tests/tools/abilities-classes-probe.php`)
+proves `WP_Abilities_Registry`, `WP_Ability_Categories_Registry`,
+`WP_Ability` and `WP_Ability_Category`. Registrations live for the request
+only; the probe writes nothing.
+
+- **The registries** are new. Each keeps one instance (`get_instance()`),
+  and the first call fires its init action. The init actions now pass the
+  registry; before, they fired with no arguments. Rows stay in
+  `Runtime\Abilities`, and the registries hand them out as objects. The
+  `wp_*_ability` functions are thin calls on the registries.
+- **Registering outside the action.** The registries accept a registration
+  at any time. Only `wp_register_ability` and
+  `wp_register_ability_category` refuse one outside the init action. That
+  check moved out of `Runtime\Abilities`.
+- **Check order.** Name shape and duplicates come first. Then an
+  unregistered category is named before any other problem: an ability with
+  an empty label and an unknown category is refused for the category.
+  After that come the property checks.
+- **Property checks** (`prepare_properties`) run in the constructor and
+  throw `InvalidArgumentException`. The registry reports the message with
+  `_doing_it_wrong`. The ability checks, in order:
+  1. label, description and category strings;
+  2. a callable `execute_callback`, then `permission_callback`;
+  3. array `input_schema` and `output_schema`;
+  4. a `meta` array, an `annotations` array, then boolean `show_in_rest`
+     and `public`.
+
+  A category checks its label and description strings and a `meta` array.
+  Neither class checks the name or slug shape, or whether the category is
+  registered.
+- **Meta defaults.** `annotations` always comes first, merged over the
+  three defaults; extra annotation keys are kept. An unset `show_in_rest`
+  takes `public`'s value, and `public` defaults to false.
+- **A run.** `execute()` first fills input left out from the input
+  schema's top-level `default` (`normalize_input`). It then validates,
+  checks permission, and calls `do_execute` (through `invoke_callback`,
+  which passes no argument for null input). `validate_output` comes last.
+  `AbilityRun` now holds only the checks.
+- All four classes refuse `serialize()` and `unserialize()` with a
+  `LogicException` naming the class. `has_permission()`, which the
+  reference doesn't define, was removed.

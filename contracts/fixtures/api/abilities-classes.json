@@ -1,0 +1,409 @@
+[
+    [
+        "during the init actions",
+        [
+            {
+                "categories": [
+                    "WP_Ability_Categories_Registry",
+                    [
+                        "WP_Ability_Category",
+                        "zz-cat"
+                    ],
+                    null
+                ],
+                "abilities": [
+                    "WP_Abilities_Registry",
+                    [
+                        "WP_Ability",
+                        "zz/echo"
+                    ],
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    [
+                        "WP_Ability",
+                        "zz/dflt"
+                    ]
+                ]
+            },
+            [
+                [
+                    "WP_Ability_Categories_Registry::register",
+                    "Ability category \"zz-cat\" is already registered."
+                ],
+                [
+                    "WP_Abilities_Registry::register",
+                    "Ability \"zz/echo\" is already registered."
+                ],
+                [
+                    "WP_Abilities_Registry::register",
+                    "Ability name must be a string containing a namespace prefix, i.e. \"my-plugin/my-ability\". It can only contain lowercase alphanumeric characters, dashes and the forward slash."
+                ],
+                [
+                    "WP_Abilities_Registry::register",
+                    "Ability category \"zz-missing\" is not registered. Please register the ability category before assigning it to ability \"zz/nocat\"."
+                ],
+                [
+                    "WP_Abilities_Registry::register",
+                    "The ability properties must contain a valid `execute_callback` function."
+                ],
+                [
+                    "WP_Abilities_Registry::register",
+                    "Ability category \"zz-missing\" is not registered. Please register the ability category before assigning it to ability \"zz/nolabel\"."
+                ],
+                [
+                    "WP_Abilities_Registry::register",
+                    "The ability properties should provide a valid `input_schema` definition."
+                ]
+            ]
+        ]
+    ],
+    [
+        "the registries",
+        [
+            true,
+            true,
+            true,
+            false,
+            false,
+            [
+                "WP_Ability",
+                "zz/echo"
+            ],
+            [
+                null,
+                [
+                    [
+                        "WP_Abilities_Registry::get_registered",
+                        "Ability \"zz/never\" not found."
+                    ]
+                ]
+            ],
+            [
+                "zz/echo",
+                "zz/dflt"
+            ],
+            true,
+            true,
+            [
+                "WP_Ability_Category",
+                "zz-cat"
+            ],
+            [
+                null,
+                [
+                    [
+                        "WP_Ability_Categories_Registry::get_registered",
+                        "Ability category \"zz-never\" not found."
+                    ]
+                ]
+            ],
+            true,
+            [
+                [
+                    "WP_Ability",
+                    "zz/late"
+                ],
+                []
+            ],
+            [
+                [
+                    "WP_Ability_Category",
+                    "zz-late"
+                ],
+                []
+            ]
+        ]
+    ],
+    [
+        "the ability object",
+        [
+            "zz/echo",
+            "Zz Echo",
+            "zz-cat",
+            {
+                "readonly": true,
+                "destructive": null,
+                "idempotent": null
+            },
+            null,
+            {
+                "text": "yo"
+            },
+            "scalar",
+            true,
+            [
+                [
+                    "ability_invalid_input",
+                    "Ability \"zz/echo\" has invalid input. Reason: input[times] must be greater than or equal to 1"
+                ],
+                []
+            ],
+            "ababab",
+            {
+                "errors": {
+                    "ability_invalid_input": [
+                        "Ability \"zz/echo\" has invalid input. Reason: input is not of type object."
+                    ]
+                },
+                "error_data": []
+            },
+            [
+                "ability_invalid_output",
+                "Ability \"zz/echo\" has invalid output. Reason: output is not of type string."
+            ],
+            true,
+            "xx",
+            [
+                "called",
+                {
+                    "a": 1
+                }
+            ],
+            "no input",
+            [
+                "InvalidArgumentException",
+                "The ability properties must contain a `description` string."
+            ],
+            [
+                "label",
+                "description",
+                "category",
+                "input_schema",
+                "output_schema",
+                "execute_callback",
+                "permission_callback",
+                "meta"
+            ]
+        ]
+    ],
+    [
+        "a schema default",
+        [
+            "dflt",
+            "given",
+            "DFLT",
+            "GIVEN"
+        ]
+    ],
+    [
+        "properties checked",
+        [
+            [
+                "InvalidArgumentException",
+                "The ability properties must contain a `label` string."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties must contain a `label` string."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties must contain a `category` string."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties must contain a valid `execute_callback` function."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties must provide a valid `permission_callback` function."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties should provide a valid `input_schema` definition."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties should provide a valid `output_schema` definition."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability properties should provide a valid `meta` array."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability meta should provide a valid `annotations` array."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability meta should provide a valid `show_in_rest` boolean."
+            ],
+            "zz-unregistered",
+            [
+                [
+                    "label",
+                    "description",
+                    "category",
+                    "execute_callback",
+                    "permission_callback",
+                    "meta"
+                ],
+                {
+                    "annotations": {
+                        "readonly": null,
+                        "destructive": null,
+                        "idempotent": null
+                    },
+                    "show_in_rest": false,
+                    "public": false
+                }
+            ],
+            {
+                "annotations": {
+                    "readonly": null,
+                    "destructive": false,
+                    "idempotent": null,
+                    "extra": 1
+                },
+                "public": true,
+                "zz": 1,
+                "show_in_rest": true
+            },
+            {
+                "annotations": {
+                    "readonly": null,
+                    "destructive": null,
+                    "idempotent": null
+                },
+                "public": true,
+                "show_in_rest": false
+            },
+            [
+                "InvalidArgumentException",
+                "The ability meta should provide a valid `public` boolean."
+            ],
+            {
+                "annotations": {
+                    "readonly": null,
+                    "destructive": null,
+                    "idempotent": null
+                },
+                "public": false,
+                "show_in_rest": false
+            }
+        ]
+    ],
+    [
+        "constructed directly",
+        [
+            {
+                "annotations": {
+                    "readonly": null,
+                    "destructive": null,
+                    "idempotent": null
+                },
+                "show_in_rest": false,
+                "public": false
+            },
+            [
+                "InvalidArgumentException",
+                "The ability properties must contain a `description` string."
+            ],
+            "Not A Name",
+            [],
+            [
+                "InvalidArgumentException",
+                "The ability category properties must contain a `label` string."
+            ],
+            [
+                "InvalidArgumentException",
+                "The ability category properties should provide a valid `meta` array."
+            ]
+        ]
+    ],
+    [
+        "the category object",
+        [
+            "zz-cat",
+            "Zz Cat",
+            "A probe category.",
+            [],
+            [
+                "InvalidArgumentException",
+                "The ability category properties must contain a `description` string."
+            ]
+        ]
+    ],
+    [
+        "not serialized",
+        [
+            [
+                "LogicException",
+                "WP_Ability should never be serialized."
+            ],
+            [
+                "LogicException",
+                "WP_Ability_Category should never be serialized."
+            ],
+            [
+                "LogicException",
+                "WP_Abilities_Registry should never be serialized."
+            ],
+            [
+                "LogicException",
+                "WP_Ability_Categories_Registry should never be serialized."
+            ]
+        ]
+    ],
+    [
+        "not unserialized",
+        [
+            [
+                "LogicException",
+                "WP_Ability should never be unserialized."
+            ],
+            [
+                "LogicException",
+                "WP_Ability_Category should never be unserialized."
+            ],
+            [
+                "LogicException",
+                "WP_Abilities_Registry should never be unserialized."
+            ],
+            [
+                "LogicException",
+                "WP_Ability_Categories_Registry should never be unserialized."
+            ]
+        ]
+    ],
+    [
+        "unregistered",
+        [
+            [
+                "WP_Ability",
+                "zz/echo"
+            ],
+            false,
+            [
+                "WP_Ability",
+                "zz/dflt"
+            ],
+            [
+                null,
+                [
+                    [
+                        "WP_Abilities_Registry::unregister",
+                        "Ability \"zz/echo\" not found."
+                    ]
+                ]
+            ],
+            [
+                "WP_Ability_Category",
+                "zz-cat"
+            ],
+            [
+                null,
+                [
+                    [
+                        "WP_Ability_Categories_Registry::unregister",
+                        "Ability category \"zz-cat\" not found."
+                    ]
+                ]
+            ]
+        ]
+    ]
+]

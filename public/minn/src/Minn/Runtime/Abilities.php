@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 /**
- * The abilities registry behind the wp_*_ability facade, as the reference
- * keeps it (probe abilities-registry). Categories register only on
- * wp_abilities_api_categories_init and abilities only on
- * wp_abilities_api_init; each action fires once, lazily, on the first
- * lookup of its kind (abilities after categories). A registration is
- * checked as the reference checks it (slug or name shape, duplicates,
- * required fields, a known category) and refused with its notice. An
- * ability's meta gains the default annotations, show_in_rest and public.
+ * The abilities registry behind WP_Abilities_Registry,
+ * WP_Ability_Categories_Registry and the wp_*_ability facade, as the
+ * reference keeps it (probes abilities-registry, abilities-classes). The
+ * categories init and then the abilities init fire once each, lazily, on
+ * the first lookup of their kind, each handed its registry. The registries
+ * themselves take a registration at any time; only the wp_register_*
+ * functions insist on the init action. A registration is checked as the
+ * reference checks it (name shape, duplicates, a known category, then the
+ * properties the ability and category classes check) and refused with its
+ * notice. An ability's meta gains the default annotations, show_in_rest
+ * (public's value when unset) and public.
  */
 final class Abilities
 {
@@ -21,6 +24,7 @@ final class Abilities
     private const ABILITIES = 'WP_Abilities_Registry';
     private const NAME = '/^[a-z0-9-]+\/[a-z0-9-]+$/';
     private const SLUG = '/^[a-z0-9]+(?:-[a-z0-9]+)*$/';
+    private const ANNOTATIONS = ['readonly' => null, 'destructive' => null, 'idempotent' => null];
 
     /** @return array{categoriesFired: bool, abilitiesFired: bool, categories: array<string, array>, abilities: array<string, array>} */
     private static function state(): array
@@ -43,7 +47,7 @@ final class Abilities
         }
         $state['categoriesFired'] = true;
         self::save($state);
-        \do_action('wp_abilities_api_categories_init');
+        \do_action('wp_abilities_api_categories_init', \WP_Ability_Categories_Registry::get_instance());
     }
 
     /** Fires the categories action, then the abilities action, each once. */
@@ -56,23 +60,17 @@ final class Abilities
         }
         $state['abilitiesFired'] = true;
         self::save($state);
-        \do_action('wp_abilities_api_init');
+        \do_action('wp_abilities_api_init', \WP_Abilities_Registry::get_instance());
     }
 
     /** Registers a category; its row, or null with the reference's notice. @return array<string, mixed>|null */
     public static function registerCategory(string $slug, array $args): ?array
     {
-        if (!\doing_action('wp_abilities_api_categories_init')) {
-            \_doing_it_wrong('wp_register_ability_category', sprintf('Ability categories must be registered on the %1$s action. The ability category %2$s was not registered.', 'wp_abilities_api_categories_init', $slug), '6.9.0');
-            return null;
-        }
         $state = self::state();
         $refusal = match (true) {
             isset($state['categories'][$slug]) => sprintf('Ability category "%s" is already registered.', $slug),
             preg_match(self::SLUG, $slug) !== 1 => 'Ability category slug must contain only lowercase alphanumeric characters and dashes.',
-            !is_string($args['label'] ?? null) || $args['label'] === '' => 'The ability category properties must contain a `label` string.',
-            !is_string($args['description'] ?? null) || $args['description'] === '' => 'The ability category properties must contain a `description` string.',
-            default => null,
+            default => self::categoryRefusal($args),
         };
         if ($refusal !== null) {
             \_doing_it_wrong(self::CATEGORIES . '::register', $refusal, '6.9.0');
@@ -86,15 +84,14 @@ final class Abilities
     /** Registers an ability; its row, or null with the reference's notice. @return array<string, mixed>|null */
     public static function register(string $name, array $args): ?array
     {
-        if (!\doing_action('wp_abilities_api_init')) {
-            \_doing_it_wrong('wp_register_ability', sprintf('Abilities must be registered on the %1$s action. The ability %2$s was not registered.', 'wp_abilities_api_init', $name), '6.9.0');
-            return null;
-        }
         $state = self::state();
+        $category = $args['category'] ?? null;
         $refusal = match (true) {
             preg_match(self::NAME, $name) !== 1 => 'Ability name must be a string containing a namespace prefix, i.e. "my-plugin/my-ability". It can only contain lowercase alphanumeric characters, dashes and the forward slash.',
             isset($state['abilities'][$name]) => sprintf('Ability "%s" is already registered.', $name),
-            default => self::refusal($name, $args, $state['categories']),
+            // A category that is not registered is named before any other property (probe abilities-classes).
+            is_string($category) && !isset($state['categories'][$category]) => sprintf('Ability category "%1$s" is not registered. Please register the ability category before assigning it to ability "%2$s".', $category, $name),
+            default => self::abilityRefusal($args),
         };
         if ($refusal !== null) {
             \_doing_it_wrong(self::ABILITIES . '::register', $refusal, '6.9.0');
@@ -181,27 +178,49 @@ final class Abilities
         return (bool) (self::ability($name)['meta']['annotations']['readonly'] ?? false);
     }
 
-    /** @param array<string, mixed> $args @param array<string, array> $categories */
-    private static function refusal(string $name, array $args, array $categories): ?string
+    /** Why an ability's properties are refused, as WP_Ability::prepare_properties says it, or null. @param array<string, mixed> $args */
+    public static function abilityRefusal(array $args): ?string
     {
         foreach (['label', 'description', 'category'] as $field) {
             if (!is_string($args[$field] ?? null) || $args[$field] === '') {
                 return "The ability properties must contain a `{$field}` string.";
             }
         }
+        $meta = $args['meta'] ?? [];
         return match (true) {
-            !isset($categories[$args['category']]) => sprintf('Ability category "%1$s" is not registered. Please register the ability category before assigning it to ability "%2$s".', $args['category'], $name),
             !is_callable($args['execute_callback'] ?? null) => 'The ability properties must contain a valid `execute_callback` function.',
             !is_callable($args['permission_callback'] ?? null) => 'The ability properties must provide a valid `permission_callback` function.',
+            isset($args['input_schema']) && !is_array($args['input_schema']) => 'The ability properties should provide a valid `input_schema` definition.',
+            isset($args['output_schema']) && !is_array($args['output_schema']) => 'The ability properties should provide a valid `output_schema` definition.',
+            !is_array($meta) => 'The ability properties should provide a valid `meta` array.',
+            isset($meta['annotations']) && !is_array($meta['annotations']) => 'The ability meta should provide a valid `annotations` array.',
+            isset($meta['show_in_rest']) && !is_bool($meta['show_in_rest']) => 'The ability meta should provide a valid `show_in_rest` boolean.',
+            isset($meta['public']) && !is_bool($meta['public']) => 'The ability meta should provide a valid `public` boolean.',
             default => null,
         };
     }
 
-    /** An ability's meta with the reference's defaults: the three annotations, show_in_rest and public. @return array<string, mixed> */
-    private static function meta(array $meta): array
+    /** Why a category's properties are refused, as WP_Ability_Category::prepare_properties says it, or null. @param array<string, mixed> $args */
+    public static function categoryRefusal(array $args): ?string
     {
-        $meta['annotations'] = array_merge(['readonly' => null, 'destructive' => null, 'idempotent' => null], (array) ($meta['annotations'] ?? []));
-        $meta['show_in_rest'] ??= false;
+        return match (true) {
+            !is_string($args['label'] ?? null) || $args['label'] === '' => 'The ability category properties must contain a `label` string.',
+            !is_string($args['description'] ?? null) || $args['description'] === '' => 'The ability category properties must contain a `description` string.',
+            isset($args['meta']) && !is_array($args['meta']) => 'The ability category properties should provide a valid `meta` array.',
+            default => null,
+        };
+    }
+
+    /**
+     * An ability's meta with the reference's defaults: the three annotations
+     * first, show_in_rest (public's value when unset), then public.
+     *
+     * @return array<string, mixed>
+     */
+    public static function meta(array $meta): array
+    {
+        $meta = ['annotations' => array_merge(self::ANNOTATIONS, (array) ($meta['annotations'] ?? []))] + $meta;
+        $meta['show_in_rest'] ??= $meta['public'] ?? false;
         $meta['public'] ??= false;
         return $meta;
     }

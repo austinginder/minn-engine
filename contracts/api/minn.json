@@ -107947,8 +107947,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Abilities.php",
-            "lines": 207,
-            "doc": "The abilities registry behind the wp_*_ability facade, as the reference\nkeeps it (probe abilities-registry). Categories register only on\nwp_abilities_api_categories_init and abilities only on\nwp_abilities_api_init; each action fires once, lazily, on the first\nlookup of its kind (abilities after categories). A registration is\nchecked as the reference checks it (slug or name shape, duplicates,\nrequired fields, a known category) and refused with its notice. An\nability's meta gains the default annotations, show_in_rest and public.",
+            "lines": 223,
+            "doc": "The abilities registry behind WP_Abilities_Registry,\nWP_Ability_Categories_Registry and the wp_*_ability facade, as the\nreference keeps it (probes abilities-registry, abilities-classes). The\ncategories init and then the abilities init fire once each, lazily, on\nthe first lookup of their kind, each handed its registry. The registries\nthemselves take a registration at any time; only the wp_register_*\nfunctions insist on the init action. A registration is checked as the\nreference checks it (name shape, duplicates, a known category, then the\nproperties the ability and category classes check) and refused with its\nnotice. An ability's meta gains the default annotations, show_in_rest\n(public's value when unset) and public.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -107989,6 +107989,12 @@
                     "value": "'/^[a-z0-9]+(?:-[a-z0-9]+)*$/'",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "ANNOTATIONS",
+                    "value": "array (   'readonly' => NULL,   'destructive' => NULL,   'idempotent' => NULL, )",
+                    "doc": "",
+                    "visibility": "private"
                 }
             ],
             "properties": [],
@@ -108002,8 +108008,8 @@
                     "doc": "Fires the categories action once.",
                     "shapes": [],
                     "params": [],
-                    "line": 38,
-                    "end": 47
+                    "line": 42,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -108014,8 +108020,8 @@
                     "doc": "Fires the categories action, then the abilities action, each once.",
                     "shapes": [],
                     "params": [],
-                    "line": 50,
-                    "end": 60
+                    "line": 54,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -108043,8 +108049,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 84
+                    "line": 67,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -108072,8 +108078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 116
+                    "line": 85,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -108094,8 +108100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 116,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -108116,8 +108122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 128
+                    "line": 122,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -108138,8 +108144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 138
+                    "line": 128,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -108160,8 +108166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 145
+                    "line": 138,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -108182,8 +108188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 155
+                    "line": 145,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -108204,8 +108210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 162
+                    "line": 155,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -108218,8 +108224,8 @@
                         "@return array<string, array>"
                     ],
                     "params": [],
-                    "line": 165,
-                    "end": 169
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -108232,8 +108238,8 @@
                         "@return array<string, array>"
                     ],
                     "params": [],
-                    "line": 172,
-                    "end": 176
+                    "line": 169,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -108252,8 +108258,74 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 182
+                    "line": 176,
+                    "end": 179
+                },
+                {
+                    "routes": [],
+                    "name": "abilityRefusal",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "abilityRefusal(array $args): ?string",
+                    "doc": "Why an ability's properties are refused, as WP_Ability::prepare_properties says it, or null. @param array<string, mixed> $args",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 182,
+                    "end": 201
+                },
+                {
+                    "routes": [],
+                    "name": "categoryRefusal",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "categoryRefusal(array $args): ?string",
+                    "doc": "Why a category's properties are refused, as WP_Ability_Category::prepare_properties says it, or null. @param array<string, mixed> $args",
+                    "shapes": [
+                        "@param array<string, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 204,
+                    "end": 212
+                },
+                {
+                    "routes": [],
+                    "name": "meta",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "meta(array $meta): array",
+                    "doc": "An ability's meta with the reference's defaults: the three annotations\nfirst, show_in_rest (public's value when unset), then public.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 220,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -108266,8 +108338,8 @@
                         "@return array{categoriesFired: bool, abilitiesFired: bool, categories: array<string, array>, abilities: array<string, array>}"
                     ],
                     "params": [],
-                    "line": 26,
-                    "end": 30
+                    "line": 30,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -108286,66 +108358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
-                },
-                {
-                    "routes": [],
-                    "name": "refusal",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "refusal(string $name, array $args, array $categories): ?string",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, mixed> $args @param array<string, array> $categories"
-                    ],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": "@param array<string, array> $categories"
-                        },
-                        {
-                            "name": "categories",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 185,
-                    "end": 198
-                },
-                {
-                    "routes": [],
-                    "name": "meta",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "meta(array $meta): array",
-                    "doc": "An ability's meta with the reference's defaults: the three annotations, show_in_rest and public. @return array<string, mixed>",
-                    "shapes": [
-                        "@return array<string, mixed>"
-                    ],
-                    "params": [
-                        {
-                            "name": "meta",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 201,
-                    "end": 207
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -108387,8 +108401,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 222
+                    "line": 229,
+                    "end": 241
                 }
             ]
         },
@@ -108398,8 +108412,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AbilityRun.php",
-            "lines": 41,
-            "doc": "Running an ability as the reference runs one (probe abilities-registry):\ninput given to an ability without an input schema is refused, input that\nits schema refuses is ability_invalid_input; a permission callback that\ndoes not answer true is ability_invalid_permissions (an error it returns\nis reported as a notice); then wp_before_execute_ability, the callback\n(an error it returns is the answer), the output checked against the\noutput schema (ability_invalid_output), and wp_after_execute_ability.",
+            "lines": 28,
+            "doc": "The checks of an ability's run, as the reference makes them (probes\nabilities-registry, abilities-classes); WP_Ability::execute strings them:\ninput left out takes the input schema's default, input given to an ability\nwithout an input schema is refused, input that its schema refuses is\nability_invalid_input; a permission callback that does not answer true is\nability_invalid_permissions (an error it returns is reported as a notice);\nthen wp_before_execute_ability, the callback\n(an error it returns is the answer), the output checked against the\noutput schema (ability_invalid_output), and wp_after_execute_ability.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -108440,42 +108454,69 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 26
+                    "line": 21,
+                    "end": 28
                 },
                 {
                     "routes": [],
-                    "name": "execute",
+                    "name": "allowed",
                     "static": true,
                     "visibility": "public",
-                    "signature": "execute(WP_Ability $ability, mixed $callback, mixed $input): mixed",
-                    "doc": "The ability's answer, or the error that stopped it.",
+                    "signature": "allowed(string $name, mixed $answer): WP_Error|true",
+                    "doc": "True, or the error a permission answer other than true becomes (an error it returns is reported as a notice).",
                     "shapes": [],
                     "params": [
                         {
-                            "name": "ability",
-                            "type": "WP_Ability",
+                            "name": "name",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "callback",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "input",
+                            "name": "answer",
                             "type": "mixed",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 55
+                    "line": 31,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "output",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "output(string $name, array $schema, mixed $output): WP_Error|true",
+                    "doc": "True, or why the output does not fit the output schema.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "output",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 40,
+                    "end": 44
                 }
             ]
         },

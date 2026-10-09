@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 /**
- * Running an ability as the reference runs one (probe abilities-registry):
- * input given to an ability without an input schema is refused, input that
- * its schema refuses is ability_invalid_input; a permission callback that
- * does not answer true is ability_invalid_permissions (an error it returns
- * is reported as a notice); then wp_before_execute_ability, the callback
+ * The checks of an ability's run, as the reference makes them (probes
+ * abilities-registry, abilities-classes); WP_Ability::execute strings them:
+ * input left out takes the input schema's default, input given to an ability
+ * without an input schema is refused, input that its schema refuses is
+ * ability_invalid_input; a permission callback that does not answer true is
+ * ability_invalid_permissions (an error it returns is reported as a notice);
+ * then wp_before_execute_ability, the callback
  * (an error it returns is the answer), the output checked against the
  * output schema (ability_invalid_output), and wp_after_execute_ability.
  */
@@ -25,32 +27,19 @@ final class AbilityRun
         return \is_wp_error($valid) ? new \WP_Error('ability_invalid_input', sprintf('Ability "%1$s" has invalid input. Reason: %2$s', $name, $valid->get_error_message())) : true;
     }
 
-    /** The ability's answer, or the error that stopped it. */
-    public static function execute(\WP_Ability $ability, mixed $callback, mixed $input): mixed
+    /** True, or the error a permission answer other than true becomes (an error it returns is reported as a notice). */
+    public static function allowed(string $name, mixed $answer): true|\WP_Error
     {
-        $name = $ability->get_name();
-        $valid = self::input($name, $ability->get_input_schema(), $input);
-        if ($valid instanceof \WP_Error) {
-            return $valid;
+        if ($answer instanceof \WP_Error) {
+            \_doing_it_wrong('WP_Ability::execute', $answer->get_error_message(), '6.9.0');
         }
-        $allowed = $ability->check_permissions($input);
-        if ($allowed instanceof \WP_Error) {
-            \_doing_it_wrong('WP_Ability::execute', $allowed->get_error_message(), '6.9.0');
-        }
-        if ($allowed !== true) {
-            return new \WP_Error('ability_invalid_permissions', sprintf('Ability "%s" does not have necessary permission.', $name));
-        }
-        \do_action('wp_before_execute_ability', $name, $input);
-        $result = !is_callable($callback) ? null : ($input === null ? call_user_func($callback) : call_user_func($callback, $input));
-        if ($result instanceof \WP_Error) {
-            return $result;
-        }
-        $schema = $ability->get_output_schema();
-        $fits = $schema === [] ? true : \rest_validate_value_from_schema($result, $schema, 'output');
-        if (\is_wp_error($fits)) {
-            return new \WP_Error('ability_invalid_output', sprintf('Ability "%1$s" has invalid output. Reason: %2$s', $name, $fits->get_error_message()));
-        }
-        \do_action('wp_after_execute_ability', $name, $input, $result);
-        return $result;
+        return $answer === true ? true : new \WP_Error('ability_invalid_permissions', sprintf('Ability "%s" does not have necessary permission.', $name));
+    }
+
+    /** True, or why the output does not fit the output schema. */
+    public static function output(string $name, array $schema, mixed $output): true|\WP_Error
+    {
+        $fits = $schema === [] ? true : \rest_validate_value_from_schema($output, $schema, 'output');
+        return \is_wp_error($fits) ? new \WP_Error('ability_invalid_output', sprintf('Ability "%1$s" has invalid output. Reason: %2$s', $name, $fits->get_error_message())) : true;
     }
 }
