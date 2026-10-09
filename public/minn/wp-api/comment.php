@@ -490,6 +490,31 @@ function get_comment_author_url($comment_id = 0)
     return apply_filters('get_comment_author_url', $url === '' ? '' : esc_url($url), (string) ($comment->comment_ID ?? ''), $comment);
 }
 
+/** Prints a comment author's URL, through comment_url. */
+function comment_author_url($comment_id = 0)
+{
+    $comment = get_comment($comment_id);
+    echo apply_filters('comment_url', get_comment_author_url($comment), $comment->comment_ID ?? '');
+}
+
+/** A link to a comment author's URL; its text the one given, or the URL without its http:// and http://www. and one trailing slash. */
+function get_comment_author_url_link($link_text = '', $before = '', $after = '', $comment = 0)
+{
+    $url = get_comment_author_url($comment);
+    $text = $link_text;
+    if ($text === '') {
+        $text = str_replace(['http://www.', 'http://'], '', $url);
+        $text = str_ends_with($text, '/') ? substr($text, 0, -1) : $text;
+    }
+    return apply_filters('get_comment_author_url_link', $before . '<a href="' . $url . '" rel="external">' . $text . '</a>' . $after);
+}
+
+/** Prints get_comment_author_url_link. */
+function comment_author_url_link($link_text = '', $before = '', $after = '', $comment = 0)
+{
+    echo get_comment_author_url_link($link_text, $before, $after, $comment);
+}
+
 function comment_ID()
 {
     echo (string) (get_comment()->comment_ID ?? '');
@@ -893,7 +918,7 @@ function get_comment_id_fields($post = null)
 {
     $post = get_post($post);
     $post_id = $post ? (int) $post->ID : 0;
-    $reply_to = isset($_GET['replytocom']) ? (int) $_GET['replytocom'] : 0;
+    $reply_to = _get_comment_reply_id($post_id);
     $result = "<input type='hidden' name='comment_post_ID' value='{$post_id}' id='comment_post_ID' />\n";
     $result .= "<input type='hidden' name='comment_parent' id='comment_parent' value='{$reply_to}' />\n";
     return apply_filters('comment_id_fields', $result, $post_id, $reply_to);
@@ -957,11 +982,98 @@ function comment_reply_link($args = [], $comment = null, $post = null)
     echo get_comment_reply_link($args, $comment, $post);
 }
 
-/** The link that cancels a reply: the page without its replytocom, hidden unless one is replying. */
+/** The link that opens a post's comment form (a sign-in link when commenting needs an account), or false while its comments are closed. */
+function get_post_reply_link($args = [], $post = null)
+{
+    $args = wp_parse_args($args, ['add_below' => 'post', 'respond_id' => 'respond', 'reply_text' => 'Leave a Comment', 'login_text' => 'Log in to leave a Comment', 'before' => '', 'after' => '']);
+    $post = get_post($post);
+    if (!$post || !comments_open($post->ID)) {
+        return false;
+    }
+    if (get_option('comment_registration') && !is_user_logged_in()) {
+        $link = sprintf('<a rel="nofollow" class="comment-reply-login" href="%s">%s</a>', esc_url(wp_login_url()), $args['login_text']);
+    } else {
+        $move = sprintf('return addComment.moveForm( "%1$s-%2$d", "0", "%3$s", "%2$d" )', $args['add_below'], $post->ID, $args['respond_id']);
+        $link = sprintf("<a rel='nofollow' class='comment-reply-link' href='%s' onclick='%s'>%s</a>", get_permalink($post->ID) . '#' . $args['respond_id'], $move, $args['reply_text']);
+    }
+    return apply_filters('post_comments_link', $args['before'] . $link . $args['after'], $post);
+}
+
+/** Prints get_post_reply_link. */
+function post_reply_link($args = [], $post = null)
+{
+    echo get_post_reply_link($args, $post);
+}
+
+/** The comment ?replytocom= names: a positive number naming an approved comment on the post, else 0. */
+function _get_comment_reply_id($post = null)
+{
+    $post = get_post($post);
+    $asked = $_GET['replytocom'] ?? null;
+    if (!$post || !is_numeric($asked) || (int) $asked <= 0) {
+        return 0;
+    }
+    $comment = get_comment((int) $asked);
+    if (!$comment || (int) $comment->comment_post_ID !== (int) $post->ID || (string) $comment->comment_approved !== '1') {
+        return 0;
+    }
+    return (int) $asked;
+}
+
+/** Prints the comment's type: the comment, trackback or pingback text given, "Comment" etc. by default. */
+function comment_type($comment_text = false, $trackback_text = false, $pingback_text = false)
+{
+    echo match (get_comment_type()) {
+        'trackback' => $trackback_text === false ? 'Trackback' : $trackback_text,
+        'pingback' => $pingback_text === false ? 'Pingback' : $pingback_text,
+        default => $comment_text === false ? 'Comment' : $comment_text,
+    };
+}
+
+/** The address that takes trackbacks for the current post: trackback/ under a pretty permalink, the siteurl option's wp-trackback.php?p= otherwise. */
+function get_trackback_url()
+{
+    $url = get_option('permalink_structure')
+        ? trailingslashit(get_permalink()) . user_trailingslashit('trackback', 'single_trackback')
+        : get_option('siteurl') . '/wp-trackback.php?p=' . get_the_ID();
+    return apply_filters('trackback_url', $url);
+}
+
+/** Prints the trackback address; given false it returns it instead (deprecated since 2.5.0). */
+function trackback_url($deprecated_echo = true)
+{
+    if ($deprecated_echo !== true) {
+        _deprecated_argument(__FUNCTION__, '2.5.0', 'Call get_trackback_url() for the address without printing it.');
+    }
+    if (!$deprecated_echo) {
+        return get_trackback_url();
+    }
+    echo get_trackback_url();
+}
+
+/** Prints the current post's trackback discovery block (RDF), except to the W3C validator. */
+function trackback_rdf($deprecated = '')
+{
+    if ($deprecated !== '') {
+        _deprecated_argument(__FUNCTION__, '2.5.0');
+    }
+    if (stripos((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 'W3C_Validator') !== false) {
+        return;
+    }
+    echo "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\t\t\txmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n\t\t\txmlns:trackback=\"http://madskills.com/public/xml/rss/module/trackback/\">\n\t\t<rdf:Description rdf:about=\"";
+    the_permalink();
+    echo "\"\n    dc:identifier=\"";
+    the_permalink();
+    echo "\"\n    dc:title=\"" . the_title_attribute(['echo' => false]) . "\"\n    trackback:ping=\"";
+    trackback_url();
+    echo "\" />\n</rdf:RDF>";
+}
+
+/** The link that cancels a reply: the page without its replytocom, hidden unless it names a comment the post takes replies to. */
 function get_cancel_comment_reply_link($link_text = '', $post = null)
 {
     $link_text = $link_text === '' ? 'Click here to cancel reply.' : $link_text;
-    $style = isset($_GET['replytocom']) ? '' : ' style="display:none;"';
+    $style = _get_comment_reply_id($post) > 0 ? '' : ' style="display:none;"';
     $link = esc_html(remove_query_arg(['replytocom', 'unapproved', 'moderation-hash'])) . '#respond';
     $markup = '<a rel="nofollow" id="cancel-comment-reply-link" href="' . $link . '"' . $style . '>' . $link_text . '</a>';
     return apply_filters('cancel_comment_reply_link', $markup, $link, $link_text);
@@ -972,7 +1084,8 @@ function comment_form_title($no_reply_text = false, $reply_text = false, $link_t
 {
     $no_reply_text = $no_reply_text === false ? 'Leave a Reply' : $no_reply_text;
     $reply_text = $reply_text === false ? 'Leave a Reply to %s' : $reply_text;
-    $reply_to = isset($_GET['replytocom']) ? get_comment((int) $_GET['replytocom']) : null;
+    $reply_id = _get_comment_reply_id($post);
+    $reply_to = $reply_id > 0 ? get_comment($reply_id) : null;
     if ($reply_to === null) {
         echo $no_reply_text;
         return;

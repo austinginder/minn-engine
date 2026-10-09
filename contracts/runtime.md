@@ -6707,3 +6707,39 @@ fetches the engine never sends) joins the XML-RPC area's pings.
 - `wp_delete_auto_drafts` deletes auto-drafts dated over a week ago.
   `wp_queue_posts_for_term_meta_lazyload` has nothing to queue: the engine
   reads term meta directly.
+
+## comment-template.php's remaining tags (2026-10-08)
+
+Probe `comment-template-more` (`tests/tools/comment-template-more-probe.php`).
+Ten functions, all real. The trackback tags only print addresses and the
+discovery block; receiving and sending trackbacks stays in the XML-RPC area.
+
+- **Author URL.** `comment_author_url` prints `get_comment_author_url`
+  through `comment_url` (the comment id as a string). `get_comment_author_url_link`
+  is `before`, `<a href="URL" rel="external">TEXT</a>`, `after`, all through
+  `get_comment_author_url_link`. TEXT is the text given, or the escaped URL
+  with every `http://www.` and then every `http://` removed (anywhere in it,
+  case-sensitive; `https://` stays) and one trailing slash dropped. Without a
+  URL the link is still printed, with an empty href.
+- `comment_type` prints the comment, trackback or pingback text (in that
+  argument order), `Comment`, `Trackback` and `Pingback` by default; any other
+  type is a comment.
+- **Post reply link.** `get_post_reply_link` (single-quoted attributes, an
+  `addComment.moveForm( "post-ID", "0", "respond", "ID" )` onclick, href the
+  permalink plus `#respond`) or, when commenting needs an account and nobody
+  is signed in, a `comment-reply-login` link to `wp_login_url()` with no
+  redirect. false while comments are closed. `post_comments_link` sees
+  before and after and gets the post.
+- **`_get_comment_reply_id`.** `?replytocom=` counts only when it is numeric
+  (leading space allowed), positive, and names an approved comment on the
+  post (a held comment is 0 even for an administrator); 0 otherwise, as an
+  int. `get_comment_id_fields`, `comment_form_title` and
+  `get_cancel_comment_reply_link` (whose link shows only then) now go through
+  it, where they read the query var raw before.
+- **Trackback.** `get_trackback_url`: `trackback/` under the permalink with
+  pretty permalinks, else the `siteurl` option's `/wp-trackback.php?p=ID`
+  (the option itself, not `site_url()`), through `trackback_url`.
+  `trackback_url(false)` returns it and reports the argument deprecated
+  (2.5.0). `trackback_rdf` prints the RDF block (permalink twice,
+  `the_title_attribute`, the trackback URL); nothing when the user agent
+  contains `W3C_Validator` in any case; an argument is deprecated (2.5.0).

@@ -1,0 +1,221 @@
+[
+    [
+        "author urls",
+        [
+            "https://www.zz-ctm.example/path/",
+            "http://zz-ctm.example",
+            "",
+            ""
+        ]
+    ],
+    [
+        "author url links",
+        [
+            "<a href=\"https://www.zz-ctm.example/path/\" rel=\"external\">https://www.zz-ctm.example/path</a>",
+            "<b><a href=\"https://www.zz-ctm.example/path/\" rel=\"external\">Visit</a></b>",
+            "<a href=\"http://zz-ctm.example\" rel=\"external\">zz-ctm.example</a>",
+            "[<a href=\"\" rel=\"external\"></a>]",
+            "<a href=\"\" rel=\"external\"></a>",
+            "<a href=\"http://www.zz-ctm.example/\" rel=\"external\">zz-ctm.example</a>",
+            "<a href=\"http://zz-ctm.example/a//?x=1&#038;y=2\" rel=\"external\">zz-ctm.example/a//?x=1&#038;y=2</a>",
+            "<a href=\"http://WWW.ZZ-CTM.EXAMPLE\" rel=\"external\">WWW.ZZ-CTM.EXAMPLE</a>",
+            "<a href=\"https://zz-ctm.example/?u=http://www.x.example/http://y\" rel=\"external\">https://zz-ctm.example/?u=x.example/y</a>",
+            "<a href=\"http://zz-ctm.example/b//\" rel=\"external\">zz-ctm.example/b/</a>",
+            "<a href=\"https://www.zz-ctm.example/path/\" rel=\"external\"><i>Tagged</i> & more</a>",
+            "(<a href=\"https://www.zz-ctm.example/path/\" rel=\"external\">Echoed</a>)"
+        ]
+    ],
+    [
+        "author url links, filtered",
+        [
+            "https://www.zz-ctm.example/path/#from-filter-string-{with url}",
+            "<A HREF=\"HTTPS://WWW.ZZ-CTM.EXAMPLE/PATH/\" REL=\"EXTERNAL\">HTTPS://WWW.ZZ-CTM.EXAMPLE/PATH</A>",
+            "[B]<A HREF=\"HTTP://ZZ-CTM.EXAMPLE\" REL=\"EXTERNAL\">ZZ-CTM.EXAMPLE</A>[/B]"
+        ]
+    ],
+    [
+        "comment types",
+        [
+            [
+                "Comment",
+                "A remark"
+            ],
+            [
+                "Pingback",
+                "A ping"
+            ],
+            [
+                "Trackback",
+                "A track"
+            ],
+            [
+                "Comment",
+                "A remark"
+            ]
+        ]
+    ],
+    [
+        "post reply links",
+        [
+            "<a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Leave a Comment</a>",
+            "<p><a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#zz-respond' onclick='return addComment.moveForm( \"zz-{post}\", \"0\", \"zz-respond\", \"{post}\" )'>Say something</a></p>",
+            false,
+            "<a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Echo reply</a>"
+        ]
+    ],
+    [
+        "post reply links, sign-in required",
+        [
+            "<a rel=\"nofollow\" class=\"comment-reply-login\" href=\"{site}/wp-login.php\">Log in to leave a Comment</a>",
+            "[<a rel=\"nofollow\" class=\"comment-reply-login\" href=\"{site}/wp-login.php\">Sign in first</a>]",
+            "<a rel=\"nofollow\" class=\"comment-reply-login\" href=\"{site}/wp-login.php\">Log in to leave a Comment</a><!-- filtered {post} -->",
+            "<a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Leave a Comment</a>"
+        ]
+    ],
+    [
+        "post reply link, filtered",
+        [
+            "<a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Leave a Comment</a><!-- {post} -->",
+            "<p><a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Leave a Comment</a></p><!-- {post} -->"
+        ]
+    ],
+    [
+        "reply to comment ids",
+        [
+            [
+                "integer",
+                "with url"
+            ],
+            [
+                "integer",
+                "with url"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            0,
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                "with url"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ]
+        ]
+    ],
+    [
+        "the form for a reply",
+        [
+            [
+                "<input type='hidden' name='comment_post_ID' value='{post}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='{with url}' />\n",
+                "Leave a Reply to <a href=\"#comment-{with url}\">Zed</a>",
+                "To Zed",
+                false
+            ],
+            [
+                "<input type='hidden' name='comment_post_ID' value='{post}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+                "Leave a Reply",
+                "None",
+                true
+            ],
+            [
+                "<input type='hidden' name='comment_post_ID' value='{post}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+                "Leave a Reply",
+                "None",
+                true
+            ],
+            [
+                "<input type='hidden' name='comment_post_ID' value='{post}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+                "Leave a Reply",
+                "None",
+                true
+            ],
+            [
+                "<input type='hidden' name='comment_post_ID' value='{post}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+                "Leave a Reply",
+                "None",
+                true
+            ],
+            [
+                "<input type='hidden' name='comment_post_ID' value='{post}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+                "Leave a Reply",
+                "None",
+                true
+            ]
+        ]
+    ],
+    [
+        "trackback urls",
+        [
+            "{site}/zz-ctm-post/trackback/",
+            "{site}/zz-ctm-post/trackback/",
+            "{site}/zz-ctm-post/trackback/",
+            "<a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Leave a Comment</a>",
+            "<a rel='nofollow' class='comment-reply-link' href='{site}/zz-ctm-post/#respond' onclick='return addComment.moveForm( \"post-{post}\", \"0\", \"respond\", \"{post}\" )'>Leave a Comment</a>",
+            [
+                "",
+                "{site}/zz-ctm-post/trackback/",
+                [
+                    [
+                        "trackback_url",
+                        "2.5.0"
+                    ]
+                ]
+            ],
+            "{site}/wp-trackback.php?p={post}",
+            "https://zz-ctm-siteurl.example",
+            "{site}/zz-ctm-post/trackback/?from-filter"
+        ]
+    ],
+    [
+        "trackback rdf",
+        [
+            "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\t\t\txmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n\t\t\txmlns:trackback=\"http://madskills.com/public/xml/rss/module/trackback/\">\n\t\t<rdf:Description rdf:about=\"{site}/zz-ctm-post/\"\n    dc:identifier=\"{site}/zz-ctm-post/\"\n    dc:title=\"zz ctm post\"\n    trackback:ping=\"{site}/zz-ctm-post/trackback/\" />\n</rdf:RDF>",
+            "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\t\t\txmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n\t\t\txmlns:trackback=\"http://madskills.com/public/xml/rss/module/trackback/\">\n\t\t<rdf:Description rdf:about=\"{site}/zz-ctm-post/\"\n    dc:identifier=\"{site}/zz-ctm-post/\"\n    dc:title=\"zz ctm post\"\n    trackback:ping=\"{site}/zz-ctm-post/trackback/\" />\n</rdf:RDF>",
+            "",
+            "",
+            "",
+            "<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"\n\t\t\txmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n\t\t\txmlns:trackback=\"http://madskills.com/public/xml/rss/module/trackback/\">\n\t\t<rdf:Description rdf:about=\"{site}/zz-ctm-titled/\"\n    dc:identifier=\"{site}/zz-ctm-titled/\"\n    dc:title=\"zz ctm &#8220;quoted&#8221; &#038; bold it&#8217;s\"\n    trackback:ping=\"{site}/zz-ctm-titled/trackback/\" />\n</rdf:RDF>",
+            [
+                [
+                    "trackback_url",
+                    "2.5.0"
+                ],
+                [
+                    "trackback_rdf",
+                    "2.5.0"
+                ]
+            ]
+        ]
+    ]
+]

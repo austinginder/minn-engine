@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 743,
-        "composes": 1570,
+        "composes": 1578,
         "leaf": 764,
-        "noop": 2448,
+        "noop": 2450,
         "placeholder": 280,
         "deadend": 1599,
-        "functions": 7327,
+        "functions": 7337,
         "minnMethods": 893,
         "leafLinesOver15": 13
     },
@@ -25604,6 +25604,16 @@
             "minn": [],
             "composes": []
         },
+        "_get_comment_reply_id": {
+            "file": "comment.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_comment",
+                "get_post"
+            ]
+        },
         "_get_component_from_parsed_url_array": {
             "file": "formatting.php",
             "lines": 1,
@@ -32576,6 +32586,26 @@
                 "get_comment_author_rss"
             ]
         },
+        "comment_author_url": {
+            "file": "comment.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_comment",
+                "get_comment_author_url"
+            ]
+        },
+        "comment_author_url_link": {
+            "file": "comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_comment_author_url_link"
+            ]
+        },
         "comment_class": {
             "file": "comment.php",
             "lines": 6,
@@ -32641,10 +32671,11 @@
         },
         "comment_form_title": {
             "file": "comment.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_get_comment_reply_id",
                 "get_comment",
                 "get_comment_author"
             ]
@@ -32716,6 +32747,15 @@
             "minn": [],
             "composes": [
                 "get_comment_time"
+            ]
+        },
+        "comment_type": {
+            "file": "comment.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_comment_type"
             ]
         },
         "comments_block_form_defaults": {
@@ -36262,6 +36302,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_get_comment_reply_id",
                 "apply_filters",
                 "esc_html",
                 "remove_query_arg"
@@ -36574,6 +36615,16 @@
                 "get_comment"
             ]
         },
+        "get_comment_author_url_link": {
+            "file": "comment.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_comment_author_url"
+            ]
+        },
         "get_comment_class": {
             "file": "comment.php",
             "lines": 17,
@@ -36650,6 +36701,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_get_comment_reply_id",
                 "apply_filters",
                 "get_post"
             ]
@@ -38798,6 +38850,23 @@
                 "get_post"
             ]
         },
+        "get_post_reply_link": {
+            "file": "comment.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "comments_open",
+                "esc_url",
+                "get_option",
+                "get_permalink",
+                "get_post",
+                "is_user_logged_in",
+                "wp_login_url",
+                "wp_parse_args"
+            ]
+        },
         "get_post_states": {
             "file": "admin.php",
             "lines": 16,
@@ -40813,6 +40882,19 @@
                 "apply_filters",
                 "get_post",
                 "sanitize_trackback_urls"
+            ]
+        },
+        "get_trackback_url": {
+            "file": "comment.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_option",
+                "get_permalink",
+                "trailingslashit",
+                "user_trailingslashit"
             ]
         },
         "get_transient": {
@@ -44743,6 +44825,15 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "post_reply_link": {
+            "file": "comment.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_post_reply_link"
+            ]
         },
         "post_revisions_meta_box": {
             "file": "deadends.php",
@@ -50254,6 +50345,28 @@
             "minn": [],
             "composes": [],
             "deadend": "xmlrpc"
+        },
+        "trackback_rdf": {
+            "file": "comment.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_argument",
+                "the_permalink",
+                "the_title_attribute",
+                "trackback_url"
+            ]
+        },
+        "trackback_url": {
+            "file": "comment.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_argument",
+                "get_trackback_url"
+            ]
         },
         "trackback_url_list": {
             "file": "deadends.php",
