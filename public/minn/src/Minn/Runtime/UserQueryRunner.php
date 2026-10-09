@@ -180,7 +180,18 @@ final class UserQueryRunner
             };
         }
         $columns = (array) \apply_filters('user_search_columns', $columns, $search, $query);
-        $like = Sql::quote(($leading ? '%' : '') . Sql::like($search) . ($trailing ? '%' : ''));
+        return self::searchSql($search, $columns, $leading && $trailing ? 'both' : ($leading ? 'leading' : ($trailing ? 'trailing' : false)));
+    }
+
+    /**
+     * A search over columns (get_search_sql): ID matched exactly, the rest
+     * by LIKE with wildcards at the leading or trailing end, or both.
+     *
+     * @param list<string> $columns
+     */
+    public static function searchSql(string $search, array $columns, string|false $wild): string
+    {
+        $like = Sql::quote(($wild === 'leading' || $wild === 'both' ? '%' : '') . Sql::like($search) . ($wild === 'trailing' || $wild === 'both' ? '%' : ''));
         $parts = array_map(static fn ($column) => $column === 'ID' ? "{$column} = " . Sql::quote($search) : "{$column} LIKE {$like}", $columns);
         return ' AND (' . implode(' OR ', $parts) . ')';
     }

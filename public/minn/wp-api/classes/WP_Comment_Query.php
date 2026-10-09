@@ -52,6 +52,31 @@ class WP_Comment_Query
         return (new CommentQueryRunner($wpdb))->run($this);
     }
 
+    /** The old protected get_search_sql, callable as it was; anything else answers false (probe query-compat). */
+    public function __call($name, $arguments)
+    {
+        return $name === 'get_search_sql' ? $this->get_search_sql(...$arguments) : false;
+    }
+
+    protected function get_comment_ids()
+    {
+        global $wpdb;
+        $this->meta_query = new WP_Meta_Query();
+        $this->meta_query->parse_query_vars($this->query_vars);
+        $meta = empty($this->meta_query->queries) ? [] : (array) $this->meta_query->get_sql('comment', $wpdb->comments, 'comment_ID', $this);
+        return (new Minn\Runtime\CommentQueryRunner($wpdb))->ids($this, $meta);
+    }
+
+    protected function fill_descendants($comments)
+    {
+        return (new Minn\Runtime\CommentThreads())->fill($this, (array) $comments);
+    }
+
+    protected function get_search_sql($search, $columns)
+    {
+        return Minn\Runtime\CommentQueryWhere::searchSql((string) $search, (array) $columns);
+    }
+
     protected function parse_orderby($orderby)
     {
         global $wpdb;

@@ -62,6 +62,26 @@ class WP_Term_Query
         return TermOrder::clause($this, (string) $orderby_raw);
     }
 
+    protected function parse_orderby_meta($orderby_raw)
+    {
+        return Minn\Runtime\TermOrder::meta($this, strtolower((string) $orderby_raw));
+    }
+
+    /**
+     * The cache key for a request (probe query-compat): the query vars it
+     * knows, in their own order, with the cache switches left out and every
+     * fields value but count and all_with_object_id read as all, then the SQL.
+     */
+    protected function generate_cache_key(array $args, $sql)
+    {
+        $cache_args = array_intersect_key(array_replace(array_fill_keys(array_keys((array) $this->query_var_defaults), null), $args), $args);
+        unset($cache_args['update_term_meta_cache'], $cache_args['cache_results']);
+        if (array_key_exists('fields', $cache_args) && !in_array($cache_args['fields'], ['count', 'all_with_object_id'], true)) {
+            $cache_args['fields'] = 'all';
+        }
+        return 'get_terms:' . md5(serialize($cache_args) . $sql);
+    }
+
     protected function parse_order($order)
     {
         return TermOrder::direction($order);

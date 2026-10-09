@@ -7545,3 +7545,43 @@ opens the protected ones.
 - **Meta joins.** A clause's join is LEFT for NOT EXISTS and INNER
   otherwise. Only `get_sql` turns every join LEFT when an OR group holds a
   NOT EXISTS; `get_sql_clauses` alone keeps INNER joins.
+
+## The query classes' compatibility doors (2026-10-09)
+
+Probe `query-compat` (`tests/tools/query-compat-probe.php`) proves the
+magic methods and smaller steps of `WP_Query`, `WP_User_Query`,
+`WP_Comment_Query` and `WP_Term_Query`. It makes a three-comment thread
+and removes it afterwards.
+
+- **`WP_Query`.**
+  - `__get` and `__isset` read `query_vars_hash` and
+    `query_vars_changed`. They stay public because engine code writes
+    them; any other name reads null.
+  - `__call` reaches `init_query_flags` and `parse_tax_query` (whose
+    by-reference argument fails when called this way, as on the
+    reference), and answers false for anything else.
+  - `is_comments_popup()` is deprecated (4.5.0) and returns false.
+  - `generate_postdata()` returns the postdata globals without setting
+    them. Its page comes from its own query. `more` is set on a single, a
+    page or a feed (from the main query), or past the first page of a post
+    split into pages; `setup_postdata` now gets that last case too.
+- **`WP_User_Query`.**
+  - The magic methods read, write, check and unset `results` and
+    `total_users`. Any other name gets a `wp_trigger_error` deprecation
+    and is neither read nor set.
+  - `__call` reaches `get_search_sql`.
+  - The search matches ID exactly and everything else by LIKE, with
+    leading, trailing or both wildcards.
+  - The cache key is `get_users:` and the md5 of the SQL alone.
+  - The last-changed list is the users' stamp, plus the posts' when the
+    query asks for published posts or orders by `post_count`.
+- **`WP_Comment_Query`.**
+  - `__call` reaches `get_search_sql`, a LIKE over the given columns.
+  - `get_comment_ids()` writes the request and returns the IDs (the
+    runner's `ids()`, now shared with the full run).
+  - `fill_descendants()` fills in the thread, flat or threaded.
+- **`WP_Term_Query`.**
+  - `parse_orderby_meta()` is `TermOrder::meta`, now public.
+  - The cache key takes the vars the query knows, in their own order,
+    leaves out the two cache switches, and reads every `fields` value
+    except count and all_with_object_id as `all`.

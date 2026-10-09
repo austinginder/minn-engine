@@ -112672,7 +112672,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentQueryRunner.php",
-            "lines": 105,
+            "lines": 123,
             "doc": "WP_Comment_Query as the reference runs it (probe wp-comment-query-sql):\nthe variables filled and handed to pre_get_comments, the meta query's\nSQL, comments_pre_query (which may answer), the clauses (the date query\namong them) handed to comments_clauses, the request, found_comments_query\nwhen a limited query counts what it found, then the ids, the count, or\nthe comments through the_comments, threaded or flattened when asked.\nResults are not cached between queries (the reference keeps them in the\nobject cache by last_changed).",
             "implements": [],
             "extends": null,
@@ -112733,7 +112733,37 @@
                         }
                     ],
                     "line": 26,
-                    "end": 60
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "ids",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ids(WP_Comment_Query $query, array $meta): array|int",
+                    "doc": "The comment IDs for the query's vars (get_comment_ids), or the count\nwhen it counts; the request is written, and the found rows read when\nthe request counts them and found some.",
+                    "shapes": [
+                        "@param array{join?: string, where?: string} $meta",
+                        "@return list<int>|int"
+                    ],
+                    "params": [
+                        {
+                            "name": "query",
+                            "type": "WP_Comment_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array{join?: string, where?: string}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -112762,8 +112792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 91
+                    "line": 87,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -112793,8 +112823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 122
+                    "line": 119,
+                    "end": 140
                 }
             ]
         },
@@ -112804,7 +112834,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentQueryWhere.php",
-            "lines": 190,
+            "lines": 196,
             "doc": "WP_Comment_Query's WHERE pieces and the posts join, in the reference's\norder (probe wp-comment-query-sql): the approval statuses (with the\nreaders whose held comments show), the post, the id lists, the author's\nemail and url, karma, the types (notes left out unless asked for), the\nparent (0 for a threaded or flat query that names none), the user, the\nsearch, the post's own fields, the author lists, then the meta and date\nqueries.",
             "implements": [],
             "extends": null,
@@ -112906,6 +112936,35 @@
                     ],
                     "line": 38,
                     "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "searchSql",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "searchSql(string $search, array $columns): string",
+                    "doc": "A LIKE test over the columns (get_search_sql), as an AND clause. @param list<string> $columns",
+                    "shapes": [
+                        "@param list<string> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -113016,7 +113075,7 @@
                         }
                     ],
                     "line": 152,
-                    "end": 160
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -113038,8 +113097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 186
+                    "line": 175,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -113058,8 +113117,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 192
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -113080,8 +113139,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 201
+                    "line": 201,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -113100,8 +113159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 207
+                    "line": 210,
+                    "end": 213
                 }
             ]
         },
@@ -121019,7 +121078,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostData.php",
-            "lines": 65,
+            "lines": 68,
             "doc": "The loop's view of a post, as the reference's generate_postdata and\nget_the_content give it (probes the-content, excerpt): the content split\ninto pages at <!--nextpage--> (the line breaks beside the marker go with\nit) and handed to content_pagination, the page the query asks for, and\n\"more\" when the main query shows a single post, a page or a feed; then\nthe content of that page, cut at the more tag with a more link (or run\non past it when \"more\" is set), the teaser dropped when asked or marked\n<!--noteaser-->.",
             "implements": [],
             "extends": null,
@@ -121035,8 +121094,8 @@
                     "name": "generate",
                     "static": true,
                     "visibility": "public",
-                    "signature": "generate(WP_Post $post): array",
-                    "doc": "id, authordata, currentday, currentmonth, page, pages, multipage,\nmore, numpages.",
+                    "signature": "generate(WP_Post $post, ?WP_Query $query = NULL): array",
+                    "doc": "id, authordata, currentday, currentmonth, page, pages, multipage,\nmore, numpages. The page comes from the query given (the main query\notherwise); more is set on a single, a page or a feed, or past the\nfirst page of a post split into pages (probe query-compat).",
                     "shapes": [
                         "@return array<string, mixed>"
                     ],
@@ -121047,10 +121106,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "?WP_Query",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 44
+                    "line": 27,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -121085,8 +121151,8 @@
                             "doc": "as generate() gives them, with strip_teaser when the teaser should go"
                         }
                     ],
-                    "line": 52,
-                    "end": 80
+                    "line": 55,
+                    "end": 83
                 }
             ]
         },
@@ -131011,9 +131077,9 @@
                     "routes": [],
                     "name": "meta",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "meta(WP_Term_Query $query, string $orderby): string",
-                    "doc": "A meta key, meta_value[_num] or a named meta clause as SQL, or '' when the query has no such clause.",
+                    "doc": "A meta key, meta_value[_num] or a named meta clause as SQL (parse_orderby_meta), or '' when the query has no such clause.",
                     "shapes": [],
                     "params": [
                         {
@@ -134972,7 +135038,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/UserQueryRunner.php",
-            "lines": 207,
+            "lines": 218,
             "doc": "WP_User_Query as the reference runs it (probe wp-user-query-sql): the\nvariables filled and handed to pre_get_users; the fields (a column list,\nids, the count), published authors, nicenames and logins, the meta query\nwith the roles and capabilities joined in, the order (post counts joined\nin, include and list orders kept), the limit, a search over the columns\nits shape suggests (through user_search_columns), ids in or out, the date\nquery, then pre_user_query; the query (users_pre_query may answer it),\nfound_users_query, and the results shaped as the fields ask.",
             "implements": [],
             "extends": null,
@@ -135061,6 +135127,42 @@
                 },
                 {
                     "routes": [],
+                    "name": "searchSql",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "searchSql(string $search, array $columns, string|false $wild): string",
+                    "doc": "A search over columns (get_search_sql): ID matched exactly, the rest\nby LIKE with wildcards at the leading or trailing end, or both.",
+                    "shapes": [
+                        "@param list<string> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "wild",
+                            "type": "string|false",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 197
+                },
+                {
+                    "routes": [],
                     "name": "query",
                     "static": false,
                     "visibility": "public",
@@ -135076,8 +135178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 225
+                    "line": 200,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -135251,7 +135353,7 @@
                         }
                     ],
                     "line": 168,
-                    "end": 186
+                    "end": 184
                 }
             ]
         },

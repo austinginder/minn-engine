@@ -155,8 +155,14 @@ final class CommentQueryWhere
         if ($search === '') {
             return [];
         }
+        return [substr(self::searchSql($search, self::SEARCHED), strlen(' AND '))];
+    }
+
+    /** A LIKE test over the columns (get_search_sql), as an AND clause. @param list<string> $columns */
+    public static function searchSql(string $search, array $columns): string
+    {
         $like = Sql::quote('%' . Sql::like($search) . '%');
-        return ['(' . implode(' OR ', array_map(static fn ($column) => "{$column} LIKE {$like}", self::SEARCHED)) . ')'];
+        return ' AND (' . implode(' OR ', array_map(static fn ($column) => "{$column} LIKE {$like}", $columns)) . ')';
     }
 
     /**

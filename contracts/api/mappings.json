@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 769,
-        "composes": 1665,
-        "leaf": 824,
-        "noop": 2575,
+        "minn": 771,
+        "composes": 1671,
+        "leaf": 825,
+        "noop": 2585,
         "placeholder": 250,
         "deadend": 1659,
-        "functions": 7664,
-        "minnMethods": 926,
+        "functions": 7683,
+        "minnMethods": 930,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -8599,11 +8599,36 @@
             "minn": [],
             "composes": []
         },
+        "WP_Comment_Query::__call": {
+            "file": "classes/WP_Comment_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Comment_Query::__construct": {
             "file": "classes/WP_Comment_Query.php",
             "lines": 4,
             "kind": "leaf",
             "minn": [],
+            "composes": []
+        },
+        "WP_Comment_Query::fill_descendants": {
+            "file": "classes/WP_Comment_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentThreads::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Comment_Query::get_comment_ids": {
+            "file": "classes/WP_Comment_Query.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\CommentQueryRunner::__construct"
+            ],
             "composes": []
         },
         "WP_Comment_Query::get_comments": {
@@ -8612,6 +8637,15 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\CommentQueryRunner::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Comment_Query::get_search_sql": {
+            "file": "classes/WP_Comment_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\CommentQueryWhere::searchSql"
             ],
             "composes": []
         },
@@ -16241,10 +16275,31 @@
             "composes": [],
             "deadend": "admin"
         },
+        "WP_Query::__call": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Query::__construct": {
             "file": "classes/WP_Query.php",
             "lines": 3,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Query::__get": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Query::__isset": {
+            "file": "classes/WP_Query.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -16264,6 +16319,17 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Query::generate_postdata": {
+            "file": "classes/WP_Query.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PostData::generate"
+            ],
+            "composes": [
+                "get_post"
+            ]
         },
         "WP_Query::get": {
             "file": "classes/WP_Query.php",
@@ -16386,6 +16452,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Query::is_comments_popup": {
+            "file": "classes/WP_Query.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "WP_Query::is_date": {
             "file": "classes/WP_Query.php",
@@ -22413,6 +22488,13 @@
             ],
             "composes": []
         },
+        "WP_Term_Query::generate_cache_key": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Term_Query::get_search_sql": {
             "file": "classes/WP_Term_Query.php",
             "lines": 2,
@@ -22444,6 +22526,15 @@
             "kind": "noop",
             "minn": [
                 "Minn\\Runtime\\TermOrder::clause"
+            ],
+            "composes": []
+        },
+        "WP_Term_Query::parse_orderby_meta": {
+            "file": "classes/WP_Term_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermOrder::meta"
             ],
             "composes": []
         },
@@ -24883,12 +24974,55 @@
                 "update_user_meta"
             ]
         },
+        "WP_User_Query::__call": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_User_Query::__construct": {
             "file": "classes/WP_User_Query.php",
             "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_User_Query::__get": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_trigger_error"
+            ]
+        },
+        "WP_User_Query::__isset": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_trigger_error"
+            ]
+        },
+        "WP_User_Query::__set": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_trigger_error"
+            ]
+        },
+        "WP_User_Query::__unset": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_trigger_error"
+            ]
         },
         "WP_User_Query::fill_query_vars": {
             "file": "classes/WP_User_Query.php",
@@ -24900,6 +25034,13 @@
                 "wp_parse_args"
             ]
         },
+        "WP_User_Query::generate_cache_key": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_User_Query::get": {
             "file": "classes/WP_User_Query.php",
             "lines": 1,
@@ -24907,11 +25048,29 @@
             "minn": [],
             "composes": []
         },
+        "WP_User_Query::get_cache_last_changed": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_cache_get_last_changed"
+            ]
+        },
         "WP_User_Query::get_results": {
             "file": "classes/WP_User_Query.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "WP_User_Query::get_search_sql": {
+            "file": "classes/WP_User_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\UserQueryRunner::searchSql"
+            ],
             "composes": []
         },
         "WP_User_Query::get_total": {

@@ -36,15 +36,9 @@ final class CommentQueryRunner
             return $answer;
         }
         $qv = $query->query_vars;
-        [$request, $found] = $this->request($query, $meta);
+        $ids = $this->ids($query, $meta);
         if (!empty($qv['count'])) {
-            return (int) $this->wpdb->get_var($request);
-        }
-        $ids = array_map('intval', (array) $this->wpdb->get_col($request));
-        // An empty page counts nothing: the found rows are read only when the query found some.
-        if ($found && $ids !== []) {
-            $query->found_comments = (int) $this->wpdb->get_var(\apply_filters_ref_array('found_comments_query', ['SELECT FOUND_ROWS()', &$query]));
-            $query->max_num_pages = (int) ceil($query->found_comments / max(1, abs((int) ($qv['number']))));
+            return $ids;
         }
         if (($qv['fields'] ?? '') === 'ids') {
             $query->comments = $ids;
@@ -57,6 +51,30 @@ final class CommentQueryRunner
         }
         $query->comments = $comments;
         return $comments;
+    }
+
+    /**
+     * The comment IDs for the query's vars (get_comment_ids), or the count
+     * when it counts; the request is written, and the found rows read when
+     * the request counts them and found some.
+     *
+     * @param array{join?: string, where?: string} $meta
+     * @return list<int>|int
+     */
+    public function ids(\WP_Comment_Query $query, array $meta): array|int
+    {
+        $qv = $query->query_vars;
+        [$request, $found] = $this->request($query, $meta);
+        if (!empty($qv['count'])) {
+            return (int) $this->wpdb->get_var($request);
+        }
+        $ids = array_map('intval', (array) $this->wpdb->get_col($request));
+        // An empty page counts nothing: the found rows are read only when the query found some.
+        if ($found && $ids !== []) {
+            $query->found_comments = (int) $this->wpdb->get_var(\apply_filters_ref_array('found_comments_query', ['SELECT FOUND_ROWS()', &$query]));
+            $query->max_num_pages = (int) ceil($query->found_comments / max(1, abs((int) ($qv['number']))));
+        }
+        return $ids;
     }
 
     /**

@@ -52,8 +52,8 @@ final class TermOrder
         return $byMeta !== '' ? $byMeta : $clause;
     }
 
-    /** A meta key, meta_value[_num] or a named meta clause as SQL, or '' when the query has no such clause. */
-    private static function meta(\WP_Term_Query $query, string $orderby): string
+    /** A meta key, meta_value[_num] or a named meta clause as SQL (parse_orderby_meta), or '' when the query has no such clause. */
+    public static function meta(\WP_Term_Query $query, string $orderby): string
     {
         $query->meta_query->get_sql('term', 't', 'term_id');
         $clauses = (array) $query->meta_query->get_clauses();

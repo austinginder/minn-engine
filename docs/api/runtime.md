@@ -26,8 +26,8 @@ the WordPress runtime plugins load against
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentPages`](#commentpages) | final class | 110 | Which page of a post's comments a comment falls on, and the link that |
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
-| [`CommentQueryRunner`](#commentqueryrunner) | final class | 105 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
-| [`CommentQueryWhere`](#commentquerywhere) | final class | 190 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
+| [`CommentQueryRunner`](#commentqueryrunner) | final class | 123 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
+| [`CommentQueryWhere`](#commentquerywhere) | final class | 196 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 83 | The constants plugin code expects: the fixed set from data/constants.json |
@@ -62,7 +62,7 @@ the WordPress runtime plugins load against
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 264 | Loads the site's plugins into the runtime the way the reference does: |
-| [`PostData`](#postdata) | final class | 65 | The loop's view of a post, as the reference's generate_postdata and |
+| [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
@@ -109,7 +109,7 @@ the WordPress runtime plugins load against
 | [`UserInsert`](#userinsert) | final readonly class | 115 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
-| [`UserQueryRunner`](#userqueryrunner) | final class | 207 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
+| [`UserQueryRunner`](#userqueryrunner) | final class | 218 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
 | [`WidgetAreas`](#widgetareas) | final class | 84 | The widgets helper functions as the reference answers them (probe |
 
@@ -1095,7 +1095,16 @@ __construct(object $wpdb)
 
 Runs the query, as WP_Comment_Query::get_comments() does: a count, ids, or comments.
 
-Internals: `request()` (private, line 69), `comments()` (private, line 101)
+### `ids(WP_Comment_Query $query, array $meta): array|int`
+
+The comment IDs for the query's vars (get_comment_ids), or the count
+when it counts; the request is written, and the found rows read when
+the request counts them and found some.
+
+- `@param array{join?: string, where?: string} $meta`
+- `@return list<int>|int`
+
+Internals: `request()` (private, line 87), `comments()` (private, line 119)
 
 
 ## CommentQueryWhere
@@ -1131,7 +1140,13 @@ The WHERE pieces (joined with AND by the caller) and the posts join
 - `@param array{join?: string, where?: string} $meta the meta query's SQL, when it has clauses`
 - `@return array{0: list<string>, 1: string}`
 
-Internals: `approved()` (private, line 76), `post()` (private, line 96), `types()` (private, line 111), `parentAndUser()` (private, line 139), `search()` (private, line 152), `posts()` (private, line 169), `given()` (private, line 189), `listOf()` (private, line 195), `bare()` (private, line 204)
+### static `searchSql(string $search, array $columns): string`
+
+A LIKE test over the columns (get_search_sql), as an AND clause. @param list<string> $columns
+
+- `@param list<string> $columns`
+
+Internals: `approved()` (private, line 76), `post()` (private, line 96), `types()` (private, line 111), `parentAndUser()` (private, line 139), `search()` (private, line 152), `posts()` (private, line 175), `given()` (private, line 195), `listOf()` (private, line 201), `bare()` (private, line 210)
 
 
 ## CommentThreads
@@ -2707,10 +2722,12 @@ the content of that page, cut at the more tag with a more link (or run
 on past it when "more" is set), the teaser dropped when asked or marked
 <!--noteaser-->.
 
-### static `generate(WP_Post $post): array`
+### static `generate(WP_Post $post, ?WP_Query $query = NULL): array`
 
 id, authordata, currentday, currentmonth, page, pages, multipage,
-more, numpages.
+more, numpages. The page comes from the query given (the main query
+otherwise); more is set on a single, a page or a feed, or past the
+first page of a post split into pages (probe query-compat).
 
 - `@return array<string, mixed>`
 
@@ -4550,7 +4567,9 @@ ASC when asked for, DESC for anything else.
 
 The ORDER BY body for an orderby value, filtered as the reference filters it.
 
-Internals: `meta()` (private, line 56)
+### static `meta(WP_Term_Query $query, string $orderby): string`
+
+A meta key, meta_value[_num] or a named meta clause as SQL (parse_orderby_meta), or '' when the query has no such clause.
 
 
 ## TermQuery
@@ -5262,6 +5281,13 @@ __construct(object $wpdb)
 ### `prepare(WP_User_Query $query): void`
 
 Builds the query's pieces from its variables, as prepare_query does.
+
+### static `searchSql(string $search, array $columns, string|false $wild): string`
+
+A search over columns (get_search_sql): ID matched exactly, the rest
+by LIKE with wildcards at the leading or trailing end, or both.
+
+- `@param list<string> $columns`
 
 ### `query(WP_User_Query $query): void`
 

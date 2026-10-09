@@ -164,9 +164,9 @@ class WP_Query
         }
     }
 
-    public function parse_tax_query(&$q)
+    public function parse_tax_query(&$query_vars)
     {
-        $this->tax_query = new WP_Tax_Query(PostQueryTax::clauses($this, $q));
+        $this->tax_query = new WP_Tax_Query(PostQueryTax::clauses($this, $query_vars));
         do_action('parse_tax_query', $this);
     }
 
@@ -601,6 +601,36 @@ class WP_Query
     public function rewind_comments()
     {
         $this->current_comment = -1;
+    }
+
+    /** The old private fields, readable as they were (probe query-compat); anything else is null. */
+    public function __get($name)
+    {
+        return in_array($name, ['query_vars_hash', 'query_vars_changed'], true) ? $this->{$name} : null;
+    }
+
+    public function __isset($name)
+    {
+        return in_array($name, ['query_vars_hash', 'query_vars_changed'], true) && isset($this->{$name});
+    }
+
+    /** The old private methods, callable as they were; anything else answers false. */
+    public function __call($name, $arguments)
+    {
+        return in_array($name, ['init_query_flags', 'parse_tax_query'], true) ? call_user_func_array([$this, $name], $arguments) : false;
+    }
+
+    public function is_comments_popup()
+    {
+        _deprecated_function(__FUNCTION__, '4.5.0');
+        return false;
+    }
+
+    /** The post's globals as setup_postdata sets them, without setting them; the page comes from this query. */
+    public function generate_postdata($post)
+    {
+        $post = $post instanceof WP_Post ? $post : get_post($post);
+        return $post instanceof WP_Post ? Minn\Runtime\PostData::generate($post, $this) : false;
     }
 
     public function generate_cache_key(array $args, $sql)

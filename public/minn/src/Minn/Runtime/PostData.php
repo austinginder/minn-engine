@@ -18,11 +18,13 @@ final class PostData
 {
     /**
      * id, authordata, currentday, currentmonth, page, pages, multipage,
-     * more, numpages.
+     * more, numpages. The page comes from the query given (the main query
+     * otherwise); more is set on a single, a page or a feed, or past the
+     * first page of a post split into pages (probe query-compat).
      *
      * @return array<string, mixed>
      */
-    public static function generate(\WP_Post $post): array
+    public static function generate(\WP_Post $post, ?\WP_Query $query = null): array
     {
         $content = str_replace("\n<!--nextpage-->\n", '<!--nextpage-->', (string) $post->post_content);
         $content = str_replace(["\n<!--nextpage-->", "<!--nextpage-->\n"], '<!--nextpage-->', $content);
@@ -30,15 +32,16 @@ final class PostData
             $content = substr($content, strlen('<!--nextpage-->'));
         }
         $pages = (array) \apply_filters('content_pagination', explode('<!--nextpage-->', $content), $post);
+        $page = max(1, (int) ($query === null ? \get_query_var('page') : $query->get('page')));
         return [
             'id' => (int) $post->ID,
             'authordata' => \get_userdata((int) $post->post_author),
             'currentday' => \mysql2date('d.m.y', $post->post_date, false),
             'currentmonth' => \mysql2date('m', $post->post_date, false),
-            'page' => max(1, (int) \get_query_var('page')),
+            'page' => $page,
             'pages' => $pages,
             'multipage' => count($pages) > 1 ? 1 : 0,
-            'more' => \is_single() || \is_page() || \is_feed() ? 1 : 0,
+            'more' => \is_single() || \is_page() || \is_feed() || (count($pages) > 1 && $page > 1) ? 1 : 0,
             'numpages' => count($pages),
         ];
     }

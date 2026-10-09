@@ -1,0 +1,243 @@
+[
+    [
+        "WP_Query doors",
+        [
+            [
+                32,
+                []
+            ],
+            [
+                false,
+                []
+            ],
+            [
+                [
+                    true,
+                    true,
+                    false
+                ],
+                []
+            ],
+            [
+                null,
+                []
+            ],
+            [
+                null,
+                []
+            ],
+            [
+                [
+                    false,
+                    false,
+                    false
+                ],
+                []
+            ],
+            [
+                [
+                    "Error",
+                    "WP_Query::parse_tax_query(): Argument #1 ($query_vars) could not be passed by reference"
+                ],
+                []
+            ],
+            [
+                false,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "deprecated_function_run",
+                        "is_comments_popup",
+                        "",
+                        "4.5.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "generate_postdata",
+        [
+            true,
+            {
+                "id": true,
+                "authordata": "WP_User",
+                "currentday": 8,
+                "currentmonth": 2,
+                "page": 1,
+                "pages": 1,
+                "multipage": 0,
+                "more": 0,
+                "numpages": 1
+            },
+            false,
+            [
+                [
+                    "one",
+                    "two",
+                    "three"
+                ],
+                1,
+                3,
+                2,
+                1,
+                "05.03.24",
+                "03"
+            ]
+        ]
+    ],
+    [
+        "WP_User_Query doors",
+        [
+            [
+                1,
+                []
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                [
+                    true,
+                    true,
+                    false
+                ],
+                []
+            ],
+            [
+                null,
+                []
+            ],
+            [
+                [
+                    "zz"
+                ],
+                []
+            ],
+            [
+                [
+                    false,
+                    null
+                ],
+                []
+            ],
+            [
+                false,
+                []
+            ],
+            [
+                " AND (user_login LIKE '%zz%' OR user_email LIKE '%zz%')",
+                []
+            ],
+            [
+                3,
+                []
+            ],
+            [
+                false,
+                []
+            ]
+        ]
+    ],
+    [
+        "user search and cache keys",
+        [
+            " AND (user_login LIKE '%zz%' OR user_email LIKE '%zz%')",
+            " AND (user_login LIKE '%zz')",
+            " AND (user_nicename LIKE 'zz%')",
+            " AND (ID = '42')",
+            " AND (user_url LIKE 'a\\\\_b\\\\%c' OR display_name LIKE 'a\\\\_b\\\\%c')",
+            "get_users:b1698e52a0f16203489454196a0c6307",
+            "get_users:b1698e52a0f16203489454196a0c6307",
+            "get_users:fc1c7a0bdce312b20bc3780dd6d41aaa",
+            [
+                "{microtime}"
+            ],
+            [
+                "{microtime}",
+                "{microtime}"
+            ],
+            [
+                "{microtime}",
+                "{microtime}"
+            ],
+            [
+                "{microtime}",
+                "{microtime}"
+            ],
+            [
+                "{microtime}"
+            ],
+            true
+        ]
+    ],
+    [
+        "WP_Comment_Query doors",
+        [
+            [
+                " AND (comment_author LIKE '%zz%' OR comment_content LIKE '%zz%')",
+                []
+            ],
+            [
+                false,
+                []
+            ],
+            " AND (comment_author LIKE '%zz%' OR comment_author_email LIKE '%zz%')",
+            " AND (comment_content LIKE '%a\\\\%b%')",
+            [
+                true,
+                true,
+                true,
+                "SELECT  {prefix}comments.comment_ID\n\t\t\t FROM {prefix}comments \n\t\t\t WHERE ( ( comment_approved = '0' OR comment_approved = '1' ) ) AND comment_type NOT IN ('note')\n\t\t\t \n\t\t\t ORDER BY {prefix}comments.comment_ID ASC\n\t\t\t LIMIT 0,3"
+            ]
+        ]
+    ],
+    [
+        "comment descendants",
+        [
+            1,
+            [
+                []
+            ],
+            [
+                "zz parent",
+                "zz child",
+                "zz grandchild"
+            ],
+            [
+                [
+                    "zz parent",
+                    [
+                        [
+                            "zz child",
+                            [
+                                "zz grandchild"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "term orderby meta and cache keys",
+        [
+            "CAST({prefix}termmeta.meta_value AS SIGNED)",
+            "{prefix}termmeta.meta_value+0",
+            "CAST(mt1.meta_value AS CHAR)",
+            "CAST({prefix}termmeta.meta_value AS SIGNED)",
+            "",
+            "",
+            "get_terms:b8a25dbda6da4f9cf8bd404cdcc2e42e",
+            "get_terms:b8a25dbda6da4f9cf8bd404cdcc2e42e",
+            "get_terms:8b8cf9716e3f1d90c941df83425df8c7",
+            "get_terms:ac9db07fbd8be7a45eca2da0cd12cdf6",
+            "get_terms:b8a25dbda6da4f9cf8bd404cdcc2e42e",
+            "get_terms:927dcd9cd3b646c3b85947b733d184b6"
+        ]
+    ]
+]
