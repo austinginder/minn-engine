@@ -1,0 +1,566 @@
+[
+    [
+        "dataset names",
+        [
+            [
+                "foo",
+                "fooBar",
+                "wpOn-Click",
+                "",
+                null,
+                "fooBar",
+                "foo",
+                "foo-1",
+                "Foo",
+                "foo-",
+                "foo_bar",
+                "aBC",
+                "xY",
+                "1a",
+                "a-B",
+                "foo"
+            ],
+            [
+                "data-foo",
+                "data-foo-bar",
+                "data-wp-on--click",
+                "data-",
+                "data--foo-bar",
+                "data-foo-bar",
+                null,
+                "data-a1-b",
+                "data--foo",
+                null,
+                "data-x\"y",
+                "data-foo-b-a-r",
+                "data-foo--bar",
+                "data-1a",
+                null,
+                null
+            ],
+            [
+                "data-a'b",
+                "data-a<b",
+                "data-a\u0000b",
+                null,
+                null,
+                null,
+                null,
+                "data-a&b",
+                "data-a:b",
+                "data-a.b",
+                "data-aéb",
+                "data-a`b",
+                "data-aÉb",
+                "data-a_-b",
+                "data-a\\b",
+                "data-a-",
+                "data--ab"
+            ],
+            [
+                null,
+                null,
+                null,
+                null,
+                "a'b",
+                "aéb",
+                "a-é",
+                "a-_",
+                "a",
+                "aBC",
+                null,
+                null,
+                "aB-",
+                null
+            ]
+        ]
+    ],
+    [
+        "relative links made absolute",
+        [
+            "a{background:url(/wp-content/themes/t/img/a.png)} b{background:url('/wp-content/themes/t/../b.png')} c{background:url(\"/abs/c.png\")} d{background:url(https://zz.example/d.png)} e{background:url(data:image/png;base64,AAA)} f{background:url(#frag)} g{background:url( '/wp-content/themes/t/sp.png' )} h{background:url(//cdn.zz/x.png)} i{background:URL(up.png)} j{src:url(/wp-content/themes/t/fonts/a.woff2) format('woff2')} k{background:url(/wp-content/themes/t/dot.png)} l{background:url(\"/wp-content/themes/t/q.png?x=1#y\")} m{background:url(/wp-content/themes/t/about:blank)} n{background:url(/wp-content/themes/t/ftp://x/y.png)} o{background:url(/wp-content/themes/t/HTTPS://x/y.png)} p{background:url()} q{background:url('')} r{background:url(/wp-content/themes/t/.hidden.png)} s{background:url(/wp-content/themes/t/../../x.png)} t{background:url( /wp-content/themes/t/img/u.png )} u{background:url(/wp-content/themes/t/%2Fenc.png)} v{background:url(/wp-content/themes/t/mailto:a@b)} w{background:url(  \"/wp-content/themes/t/w.png\"  )} x{background: url(\n'/wp-content/themes/t/nl.png')} y{background:url(/wp-content/themes/t/Img/Y.PNG)}",
+            "a{background:url(/wp-content/themes/t/css/img/a.png)} b{background:url('/wp-content/themes/t/css/../b.png')} c{background:url(\"/abs/c.png\")} d{background:url(https://zz.example/d.png)} e{background:url(data:image/png;base64,AAA)} f{background:url(#frag)} g{background:url( '/wp-content/themes/t/css/sp.png' )} h{background:url(//cdn.zz/x.png)} i{background:URL(up.png)} j{src:url(/wp-content/themes/t/css/fonts/a.woff2) format('woff2')} k{background:url(/wp-content/themes/t/css/dot.png)} l{background:url(\"/wp-content/themes/t/css/q.png?x=1#y\")} m{background:url(/wp-content/themes/t/css/about:blank)} n{background:url(/wp-content/themes/t/css/ftp://x/y.png)} o{background:url(/wp-content/themes/t/css/HTTPS://x/y.png)} p{background:url()} q{background:url('')} r{background:url(/wp-content/themes/t/css/.hidden.png)} s{background:url(/wp-content/themes/t/css/../../x.png)} t{background:url( /wp-content/themes/t/css/img/u.png )} u{background:url(/wp-content/themes/t/css/%2Fenc.png)} v{background:url(/wp-content/themes/t/css/mailto:a@b)} w{background:url(  \"/wp-content/themes/t/css/w.png\"  )} x{background: url(\n'/wp-content/themes/t/css/nl.png')} y{background:url(/wp-content/themes/t/css/Img/Y.PNG)}",
+            "a{background:url(/wp-content/plugins/p/img/a.png)} b{background:url('/wp-content/plugins/p/../b.png')} c{background:url(\"/abs/c.png\")} d{background:url(https://zz.example/d.png)} e{background:url(data:image/png;base64,AAA)} f{background:url(#frag)} g{background:url( '/wp-content/plugins/p/sp.png' )} h{background:url(//cdn.zz/x.png)} i{background:URL(up.png)} j{src:url(/wp-content/plugins/p/fonts/a.woff2) format('woff2')} k{background:url(/wp-content/plugins/p/dot.png)} l{background:url(\"/wp-content/plugins/p/q.png?x=1#y\")} m{background:url(/wp-content/plugins/p/about:blank)} n{background:url(/wp-content/plugins/p/ftp://x/y.png)} o{background:url(/wp-content/plugins/p/HTTPS://x/y.png)} p{background:url()} q{background:url('')} r{background:url(/wp-content/plugins/p/.hidden.png)} s{background:url(/wp-content/plugins/p/../../x.png)} t{background:url( /wp-content/plugins/p/img/u.png )} u{background:url(/wp-content/plugins/p/%2Fenc.png)} v{background:url(/wp-content/plugins/p/mailto:a@b)} w{background:url(  \"/wp-content/plugins/p/w.png\"  )} x{background: url(\n'/wp-content/plugins/p/nl.png')} y{background:url(/wp-content/plugins/p/Img/Y.PNG)}",
+            "a{background:url(./img/a.png)} b{background:url('./../b.png')} c{background:url(\"/abs/c.png\")} d{background:url(https://zz.example/d.png)} e{background:url(data:image/png;base64,AAA)} f{background:url(#frag)} g{background:url( './sp.png' )} h{background:url(//cdn.zz/x.png)} i{background:URL(up.png)} j{src:url(./fonts/a.woff2) format('woff2')} k{background:url(./dot.png)} l{background:url(\"./q.png?x=1#y\")} m{background:url(./about:blank)} n{background:url(./ftp://x/y.png)} o{background:url(./HTTPS://x/y.png)} p{background:url()} q{background:url('')} r{background:url(./.hidden.png)} s{background:url(./../../x.png)} t{background:url( ./img/u.png )} u{background:url(./%2Fenc.png)} v{background:url(./mailto:a@b)} w{background:url(  \"./w.png\"  )} x{background: url(\n'./nl.png')} y{background:url(./Img/Y.PNG)}",
+            "a{color:red}",
+            "a{background:url(https:/i.png)}",
+            "a{background:url(https:/i.png)}",
+            "a{background:url(/i.png)}",
+            "a{background:url(/i.png)}",
+            "a{background:url(/x/y/i.png)} b{background:url(/x/y/i.png)}",
+            [
+                "a{background:url(/x/i.png)}",
+                "a{background:url(/a/i.png)}",
+                "a{background:url(ftp://zz.example/a/i.png)}",
+                "a{background:url(/a?x=/y/i.png)}",
+                "a{background:url(/a/i.png)}",
+                "a{background:url(https:///a/i.png)}",
+                "a{background:url(/a/i.png)}",
+                "a{background:url(a/b/i.png)}",
+                "a{background:url(../a/i.png)}",
+                "a{background:url()}"
+            ],
+            [
+                "url()",
+                "url() url(/base/x.png)",
+                "url('/base/a)b.png')",
+                "url(/base/a)b.png)",
+                "url( '/base/x.png')",
+                "url('/base/x.png\")",
+                "url(/base/x.png",
+                "url(\"\")",
+                "url(/base/ )",
+                "url( /base/ )",
+                "url('  /base/x.png  ')",
+                "url(/base/x.png)url(/base/y.png)",
+                "url(http:x.png)",
+                "url(https:/x.png)",
+                "url(' /x.png')",
+                "url('#x')",
+                "url(\t /base/x.png\t)",
+                "url(/base/x.png) url(/base/x.png)",
+                "url(/base/a.png) url(/base/b/a.png)",
+                "url(/base/()",
+                "url(/base/httpfoo.png)",
+                "url(/base/datafoo.png)",
+                "url(/base/Data:x)",
+                "url(/base/./x.png)",
+                "url(/base/)",
+                "url(/base/..)"
+            ]
+        ]
+    ],
+    [
+        "block nodes filtered out",
+        [
+            {
+                "0": {
+                    "path": [
+                        "styles"
+                    ],
+                    "selector": "body"
+                },
+                "2": {
+                    "path": [
+                        "styles",
+                        "elements",
+                        "link"
+                    ],
+                    "selector": "a"
+                },
+                "9": {
+                    "path": [
+                        "styles",
+                        "Blocks"
+                    ],
+                    "selector": "v"
+                },
+                "10": {
+                    "path": [],
+                    "selector": "u"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "the polyfill loader",
+        [
+            "( \"fetch\" in window ) || document.write( '<script src=\"https://zz.example/poly.js?ver=1.2\"></scr' + 'ipt>' );",
+            "( \"fetch\" in window ) || document.write( '<script src=\"https://zz.example/poly.js?ver=1.2\"></scr' + 'ipt>' );( window.Promise ) || document.write( '<script src=\"https://{host}/zz/poly-rel.js\"></scr' + 'ipt>' );( x ) || document.write( '<script src=\"https://zz.example/poly-null.js\"></scr' + 'ipt>' );( y ) || document.write( '<script src=\"https://zz.example/poly-empty.js\"></scr' + 'ipt>' );",
+            "",
+            "",
+            "( a ) || document.write( '<script src=\"https://zz.example/p.js?a=1&#038;b=%222%22&#038;ver=v1\"></scr' + 'ipt>' );( b ) || document.write( '<script src=\"https://{host}bare/poly.js?ver=2\"></scr' + 'ipt>' );( c ) || document.write( '<script src=\"https://{host}?ver=2\"></scr' + 'ipt>' );",
+            "( a ) || document.write( '<script src=\"//cdn.zz/p.js?ver=3\"></scr' + 'ipt>' );( b ) || document.write( '<script src=\"https://{host}HTTPS://zz.example/up.js?ver=3\"></scr' + 'ipt>' );( c ) || document.write( '<script src=\"https://{host}httpx.js?ver=3\"></scr' + 'ipt>' );( d'q\" ) || document.write( '<script src=\"https://zz.example/poly.js?ver=1.2\"></scr' + 'ipt>' );",
+            "( b ) || document.write( '<script src=\"https://{host}/zz/poly-rel.js\"></scr' + 'ipt>' );",
+            "( a ) || document.write( '<script src=\"https://zz.example/poly.js?ver=1.2#filtered\"></scr' + 'ipt>' );",
+            "( a ) || document.write( '<script src=\"https://zz.example/base/zz/poly-rel.js\"></scr' + 'ipt>' );"
+        ]
+    ],
+    [
+        "prototype before jquery",
+        [
+            [
+                "prototype",
+                "jquery",
+                "x"
+            ],
+            [
+                "prototype",
+                "jquery"
+            ],
+            [
+                "jquery",
+                "x"
+            ],
+            [
+                "x",
+                "prototype"
+            ],
+            [],
+            [
+                "a",
+                "prototype",
+                "jquery",
+                "b"
+            ],
+            [
+                "prototype",
+                "jquery",
+                "jquery"
+            ],
+            [
+                "prototype",
+                "x",
+                "jquery"
+            ],
+            [
+                "prototype",
+                "jquery",
+                "prototype"
+            ],
+            [
+                "x",
+                "y"
+            ],
+            [
+                "prototype"
+            ],
+            [
+                "jquery"
+            ]
+        ]
+    ],
+    [
+        "the concatenation printers",
+        [
+            [
+                "<!-- zz html -->",
+                "<!-- zz html -->",
+                "var zz = 1;",
+                ""
+            ],
+            [
+                "<script>\nvar zz = 2;\n//# sourceURL=js-inline-concat-zz-a%2Czz-b\n</script>\n<script src=\"https://{host}/wp-admin/load-scripts.php?c=0&#038;load%5Bchunk_0%5D=zz-a,zz-b&#038;ver={version}\"></script>\n",
+                "",
+                "var zz = 2;",
+                "zz-a,zz-b,"
+            ],
+            "<script src=\"https://{host}/wp-admin/load-scripts.php?c=0&#038;load%5Bchunk_0%5D=zz-long-handle,zz-long-handle,zz-long-handle,zz-long-handle,zz-long-handle,zz-long-handle,zz-long-handle,zz-long-handle,zz-long-&#038;load%5Bchunk_1%5D=handle,zz-long-handle,zz-long-handle,zz-long-handle&#038;ver={version}\"></script>\n<!-- zz -->",
+            "<script src=\"https://zz.example/base/wp-admin/load-scripts.php?c=1&#038;load%5Bchunk_0%5D=zz-a,%20zz-b&#038;ver=zz-ver\"></script>\n",
+            "<script>\nvar zz = 4;\n//# sourceURL=js-inline-concat-zz-a\n</script>\n<script src=\"https://{host}/wp-admin/load-scripts.php?c=0&#038;load%5Bchunk_0%5D=zz-a&#038;ver={version}\"></script>\n",
+            "<!-- zz3 -->",
+            [
+                "<!-- zz style html -->",
+                "<!-- zz style html -->",
+                ".zz{}"
+            ],
+            "<link rel='stylesheet' href='https://{host}/wp-admin/load-styles.php?c=0&amp;dir=ltr&amp;load%5Bchunk_0%5D=zz-a,zz-b&amp;ver={version}' media='all' />\n<style>\n.zz2{}\n/*# sourceURL=css-inline-concat-zz-a%2Czz-b */\n</style>\n",
+            "<link rel='stylesheet' href='https://{host}/wp-admin/load-styles.php?c=1&amp;dir=ltr&amp;load%5Bchunk_0%5D=zz-long-style,zz-long-style,zz-long-style,zz-long-style,zz-long-style,zz-long-style,zz-long-style,zz-long-style,zz-long-style,zz&amp;load%5Bchunk_1%5D=-long-style&amp;ver={version}' media='all' />\n<!-- zz style html 2 -->",
+            [
+                "<link rel='stylesheet' href='https://zz.example/sbase/wp-admin/load-styles.php?c=0&amp;dir=ltr&amp;load%5Bchunk_0%5D=zz-c, zz-d&amp;ver=zz-sver' media='all' />\n<style>\n.zz4{}\n/*# sourceURL=css-inline-concat-zz-c%2C%20zz-d */\n</style>\n",
+                "<link rel='stylesheet' href='https://zz.example/sbase/wp-admin/load-styles.php?c=0&amp;dir=ltr&amp;load%5Bchunk_0%5D=zz-c, zz-d&amp;ver=zz-sver' media='all' />\n<style>\n.zz4{}\n/*# sourceURL=css-inline-concat-zz-c%2C%20zz-d */\n</style>\n"
+            ],
+            "<link rel='stylesheet' href='https://{host}/wp-admin/load-styles.php?c=0&amp;dir=rtl&amp;load%5Bchunk_0%5D=zz-a&amp;ver={version}' media='all' />\n",
+            "<!-- zz style html 3 -->"
+        ]
+    ],
+    [
+        "localized data is the script's data string",
+        [
+            "var zzA = {\"a\":\"1\"};",
+            "var zzA = {\"a\":\"1\"};",
+            "var zzA = {\"a\":\"1\"};\nvar zzB = {\"b\":\"2\"};",
+            "var raw = 1;\nvar zzC = {\"c\":\"3\"};",
+            "var replaced = 1;",
+            "var replaced = 1;\nvar zzD = {\"d\":\"4\"};",
+            "var direct = 1;\nvar zzE = {\"e\":\"5\"};",
+            "<script id=\"zz-l2-js-extra\">\nvar replaced = 1;\nvar zzD = {\"d\":\"4\"};\n//# sourceURL=zz-l2-js-extra\n</script>\n",
+            "<script id=\"zz-l3-js-extra\">\nvar direct = 1;\nvar zzE = {\"e\":\"5\"};\n//# sourceURL=zz-l3-js-extra\n</script>\n<script id=\"zz-l3-js\" src=\"https://zz.example/3.js?ver=1\"></script>\n"
+        ]
+    ],
+    [
+        "the embed shortcode outside the_content",
+        [
+            true,
+            "a  b",
+            "a  b"
+        ]
+    ],
+    [
+        "scripts localized just in time",
+        [
+            [
+                false,
+                false,
+                false
+            ],
+            {
+                "autosave": "var autosaveL10n = {\"autosaveInterval\":\"60\",\"blog_id\":\"1\"};",
+                "mce-view": "var mceViewL10n = {\"shortcodes\":[\"wp_caption\",\"caption\",\"gallery\",\"playlist\",\"audio\",\"video\",\"embed\"]};",
+                "word-count": "var wordCountL10n = {\"type\":\"words\",\"shortcodes\":[\"wp_caption\",\"caption\",\"gallery\",\"playlist\",\"audio\",\"video\",\"embed\"]};"
+            }
+        ]
+    ],
+    [
+        "stored styles enqueued",
+        [
+            [
+                false,
+                false,
+                false
+            ],
+            {
+                "core-block-supports": [
+                    true,
+                    true,
+                    [
+                        ".zz-a{color:red;margin-top:1px;}"
+                    ],
+                    false
+                ],
+                "core-core": [
+                    false,
+                    false,
+                    false,
+                    null
+                ],
+                "core": [
+                    false,
+                    false,
+                    false,
+                    null
+                ]
+            },
+            [
+                ".zz-a{color:red;margin-top:1px;}",
+                "/**\n * Core styles: block-supports\n */\n.zz-a {\n\tcolor: red;\n\tmargin-top: 1px;\n}\n.zz-b {\n\tcolor: green;\n}\n"
+            ],
+            {
+                "core-block-supports": [
+                    ".zz-a{color:red;margin-top:1px;}",
+                    "/**\n * Core styles: block-supports\n */\n.zz-a {\n\tcolor: red;\n\tmargin-top: 1px;\n}\n.zz-b {\n\tcolor: green;\n}\n",
+                    ".zz-a{color:red;margin-top:1px;}.zz-b{color:green;}"
+                ],
+                "wp-style-engine-core": [
+                    ".zz-core{color:blue;}",
+                    ".zz-core {\n\tcolor: blue;\n}\n",
+                    ".zz-core{color:blue;}"
+                ]
+            },
+            {
+                "core-block-supports": [
+                    ".zz-a{color:red;margin-top:1px;}",
+                    "/**\n * Core styles: block-supports\n */\n.zz-a {\n\tcolor: red;\n\tmargin-top: 1px;\n}\n.zz-b {\n\tcolor: green;\n}\n",
+                    ".zz-a{color:red;margin-top:1px;}.zz-b{color:green;}",
+                    ".zz-a{color:red;margin-top:1px;}.zz-b{color:green;}"
+                ],
+                "wp-style-engine-core": [
+                    ".zz-core{color:blue;}",
+                    ".zz-core {\n\tcolor: blue;\n}\n",
+                    ".zz-core{color:blue;}",
+                    ".zz-core{color:blue;}"
+                ],
+                "wp-style-engine-zz-context": [
+                    ".zz-other{color:pink;}"
+                ],
+                "wp-style-engine-block-supports-duotone": [
+                    ".zz-ctx{color:teal;}"
+                ]
+            }
+        ]
+    ],
+    [
+        "block style variations",
+        [
+            30,
+            false,
+            true,
+            [
+                false,
+                {
+                    "zz-inline-marker-fake": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-fake{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-fake2": [
+                        [
+                            "wp-block-zz-fake2",
+                            ".zz-inline-marker-fake2{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-never": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-never{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-reg": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-reg{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-styled": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-styled{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-unstyled": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-unstyled{color:red}"
+                        ]
+                    ]
+                }
+            ],
+            [
+                false,
+                {
+                    "zz-inline-marker-fake": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-fake{color:red}"
+                        ],
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-fake{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-fake2": [
+                        [
+                            "wp-block-zz-fake2",
+                            ".zz-inline-marker-fake2{color:red}"
+                        ],
+                        [
+                            "wp-block-zz-fake2",
+                            ".zz-inline-marker-fake2{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-never": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-never{color:red}"
+                        ],
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-never{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-reg": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-reg{color:red}"
+                        ],
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-reg{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-styled": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-styled{color:red}"
+                        ],
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-styled{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-unstyled": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-unstyled{color:red}"
+                        ],
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-unstyled{color:red}"
+                        ]
+                    ]
+                }
+            ],
+            [
+                true,
+                {
+                    "zz-inline-marker-fake": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-fake{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-fake2": [
+                        [
+                            "wp-block-zz-fake2",
+                            ".zz-inline-marker-fake2{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-never": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-never{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-reg": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-reg{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-styled": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-styled{color:red}"
+                        ]
+                    ],
+                    "zz-inline-marker-unstyled": [
+                        [
+                            "wp-block-library",
+                            ".zz-inline-marker-unstyled{color:red}"
+                        ]
+                    ]
+                }
+            ],
+            [
+                [
+                    false,
+                    true
+                ],
+                true
+            ]
+        ]
+    ],
+    [
+        "every registered block's assets",
+        [
+            10,
+            [
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                false,
+                false,
+                false,
+                false,
+                false
+            ],
+            [
+                true,
+                false,
+                true,
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "development scripts",
+        []
+    ]
+]

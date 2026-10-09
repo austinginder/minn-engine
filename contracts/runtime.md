@@ -7771,3 +7771,108 @@ item cache, removal with a deleted term, and the two menu template filters.
 - **Still owed.** `_wp_reset_invalid_menu_item_parent` stays missing. No
   menu or post write on the reference showed it changing a parent, so its
   trigger is unknown.
+
+## Script loader helpers (2026-10-09)
+
+Probe `script-loader-helpers`. It covers the dataset name converters,
+relative stylesheet links, block node filtering, the polyfill loader,
+prototype before jQuery, the concatenation printers, localized data,
+just-in-time localization, the style engine's stored rules, block style
+variations' assets, every registered block's assets, and the development
+scripts.
+
+- **Dataset names.**
+  - `wp_js_dataset_name` needs a `data-` prefix in any case. The rest is
+    lowercased, and each hyphen before a letter becomes that letter in
+    capitals (`data-wp-on--click` is `wpOn-Click`).
+  - `wp_html_custom_data_attribute_name` turns each ASCII capital into a
+    hyphen and its lowercase, after `data-`.
+  - Both give null for a name holding whitespace, `/`, `=` or `>`. Quotes,
+    `<`, `&` and non-ASCII letters pass.
+- **Relative stylesheet links.**
+  - Every `url(` reference is read after optional whitespace, a quote and
+    more whitespace, up to a quote or `)`; the match need not close.
+  - A reference starting with `/`, `#`, `data:`, `http:` or `https:`
+    (case-sensitive) is left alone. One leading `./` is dropped.
+  - The rest is joined to the stylesheet URL's `dirname` with a slash, then
+    made host-relative, so a stylesheet at `/` turns `url(i.png)` into
+    `url()`, as the reference does.
+- **Block nodes.** A node is dropped when `blocks` is anywhere in its path.
+  Keys are kept.
+- **The polyfill loader.**
+  - One `( test ) || document.write( '<script src="…"></scr' + 'ipt>' );`
+    per registered handle, run together, with the test unescaped.
+  - A source not starting with `//` or `http(s)://` gets the registry's
+    base URL, with no slash added. A version is added only when the handle
+    has one.
+  - Then `script_loader_src` runs; a source it empties is skipped. The
+    rest goes through `esc_url`.
+- **Prototype before jQuery.** Prototype's first copy moves to just before
+  jQuery's first copy when it came later. Anything else is unchanged.
+- **The concatenation printers.**
+  - They print only when the trimmed concat list (`, ` trimmed) is not
+    empty; `do_concat` is not consulted. The registry's `print_html`
+    prints last, always. Nothing is reset.
+  - Scripts print their held code as an inline tag, with
+    `//# sourceURL=js-inline-concat-{rawurlencoded list}`. Then comes the
+    `load-scripts.php?c={0|1}` tag through `esc_url`, the list in
+    128-character `load[chunk_N]` pieces, and `ver` as the registry's
+    default version.
+  - Styles print a `load-styles.php` link first (through `esc_attr`,
+    `dir` from the registry's text direction), then the held CSS with a
+    `/*# sourceURL=css-inline-concat-… */` trailer.
+  - `c` is 1 when `$compress_scripts` or `$compress_css` is truthy.
+- **Localized data** (shared machinery, `Runtime\Assets`).
+  - `wp_localize_script` appends its `var` line to the script's `data`
+    string, joined by a newline. `add_data('data')` replaces the whole
+    string. `extra['data']` and `get_data()` show it, and
+    `print_extra_script` prints it.
+  - An `extra['data']` set in place on `$wp_scripts->registered` is handed
+    to the registry before the next data change, so a later localize
+    appends to it.
+  - Before this, the engine kept localized objects in a list of its own:
+    `get_data` never saw them, and raw data was not printed.
+- **Just-in-time localization.**
+  - autosave gets `autosaveInterval` (the constant) and `blog_id`.
+  - mce-view and word-count get the registered shortcode tags; word-count
+    also gets the type `words`.
+  - `[embed]` is now registered as `__return_false`, as on the reference,
+    so `strip_shortcodes` and `do_shortcode` drop it outside the_content's
+    own embed pass. The default shortcodes are registered in the
+    reference's order (`playlist` after `gallery`).
+- **Stored styles.**
+  - Each style-engine store with CSS is registered without a source,
+    given the CSS inline and enqueued, on every call.
+  - Block supports use `core-block-supports` (headed by a `Core styles:
+    block-supports` comment when prettified). Any other context uses
+    `wp-style-engine-{context}`.
+  - Prettify defaults to `SCRIPT_DEBUG`.
+  - **Not hooked**: the reference runs it on `wp_enqueue_scripts` and
+    `wp_footer` 1. The engine prints the block-supports store inside
+    `global-styles-inline-css` (the styles suite checks the container
+    rules there), so hooking it would print those rules twice. Rules a
+    plugin stores in another context are therefore not printed for it
+    yet.
+- **Block style variations** (`enqueue_block_assets` 30).
+  - An inline style joins `wp-block-{name without core/}` when that handle
+    is registered, otherwise `wp-block-library`. It is added again on
+    every call.
+  - A `style_handle` is enqueued at once when block assets do not load on
+    demand. Otherwise it is enqueued when a block of that name renders,
+    whatever its class.
+  - The engine registers neither `wp-block-library` nor the per-block core
+    handles. A core block's variation CSS (Twenty Twenty-Five's checkmark
+    list) therefore has nowhere to print yet.
+- **Every registered block's assets** (`enqueue_block_assets` 10). When
+  block assets do not load on demand, every block type's style and script
+  handles are enqueued; view and editor handles are not.
+- **Development scripts.** Nothing is registered. The reference registers
+  none outside development mode, and Minn ships no development builds.
+- **Still owed.**
+  - `wp_default_packages`, `_vendor`, `_scripts` and `_inline_scripts`
+    register the GPL script packages, which the engine supplies through
+    the site's script pack instead.
+  - `wp_hoist_late_printed_styles` and
+    `wp_load_classic_theme_block_styles_on_demand` need a classic theme
+    to observe.
+  - The editor and admin enqueuers.

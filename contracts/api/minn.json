@@ -109680,7 +109680,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/AssetEdits.php",
-            "lines": 29,
+            "lines": 33,
             "doc": "What a plugin did to $wp_scripts->registered or $wp_styles->registered\ndirectly, as wp_default_scripts callbacks do (a dependency dropped, a\nsource swapped, an entry unset or added), handed to the registry: each\nhandle as the view showed it last against the view as the plugin left\nit.",
             "implements": [],
             "extends": null,
@@ -109702,7 +109702,7 @@
                     "doc": "The edits applied. The view is rebuilt by every change the registry\ntakes, so the edited view is read from the copy handed in.",
                     "shapes": [
                         "@param array<string, mixed> $edited the view as the plugin left it",
-                        "@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}> $synced each handle as the view last showed it"
+                        "@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}> $synced each handle as the view last showed it (source, dependencies, version, args, data)"
                     ],
                     "params": [
                         {
@@ -109722,13 +109722,13 @@
                         {
                             "name": "synced",
                             "type": "array",
-                            "shape": "array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}>",
+                            "shape": "array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}>",
                             "default": null,
-                            "doc": "each handle as the view last showed it"
+                            "doc": "each handle as the view last showed it (source, dependencies, version, args, data)"
                         }
                     ],
                     "line": 23,
-                    "end": 41
+                    "end": 45
                 }
             ]
         },
@@ -109738,7 +109738,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 413,
+            "lines": 431,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -109763,8 +109763,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 32
+                "line": 31,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -109824,6 +109824,15 @@
                     "promoted": false
                 },
                 {
+                    "name": "beforeChange",
+                    "type": "?Closure",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "kind",
                     "type": "string",
                     "readonly": true,
@@ -109839,8 +109848,8 @@
                     "name": "watch",
                     "static": false,
                     "visibility": "public",
-                    "signature": "watch(Closure $listener): void",
-                    "doc": "A listener called after every change, so a plugin-facing view can stay current.",
+                    "signature": "watch(Closure $listener, ?Closure $before = NULL): void",
+                    "doc": "A listener called after every change, so a plugin-facing view can stay\ncurrent; and one called before a script's data changes, so what a\nplugin set in that view lands first.",
                     "shapes": [],
                     "params": [
                         {
@@ -109849,10 +109858,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "before",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 39
+                    "line": 40,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -109871,8 +109887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 45
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -109919,8 +109935,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 68
+                    "line": 68,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -109967,8 +109983,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 79
+                    "line": 84,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -109989,8 +110005,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 107
+                    "line": 99,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -110009,8 +110025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 115
+                    "line": 123,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -110029,8 +110045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 131
+                    "line": 136,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -110049,8 +110065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 139
+                    "line": 147,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -110069,8 +110085,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -110091,8 +110107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 151
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -110113,8 +110129,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 157
+                    "line": 167,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -110142,8 +110158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 186
+                    "line": 178,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -110162,8 +110178,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 208
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -110176,8 +110192,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 215,
-                    "end": 218
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -110196,8 +110212,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 224
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -110216,8 +110232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 230
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -110250,8 +110266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 263
+                    "line": 262,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -110284,8 +110300,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 279
+                    "line": 279,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -110318,8 +110334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 293
+                    "line": 296,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -110345,8 +110361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 299
+                    "line": 310,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -110379,8 +110395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 317
+                    "line": 316,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -110393,8 +110409,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 320,
-                    "end": 323
+                    "line": 338,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -110407,8 +110423,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 368,
-                    "end": 378
+                    "line": 386,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -110427,8 +110443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 387
+                    "line": 399,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -110447,8 +110463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 390,
-                    "end": 394
+                    "line": 408,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -110467,8 +110483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 400
+                    "line": 415,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -110481,8 +110497,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 407,
-                    "end": 410
+                    "line": 425,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -110495,8 +110511,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 417,
-                    "end": 420
+                    "line": 435,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -110507,8 +110523,20 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 423,
-                    "end": 426
+                    "line": 441,
+                    "end": 444
+                },
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "settle(): void",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 53,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -110519,8 +110547,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 47,
-                    "end": 52
+                    "line": 60,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -110533,8 +110561,8 @@
                         "@return array<string, array<string, list<string>>>"
                     ],
                     "params": [],
-                    "line": 189,
-                    "end": 196
+                    "line": 202,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -110553,8 +110581,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 246
+                    "line": 252,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -110576,8 +110604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 359
+                    "line": 347,
+                    "end": 377
                 }
             ]
         },

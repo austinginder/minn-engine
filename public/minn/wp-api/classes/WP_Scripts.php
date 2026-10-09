@@ -62,11 +62,11 @@ class WP_Scripts extends WP_Dependencies
     /** A script's localized data: printed as its own tag (true), or returned as code; nothing when it has none. */
     public function print_extra_script($handle, $display = true)
     {
-        $item = $this->assets->item((string) $handle);
-        if ($item === null || $item['localized'] === []) {
+        $data = $this->get_data($handle, 'data');
+        if (!is_string($data) || $data === '') {
             return null;
         }
-        $output = implode("\n", $item['localized']) . _minn_source_url($handle . '-js-extra');
+        $output = $data . _minn_source_url($handle . '-js-extra');
         if (!$display) {
             return $output;
         }

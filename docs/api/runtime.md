@@ -12,8 +12,8 @@ the WordPress runtime plugins load against
 | [`ApplicationPasswordEvents`](#applicationpasswordevents) | final class | 46 | Application password changes made over REST, as the reference makes them |
 | [`ApplicationPasswordSignIn`](#applicationpasswordsignin) | final class | 85 | wp_authenticate_application_password as the reference answers it (probe |
 | [`ArchiveLinks`](#archivelinks) | final class | 41 | A post type's archive address and its feed, as the reference gives them |
-| [`AssetEdits`](#assetedits) | final class | 29 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
-| [`Assets`](#assets) | final class | 413 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
+| [`AssetEdits`](#assetedits) | final class | 33 | What a plugin did to $wp_scripts->registered or $wp_styles->registered |
+| [`Assets`](#assets) | final class | 431 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 127 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -443,7 +443,7 @@ The edits applied. The view is rebuilt by every change the registry
 takes, so the edited view is read from the copy handed in.
 
 - `@param array<string, mixed> $edited the view as the plugin left it`
-- `@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}> $synced each handle as the view last showed it`
+- `@param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}> $synced each handle as the view last showed it (source, dependencies, version, args, data)`
 
 
 ## Assets
@@ -462,9 +462,11 @@ __construct(string $kind)
 ```
 
 
-### `watch(Closure $listener): void`
+### `watch(Closure $listener, ?Closure $before = NULL): void`
 
-A listener called after every change, so a plugin-facing view can stay current.
+A listener called after every change, so a plugin-facing view can stay
+current; and one called before a script's data changes, so what a
+plugin set in that view lands first.
 
 ### `setQueue(array $queue): void`
 
@@ -606,7 +608,7 @@ The handles queued.
 
 Whether these are scripts or styles.
 
-Internals: `changed()` (private, line 47), `defaults()` (private, line 189), `held()` (private, line 239), `ordered()` (private, line 329)
+Internals: `settle()` (private, line 53), `changed()` (private, line 60), `defaults()` (private, line 202), `held()` (private, line 252), `ordered()` (private, line 347)
 
 
 ## Avatar

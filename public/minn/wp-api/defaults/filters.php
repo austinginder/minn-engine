@@ -121,6 +121,8 @@ add_filter('the_guid', 'esc_url');
 add_filter('term_name_rss', 'convert_chars');
 add_action('wp_head', 'wp_enqueue_scripts', 1);
 add_action('wp_enqueue_scripts', 'wp_common_block_scripts_and_styles', 10);
+add_action('enqueue_block_assets', 'wp_enqueue_registered_block_scripts_and_styles');
+add_action('enqueue_block_assets', 'enqueue_block_styles_assets', 30);
 // A block widget's content runs the block and shortcode pipelines; fitting an
 // image out twice changes nothing (wp_filter_content_tags leaves a fitted one be).
 add_filter('widget_block_content', 'do_blocks', 9);
@@ -129,9 +131,11 @@ add_filter('widget_text', 'balanceTags');
 add_shortcode('wp_caption', 'img_caption_shortcode');
 add_shortcode('caption', 'img_caption_shortcode');
 add_shortcode('gallery', 'gallery_shortcode');
+add_shortcode('playlist', 'wp_playlist_shortcode');
 add_shortcode('audio', 'wp_audio_shortcode');
 add_shortcode('video', 'wp_video_shortcode');
-add_shortcode('playlist', 'wp_playlist_shortcode');
+// [embed] answers nothing outside the_content's own pass (WP_Embed::run_shortcode at 8), so excerpts and strip_shortcodes drop it.
+add_shortcode('embed', '__return_false');
 add_action('wp_playlist_scripts', 'wp_playlist_scripts');
 $GLOBALS['wp_embed'] ??= new WP_Embed();
 add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);

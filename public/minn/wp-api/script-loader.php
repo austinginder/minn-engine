@@ -534,3 +534,204 @@ function script_concat_settings()
     $compress_scripts ??= false;
     $compress_css ??= false;
 }
+
+// Script loader helpers (probe script-loader-helpers).
+
+/** A data-* attribute's dataset name as the DOM gives it (data-wp-on--click is wpOn-Click); null for any other name, or one holding a space, slash, equals sign or >. */
+function wp_js_dataset_name(string $html_attribute_name): ?string
+{
+    if (strncasecmp($html_attribute_name, 'data-', 5) !== 0 || strpbrk($html_attribute_name, " \t\n\f\r/=>") !== false) {
+        return null;
+    }
+    return preg_replace_callback('/-([a-z])/', static fn (array $m) => strtoupper($m[1]), strtolower(substr($html_attribute_name, 5)));
+}
+
+/** The data-* attribute a dataset name stands for, each capital letter a hyphen and its lowercase; null for a name holding a space, slash, equals sign or >. */
+function wp_html_custom_data_attribute_name(string $js_dataset_name): ?string
+{
+    if (strpbrk($js_dataset_name, " \t\n\f\r/=>") !== false) {
+        return null;
+    }
+    return 'data-' . preg_replace_callback('/[A-Z]/', static fn (array $m) => '-' . strtolower($m[0]), $js_dataset_name);
+}
+
+/**
+ * A stylesheet's relative url() references joined to the folder it is
+ * served from, then made host-relative. A reference starting with a slash,
+ * #, data: or http(s): is left alone; one leading ./ is dropped.
+ */
+function _wp_normalize_relative_css_links($css, $stylesheet_url)
+{
+    $folder = dirname((string) $stylesheet_url);
+    return preg_replace_callback('/url\(\s*([\'"]?)\s*([^\'")]+)/', static function (array $m) use ($folder): string {
+        $url = $m[2];
+        if (preg_match('#^(?:/|\#|data:|https?:)#', $url) === 1) {
+            return $m[0];
+        }
+        return substr($m[0], 0, -strlen($url)) . wp_make_link_relative($folder . '/' . (str_starts_with($url, './') ? substr($url, 2) : $url));
+    }, (string) $css);
+}
+
+/** The theme.json nodes outside any block: a node whose path names blocks is dropped, the others keep their keys. */
+function wp_filter_out_block_nodes($nodes)
+{
+    return array_filter((array) $nodes, static fn ($node) => !in_array('blocks', (array) ($node['path'] ?? []), true));
+}
+
+/**
+ * The inline loader that writes a polyfill's script tag when its test
+ * fails, one per registered handle in order. A source that is not absolute
+ * gets the registry's base URL; a version is added when it has one; a
+ * source script_loader_src empties is skipped.
+ */
+function wp_get_script_polyfill($scripts, $tests)
+{
+    $polyfill = '';
+    foreach ((array) $tests as $test => $handle) {
+        $item = $scripts->registered[$handle] ?? null;
+        if ($item === null) {
+            continue;
+        }
+        $src = preg_match('#^(https?:)?//#', (string) $item->src) === 1 ? (string) $item->src : $scripts->base_url . $item->src;
+        $src = apply_filters('script_loader_src', empty($item->ver) ? $src : add_query_arg('ver', $item->ver, $src), $handle);
+        $polyfill .= $src ? '( ' . $test . ' ) || document.write( \'<script src="' . esc_url($src) . '"></scr\' + \'ipt>\' );' : '';
+    }
+    return $polyfill;
+}
+
+/** A script list with prototype moved to just before jquery when it came after it. */
+function wp_prototype_before_jquery($js_array)
+{
+    $jquery = array_search('jquery', $js_array, true);
+    $prototype = array_search('prototype', $js_array, true);
+    if ($jquery === false || $prototype === false || $prototype < $jquery) {
+        return $js_array;
+    }
+    array_splice($js_array, $prototype, 1);
+    array_splice($js_array, $jquery, 0, 'prototype');
+    return $js_array;
+}
+
+/** @internal a concatenation list as load-*.php query chunks of 128 characters */
+function _minn_concat_chunks(string $concat): string
+{
+    $out = '';
+    foreach (str_split($concat, 128) as $key => $chunk) {
+        $out .= "&load%5Bchunk_{$key}%5D={$chunk}";
+    }
+    return $out;
+}
+
+/** The concatenated scripts: their held inline code, one load-scripts.php tag for the list, then the markup kept out of the concatenation. */
+function _print_scripts()
+{
+    $scripts = wp_scripts();
+    $concat = trim((string) $scripts->concat, ', ');
+    if ($concat !== '') {
+        if ((string) $scripts->print_code !== '') {
+            wp_print_inline_script_tag($scripts->print_code . "\n//# sourceURL=js-inline-concat-" . rawurlencode($concat));
+        }
+        $src = $scripts->base_url . '/wp-admin/load-scripts.php?c=' . (empty($GLOBALS['compress_scripts']) ? 0 : 1) . _minn_concat_chunks($concat) . '&ver=' . $scripts->default_version;
+        wp_print_script_tag(['src' => esc_url($src)]);
+    }
+    echo (string) $scripts->print_html;
+}
+
+/** The concatenated styles: one load-styles.php link for the list in the registry's text direction, their held inline CSS, then the markup kept out of the concatenation. */
+function _print_styles()
+{
+    $styles = wp_styles();
+    $concat = trim((string) $styles->concat, ', ');
+    if ($concat !== '') {
+        $href = $styles->base_url . '/wp-admin/load-styles.php?c=' . (empty($GLOBALS['compress_css']) ? 0 : 1) . '&dir=' . $styles->text_direction . _minn_concat_chunks($concat) . '&ver=' . $styles->default_version;
+        echo "<link rel='stylesheet' href='" . esc_attr($href) . "' media='all' />\n";
+        if ((string) $styles->print_code !== '') {
+            echo "<style>\n" . $styles->print_code . "\n/*# sourceURL=css-inline-concat-" . rawurlencode($concat) . " */\n</style>\n";
+        }
+    }
+    echo (string) $styles->print_html;
+}
+
+/** The autosave, mce-view and word-count scripts told their settings: the autosave interval and site, the registered shortcodes, and words as the count type. */
+function wp_just_in_time_script_localization()
+{
+    $shortcodes = array_keys((array) ($GLOBALS['shortcode_tags'] ?? []));
+    wp_localize_script('autosave', 'autosaveL10n', ['autosaveInterval' => AUTOSAVE_INTERVAL, 'blog_id' => get_current_blog_id()]);
+    wp_localize_script('mce-view', 'mceViewL10n', ['shortcodes' => $shortcodes]);
+    wp_localize_script('word-count', 'wordCountL10n', ['type' => _x('words', 'word count type'), 'shortcodes' => $shortcodes]);
+}
+
+/**
+ * The style engine's stored rules, each store as inline CSS on a handle of
+ * its own, registered without a source and enqueued: core-block-supports for
+ * block supports (headed by a comment when prettified), wp-style-engine-{context}
+ * for the rest. Prettified when asked, or under SCRIPT_DEBUG. Not hooked:
+ * the engine prints the block-supports store inside the global styles.
+ */
+function wp_enqueue_stored_styles($options = [])
+{
+    $prettify = (bool) ($options['prettify'] ?? (defined('SCRIPT_DEBUG') && SCRIPT_DEBUG));
+    foreach (array_keys(WP_Style_Engine_CSS_Rules_Store::get_stores()) as $context) {
+        $css = (string) wp_style_engine_get_stylesheet_from_context($context, ['prettify' => $prettify]);
+        if ($css === '') {
+            continue;
+        }
+        $handle = $context === 'block-supports' ? 'core-block-supports' : 'wp-style-engine-' . $context;
+        wp_register_style($handle, false);
+        wp_add_inline_style($handle, ($prettify && $context === 'block-supports' ? "/**\n * Core styles: block-supports\n */\n" : '') . $css);
+        wp_enqueue_style($handle);
+    }
+}
+
+/**
+ * Block style variations' assets: inline CSS joins the block's own
+ * stylesheet (wp-block-{name} when that is registered, wp-block-library
+ * otherwise), every call; a stylesheet is enqueued now, or as a block of that
+ * name renders when block assets load on demand.
+ */
+function enqueue_block_styles_assets()
+{
+    foreach (WP_Block_Styles_Registry::get_instance()->get_all_registered() as $block_name => $styles) {
+        foreach ((array) $styles as $style) {
+            if (isset($style['style_handle'])) {
+                _minn_enqueue_block_style_handle((string) $block_name, (string) $style['style_handle']);
+            }
+            if (isset($style['inline_style'])) {
+                $handle = 'wp-block-' . str_replace('core/', '', (string) $block_name);
+                wp_add_inline_style(wp_style_is($handle, 'registered') ? $handle : 'wp-block-library', $style['inline_style']);
+            }
+        }
+    }
+}
+
+/** @internal a block style variation's stylesheet, enqueued now or as a block of its name renders */
+function _minn_enqueue_block_style_handle(string $block_name, string $handle): void
+{
+    if (!wp_should_load_block_assets_on_demand()) {
+        wp_enqueue_style($handle);
+        return;
+    }
+    add_filter('render_block', static function ($html, $block) use ($block_name, $handle) {
+        if (($block['blockName'] ?? null) === $block_name) {
+            wp_enqueue_style($handle);
+        }
+        return $html;
+    }, 10, 2);
+}
+
+/** Every registered block's style and script handles enqueued, unless block assets load on demand. */
+function wp_enqueue_registered_block_scripts_and_styles()
+{
+    if (wp_should_load_block_assets_on_demand()) {
+        return;
+    }
+    foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $block_type) {
+        array_map('wp_enqueue_style', (array) $block_type->style_handles);
+        array_map('wp_enqueue_script', (array) $block_type->script_handles);
+    }
+}
+
+/** The editor's development-build scripts: Minn ships none, so nothing is registered (outside development mode the reference registers none either). */
+function wp_register_development_scripts($scripts)
+{
+}

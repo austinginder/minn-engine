@@ -26,15 +26,21 @@ final class Assets
     private static ?array $defaults = null;
 
     private ?\Closure $onChange = null;
+    private ?\Closure $beforeChange = null;
 
     public function __construct(private readonly string $kind)
     {
     }
 
-    /** A listener called after every change, so a plugin-facing view can stay current. */
-    public function watch(\Closure $listener): void
+    /**
+     * A listener called after every change, so a plugin-facing view can stay
+     * current; and one called before a script's data changes, so what a
+     * plugin set in that view lands first.
+     */
+    public function watch(\Closure $listener, ?\Closure $before = null): void
     {
         $this->onChange = $listener;
+        $this->beforeChange = $before;
         $listener();
     }
 
@@ -42,6 +48,13 @@ final class Assets
     public function setQueue(array $queue): void
     {
         $this->queue = array_values(array_map('strval', $queue));
+    }
+
+    private function settle(): void
+    {
+        if ($this->beforeChange !== null) {
+            ($this->beforeChange)();
+        }
     }
 
     private function changed(): void
@@ -58,7 +71,7 @@ final class Assets
             $this->changed();
             return false;
         }
-        $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra, 'inline' => ['before' => [], 'after' => []], 'localized' => [], 'data' => [], 'args' => []];
+        $this->items[$handle] = ['src' => $src, 'deps' => array_values(array_map('strval', $deps)), 'ver' => $ver, 'extra' => $extra, 'inline' => ['before' => [], 'after' => []], 'data' => [], 'args' => []];
         if (in_array($handle, $this->waiting, true)) {
             $this->waiting = array_values(array_diff($this->waiting, [$handle]));
             $this->queue[] = $handle;
@@ -265,6 +278,7 @@ final class Assets
     /** Attaches a data key to an asset. */
     public function addData(string $handle, string $key, mixed $value): bool
     {
+        $this->settle();
         if (!$this->held($handle)) {
             $this->changed();
             return false;
@@ -301,6 +315,7 @@ final class Assets
     /** Attaches a localized object to a script. */
     public function localize(string $handle, string $name, array $data): bool
     {
+        $this->settle();
         if (!isset($this->items[$handle])) {
             $this->changed();
             return false;
@@ -310,8 +325,11 @@ final class Assets
                 $data[$k] = html_entity_decode((string) $v, ENT_QUOTES, 'UTF-8');
             }
         }
-        // The reference prints localized data with slashes unescaped.
-        $this->items[$handle]['localized'][] = 'var ' . $name . ' = ' . Json::encode($data, JSON_UNESCAPED_SLASHES) . ';';
+        // The reference prints localized data with slashes unescaped, and keeps it in the
+        // script's data string: each object a line after what is there (add_data replaces it all).
+        $script = 'var ' . $name . ' = ' . Json::encode($data, JSON_UNESCAPED_SLASHES) . ';';
+        $held = $this->items[$handle]['data']['data'] ?? '';
+        $this->items[$handle]['data']['data'] = is_string($held) && $held !== '' ? $held . "\n" . $script : $script;
         $this->changed();
         return true;
     }

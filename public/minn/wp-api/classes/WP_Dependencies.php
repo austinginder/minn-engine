@@ -36,6 +36,8 @@ class WP_Dependencies
         $this->assets = $assets ?? new Assets('dependency');
         $this->assets->watch(function (): void {
             $this->sync();
+        }, function (): void {
+            $this->push();
         });
     }
 
@@ -46,7 +48,7 @@ class WP_Dependencies
         $this->registered = [];
         foreach ($this->assets->items() as $handle => $item) {
             $dep = new _WP_Dependency($handle, $item['src'], $item['deps'], $item['ver'], $item['extra']);
-            $dep->extra = ['data' => implode("\n", $item['localized']), 'before' => $item['inline']['before'], 'after' => $item['inline']['after']] + $item['data'];
+            $dep->extra = ['before' => $item['inline']['before'], 'after' => $item['inline']['after']] + $item['data'];
             if (isset($item['translations'])) {
                 $dep->set_translations($item['translations']['domain'], $item['translations']['path']);
             }
@@ -55,7 +57,7 @@ class WP_Dependencies
         $this->queue = $this->assets->queue();
         $this->done = $this->assets->doneList();
         $this->synced_lists = [$this->queue, $this->done];
-        $this->synced = array_map(static fn (_WP_Dependency $dep): array => [$dep->src, array_values((array) $dep->deps), $dep->ver, $dep->args], $this->registered);
+        $this->synced = array_map(static fn (_WP_Dependency $dep): array => [$dep->src, array_values((array) $dep->deps), $dep->ver, $dep->args, $dep->extra['data'] ?? null], $this->registered);
     }
 
     /** What a plugin did to $registered directly, handed to the registry (Runtime\AssetEdits). */

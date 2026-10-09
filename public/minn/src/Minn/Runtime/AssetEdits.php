@@ -18,7 +18,7 @@ final class AssetEdits
      * takes, so the edited view is read from the copy handed in.
      *
      * @param array<string, mixed> $edited the view as the plugin left it
-     * @param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed}> $synced each handle as the view last showed it
+     * @param array<string, array{0: mixed, 1: list<string>, 2: mixed, 3: mixed, 4: mixed}> $synced each handle as the view last showed it (source, dependencies, version, args, data)
      */
     public static function apply(Assets $assets, array $edited, array $synced): void
     {
@@ -29,8 +29,12 @@ final class AssetEdits
                 continue;
             }
             $now = [$dep->src, array_values((array) $dep->deps), $dep->ver, $dep->args];
-            if ($now !== $was) {
+            if ($now !== array_slice($was, 0, 4)) {
                 $assets->revise((string) $handle, $dep->src === false ? false : (string) $dep->src, (array) $dep->deps, $dep->ver, $dep->args);
+            }
+            // The localized data string, set in place (extra['data']).
+            if (($dep->extra['data'] ?? null) !== ($was[4] ?? null)) {
+                $assets->addData((string) $handle, 'data', $dep->extra['data'] ?? null);
             }
         }
         foreach (array_diff_key($edited, $synced) as $handle => $dep) {
