@@ -3,7 +3,7 @@
 use Minn\Query\DateSql;
 use Minn\Runtime\Runtime;
 
-/** A date query: the clauses as given, the WHERE fragment from Minn\Query\DateSql. */
+/** A date query: the clauses as given, the WHERE fragment and its pieces from Minn\Query\DateSql (probes query-clauses, query-clause-internals). */
 #[AllowDynamicProperties]
 class WP_Date_Query
 {
@@ -63,5 +63,45 @@ class WP_Date_Query
     public function build_mysql_datetime($datetime, $default_to_max = false)
     {
         return DateSql::datetime($datetime, (bool) $default_to_max);
+    }
+
+    public function validate_date_values($date_query = [])
+    {
+        return DateSql::validate((array) $date_query);
+    }
+
+    protected function get_sql_clauses()
+    {
+        return ['join' => '', 'where' => $this->builder()->build($this->queries)];
+    }
+
+    protected function get_sql_for_query($query, $depth = 0)
+    {
+        return $this->builder()->forQuery((array) $query, (int) $depth);
+    }
+
+    protected function get_sql_for_subquery($query)
+    {
+        return $this->get_sql_for_clause($query, '');
+    }
+
+    protected function get_sql_for_clause($query, $parent_query)
+    {
+        return ['where' => $this->builder()->clauseParts((array) $query), 'join' => []];
+    }
+
+    public function build_value($compare, $value)
+    {
+        return DateSql::buildValue((string) $compare, $value);
+    }
+
+    public function build_time_query($column, $compare, $hour = null, $minute = null, $second = null)
+    {
+        return DateSql::buildTime((string) $column, DateSql::compare((string) $compare), $hour, $minute, $second);
+    }
+
+    public function sanitize_relation($relation)
+    {
+        return strtoupper((string) $relation) === 'OR' ? 'OR' : 'AND';
     }
 }

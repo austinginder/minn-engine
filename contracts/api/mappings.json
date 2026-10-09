@@ -4,12 +4,12 @@
     "summary": {
         "minn": 769,
         "composes": 1665,
-        "leaf": 818,
-        "noop": 2560,
+        "leaf": 824,
+        "noop": 2575,
         "placeholder": 250,
         "deadend": 1659,
-        "functions": 7643,
-        "minnMethods": 924,
+        "functions": 7664,
+        "minnMethods": 926,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -10453,6 +10453,25 @@
             ],
             "composes": []
         },
+        "WP_Date_Query::build_time_query": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\DateSql::buildTime",
+                "Minn\\Query\\DateSql::compare"
+            ],
+            "composes": []
+        },
+        "WP_Date_Query::build_value": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\DateSql::buildValue"
+            ],
+            "composes": []
+        },
         "WP_Date_Query::builder": {
             "file": "classes/WP_Date_Query.php",
             "lines": 2,
@@ -10483,6 +10502,34 @@
                 "apply_filters"
             ]
         },
+        "WP_Date_Query::get_sql_clauses": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Date_Query::get_sql_for_clause": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Date_Query::get_sql_for_query": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Date_Query::get_sql_for_subquery": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Date_Query::is_first_order_clause": {
             "file": "classes/WP_Date_Query.php",
             "lines": 1,
@@ -10499,11 +10546,27 @@
             "minn": [],
             "composes": []
         },
+        "WP_Date_Query::sanitize_relation": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Date_Query::validate_column": {
             "file": "classes/WP_Date_Query.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "WP_Date_Query::validate_date_values": {
+            "file": "classes/WP_Date_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\DateSql::validate"
+            ],
             "composes": []
         },
         "WP_Debug_Data::check_for_updates": {
@@ -15023,6 +15086,22 @@
             "minn": [],
             "composes": []
         },
+        "WP_Meta_Query::builder": {
+            "file": "classes/WP_Meta_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\MetaSql::__construct"
+            ],
+            "composes": []
+        },
+        "WP_Meta_Query::find_compatible_table_alias": {
+            "file": "classes/WP_Meta_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Meta_Query::get_cast_for_type": {
             "file": "classes/WP_Meta_Query.php",
             "lines": 1,
@@ -15041,12 +15120,10 @@
         },
         "WP_Meta_Query::get_sql": {
             "file": "classes/WP_Meta_Query.php",
-            "lines": 15,
+            "lines": 14,
             "kind": "minn",
             "minn": [
                 "Minn\\Query\\MetaSql::__construct",
-                "Minn\\Query\\MetaSql::build",
-                "Minn\\Query\\MetaSql::clauses",
                 "Minn\\Query\\MetaSql::hasOr",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db->table"
@@ -15054,6 +15131,27 @@
             "composes": [
                 "apply_filters_ref_array"
             ]
+        },
+        "WP_Meta_Query::get_sql_clauses": {
+            "file": "classes/WP_Meta_Query.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Meta_Query::get_sql_for_clause": {
+            "file": "classes/WP_Meta_Query.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Meta_Query::get_sql_for_query": {
+            "file": "classes/WP_Meta_Query.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "WP_Meta_Query::has_or_relation": {
             "file": "classes/WP_Meta_Query.php",
@@ -15080,6 +15178,13 @@
             "minn": [
                 "Minn\\Runtime\\Meta::clausesFromQueryVars"
             ],
+            "composes": []
+        },
+        "WP_Meta_Query::remember": {
+            "file": "classes/WP_Meta_Query.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Meta_Query::sanitize_query": {
@@ -22146,13 +22251,12 @@
             ],
             "composes": []
         },
-        "WP_Tax_Query::get_sql": {
+        "WP_Tax_Query::builder": {
             "file": "classes/WP_Tax_Query.php",
-            "lines": 5,
+            "lines": 2,
             "kind": "minn",
             "minn": [
                 "Minn\\Query\\TaxSql::__construct",
-                "Minn\\Query\\TaxSql::build",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db",
                 "Minn\\Runtime\\Runtime::table"
@@ -22161,6 +22265,50 @@
                 "_minn_term_taxonomy_ids"
             ]
         },
+        "WP_Tax_Query::find_compatible_table_alias": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Tax_Query::get_sql": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Tax_Query::get_sql_clauses": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Tax_Query::get_sql_for_clause": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Tax_Query::get_sql_for_query": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Tax_Query::is_first_order_clause": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Query\\TaxSql::isFirstOrder"
+            ],
+            "composes": []
+        },
         "WP_Tax_Query::sanitize_query": {
             "file": "classes/WP_Tax_Query.php",
             "lines": 1,
@@ -22168,6 +22316,13 @@
             "minn": [
                 "Minn\\Query\\TaxSql::sanitize"
             ],
+            "composes": []
+        },
+        "WP_Tax_Query::sanitize_relation": {
+            "file": "classes/WP_Tax_Query.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_Tax_Query::transform_query": {

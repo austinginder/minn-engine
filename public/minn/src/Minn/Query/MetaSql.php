@@ -22,10 +22,6 @@ final class MetaSql
 
     private int $aliasCount = 0;
 
-    /** @var list<string> */
-    private array $joins = [];
-
-    private bool $orRelation = false;
 
     /** @param array<string, array{0: string, 1: string}> $tables meta type to [table, object column] */
     public function __construct(
@@ -101,9 +97,77 @@ final class MetaSql
         if ($queries === []) {
             return ['join' => '', 'where' => ''];
         }
-        $this->orRelation = self::hasOrWithNotExists($queries);
-        $where = $this->group($queries, 0);
-        return ['join' => implode(' ', $this->joins), 'where' => $where === '' ? '' : ' AND ' . $where];
+        $sql = $this->sqlClauses($queries);
+        // Once an OR group holds a NOT EXISTS, every join is a LEFT one (get_sql; the clauses alone keep theirs).
+        return self::hasOrWithNotExists($queries) ? ['join' => str_replace('INNER JOIN', 'LEFT JOIN', $sql['join']), 'where' => $sql['where']] : $sql;
+    }
+
+    /** The whole query's JOIN and WHERE (get_sql_clauses), each clause given its alias in place. @return array{join: string, where: string} */
+    public function sqlClauses(array &$queries): array
+    {
+        $sql = $this->querySql($queries, 0);
+        return ['join' => $sql['join'], 'where' => $sql['where'] === '' ? '' : ' AND ' . $sql['where']];
+    }
+
+    /**
+     * A group's JOIN and WHERE (get_sql_for_query), indented for its depth;
+     * each clause is given its alias in place, so its siblings can share it.
+     *
+     * @return array{join: string, where: string}
+     */
+    public function querySql(array &$queries, int $depth): array
+    {
+        $joins = [];
+        $parts = [];
+        foreach (array_keys($queries) as $key) {
+            if ($key === 'relation' || !is_array($queries[$key])) {
+                continue;
+            }
+            $sql = self::isFirstOrder($queries[$key]) ? $this->clauseSql($queries[$key], $queries, is_string($key) ? $key : '') : $this->querySql($queries[$key], $depth + 1);
+            $joins = [...$joins, ...(array) $sql['join']];
+            $parts = [...$parts, ...array_filter((array) $sql['where'], static fn (string $p) => $p !== '')];
+        }
+        return ['join' => implode(' ', array_filter($joins, static fn (string $j) => $j !== '')), 'where' => Sql::group($parts, (string) ($queries['relation'] ?? 'AND'), $depth)];
+    }
+
+    /**
+     * One clause's JOIN and WHERE pieces (get_sql_for_clause): the clause is
+     * settled in place (compare, compare_key, then its alias and cast), its
+     * alias shared with a compatible sibling or a new join.
+     *
+     * @return array{where: list<string>, join: list<string>}
+     */
+    public function clauseSql(array &$clause, array $parent, string $key): array
+    {
+        $clause = self::normalized($clause);
+        $alias = $this->compatibleAlias($clause, $parent);
+        $join = [];
+        if ($alias === false) {
+            [$alias, $join] = $this->newAlias($clause);
+        }
+        $clause['alias'] = $alias;
+        $clause['cast'] = self::cast((string) ($clause['type'] ?? ''));
+        $this->clauses[$key !== '' ? $key : $alias] = $clause;
+        $where = $this->clause($clause);
+        return ['where' => $where === '' ? [] : [$where], 'join' => $join];
+    }
+
+    /**
+     * The alias of a sibling the clause can share (find_compatible_table_alias):
+     * under OR, the first sibling already given an alias whose comparison,
+     * like the clause's, reads the same join; false otherwise.
+     */
+    public function compatibleAlias(array $clause, array $parent): string|false
+    {
+        if (($parent['relation'] ?? 'AND') !== 'OR' || !in_array(self::normalized($clause)['compare'], self::COMPATIBLE, true)) {
+            return false;
+        }
+        foreach ($parent as $key => $sibling) {
+            if ($key !== 'relation' && is_array($sibling) && isset($sibling['alias']) && in_array(self::normalized($sibling)['compare'], self::COMPATIBLE, true)) {
+                return (string) $sibling['alias'];
+            }
+        }
+        return false;
     }
 
     /**
@@ -149,37 +213,11 @@ final class MetaSql
         return false;
     }
 
-    private function group(array $queries, int $depth): string
+    /** A settled clause's WHERE piece, read from its alias. */
+    private function clause(array $clause): string
     {
-        $relation = $queries['relation'] ?? 'AND';
-        $parts = [];
-        $siblings = [];
-        foreach ($queries as $key => $query) {
-            if ($key === 'relation' || !is_array($query)) {
-                continue;
-            }
-            if (self::isFirstOrder($query)) {
-                $parts[] = $this->clause($query, is_string($key) ? $key : null, $relation, $siblings);
-            } else {
-                $inner = $this->group($query, $depth + 1);
-                if ($inner !== '') {
-                    $parts[] = $inner;
-                }
-            }
-        }
-        return Sql::group(array_values(array_filter($parts, static fn (string $p) => $p !== '')), (string) $relation, $depth);
-    }
-
-    /** @param list<array{compare: string, alias: string}> $siblings earlier clauses of the same group */
-    private function clause(array $clause, ?string $name, string $relation, array &$siblings): string
-    {
-        $clause = self::normalized($clause);
+        $alias = (string) $clause['alias'];
         $compare = (string) $clause['compare'];
-        $alias = $this->alias($clause, $relation, $siblings);
-        $siblings[] = ['compare' => $compare, 'alias' => $alias];
-        $cast = self::cast((string) ($clause['type'] ?? ''));
-        // The clause as the builder settled it, then where it reads from.
-        $this->clauses[$name ?? $alias] = $clause + ['alias' => $alias, 'cast' => $cast];
         if ($compare === 'NOT EXISTS') {
             return "{$alias}.{$this->objectColumn} IS NULL";
         }
@@ -188,7 +226,7 @@ final class MetaSql
             $parts[] = $this->keyClause($alias, $clause);
         }
         if (array_key_exists('value', $clause) && $compare !== 'EXISTS') {
-            $column = $cast === 'CHAR' ? "{$alias}.meta_value" : "CAST({$alias}.meta_value AS {$cast})";
+            $column = $clause['cast'] === 'CHAR' ? "{$alias}.meta_value" : "CAST({$alias}.meta_value AS {$clause['cast']})";
             $parts[] = $column . ' ' . self::valueClause($compare, $clause['value']);
         }
         return count($parts) > 1 ? '( ' . implode(' AND ', $parts) . ' )' : (string) ($parts[0] ?? '');
@@ -226,27 +264,15 @@ final class MetaSql
         return preg_split('/[,\s]+/', trim((string) $value), -1, PREG_SPLIT_NO_EMPTY) ?: [];
     }
 
-    /** @param list<array{compare: string, alias: string}> $siblings */
-    private function alias(array $clause, string $relation, array $siblings): string
+    /** A new alias for a clause, and the join that reads it: LEFT for NOT EXISTS (with the key), INNER otherwise. @return array{0: string, 1: list<string>} */
+    private function newAlias(array $clause): array
     {
-        $compare = (string) $clause['compare'];
-        if ($relation === 'OR' && in_array($compare, self::COMPATIBLE, true)) {
-            foreach ($siblings as $sibling) {
-                if (in_array($sibling['compare'], self::COMPATIBLE, true)) {
-                    return $sibling['alias'];
-                }
-            }
-        }
         $alias = $this->aliasCount === 0 ? $this->metaTable : 'mt' . $this->aliasCount;
         $this->aliasCount++;
-        $joinType = $compare === 'NOT EXISTS' || $this->orRelation ? 'LEFT JOIN' : 'INNER JOIN';
+        $compare = (string) $clause['compare'];
         $as = $alias === $this->metaTable ? $this->metaTable : "{$this->metaTable} AS {$alias}";
-        $on = "{$this->primaryTable}.{$this->primaryId} = {$alias}.{$this->objectColumn}";
-        if ($compare === 'NOT EXISTS') {
-            $on .= ' AND ' . $this->keyClause($alias, $clause);
-        }
-        $this->joins[] = " {$joinType} {$as} ON ( {$on} )";
-        return $alias;
+        $on = "{$this->primaryTable}.{$this->primaryId} = {$alias}.{$this->objectColumn}" . ($compare === 'NOT EXISTS' ? ' AND ' . $this->keyClause($alias, $clause) : '');
+        return [$alias, [' ' . ($compare === 'NOT EXISTS' ? 'LEFT JOIN' : 'INNER JOIN') . " {$as} ON ( {$on} )"]];
     }
 
     /** The CAST target for a clause type; CHAR means no cast. */

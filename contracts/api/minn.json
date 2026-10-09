@@ -84190,7 +84190,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/DateSql.php",
-            "lines": 248,
+            "lines": 285,
             "doc": "The WHERE fragment of a date query in the reference's shape: before and\nafter bounds as full datetimes (inclusive bounds close the day), the\ndate parts as MySQL functions compared or listed, groups joined by\ntheir relation, columns validated against the known date columns.",
             "implements": [],
             "extends": null,
@@ -84247,8 +84247,8 @@
                 },
                 {
                     "name": "RANGES",
-                    "value": "array (   'month' =>    array (     0 => 1,     1 => 12,   ),   'week' =>    array (     0 => 1,     1 => 53,   ),   'dayofyear' =>    array (     0 => 1,     1 => 366,   ),   'day' =>    array (     0 => 1,     1 => 31,   ),   'dayofweek' =>    array (     0 => 1,     1 => 7,   ),   'dayofweek_iso' =>    array (     0 => 1,     1 => 7,   ),   'hour' =>    array (     0 => 0,     1 => 23,   ),   'minute' =>    array (     0 => 0,     1 => 59,   ),   'second' =>    array (     0 => 0,     1 => 59,   ), )",
-                    "doc": "The ranges a date part is checked against, as the reference names them in its notice.",
+                    "value": "array (   'dayofyear' =>    array (     0 => 1,     1 => 366,   ),   'dayofweek' =>    array (     0 => 1,     1 => 7,   ),   'dayofweek_iso' =>    array (     0 => 1,     1 => 7,   ),   'month' =>    array (     0 => 1,     1 => 12,   ),   'week' =>    array (     0 => 1,     1 => 53,   ),   'day' =>    array (     0 => 1,     1 => 31,   ),   'hour' =>    array (     0 => 0,     1 => 23,   ),   'minute' =>    array (     0 => 0,     1 => 59,   ),   'second' =>    array (     0 => 0,     1 => 59,   ), )",
+                    "doc": "The ranges a date part is checked against, in the order the reference reports them (week's top depends on the year).",
                     "visibility": "private"
                 }
             ],
@@ -84314,8 +84314,8 @@
                     "name": "validate",
                     "static": true,
                     "visibility": "public",
-                    "signature": "validate(array $clause): void",
-                    "doc": "Notices for parts out of range and for a year, month and day that make no date (probe query-clauses).",
+                    "signature": "validate(array $clause): bool",
+                    "doc": "Whether a clause's date values are valid, with a notice for each part\nout of range (week up to the given year's ISO weeks, 53 without one)\nand for a month and day that make no date (in a leap year when no year\nis given, and only once every part is in range); before and after given\nas parts are checked too (probes\nquery-clauses, query-clause-internals). An empty clause is not valid.",
                     "shapes": [],
                     "params": [
                         {
@@ -84326,8 +84326,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 61
+                    "line": 51,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -84353,8 +84353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 89
+                    "line": 89,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -84373,8 +84373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 100
+                    "line": 117,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -84393,8 +84393,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 115
+                    "line": 128,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -84413,8 +84413,134 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 122
+                    "line": 143,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "forQuery",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "forQuery(array $queries, int $depth): array",
+                    "doc": "A query or group as the reference's get_sql_for_query returns it, indented for its depth. @return array{join: string, where: string}",
+                    "shapes": [
+                        "@return array{join: string, where: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "queries",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 150,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "clauseParts",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clauseParts(array $clause): array",
+                    "doc": "One clause's pieces, before they are joined: the bounds, the date parts\nin order (a part whose value builds to nothing, or to 0, is left out),\nthen the time.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 162,
+                    "end": 182
+                },
+                {
+                    "routes": [],
+                    "name": "buildValue",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "buildValue(string $compare, mixed $value): string|int|false",
+                    "doc": "A value as the comparison wants it (build_value): a list of numbers\nfor IN, exactly two for BETWEEN, one number otherwise; false when the\nvalue does not fit.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "compare",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 189,
+                    "end": 199
+                },
+                {
+                    "routes": [],
+                    "name": "buildTime",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "buildTime(string $column, string $compare, mixed $hour, mixed $minute, mixed $second): string|false",
+                    "doc": "The time of day (build_time_query): listed or ranged parts each on\ntheir own; a single part by its function; an hour with a second and no\nminute not at all; otherwise the parts as one decimal, DATE_FORMAT( col,\n'%H.%i%s' ). False when no part is given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "compare",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hour",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "minute",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "second",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 207,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -84440,8 +84566,77 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 253
+                    "line": 267,
+                    "end": 289
+                },
+                {
+                    "routes": [],
+                    "name": "compare",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "compare(string $compare): string",
+                    "doc": "A comparison upper-cased, = for anything the reference does not know.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "compare",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 292,
+                    "end": 296
+                },
+                {
+                    "routes": [],
+                    "name": "validDate",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "validDate(array $clause): bool",
+                    "doc": "Whether a clause's month and day make a date, in its year or a leap year; a notice names them when they do not.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "partExpressions",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "partExpressions(string $column, array $clause): array",
+                    "doc": "The date parts a clause gives, each as its SQL expression; monthnum and w stand in for month and week only when those are not given. @return array<string, string>",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 233,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -84467,8 +84662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 135
+                    "line": 241,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -84476,93 +84671,12 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "clause(array $clause): string",
-                    "doc": "One clause as the reference writes it: the bounds, the date parts in\norder (a part whose value builds to nothing is left out), then the\ntime; more than one piece joined by AND inside parentheses.",
+                    "doc": "One clause as the reference writes it: its pieces, more than one joined by AND inside parentheses.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "clause",
                             "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 142,
-                    "end": 175
-                },
-                {
-                    "routes": [],
-                    "name": "value",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "value(string $compare, mixed $value): string",
-                    "doc": "A part's value as the comparison wants it: a list, a range, or one number.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "compare",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 178,
-                    "end": 189
-                },
-                {
-                    "routes": [],
-                    "name": "time",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "time(string $column, string $compare, array $clause): string",
-                    "doc": "The time of day: listed or ranged parts each on their own; a single\npart by its function; an hour with a second and no minute not at\nall; otherwise the parts as one decimal, DATE_FORMAT( col, '%H.%i%s' ).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "column",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "compare",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "clause",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 196,
-                    "end": 223
-                },
-                {
-                    "routes": [],
-                    "name": "compare",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "compare(string $compare): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "compare",
-                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -84579,7 +84693,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/MetaSql.php",
-            "lines": 252,
+            "lines": 278,
             "doc": "The JOIN and WHERE fragments of a meta query in the reference's shape:\none meta-table join per clause (the first under the table's own name,\nthen mt1, mt2, ...), INNER joins unless an OR relation or a NOT EXISTS\nclause needs LEFT ones, and casts by the clause's declared type. Under\nan OR relation a clause shares an equality-shaped sibling's join.",
             "implements": [],
             "extends": null,
@@ -84624,8 +84738,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 37
+                "line": 27,
+                "end": 33
             },
             "cases": [],
             "constants": [
@@ -84655,24 +84769,6 @@
                 {
                     "name": "aliasCount",
                     "type": "int",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "joins",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "orRelation",
-                    "type": "bool",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -84734,8 +84830,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 76
+                    "line": 40,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -84754,8 +84850,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 92
+                    "line": 85,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -84776,8 +84872,122 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 107
+                    "line": 95,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "sqlClauses",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sqlClauses(array $queries): array",
+                    "doc": "The whole query's JOIN and WHERE (get_sql_clauses), each clause given its alias in place. @return array{join: string, where: string}",
+                    "shapes": [
+                        "@return array{join: string, where: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "queries",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 106,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "querySql",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "querySql(array $queries, int $depth): array",
+                    "doc": "A group's JOIN and WHERE (get_sql_for_query), indented for its depth;\neach clause is given its alias in place, so its siblings can share it.",
+                    "shapes": [
+                        "@return array{join: string, where: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "queries",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "depth",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 118,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "clauseSql",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clauseSql(array $clause, array $parent, string $key): array",
+                    "doc": "One clause's JOIN and WHERE pieces (get_sql_for_clause): the clause is\nsettled in place (compare, compare_key, then its alias and cast), its\nalias shared with a compatible sibling or a new join.",
+                    "shapes": [
+                        "@return array{where: list<string>, join: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 153
+                },
+                {
+                    "routes": [],
+                    "name": "compatibleAlias",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "compatibleAlias(array $clause, array $parent): string|false",
+                    "doc": "The alias of a sibling the clause can share (find_compatible_table_alias):\nunder OR, the first sibling already given an alias whose comparison,\nlike the clause's, reads the same join; false otherwise.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 160,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -84790,8 +85000,8 @@
                         "@return array<string, array{alias: string, cast: string}> clauses seen while building, by name or alias"
                     ],
                     "params": [],
-                    "line": 114,
-                    "end": 117
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -84810,8 +85020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 150
+                    "line": 203,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -84830,8 +85040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 264
+                    "line": 279,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -84852,8 +85062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 86
+                    "line": 75,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -84872,46 +85082,17 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 136
-                },
-                {
-                    "routes": [],
-                    "name": "group",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "group(array $queries, int $depth): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "queries",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "depth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 152,
-                    "end": 171
+                    "line": 184,
+                    "end": 200
                 },
                 {
                     "routes": [],
                     "name": "clause",
                     "static": false,
                     "visibility": "private",
-                    "signature": "clause(array $clause, ?string $name, string $relation, array $siblings): string",
-                    "doc": "",
-                    "shapes": [
-                        "@param list<array{compare: string, alias: string}> $siblings earlier clauses of the same group"
-                    ],
+                    "signature": "clause(array $clause): string",
+                    "doc": "A settled clause's WHERE piece, read from its alias.",
+                    "shapes": [],
                     "params": [
                         {
                             "name": "clause",
@@ -84919,31 +85100,10 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "name",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "relation",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "siblings",
-                            "type": "array",
-                            "shape": "list<array{compare: string, alias: string}>",
-                            "default": null,
-                            "doc": "earlier clauses of the same group"
                         }
                     ],
-                    "line": 174,
-                    "end": 195
+                    "line": 217,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -84969,8 +85129,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 207
+                    "line": 235,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -84996,8 +85156,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 218
+                    "line": 247,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -85018,18 +85178,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 227
+                    "line": 259,
+                    "end": 265
                 },
                 {
                     "routes": [],
-                    "name": "alias",
+                    "name": "newAlias",
                     "static": false,
                     "visibility": "private",
-                    "signature": "alias(array $clause, string $relation, array $siblings): string",
-                    "doc": "",
+                    "signature": "newAlias(array $clause): array",
+                    "doc": "A new alias for a clause, and the join that reads it: LEFT for NOT EXISTS (with the key), INNER otherwise. @return array{0: string, 1: list<string>}",
                     "shapes": [
-                        "@param list<array{compare: string, alias: string}> $siblings"
+                        "@return array{0: string, 1: list<string>}"
                     ],
                     "params": [
                         {
@@ -85038,24 +85198,10 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "relation",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "siblings",
-                            "type": "array",
-                            "shape": "list<array{compare: string, alias: string}>",
-                            "default": null,
-                            "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 250
+                    "line": 268,
+                    "end": 276
                 }
             ]
         },
@@ -85747,7 +85893,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/TaxSql.php",
-            "lines": 164,
+            "lines": 190,
             "doc": "The JOIN and WHERE fragments of a taxonomy query in the reference's\nshape: IN clauses join term_relationships (the first under the table's\nown name, then tt1, tt2, ..., shared between IN siblings under OR),\nNOT IN and AND read subqueries, EXISTS checks the taxonomy, and a term\nnobody has yields \"0 = 1\".",
             "implements": [],
             "extends": null,
@@ -85799,8 +85945,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 33
+                "line": 23,
+                "end": 30
             },
             "cases": [],
             "constants": [],
@@ -85808,15 +85954,6 @@
                 {
                     "name": "aliasCount",
                     "type": "int",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "joins",
-                    "type": "array",
                     "readonly": false,
                     "static": false,
                     "doc": "",
@@ -85890,8 +86027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 63
+                    "line": 42,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -85910,8 +86047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 72
+                    "line": 63,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -85940,8 +86077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 104
+                    "line": 78,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -85962,17 +86099,41 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
+                    "line": 108,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "sqlClauses",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sqlClauses(array $queries): array",
+                    "doc": "The whole query's JOIN and WHERE (get_sql_clauses), each clause settled in place. @return array{join: string, where: string}",
+                    "shapes": [
+                        "@return array{join: string, where: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "queries",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 114,
                     "end": 118
                 },
                 {
                     "routes": [],
-                    "name": "group",
+                    "name": "querySql",
                     "static": false,
-                    "visibility": "private",
-                    "signature": "group(array $queries, int $depth): string",
-                    "doc": "",
-                    "shapes": [],
+                    "visibility": "public",
+                    "signature": "querySql(array $queries, int $depth): array",
+                    "doc": "A group's JOIN and WHERE (get_sql_for_query), indented for its depth. @return array{join: string, where: string}",
+                    "shapes": [
+                        "@return array{join: string, where: string}"
+                    ],
                     "params": [
                         {
                             "name": "queries",
@@ -85989,16 +86150,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 139
+                    "line": 121,
+                    "end": 134
                 },
                 {
                     "routes": [],
-                    "name": "clause",
+                    "name": "clauseSql",
                     "static": false,
-                    "visibility": "private",
-                    "signature": "clause(array $clause, string $relation, ?string $shared): string",
-                    "doc": "",
+                    "visibility": "public",
+                    "signature": "clauseSql(array $clause, array $parent): array",
+                    "doc": "One clause's JOIN and WHERE pieces (get_sql_for_clause). Its terms are\nturned into term_taxonomy_ids in place; an IN clause reads\nterm_relationships under an alias it shares with a compatible sibling\nor joins anew, and keeps that alias. A term nobody has yields \"0 = 1\"\n(nothing at all for NOT IN).",
+                    "shapes": [
+                        "@return array{where: list<string>, join: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 145,
+                    "end": 169
+                },
+                {
+                    "routes": [],
+                    "name": "compatibleAlias",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "compatibleAlias(array $clause, array $parent): string|false",
+                    "doc": "The alias of an IN sibling the clause can share under OR (find_compatible_table_alias), or false.",
                     "shapes": [],
                     "params": [
                         {
@@ -86009,56 +86199,71 @@
                             "doc": ""
                         },
                         {
-                            "name": "relation",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "shared",
-                            "type": "?string",
+                            "name": "parent",
+                            "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 164
+                    "line": 172,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "operator",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "operator(array $clause): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 185,
+                    "end": 189
                 },
                 {
                     "routes": [],
                     "name": "inClause",
                     "static": false,
                     "visibility": "private",
-                    "signature": "inClause(string $list, string $relation, ?string $shared): string",
+                    "signature": "inClause(array $clause, array $parent, string $list): array",
                     "doc": "",
-                    "shapes": [],
+                    "shapes": [
+                        "@return array{where: list<string>, join: list<string>}"
+                    ],
                     "params": [
+                        {
+                            "name": "clause",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
                         {
                             "name": "list",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
-                        },
-                        {
-                            "name": "relation",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "shared",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 178
+                    "line": 192,
+                    "end": 204
                 }
             ]
         },

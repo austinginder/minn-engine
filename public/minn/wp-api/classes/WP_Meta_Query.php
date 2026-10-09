@@ -3,7 +3,7 @@
 use Minn\Query\MetaSql;
 use Minn\Runtime\Runtime;
 
-/** A meta query: the clauses as given, the SQL fragments from Minn\Query\MetaSql. */
+/** A meta query: the clauses as given, the SQL fragments per query and clause from Minn\Query\MetaSql (probes query-clauses, query-clause-internals). */
 #[AllowDynamicProperties]
 class WP_Meta_Query
 {
@@ -16,6 +16,8 @@ class WP_Meta_Query
     protected $table_aliases = [];
     protected $clauses = [];
     protected $has_or_relation = false;
+    /** @var MetaSql|null the builder whose aliases this query has handed out so far */
+    private $builder;
 
     public function __construct($meta_query = false)
     {
@@ -58,10 +60,9 @@ class WP_Meta_Query
         $this->meta_id_column = $column;
         $this->primary_table = $primary_table;
         $this->primary_id_column = $primary_id_column;
-        $builder = new MetaSql($this->meta_table, $column, (string) $primary_table, (string) $primary_id_column);
-        $sql = $builder->build($this->queries);
-        $this->clauses = $builder->clauses();
-        $this->table_aliases = array_values(array_unique(array_map(static fn (array $c) => $c['alias'], $this->clauses)));
+        $this->builder = new MetaSql($this->meta_table, $column, (string) $primary_table, (string) $primary_id_column);
+        $sql = $this->builder->build($this->queries);
+        $this->remember();
         $this->has_or_relation = MetaSql::hasOr($this->queries);
         return apply_filters_ref_array('get_meta_sql', [$sql, $this->queries, $type, $primary_table, $primary_id_column, $context]);
     }
@@ -69,6 +70,46 @@ class WP_Meta_Query
     public function get_clauses()
     {
         return $this->clauses;
+    }
+
+    protected function get_sql_clauses()
+    {
+        $queries = $this->queries;
+        $sql = $this->builder()->sqlClauses($queries);
+        $this->remember();
+        return $sql;
+    }
+
+    protected function get_sql_for_query(&$query, $depth = 0)
+    {
+        $sql = $this->builder()->querySql($query, (int) $depth);
+        $this->remember();
+        return $sql;
+    }
+
+    public function get_sql_for_clause(&$clause, $parent_query, $clause_key = '')
+    {
+        $sql = $this->builder()->clauseSql($clause, (array) $parent_query, (string) $clause_key);
+        $this->remember();
+        return $sql;
+    }
+
+    protected function find_compatible_table_alias($clause, $parent_query)
+    {
+        return $this->builder()->compatibleAlias((array) $clause, (array) $parent_query);
+    }
+
+    /** The builder for the tables this query reads, made once. */
+    private function builder(): MetaSql
+    {
+        return $this->builder ??= new MetaSql((string) $this->meta_table, (string) $this->meta_id_column, (string) $this->primary_table, (string) $this->primary_id_column);
+    }
+
+    /** The clauses and aliases the builder has settled so far. */
+    private function remember(): void
+    {
+        $this->clauses = $this->builder()->clauses();
+        $this->table_aliases = array_values(array_unique(array_map(static fn (array $c) => $c['alias'], $this->clauses)));
     }
 
     public function has_or_relation()

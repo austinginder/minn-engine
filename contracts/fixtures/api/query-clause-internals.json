@@ -1,0 +1,349 @@
+[
+    [
+        "date values checked",
+        [
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "The following values do not describe a valid date: year 2023, month 2, day 29.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 13 for month. Expected value should be between 1 and 12.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 25 for hour. Expected value should be between 0 and 23.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 61 for minute. Expected value should be between 0 and 59.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value -1 for second. Expected value should be between 0 and 59.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 367 for dayofyear. Expected value should be between 1 and 366.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 8 for dayofweek. Expected value should be between 1 and 7.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 0 for dayofweek_iso. Expected value should be between 1 and 7.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 54 for week. Expected value should be between 1 and 53.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 14 for month. Expected value should be between 1 and 12.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "The following values do not describe a valid date: month 4, day 31.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 13 for month. Expected value should be between 1 and 12.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 0 for dayofyear. Expected value should be between 1 and 366.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 0 for dayofweek. Expected value should be between 1 and 7.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 8 for dayofweek_iso. Expected value should be between 1 and 7.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 0 for month. Expected value should be between 1 and 12.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 0 for week. Expected value should be between 1 and 52.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 32 for day. Expected value should be between 1 and 31.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 24 for hour. Expected value should be between 0 and 23.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value -1 for minute. Expected value should be between 0 and 59.",
+                        "4.1.0"
+                    ],
+                    [
+                        "WP_Date_Query",
+                        "Invalid value 60 for second. Expected value should be between 0 and 59.",
+                        "4.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Date_Query",
+                        "The following values do not describe a valid date: year 2024, month 2, day 30.",
+                        "4.1.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "date sql",
+        [
+            {
+                "join": "",
+                "where": " AND ( \n  ( YEAR( {prefix}posts.post_date ) IN (2024) AND MONTH( {prefix}posts.post_date ) IN (1,2) ) \n  OR \n  {prefix}posts.post_modified >= '2024-01-01 00:00:00' \n  OR \n  ( \n    HOUR( {prefix}posts.post_date ) >= 9 \n    AND \n    DAYOFWEEK( {prefix}posts.post_date ) BETWEEN 2 AND 6\n  )\n)"
+            },
+            {
+                "join": "",
+                "where": "( \n  ( YEAR( {prefix}posts.post_date ) IN (2024) AND MONTH( {prefix}posts.post_date ) IN (1,2) ) \n  OR \n  {prefix}posts.post_modified >= '2024-01-01 00:00:00' \n  OR \n  ( \n    HOUR( {prefix}posts.post_date ) >= 9 \n    AND \n    DAYOFWEEK( {prefix}posts.post_date ) BETWEEN 2 AND 6\n  )\n)"
+            },
+            {
+                "join": "",
+                "where": "( \n    ( YEAR( {prefix}posts.post_date ) IN (2024) AND MONTH( {prefix}posts.post_date ) IN (1,2) ) \n    OR \n    {prefix}posts.post_modified >= '2024-01-01 00:00:00' \n    OR \n    ( \n      HOUR( {prefix}posts.post_date ) >= 9 \n      AND \n      DAYOFWEEK( {prefix}posts.post_date ) BETWEEN 2 AND 6\n    )\n  )"
+            },
+            {
+                "where": [
+                    "YEAR( {prefix}posts.post_date ) IN (2024)",
+                    "MONTH( {prefix}posts.post_date ) IN (1,2)"
+                ],
+                "join": []
+            },
+            {
+                "where": [
+                    "YEAR( {prefix}posts.post_date ) IN (2024)",
+                    "MONTH( {prefix}posts.post_date ) IN (1,2)"
+                ],
+                "join": []
+            },
+            {
+                "where": [
+                    "{prefix}posts.post_modified >= '2024-01-01 00:00:00'"
+                ],
+                "join": []
+            },
+            {
+                "where": [
+                    "WEEK( {prefix}posts.post_date, 1 ) != 10"
+                ],
+                "join": []
+            },
+            {
+                "where": [
+                    "{prefix}posts.post_date > '2010-06-30 23:59:59'",
+                    "{prefix}posts.post_date < '2020-01-01 00:00:00'"
+                ],
+                "join": []
+            },
+            {
+                "where": [],
+                "join": []
+            },
+            {
+                "where": [
+                    "HOUR( {prefix}posts.post_date ) = 0"
+                ],
+                "join": []
+            },
+            {
+                "where": [
+                    "YEAR( {prefix}posts.post_date ) IN (2024)"
+                ],
+                "join": []
+            },
+            {
+                "where": [],
+                "join": []
+            },
+            {
+                "where": [
+                    "MONTH( {prefix}posts.post_date ) IN (3)"
+                ],
+                "join": []
+            },
+            {
+                "where": [],
+                "join": []
+            },
+            " AND ( \n  ( YEAR( {prefix}posts.post_date ) IN (2024) AND MONTH( {prefix}posts.post_date ) IN (1,2) ) \n  OR \n  {prefix}posts.post_modified >= '2024-01-01 00:00:00' \n  OR \n  ( \n    HOUR( {prefix}posts.post_date ) >= 9 \n    AND \n    DAYOFWEEK( {prefix}posts.post_date ) BETWEEN 2 AND 6\n  )\n)"
+        ]
+    ],
+    [
+        "date values and times built",
+        [
+            "(1,2,3)",
+            false,
+            "1 AND 5",
+            false,
+            false,
+            5,
+            false,
+            false,
+            1,
+            false,
+            "DATE_FORMAT( post_date, '%H.%i%s' ) = 10.300000",
+            "HOUR( post_date ) = 10",
+            "DATE_FORMAT( post_date, '%H.%i' ) > 10.300000",
+            "MINUTE( post_date ) = 30",
+            "HOUR( post_date ) IN (9,10)",
+            "",
+            "SECOND( post_date ) = 15",
+            false,
+            "DATE_FORMAT( post_date, '%H.%i%s' ) < 23.595900",
+            "OR",
+            "AND",
+            "AND",
+            "AND"
+        ]
+    ],
+    [
+        "meta sql",
+        [
+            {
+                "join": " INNER JOIN {prefix}postmeta ON ( {prefix}posts.ID = {prefix}postmeta.post_id )  INNER JOIN {prefix}postmeta AS mt1 ON ( {prefix}posts.ID = mt1.post_id )  LEFT JOIN {prefix}postmeta AS mt2 ON ( {prefix}posts.ID = mt2.post_id AND mt2.meta_key = 'zz_c' )  INNER JOIN {prefix}postmeta AS mt3 ON ( {prefix}posts.ID = mt3.post_id )  INNER JOIN {prefix}postmeta AS mt4 ON ( {prefix}posts.ID = mt4.post_id )  INNER JOIN {prefix}postmeta AS mt5 ON ( {prefix}posts.ID = mt5.post_id )",
+                "where": " AND ( \n  ( {prefix}postmeta.meta_key = 'zz_a' AND CAST({prefix}postmeta.meta_value AS SIGNED) > '5' ) \n  AND \n  ( \n    mt1.meta_key = 'zz_b' \n    OR \n    mt2.post_id IS NULL \n    OR \n    ( mt1.meta_key = 'zz_b' AND mt1.meta_value LIKE '%x%' )\n  ) \n  AND \n  ( mt3.meta_key = 'zz_d' AND mt3.meta_value IN ('x','y') ) \n  AND \n  mt4.meta_value = 'only value' \n  AND \n  mt5.meta_key IN ('zz_e','zz_f')\n)"
+            },
+            {
+                "join": " INNER JOIN {prefix}postmeta ON ( {prefix}posts.ID = {prefix}postmeta.post_id )  INNER JOIN {prefix}postmeta AS mt1 ON ( {prefix}posts.ID = mt1.post_id )  LEFT JOIN {prefix}postmeta AS mt2 ON ( {prefix}posts.ID = mt2.post_id AND mt2.meta_key = 'zz_c' )  INNER JOIN {prefix}postmeta AS mt3 ON ( {prefix}posts.ID = mt3.post_id )  INNER JOIN {prefix}postmeta AS mt4 ON ( {prefix}posts.ID = mt4.post_id )  INNER JOIN {prefix}postmeta AS mt5 ON ( {prefix}posts.ID = mt5.post_id )",
+                "where": "( \n  ( {prefix}postmeta.meta_key = 'zz_a' AND CAST({prefix}postmeta.meta_value AS SIGNED) > '5' ) \n  AND \n  ( \n    mt1.meta_key = 'zz_b' \n    OR \n    mt2.post_id IS NULL \n    OR \n    ( mt1.meta_key = 'zz_b' AND mt1.meta_value LIKE '%x%' )\n  ) \n  AND \n  ( mt3.meta_key = 'zz_d' AND mt3.meta_value IN ('x','y') ) \n  AND \n  mt4.meta_value = 'only value' \n  AND \n  mt5.meta_key IN ('zz_e','zz_f')\n)"
+            },
+            {
+                "join": " INNER JOIN {prefix}postmeta ON ( {prefix}posts.ID = {prefix}postmeta.post_id )  INNER JOIN {prefix}postmeta AS mt1 ON ( {prefix}posts.ID = mt1.post_id )  LEFT JOIN {prefix}postmeta AS mt2 ON ( {prefix}posts.ID = mt2.post_id AND mt2.meta_key = 'zz_c' )  INNER JOIN {prefix}postmeta AS mt3 ON ( {prefix}posts.ID = mt3.post_id )  INNER JOIN {prefix}postmeta AS mt4 ON ( {prefix}posts.ID = mt4.post_id )  INNER JOIN {prefix}postmeta AS mt5 ON ( {prefix}posts.ID = mt5.post_id )",
+                "where": "( \n      ( {prefix}postmeta.meta_key = 'zz_a' AND CAST({prefix}postmeta.meta_value AS SIGNED) > '5' ) \n      AND \n      ( \n        mt1.meta_key = 'zz_b' \n        OR \n        mt2.post_id IS NULL \n        OR \n        ( mt1.meta_key = 'zz_b' AND mt1.meta_value LIKE '%x%' )\n      ) \n      AND \n      ( mt3.meta_key = 'zz_d' AND mt3.meta_value IN ('x','y') ) \n      AND \n      mt4.meta_value = 'only value' \n      AND \n      mt5.meta_key IN ('zz_e','zz_f')\n    )"
+            },
+            [
+                {
+                    "where": [
+                        "( {prefix}postmeta.meta_key = 'zz_d' AND {prefix}postmeta.meta_value IN ('x','y') )"
+                    ],
+                    "join": [
+                        " INNER JOIN {prefix}postmeta ON ( {prefix}posts.ID = {prefix}postmeta.post_id )"
+                    ]
+                },
+                {
+                    "key": "zz_d",
+                    "value": [
+                        "x",
+                        "y"
+                    ],
+                    "compare": "IN",
+                    "compare_key": "=",
+                    "alias": "{prefix}postmeta",
+                    "cast": "CHAR"
+                }
+            ],
+            [
+                false,
+                "mt1",
+                false,
+                false,
+                {
+                    "key": "zz_b",
+                    "compare": "=",
+                    "compare_key": "=",
+                    "alias": "mt1",
+                    "cast": "CHAR"
+                }
+            ],
+            {
+                "join": " LEFT JOIN {prefix}postmeta ON ( {prefix}posts.ID = {prefix}postmeta.post_id )  LEFT JOIN {prefix}postmeta AS mt1 ON ( {prefix}posts.ID = mt1.post_id )  LEFT JOIN {prefix}postmeta AS mt2 ON ( {prefix}posts.ID = mt2.post_id AND mt2.meta_key = 'zz_c' )  LEFT JOIN {prefix}postmeta AS mt3 ON ( {prefix}posts.ID = mt3.post_id )  LEFT JOIN {prefix}postmeta AS mt4 ON ( {prefix}posts.ID = mt4.post_id )  LEFT JOIN {prefix}postmeta AS mt5 ON ( {prefix}posts.ID = mt5.post_id )",
+                "where": " AND ( \n  ( {prefix}postmeta.meta_key = 'zz_a' AND CAST({prefix}postmeta.meta_value AS SIGNED) > '5' ) \n  AND \n  ( \n    mt1.meta_key = 'zz_b' \n    OR \n    mt2.post_id IS NULL \n    OR \n    ( mt1.meta_key = 'zz_b' AND mt1.meta_value LIKE '%x%' )\n  ) \n  AND \n  ( mt3.meta_key = 'zz_d' AND mt3.meta_value IN ('x','y') ) \n  AND \n  mt4.meta_value = 'only value' \n  AND \n  mt5.meta_key IN ('zz_e','zz_f')\n)"
+            }
+        ]
+    ],
+    [
+        "tax sql",
+        [
+            true,
+            "{\"join\":\" LEFT JOIN {prefix}term_relationships ON ({prefix}posts.ID = {prefix}term_relationships.object_id)\",\"where\":\" AND ( \\n  {prefix}term_relationships.term_taxonomy_id IN ({term}) \\n  OR \\n  ( \\n    EXISTS (\\n\\t\\t\\t\\t\\tSELECT {term}\\n\\t\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\t\\tINNER JOIN {prefix}term_taxonomy\\n\\t\\t\\t\\t\\tON {prefix}term_taxonomy.term_taxonomy_id = {prefix}term_relationships.term_taxonomy_id\\n\\t\\t\\t\\t\\tWHERE {prefix}term_taxonomy.taxonomy = 'post_tag'\\n\\t\\t\\t\\t\\tAND {prefix}term_relationships.object_id = {prefix}posts.ID\\n\\t\\t\\t\\t) \\n    AND \\n    {prefix}posts.ID NOT IN (\\n\\t\\t\\t\\tSELECT object_id\\n\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\tWHERE term_taxonomy_id IN ({term})\\n\\t\\t\\t)\\n  ) \\n  OR \\n  (\\n\\t\\t\\t\\tSELECT COUNT({term})\\n\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\tWHERE term_taxonomy_id IN ({term})\\n\\t\\t\\t\\tAND object_id = {prefix}posts.ID\\n\\t\\t\\t) = {term} \\n  OR \\n  NOT EXISTS (\\n\\t\\t\\t\\t\\tSELECT {term}\\n\\t\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\t\\tINNER JOIN {prefix}term_taxonomy\\n\\t\\t\\t\\t\\tON {prefix}term_taxonomy.term_taxonomy_id = {prefix}term_relationships.term_taxonomy_id\\n\\t\\t\\t\\t\\tWHERE {prefix}term_taxonomy.taxonomy = 'post_format'\\n\\t\\t\\t\\t\\tAND {prefix}term_relationships.object_id = {prefix}posts.ID\\n\\t\\t\\t\\t)\\n)\"}",
+            "{\"join\":\" LEFT JOIN {prefix}term_relationships ON ({prefix}posts.ID = {prefix}term_relationships.object_id)\",\"where\":\"( \\n    {prefix}term_relationships.term_taxonomy_id IN ({term}) \\n    OR \\n    ( \\n      EXISTS (\\n\\t\\t\\t\\t\\tSELECT {term}\\n\\t\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\t\\tINNER JOIN {prefix}term_taxonomy\\n\\t\\t\\t\\t\\tON {prefix}term_taxonomy.term_taxonomy_id = {prefix}term_relationships.term_taxonomy_id\\n\\t\\t\\t\\t\\tWHERE {prefix}term_taxonomy.taxonomy = 'post_tag'\\n\\t\\t\\t\\t\\tAND {prefix}term_relationships.object_id = {prefix}posts.ID\\n\\t\\t\\t\\t) \\n      AND \\n      {prefix}posts.ID NOT IN (\\n\\t\\t\\t\\tSELECT object_id\\n\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\tWHERE term_taxonomy_id IN ({term})\\n\\t\\t\\t)\\n    ) \\n    OR \\n    (\\n\\t\\t\\t\\tSELECT COUNT({term})\\n\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\tWHERE term_taxonomy_id IN ({term})\\n\\t\\t\\t\\tAND object_id = {prefix}posts.ID\\n\\t\\t\\t) = {term} \\n    OR \\n    NOT EXISTS (\\n\\t\\t\\t\\t\\tSELECT {term}\\n\\t\\t\\t\\t\\tFROM {prefix}term_relationships\\n\\t\\t\\t\\t\\tINNER JOIN {prefix}term_taxonomy\\n\\t\\t\\t\\t\\tON {prefix}term_taxonomy.term_taxonomy_id = {prefix}term_relationships.term_taxonomy_id\\n\\t\\t\\t\\t\\tWHERE {prefix}term_taxonomy.taxonomy = 'post_format'\\n\\t\\t\\t\\t\\tAND {prefix}term_relationships.object_id = {prefix}posts.ID\\n\\t\\t\\t\\t)\\n  )\"}",
+            "[{\"where\":[\"{prefix}term_relationships.term_taxonomy_id IN ({term})\"],\"join\":[\" LEFT JOIN {prefix}term_relationships ON ({prefix}posts.ID = {prefix}term_relationships.object_id)\"]},[false,false,false,\"tt{term}\",false],{\"taxonomy\":\"category\",\"terms\":[{term}],\"field\":\"term_taxonomy_id\",\"operator\":\"IN\",\"include_children\":true,\"alias\":\"{prefix}term_relationships\"},{\"taxonomy\":\"category\",\"terms\":[{term}],\"field\":\"term_taxonomy_id\",\"operator\":\"IN\",\"include_children\":true,\"alias\":\"tt{term}\"}]",
+            "{\"join\":\"\",\"where\":\" AND ( \\n  0 = {term}\\n)\"}",
+            "OR",
+            "AND",
+            true,
+            true,
+            false,
+            true
+        ]
+    ]
+]

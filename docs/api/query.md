@@ -6,13 +6,13 @@ shared SQL fragments
 |---|---|---|---|
 | [`AuthorPostsSql`](#authorpostssql) | final class | 30 | get_posts_by_author_sql as the reference writes it: for each type, its |
 | [`CommentOrder`](#commentorder) | final class | 100 | WP_Comment_Query's ORDER BY and LIMIT as the reference writes them |
-| [`DateSql`](#datesql) | final class | 248 | The WHERE fragment of a date query in the reference's shape: before and |
-| [`MetaSql`](#metasql) | final class | 252 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
+| [`DateSql`](#datesql) | final class | 285 | The WHERE fragment of a date query in the reference's shape: before and |
+| [`MetaSql`](#metasql) | final class | 278 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
 | [`PostOrder`](#postorder) | final class | 118 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
-| [`TaxSql`](#taxsql) | final class | 164 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+| [`TaxSql`](#taxsql) | final class | 190 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## AuthorPostsSql
 
@@ -88,7 +88,7 @@ their relation, columns validated against the known date columns.
 
 - const `COLUMNS` = `array (   'posts' =>    array (     0 => 'post_date',     1 => 'post_date_gmt',     2 => 'post_modified',     3 => 'post_modified_gmt',   ),   'comments' =>    array (     0 => 'comment_date',     1 => 'comment_date_gmt',   ),   'users' =>    array (     0 => 'user_registered',   ),   'blogs' =>    array (     0 => 'registered',     1 => 'last_updated',   ), )`
 - const `PART_ORDER` = `array (   0 => 'year',   1 => 'month',   2 => 'monthnum',   3 => 'week',   4 => 'w',   5 => 'dayofyear',   6 => 'day',   7 => 'dayofweek',   8 => 'dayofweek_iso',   9 => 'hour',   10 => 'minute',   11 => 'second', )`
-- const `RANGES` = `array (   'month' =>    array (     0 => 1,     1 => 12,   ),   'week' =>    array (     0 => 1,     1 => 53,   ),   'dayofyear' =>    array (     0 => 1,     1 => 366,   ),   'day' =>    array (     0 => 1,     1 => 31,   ),   'dayofweek' =>    array (     0 => 1,     1 => 7,   ),   'dayofweek_iso' =>    array (     0 => 1,     1 => 7,   ),   'hour' =>    array (     0 => 0,     1 => 23,   ),   'minute' =>    array (     0 => 0,     1 => 59,   ),   'second' =>    array (     0 => 0,     1 => 59,   ), )` — The ranges a date part is checked against, as the reference names them in its notice.
+- const `RANGES` = `array (   'dayofyear' =>    array (     0 => 1,     1 => 366,   ),   'dayofweek' =>    array (     0 => 1,     1 => 7,   ),   'dayofweek_iso' =>    array (     0 => 1,     1 => 7,   ),   'month' =>    array (     0 => 1,     1 => 12,   ),   'week' =>    array (     0 => 1,     1 => 53,   ),   'day' =>    array (     0 => 1,     1 => 31,   ),   'hour' =>    array (     0 => 0,     1 => 23,   ),   'minute' =>    array (     0 => 0,     1 => 59,   ),   'second' =>    array (     0 => 0,     1 => 59,   ), )` — The ranges a date part is checked against, in the order the reference reports them (week's top depends on the year).
 
 ```php
 __construct(array $tables, string $defaultColumn = 'post_date', int $startOfWeek = 1)
@@ -100,9 +100,14 @@ __construct(array $tables, string $defaultColumn = 'post_date', int $startOfWeek
 
 The week of a column as the reference counts it from the site's first day of the week.
 
-### static `validate(array $clause): void`
+### static `validate(array $clause): bool`
 
-Notices for parts out of range and for a year, month and day that make no date (probe query-clauses).
+Whether a clause's date values are valid, with a notice for each part
+out of range (week up to the given year's ISO weeks, 53 without one)
+and for a month and day that make no date (in a leap year when no year
+is given, and only once every part is in range); before and after given
+as parts are checked too (probes
+query-clauses, query-clause-internals). An empty clause is not valid.
 
 ### `sanitize(array $queries, array $defaults): array`
 
@@ -120,6 +125,33 @@ A column name as "table.column", the default for anything unknown.
 
 The WHERE fragment for a date query.
 
+### `forQuery(array $queries, int $depth): array`
+
+A query or group as the reference's get_sql_for_query returns it, indented for its depth. @return array{join: string, where: string}
+
+- `@return array{join: string, where: string}`
+
+### `clauseParts(array $clause): array`
+
+One clause's pieces, before they are joined: the bounds, the date parts
+in order (a part whose value builds to nothing, or to 0, is left out),
+then the time.
+
+- `@return list<string>`
+
+### static `buildValue(string $compare, mixed $value): string|int|false`
+
+A value as the comparison wants it (build_value): a list of numbers
+for IN, exactly two for BETWEEN, one number otherwise; false when the
+value does not fit.
+
+### static `buildTime(string $column, string $compare, mixed $hour, mixed $minute, mixed $second): string|false`
+
+The time of day (build_time_query): listed or ranged parts each on
+their own; a single part by its function; an hour with a second and no
+minute not at all; otherwise the parts as one decimal, DATE_FORMAT( col,
+'%H.%i%s' ). False when no part is given.
+
 ### static `datetime(mixed $value, bool $endOfUnit): string`
 
 A full datetime from a string or a parts array. A string as precise as
@@ -127,7 +159,11 @@ a year, a month, a day or a minute is read as those parts, so an end
 bound reaches the end of its unit; any other string is read as a time
 in the site's zone. Missing parts start (or end) the unit.
 
-Internals: `group()` (private, line 124), `clause()` (private, line 142), `value()` (private, line 178), `time()` (private, line 196), `compare()` (private, line 255)
+### static `compare(string $compare): string`
+
+A comparison upper-cased, = for anything the reference does not know.
+
+Internals: `validDate()` (private, line 77), `partExpressions()` (private, line 233), `group()` (private, line 241), `clause()` (private, line 255)
 
 
 ## MetaSql
@@ -165,6 +201,33 @@ The JOIN and WHERE fragments for a meta query.
 
 - `@return array{join: string, where: string}`
 
+### `sqlClauses(array $queries): array`
+
+The whole query's JOIN and WHERE (get_sql_clauses), each clause given its alias in place. @return array{join: string, where: string}
+
+- `@return array{join: string, where: string}`
+
+### `querySql(array $queries, int $depth): array`
+
+A group's JOIN and WHERE (get_sql_for_query), indented for its depth;
+each clause is given its alias in place, so its siblings can share it.
+
+- `@return array{join: string, where: string}`
+
+### `clauseSql(array $clause, array $parent, string $key): array`
+
+One clause's JOIN and WHERE pieces (get_sql_for_clause): the clause is
+settled in place (compare, compare_key, then its alias and cast), its
+alias shared with a compatible sibling or a new join.
+
+- `@return array{where: list<string>, join: list<string>}`
+
+### `compatibleAlias(array $clause, array $parent): string|false`
+
+The alias of a sibling the clause can share (find_compatible_table_alias):
+under OR, the first sibling already given an alias whose comparison,
+like the clause's, reads the same join; false otherwise.
+
 ### `clauses(): array`
 
 The clauses the last build resolved, by name.
@@ -179,7 +242,7 @@ Whether any level of the query relates two or more clauses by OR.
 
 The CAST target for a clause type; CHAR means no cast.
 
-Internals: `normalized()` (private, line 79), `hasOrWithNotExists()` (private, line 120), `group()` (private, line 152), `clause()` (private, line 174), `keyClause()` (private, line 197), `valueClause()` (private, line 209), `values()` (private, line 221), `alias()` (private, line 230)
+Internals: `normalized()` (private, line 75), `hasOrWithNotExists()` (private, line 184), `clause()` (private, line 217), `keyClause()` (private, line 235), `valueClause()` (private, line 247), `values()` (private, line 259), `newAlias()` (private, line 268)
 
 
 ## MimeWhere
@@ -389,5 +452,31 @@ The JOIN and WHERE fragments for a taxonomy query.
 
 - `@return array{join: string, where: string}`
 
-Internals: `group()` (private, line 120), `clause()` (private, line 141), `inClause()` (private, line 166)
+### `sqlClauses(array $queries): array`
+
+The whole query's JOIN and WHERE (get_sql_clauses), each clause settled in place. @return array{join: string, where: string}
+
+- `@return array{join: string, where: string}`
+
+### `querySql(array $queries, int $depth): array`
+
+A group's JOIN and WHERE (get_sql_for_query), indented for its depth. @return array{join: string, where: string}
+
+- `@return array{join: string, where: string}`
+
+### `clauseSql(array $clause, array $parent): array`
+
+One clause's JOIN and WHERE pieces (get_sql_for_clause). Its terms are
+turned into term_taxonomy_ids in place; an IN clause reads
+term_relationships under an alias it shares with a compatible sibling
+or joins anew, and keeps that alias. A term nobody has yields "0 = 1"
+(nothing at all for NOT IN).
+
+- `@return array{where: list<string>, join: list<string>}`
+
+### `compatibleAlias(array $clause, array $parent): string|false`
+
+The alias of an IN sibling the clause can share under OR (find_compatible_table_alias), or false.
+
+Internals: `operator()` (private, line 185), `inClause()` (private, line 192)
 

@@ -7497,3 +7497,51 @@ Probe `icons` (`tests/tools/icons-probe.php`) proves the icon functions,
     view. Schemas are captured in `data/rest-schemas.json`.
   - Over HTTP, the OPTIONS answers and the namespace index match the
     reference byte for byte.
+
+## The query clause internals (2026-10-09)
+
+Probe `query-clause-internals`
+(`tests/tools/query-clause-internals-probe.php`) calls the steps of
+`WP_Date_Query`, `WP_Meta_Query` and `WP_Tax_Query` directly; a subclass
+opens the protected ones.
+
+- **Date values checked** (`validate_date_values`).
+  - Range notices come in this order: dayofyear, dayofweek, dayofweek_iso,
+    month, week, day, hour, minute, second. The function is
+    `WP_Date_Query`, version 4.1.0.
+  - Week runs up to the given year's ISO week count, 53 when no year is
+    given.
+  - A month and day are checked as a date (in a leap year when no year is
+    given) only once every part is in range. `monthnum` isn't part of
+    that check.
+  - Before and after given as parts are checked too. An empty clause is
+    not valid. These fixes reach `sanitize_query` as well.
+- **Values and times** (`build_value`, `build_time_query`).
+  - IN takes a list of numbers, a lone number included; anything
+    non-numeric is false.
+  - BETWEEN takes exactly two values; one alone is false.
+  - Other comparisons take one number, cast to an integer; a list is
+    false.
+  - A clause leaves out a part whose value is false or 0. Before, the
+    engine printed a one-value BETWEEN as `n AND n` and a non-numeric IN
+    as `(0)`.
+  - Time: no part gives false; a list or range is per part; one part uses
+    its function; an hour and a second without a minute give `''`.
+- **Per query and clause.** `get_sql_for_query` returns join and where
+  strings, indented for the depth. `get_sql_for_clause` returns lists of
+  where and join pieces and settles the clause in place:
+  - meta adds compare, compare_key, alias and cast;
+  - tax turns terms into term_taxonomy_ids and adds the alias of an IN
+    clause.
+
+  `get_sql_clauses` is the whole query with a leading ` AND `.
+- **Aliases.** `find_compatible_table_alias` returns the alias of the
+  first sibling under OR that already has one and reads the same join.
+  For meta, that means both comparisons are in the compatible set (not
+  NOT EXISTS). For tax, both clauses use IN. The builders now write each
+  alias into the clause, so siblings find it there, where before they
+  kept their own list. Each facade keeps one builder, so aliases go on
+  counting across calls, as the reference's do.
+- **Meta joins.** A clause's join is LEFT for NOT EXISTS and INNER
+  otherwise. Only `get_sql` turns every join LEFT when an OR group holds a
+  NOT EXISTS; `get_sql_clauses` alone keeps INNER joins.
