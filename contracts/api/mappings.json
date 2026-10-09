@@ -2,13 +2,13 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 773,
-        "composes": 1692,
-        "leaf": 841,
-        "noop": 2604,
+        "minn": 772,
+        "composes": 1698,
+        "leaf": 843,
+        "noop": 2612,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7735,
+        "functions": 7750,
         "minnMethods": 932,
         "leafLinesOver15": 12
     },
@@ -22314,6 +22314,64 @@
                 "wp_sitemaps_get_max_urls"
             ]
         },
+        "WP_Speculation_Rules::add_rule": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Speculation_Rules::has_rule": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Speculation_Rules::is_valid_eagerness": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Speculation_Rules::is_valid_id": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Speculation_Rules::is_valid_mode": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Speculation_Rules::is_valid_source": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Speculation_Rules::jsonSerialize": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Speculation_Rules::refusal": {
+            "file": "classes/WP_Speculation_Rules.php",
+            "lines": 12,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Style_Engine::compile_css": {
             "file": "classes/WP_Style_Engine.php",
             "lines": 4,
@@ -24755,6 +24813,46 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_URL_Pattern_Prefixer::__construct": {
+            "file": "classes/WP_URL_Pattern_Prefixer.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_URL_Pattern_Prefixer::escape_pattern_string": {
+            "file": "classes/WP_URL_Pattern_Prefixer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_URL_Pattern_Prefixer::get_default_contexts": {
+            "file": "classes/WP_URL_Pattern_Prefixer.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "content_url",
+                "get_stylesheet_directory_uri",
+                "get_template_directory_uri",
+                "home_url",
+                "plugins_url",
+                "site_url",
+                "trailingslashit",
+                "wp_parse_url",
+                "wp_upload_dir"
+            ]
+        },
+        "WP_URL_Pattern_Prefixer::prefix_path_pattern": {
+            "file": "classes/WP_URL_Pattern_Prefixer.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
         },
         "WP_Upgrader::__construct": {
             "file": "classes/WP_Upgrader.php",
@@ -60555,6 +60653,36 @@
                 "wp_sitemaps_get_server"
             ]
         },
+        "wp_get_speculation_rules": {
+            "file": "speculative-loading.php",
+            "lines": 23,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "do_action",
+                "wp_get_speculation_rules_configuration"
+            ]
+        },
+        "wp_get_speculation_rules_configuration": {
+            "file": "speculative-loading.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_option",
+                "is_user_logged_in",
+                "wp_get_speculation_rules_default_configuration"
+            ]
+        },
+        "wp_get_speculation_rules_default_configuration": {
+            "file": "speculative-loading.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_get_split_term": {
             "file": "taxonomy.php",
             "lines": 2,
@@ -63822,17 +63950,13 @@
             ]
         },
         "wp_print_speculation_rules": {
-            "file": "template.php",
-            "lines": 19,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
-            ],
+            "file": "speculative-loading.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "get_stylesheet",
-                "get_template",
-                "is_user_logged_in",
+                "wp_get_speculation_rules",
+                "wp_json_encode",
                 "wp_print_inline_script_tag"
             ]
         },

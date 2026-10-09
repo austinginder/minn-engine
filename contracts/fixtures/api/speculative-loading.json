@@ -1,0 +1,459 @@
+[
+    [
+        "configuration",
+        [
+            {
+                "mode": "prefetch",
+                "eagerness": "conservative"
+            },
+            {
+                "mode": "prefetch",
+                "eagerness": "conservative"
+            },
+            {
+                "mode": "prerender",
+                "eagerness": "eager"
+            },
+            {
+                "mode": "prefetch",
+                "eagerness": "conservative"
+            },
+            {
+                "mode": "prefetch",
+                "eagerness": "conservative"
+            },
+            {
+                "mode": "prefetch",
+                "eagerness": "conservative"
+            },
+            null,
+            {
+                "mode": "prefetch",
+                "eagerness": "conservative"
+            },
+            {
+                "mode": "prerender",
+                "eagerness": "conservative"
+            },
+            null,
+            null
+        ]
+    ],
+    [
+        "the rules object",
+        [
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "A speculation rule with ID \"zz-one\" already exists.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "The value \"fetch\" is not a valid speculation rules mode.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "The value \"Zz Bad Id\" is not a valid ID for a speculation rule.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "The value \"1zz\" is not a valid ID for a speculation rule.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "The value \"sometimes\" is not a valid eagerness for a speculation rule.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "The value \"nowhere\" is not a valid source for a speculation rule.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "A speculation rule of source \"list\" must not include a \"where\" key.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "A speculation rule of source \"document\" must not include a \"urls\" key.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Speculation_Rules::add_rule",
+                        "A speculation rule must include either a \"where\" key or a \"urls\" key, but not both.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                true,
+                false,
+                false,
+                false
+            ],
+            {
+                "prefetch": [
+                    {
+                        "source": "list",
+                        "urls": [
+                            "/a/",
+                            "/b/"
+                        ],
+                        "eagerness": "moderate"
+                    },
+                    {
+                        "where": {
+                            "href_matches": "/zz/*"
+                        }
+                    },
+                    {
+                        "urls": [
+                            "/ten/"
+                        ]
+                    }
+                ],
+                "prerender": [
+                    {
+                        "source": "document",
+                        "where": {
+                            "href_matches": "/x/*"
+                        },
+                        "eagerness": "eager"
+                    },
+                    {
+                        "source": "list",
+                        "urls": [
+                            "/eleven/"
+                        ],
+                        "eagerness": "immediate",
+                        "tag": "zz"
+                    }
+                ]
+            },
+            "{\"prefetch\":[{\"source\":\"list\",\"urls\":[\"\\/a\\/\",\"\\/b\\/\"],\"eagerness\":\"moderate\"},{\"where\":{\"href_matches\":\"\\/zz\\/*\"}},{\"urls\":[\"\\/ten\\/\"]}],\"prerender\":[{\"source\":\"document\",\"where\":{\"href_matches\":\"\\/x\\/*\"},\"eagerness\":\"eager\"},{\"source\":\"list\",\"urls\":[\"\\/eleven\\/\"],\"eagerness\":\"immediate\",\"tag\":\"zz\"}]}",
+            [],
+            [
+                true,
+                true,
+                false,
+                false
+            ],
+            [
+                true,
+                false,
+                true,
+                false
+            ],
+            [
+                true,
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "the URL pattern prefixer",
+        [
+            {
+                "home": "/",
+                "site": "/",
+                "uploads": "/wp-content/uploads/",
+                "content": "/wp-content/",
+                "plugins": "/wp-content/plugins/",
+                "template": "/wp-content/themes/twentytwentyfive/",
+                "stylesheet": "/wp-content/themes/twentytwentyfive/"
+            },
+            "/zz/*",
+            "/zz/*",
+            "/*\\?(.+)",
+            "/x/*",
+            "/wp-content/uploads/x/*",
+            "/wp-content/x/*",
+            "/wp-content/plugins/x/*",
+            "/wp-content/themes/twentytwentyfive/x/*",
+            "/wp-content/themes/twentytwentyfive/x/*",
+            [
+                "/x/*",
+                [
+                    [
+                        "prefix_path_pattern",
+                        "Invalid URL pattern context nowhere.",
+                        "6.8.0"
+                    ]
+                ]
+            ],
+            "/sub dir\\+x\\(1\\)/x/*",
+            "{/zz\\:\\{a\\}\\*\\?}/x/*",
+            "/x/*",
+            "nested/path/x/*",
+            [
+                "/plain/x/*",
+                "{/a\\?}/x/*",
+                "/a\\*/x/*",
+                "/a\\+/x/*",
+                "{/a\\:b}/x/*",
+                "/a\\{b\\}/x/*",
+                "/a\\(b\\)/x/*",
+                "/a\\\\b/x/*",
+                "{/end\\?}/x/*",
+                "{/q\\?x}/x/*",
+                "{/x\\:}/x/*",
+                "/x\\}/x/*",
+                "/a.b/x/*",
+                "/a b/x/*",
+                "/a-b_c~/x/*",
+                "/%41/x/*",
+                "/a@b/x/*"
+            ]
+        ]
+    ],
+    [
+        "the rules the site builds",
+        [
+            {
+                "prefetch": [
+                    {
+                        "source": "document",
+                        "where": {
+                            "and": [
+                                {
+                                    "href_matches": "/*"
+                                },
+                                {
+                                    "not": {
+                                        "href_matches": [
+                                            "/wp-*.php",
+                                            "/wp-admin/*",
+                                            "/wp-content/uploads/*",
+                                            "/wp-content/*",
+                                            "/wp-content/plugins/*",
+                                            "/wp-content/themes/twentytwentyfive/*",
+                                            "/*\\?(.+)"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": "a[rel~=\"nofollow\"]"
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": ".no-prefetch, .no-prefetch a"
+                                    }
+                                }
+                            ]
+                        },
+                        "eagerness": "conservative"
+                    }
+                ]
+            },
+            {
+                "prefetch": [
+                    {
+                        "source": "document",
+                        "where": {
+                            "and": [
+                                {
+                                    "href_matches": "/*"
+                                },
+                                {
+                                    "not": {
+                                        "href_matches": [
+                                            "/wp-*.php",
+                                            "/wp-admin/*",
+                                            "/wp-content/uploads/*",
+                                            "/wp-content/*",
+                                            "/wp-content/plugins/*",
+                                            "/wp-content/themes/twentytwentyfive/*",
+                                            "/*\\?(.+)",
+                                            "/zz-skip/*",
+                                            "/zz-relative/*",
+                                            "/prefetch"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": "a[rel~=\"nofollow\"]"
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": ".no-prefetch, .no-prefetch a"
+                                    }
+                                }
+                            ]
+                        },
+                        "eagerness": "conservative"
+                    }
+                ]
+            },
+            {
+                "prerender": [
+                    {
+                        "source": "document",
+                        "where": {
+                            "and": [
+                                {
+                                    "href_matches": "/*"
+                                },
+                                {
+                                    "not": {
+                                        "href_matches": [
+                                            "/wp-*.php",
+                                            "/wp-admin/*",
+                                            "/wp-content/uploads/*",
+                                            "/wp-content/*",
+                                            "/wp-content/plugins/*",
+                                            "/wp-content/themes/twentytwentyfive/*",
+                                            "/*\\?(.+)"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": "a[rel~=\"nofollow\"]"
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": ".no-prerender, .no-prerender a"
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": ".no-prefetch, .no-prefetch a"
+                                    }
+                                }
+                            ]
+                        },
+                        "eagerness": "moderate"
+                    }
+                ]
+            },
+            null,
+            {
+                "prefetch": [
+                    {
+                        "source": "document",
+                        "where": {
+                            "and": [
+                                {
+                                    "href_matches": "/*"
+                                },
+                                {
+                                    "not": {
+                                        "href_matches": [
+                                            "/wp-*.php",
+                                            "/wp-admin/*",
+                                            "/wp-content/uploads/*",
+                                            "/wp-content/*",
+                                            "/wp-content/plugins/*",
+                                            "/wp-content/themes/twentytwentyfive/*",
+                                            "/*\\?(.+)"
+                                        ]
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": "a[rel~=\"nofollow\"]"
+                                    }
+                                },
+                                {
+                                    "not": {
+                                        "selector_matches": ".no-prefetch, .no-prefetch a"
+                                    }
+                                }
+                            ]
+                        },
+                        "eagerness": "conservative"
+                    }
+                ],
+                "prerender": [
+                    {
+                        "source": "list",
+                        "urls": [
+                            "/zz-added/"
+                        ]
+                    }
+                ]
+            }
+        ]
+    ],
+    [
+        "the script printed",
+        [
+            "<script type=\"speculationrules\">\n{\"prefetch\":[{\"source\":\"document\",\"where\":{\"and\":[{\"href_matches\":\"/*\"},{\"not\":{\"href_matches\":[\"/wp-*.php\",\"/wp-admin/*\",\"/wp-content/uploads/*\",\"/wp-content/*\",\"/wp-content/plugins/*\",\"/wp-content/themes/twentytwentyfive/*\",\"/*\\\\?(.+)\"]}},{\"not\":{\"selector_matches\":\"a[rel~=\\\"nofollow\\\"]\"}},{\"not\":{\"selector_matches\":\".no-prefetch, .no-prefetch a\"}}]},\"eagerness\":\"conservative\"}]}\n</script>\n",
+            "",
+            10
+        ]
+    ]
+]

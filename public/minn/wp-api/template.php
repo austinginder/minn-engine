@@ -613,30 +613,6 @@ function _minn_classic_bar_footer()
     }
 }
 
-/** Speculative loading for signed-out visitors under pretty permalinks: conservative prefetch away from the WordPress paths. */
-function wp_print_speculation_rules()
-{
-    if (!Runtime::current()->get('classic_theme') || is_user_logged_in() || !$GLOBALS['wp_rewrite']->using_permalinks()) {
-        return;
-    }
-    $exclude = ['/wp-*.php', '/wp-admin/*', '/wp-content/uploads/*', '/wp-content/*', '/wp-content/plugins/*'];
-    foreach (array_unique([get_stylesheet(), get_template()]) as $slug) {
-        $exclude[] = '/wp-content/themes/' . $slug . '/*';
-    }
-    $exclude[] = '/*\\?(.+)';
-    $rules = ['prefetch' => [[
-        'source' => 'document',
-        'where' => ['and' => [
-            ['href_matches' => '/*'],
-            ['not' => ['href_matches' => $exclude]],
-            ['not' => ['selector_matches' => 'a[rel~="nofollow"]']],
-            ['not' => ['selector_matches' => '.no-prefetch, .no-prefetch a']],
-        ]],
-        'eagerness' => 'conservative',
-    ]]];
-    wp_print_inline_script_tag((string) json_encode($rules, JSON_HEX_TAG | JSON_UNESCAPED_SLASHES), ['type' => 'speculationrules']);
-}
-
 /** The style that sizes auto-sized images before they load, first in the queue, once a request (the first call decides), unless wp_img_tag_add_auto_sizes turns them off. */
 function wp_enqueue_img_auto_sizes_contain_css_fix()
 {

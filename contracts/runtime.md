@@ -7684,3 +7684,45 @@ proves `WP_Plugin_Dependencies`.
 - **The AJAX check.** `check_plugin_dependencies_during_ajax` answers the
   plugin install screen's JSON check. It sends and exits, so the probe
   leaves it out.
+
+## Speculative loading (2026-10-09)
+
+Probe `speculative-loading` (`tests/tools/speculative-loading-probe.php`)
+proves the speculative-loading functions, `WP_Speculation_Rules` and
+`WP_URL_Pattern_Prefixer`.
+
+- **Every theme now prints the rules.** Signed-out visitors under pretty
+  permalinks get the `<script type="speculationrules">` block on
+  `wp_footer`. Before, only classic themes printed it. Over HTTP, the
+  block is byte-identical to the reference on the front page, a post, a
+  search, an archive and a 404.
+- **Configuration.**
+  - `wp_speculation_rules_configuration` starts from auto/auto, or from
+    null for a signed-in visitor or plain permalinks, and null means off.
+  - Auto, unknown values and a non-array settle on prefetch and
+    conservative; immediate eagerness becomes conservative.
+- **The site's rule.**
+  - It is one document rule for every link under home.
+  - It leaves out `wp-*.php`, wp-admin, uploads, content, plugins, the
+    themes (once when template and stylesheet are the same) and query
+    strings. Then come the paths `wp_speculation_rules_href_exclude_paths`
+    adds (it starts from an empty list and is given the mode), each under
+    home.
+  - It also leaves out nofollow links and those marked `no-{mode}`, with
+    no-prefetch as well for prerender. `wp_load_speculation_rules` may add
+    more rules.
+- **The rules object.**
+  - A rule needs a known mode and an id that starts with a lowercase
+    letter, unused in any mode.
+  - It has either `urls` or `where`, not both, and a source that agrees
+    with them; an eagerness, when it names one, must be valid. Each
+    refusal is a 6.8.0 notice.
+  - The object serializes as each mode's rules, without their ids.
+- **The prefixer.**
+  - A context's path is escaped for URL patterns (`+ * ? : { } ( ) \`).
+    It is grouped in braces when it holds `?` or `:`.
+  - It is joined to the pattern by one slash. An unknown context gives a
+    notice and leaves the pattern as it is.
+- **Still owed.** `wp_get_speculative_loading_override` stays missing. No
+  query arg, constant, environment variable or option changed its answer
+  on the reference, so its source is unknown.
