@@ -1,0 +1,348 @@
+[
+    [
+        "the classes",
+        [
+            true,
+            true,
+            true,
+            [
+                true,
+                true,
+                true,
+                true,
+                false,
+                false
+            ],
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "loaded",
+        [
+            true,
+            {
+                "width": 400,
+                "height": 300
+            },
+            false,
+            "image/jpeg",
+            false,
+            false,
+            "webp",
+            false,
+            [
+                "error",
+                "error_loading_image",
+                "File does not exist?"
+            ],
+            [
+                "error",
+                "invalid_image",
+                "File is not an image."
+            ]
+        ]
+    ],
+    [
+        "quality",
+        [
+            82,
+            82,
+            86,
+            82,
+            true,
+            1,
+            [
+                "error",
+                "invalid_image_quality",
+                "Attempted to set image quality outside of the range [1,100]."
+            ],
+            true,
+            55,
+            42
+        ]
+    ],
+    [
+        "output format and names",
+        [
+            [
+                null,
+                "png",
+                "image/png"
+            ],
+            [
+                "{dir}/x.jpg",
+                "jpg",
+                "image/jpeg"
+            ],
+            [
+                null,
+                "gif",
+                "image/gif"
+            ],
+            [
+                "{dir}/x.png",
+                "png",
+                "image/png"
+            ],
+            [
+                null,
+                "webp",
+                "image/webp"
+            ],
+            "400x300",
+            "{dir}/zz-photo-400x300.png",
+            "{dir}/zz-photo-small.png",
+            "{dir}/zz-photo-small.png",
+            "{dir}/zz-photo-small.jpg",
+            "{dir}/zz-photo-400x300.gif"
+        ]
+    ],
+    [
+        "changes",
+        {
+            "resize": [
+                true,
+                {
+                    "width": 133,
+                    "height": 100
+                }
+            ],
+            "resize bigger": [
+                [
+                    "error",
+                    "error_getting_dimensions",
+                    "Could not calculate resized image dimensions"
+                ],
+                {
+                    "width": 133,
+                    "height": 100
+                }
+            ],
+            "resize cropped": [
+                true,
+                {
+                    "width": 100,
+                    "height": 100
+                }
+            ],
+            "resize cropped top left": [
+                true,
+                {
+                    "width": 120,
+                    "height": 60
+                }
+            ],
+            "crop": [
+                true,
+                {
+                    "width": 100,
+                    "height": 50
+                },
+                true,
+                {
+                    "width": 20,
+                    "height": 10
+                },
+                [
+                    "error",
+                    "image_crop_error",
+                    "Image crop failed."
+                ]
+            ],
+            "rotate": [
+                true,
+                {
+                    "width": 300,
+                    "height": 400
+                },
+                true,
+                {
+                    "width": 495,
+                    "height": 495
+                }
+            ],
+            "flip": [
+                true,
+                true,
+                true,
+                {
+                    "width": 400,
+                    "height": 300
+                }
+            ],
+            "exif rotate": [
+                false,
+                false
+            ]
+        }
+    ],
+    [
+        "sub-sizes",
+        [
+            {
+                "zz_small": {
+                    "file": "zz-photo-100x100.png",
+                    "width": 100,
+                    "height": 100,
+                    "mime-type": "image/png",
+                    "filesize": 357
+                },
+                "zz_wide": {
+                    "file": "zz-photo-300x225.png",
+                    "width": 300,
+                    "height": 225,
+                    "mime-type": "image/png",
+                    "filesize": 860
+                },
+                "zz_tall": {
+                    "file": "zz-photo-200x150.png",
+                    "width": 200,
+                    "height": 150,
+                    "mime-type": "image/png",
+                    "filesize": 493
+                }
+            },
+            {
+                "zz_small": {
+                    "0": 100,
+                    "1": 100,
+                    "mime": "image/png"
+                },
+                "zz_wide": {
+                    "0": 300,
+                    "1": 225,
+                    "mime": "image/png"
+                },
+                "zz_tall": {
+                    "0": 200,
+                    "1": 150,
+                    "mime": "image/png"
+                }
+            },
+            {
+                "file": "zz-photo-50x40.png",
+                "width": 50,
+                "height": 40,
+                "mime-type": "image/png",
+                "filesize": 174
+            },
+            [
+                "error",
+                "error_getting_dimensions",
+                "Could not calculate resized image dimensions"
+            ],
+            {
+                "width": 400,
+                "height": 300
+            }
+        ]
+    ],
+    [
+        "saved",
+        [
+            [
+                {
+                    "path": "{dir}/zz-photo-320x240.jpg",
+                    "file": "zz-photo-320x240.jpg",
+                    "width": 320,
+                    "height": 240,
+                    "mime-type": "image/jpeg",
+                    "filesize": 6276
+                },
+                {
+                    "0": 320,
+                    "1": 240,
+                    "mime": "image/jpeg"
+                }
+            ],
+            [
+                {
+                    "path": "{dir}/zz-named.jpg",
+                    "file": "zz-named.jpg",
+                    "width": 320,
+                    "height": 240,
+                    "mime-type": "image/jpeg",
+                    "filesize": 6276
+                },
+                {
+                    "0": 320,
+                    "1": 240,
+                    "mime": "image/jpeg"
+                }
+            ],
+            [
+                {
+                    "path": "{dir}/zz-as.png",
+                    "file": "zz-as.png",
+                    "width": 320,
+                    "height": 240,
+                    "mime-type": "image/png",
+                    "filesize": 1237
+                },
+                {
+                    "0": 320,
+                    "1": 240,
+                    "mime": "image/png"
+                }
+            ],
+            [
+                {
+                    "path": "{dir}/zz-as-320x240.png",
+                    "file": "zz-as-320x240.png",
+                    "width": 320,
+                    "height": 240,
+                    "mime-type": "image/png",
+                    "filesize": 1237
+                },
+                {
+                    "0": 320,
+                    "1": 240,
+                    "mime": "image/png"
+                }
+            ],
+            [
+                {
+                    "path": "{dir}/zz-photo.webp",
+                    "file": "zz-photo.webp",
+                    "width": 320,
+                    "height": 240,
+                    "mime-type": "image/webp"
+                },
+                {
+                    "0": 320,
+                    "1": 240,
+                    "mime": "image/webp"
+                }
+            ],
+            [
+                "path",
+                "file",
+                "width",
+                "height",
+                "mime-type",
+                "filesize"
+            ],
+            true
+        ]
+    ],
+    [
+        "saved twice without a name",
+        [
+            "zz-photo-320x240.jpg",
+            "zz-photo-320x240-160x120.jpg",
+            "zz-photo-320x240-160x120-160x120.png"
+        ]
+    ],
+    [
+        "streamed",
+        [
+            true,
+            "ffd8",
+            true,
+            true,
+            "89504e470d0a1a0a"
+        ]
+    ]
+]

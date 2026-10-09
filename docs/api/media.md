@@ -5,7 +5,7 @@ uploads, image sizes and attachment metadata
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`AvifInfo`](#avifinfo) | final class | 142 | An AVIF file's primary image as wp_get_avif_info reports it (probe |
-| [`Canvas`](#canvas) | final readonly class | 156 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`Canvas`](#canvas) | final readonly class | 168 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
@@ -54,6 +54,14 @@ Used by: `Minn\Media\Images`
 
 - readonly `int $width`
 - readonly `int $height`
+
+### static `of(GdImage $image): self`
+
+A canvas over a GD image already in hand (what WP_Image_Editor_GD::_save is given).
+
+### `image(): GdImage`
+
+The GD image behind the canvas (what WP_Image_Editor_GD::_resize hands back).
 
 ### static `open(string $path): ?self`
 
@@ -104,7 +112,7 @@ The bitmap written line by line from now on, as it is by default.
 
 Writes the image to the output in a format, at a quality.
 
-Internals: `affordable()` (private, line 48), `memoryLimit()` (private, line 60), `flipped()` (private, line 122), `encode()` (private, line 159)
+Internals: `affordable()` (private, line 60), `memoryLimit()` (private, line 72), `flipped()` (private, line 134), `encode()` (private, line 171)
 
 
 ## Gallery

@@ -7076,3 +7076,29 @@ slugs already matched; two things changed.
   controller's) now carry the property's `description`, after
   `default`/`required` and before the type keywords. That matches the
   reference's arguments in the route index.
+
+## The image editors (2026-10-08)
+
+Probe `image-editor` (`tests/tools/image-editor-probe.php`) proves
+`WP_Image_Editor` and `WP_Image_Editor_GD` on a PNG and a JPEG the probe
+draws. Files are compared by name and measured size, never by bytes; the
+probe's folder is removed. Which editor `wp_get_image_editor()` picks is
+left out. The reference prefers Imagick when the extension is loaded, and
+the engine's `WP_Image_Editor_Imagick` is still a placeholder, so it always
+edits with GD (open).
+
+- **Output format.** A file name given without a mime type names the format
+  by its extension (`x.jpg` saves a JPEG, so saving a JPEG to `x.png` writes
+  a PNG). Keeping the source's own format keeps the source's extension.
+- **Saving moves the editor.** After `save()` the editor stands for the file
+  it wrote, in that format, so a later unnamed save is named from it
+  (`photo-320x240-160x120.jpg`). `make_subsize` and `multi_resize` put the
+  file and format back, so sub-sizes never move it.
+- **GD's own steps.**
+  - `_resize` returns the resampled GD image, or the dimensions error.
+  - `_save` writes a GD image and reports path, file, width, height,
+    mime-type and filesize. `resize` and `save` go through them
+    (`Media\Canvas::of` and `image()`).
+  - `__destruct` has nothing to free.
+- **Errors.** A crop with no area is `image_crop_error` "Image crop failed.".
+  A missing file reads "File does not exist?".

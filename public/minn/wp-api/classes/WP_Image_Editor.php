@@ -92,6 +92,10 @@ abstract class WP_Image_Editor
      */
     protected function get_output_format($filename = null, $mime_type = null)
     {
+        // A file name with no mime type names its format by extension; the source's own format keeps the source's extension.
+        if (!$mime_type && $filename !== null) {
+            $mime_type = static::get_mime_type(strtolower((string) pathinfo((string) $filename, PATHINFO_EXTENSION))) ?: null;
+        }
         $mime_type = $mime_type ?: $this->mime_type;
         $map = wp_get_image_editor_output_format($filename, $this->mime_type);
         if (isset($map[$mime_type]) && static::supports_mime_type($map[$mime_type])) {
@@ -100,8 +104,7 @@ abstract class WP_Image_Editor
         if (!static::supports_mime_type($mime_type)) {
             $mime_type = $this->default_mime_type;
         }
-        $source = $filename ?? $this->file;
-        $extension = $mime_type === $this->mime_type ? strtolower((string) pathinfo((string) $source, PATHINFO_EXTENSION)) : (string) static::get_extension($mime_type);
+        $extension = $mime_type === $this->mime_type ? strtolower((string) pathinfo((string) $this->file, PATHINFO_EXTENSION)) : (string) static::get_extension($mime_type);
         $extension = $extension !== '' ? $extension : (string) static::get_extension($mime_type);
         if ($filename !== null) {
             $filename = trailingslashit(pathinfo((string) $filename, PATHINFO_DIRNAME)) . pathinfo((string) $filename, PATHINFO_FILENAME) . '.' . $extension;
@@ -191,15 +194,15 @@ abstract class WP_Image_Editor
         return $saved;
     }
 
-    /** What make_subsize puts back after a size: the editor's own state. */
+    /** What make_subsize puts back after a size: the editor's size, and the file and format a save moves it to. */
     protected function keep()
     {
-        return ['size' => $this->size];
+        return ['size' => $this->size, 'file' => $this->file, 'mime_type' => $this->mime_type];
     }
 
     protected function restore($state)
     {
-        $this->size = $state['size'];
+        [$this->size, $this->file, $this->mime_type] = [$state['size'], $state['file'], $state['mime_type']];
     }
 
     protected function make_image($filename, $callback, $arguments)
@@ -246,7 +249,7 @@ class WP_Image_Editor_GD extends WP_Image_Editor
             return true;
         }
         if (!is_file($this->file)) {
-            return new WP_Error('error_loading_image', 'File doesn&#8217;t exist?', $this->file);
+            return new WP_Error('error_loading_image', __('File does not exist?'), $this->file);
         }
         $canvas = Canvas::open($this->file);
         if ($canvas === null) {
@@ -268,12 +271,22 @@ class WP_Image_Editor_GD extends WP_Image_Editor
         if ($this->size['width'] === (int) $max_w && $this->size['height'] === (int) $max_h) {
             return true;
         }
+        $resized = $this->_resize($max_w, $max_h, $crop);
+        if (is_wp_error($resized)) {
+            return $resized;
+        }
+        $this->adopt(Canvas::of($resized));
+        return $this->set_quality();
+    }
+
+    /** The image resampled to fit (or fill, cropped) the box, as a new GD image; an error when no box fits. */
+    protected function _resize($max_w, $max_h, $crop = false)
+    {
         $box = image_resize_dimensions($this->size['width'], $this->size['height'], $max_w, $max_h, $crop);
         if (!$box) {
-            return new WP_Error('error_getting_dimensions', 'Could not calculate resized image dimensions', $this->file);
+            return new WP_Error('error_getting_dimensions', __('Could not calculate resized image dimensions'), $this->file);
         }
-        $this->adopt($this->canvas->resample($box));
-        return $this->set_quality();
+        return $this->canvas->resample($box)->image();
     }
 
     protected function keep()
@@ -299,7 +312,7 @@ class WP_Image_Editor_GD extends WP_Image_Editor
             $size += ['width' => null, 'height' => null, 'crop' => false];
             $resized = $this->resize($size['width'], $size['height'], $size['crop']);
             if (!is_wp_error($resized) && ($this->size['width'] !== $originalSize['width'] || $this->size['height'] !== $originalSize['height'])) {
-                $saved = $this->save();
+                $saved = $this->_save($this->canvas->image());
                 if (!is_wp_error($saved)) {
                     unset($saved['path']);
                     $metadata[$name] = $saved;
@@ -311,11 +324,15 @@ class WP_Image_Editor_GD extends WP_Image_Editor
         return $metadata;
     }
 
+    /** The image cut to a box (scaled to a destination size when one is given); an error for a box with no area. */
     public function crop($src_x, $src_y, $src_w, $src_h, $dst_w = null, $dst_h = null, $src_abs = false)
     {
         if ($src_abs) {
             $src_w -= $src_x;
             $src_h -= $src_y;
+        }
+        if ((int) $src_w < 1 || (int) $src_h < 1 || ($dst_w !== null && (int) $dst_w < 1) || ($dst_h !== null && (int) $dst_h < 1)) {
+            return new WP_Error('image_crop_error', __('Image crop failed.'), $this->file);
         }
         return $this->adopt($this->canvas->crop((int) $src_x, (int) $src_y, (int) $src_w, (int) $src_h, $dst_w === null ? null : (int) $dst_w, $dst_h === null ? null : (int) $dst_h));
     }
@@ -338,15 +355,32 @@ class WP_Image_Editor_GD extends WP_Image_Editor
         return $this->adopt($canvas);
     }
 
+    /** The image written (_save); the editor then stands for that file in its format, so the next name grows from it. */
     public function save($destfilename = null, $mime_type = null)
     {
-        [$filename, $extension, $mime_type] = $this->get_output_format($destfilename, $mime_type);
-        $filename = $filename ?? $this->generate_filename(null, null, $extension);
-        apply_filters('image_save_progressive', false, $mime_type) && $mime_type === 'image/jpeg' ? $this->canvas->progressive() : $this->canvas->baseline();
-        if (!$this->canvas->write($filename, $mime_type, $this->get_quality())) {
-            return new WP_Error('image_save_error', 'Image Editor Save Failed');
+        $saved = $this->_save($this->canvas->image(), $destfilename, $mime_type);
+        if (!is_wp_error($saved)) {
+            [$this->file, $this->mime_type] = [$saved['path'], $saved['mime-type']];
         }
-        return ['path' => $filename, 'file' => wp_basename(apply_filters('image_make_intermediate_size', $filename)), 'width' => $this->size['width'], 'height' => $this->size['height'], 'mime-type' => $mime_type, 'filesize' => (int) filesize($filename)];
+        return $saved;
+    }
+
+    /** A GD image written in the output format, under the name given or one the editor makes: its path, file, size, type and bytes. */
+    protected function _save($image, $filename = null, $mime_type = null)
+    {
+        [$filename, $extension, $mime_type] = $this->get_output_format($filename, $mime_type);
+        $filename = $filename ?? $this->generate_filename(null, null, $extension);
+        $canvas = Canvas::of($image);
+        apply_filters('image_save_progressive', false, $mime_type) && $mime_type === 'image/jpeg' ? $canvas->progressive() : $canvas->baseline();
+        if (!$canvas->write($filename, $mime_type, $this->get_quality())) {
+            return new WP_Error('image_save_error', __('Image Editor Save Failed'));
+        }
+        return ['path' => $filename, 'file' => wp_basename(apply_filters('image_make_intermediate_size', $filename)), 'width' => $canvas->width, 'height' => $canvas->height, 'mime-type' => $mime_type, 'filesize' => (int) filesize($filename)];
+    }
+
+    /** Nothing to let go: PHP frees the GD image with the editor. */
+    public function __destruct()
+    {
     }
 
     public function stream($mime_type = null)

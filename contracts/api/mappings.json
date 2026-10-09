@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 753,
-        "composes": 1612,
-        "leaf": 778,
-        "noop": 2468,
+        "minn": 755,
+        "composes": 1613,
+        "leaf": 777,
+        "noop": 2469,
         "placeholder": 279,
         "deadend": 1659,
-        "functions": 7471,
-        "minnMethods": 905,
+        "functions": 7474,
+        "minnMethods": 909,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -12705,7 +12705,7 @@
         },
         "WP_Image_Editor::get_output_format": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 22,
+            "lines": 25,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -12806,6 +12806,39 @@
             "minn": [],
             "composes": []
         },
+        "WP_Image_Editor_GD::__destruct": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Image_Editor_GD::_resize": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "image_resize_dimensions"
+            ]
+        },
+        "WP_Image_Editor_GD::_save": {
+            "file": "classes/WP_Image_Editor.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Media\\Canvas::baseline",
+                "Minn\\Media\\Canvas::of",
+                "Minn\\Media\\Canvas::progressive",
+                "Minn\\Media\\Canvas::write"
+            ],
+            "composes": [
+                "__",
+                "apply_filters",
+                "wp_basename"
+            ]
+        },
         "WP_Image_Editor_GD::adopt": {
             "file": "classes/WP_Image_Editor.php",
             "lines": 2,
@@ -12815,10 +12848,12 @@
         },
         "WP_Image_Editor_GD::crop": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 5,
-            "kind": "leaf",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_Image_Editor_GD::flip": {
             "file": "classes/WP_Image_Editor.php",
@@ -12842,6 +12877,7 @@
                 "Minn\\Media\\Canvas::open"
             ],
             "composes": [
+                "__",
                 "wp_get_image_mime"
             ]
         },
@@ -12857,10 +12893,12 @@
         "WP_Image_Editor_GD::resize": {
             "file": "classes/WP_Image_Editor.php",
             "lines": 9,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Media\\Canvas::of"
+            ],
             "composes": [
-                "image_resize_dimensions"
+                "is_wp_error"
             ]
         },
         "WP_Image_Editor_GD::restore": {
@@ -12879,12 +12917,11 @@
         },
         "WP_Image_Editor_GD::save": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 7,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "apply_filters",
-                "wp_basename"
+                "is_wp_error"
             ]
         },
         "WP_Image_Editor_GD::stream": {

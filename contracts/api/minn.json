@@ -75857,7 +75857,7 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Canvas.php",
-            "lines": 156,
+            "lines": 168,
             "doc": "One GD bitmap and the operations the media layer needs on it. Every\noperation returns a new canvas; alpha is preserved throughout, which is\nwhat makes PNG and WebP sub-sizes match the reference's.",
             "implements": [],
             "extends": null,
@@ -75930,6 +75930,38 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(GdImage $image): self",
+                    "doc": "A canvas over a GD image already in hand (what WP_Image_Editor_GD::_save is given).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "image",
+                            "type": "GdImage",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 21,
+                    "end": 24
+                },
+                {
+                    "routes": [],
+                    "name": "image",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "image(): GdImage",
+                    "doc": "The GD image behind the canvas (what WP_Image_Editor_GD::_resize hands back).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 27,
+                    "end": 30
+                },
+                {
+                    "routes": [],
                     "name": "open",
                     "static": true,
                     "visibility": "public",
@@ -75945,8 +75977,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 40
+                    "line": 38,
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -75967,8 +75999,8 @@
                             "doc": "dst x, dst y, src x, src y, dst w, dst h, src w, src h (the GD argument order)"
                         }
                     ],
-                    "line": 81,
-                    "end": 89
+                    "line": 93,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -76022,8 +76054,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 95
+                    "line": 104,
+                    "end": 107
                 },
                 {
                     "routes": [],
@@ -76042,8 +76074,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 102
+                    "line": 110,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -76054,8 +76086,8 @@
                     "doc": "A canvas mirrored on either axis.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 108
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -76066,8 +76098,8 @@
                     "doc": "A canvas mirrored left to right.",
                     "shapes": [],
                     "params": [],
-                    "line": 111,
-                    "end": 114
+                    "line": 123,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -76078,8 +76110,8 @@
                     "doc": "An untouched copy of the canvas.",
                     "shapes": [],
                     "params": [],
-                    "line": 117,
-                    "end": 120
+                    "line": 129,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -76112,8 +76144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 137
+                    "line": 142,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -76124,8 +76156,8 @@
                     "doc": "The bitmap written progressively from now on (an interlaced JPEG).",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 144
+                    "line": 152,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -76136,8 +76168,8 @@
                     "doc": "The bitmap written line by line from now on, as it is by default.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 151
+                    "line": 159,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -76163,8 +76195,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 157
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -76190,8 +76222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 57
+                    "line": 60,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -76202,8 +76234,8 @@
                     "doc": "memory_limit in bytes, or null when it is unlimited.",
                     "shapes": [],
                     "params": [],
-                    "line": 60,
-                    "end": 74
+                    "line": 72,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -76222,8 +76254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 127
+                    "line": 134,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -76256,8 +76288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 168
+                    "line": 171,
+                    "end": 180
                 }
             ]
         },

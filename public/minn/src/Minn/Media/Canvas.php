@@ -17,6 +17,18 @@ final readonly class Canvas
     {
     }
 
+    /** A canvas over a GD image already in hand (what WP_Image_Editor_GD::_save is given). */
+    public static function of(GdImage $image): self
+    {
+        return new self($image, imagesx($image), imagesy($image));
+    }
+
+    /** The GD image behind the canvas (what WP_Image_Editor_GD::_resize hands back). */
+    public function image(): GdImage
+    {
+        return $this->image;
+    }
+
     /**
      * A canvas from an image file, or null when it cannot be decoded or
      * would not fit in memory. The header names the dimensions before a
