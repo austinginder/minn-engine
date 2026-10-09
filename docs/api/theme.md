@@ -18,7 +18,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FrontLifecycle`](#frontlifecycle) | final class | 105 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 493 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 107 | The links the reference puts in every head: the site and comments |
-| [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
+| [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 178 | A whole page from the active block theme: the template the resolution |
@@ -556,7 +556,8 @@ The single templates, custom first.
 
 ### static `attachment(string $mimeType): array`
 
-The attachment templates by mime type.
+The attachment templates by mime type: type-subtype, subtype, type
+(probe template-getters).
 
 - `@return list<string>`
 

@@ -2,8 +2,8 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 775,
-        "composes": 1850,
+        "minn": 774,
+        "composes": 1851,
         "leaf": 874,
         "noop": 2644,
         "placeholder": 242,
@@ -29844,16 +29844,6 @@
                 "wp_style_engine_get_stylesheet_from_context"
             ]
         },
-        "_minn_block_template_exists": {
-            "file": "template.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_stylesheet_directory",
-                "get_template_directory"
-            ]
-        },
         "_minn_block_template_from": {
             "file": "blocks.php",
             "lines": 28,
@@ -31066,7 +31056,7 @@
         },
         "_minn_post_inputs": {
             "file": "post.php",
-            "lines": 24,
+            "lines": 28,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PostInsert::categories"
@@ -31076,8 +31066,10 @@
                 "delete_post_meta",
                 "get_object_taxonomies",
                 "get_option",
+                "get_post",
                 "get_taxonomy",
                 "update_post_meta",
+                "wp_get_theme",
                 "wp_set_post_categories",
                 "wp_set_post_tags",
                 "wp_set_post_terms"
@@ -31173,6 +31165,16 @@
                 "_minn_post_writer",
                 "sanitize_title",
                 "wp_unique_post_slug"
+            ]
+        },
+        "_minn_post_template_refusal": {
+            "file": "post.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "update_post_meta"
             ]
         },
         "_minn_post_writer": {
@@ -43661,15 +43663,12 @@
         },
         "get_query_template": {
             "file": "template.php",
-            "lines": 12,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
-            ],
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "_minn_block_template_exists",
                 "apply_filters",
+                "locate_block_template",
                 "locate_template"
             ]
         },
@@ -63398,7 +63397,7 @@
         },
         "wp_insert_post": {
             "file": "post.php",
-            "lines": 36,
+            "lines": 39,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\PostWriter::recountTaxonomiesOf",
@@ -63419,6 +63418,7 @@
                 "_minn_post_insert",
                 "_minn_post_saved",
                 "_minn_post_slug_from_id",
+                "_minn_post_template_refusal",
                 "_minn_post_writer",
                 "get_permalink",
                 "get_post",

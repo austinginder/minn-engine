@@ -144802,7 +144802,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/Hierarchy.php",
-            "lines": 146,
+            "lines": 148,
             "doc": "The classic template hierarchy: the candidate file names each template\ntype tries, most specific first, as the reference resolves them. The\nfacade's get_{type}_template() functions feed these to get_query_template(),\nwhich locates the first candidate the theme (child, then parent) ships.",
             "implements": [],
             "extends": null,
@@ -144933,7 +144933,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "attachment(string $mimeType): array",
-                    "doc": "The attachment templates by mime type.",
+                    "doc": "The attachment templates by mime type: type-subtype, subtype, type\n(probe template-getters).",
                     "shapes": [
                         "@return list<string>"
                     ],
@@ -144946,8 +144946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 107
+                    "line": 99,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -144982,8 +144982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 124
+                    "line": 115,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -145011,8 +145011,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 142
+                    "line": 133,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -145033,8 +145033,8 @@
                             "doc": "@return list<string>"
                         }
                     ],
-                    "line": 149,
-                    "end": 157
+                    "line": 151,
+                    "end": 159
                 }
             ]
         },

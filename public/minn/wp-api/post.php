@@ -1199,8 +1199,11 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
     $id = $insert->persist($columns, $existing?->ID, static fn (int $id): string => (string) get_permalink($id));
     _minn_post_slug_from_id($id, $columns, $type);
     wp_cache_delete($id, 'posts');
-    _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update);
+    $refused = _minn_post_template_refusal($id, _minn_post_inputs($id, (array) wp_unslash($given), $type, $columns['post_status'], $update), (bool) $wp_error);
     _minn_post_writer()->recountTaxonomiesOf($id);
+    if ($refused !== null) {
+        return $refused;
+    }
     if ($type === 'attachment') {
         return _minn_attachment_saved($id, $given, $existing, (bool) $fire_after_hooks);
     }
@@ -1281,8 +1284,25 @@ function _minn_post_saved(int $post_id, bool $update, ?WP_Post $post_before): ?W
     return $post;
 }
 
-/** @internal the terms, meta, and template a postarr carries beside the columns */
-function _minn_post_inputs(int $id, array $postarr, string $type, string $status, bool $update): void
+/**
+ * @internal A page template the theme does not offer (probe template-getters):
+ * the post stands either way; asked for an error, the save stops there with
+ * one (no save hooks), otherwise the post keeps the default template.
+ */
+function _minn_post_template_refusal(int $id, bool $kept, bool $wp_error): ?WP_Error
+{
+    if ($kept) {
+        return null;
+    }
+    if ($wp_error) {
+        return new WP_Error('invalid_page_template', __('Invalid page template.'));
+    }
+    update_post_meta($id, '_wp_page_template', 'default');
+    return null;
+}
+
+/** @internal the terms, meta, and template a postarr carries beside the columns; false when the page template is not one the theme offers */
+function _minn_post_inputs(int $id, array $postarr, string $type, string $status, bool $update): bool
 {
     $categories = PostInsert::categories($postarr, $type, $status, $update, get_object_taxonomies($type), (int) get_option('default_category'));
     if ($categories !== null) {
@@ -1302,12 +1322,16 @@ function _minn_post_inputs(int $id, array $postarr, string $type, string $status
         update_post_meta($id, (string) $key, $value);
     }
     if (isset($postarr['page_template'])) {
-        if ($postarr['page_template'] === '' || $postarr['page_template'] === 'default') {
+        $template = (string) $postarr['page_template'];
+        if ($template === '') {
             delete_post_meta($id, '_wp_page_template');
+        } elseif ($template === 'default' || array_key_exists($template, wp_get_theme()->get_page_templates(get_post($id)))) {
+            update_post_meta($id, '_wp_page_template', $template);
         } else {
-            update_post_meta($id, '_wp_page_template', $postarr['page_template']);
+            return false;
         }
     }
+    return true;
 }
 
 function wp_after_insert_post($post, $update, $post_before)

@@ -476,12 +476,9 @@ function get_query_template($type, $templates = [])
         $templates = ["{$type}.php"];
     }
     $templates = apply_filters("{$type}_template_hierarchy", $templates);
-    $template = locate_template($templates);
-    // A block theme's own template wins over the engine's theme-compat stand-ins, as over nothing.
-    $compat = str_starts_with($template, MINN_ENGINE_DIR . '/wp-api/theme-compat/');
-    if (($template === '' || $compat) && Runtime::current()->get('block_theme', false) && _minn_block_template_exists($templates)) {
-        $template = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
-    }
+    // A block template, when the theme has one for the hierarchy, becomes the canvas and is
+    // recorded in $_wp_current_template_id (probe template-getters).
+    $template = locate_block_template(locate_template($templates), $type, $templates);
     return apply_filters("{$type}_template", $template, $type, $templates);
 }
 
@@ -786,20 +783,6 @@ function get_the_generator($type = '')
         default => '<meta name="generator" content="WordPress ' . esc_attr($version) . '" />',
     };
     return apply_filters("get_the_generator_{$type}", $gen, $type);
-}
-
-/** @internal whether the theme (or its parent) ships a block template for any of the PHP names given */
-function _minn_block_template_exists(array $templates): bool
-{
-    foreach ($templates as $name) {
-        $slug = basename((string) $name, '.php');
-        foreach (array_unique([get_stylesheet_directory(), get_template_directory()]) as $dir) {
-            if (is_file("{$dir}/templates/{$slug}.html")) {
-                return true;
-            }
-        }
-    }
-    return false;
 }
 
 function get_calendar($args = [])

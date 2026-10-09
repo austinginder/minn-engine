@@ -91,7 +91,8 @@ final class Hierarchy
     }
 
     /**
-     * The attachment templates by mime type.
+     * The attachment templates by mime type: type-subtype, subtype, type
+     * (probe template-getters).
      *
      * @return list<string>
      */
@@ -99,7 +100,7 @@ final class Hierarchy
     {
         $templates = [];
         [$type, $subtype] = array_pad(explode('/', $mimeType, 2), 2, '');
-        foreach (array_filter([$type, $subtype, $type !== '' && $subtype !== '' ? "{$type}-{$subtype}" : '']) as $name) {
+        foreach (array_filter([$type !== '' && $subtype !== '' ? "{$type}-{$subtype}" : '', $subtype, $type]) as $name) {
             $templates[] = "{$name}.php";
         }
         $templates[] = 'attachment.php';
@@ -119,8 +120,9 @@ final class Hierarchy
             $templates = $decoded !== $slug ? ["{$base}-{$decoded}.php"] : [];
             return [...$templates, "{$base}-{$slug}.php", "{$base}-{$id}.php", "{$base}.php"];
         }
+        // A custom taxonomy's term also offers its id (probe template-getters).
         $templates = $decoded !== $slug ? ["taxonomy-{$taxonomy}-{$decoded}.php"] : [];
-        return [...$templates, "taxonomy-{$taxonomy}-{$slug}.php", "taxonomy-{$taxonomy}.php", 'taxonomy.php'];
+        return [...$templates, "taxonomy-{$taxonomy}-{$slug}.php", "taxonomy-{$taxonomy}-{$id}.php", "taxonomy-{$taxonomy}.php", 'taxonomy.php'];
     }
 
     /**

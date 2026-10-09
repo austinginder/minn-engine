@@ -9568,3 +9568,39 @@ Fixed to match:
 
 Owed: `wp_enqueue_media`, and the Imagick editor (on the reference,
 `wp_image_editor_supports` answers for Imagick).
+
+## template.php's template getters (2026-10-09)
+
+Probe `template-getters` proves the 18 `get_*_template` getters. For each
+query a theme can be asked to render, it records:
+- the hierarchy each getter offers;
+- what the getter answers: the block template canvas, a theme file, or
+  nothing;
+- the block template it picks (`$_wp_current_template_id`).
+
+It covers 404, archives, attachments, authors, categories, dates, embeds, the
+front and posts pages, pages, a post type archive, the privacy policy page,
+search, singles, tags and terms. The canvas lives in a different folder on
+each stack, so the probe names it rather than locating it. The probe removes
+the `post-format-gallery` term that `set_post_format` makes, when the term
+was new; other probes count format terms.
+
+Fixed to match:
+
+- **`get_query_template`** runs `locate_block_template`, as the reference
+  does. A theme's block template for the hierarchy becomes the canvas, and
+  its id goes into `$_wp_current_template_id` (`twentytwentyfive//single`,
+  `//page`, `//archive`, `//search`, `//404`, `//index`). The engine's
+  file-only check (`_minn_block_template_exists`) is gone.
+- **Attachments** offer `type-subtype.php`, `subtype.php`, `type.php`, then
+  `attachment.php`. It was type first.
+- **A custom taxonomy's term** also offers `taxonomy-{taxonomy}-{term id}.php`.
+- **`wp_insert_post` with a page template the theme does not offer** (shared
+  fix).
+  - The post is saved either way, with its terms and `meta_input`.
+  - With `$wp_error`, it then answers `invalid_page_template` ("Invalid page
+    template."), stores no template, and runs no save hooks.
+  - Without `$wp_error`, the post keeps `default`.
+
+  An explicit `default` is stored, not deleted. An empty template stores
+  nothing. The engine used to store any template it was given.
