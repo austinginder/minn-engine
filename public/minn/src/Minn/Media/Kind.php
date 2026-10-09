@@ -37,7 +37,8 @@ final class Kind
      */
     /**
      * Real mime types grouped under the wildcard patterns that match them
-     * (image, audio/*, image/jpeg, *); a pattern with no matches is omitted.
+     * (image, audio/*, image/jpeg, *), the last pattern first; a pattern with
+     * no matches is omitted (probe post-remaining).
      *
      * @param list<string> $patterns
      * @param list<string> $reals
@@ -46,16 +47,19 @@ final class Kind
     public static function matchWildcards(array $patterns, array $reals): array
     {
         $matches = [];
-        foreach ($patterns as $pattern) {
+        foreach (array_reverse($patterns) as $pattern) {
             $pattern = (string) $pattern;
-            $regex = match (true) {
-                $pattern === '*' => '[-.a-z0-9]+/[-.a-z0-9]+',
-                str_contains($pattern, '/') => str_replace('\*', '[-.a-z0-9]+', preg_quote($pattern, '#')),
-                default => preg_quote($pattern, '#') . '/[-.a-z0-9]+',
-            };
-            foreach ($reals as $real) {
-                if (preg_match('#^' . $regex . '$#i', (string) $real)) {
-                    $matches[$pattern][] = (string) $real;
+            $quoted = preg_quote($pattern, '#');
+            // A type/subtype matches whole, a star standing for one name; a bare
+            // type matches from the start, then anywhere, a star for anything.
+            $passes = str_contains($pattern, '/')
+                ? ['#^' . str_replace('\*', '[-._a-z0-9]+', $quoted) . '$#']
+                : ['#^' . str_replace('\*', '.*', $quoted) . '#', '#' . str_replace('\*', '.*', $quoted) . '#'];
+            foreach ($passes as $regex) {
+                foreach ($reals as $real) {
+                    if (preg_match($regex, (string) $real) && !in_array((string) $real, $matches[$pattern] ?? [], true)) {
+                        $matches[$pattern][] = (string) $real;
+                    }
                 }
             }
         }

@@ -9,7 +9,7 @@ uploads, image sizes and attachment metadata
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
-| [`Kind`](#kind) | final class | 75 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
+| [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 145 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
@@ -223,7 +223,8 @@ the singular and plural count labels.
 ### static `matchWildcards(array $patterns, array $reals): array`
 
 Real mime types grouped under the wildcard patterns that match them
-(image, audio/*, image/jpeg, *); a pattern with no matches is omitted.
+(image, audio/*, image/jpeg, *), the last pattern first; a pattern with
+no matches is omitted (probe post-remaining).
 
 - `@param list<string> $patterns`
 - `@param list<string> $reals`

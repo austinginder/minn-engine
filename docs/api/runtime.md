@@ -80,7 +80,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 392 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 427 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 373 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
@@ -3644,6 +3644,29 @@ Registers a post type with the reference's defaults filled in.
 
 - `@param array<string, mixed> $args`
 
+### `labels(array $labels, ?string $label, string $base, string $name): array`
+
+A type's labels from its own (probe post-remaining): the labels of its
+base type (page for a hierarchical type, post for any other) under the
+type's own. A missing
+name comes from the type's label, a missing singular name from the name,
+the menu name from the name, all items from the menu name, archives from
+all items, and the admin bar name from the singular name or else the
+type's name; a type with a singular name also names its single-item
+template.
+
+- `@param array<string, mixed> $labels`
+- `@return array<string, mixed>`
+
+### static `capabilities(array|string $capabilityType, array $overrides, bool $mapMetaCap): array`
+
+A type's capability names (probe post-remaining): the eight primitive
+ones, the six more a mapped type uses, the type's own names merged over
+them, and create_posts last, the edit capability unless named.
+
+- `@param array<string, string> $overrides`
+- `@return array<string, string>`
+
 ### `unregisterPostType(string $name): bool`
 
 Forgets a non-builtin post type.
@@ -3692,7 +3715,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsFrom()` (private, line 186), `capabilities()` (private, line 200)
+Internals: `supportsFrom()` (private, line 173)
 
 
 ## RewriteRules

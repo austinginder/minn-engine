@@ -1,0 +1,1336 @@
+[
+    [
+        "page statuses and viewable statuses",
+        [
+            {
+                "draft": "Draft",
+                "private": "Private",
+                "publish": "Published"
+            },
+            [
+                true,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+            ],
+            true,
+            false
+        ]
+    ],
+    [
+        "publicly viewable posts",
+        [
+            [
+                [
+                    "{zz-pr-published}",
+                    true
+                ],
+                [
+                    "{zz-pr-draft}",
+                    false
+                ],
+                [
+                    "{zz-pr-private}",
+                    false
+                ],
+                [
+                    "{zz-pr-page}",
+                    true
+                ],
+                [
+                    "{zz-pr-hidden}",
+                    false
+                ],
+                [
+                    "{zz-pr-shown}",
+                    true
+                ],
+                [
+                    "{zz-pr-shut}",
+                    false
+                ],
+                [
+                    "{inherit}",
+                    true
+                ],
+                [
+                    "{orphan}",
+                    false
+                ],
+                [
+                    999999,
+                    false
+                ]
+            ],
+            true,
+            true
+        ]
+    ],
+    [
+        "publicly viewable with no post",
+        false
+    ],
+    [
+        "post type capabilities",
+        [
+            {
+                "edit_post": "edit_post",
+                "read_post": "read_post",
+                "delete_post": "delete_post",
+                "edit_posts": "edit_posts",
+                "edit_others_posts": "edit_others_posts",
+                "delete_posts": "delete_posts",
+                "publish_posts": "publish_posts",
+                "read_private_posts": "read_private_posts",
+                "read": "read",
+                "delete_private_posts": "delete_private_posts",
+                "delete_published_posts": "delete_published_posts",
+                "delete_others_posts": "delete_others_posts",
+                "edit_private_posts": "edit_private_posts",
+                "edit_published_posts": "edit_published_posts",
+                "create_posts": "edit_posts"
+            },
+            {
+                "edit_post": "edit_post",
+                "read_post": "read_post",
+                "delete_post": "delete_post",
+                "edit_posts": "edit_posts",
+                "edit_others_posts": "edit_others_posts",
+                "delete_posts": "delete_posts",
+                "publish_posts": "publish_posts",
+                "read_private_posts": "read_private_posts",
+                "create_posts": "edit_posts"
+            },
+            {
+                "edit_post": "edit_zz_book",
+                "read_post": "read_zz_book",
+                "delete_post": "delete_zz_book",
+                "edit_posts": "zz_write",
+                "edit_others_posts": "edit_others_zz_books",
+                "delete_posts": "delete_zz_books",
+                "publish_posts": "publish_zz_books",
+                "read_private_posts": "read_private_zz_books",
+                "read": "read",
+                "delete_private_posts": "delete_private_zz_books",
+                "delete_published_posts": "delete_published_zz_books",
+                "delete_others_posts": "delete_others_zz_books",
+                "edit_private_posts": "edit_private_zz_books",
+                "edit_published_posts": "edit_published_zz_books",
+                "create_posts": "zz_create",
+                "zz_extra": "zz_extra_cap"
+            },
+            {
+                "edit_post": "edit_zz_page",
+                "read_post": "read_zz_page",
+                "delete_post": "delete_zz_page",
+                "edit_posts": "edit_zz_pages",
+                "edit_others_posts": "edit_others_zz_pages",
+                "delete_posts": "delete_zz_pages",
+                "publish_posts": "publish_zz_pages",
+                "read_private_posts": "read_private_zz_pages",
+                "read": "zz_read",
+                "create_posts": "edit_zz_pages"
+            },
+            {
+                "edit_post": "edit_zz_pr_cap",
+                "read_post": "read_zz_pr_cap",
+                "delete_post": "delete_zz_pr_cap",
+                "edit_posts": "zz_write",
+                "edit_others_posts": "edit_others_zz_pr_caps",
+                "delete_posts": "delete_zz_pr_caps",
+                "publish_posts": "publish_zz_pr_caps",
+                "read_private_posts": "read_private_zz_pr_caps",
+                "read": "read",
+                "delete_private_posts": "delete_private_zz_pr_caps",
+                "delete_published_posts": "delete_published_zz_pr_caps",
+                "delete_others_posts": "delete_others_zz_pr_caps",
+                "edit_private_posts": "edit_private_zz_pr_caps",
+                "edit_published_posts": "edit_published_zz_pr_caps",
+                "create_posts": "zz_write"
+            },
+            {
+                "edit_post": "edit_zz_solo",
+                "read_post": "read_zz_solo",
+                "delete_post": "delete_zz_solo",
+                "edit_posts": "edit_",
+                "edit_others_posts": "edit_others_",
+                "delete_posts": "delete_",
+                "publish_posts": "publish_",
+                "read_private_posts": "read_private_",
+                "create_posts": "edit_"
+            },
+            {
+                "edit_zz_book": "edit_post",
+                "read_zz_book": "read_post",
+                "delete_zz_book": "delete_post",
+                "edit_zz_pr_cap": "edit_post",
+                "read_zz_pr_cap": "read_post",
+                "delete_zz_pr_cap": "delete_post"
+            }
+        ]
+    ],
+    [
+        "post type labels",
+        [
+            {
+                "name": "Posts",
+                "singular_name": "Post",
+                "add_new": "Add",
+                "add_new_item": "Add Post",
+                "edit_item": "Edit Post",
+                "new_item": "New Post",
+                "view_item": "View Post",
+                "view_items": "View Posts",
+                "search_items": "Search Posts",
+                "not_found": "No posts found.",
+                "not_found_in_trash": "No posts found in Trash.",
+                "parent_item_colon": null,
+                "all_items": "All Posts",
+                "archives": "Post Archives",
+                "attributes": "Post Attributes",
+                "insert_into_item": "Insert into post",
+                "uploaded_to_this_item": "Uploaded to this post",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter posts list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Posts list navigation",
+                "items_list": "Posts list",
+                "item_published": "Post published.",
+                "item_published_privately": "Post published privately.",
+                "item_reverted_to_draft": "Post reverted to draft.",
+                "item_trashed": "Post trashed.",
+                "item_scheduled": "Post scheduled.",
+                "item_updated": "Post updated.",
+                "item_link": "Post Link",
+                "item_link_description": "A link to a post.",
+                "menu_name": "Posts",
+                "name_admin_bar": "Post",
+                "template_name": "Single item: Post"
+            },
+            {
+                "name": "Pages",
+                "singular_name": "Page",
+                "add_new": "Add",
+                "add_new_item": "Add Page",
+                "edit_item": "Edit Page",
+                "new_item": "New Page",
+                "view_item": "View Page",
+                "view_items": "View Pages",
+                "search_items": "Search Pages",
+                "not_found": "No pages found.",
+                "not_found_in_trash": "No pages found in Trash.",
+                "parent_item_colon": "Parent Page:",
+                "all_items": "All Pages",
+                "archives": "Page Archives",
+                "attributes": "Page Attributes",
+                "insert_into_item": "Insert into page",
+                "uploaded_to_this_item": "Uploaded to this page",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter pages list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Pages list navigation",
+                "items_list": "Pages list",
+                "item_published": "Page published.",
+                "item_published_privately": "Page published privately.",
+                "item_reverted_to_draft": "Page reverted to draft.",
+                "item_trashed": "Page trashed.",
+                "item_scheduled": "Page scheduled.",
+                "item_updated": "Page updated.",
+                "item_link": "Page Link",
+                "item_link_description": "A link to a page.",
+                "menu_name": "Pages",
+                "name_admin_bar": "Page",
+                "template_name": "Single item: Page"
+            },
+            {
+                "name": "Books",
+                "singular_name": "Book",
+                "add_new": "Add",
+                "add_new_item": "New book",
+                "edit_item": "Edit Post",
+                "new_item": "New Post",
+                "view_item": "View Post",
+                "view_items": "View Posts",
+                "search_items": "Search Posts",
+                "not_found": "No posts found.",
+                "not_found_in_trash": "No posts found in Trash.",
+                "parent_item_colon": null,
+                "all_items": "Books",
+                "archives": "Books",
+                "attributes": "Post Attributes",
+                "insert_into_item": "Insert into post",
+                "uploaded_to_this_item": "Uploaded to this post",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter posts list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Posts list navigation",
+                "items_list": "Posts list",
+                "item_published": "Post published.",
+                "item_published_privately": "Post published privately.",
+                "item_reverted_to_draft": "Post reverted to draft.",
+                "item_trashed": "Post trashed.",
+                "item_scheduled": "Post scheduled.",
+                "item_updated": "Post updated.",
+                "item_link": "Post Link",
+                "item_link_description": "A link to a post.",
+                "menu_name": "Books",
+                "name_admin_bar": "Book",
+                "template_name": "Single item: Book"
+            },
+            {
+                "name": "Trees",
+                "singular_name": "Trees",
+                "add_new": "Add",
+                "add_new_item": "Add Page",
+                "edit_item": "Edit Page",
+                "new_item": "New Page",
+                "view_item": "View Page",
+                "view_items": "View Pages",
+                "search_items": "Search Pages",
+                "not_found": "No pages found.",
+                "not_found_in_trash": "No pages found in Trash.",
+                "parent_item_colon": "Parent Page:",
+                "all_items": "Trees",
+                "archives": "Trees",
+                "attributes": "Page Attributes",
+                "insert_into_item": "Insert into page",
+                "uploaded_to_this_item": "Uploaded to this page",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter pages list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Pages list navigation",
+                "items_list": "Pages list",
+                "item_published": "Page published.",
+                "item_published_privately": "Page published privately.",
+                "item_reverted_to_draft": "Page reverted to draft.",
+                "item_trashed": "Page trashed.",
+                "item_scheduled": "Page scheduled.",
+                "item_updated": "Page updated.",
+                "item_link": "Page Link",
+                "item_link_description": "A link to a page.",
+                "menu_name": "Trees",
+                "name_admin_bar": "Trees",
+                "template_name": "Single item: Trees"
+            },
+            {
+                "name": "Posts",
+                "singular_name": "Post",
+                "add_new": "Add",
+                "add_new_item": "Add Post",
+                "edit_item": "Edit Post",
+                "new_item": "New Post",
+                "view_item": "View Post",
+                "view_items": "View Posts",
+                "search_items": "Search Posts",
+                "not_found": "No posts found.",
+                "not_found_in_trash": "No posts found in Trash.",
+                "parent_item_colon": null,
+                "all_items": "All Posts",
+                "archives": "Post Archives",
+                "attributes": "Post Attributes",
+                "insert_into_item": "Insert into post",
+                "uploaded_to_this_item": "Uploaded to this post",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter posts list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Posts list navigation",
+                "items_list": "Posts list",
+                "item_published": "Post published.",
+                "item_published_privately": "Post published privately.",
+                "item_reverted_to_draft": "Post reverted to draft.",
+                "item_trashed": "Post trashed.",
+                "item_scheduled": "Post scheduled.",
+                "item_updated": "Post updated.",
+                "item_link": "Post Link",
+                "item_link_description": "A link to a post.",
+                "menu_name": "Posts",
+                "name_admin_bar": "zz_pr_bare"
+            },
+            {
+                "name": "Twos",
+                "singular_name": "Two",
+                "add_new": "Add",
+                "add_new_item": "Add Post",
+                "edit_item": "Edit Post",
+                "new_item": "New Post",
+                "view_item": "View Post",
+                "view_items": "View Posts",
+                "search_items": "Search Posts",
+                "not_found": "No posts found.",
+                "not_found_in_trash": "No posts found in Trash.",
+                "parent_item_colon": null,
+                "all_items": "Twos",
+                "archives": "Twos",
+                "attributes": "Post Attributes",
+                "insert_into_item": "Insert into post",
+                "uploaded_to_this_item": "Uploaded to this post",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter posts list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Posts list navigation",
+                "items_list": "Posts list",
+                "item_published": "Post published.",
+                "item_published_privately": "Post published privately.",
+                "item_reverted_to_draft": "Post reverted to draft.",
+                "item_trashed": "Post trashed.",
+                "item_scheduled": "Post scheduled.",
+                "item_updated": "Post updated.",
+                "item_link": "Post Link",
+                "item_link_description": "A link to a post.",
+                "menu_name": "Twos",
+                "zz_custom": "C",
+                "template_name": "T",
+                "name_admin_bar": "Two"
+            },
+            {
+                "name": "Threes",
+                "singular_name": "Threes",
+                "add_new": "Add",
+                "add_new_item": "Add Page",
+                "edit_item": "Edit Page",
+                "new_item": "New Page",
+                "view_item": "View Page",
+                "view_items": "View Pages",
+                "search_items": "Search Pages",
+                "not_found": "No pages found.",
+                "not_found_in_trash": "No pages found in Trash.",
+                "parent_item_colon": "Parent Page:",
+                "all_items": "Every three",
+                "archives": "Every three",
+                "attributes": "Page Attributes",
+                "insert_into_item": "Insert into page",
+                "uploaded_to_this_item": "Uploaded to this page",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter pages list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Pages list navigation",
+                "items_list": "Pages list",
+                "item_published": "Page published.",
+                "item_published_privately": "Page published privately.",
+                "item_reverted_to_draft": "Page reverted to draft.",
+                "item_trashed": "Page trashed.",
+                "item_scheduled": "Page scheduled.",
+                "item_updated": "Page updated.",
+                "item_link": "Page Link",
+                "item_link_description": "A link to a page.",
+                "menu_name": "Threes",
+                "name_admin_bar": "Bar",
+                "template_name": "Single item: Threes"
+            },
+            {
+                "name": "Posts",
+                "singular_name": "Four",
+                "add_new": "Add",
+                "add_new_item": "Add Post",
+                "edit_item": "Edit Post",
+                "new_item": "New Post",
+                "view_item": "View Post",
+                "view_items": "View Posts",
+                "search_items": "Search Posts",
+                "not_found": "No posts found.",
+                "not_found_in_trash": "No posts found in Trash.",
+                "parent_item_colon": null,
+                "all_items": "All Posts",
+                "archives": "Post Archives",
+                "attributes": "Post Attributes",
+                "insert_into_item": "Insert into post",
+                "uploaded_to_this_item": "Uploaded to this post",
+                "featured_image": "Featured image",
+                "set_featured_image": "Set featured image",
+                "remove_featured_image": "Remove featured image",
+                "use_featured_image": "Use as featured image",
+                "filter_items_list": "Filter posts list",
+                "filter_by_date": "Filter by date",
+                "items_list_navigation": "Posts list navigation",
+                "items_list": "Posts list",
+                "item_published": "Post published.",
+                "item_published_privately": "Post published privately.",
+                "item_reverted_to_draft": "Post reverted to draft.",
+                "item_trashed": "Post trashed.",
+                "item_scheduled": "Post scheduled.",
+                "item_updated": "Post updated.",
+                "item_link": "Post Link",
+                "item_link_description": "A link to a post.",
+                "menu_name": "Posts",
+                "name_admin_bar": "Four",
+                "template_name": "Single item: Four"
+            }
+        ]
+    ],
+    [
+        "post type labels filter",
+        [
+            [
+                [
+                    "stdClass",
+                    "Single item: Five",
+                    "Five"
+                ]
+            ],
+            "stdClass",
+            "A"
+        ]
+    ],
+    [
+        "labels of a registered type",
+        {
+            "item_link": "Post Link",
+            "item_link_description": "A link to a post.",
+            "menu_name": "Ones",
+            "zz_custom": "C",
+            "name_admin_bar": "One",
+            "template_name": "Single item: One"
+        }
+    ],
+    [
+        "custom fields",
+        [
+            {
+                "zz_one": [
+                    "a"
+                ],
+                "zz_many": [
+                    "b",
+                    "c"
+                ],
+                "zz_list": [
+                    "a:2:{s:1:\"x\";i:1;s:1:\"y\";a:2:{i:0;i:2;i:1;i:3;}}"
+                ],
+                "_zz_hidden": [
+                    "h"
+                ],
+                "zz_empty": [
+                    ""
+                ]
+            },
+            {
+                "zz_one": [
+                    "a"
+                ],
+                "zz_many": [
+                    "b",
+                    "c"
+                ],
+                "zz_list": [
+                    "a:2:{s:1:\"x\";i:1;s:1:\"y\";a:2:{i:0;i:2;i:1;i:3;}}"
+                ],
+                "_zz_hidden": [
+                    "h"
+                ],
+                "zz_empty": [
+                    ""
+                ]
+            },
+            [],
+            [],
+            [
+                "b",
+                "c"
+            ],
+            [
+                "a:2:{s:1:\"x\";i:1;s:1:\"y\";a:2:{i:0;i:2;i:1;i:3;}}"
+            ],
+            [
+                "a"
+            ],
+            null,
+            null,
+            [
+                ""
+            ]
+        ]
+    ],
+    [
+        "post thumbnails",
+        [
+            "int",
+            "{image}",
+            false,
+            false,
+            true,
+            "",
+            "int",
+            true,
+            "",
+            "int",
+            false,
+            "{image}",
+            false,
+            "{image}",
+            false,
+            false,
+            true,
+            "",
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "author SQL, signed in",
+        [
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) )",
+            "( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) )",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) ) AND post_author = 1",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) ) AND post_author = 1",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) )",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) OR ( post_type = 'page' AND ( post_status = 'publish' ) ) )",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) OR ( post_type = 'page' AND ( post_status = 'publish' OR post_status = 'private' ) ) ) AND post_author = 1",
+            "WHERE ( ( post_type = 'page' AND ( post_status = 'publish' OR post_status = 'private' ) ) ) AND post_author = 2",
+            "WHERE 1 = 0",
+            "WHERE ( ( post_type = 'attachment' AND ( post_status = 'publish' OR post_status = 'private' ) ) )",
+            "WHERE ( ( post_type = 'zz_pr_shown' AND ( post_status = 'publish' OR post_status = 'private' ) ) ) AND post_author = 1",
+            "WHERE 1 = 0",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) ) AND post_author = 0"
+        ]
+    ],
+    [
+        "author SQL, signed out",
+        [
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) )",
+            "( ( post_type = 'post' AND ( post_status = 'publish' ) ) )",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) ) AND post_author = 1",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) ) AND post_author = 1",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) )",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) OR ( post_type = 'page' AND ( post_status = 'publish' ) ) )",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) OR ( post_type = 'page' AND ( post_status = 'publish' ) ) ) AND post_author = 1",
+            "WHERE ( ( post_type = 'page' AND ( post_status = 'publish' ) ) ) AND post_author = 2",
+            "WHERE 1 = 0",
+            "WHERE ( ( post_type = 'attachment' AND ( post_status = 'publish' ) ) )",
+            "WHERE ( ( post_type = 'zz_pr_shown' AND ( post_status = 'publish' ) ) ) AND post_author = 1",
+            "WHERE 1 = 0",
+            "WHERE ( ( post_type = 'post' AND ( post_status = 'publish' ) ) ) AND post_author = 0"
+        ]
+    ],
+    [
+        "page children",
+        [
+            [
+                102,
+                103,
+                107,
+                104
+            ],
+            [
+                103,
+                107
+            ],
+            [
+                107
+            ],
+            [
+                106
+            ],
+            [],
+            [
+                101,
+                102,
+                103,
+                107,
+                104,
+                105,
+                106
+            ],
+            [
+                108
+            ],
+            []
+        ]
+    ],
+    [
+        "hierarchy loops",
+        [
+            0,
+            "{zz-pr-a}",
+            0,
+            "{zz-pr-b}",
+            999999,
+            "{zz-pr-b}",
+            [
+                0,
+                "{zz-pr-a}",
+                "{zz-pr-b}"
+            ],
+            0,
+            [
+                0,
+                "{zz-pr-a}",
+                "{zz-pr-b}"
+            ],
+            0,
+            [
+                0,
+                "{zz-pr-a}",
+                "{zz-pr-b}"
+            ]
+        ]
+    ],
+    [
+        "MIME type matching",
+        [
+            {
+                "image": [
+                    "image/png",
+                    "image/jpeg",
+                    "image/svg+xml"
+                ]
+            },
+            {
+                "video": [
+                    "video/mp4"
+                ],
+                "image/*": [
+                    "image/png",
+                    "image/jpeg"
+                ]
+            },
+            {
+                "audio": [
+                    "audio/mpeg"
+                ],
+                "image/png": [
+                    "image/png"
+                ]
+            },
+            {
+                "": [
+                    "image/png",
+                    "image/jpeg",
+                    "video/mp4",
+                    "text/plain",
+                    "application/pdf",
+                    "image/svg+xml",
+                    "audio/mpeg"
+                ]
+            },
+            {
+                "*/png": [
+                    "image/png"
+                ]
+            },
+            {
+                "image/svg+xml": [
+                    "image/svg+xml"
+                ]
+            },
+            [],
+            {
+                "text": [
+                    "text/plain"
+                ],
+                "application": [
+                    "application/pdf"
+                ]
+            },
+            {
+                "image": [
+                    "image/png",
+                    "image/gif"
+                ]
+            },
+            {
+                "video": [
+                    "video/mp4"
+                ],
+                "image": [
+                    "image/png",
+                    "image/jpeg",
+                    "image/svg+xml"
+                ],
+                "audio": [
+                    "audio/mpeg"
+                ]
+            },
+            {
+                "*": [
+                    "image/png",
+                    "image/jpeg",
+                    "video/mp4",
+                    "text/plain",
+                    "application/pdf",
+                    "image/svg+xml",
+                    "audio/mpeg"
+                ]
+            },
+            {
+                "imag": [
+                    "image/png",
+                    "image/jpeg",
+                    "image/svg+xml"
+                ]
+            },
+            [],
+            [],
+            [],
+            {
+                "image": [
+                    "image/png",
+                    "image/jpeg",
+                    "image/svg+xml"
+                ]
+            },
+            {
+                "image": [
+                    "image/png",
+                    "image/vnd.zz_x",
+                    " image/gif "
+                ]
+            },
+            {
+                "application/*": [
+                    "application/vnd.ms-excel"
+                ]
+            },
+            {
+                "video": [
+                    "video/mp4"
+                ],
+                "": [
+                    "image/png",
+                    "image/jpeg",
+                    "video/mp4",
+                    "text/plain",
+                    "application/pdf",
+                    "image/svg+xml",
+                    "audio/mpeg"
+                ],
+                "image": [
+                    "image/png",
+                    "image/jpeg",
+                    "image/svg+xml"
+                ]
+            },
+            {
+                "image/png": [
+                    "image/png"
+                ]
+            },
+            {
+                "image/*": [
+                    "image/vnd.zz_x"
+                ]
+            },
+            {
+                "*": [
+                    " text/plain",
+                    "text/plain"
+                ]
+            },
+            {
+                "image": [
+                    "image/png x",
+                    "image/png\n",
+                    "x image/png"
+                ]
+            }
+        ]
+    ],
+    [
+        "MIME type SQL",
+        [
+            " AND (post_mime_type LIKE 'image/%') ",
+            " AND (post_mime_type = 'image/png') ",
+            " AND (post_mime_type LIKE 'image/%' OR post_mime_type = 'video/mp4') ",
+            " AND (p.post_mime_type LIKE 'image/%') ",
+            "",
+            " AND (post_mime_type LIKE 'badmime/%') ",
+            " AND (post_mime_type LIKE 'image/%') ",
+            " AND (post_mime_type LIKE 'image/%' OR post_mime_type LIKE 'video/%') ",
+            " AND (post_mime_type LIKE 'image/%' OR post_mime_type LIKE 'audio/%') ",
+            " AND (post_mime_type LIKE '%/png') ",
+            "",
+            " AND (zz.post_mime_type = 'application/vnd.ms-excel') "
+        ]
+    ],
+    [
+        "relative upload paths",
+        [
+            "2026/10/a.png",
+            "a.png",
+            "",
+            "/elsewhere/a.png",
+            "2026/a.png",
+            "",
+            "double.png"
+        ]
+    ],
+    [
+        "original image addresses",
+        [
+            "{uploads}/2026/10/zz-pr-big.jpg",
+            "{uploads}/2026/10/zz-pr-plain.jpg",
+            "{uploads}/zz/zz-pr-image.png",
+            false,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "post tags",
+        [
+            [
+                [
+                    "zz pr tag a",
+                    "{zz-pr-tag-a}",
+                    "post_tag",
+                    1
+                ],
+                [
+                    "zz pr tag b",
+                    "{zz-pr-tag-b}",
+                    "post_tag",
+                    1
+                ]
+            ],
+            [
+                "zz pr tag a",
+                "zz pr tag b"
+            ],
+            [
+                "{zz-pr-tag-b}",
+                "{zz-pr-tag-a}"
+            ],
+            [],
+            [],
+            []
+        ]
+    ],
+    [
+        "scheduling and publishing",
+        [
+            false,
+            0,
+            null,
+            "future",
+            null,
+            "publish",
+            null,
+            null,
+            [
+                [
+                    "publish",
+                    "future",
+                    "zz pr due"
+                ],
+                [
+                    "inherit",
+                    "new",
+                    "zz pr due"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the transition default",
+        [
+            [
+                "publish from draft",
+                "",
+                "{site}/zz-pr-moving-0/",
+                false,
+                [
+                    [
+                        "private_to_published",
+                        "private_to_publish",
+                        "2.3.0"
+                    ],
+                    [
+                        "heard",
+                        [
+                            "{zz-pr-moving-0}"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "publish from private",
+                "",
+                "{site}/?p={zz-pr-moving-1}",
+                false,
+                [
+                    [
+                        "private_to_published",
+                        "private_to_publish",
+                        "2.3.0"
+                    ],
+                    [
+                        "heard",
+                        [
+                            "{zz-pr-moving-1}"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "publish from future",
+                "",
+                "{site}/?page_id={zz-pr-moving-2}",
+                false,
+                [
+                    [
+                        "private_to_published",
+                        "private_to_publish",
+                        "2.3.0"
+                    ],
+                    [
+                        "heard",
+                        [
+                            "{zz-pr-moving-2}"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "draft from future",
+                "",
+                "",
+                false,
+                []
+            ],
+            [
+                "private from draft",
+                "",
+                "",
+                false,
+                []
+            ],
+            [
+                "publish from publish",
+                "",
+                "",
+                false,
+                []
+            ],
+            [
+                "future from draft",
+                "",
+                "",
+                false,
+                []
+            ],
+            [
+                "publish from new",
+                "",
+                "{site}/?p={zz-pr-moving-7}",
+                false,
+                [
+                    [
+                        "private_to_published",
+                        "private_to_publish",
+                        "2.3.0"
+                    ],
+                    [
+                        "heard",
+                        [
+                            "{zz-pr-moving-7}"
+                        ]
+                    ]
+                ]
+            ],
+            "https://zz.example/kept"
+        ]
+    ],
+    [
+        "the initial post meta",
+        [
+            [
+                "wp_pattern_sync_status",
+                "footnotes"
+            ],
+            [
+                "footnotes"
+            ],
+            [
+                "footnotes",
+                "wp_pattern_sync_status"
+            ],
+            {
+                "type": "string",
+                "label": "",
+                "description": "",
+                "single": true,
+                "sanitize_callback": "sanitize_text_field",
+                "auth_callback": "__return_true",
+                "show_in_rest": {
+                    "schema": {
+                        "type": "string",
+                        "enum": [
+                            "partial",
+                            "unsynced"
+                        ]
+                    }
+                },
+                "revisions_enabled": false
+            }
+        ]
+    ],
+    [
+        "front page and privacy page resets",
+        [
+            [
+                "page",
+                "{zz-pr-page}",
+                "{zz-pr-a}",
+                "{zz-pr-b}",
+                true
+            ],
+            [
+                "page",
+                "{zz-pr-page}",
+                "{zz-pr-a}",
+                "{zz-pr-b}",
+                true
+            ],
+            [
+                "page",
+                "{zz-pr-page}",
+                0,
+                "{zz-pr-b}",
+                true
+            ],
+            [
+                "posts",
+                0,
+                0,
+                "{zz-pr-b}",
+                true
+            ],
+            [
+                "posts",
+                0,
+                0,
+                "{zz-pr-b}",
+                false
+            ],
+            [
+                "posts",
+                0,
+                0,
+                "{zz-pr-b}",
+                false
+            ],
+            [
+                "posts",
+                0,
+                0,
+                0,
+                false
+            ]
+        ]
+    ],
+    [
+        "term counts on a transition",
+        [
+            1,
+            7,
+            7,
+            1
+        ]
+    ],
+    [
+        "old slugs and dates",
+        [
+            [
+                [
+                    "zz-pr-moved"
+                ],
+                [
+                    "1988-03-03"
+                ]
+            ],
+            [
+                [
+                    "zz-pr-moved"
+                ],
+                [
+                    "1988-03-03"
+                ]
+            ],
+            [
+                [
+                    "zz-pr-moved-on"
+                ],
+                [
+                    "1988-03-04"
+                ]
+            ],
+            [
+                [],
+                []
+            ],
+            []
+        ]
+    ],
+    [
+        "the after-insert action",
+        [
+            [
+                "revision of zz-pr-published",
+                "zz pr published",
+                false,
+                null
+            ],
+            [
+                "{zz-pr-published}",
+                "zz pr published",
+                true,
+                "zz pr draft"
+            ],
+            [
+                "{zz-pr-page}",
+                "zz pr page",
+                false,
+                null
+            ]
+        ]
+    ],
+    [
+        "trashing a post's comments",
+        [
+            [
+                [
+                    "zz pr approved",
+                    "1"
+                ],
+                [
+                    "zz pr held",
+                    "0"
+                ],
+                [
+                    "zz pr spam",
+                    "spam"
+                ],
+                [
+                    "zz pr trashed",
+                    "trash"
+                ]
+            ],
+            4,
+            [
+                [
+                    "zz pr approved",
+                    "post-trashed"
+                ],
+                [
+                    "zz pr held",
+                    "post-trashed"
+                ],
+                [
+                    "zz pr spam",
+                    "post-trashed"
+                ],
+                [
+                    "zz pr trashed",
+                    "post-trashed"
+                ]
+            ],
+            [
+                [
+                    "{zz-pr-approved}",
+                    "1"
+                ],
+                [
+                    "{zz-pr-held}",
+                    "0"
+                ],
+                [
+                    "{zz-pr-spam}",
+                    "spam"
+                ],
+                [
+                    "{zz-pr-trashed}",
+                    "trash"
+                ]
+            ],
+            0,
+            null,
+            [
+                [
+                    "zz pr approved",
+                    "1"
+                ],
+                [
+                    "zz pr held",
+                    "0"
+                ],
+                [
+                    "zz pr spam",
+                    "spam"
+                ],
+                [
+                    "zz pr trashed",
+                    "trash"
+                ]
+            ],
+            "",
+            true,
+            null,
+            null,
+            null,
+            true
+        ]
+    ],
+    [
+        "attachment files",
+        [
+            {
+                "main": true,
+                "small": true,
+                "backup": true,
+                "original": true,
+                "other": true
+            },
+            true,
+            {
+                "main": false,
+                "small": false,
+                "backup": false,
+                "original": false,
+                "other": true
+            },
+            false,
+            true,
+            {
+                "main": false,
+                "small": false,
+                "backup": false,
+                "original": false,
+                "other": false
+            },
+            false,
+            false,
+            false
+        ]
+    ]
+]

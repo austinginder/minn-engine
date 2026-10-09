@@ -78468,7 +78468,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Kind.php",
-            "lines": 75,
+            "lines": 79,
             "doc": "Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second.",
             "implements": [],
             "extends": null,
@@ -78498,7 +78498,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "matchWildcards(array $patterns, array $reals): array",
-                    "doc": "Real mime types grouped under the wildcard patterns that match them\n(image, audio/*, image/jpeg, *); a pattern with no matches is omitted.",
+                    "doc": "Real mime types grouped under the wildcard patterns that match them\n(image, audio/*, image/jpeg, *), the last pattern first; a pattern with\nno matches is omitted (probe post-remaining).",
                     "shapes": [
                         "@param list<string> $patterns",
                         "@param list<string> $reals",
@@ -78520,8 +78520,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 63
+                    "line": 47,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -78568,8 +78568,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 81
+                    "line": 70,
+                    "end": 85
                 }
             ]
         },
@@ -127693,7 +127693,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 392,
+            "lines": 427,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -127914,7 +127914,88 @@
                         }
                     ],
                     "line": 101,
-                    "end": 183
+                    "end": 170
+                },
+                {
+                    "routes": [],
+                    "name": "labels",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "labels(array $labels, ?string $label, string $base, string $name): array",
+                    "doc": "A type's labels from its own (probe post-remaining): the labels of its\nbase type (page for a hierarchical type, post for any other) under the\ntype's own. A missing\nname comes from the type's label, a missing singular name from the name,\nthe menu name from the name, all items from the menu name, archives from\nall items, and the admin bar name from the singular name or else the\ntype's name; a type with a singular name also names its single-item\ntemplate.",
+                    "shapes": [
+                        "@param array<string, mixed> $labels",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "labels",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 200,
+                    "end": 224
+                },
+                {
+                    "routes": [],
+                    "name": "capabilities",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "capabilities(array|string $capabilityType, array $overrides, bool $mapMetaCap): array",
+                    "doc": "A type's capability names (probe post-remaining): the eight primitive\nones, the six more a mapped type uses, the type's own names merged over\nthem, and create_posts last, the edit capability unless named.",
+                    "shapes": [
+                        "@param array<string, string> $overrides",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "capabilityType",
+                            "type": "array|string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "overrides",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mapMetaCap",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 234,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -127933,8 +128014,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 241
+                    "line": 266,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -127967,8 +128048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 256
+                    "line": 283,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -127994,8 +128075,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -128016,8 +128097,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 272
+                    "line": 304,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -128052,8 +128133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 339
+                    "line": 314,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -128064,8 +128145,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 345
+                    "line": 377,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -128084,8 +128165,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 355
+                    "line": 383,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -128111,8 +128192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 367
+                    "line": 393,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -128138,8 +128219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 377
+                    "line": 405,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -128167,8 +128248,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 406
+                    "line": 419,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -128189,44 +128270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 197
-                },
-                {
-                    "routes": [],
-                    "name": "capabilities",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "capabilities(array|string $capabilityType, array $overrides, bool $mapMetaCap): array",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, string> $overrides"
-                    ],
-                    "params": [
-                        {
-                            "name": "capabilityType",
-                            "type": "array|string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "overrides",
-                            "type": "array",
-                            "shape": "array<string, string>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "mapMetaCap",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 200,
-                    "end": 228
+                    "line": 173,
+                    "end": 184
                 }
             ]
         },

@@ -9424,3 +9424,75 @@ Fixed to match:
 - **Shared fix: `get_post()` with no argument** reads only the global
   post. It no longer falls back to the runtime's copy, so once a caller
   clears `$post` there is no current post, as on the reference.
+
+## The rest of post.php (2026-10-09)
+
+Probe `post-remaining` proves the 30 post.php functions that were left:
+- page statuses, and which statuses and posts are publicly viewable;
+- post type capabilities and labels;
+- custom fields and post thumbnails;
+- the author SQL;
+- page children and hierarchy loops;
+- MIME type matching and its SQL;
+- relative upload paths, the original image address, and post tags;
+- the status transition defaults: scheduling, publishing what is due, the
+  front page, posts page, sticky and privacy page resets, term counts, old
+  slugs and dates, the after-insert action (it saves a revision on update),
+  trashing a post's comments, attachment files, and the initial post meta.
+
+The probe puts back every option it can change, clears its cron events (a
+`do_pings` it caused included), and deletes its posts, comments, terms and
+files.
+
+Fixed to match:
+
+- **`get_post_type_capabilities`** builds the capability names; it used to
+  return the object's `cap`. The order is:
+  - the eight primitive names, plus six more for a mapped type;
+  - the type's own names merged over them (a new name is added after);
+  - `create_posts` last, the merged `edit_posts` unless the type names it.
+
+  A one-name `capability_type` list has no plural, so its plural names end
+  in `_`. A mapped type records its meta capabilities. `register_post_type`
+  uses the same rule (`Runtime\Registry::capabilities`), so `create_posts`
+  now follows an overridden `edit_posts`.
+- **`get_post_type_labels`** builds the labels from the type's own
+  (`Runtime\Registry::labels`), then runs `post_type_labels_{$name}` on the
+  object. It used to return the object's `labels`.
+  - The base labels are page's for a hierarchical type, post's otherwise.
+  - A missing name comes from `label`, a missing singular name from the
+    name, the menu name from the name, all items from the menu name, and
+    archives from all items.
+  - The admin bar name comes from the singular name, or else the type's
+    name.
+  - `template_name` is added only when there is a singular name.
+
+  `register_post_type` builds its labels the same way, so custom labels
+  keep the reference's order.
+- **`wp_match_mime_types`**:
+  - Groups come back with the last pattern first. Matching is
+    case-sensitive.
+  - A type/subtype pattern must match whole, `*` standing for one name
+    (`[-._a-z0-9]+`, so not `svg+xml`).
+  - A bare type matches from the start, then, in a second pass, anywhere.
+    `*` and an empty pattern match everything.
+  - A string of real types is split on commas.
+- **`_transition_post_status`**:
+  - A post becoming published gets its permalink as its guid when it has
+    none. The cached post keeps the old value.
+  - It runs the deprecated `private_to_published` (2.3.0, use
+    `private_to_publish`).
+  - Every transition clears the post's `publish_future_post` event, and
+    `_future_post_hook` sets it again for a future post.
+- **`_reset_front_page_settings_for_post`** also unsticks the post, of any
+  type.
+- **`wp_trash_post_comments`** returns how many comments changed. On a
+  second call that is 0, since comments already set aside with their post
+  do not count.
+- **`wp_delete_attachment_files`** deletes only inside the uploads folder,
+  and returns false when any file is missing or outside it. The main file is
+  tried even when it is missing.
+
+Owed: `register_post_type` does not run `post_type_labels_{$name}`, and the
+built-in types' labels are never filtered. On the reference a plugin can
+rename Posts this way.

@@ -1226,10 +1226,13 @@ function wp_delete_attachment($post_id, $force_delete = false)
 
 function wp_delete_attachment_files($post_id, $meta, $backup_sizes, $file)
 {
+    // False when any of the files is missing or outside the uploads folder (probe post-remaining).
+    $deleted = true;
+    $base = wp_get_upload_dir()['basedir'];
     foreach (Uploads::attachmentFiles((string) $file, is_array($meta) ? $meta : [], is_array($backup_sizes) ? $backup_sizes : null) as $path) {
-        wp_delete_file($path);
+        $deleted = wp_delete_file_from_directory($path, $base) && $deleted;
     }
-    return true;
+    return $deleted;
 }
 
 function wp_delete_file($file)
@@ -1540,7 +1543,8 @@ function wp_omit_loading_attr_threshold($force = false)
 function wp_match_mime_types($wildcard_mime_types, $real_mime_types)
 {
     $patterns = is_array($wildcard_mime_types) ? $wildcard_mime_types : array_map('trim', explode(',', (string) $wildcard_mime_types));
-    return \Minn\Media\Kind::matchWildcards(array_map('strval', $patterns), array_map('strval', (array) $real_mime_types));
+    $reals = is_array($real_mime_types) ? $real_mime_types : explode(',', (string) $real_mime_types);
+    return \Minn\Media\Kind::matchWildcards(array_map('strval', $patterns), array_map('strval', $reals));
 }
 
 /** Streams an image editor's current image at the requested type; anything else has nothing to stream. */

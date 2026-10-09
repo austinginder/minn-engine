@@ -1629,11 +1629,22 @@ function _future_post_hook($deprecated, $post)
 }
 
 /** The first default on transition_post_status: a post that stops being scheduled leaves the cron calendar. */
+/**
+ * The default on transition_post_status (probe post-remaining): a post
+ * becoming published gets its permalink as its guid when it has none (the
+ * cached copy is left as it was) and runs the deprecated private_to_published;
+ * every transition clears the post's scheduled publishing, which
+ * _future_post_hook sets again for a future post.
+ */
 function _transition_post_status($new_status, $old_status, $post)
 {
-    if ($old_status === 'future' && $new_status !== 'future') {
-        wp_clear_scheduled_hook('publish_future_post', [$post->ID]);
+    if ($old_status !== 'publish' && $new_status === 'publish') {
+        if (get_the_guid($post->ID) === '') {
+            _minn_post_writer()->update((int) $post->ID, ['guid' => get_permalink($post->ID)]);
+        }
+        do_action_deprecated('private_to_published', [$post->ID], '2.3.0', 'private_to_publish');
     }
+    wp_clear_scheduled_hook('publish_future_post', [$post->ID]);
 }
 
 /** The default on publish_post and publish_page: a site that has published something is no longer fresh. */
@@ -1642,20 +1653,23 @@ function _delete_option_fresh_site()
     update_option('fresh_site', '0', false);
 }
 
-/** The default on wp_trash_post and before_delete_post: a page that stops existing stops being the front page or the posts page. */
+/** The default on wp_trash_post and before_delete_post: a page leaving the site stops being the front or posts page, and any post leaving stops being sticky (probe post-remaining). */
 function _reset_front_page_settings_for_post($post_id)
 {
     $post = get_post($post_id);
-    if ($post === null || $post->post_type !== 'page') {
+    if ($post === null) {
         return;
     }
-    if ((int) get_option('page_on_front') === $post->ID) {
-        update_option('show_on_front', 'posts');
-        update_option('page_on_front', 0);
+    if ($post->post_type === 'page') {
+        if ((int) get_option('page_on_front') === $post->ID) {
+            update_option('show_on_front', 'posts');
+            update_option('page_on_front', 0);
+        }
+        if ((int) get_option('page_for_posts') === $post->ID) {
+            update_option('page_for_posts', 0);
+        }
     }
-    if ((int) get_option('page_for_posts') === $post->ID) {
-        update_option('page_for_posts', 0);
-    }
+    unstick_post($post->ID);
 }
 
 /** The default on before_delete_post: a deleted privacy policy page is no longer the site's policy. */
@@ -1928,14 +1942,22 @@ function unregister_post_type($post_type)
     return true;
 }
 
+/** A type's full labels from its own, then post_type_labels_{$name} (Runtime\Registry::labels; probe post-remaining). */
 function get_post_type_labels($post_type_object)
 {
-    return $post_type_object->labels;
+    $name = (string) ($post_type_object->name ?? '');
+    $labels = Runtime::registry()->labels((array) ($post_type_object->labels ?? []), isset($post_type_object->label) ? (string) $post_type_object->label : null, empty($post_type_object->hierarchical) ? 'post' : 'page', $name);
+    return apply_filters("post_type_labels_{$name}", (object) $labels);
 }
 
+/** A type's capability names (Runtime\Registry::capabilities; probe post-remaining); a mapped type's meta capabilities are recorded. */
 function get_post_type_capabilities($args)
 {
-    return $args->cap ?? new stdClass();
+    $caps = Minn\Runtime\Registry::capabilities($args->capability_type ?? 'post', (array) ($args->capabilities ?? []), !empty($args->map_meta_cap));
+    if (!empty($args->map_meta_cap)) {
+        _post_type_meta_capabilities($caps);
+    }
+    return (object) $caps;
 }
 
 function get_all_post_type_supports($post_type)

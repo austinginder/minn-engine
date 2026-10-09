@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 772,
-        "composes": 1850,
+        "minn": 775,
+        "composes": 1849,
         "leaf": 874,
-        "noop": 2647,
+        "noop": 2645,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7969,
-        "minnMethods": 938,
+        "minnMethods": 939,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -32494,12 +32494,13 @@
         },
         "_reset_front_page_settings_for_post": {
             "file": "post.php",
-            "lines": 11,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "get_option",
                 "get_post",
+                "unstick_post",
                 "update_option"
             ]
         },
@@ -32697,10 +32698,16 @@
         },
         "_transition_post_status": {
             "file": "post.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostWriter::update"
+            ],
             "composes": [
+                "_minn_post_writer",
+                "do_action_deprecated",
+                "get_permalink",
+                "get_the_guid",
                 "wp_clear_scheduled_hook"
             ]
         },
@@ -43385,17 +43392,25 @@
         },
         "get_post_type_capabilities": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Registry::capabilities"
+            ],
+            "composes": [
+                "_post_type_meta_capabilities"
+            ]
         },
         "get_post_type_labels": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::registry"
+            ],
+            "composes": [
+                "apply_filters"
+            ]
         },
         "get_post_type_object": {
             "file": "post.php",
@@ -59754,13 +59769,14 @@
         },
         "wp_delete_attachment_files": {
             "file": "media.php",
-            "lines": 4,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Media\\Uploads::attachmentFiles"
             ],
             "composes": [
-                "wp_delete_file"
+                "wp_delete_file_from_directory",
+                "wp_get_upload_dir"
             ]
         },
         "wp_delete_auto_drafts": {
@@ -64739,7 +64755,7 @@
         },
         "wp_match_mime_types": {
             "file": "media.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "minn",
             "minn": [
                 "Minn\\Media\\Kind::matchWildcards"
@@ -69049,7 +69065,7 @@
         },
         "wp_trash_post_comments": {
             "file": "comment.php",
-            "lines": 14,
+            "lines": 15,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Comments::setStatusOf",

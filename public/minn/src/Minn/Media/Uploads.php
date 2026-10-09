@@ -157,7 +157,7 @@ final readonly class Uploads
                 $paths[] = $sibling((string) $size['file']);
             }
         }
-        if ($file !== '' && is_file($file)) {
+        if ($file !== '') {
             $paths[] = $file;
         }
         return $paths;

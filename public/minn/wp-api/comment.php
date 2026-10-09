@@ -270,7 +270,8 @@ function wp_trash_post_comments($post = null)
     _minn_comments()->setStatusOf(array_keys($statuses), 'post-trashed');
     clean_comment_cache(array_keys($statuses));
     do_action('trashed_post_comments', $post->ID, $statuses);
-    return count($statuses);
+    // How many comments changed: one already set aside with its post does not count (probe post-remaining).
+    return count(array_filter($statuses, static fn ($status): bool => (string) $status !== 'post-trashed'));
 }
 
 /** A post back from the trash gives its comments their statuses back. */

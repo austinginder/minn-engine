@@ -100,21 +100,8 @@ final class Registry
      */
     public function registerPostType(string $name, array $args): array
     {
-        // A hierarchical type starts from the page labels, any other from the post labels (probe rest-types-edit).
-        $post = $this->postTypes[!empty($args['hierarchical']) ? 'page' : 'post'];
         $label = (string) ($args['label'] ?? ($args['labels']['name'] ?? $name));
-        $labels = $post['labels'];
-        $labels['name'] = $label;
-        $labels['singular_name'] = (string) ($args['labels']['singular_name'] ?? $label);
-        $labels['menu_name'] = (string) ($args['labels']['menu_name'] ?? $label);
-        $labels['name_admin_bar'] = (string) ($args['labels']['name_admin_bar'] ?? $labels['singular_name']);
-        $labels['all_items'] = (string) ($args['labels']['all_items'] ?? $labels['menu_name']);
-        $labels['archives'] = (string) ($args['labels']['archives'] ?? $labels['all_items']);
-        foreach ((array) ($args['labels'] ?? []) as $key => $value) {
-            $labels[$key] = $value;
-        }
-        // A plugin's type also names its single-item template, last (probe rest-types-edit).
-        $labels['template_name'] ??= sprintf(\function_exists('__') ? Gettext::text('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
+        $labels = $this->labels((array) ($args['labels'] ?? []), $label, empty($args['hierarchical']) ? 'post' : 'page', $name);
         $public = (bool) ($args['public'] ?? false);
         $capabilityType = $args['capability_type'] ?? 'post';
         // Meta capabilities are mapped by default only for the post and page families (probe rest-plugin-caps).
@@ -197,9 +184,57 @@ final class Registry
     }
 
     /** @param array<string, string> $overrides */
-    private static function capabilities(string|array $capabilityType, array $overrides, bool $mapMetaCap): array
+    /**
+     * A type's labels from its own (probe post-remaining): the labels of its
+     * base type (page for a hierarchical type, post for any other) under the
+     * type's own. A missing
+     * name comes from the type's label, a missing singular name from the name,
+     * the menu name from the name, all items from the menu name, archives from
+     * all items, and the admin bar name from the singular name or else the
+     * type's name; a type with a singular name also names its single-item
+     * template.
+     *
+     * @param array<string, mixed> $labels
+     * @return array<string, mixed>
+     */
+    public function labels(array $labels, ?string $label, string $base, string $name): array
     {
-        [$singular, $plural] = is_array($capabilityType) ? [$capabilityType[0], $capabilityType[1] ?? $capabilityType[0] . 's'] : [$capabilityType, $capabilityType . 's'];
+        if (!isset($labels['name']) && $label !== null) {
+            $labels['name'] = $label;
+        }
+        if (!isset($labels['singular_name']) && isset($labels['name'])) {
+            $labels['singular_name'] = $labels['name'];
+        }
+        $labels['name_admin_bar'] ??= $labels['singular_name'] ?? $name;
+        if (!isset($labels['menu_name']) && isset($labels['name'])) {
+            $labels['menu_name'] = $labels['name'];
+        }
+        if (!isset($labels['all_items']) && isset($labels['menu_name'])) {
+            $labels['all_items'] = $labels['menu_name'];
+        }
+        if (!isset($labels['archives']) && isset($labels['all_items'])) {
+            $labels['archives'] = $labels['all_items'];
+        }
+        $defaults = array_diff_key((array) ($this->postTypes[$base]['labels'] ?? []), ['name_admin_bar' => true, 'template_name' => true]);
+        $merged = array_merge($defaults, $labels);
+        if (!isset($merged['template_name']) && isset($labels['singular_name'])) {
+            $merged['template_name'] = sprintf(\function_exists('__') ? Gettext::text('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
+        }
+        return $merged;
+    }
+
+    /**
+     * A type's capability names (probe post-remaining): the eight primitive
+     * ones, the six more a mapped type uses, the type's own names merged over
+     * them, and create_posts last, the edit capability unless named.
+     *
+     * @param array<string, string> $overrides
+     * @return array<string, string>
+     */
+    public static function capabilities(string|array $capabilityType, array $overrides, bool $mapMetaCap): array
+    {
+        // A one-name list has no plural, so its plural capabilities end in "_" (probe post-remaining).
+        [$singular, $plural] = is_array($capabilityType) ? [$capabilityType[0], $capabilityType[1] ?? ''] : [$capabilityType, $capabilityType . 's'];
         $caps = [
             'edit_post' => "edit_{$singular}",
             'read_post' => "read_{$singular}",
@@ -220,10 +255,10 @@ final class Registry
                 'edit_published_posts' => "edit_published_{$plural}",
             ];
         }
-        $caps['create_posts'] = $overrides['create_posts'] ?? $caps['edit_posts'];
         foreach ($overrides as $key => $value) {
             $caps[$key] = $value;
         }
+        $caps['create_posts'] ??= $caps['edit_posts'];
         return $caps;
     }
 
