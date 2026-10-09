@@ -117,6 +117,12 @@ function current_user_can_for_blog($blog_id, $capability, ...$args)
     return current_user_can($capability, ...$args);
 }
 
+/** A user's capability on a site: on a single site, the site is this one, so it is user_can(). */
+function user_can_for_site($user, $site_id, $capability, ...$args)
+{
+    return user_can($user, $capability, ...$args);
+}
+
 function user_can($user, $capability, ...$args)
 {
     if (!is_object($user)) {

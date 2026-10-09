@@ -5,7 +5,8 @@
         "_wp_check_for_scheduled_split_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
         "_wp_check_split_default_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
         "_wp_check_split_nav_menu_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
-        "_wp_check_split_terms_in_menus": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it."
+        "_wp_check_split_terms_in_menus": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
+        "_wp_cron": "The reference hooks it on shutdown to spawn a loopback request to wp-cron.php when events are due; the engine's own Cron runs due events after the response under its own lock, so hooking it as well would run them twice (Austin, 2026-10-09)."
     },
     "classes": {
         "POP3": "The post-by-email mail client (wp-mail.php); Minn does not fetch mail to post it, and no catalogue plugin uses the class.",

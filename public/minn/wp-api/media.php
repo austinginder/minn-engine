@@ -1130,6 +1130,19 @@ function _wp_make_subsizes($new_sizes, $file, $image_meta, $attachment_id)
     return $image_meta;
 }
 
+/** An attachment with no metadata whose file is there has its metadata made and saved; one with metadata, or no file, is left alone. */
+function wp_maybe_generate_attachment_metadata($attachment)
+{
+    $id = (int) ($attachment->ID ?? 0);
+    if ($id < 1) {
+        return;
+    }
+    $file = get_attached_file($id);
+    if (empty(wp_get_attachment_metadata($id)) && is_string($file) && file_exists($file)) {
+        wp_update_attachment_metadata($id, wp_generate_attachment_metadata($id, $file));
+    }
+}
+
 function wp_generate_attachment_metadata($attachment_id, $file)
 {
     $attachment_id = (int) $attachment_id;

@@ -170,9 +170,15 @@ if (!class_exists('WP_Object_Cache', false)) {
             $this->blog_prefix = $this->multisite ? (int) $blog_id . ':' : '';
         }
 
+        /** @deprecated 3.5.0 Empties every group that is not global. */
         public function reset()
         {
             _deprecated_function(__FUNCTION__, '3.5.0', 'WP_Object_Cache::switch_to_blog()');
+            foreach (array_keys(Runtime::cache()->sizes()) as $group) {
+                if (!isset($this->global_groups[$group])) {
+                    Runtime::cache()->flushGroup((string) $group);
+                }
+            }
         }
 
         /** The hits and misses, then each group's size in kilobytes. */

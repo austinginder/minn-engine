@@ -331,6 +331,12 @@ function _wp_credits_build_object_link(&$data)
     return null;
 }
 
+function _wp_cron()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_cron');
+    return null;
+}
+
 function _wp_customize_include()
 {
     \Minn\Runtime\PlaceholderTrace::hit('_wp_customize_include');

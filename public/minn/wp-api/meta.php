@@ -256,6 +256,14 @@ function update_meta_cache($meta_type, $object_ids)
     return _minn_meta()->prime((string) $meta_type, $ids);
 }
 
+/** The one metadata lazyloader, made on first use. */
+function wp_metadata_lazyloader()
+{
+    static $lazyloader = null;
+    $lazyloader ??= new WP_Metadata_Lazyloader();
+    return $lazyloader;
+}
+
 function get_post_meta($post_id, $key = '', $single = false)
 {
     return get_metadata('post', $post_id, $key, $single);

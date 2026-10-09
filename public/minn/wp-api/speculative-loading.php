@@ -17,6 +17,16 @@ function wp_get_speculation_rules_default_configuration(): array
  * plain permalinks); auto, anything unknown, and immediate eagerness
  * settle on the defaults.
  */
+/** A speculative loading override: the constant of that name when it holds a string, else the environment variable (empty counts), else null. */
+function wp_get_speculative_loading_override($name)
+{
+    if (defined($name) && is_string(constant($name))) {
+        return constant($name);
+    }
+    $value = getenv($name);
+    return $value === false ? null : $value;
+}
+
 function wp_get_speculation_rules_configuration(): ?array
 {
     $off = is_user_logged_in() || !get_option('permalink_structure');

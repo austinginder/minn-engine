@@ -50,46 +50,78 @@ function _minn_dep_list($deps): array
     return is_array($deps) ? array_values($deps) : [];
 }
 
-function wp_register_script($handle, $src, $deps = [], $ver = false, $args = [])
+/**
+ * Warns (doing it wrong, 3.3.0) when an asset function runs before init
+ * and before any of the enqueue actions, naming the handle when there is
+ * one.
+ */
+function _wp_scripts_maybe_doing_it_wrong($function_name, $handle = '')
 {
-    $args = is_array($args) ? $args : ['in_footer' => (bool) $args];
-    $assets = _minn_assets('script');
-    $ok = $assets->register((string) $handle, $src === false ? false : (string) $src, _minn_dep_list($deps), $ver, $args);
+    if (did_action('init') || did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts') || did_action('login_enqueue_scripts')) {
+        return;
+    }
+    $message = sprintf(__('Scripts and styles should not be registered or enqueued until the %1$s, %2$s, or %3$s hooks.'), '<code>wp_enqueue_scripts</code>', '<code>admin_enqueue_scripts</code>', '<code>login_enqueue_scripts</code>');
+    if ($handle) {
+        $message .= ' ' . sprintf(__('This notice was triggered by the %s handle.'), '<code>' . $handle . '</code>');
+    }
+    _doing_it_wrong($function_name, $message, '3.3.0');
+}
+
+/** A registered script's arguments as its data: in_footer as group 1, then a strategy and a fetch priority (the registry refuses ones it does not know). */
+function _wp_scripts_add_args_data($wp_scripts, $handle, $args)
+{
     if (!empty($args['in_footer'])) {
-        $assets->addData((string) $handle, 'group', 1);
+        $wp_scripts->add_data($handle, 'group', 1);
     }
     // Through the registry, which refuses a strategy or fetch priority the reference refuses (probe dependencies-classes).
     foreach (['strategy', 'fetchpriority'] as $key) {
         if (!empty($args[$key])) {
-            wp_scripts()->add_data($handle, $key, $args[$key]);
+            $wp_scripts->add_data($handle, $key, $args[$key]);
         }
+    }
+}
+
+/** @internal a script registered with its arguments, without the too-early check (the caller made it) */
+function _minn_register_script($handle, $src, $deps, $ver, $args)
+{
+    $args = is_array($args) ? $args : ['in_footer' => (bool) $args];
+    $ok = _minn_assets('script')->register((string) $handle, $src === false ? false : (string) $src, _minn_dep_list($deps), $ver, $args);
+    if ($ok) {
+        _wp_scripts_add_args_data(wp_scripts(), $handle, $args);
     }
     return $ok;
 }
 
+function wp_register_script($handle, $src, $deps = [], $ver = false, $args = [])
+{
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
+    return _minn_register_script($handle, $src, $deps, $ver, $args);
+}
+
 function wp_enqueue_script($handle, $src = '', $deps = [], $ver = false, $args = [])
 {
-    $assets = _minn_assets('script');
-    if ($src !== '' || !$assets->registered((string) $handle)) {
-        if ($src !== '') {
-            wp_register_script($handle, $src, $deps, $ver, $args);
-        }
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
+    if ($src !== '') {
+        _minn_register_script($handle, $src, $deps, $ver, $args);
     }
-    $assets->enqueue((string) $handle);
+    _minn_assets('script')->enqueue((string) $handle);
 }
 
 function wp_deregister_script($handle)
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     _minn_assets('script')->deregister((string) $handle);
 }
 
 function wp_dequeue_script($handle)
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     _minn_assets('script')->dequeue((string) $handle);
 }
 
 function wp_script_is($handle, $status = 'enqueued')
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     $assets = _minn_assets('script');
     return match ($status) {
         'registered' => $assets->registered((string) $handle),
@@ -102,6 +134,7 @@ function wp_script_is($handle, $status = 'enqueued')
 
 function wp_add_inline_script($handle, $data, $position = 'after')
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     return _minn_assets('script')->addInline((string) $handle, (string) $data, (string) $position);
 }
 
@@ -117,29 +150,34 @@ function wp_script_add_data($handle, $key, $value)
 
 function wp_register_style($handle, $src, $deps = [], $ver = false, $media = 'all')
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     return _minn_assets('style')->register((string) $handle, $src === false ? false : (string) $src, _minn_dep_list($deps), $ver, (string) $media);
 }
 
 function wp_enqueue_style($handle, $src = '', $deps = [], $ver = false, $media = 'all')
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     if ($src !== '') {
-        wp_register_style($handle, $src, $deps, $ver, $media);
+        _minn_assets('style')->register((string) $handle, $src === false ? false : (string) $src, _minn_dep_list($deps), $ver, (string) $media);
     }
     _minn_assets('style')->enqueue((string) $handle);
 }
 
 function wp_deregister_style($handle)
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     _minn_assets('style')->deregister((string) $handle);
 }
 
 function wp_dequeue_style($handle)
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     _minn_assets('style')->dequeue((string) $handle);
 }
 
 function wp_style_is($handle, $status = 'enqueued')
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     $assets = _minn_assets('style');
     return match ($status) {
         'registered' => $assets->registered((string) $handle),
@@ -152,6 +190,7 @@ function wp_style_is($handle, $status = 'enqueued')
 
 function wp_add_inline_style($handle, $data)
 {
+    _wp_scripts_maybe_doing_it_wrong(__FUNCTION__, $handle);
     return _minn_assets('style')->addInline((string) $handle, (string) $data, 'after');
 }
 

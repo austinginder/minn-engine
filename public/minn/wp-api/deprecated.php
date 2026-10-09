@@ -1448,6 +1448,12 @@ function start_wp()
     setup_postdata(get_post());
 }
 
+/** @deprecated 6.7.0 SimplePie loads its own classes (SimplePie_Autoloader); this loads none. */
+function wp_simplepie_autoload($class)
+{
+    _deprecated_function(__FUNCTION__, '6.7.0', 'SimplePie_Autoloader');
+}
+
 /** Stores what a check of the https home finds in the https_detection_errors option. Deprecated in 6.4.0, nothing to use instead. */
 function wp_update_https_detection_errors()
 {

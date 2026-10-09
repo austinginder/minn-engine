@@ -7,6 +7,8 @@
  * the widgets editor. Same protocol as api-probe.php; it writes nothing.
  */
 
+// A loaded site is past init, as the reference is under WP-CLI; the engine's probe runner skips it, so the asset functions would warn as if called too early.
+$GLOBALS['wp_actions']['init'] = max(1, (int) ($GLOBALS['wp_actions']['init'] ?? 0));
 $log = [];
 $say = static function (string $label, $value) use (&$log): void {
     $log[] = [$label, $value];

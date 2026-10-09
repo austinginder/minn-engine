@@ -1420,6 +1420,15 @@ function wp_delete_nav_menu($menu)
 }
 
 /** A menu item made (id 0) or changed, as the reference saves one (Runtime\MenuEvents): its id or the refusal. */
+/** A menu item that names itself as its parent (ID and parent equal, loosely, and set) gets no parent. Any other parent is kept. */
+function _wp_reset_invalid_menu_item_parent($menu_item_data)
+{
+    if (!empty($menu_item_data['ID']) && !empty($menu_item_data['menu_item_parent']) && (int) $menu_item_data['ID'] === (int) $menu_item_data['menu_item_parent']) {
+        $menu_item_data['menu_item_parent'] = 0;
+    }
+    return $menu_item_data;
+}
+
 function wp_update_nav_menu_item($menu_id = 0, $menu_item_db_id = 0, $menu_item_data = [], $fire_after_hooks = true)
 {
     return _minn_menu_events()->saveItem((int) $menu_id, (int) $menu_item_db_id, (array) $menu_item_data, $fire_after_hooks ? 'now' : 'later');
@@ -1634,8 +1643,10 @@ function _pad_term_counts(&$terms, $taxonomy)
 }
 
 /** Nothing to queue: term meta loads when it is first read. */
+/** Queues terms so the first read of one's meta loads them all. */
 function wp_lazyload_term_meta(array $term_ids)
 {
+    wp_metadata_lazyloader()->queue_objects('term', $term_ids);
 }
 
 /** Prints a post's terms as links between before and after, through the_terms; false for a taxonomy that does not exist. */

@@ -65,6 +65,7 @@
         "_wp_check_split_terms_in_menus": "omitted",
         "_wp_credits_add_profile_link": "admin",
         "_wp_credits_build_object_link": "admin",
+        "_wp_cron": "omitted",
         "_wp_customize_changeset_filter_insert_post_data": "customizer",
         "_wp_customize_include": "customizer",
         "_wp_customize_loader_settings": "customizer",

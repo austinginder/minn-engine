@@ -737,12 +737,29 @@ function _block_bindings_term_data_get_value(array $source_args, $block_instance
     return null;
 }
 
-/** The core bindings sources, registered at init as the reference registers them. */
-function _minn_register_block_bindings_sources()
+// The core bindings sources, each registered by its own function at init, as the reference registers them.
+
+/** Registers core/pattern-overrides. */
+function _register_block_bindings_pattern_overrides_source()
 {
     register_block_bindings_source('core/pattern-overrides', ['label' => _x('Pattern Overrides', 'block bindings source'), 'get_value_callback' => '_block_bindings_pattern_overrides_get_value', 'uses_context' => ['pattern/overrides']]);
+}
+
+/** Registers core/post-data. */
+function _register_block_bindings_post_data_source()
+{
     register_block_bindings_source('core/post-data', ['label' => _x('Post Data', 'block bindings source'), 'get_value_callback' => '_block_bindings_post_data_get_value', 'uses_context' => ['postId', 'postType']]);
+}
+
+/** Registers core/post-meta. */
+function _register_block_bindings_post_meta_source()
+{
     register_block_bindings_source('core/post-meta', ['label' => _x('Post Meta', 'block bindings source'), 'get_value_callback' => '_block_bindings_post_meta_get_value', 'uses_context' => ['postId', 'postType']]);
+}
+
+/** Registers core/term-data. */
+function _register_block_bindings_term_data_source()
+{
     register_block_bindings_source('core/term-data', ['label' => _x('Term Data', 'block bindings source'), 'get_value_callback' => '_block_bindings_term_data_get_value', 'uses_context' => ['termId', 'taxonomy']]);
 }
 

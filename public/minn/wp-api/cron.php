@@ -4,15 +4,44 @@
 use Minn\Runtime\CronTable;
 use Minn\Runtime\Runtime;
 
+/** The events as stored, a list read before version 2 upgraded (and saved) first. */
 function _get_cron_array()
 {
     $cron = get_option('cron');
     if (!is_array($cron)) {
         return [];
     }
+    if (!isset($cron['version'])) {
+        $cron = _upgrade_cron_array($cron);
+    }
     unset($cron['version']);
     ksort($cron);
     return $cron;
+}
+
+/**
+ * A cron list from before version 2 (no version, or another one) with each
+ * event keyed by md5(serialize(args)) and marked version 2, saved as the
+ * cron option. A version 2 list comes back as given, unsaved.
+ */
+function _upgrade_cron_array($cron)
+{
+    if (isset($cron['version']) && $cron['version'] === 2) {
+        return $cron;
+    }
+    $upgraded = [];
+    foreach ((array) $cron as $timestamp => $hooks) {
+        if ($timestamp === 'version') {
+            $upgraded['version'] = 2;
+            continue;
+        }
+        foreach ((array) $hooks as $hook => $event) {
+            $upgraded[$timestamp][$hook][md5(serialize($event['args'] ?? null))] = $event;
+        }
+    }
+    $upgraded['version'] = 2;
+    update_option('cron', $upgraded);
+    return $upgraded;
 }
 
 function _set_cron_array($cron, $wp_error = false)

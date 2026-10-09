@@ -8649,3 +8649,77 @@ Probe `output-helpers`.
   - The engine's `get_term_link` builds format links from its own
     permalinks, so a post_format permastruct removed at runtime does not
     change them.
+
+## Runtime internals (2026-10-09)
+
+Probe `runtime-internals`. The probe saves the cron option and writes it
+back in place, removes its attachment and files, and intercepts nothing
+over the network: `_wp_cron` is left out (see below).
+
+- **The core bindings sources.** Each has its own function
+  (`_register_block_bindings_{pattern_overrides,post_data,post_meta,term_data}_source`),
+  hooked on `init` at 10, in place of the engine's one
+  `_minn_register_block_bindings_sources`. The probe runner fires no init,
+  so the probe registers any source that is missing.
+- **`wp_cache_reset`** (deprecated 3.5.0, use `wp_cache_switch_to_blog()`)
+  calls `$wp_object_cache->reset()`. That is deprecated too (`reset`,
+  `WP_Object_Cache::switch_to_blog()`), and it now empties every group
+  that is not global. Before, it only raised the notice.
+- **`user_can_for_site`** is `user_can()` on a single site, whatever the
+  site id.
+- **`WP_Metadata_Lazyloader`** (`wp_metadata_lazyloader()`: one instance,
+  kept in a static, not a global).
+  - Its settings cover term, comment and blog, each with
+    `get_{type}_metadata` and `lazyload_meta_callback`.
+  - `queue_objects` adds ids as keys (`[id => 1]`) and hooks the filter at
+    10 even for an empty list. It fires
+    `metadata_lazyloader_queued_objects(ids, type, lazyloader)` and refuses
+    an unknown type (`invalid_object_type`, "Invalid object type.").
+  - The callback does nothing for a type with nothing queued. Otherwise it
+    primes the queued ids plus the one read (`update_meta_cache`), empties
+    the queue, unhooks, and returns the check untouched.
+  - `lazyload_term_meta` and `lazyload_comment_meta` are deprecated
+    (6.3.0, `WP_Metadata_Lazyloader::lazyload_meta_callback`).
+  - `wp_lazyload_term_meta` and `wp_lazyload_comment_meta` now queue.
+    Before, they were no-ops.
+- **`_wp_reset_invalid_menu_item_parent`.** An item whose ID and
+  `menu_item_parent` are both set and equal (as integers) gets parent 0.
+  Any other parent stays, whether missing, negative or not a number.
+- **Cron arrays from before version 2.**
+  - `_upgrade_cron_array` keys each event by `md5(serialize(args))` and
+    marks the list version 2 (last, or where an old version key was). It
+    saves the result as the cron option. A version 2 list comes back as
+    given and is not saved.
+  - `_get_cron_array` upgrades a stored list that has no version.
+- **Script arguments.**
+  - `_wp_scripts_add_args_data` turns `in_footer` into group 1 and passes a
+    strategy and a fetch priority on to the registry, which refuses ones it
+    does not know with its own notices. Empty values are ignored, and an
+    unregistered handle gets nothing.
+  - `wp_register_script` and `wp_enqueue_script` share one path
+    (`_minn_register_script`).
+- **Registered too early.** `_wp_scripts_maybe_doing_it_wrong` warns (3.3.0)
+  while neither `init` nor any of the three enqueue actions has fired:
+  "Scripts and styles should not be registered or enqueued until the …
+  hooks.", plus "This notice was triggered by the `<code>{handle}</code>`
+  handle." (raw) when there is a handle.
+  - It is called by the register, enqueue, inline, `_is`, dequeue and
+    deregister functions for scripts and styles, but not by
+    `wp_localize_script` or `wp_*_add_data`.
+  - The probe runner fires no init, so the `dependencies-classes` and
+    `widgets-more` probes now mark init as done. That changes nothing on
+    the reference, so their fixtures stand.
+- **`wp_simplepie_autoload`** is deprecated (6.7.0, `SimplePie_Autoloader`)
+  and loads nothing.
+- **`wp_maybe_generate_attachment_metadata`.** An attachment with no
+  metadata whose file exists gets its metadata made and saved. One with
+  metadata, or with its file missing, is left alone.
+- **`wp_get_speculative_loading_override($name)`.** The constant of that
+  name when it holds a string. Otherwise the environment variable, where
+  an empty one counts. Otherwise null. A constant that is not a string
+  falls through to the environment.
+- **`_wp_cron` is left out (Austin, 2026-10-09).** The reference hooks it
+  on `shutdown` and, when events are due, spawns a loopback request to
+  `wp-cron.php`. The engine's own Cron runs due events after the response
+  under its own lock, so hooking `_wp_cron` as well would run them twice.
+  It is now an omitted dead end: an unhooked stub that logs the call.

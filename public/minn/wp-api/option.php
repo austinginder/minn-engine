@@ -378,6 +378,16 @@ function wp_cache_add_non_persistent_groups($groups)
 }
 endif;
 
+if (!function_exists('wp_cache_reset')) :
+/** @deprecated 3.5.0 Empties the cache's per-site groups (global groups are kept); use wp_cache_switch_to_blog(). */
+function wp_cache_reset()
+{
+    _deprecated_function(__FUNCTION__, '3.5.0', 'wp_cache_switch_to_blog()');
+    global $wp_object_cache;
+    $wp_object_cache->reset();
+}
+endif;
+
 if (!function_exists('wp_cache_switch_to_blog')) :
 function wp_cache_switch_to_blog($blog_id)
 {

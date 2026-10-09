@@ -1,0 +1,899 @@
+[
+    [
+        "the core bindings sources",
+        [
+            [
+                "core/pattern-overrides",
+                10,
+                [
+                    "core/pattern-overrides",
+                    "Pattern Overrides",
+                    [
+                        "pattern/overrides"
+                    ]
+                ],
+                null,
+                null,
+                true
+            ],
+            [
+                "core/post-data",
+                10,
+                [
+                    "core/post-data",
+                    "Post Data",
+                    [
+                        "postId",
+                        "postType"
+                    ]
+                ],
+                null,
+                null,
+                true
+            ],
+            [
+                "core/post-meta",
+                10,
+                [
+                    "core/post-meta",
+                    "Post Meta",
+                    [
+                        "postId",
+                        "postType"
+                    ]
+                ],
+                null,
+                null,
+                true
+            ],
+            [
+                "core/term-data",
+                10,
+                [
+                    "core/term-data",
+                    "Term Data",
+                    [
+                        "termId",
+                        "taxonomy"
+                    ]
+                ],
+                null,
+                null,
+                true
+            ]
+        ]
+    ],
+    [
+        "the old cache reset",
+        [
+            [
+                null,
+                false,
+                "v"
+            ],
+            [
+                [
+                    "deprecated",
+                    "wp_cache_reset",
+                    "wp_cache_switch_to_blog()",
+                    "3.5.0"
+                ],
+                [
+                    "deprecated",
+                    "reset",
+                    "WP_Object_Cache::switch_to_blog()",
+                    "3.5.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "a capability for a site",
+        [
+            true,
+            true,
+            false,
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "the metadata lazyloader",
+        [
+            [
+                null,
+                {
+                    "term": [
+                        "get_term_metadata",
+                        [
+                            true,
+                            "lazyload_meta_callback"
+                        ]
+                    ],
+                    "comment": [
+                        "get_comment_metadata",
+                        [
+                            true,
+                            "lazyload_meta_callback"
+                        ]
+                    ],
+                    "blog": [
+                        "get_blog_metadata",
+                        [
+                            true,
+                            "lazyload_meta_callback"
+                        ]
+                    ]
+                }
+            ],
+            [
+                null,
+                {
+                    "term": {
+                        "1": 1
+                    }
+                },
+                10,
+                [
+                    [
+                        [
+                            1
+                        ],
+                        "term",
+                        "Zz_Probe_Lazyloader"
+                    ]
+                ]
+            ],
+            [
+                null,
+                {
+                    "term": {
+                        "1": 1,
+                        "999999": 1,
+                        "7": 1
+                    }
+                }
+            ],
+            [
+                "invalid_object_type",
+                "Invalid object type."
+            ],
+            [
+                null,
+                {
+                    "term": {
+                        "1": 1,
+                        "999999": 1,
+                        "7": 1
+                    },
+                    "comment": []
+                },
+                10
+            ],
+            [
+                "kept",
+                {
+                    "term": {
+                        "1": 1,
+                        "999999": 1,
+                        "7": 1
+                    },
+                    "comment": []
+                },
+                10
+            ],
+            [
+                false,
+                "zzcheck",
+                {
+                    "term": [],
+                    "comment": []
+                },
+                true,
+                true,
+                false
+            ],
+            [
+                null,
+                null,
+                null
+            ],
+            [
+                null,
+                {
+                    "term": [],
+                    "comment": []
+                },
+                false
+            ],
+            [
+                "invalid_object_type",
+                "Invalid object type."
+            ],
+            [
+                "",
+                {
+                    "term": [],
+                    "comment": []
+                },
+                true,
+                false
+            ],
+            [
+                [
+                    "zzc",
+                    {
+                        "term": [],
+                        "comment": []
+                    }
+                ],
+                [
+                    [
+                        "deprecated",
+                        "WP_Metadata_Lazyloader::lazyload_term_meta",
+                        "WP_Metadata_Lazyloader::lazyload_meta_callback",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                [
+                    "zzc",
+                    {
+                        "term": [],
+                        "comment": []
+                    }
+                ],
+                [
+                    [
+                        "deprecated",
+                        "WP_Metadata_Lazyloader::lazyload_comment_meta",
+                        "WP_Metadata_Lazyloader::lazyload_meta_callback",
+                        "6.3.0"
+                    ]
+                ]
+            ],
+            [
+                "WP_Metadata_Lazyloader",
+                true,
+                false,
+                null,
+                {
+                    "1": 1,
+                    "999999": 1
+                }
+            ]
+        ]
+    ],
+    [
+        "a menu item that is its own parent",
+        [
+            {
+                "ID": 41,
+                "menu_item_parent": 0
+            },
+            {
+                "ID": 41,
+                "menu_item_parent": 0
+            },
+            {
+                "ID": "41",
+                "menu_item_parent": 0,
+                "zz": 1
+            },
+            {
+                "ID": 41,
+                "menu_item_parent": 42
+            },
+            {
+                "ID": 41,
+                "menu_item_parent": 0
+            },
+            {
+                "ID": 0,
+                "menu_item_parent": 0
+            },
+            {
+                "menu_item_parent": 41
+            },
+            {
+                "ID": 41
+            },
+            [],
+            {
+                "ID": 41,
+                "menu_item_parent": -1
+            },
+            {
+                "ID": 41,
+                "menu_item_parent": "x"
+            },
+            {
+                "ID": 41,
+                "menu_item_parent": 999999
+            }
+        ]
+    ],
+    [
+        "cron arrays from before version 2",
+        [
+            [
+                {
+                    "version": 2,
+                    "100": {
+                        "zz_kept": {
+                            "k": {
+                                "schedule": false,
+                                "args": []
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 2,
+                    "100": {
+                        "zz_kept": {
+                            "k": {
+                                "schedule": false,
+                                "args": []
+                            }
+                        }
+                    }
+                },
+                "unchanged"
+            ],
+            [
+                [],
+                {
+                    "version": 2
+                },
+                {
+                    "version": 2
+                }
+            ],
+            [
+                {
+                    "100": {
+                        "zz_old": {
+                            "schedule": "hourly",
+                            "args": [
+                                "a"
+                            ],
+                            "interval": 3600
+                        }
+                    },
+                    "200": {
+                        "zz_one": {
+                            "schedule": false,
+                            "args": []
+                        },
+                        "zz_two": {
+                            "schedule": "daily",
+                            "args": [
+                                1,
+                                "b"
+                            ],
+                            "interval": 86400
+                        }
+                    }
+                },
+                {
+                    "100": {
+                        "zz_old": {
+                            "8b05f042d01f9bbe8641a4d54ea6b0f9": {
+                                "schedule": "hourly",
+                                "args": [
+                                    "a"
+                                ],
+                                "interval": 3600
+                            }
+                        }
+                    },
+                    "200": {
+                        "zz_one": {
+                            "40cd750bba9870f18aada2478b24840a": {
+                                "schedule": false,
+                                "args": []
+                            }
+                        },
+                        "zz_two": {
+                            "d877c2a194418039fe8f789ee235a084": {
+                                "schedule": "daily",
+                                "args": [
+                                    1,
+                                    "b"
+                                ],
+                                "interval": 86400
+                            }
+                        }
+                    },
+                    "version": 2
+                },
+                {
+                    "100": {
+                        "zz_old": {
+                            "8b05f042d01f9bbe8641a4d54ea6b0f9": {
+                                "schedule": "hourly",
+                                "args": [
+                                    "a"
+                                ],
+                                "interval": 3600
+                            }
+                        }
+                    },
+                    "200": {
+                        "zz_one": {
+                            "40cd750bba9870f18aada2478b24840a": {
+                                "schedule": false,
+                                "args": []
+                            }
+                        },
+                        "zz_two": {
+                            "d877c2a194418039fe8f789ee235a084": {
+                                "schedule": "daily",
+                                "args": [
+                                    1,
+                                    "b"
+                                ],
+                                "interval": 86400
+                            }
+                        }
+                    },
+                    "version": 2
+                }
+            ],
+            [
+                {
+                    "version": 1,
+                    "100": {
+                        "zz_v1": {
+                            "schedule": false,
+                            "args": []
+                        }
+                    }
+                },
+                {
+                    "version": 2,
+                    "100": {
+                        "zz_v1": {
+                            "40cd750bba9870f18aada2478b24840a": {
+                                "schedule": false,
+                                "args": []
+                            }
+                        }
+                    }
+                },
+                {
+                    "version": 2,
+                    "100": {
+                        "zz_v1": {
+                            "40cd750bba9870f18aada2478b24840a": {
+                                "schedule": false,
+                                "args": []
+                            }
+                        }
+                    }
+                }
+            ],
+            [
+                "read",
+                {
+                    "300": {
+                        "zz_unversioned": {
+                            "00955a71896ca71cce454153103cfd4d": {
+                                "schedule": false,
+                                "args": [
+                                    "x"
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    "300": {
+                        "zz_unversioned": {
+                            "00955a71896ca71cce454153103cfd4d": {
+                                "schedule": false,
+                                "args": [
+                                    "x"
+                                ]
+                            }
+                        }
+                    },
+                    "version": 2
+                }
+            ],
+            true
+        ]
+    ],
+    [
+        "script registration arguments",
+        [
+            [
+                {
+                    "strategy": "defer"
+                },
+                [
+                    null,
+                    []
+                ],
+                [
+                    "defer",
+                    false,
+                    false
+                ]
+            ],
+            [
+                {
+                    "strategy": "async",
+                    "in_footer": true
+                },
+                [
+                    null,
+                    []
+                ],
+                [
+                    "async",
+                    1,
+                    false
+                ]
+            ],
+            [
+                {
+                    "in_footer": false
+                },
+                [
+                    null,
+                    []
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            [
+                {
+                    "in_footer": "yes"
+                },
+                [
+                    null,
+                    []
+                ],
+                [
+                    false,
+                    1,
+                    false
+                ]
+            ],
+            [
+                {
+                    "fetchpriority": "high"
+                },
+                [
+                    null,
+                    []
+                ],
+                [
+                    false,
+                    false,
+                    "high"
+                ]
+            ],
+            [
+                {
+                    "strategy": "zz"
+                },
+                [
+                    null,
+                    [
+                        [
+                            "wrong",
+                            "WP_Scripts::add_data",
+                            "Invalid strategy `zz` defined for `zz-probe-args-5` during script registration.",
+                            "6.3.0"
+                        ]
+                    ]
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            [
+                {
+                    "fetchpriority": "zz"
+                },
+                [
+                    null,
+                    [
+                        [
+                            "wrong",
+                            "WP_Scripts::add_data",
+                            "Invalid fetchpriority `zz` defined for `zz-probe-args-6` during script registration.",
+                            "6.9.0"
+                        ]
+                    ]
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            [
+                [],
+                [
+                    null,
+                    []
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            [
+                {
+                    "strategy": "",
+                    "fetchpriority": ""
+                },
+                [
+                    null,
+                    []
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ]
+            ],
+            [
+                null,
+                []
+            ]
+        ]
+    ],
+    [
+        "registered too early",
+        [
+            [
+                null,
+                []
+            ],
+            [
+                null,
+                [
+                    [
+                        "wrong",
+                        "wp_enqueue_script",
+                        "Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>zz-h</code> handle.",
+                        "3.3.0"
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "wrong",
+                        "wp_register_style",
+                        "Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks.",
+                        "3.3.0"
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "wrong",
+                        "wp_add_inline_script",
+                        "Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>zz <b></code> handle.",
+                        "3.3.0"
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "wrong",
+                        "wp_enqueue_script",
+                        "Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks.",
+                        "3.3.0"
+                    ]
+                ]
+            ],
+            [
+                "wp_enqueue_scripts",
+                [
+                    null,
+                    []
+                ]
+            ],
+            [
+                "admin_enqueue_scripts",
+                [
+                    null,
+                    []
+                ]
+            ],
+            [
+                "login_enqueue_scripts",
+                [
+                    null,
+                    []
+                ]
+            ],
+            [
+                "enqueue_block_assets",
+                [
+                    null,
+                    [
+                        [
+                            "wrong",
+                            "wp_enqueue_script",
+                            "Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>zz-h</code> handle.",
+                            "3.3.0"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "wp_loaded",
+                [
+                    null,
+                    [
+                        [
+                            "wrong",
+                            "wp_enqueue_script",
+                            "Scripts and styles should not be registered or enqueued until the <code>wp_enqueue_scripts</code>, <code>admin_enqueue_scripts</code>, or <code>login_enqueue_scripts</code> hooks. This notice was triggered by the <code>zz-h</code> handle.",
+                            "3.3.0"
+                        ]
+                    ]
+                ]
+            ],
+            {
+                "wp_register_script": [
+                    "wrong wp_register_script"
+                ],
+                "wp_enqueue_script": [
+                    "wrong wp_enqueue_script"
+                ],
+                "wp_add_inline_script": [
+                    "wrong wp_add_inline_script"
+                ],
+                "wp_localize_script": [],
+                "wp_script_add_data": [],
+                "wp_script_is": [
+                    "wrong wp_script_is"
+                ],
+                "wp_dequeue_script": [
+                    "wrong wp_dequeue_script"
+                ],
+                "wp_deregister_script": [
+                    "wrong wp_deregister_script"
+                ],
+                "wp_register_style": [
+                    "wrong wp_register_style"
+                ],
+                "wp_enqueue_style": [
+                    "wrong wp_enqueue_style"
+                ],
+                "wp_add_inline_style": [
+                    "wrong wp_add_inline_style"
+                ],
+                "wp_style_add_data": [],
+                "wp_style_is": [
+                    "wrong wp_style_is"
+                ],
+                "wp_dequeue_style": [
+                    "wrong wp_dequeue_style"
+                ],
+                "wp_deregister_style": [
+                    "wrong wp_deregister_style"
+                ]
+            }
+        ]
+    ],
+    [
+        "SimplePie's old autoloader",
+        [
+            [
+                null,
+                [
+                    [
+                        "deprecated",
+                        "wp_simplepie_autoload",
+                        "SimplePie_Autoloader",
+                        "6.7.0"
+                    ]
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "deprecated",
+                        "wp_simplepie_autoload",
+                        "SimplePie_Autoloader",
+                        "6.7.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "missing attachment metadata made",
+        [
+            null,
+            null,
+            null,
+            false,
+            [
+                null,
+                [
+                    [
+                        "width",
+                        "height",
+                        "file",
+                        "filesize",
+                        "sizes",
+                        "image_meta"
+                    ],
+                    400,
+                    300,
+                    true,
+                    {
+                        "medium": [
+                            300,
+                            225,
+                            "image/png"
+                        ],
+                        "thumbnail": [
+                            150,
+                            150,
+                            "image/png"
+                        ]
+                    }
+                ]
+            ],
+            [
+                null,
+                [
+                    [
+                        "width",
+                        "height",
+                        "file",
+                        "sizes"
+                    ],
+                    1,
+                    1,
+                    true,
+                    []
+                ]
+            ],
+            [
+                null,
+                false
+            ]
+        ]
+    ],
+    [
+        "speculative loading overrides",
+        [
+            "from-env",
+            "from-constant",
+            "",
+            null,
+            null,
+            null,
+            null,
+            "from-env"
+        ]
+    ]
+]

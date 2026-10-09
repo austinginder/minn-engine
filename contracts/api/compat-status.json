@@ -3,30 +3,30 @@
     "summary": {
         "functions": {
             "total": 3913,
-            "real": 2901,
-            "deadend": 902,
+            "real": 2915,
+            "deadend": 903,
             "placeholder": 23,
-            "missing": 87,
-            "verified": 2105,
-            "resolved": 3826
+            "missing": 72,
+            "verified": 2117,
+            "resolved": 3841
         },
         "classes": {
             "total": 380,
-            "real": 174,
+            "real": 175,
             "deadend": 131,
             "placeholder": 23,
-            "missing": 52,
-            "verified": 132,
-            "resolved": 328
+            "missing": 51,
+            "verified": 133,
+            "resolved": 329
         },
         "methods": {
             "total": 4073,
-            "real": 1693,
+            "real": 1699,
             "deadend": 1615,
             "placeholder": 353,
-            "missing": 412,
-            "verified": 1508,
-            "resolved": 3661
+            "missing": 406,
+            "verified": 1514,
+            "resolved": 3667
         }
     }
 }

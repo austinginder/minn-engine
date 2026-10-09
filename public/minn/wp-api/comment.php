@@ -1691,10 +1691,10 @@ function cancel_comment_reply_link($link_text = '')
     echo get_cancel_comment_reply_link($link_text);
 }
 
-/** Comments keep no cache here to fill. */
-/** Nothing to queue: comment meta loads when it is first read (probe deprecated). */
+/** Queues comments so the first read of one's meta loads them all. */
 function wp_lazyload_comment_meta(array $comment_ids)
 {
+    wp_metadata_lazyloader()->queue_objects('comment', $comment_ids);
 }
 
 function update_comment_cache($comments, $update_meta_cache = true)

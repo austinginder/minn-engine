@@ -260,7 +260,10 @@ add_filter('register_meta_args', '_wp_register_meta_args_allowed_list', 10, 2);
 add_action('init', 'wp_create_initial_comment_meta');
 add_action('init', 'wp_register_persisted_preferences_meta');
 add_action('init', 'register_block_core_footnotes_post_meta', 20);
-add_action('init', '_minn_register_block_bindings_sources');
+add_action('init', '_register_block_bindings_pattern_overrides_source');
+add_action('init', '_register_block_bindings_post_data_source');
+add_action('init', '_register_block_bindings_post_meta_source');
+add_action('init', '_register_block_bindings_term_data_source');
 add_action('user_request_action_confirmed', '_wp_privacy_account_request_confirmed', 10);
 add_action('user_request_action_confirmed', '_wp_privacy_send_request_confirmation_notification', 12);
 // Personal data: the core exporters and eraser listed, the two clean-up jobs scheduled at init and run by cron,
