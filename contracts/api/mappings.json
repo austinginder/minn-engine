@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1830,
-        "leaf": 872,
-        "noop": 2651,
+        "composes": 1829,
+        "leaf": 874,
+        "noop": 2657,
         "placeholder": 242,
         "deadend": 1664,
-        "functions": 7954,
-        "minnMethods": 934,
+        "functions": 7961,
+        "minnMethods": 938,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -22602,12 +22602,39 @@
             "minn": [],
             "composes": []
         },
+        "WP_Style_Engine::get_classnames": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::classNames"
+            ],
+            "composes": []
+        },
+        "WP_Style_Engine::get_css_declarations": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::declarationsFor"
+            ],
+            "composes": []
+        },
         "WP_Style_Engine::get_css_var_value": {
             "file": "classes/WP_Style_Engine.php",
             "lines": 1,
             "kind": "noop",
             "minn": [
                 "Minn\\Blocks\\StyleEngine::var"
+            ],
+            "composes": []
+        },
+        "WP_Style_Engine::get_individual_property_css_declarations": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::individual"
             ],
             "composes": []
         },
@@ -22625,6 +22652,15 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine::get_url_or_value_css_declaration": {
+            "file": "classes/WP_Style_Engine.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\StyleEngine::urlOrValue"
+            ],
             "composes": []
         },
         "WP_Style_Engine::is_valid_style_value": {
@@ -22652,24 +22688,38 @@
         },
         "WP_Style_Engine_CSS_Declarations::__construct": {
             "file": "classes/WP_Style_Engine_CSS.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Style_Engine_CSS_Declarations::add_declaration": {
             "file": "classes/WP_Style_Engine_CSS.php",
-            "lines": 14,
-            "kind": "composes",
+            "lines": 9,
+            "kind": "leaf",
             "minn": [],
-            "composes": [
-                "safecss_filter_attr"
-            ]
+            "composes": []
         },
         "WP_Style_Engine_CSS_Declarations::add_declarations": {
             "file": "classes/WP_Style_Engine_CSS.php",
             "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Declarations::filter_declaration": {
+            "file": "classes/WP_Style_Engine_CSS.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "safecss_filter_attr"
+            ]
+        },
+        "WP_Style_Engine_CSS_Declarations::get_declaration_options": {
+            "file": "classes/WP_Style_Engine_CSS.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -22682,7 +22732,7 @@
         },
         "WP_Style_Engine_CSS_Declarations::get_declarations_string": {
             "file": "classes/WP_Style_Engine_CSS.php",
-            "lines": 10,
+            "lines": 12,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -22698,6 +22748,13 @@
             "file": "classes/WP_Style_Engine_CSS.php",
             "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Style_Engine_CSS_Declarations::sanitize_property": {
+            "file": "classes/WP_Style_Engine_CSS.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },

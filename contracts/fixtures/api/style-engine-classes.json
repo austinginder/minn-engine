@@ -1,0 +1,226 @@
+[
+    [
+        "block styles parsed",
+        [
+            {
+                "classnames": [
+                    "has-text-color",
+                    "has-zz-red-color",
+                    "has-background",
+                    "has-background",
+                    "has-zz-sunset-gradient-background",
+                    "has-border-color",
+                    "has-zz-blue-border-color",
+                    "has-large-font-size",
+                    "has-zz-mono-font-family"
+                ],
+                "declarations": {
+                    "background-image": "url('https://zz.example/i.png?a=1&b=2')",
+                    "background-size": "cover",
+                    "color": "var(--wp--preset--color--zz-red)",
+                    "background-color": "#fff",
+                    "background": "var(--wp--preset--gradient--zz-sunset)",
+                    "border-radius": "4px",
+                    "border-width": "1px",
+                    "border-top-style": "dashed",
+                    "border-top-color": "red",
+                    "box-shadow": "var(--wp--preset--shadow--natural)",
+                    "min-height": "10vh",
+                    "padding-top": "1px",
+                    "padding-left": "var(--wp--preset--spacing--20)",
+                    "margin": "2em",
+                    "font-size": "var(--wp--preset--font-size--large)",
+                    "font-family": "var(--wp--preset--font-family--zz-mono)",
+                    "line-height": "1.5",
+                    "text-decoration": "underline"
+                }
+            },
+            {
+                "classnames": [
+                    "has-text-color",
+                    "has-zz-red-color",
+                    "has-background",
+                    "has-background",
+                    "has-zz-sunset-gradient-background",
+                    "has-border-color",
+                    "has-zz-blue-border-color",
+                    "has-large-font-size",
+                    "has-zz-mono-font-family"
+                ],
+                "declarations": {
+                    "background-image": "url('https://zz.example/i.png?a=1&b=2')",
+                    "background-size": "cover",
+                    "background-color": "#fff",
+                    "border-radius": "4px",
+                    "border-width": "1px",
+                    "border-top-style": "dashed",
+                    "border-top-color": "red",
+                    "min-height": "10vh",
+                    "padding-top": "1px",
+                    "padding-left": "var:preset|spacing|20",
+                    "margin": "2em",
+                    "line-height": "1.5",
+                    "text-decoration": "underline"
+                }
+            },
+            {
+                "classnames": [],
+                "declarations": {
+                    "padding": "1px"
+                }
+            },
+            {
+                "classnames": [],
+                "declarations": []
+            },
+            {
+                "classnames": [],
+                "declarations": []
+            },
+            {
+                "classnames": [
+                    "has-text-color"
+                ],
+                "declarations": []
+            }
+        ]
+    ],
+    [
+        "declarations compiled",
+        [
+            ".zz{color:red;padding-top:1px;}",
+            "color:red;",
+            "",
+            ".zz{color:red;font-family:\"A\", serif;}"
+        ]
+    ],
+    [
+        "rules stored and compiled",
+        [
+            "WP_Style_Engine_CSS_Rules_Store",
+            true,
+            "zz-probe-store",
+            null,
+            [
+                ".zz-a",
+                ".zz-b",
+                "@media (min-width: 600px) .zz-c"
+            ],
+            ".zz-a{color:red;padding:1px;}.zz-b{color:red;margin:0;}@media (min-width: 600px){.zz-c{color:blue;}}",
+            ".zz-a{color:red;padding:1px;}.zz-b{color:red;margin:0;}@media (min-width: 600px){.zz-c{color:blue;}}",
+            ".zz-a {\n\tcolor: red;\n\tpadding: 1px;\n}\n.zz-b {\n\tcolor: red;\n\tmargin: 0;\n}\n@media (min-width: 600px) {\n\t.zz-c {\n\t\tcolor: blue;\n\t}\n}\n",
+            "",
+            null,
+            null,
+            null
+        ]
+    ],
+    [
+        "the protected helpers",
+        [
+            "zz-red",
+            "large",
+            "",
+            "b",
+            "var(--wp--preset--color--zz-red)",
+            "",
+            "",
+            [
+                true,
+                false,
+                true,
+                false,
+                false,
+                false,
+                true,
+                false,
+                true,
+                true
+            ],
+            [
+                "has-text-color",
+                "has-zz-red-color"
+            ],
+            [
+                "has-text-color"
+            ],
+            {
+                "padding": "1px"
+            },
+            {
+                "padding-top": "1px",
+                "padding-zz": "2px"
+            },
+            [],
+            {
+                "background-image": "url('https://zz.example/x.png')"
+            },
+            {
+                "background-image": "none"
+            }
+        ]
+    ],
+    [
+        "a declarations set",
+        [
+            {
+                "color": "red",
+                "padding-top": "1px",
+                "badprop": "x"
+            },
+            {
+                "color": "blue",
+                "padding-top": "1px",
+                "badprop": "x",
+                "background": "url(\"a.png\")",
+                "width": "calc(100% - 1px)",
+                "--zz-var": "value"
+            },
+            {
+                "padding-top": "1px",
+                "badprop": "x",
+                "background": "url(\"a.png\")",
+                "width": "2px",
+                "--zz-var": "value"
+            },
+            [],
+            "padding-top:1px;background:url(\"a.png\");width:2px;--zz-var:value;",
+            "padding-top: 1px; background: url(\"a.png\"); width: 2px; --zz-var: value;",
+            "\t\tpadding-top: 1px;\n\t\tbackground: url(\"a.png\");\n\t\twidth: 2px;\n\t\t--zz-var: value;",
+            [
+                "color",
+                "badprop",
+                "--zz-var",
+                "margin-top",
+                "xy",
+                ""
+            ],
+            [
+                "color:red",
+                "color: red",
+                "",
+                "",
+                "--x:y"
+            ],
+            [
+                {
+                    "color": "red",
+                    "zz-unknown": "x",
+                    "margin": "expression(y)"
+                },
+                "color:red;",
+                []
+            ],
+            [
+                {
+                    "color": "red"
+                },
+                {
+                    "color": {
+                        "zz": 1
+                    }
+                }
+            ]
+        ]
+    ]
+]

@@ -8979,3 +8979,38 @@ now.
     href, aria-current, title. A new tab with no XFN gets no
     `rel="noopener"`, which the engine had added before.
   - The same walker prints an item's id only the first time.
+
+## The style engine's classes used directly (2026-10-09)
+
+Probe `style-engine-classes`. `WP_Style_Engine` is final, so its protected
+helpers are reached by reflection. The declarations class's are reached
+through a subclass.
+
+- **New protected helpers** on `WP_Style_Engine`: `get_classnames`,
+  `get_css_declarations`, `get_individual_property_css_declarations` and
+  `get_url_or_value_css_declaration`, each backed by `Blocks\StyleEngine`.
+  `get_css_var_value` now answers `''` for a preset it cannot place
+  (before, null).
+- **Shared fix: presets in sides and border sides** (`Blocks\StyleEngine`,
+  used by `parse_block_styles` and the block supports).
+  - A side (`padding.top`) with a preset becomes the custom property its
+    definition names, or is dropped when there is none. When there are no
+    custom properties to use, it stays as written, which includes presets
+    turned into class names. Before, it was dropped there too.
+  - A border side counts only the parts its group defines, named by each
+    part's pattern. A preset goes through the side's own custom properties
+    (colour only), and an unmatched one is kept as an empty value.
+- **Shared fix: `parse_block_styles`** returns `classnames` first, then
+  `declarations`, and keeps repeated class names (`has-background` from
+  both the background and the gradient). `wp_style_engine_get_styles` makes
+  them unique, as before.
+- **Shared fix: `WP_Style_Engine_CSS_Declarations`.**
+  - `add_declaration($property, $value, $options)` keeps what it is given:
+    the property cleaned to `[a-z0-9-]` in lower case, a trimmed non-empty
+    string value (a number, boolean, array or blank is not kept), and the
+    options when they are an array (`get_declaration_options`, removed with
+    the declaration). The kses CSS filter (`filter_declaration`) judges each
+    declaration only when the string is printed.
+  - Before, declarations were filtered as they were added, so
+    `get_declarations()` lost an unknown property that the reference keeps.
+  - A non-array given to the constructor adds nothing.

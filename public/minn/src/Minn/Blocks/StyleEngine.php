@@ -32,7 +32,7 @@ final class StyleEngine
      *
      * @param array<string, mixed> $styles
      * @param array<string, mixed> $options convert_vars_to_classnames turns presets into class names alone
-     * @return array{declarations: array<string, mixed>, classnames: list<string>}
+     * @return array{classnames: list<string>, declarations: array<string, mixed>}
      */
     public static function parse(array $styles, array $options = []): array
     {
@@ -50,7 +50,8 @@ final class StyleEngine
                 $declarations += self::declarations($value, $definition, $classesOnly ? [] : (array) ($definition['css_vars'] ?? []));
             }
         }
-        return ['declarations' => $declarations, 'classnames' => array_values(array_unique($classes))];
+        // Repeats are kept, as the reference's parse keeps them; wp_style_engine_get_styles() is what makes them unique.
+        return ['classnames' => $classes, 'declarations' => $declarations];
     }
 
     /** A preset's slug for a kind ("var:preset|color|base" for color is "base"), or null. */
@@ -114,7 +115,7 @@ final class StyleEngine
         $keys = (array) ($definition['property_keys'] ?? []);
         return match (true) {
             $func === 'get_url_or_value_css_declaration' => self::url($value, (string) $keys['default']),
-            $func === 'get_individual_property_css_declarations' => is_array($value) ? self::side($value, (string) end($definition['path']), $vars) : [],
+            $func === 'get_individual_property_css_declarations' => is_array($value) ? self::side($value, $definition, $vars) : [],
             is_array($value) => isset($keys['individual']) ? self::sides($value, (string) $keys['individual'], $vars) : [],
             default => self::one($value, (string) $keys['default'], $vars),
         };
@@ -130,28 +131,74 @@ final class StyleEngine
         return [$property => $value];
     }
 
-    /** @param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed> */
+    /**
+     * Sides or corners in the order given. A preset becomes the custom
+     * property the definition names for its kind, and is dropped when there
+     * is none; with no custom properties to use (presets as class names, or
+     * none defined) it stays as written.
+     *
+     * @param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>
+     */
     private static function sides(array $value, string $pattern, array $vars): array
     {
         $out = [];
         foreach ($value as $side => $part) {
+            if (is_string($part) && str_contains($part, 'var:') && $vars !== []) {
+                $part = self::var($part, $vars) ?? '';
+            }
             if (self::present($part)) {
-                $out += self::one($part, sprintf($pattern, self::kebab((string) $side)), $vars);
+                $out += [sprintf($pattern, self::kebab((string) $side)) => $part];
             }
         }
         return $out;
     }
 
-    /** A border side's parts in the order given, the colour taking a preset. @param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed> */
-    private static function side(array $value, string $side, array $vars): array
+    /**
+     * A border side's parts in the order given, each one its group defines
+     * (named by that definition's pattern): a preset through the side's own
+     * custom properties, an unmatched one left empty.
+     *
+     * @param array<string|int, mixed> $value @param array<string, mixed> $definition @param array<string, string> $vars @return array<string, mixed>
+     */
+    private static function side(array $value, array $definition, array $vars): array
     {
+        $group = self::DEFINITIONS[$definition['path'][0] ?? ''] ?? [];
         $out = [];
         foreach ($value as $part => $partValue) {
-            if (self::present($partValue)) {
-                $out += self::one($partValue, 'border-' . $side . '-' . self::kebab((string) $part), array_intersect_key($vars, [(string) $part => true]));
+            $pattern = $group[$part]['property_keys']['individual'] ?? null;
+            if ($pattern === null || !self::present($partValue)) {
+                continue;
             }
+            if (is_string($partValue) && str_contains($partValue, 'var:') && $vars !== []) {
+                $partValue = self::var($partValue, $vars) ?? '';
+            }
+            $out += [sprintf((string) $pattern, (string) end($definition['path'])) => $partValue];
         }
         return $out;
+    }
+
+    /** A preset's class names for a definition. @param array<string, mixed> $definition @return list<string> */
+    public static function classNames(mixed $value, array $definition): array
+    {
+        return self::classes($value, (array) ($definition['classnames'] ?? []));
+    }
+
+    /** The declarations one definition makes of a value; presets as class names make none. @param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed> */
+    public static function declarationsFor(mixed $value, array $definition, array $options = []): array
+    {
+        return self::declarations($value, $definition, !empty($options['convert_vars_to_classnames']) ? [] : (array) ($definition['css_vars'] ?? []));
+    }
+
+    /** A border side's declarations. @param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed> */
+    public static function individual(mixed $value, array $definition, array $options = []): array
+    {
+        return is_array($value) ? self::side($value, $definition, !empty($options['convert_vars_to_classnames']) ? [] : (array) ($definition['css_vars'] ?? [])) : [];
+    }
+
+    /** A url or a plain value. @param array<string, mixed> $definition @return array<string, mixed> */
+    public static function urlOrValue(mixed $value, array $definition): array
+    {
+        return self::url($value, (string) ($definition['property_keys']['default'] ?? ''));
     }
 
     /** @return array<string, mixed> */

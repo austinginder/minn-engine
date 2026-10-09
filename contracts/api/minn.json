@@ -20075,7 +20075,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/StyleEngine.php",
-            "lines": 148,
+            "lines": 195,
             "doc": "What a block's style object comes to, as the reference's style engine\nreads it (probe style-engine): the declarations each style property\nmakes and the class names a preset or a set colour earns.\n\n- Groups in the order background, colour, border, shadow, dimensions,\nspacing, typography, and properties in their order within a group.\n- A value goes into the declarations as given. Whether it makes CSS is\nfor the declarations holder to judge.\n- A preset (\"var:preset|color|base\") becomes a custom property only\nwhere the definition names one for its kind (a colour, a gradient,\nspacing, a font size or family, a shadow, a dimension, a border radius,\na border side's colour). Elsewhere it makes nothing, and with presets\nturned into class names it makes none anywhere.\n- Sides and corners (\"padding\" => [\"top\" => ...]) name their own\nproperties in the order given. Border sides come after the whole\nborder.",
             "implements": [],
             "extends": null,
@@ -20105,7 +20105,7 @@
                     "shapes": [
                         "@param array<string, mixed> $styles",
                         "@param array<string, mixed> $options convert_vars_to_classnames turns presets into class names alone",
-                        "@return array{declarations: array<string, mixed>, classnames: list<string>}"
+                        "@return array{classnames: list<string>, declarations: array<string, mixed>}"
                     ],
                     "params": [
                         {
@@ -20124,7 +20124,7 @@
                         }
                     ],
                     "line": 37,
-                    "end": 54
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -20150,8 +20150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 64
+                    "line": 58,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -20179,8 +20179,138 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 76
+                    "line": 68,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "classNames",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "classNames(mixed $value, array $definition): array",
+                    "doc": "A preset's class names for a definition. @param array<string, mixed> $definition @return list<string>",
+                    "shapes": [
+                        "@param array<string, mixed> $definition @return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "definition",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return list<string>"
+                        }
+                    ],
+                    "line": 181,
+                    "end": 184
+                },
+                {
+                    "routes": [],
+                    "name": "declarationsFor",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "declarationsFor(mixed $value, array $definition, array $options = array ( )): array",
+                    "doc": "The declarations one definition makes of a value; presets as class names make none. @param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "definition",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param array<string, mixed> $options @return array<string, mixed>"
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 187,
+                    "end": 190
+                },
+                {
+                    "routes": [],
+                    "name": "individual",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "individual(mixed $value, array $definition, array $options = array ( )): array",
+                    "doc": "A border side's declarations. @param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "definition",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param array<string, mixed> $options @return array<string, mixed>"
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 193,
+                    "end": 196
+                },
+                {
+                    "routes": [],
+                    "name": "urlOrValue",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "urlOrValue(mixed $value, array $definition): array",
+                    "doc": "A url or a plain value. @param array<string, mixed> $definition @return array<string, mixed>",
+                    "shapes": [
+                        "@param array<string, mixed> $definition @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "definition",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 199,
+                    "end": 202
                 },
                 {
                     "routes": [],
@@ -20199,8 +20329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 171
+                    "line": 214,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -20228,8 +20358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 89
+                    "line": 80,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -20248,8 +20378,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 94
+                    "line": 92,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -20277,8 +20407,8 @@
                             "doc": "@return list<string>"
                         }
                     ],
-                    "line": 97,
-                    "end": 108
+                    "line": 98,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -20313,8 +20443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 121
+                    "line": 112,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -20349,8 +20479,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 124,
-                    "end": 131
+                    "line": 125,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -20358,7 +20488,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "sides(array $value, string $pattern, array $vars): array",
-                    "doc": "",
+                    "doc": "Sides or corners in the order given. A preset becomes the custom\nproperty the definition names for its kind, and is dropped when there\nis none; with no custom properties to use (presets as class names, or\nnone defined) it stays as written.",
                     "shapes": [
                         "@param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>"
                     ],
@@ -20385,18 +20515,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 143
+                    "line": 142,
+                    "end": 154
                 },
                 {
                     "routes": [],
                     "name": "side",
                     "static": true,
                     "visibility": "private",
-                    "signature": "side(array $value, string $side, array $vars): array",
-                    "doc": "A border side's parts in the order given, the colour taking a preset. @param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>",
+                    "signature": "side(array $value, array $definition, array $vars): array",
+                    "doc": "A border side's parts in the order given, each one its group defines\n(named by that definition's pattern): a preset through the side's own\ncustom properties, an unmatched one left empty.",
                     "shapes": [
-                        "@param array<string|int, mixed> $value @param array<string, string> $vars @return array<string, mixed>"
+                        "@param array<string|int, mixed> $value @param array<string, mixed> $definition @param array<string, string> $vars @return array<string, mixed>"
                     ],
                     "params": [
                         {
@@ -20404,11 +20534,11 @@
                             "type": "array",
                             "shape": "array<string|int, mixed>",
                             "default": null,
-                            "doc": "@param array<string, string> $vars @return array<string, mixed>"
+                            "doc": "@param array<string, mixed> $definition @param array<string, string> $vars @return array<string, mixed>"
                         },
                         {
-                            "name": "side",
-                            "type": "string",
+                            "name": "definition",
+                            "type": "array",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -20421,8 +20551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 155
+                    "line": 163,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -20450,8 +20580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 164
+                    "line": 205,
+                    "end": 211
                 }
             ]
         },

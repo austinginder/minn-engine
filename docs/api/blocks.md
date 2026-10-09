@@ -23,7 +23,7 @@ the block parser and renderer
 | [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
-| [`StyleEngine`](#styleengine) | final class | 148 | What a block's style object comes to, as the reference's style engine |
+| [`StyleEngine`](#styleengine) | final class | 195 | What a block's style object comes to, as the reference's style engine |
 | [`Styles`](#styles) | final class | 155 | The inline style and class names a block's "style" and preset |
 | [`TemplatePartVariations`](#templatepartvariations) | final class | 41 | The template part block's variations as the reference builds them (probes |
 | [`Wrapper`](#wrapper) | final class | 59 | The opening tag of a dynamic block's wrapper, in the reference's class |
@@ -1096,7 +1096,7 @@ A style object's declarations and class names.
 
 - `@param array<string, mixed> $styles`
 - `@param array<string, mixed> $options convert_vars_to_classnames turns presets into class names alone`
-- `@return array{declarations: array<string, mixed>, classnames: list<string>}`
+- `@return array{classnames: list<string>, declarations: array<string, mixed>}`
 
 ### static `slug(mixed $value, string $kind): ?string`
 
@@ -1108,11 +1108,35 @@ A preset as the custom property the definition names for its kind, or null. @par
 
 - `@param array<string, string> $vars`
 
+### static `classNames(mixed $value, array $definition): array`
+
+A preset's class names for a definition. @param array<string, mixed> $definition @return list<string>
+
+- `@param array<string, mixed> $definition @return list<string>`
+
+### static `declarationsFor(mixed $value, array $definition, array $options = array ( )): array`
+
+The declarations one definition makes of a value; presets as class names make none. @param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>
+
+- `@param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>`
+
+### static `individual(mixed $value, array $definition, array $options = array ( )): array`
+
+A border side's declarations. @param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>
+
+- `@param array<string, mixed> $definition @param array<string, mixed> $options @return array<string, mixed>`
+
+### static `urlOrValue(mixed $value, array $definition): array`
+
+A url or a plain value. @param array<string, mixed> $definition @return array<string, mixed>
+
+- `@param array<string, mixed> $definition @return array<string, mixed>`
+
 ### static `kebab(string $text): string`
 
 A name in kebab case, as the reference's _wp_to_kebab_case cuts it ("lineHeight", "Zz Space" become "line-height", "zz-space").
 
-Internals: `at()` (private, line 79), `present()` (private, line 91), `classes()` (private, line 97), `declarations()` (private, line 111), `one()` (private, line 124), `sides()` (private, line 134), `side()` (private, line 146), `url()` (private, line 158)
+Internals: `at()` (private, line 80), `present()` (private, line 92), `classes()` (private, line 98), `declarations()` (private, line 112), `one()` (private, line 125), `sides()` (private, line 142), `side()` (private, line 163), `url()` (private, line 205)
 
 
 ## Styles

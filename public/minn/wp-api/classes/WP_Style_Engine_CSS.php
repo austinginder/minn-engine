@@ -4,27 +4,32 @@
 class WP_Style_Engine_CSS_Declarations
 {
     protected $declarations = [];
+    protected $declaration_options = [];
 
+    /** A non-array adds nothing. */
     public function __construct($declarations = [])
     {
-        $this->add_declarations((array) $declarations);
+        if (is_array($declarations)) {
+            $this->add_declarations($declarations);
+        }
     }
 
-    /** Declarations run through the kses css filter: an unknown property or a broken value drops (probed: a-b goes, --my-var and url() stay, an injected close-brace tail is cut). */
-    public function add_declaration($property, $value)
+    /**
+     * Keeps a declaration as given (probe style-engine-classes): the property
+     * cleaned to lower case letters, digits and dashes, a string value
+     * trimmed (anything else, or nothing left, is not kept), and options
+     * given as an array kept beside it. The kses css filter judges it only
+     * when the string is printed.
+     */
+    public function add_declaration($property, $value, $options = [])
     {
-        $property = strtolower(trim((string) $property));
-        // Only a string value makes CSS (probe style-engine): a number stays in the declarations it came from.
-        if ($property === '' || !is_string($value) || trim($value) === '') {
+        $property = $this->sanitize_property((string) $property);
+        if ($property === '' || !is_string($value) || ($value = trim($value)) === '') {
             return $this;
         }
-        $filtered = safecss_filter_attr($property . ':' . trim((string) $value));
-        if ($filtered === '' || !str_contains($filtered, ':')) {
-            return $this;
-        }
-        [$keptProperty, $keptValue] = array_map('trim', explode(':', $filtered, 2));
-        if ($keptProperty !== '' && $keptValue !== '') {
-            $this->declarations[$keptProperty] = $keptValue;
+        $this->declarations[$property] = $value;
+        if (is_array($options) && $options !== []) {
+            $this->declaration_options[$property] = $options;
         }
         return $this;
     }
@@ -39,8 +44,26 @@ class WP_Style_Engine_CSS_Declarations
 
     public function remove_declaration($property)
     {
-        unset($this->declarations[(string) $property]);
+        unset($this->declarations[(string) $property], $this->declaration_options[(string) $property]);
         return $this;
+    }
+
+    /** The options each declaration was added with, by property. */
+    public function get_declaration_options()
+    {
+        return $this->declaration_options;
+    }
+
+    /** One declaration through the kses css filter, the spacer after its colon; '' when the filter refuses it. */
+    protected static function filter_declaration($property, $value, $spacer = '', $options = [])
+    {
+        return safecss_filter_attr("{$property}:{$spacer}{$value}");
+    }
+
+    /** A property name in lower case, keeping letters, digits and dashes. */
+    protected function sanitize_property($property)
+    {
+        return (string) preg_replace('/[^a-z0-9-]/', '', strtolower(trim((string) $property)));
     }
 
     public function remove_declarations($properties = [])
@@ -60,10 +83,12 @@ class WP_Style_Engine_CSS_Declarations
     public function get_declarations_string($should_prettify = false, $indent_count = 0)
     {
         $indent = $should_prettify && (int) $indent_count > 0 ? str_repeat("\t", (int) $indent_count) : '';
-        $glue = $should_prettify ? ': ' : ':';
         $out = [];
         foreach ($this->declarations as $property => $value) {
-            $out[] = $indent . $property . $glue . $value . ';';
+            $filtered = static::filter_declaration($property, $value, $should_prettify ? ' ' : '', $this->declaration_options[$property] ?? []);
+            if ($filtered !== '') {
+                $out[] = $indent . $filtered . ';';
+            }
         }
         if (!$should_prettify) {
             return implode('', $out);

@@ -28,7 +28,7 @@ final class WP_Style_Engine
 
     public static function parse_block_styles($block_styles, $options)
     {
-        return empty($block_styles) || !is_array($block_styles) ? ['declarations' => [], 'classnames' => []] : StyleEngine::parse($block_styles, (array) $options);
+        return empty($block_styles) || !is_array($block_styles) ? ['classnames' => [], 'declarations' => []] : StyleEngine::parse($block_styles, (array) $options);
     }
 
     public static function compile_css($css_declarations, $css_selector)
@@ -53,11 +53,31 @@ final class WP_Style_Engine
 
     protected static function get_css_var_value($style_value, $css_vars)
     {
-        return StyleEngine::var($style_value, (array) $css_vars);
+        return StyleEngine::var($style_value, (array) $css_vars) ?? '';
     }
 
     protected static function is_valid_style_value($style_value)
     {
         return $style_value === '0' || !empty($style_value);
+    }
+
+    protected static function get_classnames($style_value, $style_definition)
+    {
+        return StyleEngine::classNames($style_value, (array) $style_definition);
+    }
+
+    protected static function get_css_declarations($style_value, $style_definition, $options = [])
+    {
+        return StyleEngine::declarationsFor($style_value, (array) $style_definition, (array) $options);
+    }
+
+    protected static function get_individual_property_css_declarations($style_value, $individual_property_definition, $options = [])
+    {
+        return StyleEngine::individual($style_value, (array) $individual_property_definition, (array) $options);
+    }
+
+    protected static function get_url_or_value_css_declaration($style_value, $style_definition)
+    {
+        return StyleEngine::urlOrValue($style_value, (array) $style_definition);
     }
 }
