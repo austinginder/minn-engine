@@ -1,0 +1,491 @@
+[
+    [
+        "cookies given",
+        [
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "secure_auth"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "logged_in"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_hash",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": ""
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_hash",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "logged_in"
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_hash",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_hash",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "nonsense"
+                        },
+                        null
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "expired",
+        [
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_expired",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                [
+                    false,
+                    [
+                        [
+                            "auth_cookie_bad_session_token",
+                            {
+                                "keys": [
+                                    "username",
+                                    "expiration",
+                                    "token",
+                                    "hmac",
+                                    "scheme"
+                                ],
+                                "username": "zz_ac_user",
+                                "scheme": "auth"
+                            },
+                            null
+                        ]
+                    ]
+                ],
+                [
+                    false,
+                    [
+                        [
+                            "auth_cookie_expired",
+                            {
+                                "keys": [
+                                    "username",
+                                    "expiration",
+                                    "token",
+                                    "hmac",
+                                    "scheme"
+                                ],
+                                "username": "zz_ac_user",
+                                "scheme": "auth"
+                            },
+                            null
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "refused",
+        [
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_hash",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_username",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_nobody",
+                            "scheme": "auth"
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_bad_session_token",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        null
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_malformed",
+                        "not a cookie",
+                        "auth"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_malformed",
+                        "a|b|c",
+                        "auth"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_expired",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        null
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "from $_COOKIE",
+        [
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_malformed",
+                        "",
+                        ""
+                    ]
+                ]
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "auth"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "secure_auth"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "logged_in"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_malformed",
+                        "",
+                        ""
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "logged-in cookie",
+        [
+            [
+                false,
+                []
+            ],
+            [
+                7,
+                []
+            ],
+            [
+                "the user",
+                [
+                    [
+                        "auth_cookie_valid",
+                        {
+                            "keys": [
+                                "username",
+                                "expiration",
+                                "token",
+                                "hmac",
+                                "scheme"
+                            ],
+                            "username": "zz_ac_user",
+                            "scheme": "logged_in"
+                        },
+                        {
+                            "user": true
+                        }
+                    ]
+                ]
+            ],
+            [
+                7,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "auth_cookie_malformed",
+                        "junk",
+                        "logged_in"
+                    ]
+                ]
+            ],
+            [
+                false,
+                []
+            ]
+        ]
+    ]
+]

@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 748,
-        "composes": 1590,
+        "minn": 749,
+        "composes": 1596,
         "leaf": 764,
         "noop": 2458,
         "placeholder": 279,
-        "deadend": 1599,
-        "functions": 7361,
-        "minnMethods": 900,
+        "deadend": 1600,
+        "functions": 7369,
+        "minnMethods": 899,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -25570,6 +25570,15 @@
                 "wp_schedule_single_event"
             ]
         },
+        "_get_additional_user_keys": {
+            "file": "user.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_user_contact_methods"
+            ]
+        },
         "_get_admin_bar_pref": {
             "file": "admin-bar.php",
             "lines": 2,
@@ -26260,6 +26269,17 @@
             "minn": [],
             "composes": [
                 "wp_get_attachment_url"
+            ]
+        },
+        "_minn_author_feed_link": {
+            "file": "post.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr",
+                "esc_url",
+                "get_author_feed_link"
             ]
         },
         "_minn_av_instance": {
@@ -27251,14 +27271,13 @@
         },
         "_minn_list_author_item": {
             "file": "post.php",
-            "lines": 12,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "esc_attr",
+                "_minn_author_feed_link",
                 "esc_html",
                 "esc_url",
-                "get_author_feed_link",
                 "get_author_posts_url"
             ]
         },
@@ -29689,6 +29708,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "_wp_get_user_contactmethods": {
+            "file": "user.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_get_user_contact_methods"
+            ]
         },
         "_wp_handle_upload": {
             "file": "deadends.php",
@@ -38156,7 +38184,7 @@
         },
         "get_metadata_raw": {
             "file": "meta.php",
-            "lines": 22,
+            "lines": 27,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Meta::all"
@@ -38164,6 +38192,7 @@
             "composes": [
                 "_minn_meta",
                 "_minn_meta_table",
+                "absint",
                 "apply_filters",
                 "wp_cache_get",
                 "wp_cache_set"
@@ -44205,6 +44234,14 @@
             "composes": [],
             "deadend": "admin"
         },
+        "new_user_email_admin_notice": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "admin"
+        },
         "next_comments_link": {
             "file": "comment.php",
             "lines": 1,
@@ -48939,6 +48976,28 @@
                 "get_self_link"
             ]
         },
+        "send_confirmation_on_profile_email": {
+            "file": "user.php",
+            "lines": 28,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "admin_url",
+                "apply_filters",
+                "delete_user_meta",
+                "email_exists",
+                "esc_url",
+                "get_option",
+                "home_url",
+                "is_email",
+                "update_user_meta",
+                "wp_get_current_user",
+                "wp_mail",
+                "wp_rand",
+                "wp_specialchars_decode"
+            ]
+        },
         "send_frame_options_header": {
             "file": "functions.php",
             "lines": 1,
@@ -53620,6 +53679,17 @@
                 "Minn\\Runtime\\ApplicationPasswordSignIn::authenticate"
             ],
             "composes": []
+        },
+        "wp_authenticate_cookie": {
+            "file": "user.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_ssl",
+                "wp_validate_auth_cookie"
+            ]
         },
         "wp_authenticate_email_password": {
             "file": "user.php",
@@ -59515,6 +59585,20 @@
             "minn": [],
             "composes": []
         },
+        "wp_list_users": {
+            "file": "user.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_author_feed_link",
+                "esc_html",
+                "get_userdata",
+                "get_users",
+                "wp_array_slice_assoc",
+                "wp_parse_args"
+            ]
+        },
         "wp_list_widget_controls": {
             "file": "deadends.php",
             "lines": 2,
@@ -60476,7 +60560,7 @@
         },
         "wp_parse_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -62575,6 +62659,16 @@
             "minn": [],
             "composes": []
         },
+        "wp_schedule_update_user_counts": {
+            "file": "user.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_next_scheduled",
+                "wp_schedule_event"
+            ]
+        },
         "wp_scheduled_delete": {
             "file": "functions.php",
             "lines": 0,
@@ -64455,13 +64549,20 @@
         },
         "wp_validate_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 3,
+            "lines": 20,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::reader"
+                "Minn\\Auth\\Cookie::__construct",
+                "Minn\\Auth\\Sessions::__construct",
+                "Minn\\Content\\Users::__construct",
+                "Minn\\Runtime\\Runtime::current"
             ],
-            "composes": []
+            "composes": [
+                "do_action",
+                "get_userdata",
+                "wp_doing_ajax",
+                "wp_parse_auth_cookie"
+            ]
         },
         "wp_validate_boolean": {
             "file": "functions.php",
@@ -64474,9 +64575,12 @@
         },
         "wp_validate_logged_in_cookie": {
             "file": "pluggable.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::request"
+            ],
             "composes": [
                 "wp_validate_auth_cookie"
             ]

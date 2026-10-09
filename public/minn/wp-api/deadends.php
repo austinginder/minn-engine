@@ -1520,6 +1520,12 @@ function network_step2($errors = false)
     return null;
 }
 
+function new_user_email_admin_notice()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('new_user_email_admin_notice');
+    return null;
+}
+
 function option_update_filter($options)
 {
     \Minn\Runtime\PlaceholderTrace::hit('option_update_filter');

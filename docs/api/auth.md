@@ -5,12 +5,12 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 153 | Application passwords as the reference stores them: a serialized list in |
-| [`AuthCookies`](#authcookies) | final readonly class | 55 | The three cookies a sign-in sets: the auth cookie on the admin and |
+| [`AuthCookies`](#authcookies) | final readonly class | 53 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 143 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 260 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
-| [`Cookie`](#cookie) | final readonly class | 75 | The logged_in auth cookie: username\|expiration\|token\|hmac, with |
+| [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
@@ -19,7 +19,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
-| [`Salts`](#salts) | final class | 35 | The site's own secret material, read from the constants wp-config.php |
+| [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
 | [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
@@ -303,10 +303,12 @@ Internals: `mapMore()` (private, line 139), `mapCommentCapability()` (private, l
 
 `final readonly class Minn\Auth\Cookie` · `public/minn/src/Minn/Auth/Cookie.php`
 
-The logged_in auth cookie: username|expiration|token|hmac, with
-key  = HMAC-md5(username|fragment|expiration|token, logged_in salt)
+The sign-in cookies: username|expiration|token|hmac, with
+key  = HMAC-md5(username|fragment|expiration|token, the scheme's salt)
 hmac = HMAC-sha256(username|expiration|token, key)
-and the session live in the user's session_tokens store.
+and the session live in the user's session_tokens store. The engine's own
+sign-in reads the logged_in one; check() judges any scheme's the way
+wp_validate_auth_cookie reports it (probe auth-cookies).
 
 Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Engine`
 
@@ -325,7 +327,16 @@ A sign-in cookie value for a user, expiry, and session token.
 
 ### `validate(string $value): ?Minn\Auth\Authenticated`
 
-The session a cookie value proves, or null when any part fails.
+The session a logged_in cookie value proves, or null when any part fails.
+
+### `check(string $username, string $expiration, string $token, string $hmac, string $scheme, int $grace = 0): array`
+
+A cookie's parts judged under a scheme, in the reference's order:
+expired (past its expiration plus $grace), bad_username, bad_hash (an
+unknown scheme never matches), bad_session_token, else valid with its
+user.
+
+- `@return array{string, ?UserRecord}`
 
 ### `fromJar(array $cookies): ?string`
 
@@ -335,7 +346,9 @@ derived from a different host.
 
 - `@param array<string, string> $cookies`
 
-Internals: `signature()` (private, line 86)
+### static `signature(string $username, string $fragment, int $expiration, string $token, string $scheme = 'logged_in'): ?string`
+
+A cookie's hmac under a scheme's salt, or null for a scheme with none.
 
 
 ## FastHash
@@ -619,11 +632,15 @@ defines, so the engine keys off exactly what the install used.
 
 - const `SCHEMES` = `array (   'logged_in' =>    array (     0 => 'LOGGED_IN_KEY',     1 => 'LOGGED_IN_SALT',   ),   'nonce' =>    array (     0 => 'NONCE_KEY',     1 => 'NONCE_SALT',   ),   'auth' =>    array (     0 => 'AUTH_KEY',     1 => 'AUTH_SALT',   ),   'secure_auth' =>    array (     0 => 'SECURE_AUTH_KEY',     1 => 'SECURE_AUTH_SALT',   ), )`
 
-Used by: `Minn\Auth\AuthCookies`, `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Engine`
+Used by: `Minn\Auth\Cookie`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Engine`
 
 ### static `configured(): bool`
 
 True when every key and salt is defined and none is the installer's placeholder.
+
+### static `knows(string $scheme): bool`
+
+Whether a scheme has a key and salt of its own (auth, secure_auth, logged_in, nonce).
 
 ### static `for(string $scheme): string`
 

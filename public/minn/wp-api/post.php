@@ -2609,6 +2609,19 @@ function get_posts_by_author_sql($post_type, $full = true, $post_author = null, 
     return Minn\Query\AuthorPostsSql::sql($types, is_user_logged_in() ? get_current_user_id() : 0, $full ? 'full' : '', $post_author === null ? null : (int) $post_author, $public_only ? 'public' : '');
 }
 
+/** @internal The feed link after a listed author or user (feed or feed_image given): an image link, or the feed text in brackets. */
+function _minn_author_feed_link(WP_User $author, string $name, array $args): string
+{
+    if (empty($args['feed_image']) && empty($args['feed'])) {
+        return '';
+    }
+    $image = !empty($args['feed_image']);
+    $alt = empty($args['feed']) ? '' : ' alt="' . esc_attr($args['feed']) . '"';
+    $label = $image ? '<img src="' . esc_url($args['feed_image']) . '" style="border: none;"' . $alt . ' />' : (empty($args['feed']) ? $name : $args['feed']);
+    $feed = '<a href="' . get_author_feed_link($author->ID, $args['feed_type']) . '">' . $label . '</a>';
+    return ' ' . ($image ? $feed : '(' . $feed . ')');
+}
+
 /**
  * The site's authors (probe plugin-queue): links to their posts, or names
  * alone (html false), as li items or a comma list (style none), by name,
@@ -2645,14 +2658,7 @@ function wp_list_authors($args = '')
 /** @internal one author's entry in wp_list_authors: the link, the feed link, the count, in an li for the list style */
 function _minn_list_author_item(WP_User $author, string $name, int $posts, array $args): string
 {
-    $link = '<a href="' . esc_url(get_author_posts_url($author->ID, $author->user_nicename)) . '">' . esc_html($name) . '</a>';
-    if (!empty($args['feed_image']) || !empty($args['feed'])) {
-        $image = !empty($args['feed_image']);
-        $alt = empty($args['feed']) ? '' : ' alt="' . esc_attr($args['feed']) . '"';
-        $label = $image ? '<img src="' . esc_url($args['feed_image']) . '" style="border: none;"' . $alt . ' />' : (empty($args['feed']) ? $name : $args['feed']);
-        $feed = '<a href="' . get_author_feed_link($author->ID, $args['feed_type']) . '">' . $label . '</a>';
-        $link .= ' ' . ($image ? $feed : '(' . $feed . ')');
-    }
+    $link = '<a href="' . esc_url(get_author_posts_url($author->ID, $author->user_nicename)) . '">' . esc_html($name) . '</a>' . _minn_author_feed_link($author, $name, $args);
     if ($args['optioncount']) {
         $link .= ' (' . $posts . ')';
     }

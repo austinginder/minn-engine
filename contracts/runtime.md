@@ -6839,3 +6839,63 @@ one byte, so `"\xE2\x82"` is one run and an overlong `"\xC0\xAF"` two.
   when none). The count read is returned. `$has_noncharacters` comes back
   false, and becomes 0 or 1 (OR'd across the scan) once a sequence that
   could hold a noncharacter is read: an `EF` lead or any four-byte one.
+
+## user.php's remaining functions, and sign-in cookies checked by scheme (2026-10-08)
+
+Probes `user-more` and `auth-cookies`. Six user.php functions real;
+`new_user_email_admin_notice` (a notice on wp-admin's profile screen) is an
+admin dead end.
+
+- **Profile keys.** `_get_additional_user_keys` lists the profile's own meta
+  keys (first_name to locale, infinite_scrolling among them) and then the
+  user's contact methods. `_wp_get_user_contactmethods` is
+  `wp_get_user_contact_methods`.
+- **`wp_list_users`**: names by display name (or first and last with
+  `show_fullname`), escaped and not linked. The user shown as "admin" is left
+  out unless `exclude_admin` is false. It prints `<li>` items, or a
+  comma-separated list with `style` none or `html` false, and adds the same
+  feed link as `wp_list_authors` (now one helper). It returns null when it
+  echoes.
+- **`wp_schedule_update_user_counts`** schedules `wp_update_user_counts`
+  twice daily from now when none is scheduled. Nothing hooks it on a single
+  site.
+- **`send_confirmation_on_profile_email`** checks the signed-in user's own
+  profile (`$user_id`, else the posted `user_id`; false for anyone else). The
+  global `$errors` is made first. The posted email is put back to the
+  current one either way, so the profile save never changes it. An unchanged
+  address does nothing. A malformed one adds `user_email` ("The email
+  address is not correct.", form-field email). One already used adds "is
+  already used." and drops the pending request. Otherwise `_new_email`
+  holds `{hash, newemail}` and "[site] Email Change Request" goes to the new
+  address. It greets the login and links
+  `wp-admin/profile.php?newuseremail=hash`, through
+  `new_user_email_content`.
+- **`get_metadata`** now answers false for an id that is not numeric or is 0
+  (a negative one is made absolute), as the reference does. A type without a
+  table still falls through to the default.
+- **`authenticate`** also carries `wp_authenticate_application_password` at
+  20, as on the reference. `wp_authenticate_cookie` is real but, as there,
+  not hooked. It keeps a user already found. With no username and no
+  password it answers the cookie's user, or `expired_session` ("Please log
+  in again.") when a cookie is there but no longer good. Otherwise it
+  returns what came in.
+- **Sign-in cookies.** `wp_validate_auth_cookie` judges a cookie under its
+  scheme (`Auth\Cookie::check`, whose signature `AuthCookies::mint` now
+  shares). The checks run in the reference's order, each firing its action:
+  `auth_cookie_malformed` (the cookie and scheme as given), `expired` (a
+  POST or ajax request gets an hour's grace), `bad_username`, `bad_hash` (a
+  scheme without a salt, or none given with the cookie, never matches),
+  `bad_session_token`, `valid` (with the user). `wp_parse_auth_cookie`
+  keeps the scheme as given, and reads `$_COOKIE` (then the request) for
+  the scheme's cookie when none is given. `wp_validate_logged_in_cookie`
+  passes a found user through and otherwise checks the `logged_in` cookie.
+- **Kept on purpose.** On a served request, a call with no cookie still
+  answers with the session the engine checked when it read the request,
+  which for a REST call includes its nonce. The reference instead sets the
+  cookie's user before init and drops it later, in
+  `rest_cookie_check_errors`, when the nonce is missing. Moving to that flow
+  (and firing `auth_cookie_*` for the request's own cookies) is open for
+  Austin. Outside a served request (WP-CLI, cron) both functions read
+  `$_COOKIE` as the reference does. The reference's refusal of the
+  logged-in cookie on wp-admin screens is left out, since Minn Admin is not
+  served from `/wp-admin/`.

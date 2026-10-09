@@ -1,0 +1,344 @@
+[
+    [
+        "additional user keys",
+        [
+            [
+                "first_name",
+                "last_name",
+                "nickname",
+                "description",
+                "rich_editing",
+                "syntax_highlighting",
+                "infinite_scrolling",
+                "comment_shortcuts",
+                "admin_color",
+                "use_ssl",
+                "show_admin_bar_front",
+                "locale"
+            ],
+            [],
+            [],
+            []
+        ]
+    ],
+    [
+        "additional user keys, filtered",
+        [
+            [
+                "first_name",
+                "last_name",
+                "nickname",
+                "description",
+                "rich_editing",
+                "syntax_highlighting",
+                "infinite_scrolling",
+                "comment_shortcuts",
+                "admin_color",
+                "use_ssl",
+                "show_admin_bar_front",
+                "locale",
+                "zz_phone",
+                "zz_user"
+            ],
+            {
+                "zz_phone": "Phone"
+            },
+            {
+                "zz_phone": "Phone",
+                "zz_user": "For zz_um_one"
+            }
+        ]
+    ],
+    [
+        "authenticate chain",
+        [
+            [
+                20,
+                "wp_authenticate_username_password",
+                3
+            ],
+            [
+                20,
+                "wp_authenticate_email_password",
+                3
+            ],
+            [
+                20,
+                "wp_authenticate_application_password",
+                3
+            ],
+            [
+                99,
+                "wp_authenticate_spam_check",
+                1
+            ]
+        ]
+    ],
+    [
+        "the cookie as authenticate",
+        [
+            [
+                "user",
+                "{two}"
+            ],
+            null,
+            null,
+            null,
+            [
+                "user",
+                "{one}"
+            ],
+            [
+                "user",
+                "{one}"
+            ],
+            [
+                "error",
+                [
+                    "expired_session"
+                ],
+                [
+                    "Please log in again."
+                ]
+            ],
+            null,
+            [
+                "user",
+                "{one}"
+            ]
+        ]
+    ],
+    [
+        "users listed",
+        [
+            "<li>Ada Z.</li><li>Bea Bold</li><li>Cy &amp; Co</li>",
+            "<li>Ada Z.</li><li>Bea Bold</li><li>Cy &amp; Co</li>",
+            "<li>Cy &amp; Co</li><li>Bea Bold</li><li>Ada Zed</li>",
+            "Ada Z., Bea Bold, Cy &amp; Co",
+            "Ada Z., Bea Bold, Cy &amp; Co",
+            "<li>Ada Z. (<a href=\"{site}/author/zz_um_one/feed/\">RSS</a>)</li><li>Bea Bold (<a href=\"{site}/author/zz_um_two/feed/\">RSS</a>)</li><li>Cy &amp; Co (<a href=\"{site}/author/zz_um_three/feed/\">RSS</a>)</li>",
+            "<li>Ada Z. <a href=\"{site}/author/zz_um_one/feed/\"><img src=\"https://img.example/feed.png\" style=\"border: none;\" alt=\"Feed\" /></a></li><li>Bea Bold <a href=\"{site}/author/zz_um_two/feed/\"><img src=\"https://img.example/feed.png\" style=\"border: none;\" alt=\"Feed\" /></a></li><li>Cy &amp; Co <a href=\"{site}/author/zz_um_three/feed/\"><img src=\"https://img.example/feed.png\" style=\"border: none;\" alt=\"Feed\" /></a></li>",
+            "<li>Ada Z.</li><li>Bea Bold</li><li>Cy &amp; Co</li>",
+            "",
+            "<li>Ada Z.</li>",
+            "<li>Ada Z.</li><li>admin</li>",
+            "<li>Ada Z.</li><li>Bea Bold</li>",
+            [
+                "<li>Ada Z.</li><li>Bea Bold</li><li>Cy &amp; Co</li>",
+                null
+            ]
+        ]
+    ],
+    [
+        "user counts scheduled",
+        [
+            false,
+            false,
+            false,
+            [
+                "twicedaily",
+                true,
+                []
+            ],
+            true
+        ]
+    ],
+    [
+        "new email asked for",
+        [
+            [
+                null,
+                [
+                    [],
+                    [],
+                    null
+                ],
+                [
+                    [
+                        "zz-um-one-new@example.com",
+                        "[Minn] Email Change Request",
+                        "Howdy zz_um_one,\n\nYou recently requested to have the email address on your account changed.\n\nIf this is correct, please click on the following link to change it:\n{site}/wp-admin/profile.php?newuseremail={hash}\n\nYou can safely ignore and delete this email if you do not want to\ntake this action.\n\nThis email has been sent to zz-um-one-new@example.com\n\nRegards,\nAll at Minn\n{site}"
+                    ],
+                    [
+                        "the posted email after",
+                        "zz-um-one@example.com"
+                    ]
+                ],
+                "zz-um-one-new@example.com"
+            ],
+            [
+                [
+                    "hash",
+                    "newemail"
+                ],
+                "zz-um-one-new@example.com",
+                32
+            ],
+            [
+                null,
+                [
+                    [],
+                    [],
+                    null
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-one@example.com"
+                    ]
+                ],
+                "zz-um-one-new@example.com"
+            ],
+            [
+                null,
+                [
+                    [
+                        "user_email"
+                    ],
+                    [
+                        "<strong>Error:</strong> The email address is not correct."
+                    ],
+                    {
+                        "form-field": "email"
+                    }
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-one@example.com"
+                    ]
+                ],
+                "zz-um-one-new@example.com"
+            ],
+            [
+                null,
+                [
+                    [
+                        "user_email"
+                    ],
+                    [
+                        "<strong>Error:</strong> The email address is already used."
+                    ],
+                    {
+                        "form-field": "email"
+                    }
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-one@example.com"
+                    ]
+                ],
+                ""
+            ],
+            [
+                false,
+                [
+                    [],
+                    [],
+                    null
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-other@example.com"
+                    ]
+                ],
+                ""
+            ],
+            [
+                false,
+                [
+                    [],
+                    [],
+                    null
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-one-again@example.com"
+                    ]
+                ],
+                false
+            ],
+            [
+                false,
+                [
+                    [],
+                    [],
+                    null
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-one-third@example.com"
+                    ]
+                ],
+                ""
+            ],
+            [
+                null,
+                [
+                    [],
+                    [],
+                    null
+                ],
+                [
+                    [
+                        "zz-um-one-fifth@example.com",
+                        "[Minn] Email Change Request",
+                        "Howdy zz_um_one,\n\nYou recently requested to have the email address on your account changed.\n\nIf this is correct, please click on the following link to change it:\n{site}/wp-admin/profile.php?newuseremail={hash}\n\nYou can safely ignore and delete this email if you do not want to\ntake this action.\n\nThis email has been sent to zz-um-one-fifth@example.com\n\nRegards,\nAll at Minn\n{site}"
+                    ],
+                    [
+                        "the posted email after",
+                        "zz-um-one@example.com"
+                    ]
+                ],
+                false
+            ],
+            [
+                null,
+                [
+                    [
+                        "user_email"
+                    ],
+                    [
+                        "<strong>Error:</strong> The email address is not correct."
+                    ],
+                    {
+                        "form-field": "email"
+                    }
+                ],
+                [
+                    [
+                        "the posted email after",
+                        "zz-um-one@example.com"
+                    ]
+                ],
+                "zz-um-one-fifth@example.com"
+            ],
+            [
+                [
+                    "hash",
+                    "newemail"
+                ],
+                "zz-um-one-fifth@example.com",
+                32
+            ]
+        ]
+    ],
+    [
+        "meta read for no object",
+        [
+            false,
+            false,
+            false,
+            "",
+            false,
+            false,
+            "",
+            "",
+            []
+        ]
+    ]
+]

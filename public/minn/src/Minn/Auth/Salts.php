@@ -30,6 +30,12 @@ final class Salts
         return true;
     }
 
+    /** Whether a scheme has a key and salt of its own (auth, secure_auth, logged_in, nonce). */
+    public static function knows(string $scheme): bool
+    {
+        return isset(self::SCHEMES[$scheme]);
+    }
+
     /** The key and salt of a scheme joined, as the reference feeds them to its HMACs. */
     public static function for(string $scheme): string
     {

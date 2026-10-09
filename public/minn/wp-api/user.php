@@ -216,6 +216,117 @@ function get_editable_roles()
     return apply_filters('editable_roles', wp_roles()->roles);
 }
 
+/** The profile's own meta keys, then the user's contact methods. */
+function _get_additional_user_keys($user)
+{
+    $keys = ['first_name', 'last_name', 'nickname', 'description', 'rich_editing', 'syntax_highlighting', 'infinite_scrolling', 'comment_shortcuts', 'admin_color', 'use_ssl', 'show_admin_bar_front', 'locale'];
+    return array_merge($keys, array_keys(wp_get_user_contact_methods($user)));
+}
+
+/** wp_get_user_contact_methods by its old private name. */
+function _wp_get_user_contactmethods($user = null)
+{
+    return wp_get_user_contact_methods($user);
+}
+
+/**
+ * The sign-in cookie as an authenticate filter: a user already found stays;
+ * with no username and no password, the cookie's user, or expired_session
+ * when a cookie is there but no longer good; otherwise what came in.
+ */
+function wp_authenticate_cookie($user, $username, $password)
+{
+    if ($user instanceof WP_User) {
+        return $user;
+    }
+    if (empty($username) && empty($password)) {
+        $user_id = wp_validate_auth_cookie();
+        if ($user_id) {
+            return new WP_User($user_id);
+        }
+        if (!empty($_COOKIE[is_ssl() ? SECURE_AUTH_COOKIE : AUTH_COOKIE])) {
+            return new WP_Error('expired_session', __('Please log in again.'));
+        }
+    }
+    return $user;
+}
+
+/**
+ * The users' names as a list (or comma-separated with style none or html
+ * false), by name, the user shown as "admin" left out unless asked for, each
+ * with a feed link when one is asked for. Echoed unless echo is false.
+ */
+function wp_list_users($args = [])
+{
+    $args = wp_parse_args($args, ['orderby' => 'name', 'order' => 'ASC', 'number' => '', 'exclude_admin' => true, 'show_fullname' => false, 'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true, 'style' => 'list', 'html' => true, 'exclude' => '', 'include' => '']);
+    $items = [];
+    foreach (get_users(wp_array_slice_assoc($args, ['orderby', 'order', 'number', 'exclude', 'include']) + ['fields' => 'ids']) as $id) {
+        $user = get_userdata($id);
+        if (!$user || ($args['exclude_admin'] && $user->display_name === 'admin')) {
+            continue;
+        }
+        $name = $args['show_fullname'] && $user->first_name && $user->last_name ? "{$user->first_name} {$user->last_name}" : $user->display_name;
+        if (!$args['html']) {
+            $items[] = $name;
+            continue;
+        }
+        $item = esc_html($name) . _minn_author_feed_link($user, $name, $args);
+        $items[] = $args['style'] === 'list' ? '<li>' . $item . '</li>' : $item;
+    }
+    $output = $args['html'] && $args['style'] === 'list' ? implode('', $items) : implode(', ', $items);
+    if (!$args['echo']) {
+        return $output;
+    }
+    echo $output;
+}
+
+/** The twice-daily user count event, scheduled from now when none is. */
+function wp_schedule_update_user_counts()
+{
+    if (!wp_next_scheduled('wp_update_user_counts')) {
+        wp_schedule_event(time(), 'twicedaily', 'wp_update_user_counts');
+    }
+}
+
+/**
+ * A new email address asked for on the signed-in user's own profile
+ * ($user_id, else the posted user_id): checked (the global $errors gets the
+ * reason), held in _new_email with a hash, and a confirmation link mailed to
+ * it. The posted email is put back to the current one either way, so the
+ * profile save does not change it. False for anyone else's profile.
+ */
+function send_confirmation_on_profile_email($user_id = 0)
+{
+    global $errors;
+    $current_user = wp_get_current_user();
+    if (!is_object($errors)) {
+        $errors = new WP_Error();
+    }
+    if ($current_user->ID !== (int) ($user_id ?: ($_POST['user_id'] ?? 0))) {
+        return false;
+    }
+    $new_email = (string) ($_POST['email'] ?? '');
+    $_POST['email'] = $current_user->user_email;
+    if ($new_email === $current_user->user_email) {
+        return;
+    }
+    if (!is_email($new_email)) {
+        $errors->add('user_email', __('<strong>Error:</strong> The email address is not correct.'), ['form-field' => 'email']);
+        return;
+    }
+    if (email_exists($new_email)) {
+        delete_user_meta($current_user->ID, '_new_email');
+        $errors->add('user_email', __('<strong>Error:</strong> The email address is already used.'), ['form-field' => 'email']);
+        return;
+    }
+    $request = ['hash' => md5($new_email . time() . wp_rand()), 'newemail' => $new_email];
+    update_user_meta($current_user->ID, '_new_email', $request);
+    $sitename = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+    $content = apply_filters('new_user_email_content', "Howdy ###USERNAME###,\n\nYou recently requested to have the email address on your account changed.\n\nIf this is correct, please click on the following link to change it:\n###ADMIN_URL###\n\nYou can safely ignore and delete this email if you do not want to\ntake this action.\n\nThis email has been sent to ###EMAIL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###", $request);
+    $content = str_replace(['###USERNAME###', '###ADMIN_URL###', '###EMAIL###', '###SITENAME###', '###SITEURL###'], [$current_user->user_login, esc_url(admin_url('profile.php?newuseremail=' . $request['hash'])), $new_email, $sitename, home_url()], $content);
+    wp_mail($new_email, sprintf(__('[%s] Email Change Request'), $sitename), $content);
+}
+
 function wp_get_user_contact_methods($user = null)
 {
     return apply_filters('user_contactmethods', [], $user);

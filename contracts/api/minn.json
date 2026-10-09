@@ -7713,14 +7713,13 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/AuthCookies.php",
-            "lines": 55,
+            "lines": 53,
             "doc": "The three cookies a sign-in sets: the auth cookie on the admin and\nplugins paths (the secure variant over HTTPS, keyed off that scheme's\nsalt) and the logged_in cookie on the site root, which is the one REST\nreads. Every value shares the username|expiration|token|hmac shape.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\Password",
-                "Minn\\Auth\\Salts",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
                 "Minn\\Http\\Response"
@@ -7902,7 +7901,7 @@
                         }
                     ],
                     "line": 63,
-                    "end": 70
+                    "end": 68
                 }
             ]
         },
@@ -8838,8 +8837,8 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Cookie.php",
-            "lines": 75,
-            "doc": "The logged_in auth cookie: username|expiration|token|hmac, with\nkey  = HMAC-md5(username|fragment|expiration|token, logged_in salt)\nhmac = HMAC-sha256(username|expiration|token, key)\nand the session live in the user's session_tokens store.",
+            "lines": 92,
+            "doc": "The sign-in cookies: username|expiration|token|hmac, with\nkey  = HMAC-md5(username|fragment|expiration|token, the scheme's salt)\nhmac = HMAC-sha256(username|expiration|token, key)\nand the session live in the user's session_tokens store. The engine's own\nsign-in reads the logged_in one; check() judges any scheme's the way\nwp_validate_auth_cookie reports it (probe auth-cookies).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -8884,8 +8883,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 24
+                "line": 21,
+                "end": 26
             },
             "cases": [],
             "constants": [],
@@ -8928,8 +8927,8 @@
                     "doc": "The cookie name this site uses: a hash of the siteurl option.",
                     "shapes": [],
                     "params": [],
-                    "line": 27,
-                    "end": 30
+                    "line": 29,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -8962,8 +8961,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 38
+                    "line": 35,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -8971,7 +8970,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "validate(string $value): ?Minn\\Auth\\Authenticated",
-                    "doc": "The session a cookie value proves, or null when any part fails.",
+                    "doc": "The session a logged_in cookie value proves, or null when any part fails.",
                     "shapes": [],
                     "params": [
                         {
@@ -8982,8 +8981,65 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 63
+                    "line": 43,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "check",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "check(string $username, string $expiration, string $token, string $hmac, string $scheme, int $grace = 0): array",
+                    "doc": "A cookie's parts judged under a scheme, in the reference's order:\nexpired (past its expiration plus $grace), bad_username, bad_hash (an\nunknown scheme never matches), bad_session_token, else valid with its\nuser.",
+                    "shapes": [
+                        "@return array{string, ?UserRecord}"
+                    ],
+                    "params": [
+                        {
+                            "name": "username",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "expiration",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "token",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hmac",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scheme",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "grace",
+                            "type": "int",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -9004,16 +9060,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 84
+                    "line": 87,
+                    "end": 99
                 },
                 {
                     "routes": [],
                     "name": "signature",
                     "static": true,
-                    "visibility": "private",
-                    "signature": "signature(string $username, string $fragment, int $expiration, string $token): string",
-                    "doc": "",
+                    "visibility": "public",
+                    "signature": "signature(string $username, string $fragment, int $expiration, string $token, string $scheme = 'logged_in'): ?string",
+                    "doc": "A cookie's hmac under a scheme's salt, or null for a scheme with none.",
                     "shapes": [],
                     "params": [
                         {
@@ -9043,10 +9099,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "scheme",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'logged_in'",
+                            "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 90
+                    "line": 102,
+                    "end": 109
                 }
             ]
         },
@@ -10302,13 +10365,12 @@
             "namespace": "Minn\\Auth",
             "kind": "final class",
             "file": "public/minn/src/Minn/Auth/Salts.php",
-            "lines": 35,
+            "lines": 41,
             "doc": "The site's own secret material, read from the constants wp-config.php\ndefines, so the engine keys off exactly what the install used.",
             "implements": [],
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Cookie",
                 "Minn\\Auth\\Nonce",
                 "Minn\\Auth\\PasswordReset",
@@ -10340,6 +10402,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "knows",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "knows(string $scheme): bool",
+                    "doc": "Whether a scheme has a key and salt of its own (auth, secure_auth, logged_in, nonce).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "scheme",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
                     "name": "for",
                     "static": true,
                     "visibility": "public",
@@ -10355,8 +10437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 38
+                    "line": 40,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -10382,8 +10464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 47,
+                    "end": 50
                 }
             ]
         },

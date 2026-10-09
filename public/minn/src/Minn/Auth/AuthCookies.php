@@ -63,9 +63,7 @@ final readonly class AuthCookies
     public static function mint(UserRecord $user, int $expiration, string $token, string $scheme): string
     {
         $username = $user->login;
-        $fragment = Password::fragment($user->passwordHash);
-        $key = Salts::hash("{$username}|{$fragment}|{$expiration}|{$token}", $scheme);
-        $hmac = hash_hmac('sha256', "{$username}|{$expiration}|{$token}", $key);
+        $hmac = (string) Cookie::signature($username, Password::fragment($user->passwordHash), $expiration, $token, $scheme);
         return "{$username}|{$expiration}|{$token}|{$hmac}";
     }
 }

@@ -335,19 +335,50 @@ function wp_authenticate($username, $password)
 endif;
 
 if (!function_exists('wp_validate_auth_cookie')) :
+/**
+ * The user a sign-in cookie proves under its scheme, firing the
+ * auth_cookie_* action for the verdict (probe auth-cookies): malformed,
+ * expired (a POST or ajax request gets an hour's grace), bad_username,
+ * bad_hash, bad_session_token, or valid. With no cookie on a served request,
+ * the session the engine already checked when it read the request answers
+ * (a REST call's nonce included); with no cookie outside one, $_COOKIE's.
+ */
 function wp_validate_auth_cookie($cookie = '', $scheme = '')
 {
-    // The engine's sign-in cookie session answers here; an application password answers through wp_validate_application_password.
-    $reader = Runtime::current()->reader;
-    return $reader->sessionToken !== '' && $reader->userId > 0 ? $reader->userId : false;
+    $runtime = Runtime::current();
+    if ((string) $cookie === '' && $runtime->request !== null) {
+        $reader = $runtime->reader;
+        return $reader->sessionToken !== '' && $reader->userId > 0 ? $reader->userId : false;
+    }
+    $elements = wp_parse_auth_cookie($cookie, $scheme);
+    if (!$elements) {
+        do_action('auth_cookie_malformed', $cookie, $scheme);
+        return false;
+    }
+    $grace = wp_doing_ajax() || ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST' ? HOUR_IN_SECONDS : 0;
+    $users = new Users($runtime->db);
+    [$verdict, $record] = (new Cookie($runtime->db, $users, new Sessions($users)))->check($elements['username'], $elements['expiration'], $elements['token'], $elements['hmac'], (string) $elements['scheme'], $grace);
+    if ($verdict !== 'valid' || $record === null) {
+        do_action('auth_cookie_' . $verdict, $elements);
+        return false;
+    }
+    $user = get_userdata($record->id);
+    do_action('auth_cookie_valid', $elements, $user);
+    return $record->id;
 }
 endif;
 
 if (!function_exists('wp_validate_logged_in_cookie')) :
-/** The user an earlier determine_current_user callback found, else the session's (the engine's session covers the logged-in cookie). */
+/** The user an earlier determine_current_user callback found; else, on a served request, the session the engine checked; else $_COOKIE's logged-in cookie. */
 function wp_validate_logged_in_cookie($user_id)
 {
-    return $user_id ?: wp_validate_auth_cookie();
+    if ($user_id) {
+        return $user_id;
+    }
+    if (Runtime::current()->request !== null) {
+        return wp_validate_auth_cookie();
+    }
+    return empty($_COOKIE[LOGGED_IN_COOKIE]) ? false : wp_validate_auth_cookie($_COOKIE[LOGGED_IN_COOKIE], 'logged_in');
 }
 endif;
 
@@ -446,14 +477,15 @@ function wp_parse_auth_cookie($cookie = '', $scheme = '')
         if ($scheme === '') {
             $scheme = is_ssl() ? 'secure_auth' : 'auth';
         }
-        $cookie = (string) (Runtime::current()->request?->cookies[$names[$scheme] ?? ''] ?? '');
+        $name = $names[$scheme] ?? '';
+        $cookie = (string) ($_COOKIE[$name] ?? Runtime::current()->request?->cookies[$name] ?? '');
     }
     $parts = explode('|', (string) $cookie);
     if (count($parts) !== 4) {
         return false;
     }
     [$username, $expiration, $token, $hmac] = $parts;
-    return ['username' => $username, 'expiration' => $expiration, 'token' => $token, 'hmac' => $hmac, 'scheme' => $scheme ?: 'auth'];
+    return ['username' => $username, 'expiration' => $expiration, 'token' => $token, 'hmac' => $hmac, 'scheme' => (string) $scheme];
 }
 endif;
 

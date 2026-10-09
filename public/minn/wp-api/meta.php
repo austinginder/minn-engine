@@ -32,11 +32,17 @@ function get_metadata($meta_type, $object_id, $meta_key = '', $single = false)
     return get_metadata_default($meta_type, $object_id, $meta_key, $single);
 }
 
+/** An object's meta as stored (probe user-more): false for no type or an id that is not a positive number once made absolute; null for a type without a table or a key not set. */
 function get_metadata_raw($meta_type, $object_id, $meta_key = '', $single = false)
 {
-    $spec = _minn_meta_table((string) $meta_type);
-    $object_id = (int) $object_id;
-    if ($spec === null || $object_id <= 0) {
+    if (!$meta_type || !is_numeric($object_id)) {
+        return false;
+    }
+    $object_id = absint($object_id);
+    if (!$object_id) {
+        return false;
+    }
+    if (_minn_meta_table((string) $meta_type) === null) {
         return null;
     }
     $check = apply_filters("get_{$meta_type}_metadata", null, $object_id, $meta_key, $single, $meta_type);
