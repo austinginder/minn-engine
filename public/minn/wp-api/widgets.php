@@ -423,6 +423,48 @@ function wp_render_widget_control($id)
     return WidgetAreas::control((string) $id);
 }
 
+/** A registered sidebar's description through kses (its own sidebar_description context); null when it has none. */
+function wp_sidebar_description($id)
+{
+    $sidebar = is_scalar($id) ? ($GLOBALS['wp_registered_sidebars'][$id] ?? null) : null;
+    return isset($sidebar['description']) ? wp_kses($sidebar['description'], 'sidebar_description') : null;
+}
+
+/** Sidebars with only the widget ids registered (or given) left in each list, keys kept; anything not a list is left as it is. */
+function _wp_remove_unregistered_widgets($sidebars_widgets, $allowed_widget_ids = [])
+{
+    $allowed = empty($allowed_widget_ids) ? array_keys((array) ($GLOBALS['wp_registered_widgets'] ?? [])) : (array) $allowed_widget_ids;
+    foreach ((array) $sidebars_widgets as $sidebar => $widgets) {
+        if (is_array($widgets)) {
+            $sidebars_widgets[$sidebar] = array_filter($widgets, static fn ($widget) => in_array($widget, $allowed));
+        }
+    }
+    return $sidebars_widgets;
+}
+
+/** On a block theme, the sidebars the previous classic theme registered (theme mod wp_classic_sidebars) registered again as they were, by their ids (widgets_init 1). */
+function _wp_block_theme_register_classic_sidebars()
+{
+    $classic = wp_is_block_theme() ? get_theme_mod('wp_classic_sidebars') : null;
+    foreach (is_array($classic) ? $classic : [] as $sidebar) {
+        $GLOBALS['wp_registered_sidebars'][$sidebar['id']] = $sidebar;
+    }
+}
+
+/** With the widgets editor's script queued, a notice for the old editor's script or the post editor's style queued beside it (admin_head). */
+function wp_check_widget_editor_deps()
+{
+    if (!wp_script_is('wp-edit-widgets', 'enqueued') && !wp_script_is('wp-customize-widgets', 'enqueued')) {
+        return;
+    }
+    if (wp_script_is('wp-editor', 'enqueued')) {
+        _doing_it_wrong('wp_enqueue_script()', sprintf(__('"%1$s" script should not be enqueued together with the new widgets editor (%2$s or %3$s).'), 'wp-editor', 'wp-edit-widgets', 'wp-customize-widgets'), '5.8.0');
+    }
+    if (wp_style_is('wp-edit-post', 'enqueued')) {
+        _doing_it_wrong('wp_enqueue_style()', sprintf(__('"%1$s" style should not be enqueued together with the new widgets editor (%2$s or %3$s).'), 'wp-edit-post', 'wp-edit-widgets', 'wp-customize-widgets'), '5.8.0');
+    }
+}
+
 /** The sidebars, every registered one present. */
 function retrieve_widgets($theme_changed = false)
 {

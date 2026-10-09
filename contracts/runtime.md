@@ -8073,3 +8073,32 @@ so the option id holds.
   through `sanitize_html_class`) and the `header_text` mod is falsy, it
   prints a tab-indented `<style id="custom-logo-css">` that clips them,
   after an HTML comment. It never has a `type` attribute.
+
+## More widget helpers (2026-10-09)
+
+Probe `widgets-more`.
+
+- **wp_sidebar_description.** A registered sidebar's description goes
+  through `wp_kses` with the `sidebar_description` context, so comment
+  markup is kept (`<a href>`, `<em>`, `<b>`), other tags are stripped and
+  `&` is escaped. It is null when the sidebar is unknown or has no
+  description key; `register_sidebar`'s default gives `''`.
+- **_wp_remove_unregistered_widgets.**
+  - Each list keeps only the widget ids registered, or only those in the
+    allowed list when one is given (it replaces the registered ones).
+  - The comparison is loose, keys are kept, and a value that is not a
+    list is left as it is.
+- **_wp_block_theme_register_classic_sidebars** (`widgets_init` 1). On a
+  block theme, each sidebar in the `wp_classic_sidebars` theme mod is put
+  into the registered sidebars under its own `id` (not its key), exactly
+  as stored, replacing any registered one.
+- **wp_check_widget_editor_deps** (`admin_head`). With `wp-edit-widgets`
+  or `wp-customize-widgets` queued as a script, it raises a 5.8.0 notice
+  on `wp_enqueue_script()` when the `wp-editor` script is queued too, and
+  on `wp_enqueue_style()` when the `wp-edit-post` style is.
+- **Still owed.** `wp_map_sidebars_widgets` (the theme-switch mapping).
+  - It matches ids first, then common names, and mixes in the stored
+    theme mods' inactive widgets under conditions not yet pinned down.
+  - It can send an unmatched sidebar's widgets to a free slot even with
+    no name in common.
+  - It needs its own run of experiments before it can be written.

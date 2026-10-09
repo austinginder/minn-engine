@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 775,
-        "composes": 1734,
-        "leaf": 849,
+        "composes": 1737,
+        "leaf": 850,
         "noop": 2630,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7813,
+        "functions": 7817,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -32372,6 +32372,16 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_wp_block_theme_register_classic_sidebars": {
+            "file": "widgets.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_theme_mod",
+                "wp_is_block_theme"
+            ]
+        },
         "_wp_call_all_hook": {
             "file": "plugin.php",
             "lines": 1,
@@ -33344,6 +33354,13 @@
                 "apply_filters",
                 "wp_get_upload_dir"
             ]
+        },
+        "_wp_remove_unregistered_widgets": {
+            "file": "widgets.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_wp_render_title_tag": {
             "file": "template.php",
@@ -57616,6 +57633,20 @@
                 "get_option"
             ]
         },
+        "wp_check_widget_editor_deps": {
+            "file": "widgets.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_doing_it_wrong",
+                "wp_enqueue_script",
+                "wp_enqueue_style",
+                "wp_script_is",
+                "wp_style_is"
+            ]
+        },
         "wp_checkdate": {
             "file": "functions.php",
             "lines": 1,
@@ -66800,6 +66831,15 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "wp_sidebar_description": {
+            "file": "widgets.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_kses"
+            ]
         },
         "wp_signon": {
             "file": "user.php",
