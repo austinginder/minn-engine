@@ -584,6 +584,50 @@ function wp_post_revision_title($revision, $link = true)
     return $date;
 }
 
+/**
+ * A revision's title with its author (probe post-template-more): avatar,
+ * name, how long ago, and the date (linked to its edit screen for someone
+ * who can edit it), marked when it is an autosave or the post itself;
+ * through wp_post_revision_title_expanded. False for anything but a post,
+ * page or revision.
+ */
+function wp_post_revision_title_expanded($revision, $link = true)
+{
+    $revision = get_post($revision);
+    if ($revision === null) {
+        return $revision;
+    }
+    if (!in_array($revision->post_type, ['post', 'page', 'revision'], true)) {
+        return false;
+    }
+    $date = date_i18n('F j, Y @ H:i:s', strtotime($revision->post_modified));
+    $edit = get_edit_post_link($revision->ID);
+    if ($link && $edit && current_user_can('edit_post', $revision->ID)) {
+        $date = "<a href='{$edit}'>{$date}</a>";
+    }
+    $title = sprintf('%1$s %2$s, %3$s ago (%4$s)', get_avatar($revision->post_author, 24), get_the_author_meta('display_name', $revision->post_author), human_time_diff(strtotime($revision->post_modified_gmt)), $date);
+    $title .= !wp_is_post_revision($revision) ? ' [Current Revision]' : (wp_is_post_autosave($revision) ? ' [Autosave]' : '');
+    return apply_filters('wp_post_revision_title_expanded', $title, $revision, $link);
+}
+
+/** A post's revisions the reader may see, each with its expanded title, the autosave or the rest alone when asked; nothing for a post without revisions. */
+function wp_list_post_revisions($post = 0, $type = 'all')
+{
+    $post = get_post($post);
+    $revisions = $post ? wp_get_post_revisions($post->ID) : [];
+    if (!$revisions) {
+        return;
+    }
+    $rows = '';
+    foreach ($revisions as $revision) {
+        $autosave = (bool) wp_is_post_autosave($revision);
+        if (current_user_can('read_post', $revision->ID) && !($type === 'revision' && $autosave) && !($type === 'autosave' && !$autosave)) {
+            $rows .= "\t<li>" . wp_post_revision_title_expanded($revision) . "</li>\n";
+        }
+    }
+    echo "<div class='hide-if-js'><p>" . __('JavaScript must be enabled to use this feature.') . "</p></div>\n<ul class='post-revisions hide-if-no-js'>\n{$rows}</ul>";
+}
+
 function wp_sprintf_l($pattern, $args)
 {
     if (!is_array($args) || strpos((string) $pattern, '%l') !== 0) {

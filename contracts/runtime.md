@@ -8011,3 +8011,37 @@ Probe `l10n-more`.
     site's origin first. `load_script_module_textdomain` uses a registered
     module's source, and is false with no filters run for an id not
     registered.
+
+## More post template tags (2026-10-09)
+
+Probe `post-template-more`. post-template.php owes nothing now.
+
+- **post_custom.** The current post's field: its value, or the list when it
+  has several (serialized values stay strings). False when it has none,
+  and for an empty key.
+- **the_meta** is deprecated in 6.0.2 for `get_post_meta()`.
+  - It prints `<ul class='post-meta'>` with one
+    `<li><span class='post-meta-key'>key:</span> values</li>` per visible
+    key, protected keys skipped. Values are trimmed and joined by `, `;
+    key and values go through `esc_html`.
+  - Each item passes through `the_meta_key` (HTML, key, the unescaped
+    value). Nothing is printed when no key is visible.
+- **the_attachment_link.** It prints `wp_get_attachment_link` with `full`
+  for any truthy `$fullsize`, `thumbnail` otherwise, and the permalink
+  flag. A non-empty `$deprecated` is a 2.5.0 notice with no message.
+- **wp_post_revision_title_expanded.**
+  - It reads `{avatar 24} {display name}, {human_time_diff} ago ({date})`,
+    the date as `F j, Y @ H:i:s`. The date is linked to the edit link
+    (`revision.php?revision=` or the post's own edit screen) only for a
+    user who can edit it.
+  - It appends ` [Current Revision]` for the post itself and
+    ` [Autosave]` for an autosave, then runs
+    `wp_post_revision_title_expanded` (title, post, link).
+  - It is null for no post, and false for any type but post, page and
+    revision (a custom type with revision support too).
+- **wp_list_post_revisions.**
+  - Nothing is printed without a post or revisions. Otherwise it prints the
+    `hide-if-js` notice, then `<ul class='post-revisions hide-if-no-js'>`
+    with one tab-indented `<li>` per revision the reader can read.
+  - `revision` leaves out the autosave and `autosave` keeps only it; any
+    other type lists all. An anonymous reader gets the empty list.

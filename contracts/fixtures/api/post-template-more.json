@@ -1,0 +1,228 @@
+[
+    [
+        "custom fields one key at a time",
+        [
+            "single value",
+            [
+                "a",
+                "b"
+            ],
+            "protected",
+            "a:1:{s:1:\"k\";s:1:\"v\";}",
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "the deprecated custom field list",
+        [
+            [
+                "<ul class='post-meta'>\n<li><span class='post-meta-key'>zz_one:</span> single value</li>\n<li><span class='post-meta-key'>zz_many:</span> a, b</li>\n<li><span class='post-meta-key'>zz_html:</span> &lt;b&gt;bold&lt;/b&gt; &amp; more</li>\n<li><span class='post-meta-key'>zz_array:</span> a:1:{s:1:&quot;k&quot;;s:1:&quot;v&quot;;}</li>\n</ul>\n",
+                null,
+                [
+                    [
+                        "deprecated_function_run",
+                        "the_meta",
+                        "get_post_meta()",
+                        "6.0.2"
+                    ]
+                ]
+            ],
+            [
+                "<ul class='post-meta'>\n[zz_one=single value][zz_many=a, b][zz_html=<b>bold</b> & more][zz_array=a:1:{s:1:\"k\";s:1:\"v\";}]</ul>\n",
+                null,
+                [
+                    [
+                        "deprecated_function_run",
+                        "the_meta",
+                        "get_post_meta()",
+                        "6.0.2"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the custom field list at its edges",
+        [
+            "",
+            "",
+            "<ul class='post-meta'>\n<li><span class='post-meta-key'>zz_spaced:</span> padded, second</li>\n<li><span class='post-meta-key'>zz &lt;key&gt;:</span> v</li>\n</ul>\n",
+            ""
+        ]
+    ],
+    [
+        "the attachment link tag",
+        [
+            [
+                "<a href='https://zz.example/zz-attachment.png'>Zz Attachment</a>",
+                null,
+                []
+            ],
+            [
+                "<a href='https://zz.example/zz-attachment.png'>Zz Attachment</a>",
+                null,
+                []
+            ],
+            [
+                "<a href='https://{host}/zz-template-more/zz-attachment/'>Zz Attachment</a>",
+                null,
+                []
+            ],
+            [
+                "<a href='https://zz.example/zz-attachment.png'>Zz Attachment</a>",
+                null,
+                [
+                    [
+                        "deprecated_argument_run",
+                        "the_attachment_link",
+                        "",
+                        "2.5.0"
+                    ]
+                ]
+            ],
+            [
+                "Missing Attachment",
+                null,
+                []
+            ],
+            [
+                "<a href='https://zz.example/zz-attachment.png'>Zz Attachment</a>",
+                null,
+                []
+            ],
+            [
+                [
+                    "thumbnail",
+                    false,
+                    false,
+                    false,
+                    ""
+                ],
+                [
+                    "full",
+                    false,
+                    false,
+                    false,
+                    ""
+                ],
+                [
+                    "full",
+                    true,
+                    false,
+                    false,
+                    ""
+                ]
+            ]
+        ]
+    ],
+    [
+        "revision titles expanded",
+        [
+            [
+                "",
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a>) [Autosave]",
+                []
+            ],
+            [
+                "",
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} ({date}) [Autosave]",
+                []
+            ],
+            [
+                "",
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a>) [Autosave]",
+                []
+            ],
+            [
+                "",
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/post.php?post={post}&amp;action=edit'>{date}</a>) [Current Revision]",
+                []
+            ],
+            [
+                "",
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision1}'>{date}</a>)",
+                []
+            ],
+            [
+                "",
+                null,
+                []
+            ],
+            [
+                "",
+                "<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a> [Autosave]",
+                []
+            ],
+            [
+                "",
+                false,
+                []
+            ],
+            [
+                [
+                    "",
+                    false,
+                    []
+                ],
+                false
+            ],
+            [
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} ({date}) [Current Revision] [zz]",
+                [
+                    [
+                        3,
+                        true,
+                        false
+                    ]
+                ]
+            ],
+            [
+                "",
+                "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} ({date}) [Current Revision]",
+                []
+            ]
+        ]
+    ],
+    [
+        "revisions listed",
+        [
+            [
+                "<div class='hide-if-js'><p>JavaScript must be enabled to use this feature.</p></div>\n<ul class='post-revisions hide-if-no-js'>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a>) [Autosave]</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision1}'>{date}</a>)</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision2}'>{date}</a>)</li>\n</ul>",
+                null,
+                []
+            ],
+            [
+                "<div class='hide-if-js'><p>JavaScript must be enabled to use this feature.</p></div>\n<ul class='post-revisions hide-if-no-js'>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision1}'>{date}</a>)</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision2}'>{date}</a>)</li>\n</ul>",
+                null,
+                []
+            ],
+            [
+                "<div class='hide-if-js'><p>JavaScript must be enabled to use this feature.</p></div>\n<ul class='post-revisions hide-if-no-js'>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a>) [Autosave]</li>\n</ul>",
+                null,
+                []
+            ],
+            [
+                "<div class='hide-if-js'><p>JavaScript must be enabled to use this feature.</p></div>\n<ul class='post-revisions hide-if-no-js'>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a>) [Autosave]</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision1}'>{date}</a>)</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision2}'>{date}</a>)</li>\n</ul>",
+                null,
+                []
+            ],
+            [
+                "",
+                null,
+                []
+            ],
+            [
+                "<div class='hide-if-js'><p>JavaScript must be enabled to use this feature.</p></div>\n<ul class='post-revisions hide-if-no-js'>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={autosave}'>{date}</a>) [Autosave]</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision1}'>{date}</a>)</li>\n\t<li><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=24&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=48&#038;d=mm&#038;r=g 2x' class='avatar avatar-24 photo' height='24' width='24' loading='lazy' decoding='async'/> admin, {ago} (<a href='https://{host}/wp-admin/revision.php?revision={revision2}'>{date}</a>)</li>\n</ul>",
+                null,
+                []
+            ],
+            [
+                "<div class='hide-if-js'><p>JavaScript must be enabled to use this feature.</p></div>\n<ul class='post-revisions hide-if-no-js'>\n</ul>",
+                null,
+                []
+            ]
+        ]
+    ]
+]

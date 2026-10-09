@@ -523,6 +523,46 @@ function get_post_custom_values($key = '', $post_id = 0)
     return $custom[$key] ?? null;
 }
 
+/** One of the current post's custom fields: its value, or its values when it has several; false when it has none (probe post-template-more). */
+function post_custom($key = '')
+{
+    $custom = get_post_custom();
+    if (!isset($custom[$key])) {
+        return false;
+    }
+    return count($custom[$key]) === 1 ? $custom[$key][0] : $custom[$key];
+}
+
+/**
+ * The current post's visible custom fields as a list (deprecated in
+ * 6.0.2): each key and its trimmed values joined by commas, escaped, through
+ * the_meta_key; nothing when none is visible.
+ */
+function the_meta()
+{
+    _deprecated_function(__FUNCTION__, '6.0.2', 'get_post_meta()');
+    $items = '';
+    foreach ((array) get_post_custom_keys() as $key) {
+        if (is_protected_meta($key, 'post')) {
+            continue;
+        }
+        $value = implode(', ', array_map('trim', (array) get_post_custom_values($key)));
+        $items .= apply_filters('the_meta_key', sprintf("<li><span class='post-meta-key'>%s:</span> %s</li>\n", esc_html($key), esc_html($value)), $key, $value);
+    }
+    if ($items !== '') {
+        echo "<ul class='post-meta'>\n{$items}</ul>\n";
+    }
+}
+
+/** An attachment's link, printed: at full size for a truthy $fullsize, thumbnail otherwise; anything in $deprecated is a 2.5.0 notice. */
+function the_attachment_link($post = 0, $fullsize = false, $deprecated = false, $permalink = false)
+{
+    if (!empty($deprecated)) {
+        _deprecated_argument(__FUNCTION__, '2.5.0');
+    }
+    echo wp_get_attachment_link($post, $fullsize ? 'full' : 'thumbnail', $permalink);
+}
+
 function get_edit_post_link($post = 0, $context = 'display')
 {
     $post = get_post($post);
