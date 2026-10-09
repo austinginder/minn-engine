@@ -28979,6 +28979,70 @@
             ]
         },
         {
+            "name": "Minn\\Content\\ObjectLabels",
+            "short": "ObjectLabels",
+            "namespace": "Minn\\Content",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Content/ObjectLabels.php",
+            "lines": 24,
+            "doc": "A post type's or taxonomy's labels from its own and the defaults\n(_get_custom_object_labels, probe post-more): the name from its label when\nunset, the singular from the name, the admin bar from the singular (else\nthe object's name), the menu from the name, all items from the menu,\narchives from all items; then the defaults (the caller picks the flat or\nthe hierarchical set) under those, in the defaults' order.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "build",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "build(array $labels, ?string $label, string $name, array $defaults): array",
+                    "doc": "The labels, the object's own filled in by the rules above and laid over the defaults.",
+                    "shapes": [
+                        "@param array<string, mixed> $labels the object's own",
+                        "@param array<string, mixed> $defaults key => the default for this object",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "labels",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the object's own"
+                        },
+                        {
+                            "name": "label",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "defaults",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "key => the default for this object"
+                        }
+                    ],
+                    "line": 24,
+                    "end": 37
+                }
+            ]
+        },
+        {
             "name": "Minn\\Content\\Page",
             "short": "Page",
             "namespace": "Minn\\Content",

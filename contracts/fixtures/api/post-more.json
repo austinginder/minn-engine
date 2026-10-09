@@ -1,0 +1,227 @@
+[
+    [
+        "labels from defaults",
+        [
+            {
+                "name": "Zz",
+                "singular_name": "Zz",
+                "add_new_item": "Add Thing",
+                "menu_name": "Zz",
+                "all_items": "Zz",
+                "archives": "Zz",
+                "name_admin_bar": "Zz"
+            },
+            {
+                "name": "Zz",
+                "singular_name": "Zz",
+                "add_new_item": "Add Page",
+                "menu_name": "Zz",
+                "all_items": "Zz",
+                "archives": "Zz",
+                "name_admin_bar": "Zz"
+            },
+            {
+                "name": "Many Zz",
+                "singular_name": "One Zz",
+                "add_new_item": "Add Thing",
+                "menu_name": "Many Zz",
+                "all_items": "Many Zz",
+                "archives": "Many Zz",
+                "name_admin_bar": "One Zz"
+            },
+            {
+                "name": "Only Label",
+                "singular_name": "Only Label",
+                "add_new_item": "Add Thing",
+                "menu_name": "Only Label",
+                "all_items": "Only Label",
+                "archives": "Only Label",
+                "name_admin_bar": "Only Label"
+            },
+            {
+                "name": "Zz",
+                "singular_name": "Zz",
+                "add_new_item": "Add Thing",
+                "menu_name": "Menu Zz",
+                "all_items": "Every Zz",
+                "archives": "Every Zz",
+                "name_admin_bar": "Zz"
+            }
+        ]
+    ],
+    [
+        "last post time",
+        [
+            "2030-02-01 15:00:00",
+            "2030-02-01 10:00:00",
+            "2030-02-01 15:00:00.000000",
+            "2030-03-01 14:00:00",
+            "2030-03-01 09:00:00",
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "page paths walked",
+        [
+            {
+                "11": "top",
+                "21": "child",
+                "31": "grandchild",
+                "12": "other"
+            },
+            {
+                "21": "child",
+                "31": "grandchild"
+            },
+            {
+                "0": [
+                    {
+                        "ID": 11,
+                        "post_name": "top",
+                        "post_parent": 0
+                    },
+                    {
+                        "ID": 12,
+                        "post_name": "other",
+                        "post_parent": 0
+                    }
+                ],
+                "11": [
+                    {
+                        "ID": 21,
+                        "post_name": "child",
+                        "post_parent": 11
+                    }
+                ],
+                "21": [
+                    {
+                        "ID": 31,
+                        "post_name": "grandchild",
+                        "post_parent": 21
+                    }
+                ]
+            }
+        ]
+    ],
+    [
+        "meta capabilities recorded",
+        [
+            {
+                "read_zz_pm": "read_post",
+                "edit_zz_pm": "edit_post",
+                "delete_zz_pm": "delete_post"
+            },
+            true
+        ]
+    ],
+    [
+        "post parent caches",
+        [
+            [
+                false,
+                false,
+                false
+            ],
+            [
+                "{parent}",
+                0,
+                false
+            ],
+            [
+                true,
+                "{parent}"
+            ],
+            "{parent}"
+        ]
+    ],
+    [
+        "mime types in use",
+        [
+            [
+                "application/pdf",
+                "image/webp"
+            ],
+            []
+        ]
+    ],
+    [
+        "enclosures",
+        [
+            [
+                "https://zz.example/a.mp3",
+                "https://zz.example/b.mp4",
+                "not a line list",
+                ""
+            ],
+            [],
+            [
+                "https://zz.example/a.mp3",
+                "https://zz.example/b.mp4",
+                "not a line list",
+                "",
+                "https://zz.example/extra"
+            ]
+        ]
+    ],
+    [
+        "private posts SQL",
+        [
+            "( ( post_type = 'post' AND ( post_status = 'publish' ) ) )",
+            "( ( post_type = 'page' AND ( post_status = 'publish' ) ) )",
+            [
+                "( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) )",
+                "( ( post_type = 'post' AND ( post_status = 'publish' OR post_status = 'private' ) ) OR ( post_type = 'page' AND ( post_status = 'publish' OR post_status = 'private' ) ) )"
+            ]
+        ]
+    ],
+    [
+        "embeddable",
+        [
+            true,
+            true,
+            false,
+            false,
+            [
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "trashed suffix for a post",
+        [
+            "zz-pm-slug__trashed",
+            "zz-pm-slug__trashed",
+            "zz-pm-slug__trashed",
+            [
+                "zz-pm-slug"
+            ]
+        ]
+    ],
+    [
+        "trashed suffix for trashed posts",
+        [
+            null,
+            "zz-pm-reused__trashed",
+            null,
+            null
+        ]
+    ],
+    [
+        "old auto-drafts removed",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "term meta queued for lazy loading",
+        [
+            null,
+            "meta value",
+            null
+        ]
+    ]
+]

@@ -2192,7 +2192,7 @@ function prepend_attachment($content)
 /** The newest published post's date (probe plugin-queue): local for 'blog', GMT for 'gmt', GMT with microseconds for 'server'; false for another timezone or an unknown type. */
 function get_lastpostdate($timezone = 'server', $post_type = 'any')
 {
-    return apply_filters('get_lastpostdate', _minn_last_post_time($timezone, 'date', $post_type), $timezone, $post_type);
+    return apply_filters('get_lastpostdate', _get_last_post_time($timezone, 'date', $post_type), $timezone, $post_type);
 }
 
 /** The newest change to a published post: its modified stamp, or its date when that is later. */
@@ -2202,16 +2202,22 @@ function get_lastpostmodified($timezone = 'server', $post_type = 'any')
     if ($modified !== false) {
         return $modified;
     }
-    $modified = _minn_last_post_time($timezone, 'modified', $post_type);
+    $modified = _get_last_post_time($timezone, 'modified', $post_type);
     $date = get_lastpostdate($timezone, $post_type);
     return apply_filters('get_lastpostmodified', $date > $modified ? $date : $modified, $timezone, $post_type);
 }
 
-/** @internal the newest published date or modified stamp in a timezone, among the public types or of one type */
-function _minn_last_post_time($timezone, string $field, $post_type)
+/**
+ * The newest published date (or modified stamp) in a timezone (probe
+ * post-more): local for 'blog', GMT for 'gmt', GMT with microseconds for
+ * 'server'; among the public types, or of one public type. False for another
+ * field or timezone, a type that is not public, or a list of types.
+ */
+function _get_last_post_time($timezone, $field, $post_type = 'any')
 {
     $zone = strtolower((string) $timezone);
-    if (!in_array($zone, ['gmt', 'blog', 'server'], true) || ($post_type !== 'any' && !post_type_exists($post_type))) {
+    if (!in_array($zone, ['gmt', 'blog', 'server'], true) || !in_array($field, ['date', 'modified'], true) || !is_string($post_type)
+        || ($post_type !== 'any' && !in_array($post_type, get_post_types(['public' => true]), true))) {
         return false;
     }
     $types = $post_type === 'any' ? array_values(get_post_types(['public' => true])) : [(string) $post_type];
@@ -2686,4 +2692,132 @@ function get_meta_keys()
 function _wp_privacy_statuses()
 {
     return ['request-pending' => _x('Pending', 'request status'), 'request-confirmed' => _x('Confirmed', 'request status'), 'request-failed' => _x('Failed', 'request status'), 'request-completed' => _x('Completed', 'request status')];
+}
+
+/** A post type's (or taxonomy's) labels from its own and the defaults (Content\ObjectLabels). */
+function _get_custom_object_labels($data_object, $nohier_vs_hier_defaults)
+{
+    $defaults = array_map(static fn ($pair) => !empty($data_object->hierarchical) ? $pair[1] : $pair[0], (array) $nohier_vs_hier_defaults);
+    $label = isset($data_object->label) ? (string) $data_object->label : null;
+    return (object) Minn\Content\ObjectLabels::build((array) ($data_object->labels ?? []), $label, (string) ($data_object->name ?? ''), $defaults);
+}
+
+/** Walks a children map (parent id => pages) depth first from a page, recording each page's slug by id. */
+function _page_traverse_name($page_id, &$children, &$result)
+{
+    foreach ((array) ($children[$page_id] ?? []) as $child) {
+        $result[$child->ID] = $child->post_name;
+        _page_traverse_name($child->ID, $children, $result);
+    }
+}
+
+/** Records a type's own names for the three meta capabilities (read_post, edit_post, delete_post) in $post_type_meta_caps. */
+function _post_type_meta_capabilities($capabilities = null)
+{
+    global $post_type_meta_caps;
+    foreach ((array) $capabilities as $core => $custom) {
+        if (in_array($core, ['read_post', 'delete_post', 'edit_post'], true)) {
+            $post_type_meta_caps[$custom] = $core;
+        }
+    }
+}
+
+/** Caches the parent ids of the posts not yet cached (post_parent:{id} in the posts group), from one query. */
+function _prime_post_parent_id_caches($ids)
+{
+    global $wpdb;
+    $missing = array_values(array_filter(array_unique(array_map('intval', (array) $ids)), static fn (int $id): bool => $id > 0 && wp_cache_get('post_parent:' . $id, 'posts') === false));
+    if ($missing === []) {
+        return;
+    }
+    foreach ((array) $wpdb->get_results("SELECT ID, post_parent FROM {$wpdb->posts} WHERE ID IN (" . implode(',', $missing) . ')') as $row) {
+        wp_cache_set('post_parent:' . (int) $row->ID, (int) $row->post_parent, 'posts');
+    }
+}
+
+/** Caches the parent posts of the posts given. */
+function update_post_parent_caches($posts)
+{
+    $parents = array_unique(array_filter(array_map(static fn ($post): int => (int) ($post->post_parent ?? 0), (array) $posts)));
+    foreach ($parents as $parent) {
+        $post = get_post($parent);
+        if ($post instanceof WP_Post) {
+            wp_cache_add($parent, $post, 'posts');
+        }
+    }
+}
+
+/** The mime types a post type's posts carry, each once (pre_get_available_post_mime_types may answer first). */
+function get_available_post_mime_types($type = 'attachment')
+{
+    global $wpdb;
+    $types = apply_filters('pre_get_available_post_mime_types', null, $type);
+    if (!is_array($types)) {
+        $types = $wpdb->get_col($wpdb->prepare("SELECT DISTINCT post_mime_type FROM {$wpdb->posts} WHERE post_type = %s AND post_mime_type != ''", $type));
+    }
+    return $types;
+}
+
+/** The first line of each of a post's enclosure meta values (its URL), through get_enclosed. */
+function get_enclosed($post_id)
+{
+    $enclosed = [];
+    foreach ((array) (get_post_custom($post_id)['enclosure'] ?? []) as $enclosure) {
+        $enclosed[] = trim(explode("\n", (string) $enclosure)[0]);
+    }
+    return apply_filters('get_enclosed', $enclosed, $post_id);
+}
+
+/** The SQL that limits a query to the posts of a type (or types) the reader may see: published, and private ones they may read. */
+function get_private_posts_cap_sql($post_type)
+{
+    return get_posts_by_author_sql($post_type, false);
+}
+
+/** Whether a post can be embedded: its type is viewable; is_post_embeddable has the last word. */
+function is_post_embeddable($post = null)
+{
+    $post = get_post($post);
+    if (!$post) {
+        return false;
+    }
+    return (bool) apply_filters('is_post_embeddable', is_post_type_viewable($post->post_type), $post);
+}
+
+/** Gives a post's slug the __trashed suffix (once), keeping the slug it wanted; the slug it now has. */
+function wp_add_trashed_suffix_to_post_name_for_post($post)
+{
+    global $wpdb;
+    $post = get_post($post);
+    if (str_ends_with((string) $post->post_name, '__trashed')) {
+        return $post->post_name;
+    }
+    add_post_meta($post->ID, '_wp_desired_post_slug', $post->post_name);
+    $name = $post->post_name . '__trashed';
+    $wpdb->update($wpdb->posts, ['post_name' => $name], ['ID' => $post->ID]);
+    clean_post_cache($post->ID);
+    return $name;
+}
+
+/** Gives every trashed post with a slug (but the one named) the __trashed suffix, so a live post may take it. */
+function wp_add_trashed_suffix_to_post_name_for_trashed_posts($post_name, $post_id = 0)
+{
+    $trashed = get_posts(['name' => $post_name, 'post_status' => 'trash', 'post_type' => 'any', 'nopaging' => true, 'post__not_in' => [(int) $post_id]]);
+    foreach ($trashed as $post) {
+        wp_add_trashed_suffix_to_post_name_for_post($post);
+    }
+}
+
+/** Deletes the auto-drafts dated more than a week ago. */
+function wp_delete_auto_drafts()
+{
+    global $wpdb;
+    foreach ((array) $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_status = 'auto-draft' AND DATE_SUB(NOW(), INTERVAL 7 DAY) > post_date") as $id) {
+        wp_delete_post((int) $id, true);
+    }
+}
+
+/** Queues the posts' terms for one term meta read; the engine reads term meta directly, so there is nothing to queue. */
+function wp_queue_posts_for_term_meta_lazyload($posts)
+{
 }

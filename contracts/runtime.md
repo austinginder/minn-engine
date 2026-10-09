@@ -6673,3 +6673,37 @@ placeholder made real (`set_user_setting`), one admin dead end.
   `delete_all_user_settings` empties them and expires the `wp-settings-{id}`
   cookie. **Dead end:** `wp_user_settings`, which keeps that cookie in step
   inside wp-admin only.
+
+## post.php's remaining helpers (2026-10-08)
+
+Probe `post-more` (`tests/tools/post-more-probe.php`). Fourteen functions;
+`_add_post_type_submenus` is admin, `_publish_post_hook` (which queues
+`_pingme`, `_encloseme` and a `do_pings` event: pingbacks and enclosure
+fetches the engine never sends) joins the XML-RPC area's pings.
+
+- `_get_custom_object_labels` (`Content\ObjectLabels`): the name from the
+  object's label when unset, the singular from the name, the admin bar from
+  the singular, menu from name, all items from menu, archives from all items;
+  the flat or hierarchical defaults under those, in their order.
+- `_get_last_post_time` is the engine's newest-date reader by its reference
+  name (`_minn_last_post_time` is gone): `date` or `modified`, `blog`, `gmt` or
+  `server` (GMT with `.000000`), among the public types or one public type;
+  false for anything else, a non-public type or a list.
+- `_page_traverse_name` walks a children map depth first, slug by id.
+  `_post_type_meta_capabilities` records a type's names for `read_post`,
+  `edit_post` and `delete_post` in `$post_type_meta_caps`.
+- **Caches.** `_prime_post_parent_id_caches` caches parent ids as
+  `post_parent:{id}` in the `posts` group (an id not in the table is not
+  cached); `update_post_parent_caches` caches the parent posts themselves.
+- `get_available_post_mime_types`: each non-empty `post_mime_type` of a type
+  once (`pre_get_available_post_mime_types` first). `get_enclosed`: the first
+  line of each `enclosure` value, empty ones included (`get_enclosed`).
+  `get_private_posts_cap_sql` is `get_posts_by_author_sql($type, false)`.
+  `is_post_embeddable`: the type is viewable, then `is_post_embeddable`.
+- **Trash slugs.** `wp_add_trashed_suffix_to_post_name_for_post` adds
+  `__trashed` once, keeping `_wp_desired_post_slug`;
+  `wp_add_trashed_suffix_to_post_name_for_trashed_posts` does it to every
+  trashed post with the slug but the one named.
+- `wp_delete_auto_drafts` deletes auto-drafts dated over a week ago.
+  `wp_queue_posts_for_term_meta_lazyload` has nothing to queue: the engine
+  reads term meta directly.

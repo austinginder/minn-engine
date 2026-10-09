@@ -22,6 +22,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Menus`](#menus) | final readonly class | 511 | Classic nav_menu terms and nav_menu_item posts. The front uses these |
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
+| [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
@@ -846,6 +847,26 @@ opening tag; any other mark stays whole (probe comment-helpers).
 Markup with every note marker's tags taken out.
 
 Internals: `isNote()` (private, line 40)
+
+
+## ObjectLabels
+
+`final class Minn\Content\ObjectLabels` · `public/minn/src/Minn/Content/ObjectLabels.php`
+
+A post type's or taxonomy's labels from its own and the defaults
+(_get_custom_object_labels, probe post-more): the name from its label when
+unset, the singular from the name, the admin bar from the singular (else
+the object's name), the menu from the name, all items from the menu,
+archives from all items; then the defaults (the caller picks the flat or
+the hierarchical set) under those, in the defaults' order.
+
+### static `build(array $labels, ?string $label, string $name, array $defaults): array`
+
+The labels, the object's own filled in by the rules above and laid over the defaults.
+
+- `@param array<string, mixed> $labels the object's own`
+- `@param array<string, mixed> $defaults key => the default for this object`
+- `@return array<string, mixed>`
 
 
 ## Page

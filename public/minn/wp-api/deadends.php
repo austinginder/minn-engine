@@ -43,6 +43,12 @@ function _access_denied_splash()
     return null;
 }
 
+function _add_post_type_submenus()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_add_post_type_submenus');
+    return null;
+}
+
 function _admin_notice_post_locked()
 {
     \Minn\Runtime\PlaceholderTrace::hit('_admin_notice_post_locked');
@@ -172,6 +178,12 @@ function _media_states($post, $display = true)
 function _preload_old_requests_classes_and_interfaces($to)
 {
     \Minn\Runtime\PlaceholderTrace::hit('_preload_old_requests_classes_and_interfaces');
+    return null;
+}
+
+function _publish_post_hook($post_id)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_publish_post_hook');
     return null;
 }
 
