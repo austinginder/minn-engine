@@ -8938,3 +8938,44 @@ to them with `wp_sitemaps_post_types`, `wp_sitemaps_taxonomies` and
 - **Left out on purpose.** `WP_Sitemaps_Stylesheet`'s text: the engine
   serves its own stylesheet (770 bytes against the reference's 3,449), so
   the class stays unproven rather than copying WordPress's XSL.
+
+## The core object classes used directly (2026-10-09)
+
+Probe `core-objects`. It saves the roles option first and writes it back in
+place, and removes its post, comments, terms and menu. The `sitemap-classes`
+probe also gained a server of its own (`new WP_Sitemaps`) and a check
+against the providers' shared parent, so those two classes count as proven
+now.
+
+- **`WP_Term`.**
+  - `get_instance` gives false for 0, a missing id, a non-number, or the
+    wrong taxonomy.
+  - The constructor keeps fields as given: a `term_group` left out stays
+    the class default `''`, and extra fields stay. Before, the constructor
+    cast five fields to integers. That cast now happens where the
+    reference casts, on a fetch: `WP_Term::get_instance` and both of
+    `get_term`'s paths, through `_minn_term_numbers`.
+  - `->data` is the nine columns plus `filter` `raw`, so a fetched term's
+    `to_array()` equals it.
+  - `filter('display')` texturizes the name and wraps the description.
+- **`WP_Comment`.** The constructor keeps fields as given (77 stays an
+  integer). A comment read from the database has its fields as text, the
+  record's numbers turned to strings where it becomes a comment
+  (`get_comment` and `rest_delete_comment`).
+  - Magic `post_*` fields read the comment's post; `__isset` covers them.
+  - `get_children` defaults to every status in tree form. `flat` lists
+    descendants depth first (keyed 0…), and `hierarchical => false` gives
+    direct replies only.
+  - `populated_children(false)` re-queries. A built comment's `add_child`
+    and `get_child` work without a query.
+- **`WP_Role`.** `has_cap` honours `role_has_cap`. `add_cap` and
+  `remove_cap` write the role (and return nothing); `add_cap(cap, false)`
+  stores a false grant.
+- **`Walker_Category`** start/end of level and element, for the list and
+  none styles, with count, description titles, a feed link and the
+  current category.
+- **`Walker_Nav_Menu`.**
+  - A link's attributes are now in the reference's order: target, rel,
+    href, aria-current, title. A new tab with no XFN gets no
+    `rel="noopener"`, which the engine had added before.
+  - The same walker prints an item's id only the first time.

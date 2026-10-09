@@ -37,12 +37,13 @@ class Walker_Nav_Menu extends Walker
         $class_names = implode(' ', array_filter((array) apply_filters('nav_menu_css_class', $classes, $item, $args, $depth)));
         $id = (string) apply_filters('nav_menu_item_id', 'menu-item-' . $item->ID, $item, $args, $depth);
         $output .= $indent . '<li' . ($id !== '' ? ' id="' . esc_attr($id) . '"' : '') . ($class_names !== '' ? ' class="' . esc_attr($class_names) . '"' : '') . '>';
+        // In the reference's order; a new tab gets no rel of its own (probe core-objects).
         $atts = [
-            'title' => (string) ($item->attr_title ?? ''),
             'target' => (string) ($item->target ?? ''),
-            'rel' => ($item->target ?? '') === '_blank' && empty($item->xfn) ? 'noopener' : (string) ($item->xfn ?? ''),
+            'rel' => (string) ($item->xfn ?? ''),
             'href' => (string) ($item->url ?? ''),
             'aria-current' => !empty($item->current) ? 'page' : '',
+            'title' => (string) ($item->attr_title ?? ''),
         ];
         $atts = apply_filters('nav_menu_link_attributes', $atts, $item, $args, $depth);
         $title = apply_filters('the_title', (string) ($item->title ?? ''), $item->ID);

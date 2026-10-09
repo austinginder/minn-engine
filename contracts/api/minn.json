@@ -111953,7 +111953,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/CommentEvents.php",
-            "lines": 253,
+            "lines": 254,
             "doc": "What the reference's REST comments controller tells plugins, for the\nengine's own: with plugins loaded every change goes through the\nruntime's comment functions (wp_insert_comment, wp_update_comment,\nwp_set_comment_status, wp_trash_comment, wp_delete_comment), which fire\nthe reference's actions in its order, and the REST actions follow.\nWithout a booted runtime the rows are written as before and nothing is\ntold.",
             "implements": [],
             "extends": null,
@@ -112313,7 +112313,7 @@
                         }
                     ],
                     "line": 271,
-                    "end": 276
+                    "end": 277
                 },
                 {
                     "routes": [],

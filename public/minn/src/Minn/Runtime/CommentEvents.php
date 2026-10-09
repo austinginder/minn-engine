@@ -271,7 +271,8 @@ final readonly class CommentEvents
     public function restDeleted(CommentRecord $comment, array $data, Request $request): void
     {
         if ($this->live()) {
-            \do_action('rest_delete_comment', new \WP_Comment((object) $comment->row()), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
+            $fields = array_map(static fn ($value) => is_int($value) || is_float($value) ? (string) $value : $value, $comment->row());
+            \do_action('rest_delete_comment', new \WP_Comment((object) $fields), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
         }
     }
 }

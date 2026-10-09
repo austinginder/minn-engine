@@ -14,6 +14,27 @@
         ]
     ],
     [
+        "a server of its own",
+        [
+            "WP_Sitemaps_Registry",
+            true,
+            [],
+            "User-agent: *\n\nSitemap: //{host}/wp-sitemap.xml\n",
+            "",
+            {
+                "posts": "WP_Sitemaps_Posts",
+                "taxonomies": "WP_Sitemaps_Taxonomies",
+                "users": "WP_Sitemaps_Users"
+            },
+            {
+                "posts": true,
+                "taxonomies": true,
+                "users": true
+            },
+            false
+        ]
+    ],
+    [
         "the registry",
         [
             true,

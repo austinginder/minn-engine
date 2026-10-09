@@ -74,6 +74,19 @@ add_filter('wp_sitemaps_users_query_args', static fn ($args) => ['include' => $m
 $server = wp_sitemaps_get_server();
 $say('the server', [get_class($server), $server->sitemaps_enabled(), array_map('get_class', $server->registry->get_providers()), get_class($server->index), get_class($server->renderer)]);
 
+$say('a server of its own', $mask((static function () {
+    $server = new WP_Sitemaps();
+    $out = [get_class($server->registry), $server->sitemaps_enabled(), $server->registry->get_providers(), $server->add_robots("User-agent: *\n", true), $server->add_robots('', false)];
+    $server->register_sitemaps();
+    $out[] = array_map('get_class', $server->registry->get_providers());
+    $out[] = array_map(static fn ($provider) => get_parent_class($provider) === WP_Sitemaps_Provider::class, $server->registry->get_providers());
+    $off = static fn () => false;
+    add_filter('wp_sitemaps_enabled', $off);
+    $out[] = $server->sitemaps_enabled();
+    remove_filter('wp_sitemaps_enabled', $off);
+    return $out;
+})()));
+
 $say('the registry', (static function () {
     $registry = new WP_Sitemaps_Registry();
     $posts = new WP_Sitemaps_Posts();

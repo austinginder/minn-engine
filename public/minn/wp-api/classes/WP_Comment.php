@@ -35,10 +35,11 @@ final class WP_Comment
         return $comment ?? false;
     }
 
+    /** A comment from the fields given, as given. */
     public function __construct($comment)
     {
         foreach (get_object_vars($comment) as $key => $value) {
-            $this->{$key} = is_int($value) || is_float($value) ? (string) $value : $value;
+            $this->{$key} = $value;
         }
     }
 

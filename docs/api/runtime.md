@@ -21,7 +21,7 @@ the WordPress runtime plugins load against
 | [`BlockTemplates`](#blocktemplates) | final class | 66 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
 | [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
-| [`CommentEvents`](#commentevents) | final readonly class | 253 | What the reference's REST comments controller tells plugins, for the |
+| [`CommentEvents`](#commentevents) | final readonly class | 254 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
 | [`CommentPages`](#commentpages) | final class | 110 | Which page of a post's comments a comment falls on, and the link that |

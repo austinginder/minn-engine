@@ -187,6 +187,15 @@ function get_taxonomy_labels($tax)
     return $tax->labels;
 }
 
+/** @internal a fetched term's numbers as integers: its id, group, taxonomy id, parent and count */
+function _minn_term_numbers(WP_Term $term): WP_Term
+{
+    foreach (['term_id', 'term_group', 'term_taxonomy_id', 'parent', 'count'] as $field) {
+        $term->{$field} = (int) $term->{$field};
+    }
+    return $term;
+}
+
 function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
 {
     if (empty($term)) {
@@ -198,13 +207,13 @@ function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
     if ($term instanceof WP_Term) {
         $object = $term;
     } elseif (is_object($term)) {
-        $object = new WP_Term($term);
+        $object = _minn_term_numbers(new WP_Term($term));
     } else {
         $row = _minn_term_row((int) $term, $taxonomy === '' ? null : (string) $taxonomy);
         if ($row === null) {
             return null;
         }
-        $object = new WP_Term((object) $row);
+        $object = _minn_term_numbers(new WP_Term((object) $row));
     }
     // The filter is told the term's own taxonomy, whether or not the caller named one.
     $object = apply_filters('get_term', $object, (string) $object->taxonomy);

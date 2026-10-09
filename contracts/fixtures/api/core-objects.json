@@ -1,0 +1,252 @@
+[
+    [
+        "a term",
+        [
+            {
+                "term_taxonomy_id": "boolean",
+                "term_id": "{child}",
+                "name": "Zz Obj Child &amp; Co",
+                "slug": "zz-obj-child",
+                "term_group": 0,
+                "taxonomy": "category",
+                "description": "",
+                "parent": "{parent}",
+                "count": 0,
+                "filter": "raw"
+            },
+            {
+                "term_taxonomy_id": "boolean",
+                "term_id": "{child}",
+                "name": "Zz Obj Child &amp; Co",
+                "slug": "zz-obj-child",
+                "term_group": 0,
+                "taxonomy": "category",
+                "description": "",
+                "parent": "{parent}",
+                "count": 0,
+                "filter": "raw"
+            },
+            false,
+            false,
+            false,
+            false,
+            [
+                {
+                    "term_taxonomy_id": "boolean",
+                    "term_id": "{child}",
+                    "name": "Built <b>\"x\"</b>",
+                    "slug": "built",
+                    "term_group": "",
+                    "taxonomy": "category",
+                    "description": "A & B",
+                    "parent": 0,
+                    "count": 0,
+                    "filter": "raw",
+                    "zz": "extra"
+                },
+                "extra",
+                [
+                    "Built &lt;b&gt;&#8220;x&#8221;&lt;/b&gt;",
+                    "<p>A &#038; B</p>\n",
+                    "display"
+                ],
+                [
+                    "Built &lt;b&gt;&#8220;x&#8221;&lt;/b&gt;",
+                    "raw"
+                ]
+            ],
+            [
+                true,
+                true,
+                "unset"
+            ]
+        ]
+    ],
+    [
+        "a comment",
+        [
+            [
+                "{top}",
+                "Top",
+                "0",
+                "1"
+            ],
+            false,
+            false,
+            false,
+            [
+                "comment_ID",
+                "comment_post_ID",
+                "comment_author",
+                "comment_author_email",
+                "comment_author_url",
+                "comment_author_IP",
+                "comment_date",
+                "comment_date_gmt",
+                "comment_content",
+                "comment_karma",
+                "comment_approved",
+                "comment_agent",
+                "comment_type",
+                "comment_parent",
+                "user_id",
+                "children",
+                "populated_children",
+                "post_fields"
+            ],
+            [
+                true,
+                "Zz Obj Post",
+                true,
+                "publish",
+                false,
+                "unset",
+                true,
+                false,
+                "post"
+            ],
+            [
+                [
+                    77,
+                    "Built",
+                    0,
+                    "1"
+                ],
+                "kept"
+            ]
+        ]
+    ],
+    [
+        "a comment's children",
+        [
+            [
+                "{reply}",
+                "{held}"
+            ],
+            [
+                "{reply}",
+                "{held}"
+            ],
+            [
+                0,
+                1,
+                2
+            ],
+            [
+                0,
+                1,
+                2
+            ],
+            [
+                [
+                    "{reply}",
+                    [
+                        0
+                    ]
+                ],
+                [
+                    "{held}",
+                    []
+                ]
+            ],
+            [
+                "{reply}",
+                "{held}"
+            ],
+            [
+                "{reply}",
+                "{held}"
+            ],
+            [
+                [],
+                false,
+                false
+            ],
+            [
+                [
+                    "{deep}"
+                ],
+                "{deep}"
+            ]
+        ]
+    ],
+    [
+        "a role",
+        [
+            "zz_obj_role",
+            {
+                "read": true,
+                "zz_cap": false
+            },
+            true,
+            false,
+            false,
+            true,
+            [
+                null,
+                true,
+                true,
+                true
+            ],
+            [
+                null,
+                false,
+                false
+            ],
+            [
+                null,
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "the category walker",
+        [
+            [
+                "\t<ul class='children'>\n",
+                "\t<li class=\"cat-item cat-item-{child}\"><a href=\"//{host}/category/zz-obj-parent/zz-obj-child/\">Zz Obj Child &amp; Co</a>\n",
+                "</li>\n",
+                "\t</ul>\n"
+            ],
+            [
+                "",
+                "\t<a href=\"//{host}/category/zz-obj-parent/zz-obj-child/\">Zz Obj Child &amp; Co</a><br />\n",
+                "",
+                ""
+            ],
+            [
+                "\t<ul class='children'>\n",
+                "\t<li class=\"cat-item cat-item-{child} current-cat\"><a aria-current=\"page\" href=\"//{host}/category/zz-obj-parent/zz-obj-child/\">Zz Obj Child &amp; Co</a> (<a aria-current=\"page\" href=\"//{host}/category/zz-obj-parent/zz-obj-child/feed/\">Feed</a>) (0)\n",
+                "</li>\n",
+                "\t</ul>\n"
+            ],
+            [
+                "\t<ul class='children'>\n",
+                "\t<li class=\"cat-item cat-item-{child}\"><a href=\"//{host}/category/zz-obj-parent/zz-obj-child/\">Zz Obj Child &amp; Co</a>\n",
+                "</li>\n",
+                "\t</ul>\n"
+            ]
+        ]
+    ],
+    [
+        "the menu walker",
+        [
+            "<li id=\"menu-item-{item}\" class=\"zz-one current-menu-item menu-item-{item}\"><a target=\"_blank\" rel=\"nofollow\" href=\"https://zz.example/a\" aria-current=\"page\" title=\"Tip\">Item &#8220;A&#8221; <b></a>",
+            "<li class=\"zz-one menu-item-{item}\"><a href=\"https://zz.example/a\">Item &#8220;A&#8221; <b></a>",
+            "<li class=\"zz-one menu-item-{item}\"><a target=\"_blank\" href=\"https://zz.example/a\">Item &#8220;A&#8221; <b></a>",
+            [
+                "\n\t<ul class=\"sub-menu\">\n",
+                "\t<li class=\"zz-one menu-item-{item}\"><i><a target=\"_blank\" rel=\"nofollow\" href=\"https://zz.example/a\" title=\"Tip\">[Item &#8220;A&#8221; <b>]</a></i>",
+                "</li>\n",
+                "\t</ul>\n"
+            ],
+            [
+                "<ul class=\"sub-menu\">",
+                "<li class=\"zz-one menu-item-{item}\"><a target=\"_blank\" rel=\"nofollow\" href=\"https://zz.example/a\" title=\"Tip\">Item &#8220;A&#8221; <b></a>",
+                "</li>",
+                "</ul>"
+            ]
+        ]
+    ]
+]

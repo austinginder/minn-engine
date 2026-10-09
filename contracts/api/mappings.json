@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1829,
+        "composes": 1830,
         "leaf": 872,
         "noop": 2651,
         "placeholder": 242,
         "deadend": 1664,
-        "functions": 7953,
+        "functions": 7954,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -23063,17 +23063,19 @@
         },
         "WP_Term::__construct": {
             "file": "classes/WP_Term.php",
-            "lines": 6,
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Term::__get": {
             "file": "classes/WP_Term.php",
-            "lines": 8,
-            "kind": "leaf",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "to_array"
+            ]
         },
         "WP_Term::filter": {
             "file": "classes/WP_Term.php",
@@ -23090,6 +23092,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_term_numbers",
                 "_minn_term_row"
             ]
         },
@@ -27536,7 +27539,7 @@
         },
         "Walker_Nav_Menu::start_el": {
             "file": "classes/Walker_Nav_Menu.php",
-            "lines": 24,
+            "lines": 25,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -31629,6 +31632,13 @@
                 "sanitize_title",
                 "wp_unslash"
             ]
+        },
+        "_minn_term_numbers": {
+            "file": "taxonomy.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_minn_term_query": {
             "file": "taxonomy.php",
@@ -40725,7 +40735,7 @@
         },
         "get_comment": {
             "file": "comment.php",
-            "lines": 23,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Comments::find"
@@ -44168,6 +44178,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_term_numbers",
                 "_minn_term_row",
                 "apply_filters",
                 "taxonomy_exists"

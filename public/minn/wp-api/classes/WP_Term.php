@@ -7,7 +7,7 @@ final class WP_Term
     public $term_id;
     public $name = '';
     public $slug = '';
-    public $term_group = 0;
+    public $term_group = '';
     public $term_taxonomy_id = 0;
     public $taxonomy = '';
     public $description = '';
@@ -25,16 +25,14 @@ final class WP_Term
         if ($row === null) {
             return false;
         }
-        return new self((object) $row);
+        return _minn_term_numbers(new self((object) $row));
     }
 
+    /** A term from the fields given, as given (a fetched term has its numbers made integers by the fetch). */
     public function __construct($term)
     {
         foreach (get_object_vars($term) as $key => $value) {
             $this->{$key} = $value;
-        }
-        foreach (['term_id', 'term_group', 'term_taxonomy_id', 'parent', 'count'] as $int) {
-            $this->{$int} = (int) $this->{$int};
         }
     }
 
@@ -51,11 +49,13 @@ final class WP_Term
 
     public function __get($key)
     {
+        // The term's columns, then filter raw: a fetched term's to_array() matches it.
         if ($key === 'data') {
             $data = new stdClass();
             foreach (['term_id', 'name', 'slug', 'term_group', 'term_taxonomy_id', 'taxonomy', 'description', 'parent', 'count'] as $k) {
                 $data->{$k} = $this->{$k};
             }
+            $data->filter = 'raw';
             return $data;
         }
         return null;
