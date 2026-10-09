@@ -1197,3 +1197,123 @@ function _minn_block_calendar(MinnBlock $block, MinnRenderer $renderer): string
     [$monthnum, $year] = $viewing;
     return Wrapper::open('div', 'wp-block-calendar', $block) . $calendar . '</div>';
 }
+
+// The breadcrumbs block's helpers (probe breadcrumbs).
+
+/** A crumb: its label, and on a paged listing the address of its first page. */
+function block_core_breadcrumbs_create_item($text, $is_paged = false)
+{
+    $item = ['label' => $text];
+    if ($is_paged) {
+        $item['url'] = get_pagenum_link(1);
+    }
+    return $item;
+}
+
+/** The crumb naming the page a listing is on. */
+function block_core_breadcrumbs_create_page_number_item($query_var = 'paged')
+{
+    return ['label' => sprintf(__('Page %s'), (int) get_query_var($query_var))];
+}
+
+/** Whether the listing is past its first page. */
+function block_core_breadcrumbs_is_paged()
+{
+    return (int) get_query_var('paged') > 1;
+}
+
+/** A post's title for a crumb, (no title) when it has none. */
+function block_core_breadcrumbs_get_post_title($post_id_or_object)
+{
+    $title = get_the_title($post_id_or_object);
+    return $title !== '' ? $title : __('(no title)');
+}
+
+/** The crumbs for a hierarchical post's ancestors, the root first, their titles kept as markup. */
+function block_core_breadcrumbs_get_hierarchical_post_type_breadcrumbs($post_id)
+{
+    return array_map(static fn ($ancestor) => ['label' => block_core_breadcrumbs_get_post_title($ancestor), 'url' => get_permalink($ancestor), 'allow_html' => true], array_reverse(get_post_ancestors($post_id)));
+}
+
+/** The crumbs for a term's ancestors, the root first. */
+function block_core_breadcrumbs_get_term_ancestors_items($term_id, $taxonomy)
+{
+    $items = [];
+    foreach (array_reverse(get_ancestors($term_id, $taxonomy, 'taxonomy')) as $ancestor) {
+        $term = get_term($ancestor, $taxonomy);
+        if ($term instanceof WP_Term) {
+            $items[] = ['label' => $term->name, 'url' => get_term_link($term)];
+        }
+    }
+    return $items;
+}
+
+/**
+ * A post's trail through one of its terms: the taxonomy
+ * block_core_breadcrumbs_post_type_settings names when it is usable
+ * (viewable, shown in REST, the type's own) and holds the post's terms,
+ * else the first usable one that does; the term it names there, else the
+ * first by name; its ancestors, then itself.
+ */
+function block_core_breadcrumbs_get_terms_breadcrumbs($post_id, $post_type)
+{
+    $settings = apply_filters('block_core_breadcrumbs_post_type_settings', [], $post_type, $post_id);
+    $settings = is_array($settings) ? $settings : [];
+    $usable = static fn ($taxonomy) => is_string($taxonomy) && is_object_in_taxonomy($post_type, $taxonomy) && is_taxonomy_viewable($taxonomy) && !empty(get_taxonomy($taxonomy)->show_in_rest);
+    $terms = [];
+    foreach (array_unique([...(isset($settings['taxonomy']) ? [$settings['taxonomy']] : []), ...get_object_taxonomies($post_type)]) as $taxonomy) {
+        $found = $usable($taxonomy) ? get_the_terms($post_id, $taxonomy) : false;
+        if (is_array($found) && $found !== []) {
+            $terms = $found;
+            break;
+        }
+    }
+    if ($terms === []) {
+        return [];
+    }
+    $chosen = array_values(array_filter($terms, static fn ($term) => isset($settings['term']) && $term->slug === $settings['term']))[0] ?? $terms[0];
+    return [...block_core_breadcrumbs_get_term_ancestors_items($chosen->term_id, $chosen->taxonomy), ['label' => $chosen->name, 'url' => get_term_link($chosen)]];
+}
+
+/** The crumbs an archive's main query gives: its date parts, its author, its term with the term's ancestors, or its post type; the last one linked to its first page when paged, and the page after it. */
+function block_core_breadcrumbs_get_archive_breadcrumbs()
+{
+    $paged = block_core_breadcrumbs_is_paged();
+    $items = match (true) {
+        is_date() => _minn_breadcrumbs_date_items($paged),
+        is_author() => [block_core_breadcrumbs_create_item(get_queried_object()?->display_name ?? '', $paged)],
+        is_category() || is_tag() || is_tax() => _minn_breadcrumbs_term_items($paged),
+        is_post_type_archive() => [block_core_breadcrumbs_create_item(post_type_archive_title('', false), $paged)],
+        default => [],
+    };
+    if ($items !== [] && $paged) {
+        $items[] = block_core_breadcrumbs_create_page_number_item();
+    }
+    return $items;
+}
+
+/** @internal a date archive's crumbs: the year, the month's name, the day, each linked but the last */
+function _minn_breadcrumbs_date_items(bool $paged): array
+{
+    $m = (string) get_query_var('m');
+    [$year, $month, $day] = $m !== '' ? [substr($m, 0, 4), (int) substr($m, 4, 2), (int) substr($m, 6, 2)] : [get_query_var('year'), (int) get_query_var('monthnum'), (int) get_query_var('day')];
+    $parts = [[$year, get_year_link($year)]];
+    if ($month > 0) {
+        $parts[] = [$GLOBALS['wp_locale']->get_month($month), get_month_link($year, $month)];
+        if ($day > 0) {
+            $parts[] = [$day, get_day_link($year, $month, $day)];
+        }
+    }
+    $last = array_pop($parts);
+    return [...array_map(static fn ($part) => ['label' => $part[0], 'url' => $part[1]], $parts), block_core_breadcrumbs_create_item($last[0], $paged)];
+}
+
+/** @internal a term archive's crumbs: the term's ancestors, then the term */
+function _minn_breadcrumbs_term_items(bool $paged): array
+{
+    $term = get_queried_object();
+    if (!$term instanceof WP_Term) {
+        return [];
+    }
+    return [...block_core_breadcrumbs_get_term_ancestors_items($term->term_id, $term->taxonomy), block_core_breadcrumbs_create_item($term->name, $paged)];
+}

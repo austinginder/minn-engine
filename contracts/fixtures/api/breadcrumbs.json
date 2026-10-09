@@ -1,0 +1,421 @@
+[
+    [
+        "items made",
+        [
+            {
+                "label": "Zz <b>T</b> & \"q\""
+            },
+            {
+                "label": ""
+            },
+            {
+                "label": 2026
+            }
+        ]
+    ],
+    [
+        "post titles",
+        [
+            "Zz Top",
+            "Zz Mid <i>m</i>",
+            "(no title)",
+            "(no title)"
+        ]
+    ],
+    [
+        "a hierarchical post's ancestors",
+        [
+            [
+                {
+                    "label": "Zz Top",
+                    "url": "https://{host}/zz-top/",
+                    "allow_html": true
+                },
+                {
+                    "label": "Zz Mid <i>m</i>",
+                    "url": "https://{host}/zz-top/zz-mid-m/",
+                    "allow_html": true
+                }
+            ],
+            [],
+            [
+                {
+                    "label": "Zz Top",
+                    "url": "https://{host}/zz-top/",
+                    "allow_html": true
+                }
+            ],
+            [
+                {
+                    "label": "Zz Top",
+                    "url": "https://{host}/zz-top/",
+                    "allow_html": true
+                },
+                {
+                    "label": "Private: Zz Private",
+                    "url": "https://{host}/?page_id={private}",
+                    "allow_html": true
+                }
+            ]
+        ]
+    ],
+    [
+        "a term's ancestors",
+        [
+            [
+                {
+                    "label": "Zz Parent Cat",
+                    "url": "https://{host}/category/zz-parent-cat/"
+                },
+                {
+                    "label": "Zz Child Cat",
+                    "url": "https://{host}/category/zz-parent-cat/zz-child-cat/"
+                }
+            ],
+            [
+                {
+                    "label": "Zz Parent Cat",
+                    "url": "https://{host}/category/zz-parent-cat/"
+                }
+            ],
+            [],
+            []
+        ]
+    ],
+    [
+        "a post's terms",
+        [
+            [
+                {
+                    "label": "Zz Parent Cat",
+                    "url": "https://{host}/category/zz-parent-cat/"
+                },
+                {
+                    "label": "Zz Child Cat",
+                    "url": "https://{host}/category/zz-parent-cat/zz-child-cat/"
+                }
+            ],
+            [
+                {
+                    "label": "Zz Parent Cat",
+                    "url": "https://{host}/category/zz-parent-cat/"
+                },
+                {
+                    "label": "Zz Child Cat",
+                    "url": "https://{host}/category/zz-parent-cat/zz-child-cat/"
+                },
+                {
+                    "label": "Zz Grand Cat",
+                    "url": "https://{host}/category/zz-parent-cat/zz-child-cat/zz-grand-cat/"
+                }
+            ],
+            []
+        ]
+    ],
+    [
+        "the taxonomy a trail follows",
+        [
+            [
+                "Zz Aa Shallow"
+            ],
+            [
+                [
+                    [],
+                    "post",
+                    true
+                ]
+            ],
+            [
+                "zz-tag-a"
+            ],
+            [
+                "Zz Parent Cat",
+                "Zz Child Cat"
+            ],
+            [
+                "Zz Parent Cat",
+                "Zz Child Cat"
+            ],
+            [
+                "Zz Aa Shallow"
+            ],
+            [
+                "Zz Aa Shallow"
+            ],
+            [
+                "Zz Aa Shallow"
+            ],
+            [
+                "Zz Aa Shallow"
+            ],
+            [
+                "zz-flat-a"
+            ],
+            [
+                "zz-hier-b"
+            ],
+            [],
+            [],
+            [],
+            [
+                "zz-hier-c"
+            ],
+            [
+                "zz-hier-d"
+            ]
+        ]
+    ],
+    [
+        "an archive's crumbs",
+        [
+            [
+                [
+                    {
+                        "label": 2026
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": 2026,
+                        "url": "https://{host}/2026/"
+                    },
+                    {
+                        "label": "August"
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": 2026,
+                        "url": "https://{host}/2026/"
+                    },
+                    {
+                        "label": "August",
+                        "url": "https://{host}/2026/08/"
+                    },
+                    {
+                        "label": 28
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "2026",
+                        "url": "https://{host}/2026/"
+                    },
+                    {
+                        "label": "August"
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "2026",
+                        "url": "https://{host}/2026/"
+                    },
+                    {
+                        "label": "August",
+                        "url": "https://{host}/2026/08/"
+                    },
+                    {
+                        "label": 28
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "admin"
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "Uncategorized"
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "Zz Parent Cat",
+                        "url": "https://{host}/category/zz-parent-cat/"
+                    },
+                    {
+                        "label": "Zz Child Cat",
+                        "url": "https://{host}/category/zz-parent-cat/zz-child-cat/"
+                    },
+                    {
+                        "label": "Zz Grand Cat"
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "Zz Things"
+                    }
+                ],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": 2026,
+                        "url": "https://{host}/"
+                    },
+                    {
+                        "label": "Page 2"
+                    }
+                ],
+                true,
+                {
+                    "label": "Page 2"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [
+                    {
+                        "label": "Zz Parent Cat",
+                        "url": "https://{host}/category/zz-parent-cat/"
+                    },
+                    {
+                        "label": "Zz Child Cat",
+                        "url": "https://{host}/"
+                    },
+                    {
+                        "label": "Page 3"
+                    }
+                ],
+                true,
+                {
+                    "label": "Page 3"
+                },
+                {
+                    "label": "Page 0"
+                }
+            ],
+            [
+                [],
+                false,
+                {
+                    "label": "Page 0"
+                },
+                {
+                    "label": "Page 2"
+                }
+            ]
+        ]
+    ]
+]

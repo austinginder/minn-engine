@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 774,
-        "composes": 1763,
+        "composes": 1770,
         "leaf": 854,
-        "noop": 2642,
+        "noop": 2645,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7858,
+        "functions": 7868,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -29537,6 +29537,30 @@
                 "get_option"
             ]
         },
+        "_minn_breadcrumbs_date_items": {
+            "file": "core-blocks.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_breadcrumbs_create_item",
+                "get_day_link",
+                "get_month_link",
+                "get_query_var",
+                "get_year_link"
+            ]
+        },
+        "_minn_breadcrumbs_term_items": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_breadcrumbs_create_item",
+                "block_core_breadcrumbs_get_term_ancestors_items",
+                "get_queried_object"
+            ]
+        },
         "_minn_bridge_dynamic_block": {
             "file": "blocks.php",
             "lines": 13,
@@ -34785,6 +34809,103 @@
                 "home_url",
                 "wp_get_inline_script_tag",
                 "wp_json_encode"
+            ]
+        },
+        "block_core_breadcrumbs_create_item": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_pagenum_link"
+            ]
+        },
+        "block_core_breadcrumbs_create_page_number_item": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_query_var"
+            ]
+        },
+        "block_core_breadcrumbs_get_archive_breadcrumbs": {
+            "file": "core-blocks.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_breadcrumbs_date_items",
+                "_minn_breadcrumbs_term_items",
+                "block_core_breadcrumbs_create_item",
+                "block_core_breadcrumbs_create_page_number_item",
+                "block_core_breadcrumbs_is_paged",
+                "get_queried_object",
+                "is_author",
+                "is_category",
+                "is_date",
+                "is_post_type_archive",
+                "is_tag",
+                "is_tax",
+                "post_type_archive_title"
+            ]
+        },
+        "block_core_breadcrumbs_get_hierarchical_post_type_breadcrumbs": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "block_core_breadcrumbs_get_post_title",
+                "get_permalink",
+                "get_post_ancestors"
+            ]
+        },
+        "block_core_breadcrumbs_get_post_title": {
+            "file": "core-blocks.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_the_title"
+            ]
+        },
+        "block_core_breadcrumbs_get_term_ancestors_items": {
+            "file": "core-blocks.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_ancestors",
+                "get_term",
+                "get_term_link"
+            ]
+        },
+        "block_core_breadcrumbs_get_terms_breadcrumbs": {
+            "file": "core-blocks.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "block_core_breadcrumbs_get_term_ancestors_items",
+                "get_object_taxonomies",
+                "get_taxonomy",
+                "get_term_link",
+                "get_the_terms",
+                "is_object_in_taxonomy",
+                "is_taxonomy_viewable"
+            ]
+        },
+        "block_core_breadcrumbs_is_paged": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_query_var"
             ]
         },
         "block_core_calendar_has_published_posts": {

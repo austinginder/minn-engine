@@ -8377,3 +8377,42 @@ Probe `block-hooks-rest`.
     The reference adds no loading or decoding attributes there; the
     engine adds them.
   - `_wp_enqueue_auto_register_blocks` belongs to the block editor.
+
+## The breadcrumbs block's helpers (2026-10-09)
+
+Probe `breadcrumbs`. The engine has no breadcrumbs renderer yet; these are
+the helpers it will be built on.
+
+- **Items.** `block_core_breadcrumbs_create_item` gives
+  `['label' => text]`, plus `url` (`get_pagenum_link(1)`) when the listing
+  is paged. The label is kept as given, so ints stay ints.
+  `block_core_breadcrumbs_create_page_number_item` is `Page {n}` from the
+  query var named, cast to an int (`Page 0` when unset).
+  `block_core_breadcrumbs_is_paged` is `paged > 1`; `page` is not read.
+- **Posts.**
+  - Titles come from `get_the_title`, so a private post reads `Private: …`.
+    An empty title, or no post, is `(no title)`.
+  - A hierarchical post's ancestors run root first, each with its
+    permalink (a private one's `?page_id=`) and `allow_html` true. A
+    post's own title is not among them.
+- **Terms.**
+  - A term's ancestors run root first, each with its term link.
+  - A post's trail follows one taxonomy: the one
+    `block_core_breadcrumbs_post_type_settings` (`[]`, type, id) names
+    when it is usable and holds the post's terms. Usable means the type's
+    own, viewable, and shown in REST.
+  - Otherwise it is the first usable taxonomy, in registration order, that
+    does. A type with no usable taxonomy has no trail.
+  - The term is the one the setting's `term` slug names, else the first
+    by name. The trail is its ancestors, then itself, with links.
+- **Archives** (the main query).
+  - Dates give the year, the month's name and the day, each linked but
+    the last. Read from `m`, the year stays a string and month and day
+    become ints.
+  - Authors give the display name, and a term archive its ancestors then
+    the term. A post type archive gives `post_type_archive_title`.
+  - Search, home and an unknown term give nothing.
+  - On a paged archive the last crumb links to its first page and
+    `Page N` follows.
+- **Still owed.** `render_block_core_breadcrumbs` still answers without
+  these: the markup the block prints is not built yet.
