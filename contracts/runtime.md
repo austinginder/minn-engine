@@ -8182,3 +8182,46 @@ Probe `oembed-cache`, in `WP_Embed`.
   as a link, or the bare address with `linkifunknown` off. It is not asked
   again.
 - **Keys.** Different attributes are a different key, so a different post.
+
+## Template loading helpers (2026-10-09)
+
+Probe `template-loading`. It uses scratch themes in the theme root, and
+removes them.
+
+- **The enhancement buffer.**
+  - `wp_should_output_buffer_template_for_enhancement` is
+    `has_filter('wp_template_enhancement_output_buffer')` through
+    `wp_should_output_buffer_template_for_enhancement`.
+  - `wp_start_template_enhancement_output_buffer`
+    (`wp_before_include_template` 1000) answers false when the buffer is
+    not wanted. Otherwise it opens a buffer with
+    `wp_finalize_template_enhancement_output_buffer` as its handler, fires
+    `wp_template_enhancement_output_buffer_started`, and answers true.
+  - The handler leaves a CLEAN phase as it is. Any other phase is filtered
+    through `wp_template_enhancement_output_buffer` (output, output), and
+    the result goes to `wp_finalized_template_enhancement_output_buffer`.
+  - The engine builds its pages as strings and fires no
+    `wp_before_include_template`, so on the engine the buffer only runs
+    when a plugin calls it.
+- **require_if_theme_supports.** When the theme supports the feature, the
+  file is `require`d (again on every call) and the answer is true;
+  otherwise false.
+- **validate_theme_requirements.**
+  - It is true unless the theme's `Requires at least` or `Requires PHP`
+    is unmet. An unknown theme is true.
+  - Otherwise it is a WP_Error (`theme_wp_php_incompatible`,
+    `theme_php_incompatible` or `theme_wp_incompatible`) whose message
+    starts `<strong>Error:</strong>` and names the theme as `display`
+    gives it.
+- **wp_post_preview_js** (`wp_head` 1). On a preview with a post, it
+  prints the inline script that names the window `wp-preview-{ID}` and
+  clears the name on `pagehide`, ending in a
+  `//# sourceURL=wp_post_preview_js` line. Nothing is printed otherwise.
+- **Hooks fix.** An action fired with no arguments still hands its
+  callbacks one empty string, but an `all` callback now gets only the
+  hook's name, as on the reference.
+- **Still owed.**
+  - `wp_set_template_globals` changed no global in any CLI experiment,
+    even after a main query, so its effect is unknown.
+  - `_wp_timezone_choice_usort_callback` sorts `Etc` zones by a rule no
+    single comparison explains yet.

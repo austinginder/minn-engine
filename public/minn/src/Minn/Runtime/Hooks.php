@@ -184,7 +184,13 @@ final class Hooks
      */
     public function action(string $hook, array $args): void
     {
-        $this->actionRef($hook, $args === [] ? [''] : $args);
+        if ($args !== []) {
+            $this->actionRef($hook, $args);
+            return;
+        }
+        // An action fired with nothing hands its callbacks one empty string, but an 'all' callback only the hook's name.
+        $this->actionsDone[$hook] = ($this->actionsDone[$hook] ?? 0) + 1;
+        $this->run($hook, [''], false, [], []);
     }
 
     /**

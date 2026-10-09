@@ -623,3 +623,28 @@ function get_theme_feature_list($api = true)
         __('Layout') => ['grid-layout' => __('Grid Layout'), 'one-column' => __('One Column'), 'two-columns' => __('Two Columns'), 'three-columns' => __('Three Columns'), 'four-columns' => __('Four Columns'), 'left-sidebar' => __('Left Sidebar'), 'right-sidebar' => __('Right Sidebar'), 'wide-blocks' => __('Wide Blocks')],
     ];
 }
+
+/** A file required (each time) when the theme supports a feature; whether it was. */
+function require_if_theme_supports($feature, $file)
+{
+    if (!current_theme_supports($feature)) {
+        return false;
+    }
+    require $file;
+    return true;
+}
+
+/** True when the theme's Requires at least and Requires PHP headers are met (or it is unknown); a WP_Error naming what is not (probe template-loading). */
+function validate_theme_requirements($stylesheet)
+{
+    $theme = wp_get_theme($stylesheet);
+    $wp = is_wp_version_compatible((string) $theme->get('RequiresWP'));
+    $php = is_php_version_compatible((string) $theme->get('RequiresPHP'));
+    $name = $theme->display('Name');
+    return match (true) {
+        !$wp && !$php => new WP_Error('theme_wp_php_incompatible', sprintf(__('<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for %s.'), $name)),
+        !$php => new WP_Error('theme_php_incompatible', sprintf(__('<strong>Error:</strong> Current PHP version does not meet minimum requirements for %s.'), $name)),
+        !$wp => new WP_Error('theme_wp_incompatible', sprintf(__('<strong>Error:</strong> Current WordPress version does not meet minimum requirements for %s.'), $name)),
+        default => true,
+    };
+}

@@ -115046,7 +115046,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 348,
+            "lines": 354,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
@@ -115454,7 +115454,7 @@
                         }
                     ],
                     "line": 185,
-                    "end": 188
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -115482,8 +115482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 200
+                    "line": 202,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -115511,8 +115511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 213
+                    "line": 215,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -115540,8 +115540,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 225
+                    "line": 227,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -115560,8 +115560,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 231
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -115580,8 +115580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 237
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -115592,8 +115592,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 240,
-                    "end": 243
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -115612,8 +115612,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 249
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -115626,8 +115626,8 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 256,
-                    "end": 266
+                    "line": 262,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -115648,8 +115648,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 340
+                    "line": 341,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -115700,8 +115700,8 @@
                             "doc": "what an 'all' callback gets after the hook's name; the arguments when null"
                         }
                     ],
-                    "line": 273,
-                    "end": 320
+                    "line": 279,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -115727,8 +115727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 331
+                    "line": 328,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -115754,8 +115754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 351
+                    "line": 348,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -115774,8 +115774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 354,
-                    "end": 364
+                    "line": 360,
+                    "end": 370
                 }
             ]
         },

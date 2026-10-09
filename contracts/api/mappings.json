@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1746,
+        "composes": 1751,
         "leaf": 850,
-        "noop": 2634,
+        "noop": 2635,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7828,
+        "functions": 7834,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -51029,6 +51029,15 @@
                 "apply_filters"
             ]
         },
+        "require_if_theme_supports": {
+            "file": "theme.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_theme_supports"
+            ]
+        },
         "require_wp_db": {
             "file": "load.php",
             "lines": 0,
@@ -55494,6 +55503,18 @@
                 "wp_http_validate_url"
             ]
         },
+        "validate_theme_requirements": {
+            "file": "theme.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_php_version_compatible",
+                "is_wp_version_compatible",
+                "wp_get_theme"
+            ]
+        },
         "validate_username": {
             "file": "user.php",
             "lines": 3,
@@ -59604,6 +59625,16 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_finalize_template_enhancement_output_buffer": {
+            "file": "template.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "do_action"
+            ]
         },
         "wp_find_hierarchy_loop": {
             "file": "functions.php",
@@ -64376,6 +64407,16 @@
             ],
             "composes": []
         },
+        "wp_post_preview_js": {
+            "file": "functions.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_preview",
+                "wp_print_inline_script_tag"
+            ]
+        },
         "wp_post_revision_meta_keys": {
             "file": "post.php",
             "lines": 7,
@@ -66893,6 +66934,16 @@
                 "apply_filters"
             ]
         },
+        "wp_should_output_buffer_template_for_enhancement": {
+            "file": "template.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "has_filter"
+            ]
+        },
         "wp_should_replace_insecure_home_url": {
             "file": "formatting.php",
             "lines": 2,
@@ -67171,6 +67222,16 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "wp_start_template_enhancement_output_buffer": {
+            "file": "template.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "wp_should_output_buffer_template_for_enhancement"
+            ]
         },
         "wp_staticize_emoji": {
             "file": "formatting.php",

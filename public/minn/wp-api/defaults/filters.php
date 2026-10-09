@@ -173,6 +173,9 @@ add_action('wp_head', '_custom_logo_header_styles');
 // Widgets (probe widgets-more): a block theme keeps the classic theme's sidebars; the widgets editor warns about the old editor.
 add_action('widgets_init', '_wp_block_theme_register_classic_sidebars', 1);
 add_action('admin_head', 'wp_check_widget_editor_deps');
+// Template loading (probe template-loading): the enhancement buffer, and the preview window's name.
+add_action('wp_before_include_template', 'wp_start_template_enhancement_output_buffer', 1000);
+add_action('wp_head', 'wp_post_preview_js', 1);
 // Menus (probe category-menu-helpers): a deleted term takes its menu items; an item's id prints once; has-children stops at the depth.
 add_action('delete_term', '_wp_delete_tax_menu_item', 10, 3);
 add_filter('nav_menu_item_id', '_nav_menu_item_id_use_once', 10, 2);

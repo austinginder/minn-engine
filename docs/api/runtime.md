@@ -39,7 +39,7 @@ the WordPress runtime plugins load against
 | [`FileTypeCheck`](#filetypecheck) | final class | 78 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
-| [`Hooks`](#hooks) | final class | 348 | The hook registry plugin code registers into and the engine fires. |
+| [`Hooks`](#hooks) | final class | 354 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
@@ -1671,7 +1671,7 @@ The 'all' callbacks run with the arguments given, the hook's name first (_wp_cal
 
 - `@param list<mixed> $args`
 
-Internals: `run()` (private, line 273), `nextPriority()` (private, line 322), `fireAll()` (private, line 342), `id()` (private, line 354)
+Internals: `run()` (private, line 279), `nextPriority()` (private, line 328), `fireAll()` (private, line 348), `id()` (private, line 360)
 
 
 ## Interactivity

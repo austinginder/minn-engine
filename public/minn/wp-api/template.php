@@ -1180,3 +1180,34 @@ function wp_preload_resources()
         printf("<link rel='preload' %s />\n", implode(' ', $html));
     }
 }
+
+// The template enhancement output buffer (probe template-loading). The engine builds its pages as strings, so the
+// buffer starts only where wp_before_include_template is fired by a plugin.
+
+/** Whether the template is buffered for enhancement: when anything filters wp_template_enhancement_output_buffer, unless overridden. */
+function wp_should_output_buffer_template_for_enhancement()
+{
+    return (bool) apply_filters('wp_should_output_buffer_template_for_enhancement', has_filter('wp_template_enhancement_output_buffer'));
+}
+
+/** The enhancement buffer started (wp_before_include_template 1000), wp_template_enhancement_output_buffer_started told; false when it is not wanted. */
+function wp_start_template_enhancement_output_buffer()
+{
+    if (!wp_should_output_buffer_template_for_enhancement()) {
+        return false;
+    }
+    ob_start('wp_finalize_template_enhancement_output_buffer');
+    do_action('wp_template_enhancement_output_buffer_started');
+    return true;
+}
+
+/** The buffered page through wp_template_enhancement_output_buffer (output, original), then wp_finalized_template_enhancement_output_buffer; a cleaned buffer is left alone. */
+function wp_finalize_template_enhancement_output_buffer(string $output, int $phase)
+{
+    if (($phase & PHP_OUTPUT_HANDLER_CLEAN) !== 0) {
+        return $output;
+    }
+    $filtered = apply_filters('wp_template_enhancement_output_buffer', $output, $output);
+    do_action('wp_finalized_template_enhancement_output_buffer', $filtered);
+    return $filtered;
+}

@@ -1,0 +1,224 @@
+[
+    [
+        "the hooks",
+        [
+            1000,
+            1
+        ]
+    ],
+    [
+        "buffered for enhancement",
+        [
+            false,
+            [
+                false,
+                0,
+                []
+            ],
+            [
+                true,
+                false
+            ],
+            [
+                true,
+                1,
+                "wp_finalize_template_enhancement_output_buffer",
+                "INNER <B>PAGE</B>",
+                [
+                    [
+                        "wp_template_enhancement_output_buffer_started",
+                        [
+                            "wp_template_enhancement_output_buffer_started"
+                        ]
+                    ],
+                    [
+                        "wp_template_enhancement_output_buffer",
+                        [
+                            "wp_template_enhancement_output_buffer",
+                            "inner <b>page</b>",
+                            "inner <b>page</b>"
+                        ]
+                    ],
+                    [
+                        "wp_finalized_template_enhancement_output_buffer",
+                        [
+                            "wp_finalized_template_enhancement_output_buffer",
+                            "INNER <B>PAGE</B>"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the buffer finalized",
+        [
+            [
+                "ABC <I>X</I>",
+                [
+                    [
+                        "wp_template_enhancement_output_buffer",
+                        [
+                            "wp_template_enhancement_output_buffer",
+                            "abc <i>x</i>",
+                            "abc <i>x</i>"
+                        ]
+                    ],
+                    [
+                        "wp_finalized_template_enhancement_output_buffer",
+                        [
+                            "wp_finalized_template_enhancement_output_buffer",
+                            "ABC <I>X</I>"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "ABC <I>X</I>",
+                [
+                    [
+                        "wp_template_enhancement_output_buffer",
+                        [
+                            "wp_template_enhancement_output_buffer",
+                            "abc <i>x</i>",
+                            "abc <i>x</i>"
+                        ]
+                    ],
+                    [
+                        "wp_finalized_template_enhancement_output_buffer",
+                        [
+                            "wp_finalized_template_enhancement_output_buffer",
+                            "ABC <I>X</I>"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "ABC <I>X</I>",
+                [
+                    [
+                        "wp_template_enhancement_output_buffer",
+                        [
+                            "wp_template_enhancement_output_buffer",
+                            "abc <i>x</i>",
+                            "abc <i>x</i>"
+                        ]
+                    ],
+                    [
+                        "wp_finalized_template_enhancement_output_buffer",
+                        [
+                            "wp_finalized_template_enhancement_output_buffer",
+                            "ABC <I>X</I>"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "ABC <I>X</I>",
+                [
+                    [
+                        "wp_template_enhancement_output_buffer",
+                        [
+                            "wp_template_enhancement_output_buffer",
+                            "abc <i>x</i>",
+                            "abc <i>x</i>"
+                        ]
+                    ],
+                    [
+                        "wp_finalized_template_enhancement_output_buffer",
+                        [
+                            "wp_finalized_template_enhancement_output_buffer",
+                            "ABC <I>X</I>"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "abc <i>x</i>",
+                []
+            ],
+            [
+                "abc <i>x</i>",
+                []
+            ],
+            [
+                "ABC <I>X</I>",
+                [
+                    [
+                        "wp_template_enhancement_output_buffer",
+                        [
+                            "wp_template_enhancement_output_buffer",
+                            "abc <i>x</i>",
+                            "abc <i>x</i>"
+                        ]
+                    ],
+                    [
+                        "wp_finalized_template_enhancement_output_buffer",
+                        [
+                            "wp_finalized_template_enhancement_output_buffer",
+                            "ABC <I>X</I>"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "finalized with no filter",
+        [
+            "plain",
+            ""
+        ]
+    ],
+    [
+        "required where supported",
+        [
+            [
+                false,
+                0
+            ],
+            [
+                true,
+                1,
+                true,
+                2
+            ]
+        ]
+    ],
+    [
+        "a theme's requirements",
+        [
+            true,
+            [
+                "theme_wp_incompatible",
+                "<strong>Error:</strong> Current WordPress version does not meet minimum requirements for Zz Req Wp.",
+                null
+            ],
+            [
+                "theme_php_incompatible",
+                "<strong>Error:</strong> Current PHP version does not meet minimum requirements for Zz Req Php.",
+                null
+            ],
+            [
+                "theme_wp_php_incompatible",
+                "<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for Zz Req Both.",
+                null
+            ],
+            true,
+            [
+                "theme_php_incompatible",
+                "<strong>Error:</strong> Current PHP version does not meet minimum requirements for Zz <em>Marked</em> &amp; Co.",
+                null
+            ],
+            true
+        ]
+    ],
+    [
+        "the preview script",
+        [
+            "",
+            "<script>\n\t( function() {\n\t\tvar query = document.location.search;\n\n\t\tif ( query && query.indexOf( 'preview=true' ) !== -1 ) {\n\t\t\twindow.name = 'wp-preview-{id}';\n\t\t}\n\n\t\tif ( window.addEventListener ) {\n\t\t\twindow.addEventListener( 'pagehide', function() { window.name = ''; } );\n\t\t}\n\t}());\n\t//# sourceURL=wp_post_preview_js\t\n</script>\n",
+            ""
+        ]
+    ]
+]

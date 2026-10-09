@@ -1492,3 +1492,15 @@ function wp_privacy_personal_data_cleanup_requests()
         }
     }
 }
+
+/** On a post's preview, the script that names the window for it and forgets the name when the page goes (wp_head 1). */
+function wp_post_preview_js()
+{
+    global $post;
+    if (!is_preview() || empty($post)) {
+        return;
+    }
+    $name = 'wp-preview-' . (int) $post->ID;
+    $script = "\t( function() {\n\t\tvar query = document.location.search;\n\n\t\tif ( query && query.indexOf( 'preview=true' ) !== -1 ) {\n\t\t\twindow.name = '{$name}';\n\t\t}\n\n\t\tif ( window.addEventListener ) {\n\t\t\twindow.addEventListener( 'pagehide', function() { window.name = ''; } );\n\t\t}\n\t}());\n\t//# sourceURL=wp_post_preview_js\t";
+    wp_print_inline_script_tag($script);
+}
