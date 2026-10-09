@@ -366,7 +366,10 @@ function get_block_wrapper_attributes($extra_attributes = [])
     $extra_attributes = (array) $extra_attributes;
     $attributes = [];
     if (!empty($new_attributes['style']) || !empty($extra_attributes['style'])) {
-        $style = (string) ($new_attributes['style'] ?? '') . (string) ($extra_attributes['style'] ?? '');
+        // The caller's style goes through safecss_filter_attr (probe breadcrumbs): an unsafe declaration is dropped, and a
+        // style left with nothing still prints, empty.
+        $extra_style = empty($extra_attributes['style']) ? '' : safecss_filter_attr((string) $extra_attributes['style']);
+        $style = (string) ($new_attributes['style'] ?? '') . ($extra_style !== '' && !empty($new_attributes['style']) && !str_ends_with(rtrim((string) $new_attributes['style']), ';') ? ';' : '') . $extra_style;
         $attributes['style'] = trim(implode(';', array_map('trim', explode(';', $style))), ';');
     }
     if (!empty($new_attributes['class']) || !empty($extra_attributes['class'])) {

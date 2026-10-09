@@ -962,6 +962,7 @@ function _minn_register_block_renderers(MinnRenderer $renderer): void
         'core/widget-group' => '_minn_block_widget_group',
         'core/calendar' => '_minn_block_calendar',
         'core/home-link' => '_minn_block_home_link',
+        'core/breadcrumbs' => '_minn_block_breadcrumbs',
     ];
     foreach ($renderers as $name => $render) {
         $renderer->registerDynamic($name, $render);
@@ -1316,4 +1317,59 @@ function _minn_breadcrumbs_term_items(bool $paged): array
         return [];
     }
     return [...block_core_breadcrumbs_get_term_ancestors_items($term->term_id, $term->taxonomy), block_core_breadcrumbs_create_item($term->name, $paged)];
+}
+
+/**
+ * The breadcrumbs block (probe breadcrumbs): nothing on the home page or a
+ * 404; otherwise a nav whose list runs from Home (unless left out) through
+ * the trail (a search's query, a singular post's ancestors or terms then
+ * its title, or an archive's crumbs) to the current item, which is
+ * dropped when it is not to show. The separator rides on a custom property.
+ */
+function _minn_block_breadcrumbs(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $items = is_front_page() || is_home() || is_404() ? [] : _minn_breadcrumbs_trail($block);
+    if ($items === []) {
+        return '';
+    }
+    if ($block->attr('showHomeItem', true)) {
+        array_unshift($items, ['label' => __('Home'), 'url' => home_url('/')]);
+    }
+    $current = array_pop($items);
+    $html = '';
+    foreach ($items as $item) {
+        $label = !empty($item['allow_html']) ? (string) $item['label'] : esc_html((string) $item['label']);
+        $html .= isset($item['url']) ? '<li><a href="' . esc_url($item['url']) . '">' . $label . '</a></li>' : '<li><span>' . $label . '</span></li>';
+    }
+    if ($block->attr('showCurrentItem', true)) {
+        $html .= '<li><span aria-current="page">' . (!empty($current['allow_html']) ? (string) $current['label'] : esc_html((string) $current['label'])) . '</span></li>';
+    }
+    if ($html === '') {
+        return '';
+    }
+    $saved = WP_Block_Supports::$block_to_render;
+    WP_Block_Supports::$block_to_render = ['blockName' => 'core/breadcrumbs', 'attrs' => $block->attrs];
+    // Quotes and backslashes in the separator are escaped, so safecss refuses a separator that carries them.
+    $wrapper = get_block_wrapper_attributes(['style' => '--separator: "' . addcslashes((string) $block->attr('separator', '/'), '\\"') . '"', 'aria-label' => __('Breadcrumbs')]);
+    WP_Block_Supports::$block_to_render = $saved;
+    return '<nav ' . $wrapper . '><ol>' . $html . '</ol></nav>';
+}
+
+/** @internal the trail after Home: a search's query, a singular post's ancestors or terms and title, or an archive's crumbs */
+function _minn_breadcrumbs_trail(MinnBlock $block): array
+{
+    if (is_search()) {
+        return [['label' => sprintf(__('Search results for: "%s"'), get_search_query(false))]];
+    }
+    if (!is_singular()) {
+        return block_core_breadcrumbs_get_archive_breadcrumbs();
+    }
+    $post = get_queried_object();
+    if (!$post instanceof WP_Post) {
+        return [];
+    }
+    // A hierarchical post follows its ancestors, unless it prefers its terms and has some to follow.
+    $terms = !is_post_type_hierarchical($post->post_type) || $block->attr('prefersTaxonomy', false) ? block_core_breadcrumbs_get_terms_breadcrumbs($post->ID, $post->post_type) : [];
+    $trail = $terms === [] && is_post_type_hierarchical($post->post_type) ? block_core_breadcrumbs_get_hierarchical_post_type_breadcrumbs($post->ID) : $terms;
+    return [...$trail, ['label' => block_core_breadcrumbs_get_post_title($post), 'allow_html' => true]];
 }

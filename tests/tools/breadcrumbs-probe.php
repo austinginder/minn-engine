@@ -173,4 +173,52 @@ $say('an archive\'s crumbs', [
     $archive(['page' => 2]),
 ]);
 
+$crumb_cat = $term('Zz Crumb Cat');
+$made['posts'][] = $crumb_post = (int) wp_insert_post(['post_title' => 'Zz Crumb Post', 'post_status' => 'publish', 'post_content' => 'x', 'post_category' => [$crumb_cat]]);
+$ids += [$crumb_cat => 'crumbcat', $crumb_post => 'crumbpost'];
+$rendered = static function (array $vars, array $attrs = []) use ($mask) {
+    $GLOBALS['wp_query'] = new WP_Query($vars);
+    $GLOBALS['wp_the_query'] = $GLOBALS['wp_query'];
+    $GLOBALS['post'] = $GLOBALS['wp_query']->have_posts() && $GLOBALS['wp_query']->is_singular ? $GLOBALS['wp_query']->posts[0] : null;
+    return $mask(do_blocks('<!-- wp:breadcrumbs ' . ($attrs === [] ? '' : wp_json_encode($attrs) . ' ') . '/-->'));
+};
+$say('the block rendered', [
+    $rendered(['page_id' => $mid]),
+    $rendered(['page_id' => $top]),
+    $rendered(['p' => $crumb_post]),
+    $rendered(['cat' => $crumb_cat]),
+    $rendered(['cat' => $grand_cat]),
+    $rendered(['year' => 2026, 'monthnum' => 8]),
+    $rendered([]),
+    $rendered(['p' => 999999999]),
+    $rendered(['author_name' => 'admin']),
+    $rendered(['cat' => $crumb_cat, 'paged' => 2]),
+    $rendered(['s' => 'zz "q" <b>']),
+    $rendered(['post_type' => 'zzbc']),
+    $rendered(['page_id' => $mid], ['separator' => '»']),
+    $rendered(['page_id' => $mid], ['separator' => 'a"b<c>']),
+    $rendered(['page_id' => $mid], ['showHomeItem' => false]),
+    $rendered(['page_id' => $mid], ['showCurrentItem' => false]),
+    $rendered(['page_id' => $top], ['showHomeItem' => false, 'showCurrentItem' => false]),
+    $rendered([], ['showOnHomePage' => true]),
+    $rendered(['p' => $crumb_post], ['prefersTaxonomy' => true]),
+    $rendered(['page_id' => $mid], ['prefersTaxonomy' => true]),
+    $rendered(['page_id' => $mid], ['className' => 'zz-x', 'anchor' => 'zz-a', 'align' => 'wide']),
+    $rendered(['page_id' => $mid], ['style' => ['color' => ['text' => '#ff0000']], 'fontSize' => 'large']),
+]);
+
+$say('styles made safe', [
+    array_map(static fn ($css) => safecss_filter_attr($css), [' color : red ; ; margin:0 ', 'color: red; ; margin:0', 'color: red;;margin:0', ';color: red', 'color: red;', ' ; ', 'a;b', 'color:red;  ;  ;margin:0', 'color:red; ;', '--separator: "a\\"b<c>"', '--separator: "/"']),
+    (static function () {
+        $saved = WP_Block_Supports::$block_to_render;
+        $out = [];
+        foreach ([[[], '--separator: "a\\"b<c>"'], [[], '--separator: "a<b"'], [[], '--separator: "a(b)"'], [[], 'color: red; --x: "a(b)"'], [[], 'color: red; background: url(javascript:alert(1))'], [[], 'zz-unknown: 1; color: red'], [['style' => ['color' => ['text' => '#f00']]], '--x: "a(b)"'], [['style' => ['color' => ['text' => '#f00']]], 'width: calc(1px + 2px)'], [[], ''], [[], ' color : red ; ; margin:0 ']] as [$attrs, $style]) {
+            WP_Block_Supports::$block_to_render = ['blockName' => 'core/breadcrumbs', 'attrs' => $attrs];
+            $out[] = get_block_wrapper_attributes(['style' => $style, 'aria-label' => 'B']);
+        }
+        WP_Block_Supports::$block_to_render = $saved;
+        return $out;
+    })(),
+]);
+
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE), "\n";

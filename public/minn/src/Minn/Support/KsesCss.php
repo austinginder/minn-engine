@@ -86,22 +86,23 @@ final class KsesCss
     private static function css(string $style): string
     {
         $allowed = self::$styleHooks === null ? self::CSS_PROPERTIES : (self::$styleHooks[0])(self::CSS_PROPERTIES);
-        $kept = [];
-        foreach (explode(';', $style) as $declaration) {
-            $declaration = trim($declaration);
+        // An empty piece is passed over, but one of only spaces stays as an empty declaration (; ; keeps its ;;), as the reference keeps it.
+        $css = '';
+        foreach (explode(';', trim($style)) as $declaration) {
             if ($declaration === '') {
                 continue;
             }
+            $declaration = trim($declaration);
             $test = self::cssTestString($declaration, $allowed);
             $allow = $test !== null && preg_match('%[\\\\(&=}]|/\*%', $test) !== 1;
             if (self::$styleHooks !== null) {
                 $allow = (self::$styleHooks[1])($allow, $declaration);
             }
             if ($allow) {
-                $kept[] = $declaration;
+                $css .= ($css !== '' ? ';' : '') . $declaration;
             }
         }
-        return implode(';', $kept);
+        return $css;
     }
 
     /**

@@ -18,7 +18,7 @@ escaping, serialized readers, small helpers
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
 | [`Kses`](#kses) | final class | 475 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
-| [`KsesCss`](#ksescss) | final class | 137 | The style attribute as kses keeps it (safecss_filter_attr): each |
+| [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
@@ -504,7 +504,7 @@ The facade sets these as it loads.
 - `@param Closure(list<string>): list<string> $properties`
 - `@param Closure(bool, string): bool $allow`
 
-Internals: `css()` (private, line 86), `cssTestString()` (private, line 115)
+Internals: `css()` (private, line 86), `cssTestString()` (private, line 116)
 
 
 ## KsesEntities

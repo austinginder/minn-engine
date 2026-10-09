@@ -417,5 +417,62 @@
                 }
             ]
         ]
+    ],
+    [
+        "the block rendered",
+        [
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><span aria-current=\"page\">Zz Top</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/category/zz-crumb-cat/\">Zz Crumb Cat</a></li><li><span aria-current=\"page\">Zz Crumb Post</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><span aria-current=\"page\">Zz Crumb Cat</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/category/zz-parent-cat/\">Zz Parent Cat</a></li><li><a href=\"https://{host}/category/zz-parent-cat/zz-child-cat/\">Zz Child Cat</a></li><li><span aria-current=\"page\">Zz Grand Cat</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/2026/\">2026</a></li><li><span aria-current=\"page\">August</span></li></ol></nav>",
+            "",
+            "",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><span aria-current=\"page\">admin</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/\">Zz Crumb Cat</a></li><li><span aria-current=\"page\">Page 2</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><span aria-current=\"page\">Search results for: &quot;zz &quot;q&quot; &lt;b&gt;&quot;</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><span aria-current=\"page\">Zz Things</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;»&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>",
+            "<nav style=\"\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li></ol></nav>",
+            "",
+            "",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/category/zz-crumb-cat/\">Zz Crumb Cat</a></li><li><span aria-current=\"page\">Zz Crumb Post</span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>",
+            "<nav style=\"--separator: &quot;/&quot;\" class=\"alignwide zz-x wp-block-breadcrumbs\" id=\"zz-a\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>",
+            "<nav style=\"color:#ff0000;--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs has-text-color has-large-font-size\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"https://{host}/\">Home</a></li><li><a href=\"https://{host}/zz-top/\">Zz Top</a></li><li><span aria-current=\"page\">Zz Mid <i>m</i></span></li></ol></nav>"
+        ]
+    ],
+    [
+        "styles made safe",
+        [
+            [
+                "color : red;;margin:0",
+                "color: red;;margin:0",
+                "color: red;margin:0",
+                "color: red",
+                "color: red",
+                "",
+                "a;b",
+                "color:red;;;margin:0",
+                "color:red;",
+                "",
+                "--separator: \"/\""
+            ],
+            [
+                "style=\"\" class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"--separator: &quot;a&lt;b&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"\" class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"color: red\" class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"color: red\" class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"color: red\" class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"color:#f00\" class=\"wp-block-breadcrumbs has-text-color\" aria-label=\"B\"",
+                "style=\"color:#f00;width: calc(1px + 2px)\" class=\"wp-block-breadcrumbs has-text-color\" aria-label=\"B\"",
+                "class=\"wp-block-breadcrumbs\" aria-label=\"B\"",
+                "style=\"color : red;;margin:0\" class=\"wp-block-breadcrumbs\" aria-label=\"B\""
+            ]
+        ]
     ]
 ]

@@ -137767,7 +137767,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/KsesCss.php",
-            "lines": 137,
+            "lines": 138,
             "doc": "The style attribute as kses keeps it (safecss_filter_attr): each\ndeclaration whose property is on the list stays, a value's url() only\non the properties that may hold one and only with a safe scheme, the\ngradients and CSS functions the reference allows, and nothing that could\nend the declaration. Plugins widen the list and the verdict through the\nhooks the facade wires in (safe_style_css, safecss_filter_attr_allow_css).",
             "implements": [],
             "extends": null,
@@ -137872,8 +137872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 152
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -137893,7 +137893,7 @@
                         }
                     ],
                     "line": 86,
-                    "end": 105
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -137921,8 +137921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 139
+                    "line": 116,
+                    "end": 140
                 }
             ]
         },

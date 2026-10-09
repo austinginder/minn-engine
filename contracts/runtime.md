@@ -8414,5 +8414,37 @@ the helpers it will be built on.
   - Search, home and an unknown term give nothing.
   - On a paged archive the last crumb links to its first page and
     `Page N` follows.
-- **Still owed.** `render_block_core_breadcrumbs` still answers without
-  these: the markup the block prints is not built yet.
+- **Still owed then, done next.** The block's markup: see the next section.
+
+## The breadcrumbs block rendered (2026-10-09)
+
+Probe `breadcrumbs`, section "the block rendered" (a facade renderer on
+`minn_block_renderers`).
+
+- **When it prints.** Nothing on the home page, the blog home or a 404,
+  with or without `showOnHomePage`. Nothing either when no item is left to
+  print.
+- **The trail.**
+  - A search gives `Search results for: "{query}"`.
+  - A singular post gives its ancestors when its type is hierarchical,
+    unless it prefers its taxonomy (`prefersTaxonomy`) and has terms to
+    follow. Otherwise it gives its terms trail; its title (as markup) ends
+    the trail.
+  - Anything else gives the archive's crumbs.
+- **Markup.**
+  - `<nav {wrapper}><ol>…</ol></nav>`. The wrapper carries
+    `--separator: "{separator}"` and `aria-label="Breadcrumbs"`; quotes
+    and backslashes in the separator are escaped, so safecss refuses it.
+  - Home (`showHomeItem`) comes first as a link. Each crumb is
+    `<li><a href>label</a></li>`, labels escaped unless `allow_html`.
+  - The last item is `<li><span aria-current="page">`, dropped under
+    `showCurrentItem` false.
+- **Shared fixes.**
+  - `get_block_wrapper_attributes` runs the caller's style through
+    `safecss_filter_attr` before merging it after the supports' style. It
+    still prints a style attribute, empty, when the caller gave one that
+    is refused entirely. Before, the extra style went through unchecked.
+  - `safecss_filter_attr` trims the whole style first, passes over empty
+    pieces, and keeps a whitespace-only piece as an empty declaration
+    (`a; ;b` is `a;;b`, `color:red; ;` keeps its trailing `;`). Before,
+    every empty piece was dropped.
