@@ -1,0 +1,161 @@
+[
+    [
+        "categories by path",
+        [
+            [
+                "term",
+                "zz-cat-parent",
+                false
+            ],
+            [
+                "term",
+                "zz-cat-child",
+                true
+            ],
+            [
+                "term",
+                "zz-cat-child",
+                true
+            ],
+            null,
+            [
+                "term",
+                "zz-cat-child",
+                true
+            ],
+            null,
+            [
+                "term",
+                "zz-cat-child",
+                true
+            ],
+            {
+                "name": "Zz Cat Child",
+                "slug": "zz-cat-child",
+                "taxonomy": "category"
+            },
+            null,
+            [
+                "term",
+                "zz-cat-child",
+                true
+            ],
+            null
+        ]
+    ],
+    [
+        "categories sanitized",
+        [
+            [
+                "&lt;b&gt;Zz &#038; &#8220;Name&#8221;&lt;/b&gt;",
+                "<p>Line one<br />\nline <script>two</script></p>\n",
+                "display"
+            ],
+            [
+                "Zz <i>raw</i>",
+                "raw"
+            ],
+            "Zz &lt;b&gt;&#038; name&lt;/b&gt;",
+            "zz-slug",
+            7,
+            "Zz\n&lt;p&gt;desc&lt;/p&gt;",
+            [
+                null,
+                "zz-cached"
+            ]
+        ]
+    ],
+    [
+        "tag cloud helpers",
+        [
+            -4,
+            4,
+            0,
+            1,
+            -1,
+            0,
+            [
+                "Alpha",
+                "alpha2",
+                "alpha10",
+                "beta"
+            ],
+            [
+                0,
+                30,
+                48,
+                100,
+                104,
+                200,
+                300
+            ]
+        ]
+    ],
+    [
+        "menu items",
+        [
+            true,
+            [
+                0
+            ],
+            [
+                0
+            ],
+            [
+                1,
+                3
+            ],
+            [],
+            [],
+            true,
+            false,
+            true,
+            true,
+            [
+                4,
+                true
+            ]
+        ]
+    ],
+    [
+        "removed with its term",
+        [
+            10,
+            [
+                true,
+                true,
+                true,
+                true
+            ]
+        ]
+    ],
+    [
+        "menu template filters",
+        [
+            10,
+            [
+                "menu-item-77",
+                "",
+                "menu-item-78"
+            ],
+            10,
+            [
+                "menu-item"
+            ],
+            [
+                "menu-item",
+                "menu-item-has-children"
+            ],
+            [
+                "menu-item"
+            ],
+            [
+                "menu-item",
+                "menu-item-has-children"
+            ],
+            {
+                "1": "x"
+            }
+        ]
+    ]
+]

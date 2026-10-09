@@ -2,13 +2,13 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 772,
-        "composes": 1698,
-        "leaf": 843,
-        "noop": 2612,
+        "minn": 773,
+        "composes": 1702,
+        "leaf": 844,
+        "noop": 2619,
         "placeholder": 242,
         "deadend": 1661,
-        "functions": 7750,
+        "functions": 7763,
         "minnMethods": 932,
         "leafLinesOver15": 12
     },
@@ -28638,6 +28638,13 @@
             "minn": [],
             "composes": []
         },
+        "_is_valid_nav_menu_item": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "_json_wp_die_handler": {
             "file": "functions.php",
             "lines": 9,
@@ -31364,6 +31371,17 @@
             "minn": [],
             "composes": []
         },
+        "_nav_menu_item_id_use_once": {
+            "file": "taxonomy.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::set"
+            ],
+            "composes": []
+        },
         "_navigation_markup": {
             "file": "link-template.php",
             "lines": 13,
@@ -32373,6 +32391,16 @@
                 "wp_delete_post"
             ]
         },
+        "_wp_delete_tax_menu_item": {
+            "file": "taxonomy.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_delete_post",
+                "wp_get_associated_nav_menu_items"
+            ]
+        },
         "_wp_die_process_input": {
             "file": "functions.php",
             "lines": 32,
@@ -32730,6 +32758,20 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "_wp_object_count_sort_cb": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "_wp_object_name_sort_cb": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "_wp_oembed_get_object": {
             "file": "admin.php",
@@ -35409,6 +35451,15 @@
                 "clean_object_term_cache"
             ]
         },
+        "clean_category_cache": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "clean_term_cache"
+            ]
+        },
         "clean_comment_cache": {
             "file": "comment.php",
             "lines": 5,
@@ -36344,6 +36395,13 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "default_topic_count_scale": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "default_topic_count_text": {
             "file": "deprecated.php",
@@ -39378,6 +39436,18 @@
             "composes": [
                 "_make_cat_compat",
                 "get_term"
+            ]
+        },
+        "get_category_by_path": {
+            "file": "taxonomy.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_ancestors",
+                "get_category",
+                "get_term",
+                "get_terms"
             ]
         },
         "get_category_by_slug": {
@@ -51498,6 +51568,24 @@
                 "esc_js"
             ]
         },
+        "sanitize_category": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "sanitize_term"
+            ]
+        },
+        "sanitize_category_field": {
+            "file": "taxonomy.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "sanitize_term_field"
+            ]
+        },
         "sanitize_comment_cookies": {
             "file": "comment.php",
             "lines": 6,
@@ -53979,6 +54067,17 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "update_menu_item_cache": {
+            "file": "taxonomy.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_prime_post_caches",
+                "_prime_term_caches",
+                "get_post_meta"
+            ]
         },
         "update_meta": {
             "file": "deadends.php",
@@ -59288,6 +59387,16 @@
                 "wp_parse_args"
             ]
         },
+        "wp_get_associated_nav_menu_items": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_meta",
+                "get_posts"
+            ]
+        },
         "wp_get_attachment_caption": {
             "file": "media.php",
             "lines": 5,
@@ -63042,6 +63151,13 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "wp_nav_menu_remove_menu_item_has_children_class": {
+            "file": "taxonomy.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "wp_nav_menu_setup": {
             "file": "deadends.php",

@@ -160,6 +160,10 @@ add_action('wp_head', 'wp_custom_css_cb', 101);
 add_action('deleted_post', '_wp_after_delete_font_family', 10, 2);
 add_action('before_delete_post', '_wp_before_delete_font_face', 10, 2);
 add_action('init', '_wp_register_default_font_collections');
+// Menus (probe category-menu-helpers): a deleted term takes its menu items; an item's id prints once; has-children stops at the depth.
+add_action('delete_term', '_wp_delete_tax_menu_item', 10, 3);
+add_filter('nav_menu_item_id', '_nav_menu_item_id_use_once', 10, 2);
+add_filter('nav_menu_css_class', 'wp_nav_menu_remove_menu_item_has_children_class', 10, 4);
 add_action('wp_head', 'wp_oembed_add_host_js');
 add_filter('embed_oembed_html', 'wp_maybe_enqueue_oembed_host_js');
 add_action('wp_footer', 'wp_print_speculation_rules', 10);

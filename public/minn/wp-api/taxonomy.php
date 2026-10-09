@@ -1681,3 +1681,119 @@ function get_tax_sql($tax_query, $primary_table, $primary_id_column)
 {
     return (new WP_Tax_Query($tax_query))->get_sql($primary_table, $primary_id_column);
 }
+
+/**
+ * A category by its path of slugs (probe category-menu-helpers): each part
+ * read as a slug, the categories carrying the last one tried in turn, the
+ * one whose own path of ancestors matches returned; without a full match,
+ * the first of them when full_match is off.
+ */
+function get_category_by_path($category_path, $full_match = true, $output = OBJECT)
+{
+    $parts = array_values(array_filter(array_map('sanitize_title', explode('/', trim(urldecode((string) $category_path), '/'))), static fn ($part) => $part !== ''));
+    if ($parts === []) {
+        return null;
+    }
+    $candidates = get_terms(['taxonomy' => 'category', 'get' => 'all', 'slug' => end($parts), 'hide_empty' => false]);
+    $candidates = is_array($candidates) ? $candidates : [];
+    foreach ($candidates as $candidate) {
+        $path = array_reverse(array_map(static fn ($id) => get_term((int) $id, 'category')->slug ?? '', get_ancestors((int) $candidate->term_id, 'category', 'taxonomy')));
+        if ([...$path, $candidate->slug] === $parts) {
+            return get_category((int) $candidate->term_id, $output);
+        }
+    }
+    return !$full_match && $candidates !== [] ? get_category((int) $candidates[0]->term_id, $output) : null;
+}
+
+function sanitize_category($category, $context = 'display')
+{
+    return sanitize_term($category, 'category', $context);
+}
+
+function sanitize_category_field($field, $value, $cat_id, $context)
+{
+    return sanitize_term_field($field, $value, $cat_id, 'category', $context);
+}
+
+function clean_category_cache($id)
+{
+    clean_term_cache($id, 'category');
+}
+
+/** The tag cloud's order by count, fewest first. */
+function _wp_object_count_sort_cb($a, $b)
+{
+    return $a->count - $b->count;
+}
+
+/** The tag cloud's order by name, naturally and ignoring case. */
+function _wp_object_name_sort_cb($a, $b)
+{
+    return strnatcasecmp($a->name, $b->name);
+}
+
+/** The tag cloud's default scale: a hundred per tenfold count. */
+function default_topic_count_scale($count)
+{
+    return (int) round(log10($count + 1) * 100);
+}
+
+function _is_valid_nav_menu_item($item)
+{
+    return empty($item->_invalid);
+}
+
+/**
+ * The menu items pointing at an object: posts by their id, terms by their
+ * id and taxonomy; any status, oldest first.
+ */
+function wp_get_associated_nav_menu_items($object_id = 0, $object_type = 'post_type', $taxonomy = '')
+{
+    $items = get_posts(['post_type' => 'nav_menu_item', 'post_status' => 'any', 'posts_per_page' => -1, 'orderby' => 'ID', 'order' => 'ASC', 'fields' => 'ids', 'meta_key' => '_menu_item_object_id', 'meta_value' => (int) $object_id, 'suppress_filters' => true]);
+    return array_values(array_filter(array_map('intval', $items), static fn ($id) => get_post_meta($id, '_menu_item_type', true) === $object_type && ($object_type !== 'taxonomy' || get_post_meta($id, '_menu_item_object', true) === $taxonomy)));
+}
+
+/** A deleted term takes the menu items pointing at it. */
+function _wp_delete_tax_menu_item($object_id, $tt_id, $taxonomy)
+{
+    foreach (wp_get_associated_nav_menu_items((int) $object_id, 'taxonomy', (string) $taxonomy) as $item_id) {
+        wp_delete_post($item_id, true);
+    }
+}
+
+/** The posts and terms the menu items point at, loaded into the cache together. */
+function update_menu_item_cache($menu_items)
+{
+    $posts = [];
+    $terms = [];
+    foreach ((array) $menu_items as $item) {
+        $type = $item->type ?? get_post_meta((int) ($item->ID ?? 0), '_menu_item_type', true);
+        $object_id = (int) ($item->object_id ?? get_post_meta((int) ($item->ID ?? 0), '_menu_item_object_id', true));
+        if ($type === 'post_type') {
+            $posts[] = $object_id;
+        } elseif ($type === 'taxonomy') {
+            $terms[] = $object_id;
+        }
+    }
+    _prime_post_caches(array_values(array_unique(array_filter($posts))), false, false);
+    _prime_term_caches(array_values(array_unique(array_filter($terms))), false);
+}
+
+/** A menu item's id attribute only the first time the item prints in a request. */
+function _nav_menu_item_id_use_once($id, $item)
+{
+    $runtime = Minn\Runtime\Runtime::current();
+    $used = (array) $runtime->get('nav_menu_used_item_ids', []);
+    if (in_array($item->ID, $used, true)) {
+        return '';
+    }
+    $runtime->set('nav_menu_used_item_ids', [...$used, $item->ID]);
+    return $id;
+}
+
+/** The has-children class is dropped at the depth where a menu stops. */
+function wp_nav_menu_remove_menu_item_has_children_class($classes, $menu_item, $args = false, $depth = false)
+{
+    $limit = is_object($args) ? (int) ($args->depth ?? 0) : 0;
+    return $limit > 0 && (int) $depth + 1 >= $limit ? array_diff((array) $classes, ['menu-item-has-children']) : $classes;
+}

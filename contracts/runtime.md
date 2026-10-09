@@ -7726,3 +7726,48 @@ proves the speculative-loading functions, `WP_Speculation_Rules` and
 - **Still owed.** `wp_get_speculative_loading_override` stays missing. No
   query arg, constant, environment variable or option changed its answer
   on the reference, so its source is unknown.
+
+## Category and nav menu helpers (2026-10-09)
+
+Probe `category-menu-helpers`. It covers category-by-path lookup,
+category sanitizing and cache cleaning, the tag cloud's sort callbacks and
+count scale, and the menu item helpers: validity, associated items, the
+item cache, removal with a deleted term, and the two menu template filters.
+
+- **Categories by path.**
+  - Each path segment is sanitized as a title, so case does not matter.
+    Leading and trailing slashes are dropped.
+  - With a full match (the default), the category's whole ancestry must
+    spell the path; a child named alone is null. Without one, the last
+    segment's slug is enough.
+  - A query string in the path matches nothing.
+  - The output argument is honoured (`ARRAY_A` gives an array).
+- **Sanitizing.**
+  - `sanitize_category` and `sanitize_category_field` are the term
+    sanitizers with the taxonomy fixed to category. A raw array keeps
+    `filter` raw.
+  - `clean_category_cache` returns null. It cleans the term's cache only,
+    so a value set in the `category` group survives.
+- **Tag cloud helpers.**
+  - The count callback returns the difference of the counts.
+  - The name callback is a natural, case-insensitive comparison.
+  - `default_topic_count_scale` is `round(log10(count + 1) * 100)`.
+- **Menu items.**
+  - `_is_valid_nav_menu_item` is true unless the item is marked invalid.
+  - `wp_get_associated_nav_menu_items` lists the items pointing at an
+    object, in menu order. The taxonomy argument narrows only taxonomy
+    items; for a post type it is ignored.
+  - `update_menu_item_cache` primes the posts the items point at.
+  - `_wp_delete_tax_menu_item` runs on `delete_term` and deletes every
+    item pointing at the term. Their children stay, with their parent meta
+    unchanged.
+- **Menu template filters.**
+  - `_nav_menu_item_id_use_once` (on `nav_menu_item_id`) gives an item's
+    id once per request; a second use of the same item gets ''.
+  - `wp_nav_menu_remove_menu_item_has_children_class` (on
+    `nav_menu_css_class`) drops `menu-item-has-children` when the menu's
+    depth limit is set and the item sits at its last level. The other
+    classes keep their keys.
+- **Still owed.** `_wp_reset_invalid_menu_item_parent` stays missing. No
+  menu or post write on the reference showed it changing a parent, so its
+  trigger is unknown.
