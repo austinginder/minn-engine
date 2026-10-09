@@ -1031,6 +1031,80 @@ function wp_is_valid_utf8($bytes)
     return Minn\Support\Utf8::isValid((string) $bytes);
 }
 
+// UTF-8 helpers and the fallbacks they rest on (probe utf8).
+
+/** The text with each malformed run replaced by U+FFFD. */
+function wp_scrub_utf8($text)
+{
+    return Minn\Support\Utf8::scrub((string) $text);
+}
+
+/** Whether the text holds a noncharacter (U+FDD0 to U+FDEF, or a plane's last two), malformed bytes stepped over. */
+function wp_has_noncharacters($text)
+{
+    return Minn\Support\Utf8::hasNoncharacters((string) $text);
+}
+
+/** wp_is_valid_utf8 without mbstring. */
+function _wp_is_valid_utf8_fallback($bytes)
+{
+    return Minn\Support\Utf8::isValid((string) $bytes);
+}
+
+/** wp_scrub_utf8 without mbstring. */
+function _wp_scrub_utf8_fallback($bytes)
+{
+    return Minn\Support\Utf8::scrub((string) $bytes);
+}
+
+/** wp_has_noncharacters without mbstring; deprecated since 7.1.0. */
+function _wp_has_noncharacters_fallback($text)
+{
+    _deprecated_function(__FUNCTION__, '7.1.0');
+    return Minn\Support\Utf8::hasNoncharacters((string) $text);
+}
+
+/**
+ * Well-formed characters read from $at (Support\Utf8::scan): $at left where
+ * it stopped, $invalid_length the malformed run there, and
+ * $has_noncharacters false, then 0 or 1 once a sequence that could hold a
+ * noncharacter was read. The count read.
+ */
+function _wp_scan_utf8($bytes, &$at, &$invalid_length, $max_bytes = null, $max_code_points = null, &$has_noncharacters = null)
+{
+    [$found, $at, $invalid_length, $noncharacter] = Minn\Support\Utf8::scan((string) $bytes, (int) $at, $max_bytes, $max_code_points);
+    $has_noncharacters = $noncharacter === null ? false : (int) $noncharacter;
+    return $found;
+}
+
+/** The characters in up to $max_byte_length bytes from $byte_offset, each malformed run counting once. */
+function _wp_utf8_codepoint_count($text, $byte_offset = 0, $max_byte_length = PHP_INT_MAX)
+{
+    $text = (string) $text;
+    $offset = (int) $byte_offset;
+    $length = min((int) $max_byte_length, max(0, strlen($text) - $offset));
+    return count(Minn\Support\Utf8::characters(substr($text, $offset, $length)));
+}
+
+/** How many bytes from $byte_offset the first $max_code_points characters take; $found_code_points how many there were. */
+function _wp_utf8_codepoint_span($text, $byte_offset, $max_code_points, &$found_code_points = 0)
+{
+    [$span, $found_code_points] = Minn\Support\Utf8::span((string) $text, (int) $byte_offset, (int) $max_code_points);
+    return $span;
+}
+
+/** UTF-8 as ISO-8859-1, "?" for what it cannot hold. */
+function _wp_utf8_decode_fallback($utf8_text)
+{
+    return Minn\Support\Utf8::toLatin1((string) $utf8_text);
+}
+
+/** ISO-8859-1 as UTF-8. */
+function _wp_utf8_encode_fallback($iso_8859_1_text)
+{
+    return Minn\Support\Utf8::fromLatin1((string) $iso_8859_1_text);
+}
+
 function sanitize_user($username, $strict = false)
 {
     $raw = (string) $username;

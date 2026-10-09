@@ -32,7 +32,7 @@ escaping, serialized readers, small helpers
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`Url`](#url) | final class | 214 | URL shaping the escaping and query helpers share: the character cleanup |
-| [`Utf8`](#utf8) | final class | 52 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
+| [`Utf8`](#utf8) | final class | 145 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
 ## Accents
@@ -1008,6 +1008,46 @@ The bytes cut into characters, a malformed byte or a broken-off
 sequence counting as one.
 
 - `@return list<string>`
+
+### static `scan(string $bytes, int $at, ?int $maxBytes = NULL, ?int $maxCodePoints = NULL): array`
+
+Reads well-formed characters from $at, as the reference's scanner does
+(probe utf8). It stops $maxBytes past $at (a character begun before
+that is read whole), after $maxCodePoints, or at a malformed byte. The
+answer: the characters read, where it stopped, the length of the
+malformed run there (a broken-off start of a sequence, else one byte,
+cut at the byte limit; 0 when there is none), and whether a character
+that could be a noncharacter was one (null when none could be: only
+EF and four-byte sequences hold them).
+
+- `@return array{int, int, int, ?bool}`
+
+### static `isNoncharacter(int $code): bool`
+
+Whether a code point is a noncharacter: U+FDD0 to U+FDEF, or the last two of any plane.
+
+### static `hasNoncharacters(string $bytes): bool`
+
+Whether any well-formed character is a noncharacter, malformed bytes stepped over.
+
+### static `scrub(string $bytes): string`
+
+The bytes with each malformed run (as characters() cuts them) replaced by U+FFFD.
+
+### static `span(string $bytes, int $offset, int $maxCodePoints): array`
+
+How many bytes from $offset the first $maxCodePoints characters take,
+and how many there were.
+
+- `@return array{int, int}`
+
+### static `toLatin1(string $bytes): string`
+
+UTF-8 as ISO-8859-1: a character past U+00FF, or a malformed run, becomes "?".
+
+### static `fromLatin1(string $bytes): string`
+
+ISO-8859-1 as UTF-8: each byte the character of its value.
 
 ### static `fromCodePoint(int $code): ?string`
 

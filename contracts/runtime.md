@@ -6814,3 +6814,28 @@ functions, plus `wp_get_post_autosave` (a placeholder before), all real.
   the post. Always true.
 - The reader suite's anonymous-preview check now compares both stacks: 403 on
   each.
+
+## UTF-8 helpers (2026-10-08)
+
+Probe `utf8` (`tests/tools/utf8-probe.php`). utf8.php's `wp_scrub_utf8` and
+`wp_has_noncharacters`, and compat-utf8.php's eight fallbacks, all real, in
+`Support\Utf8`. They read malformed input the way `Utf8::characters` already
+cuts it. A malformed run is the longest broken-off start of a sequence, else
+one byte, so `"\xE2\x82"` is one run and an overlong `"\xC0\xAF"` two.
+
+- **Scrub** replaces each run with U+FFFD. **Count** counts characters in a
+  byte window, each run once. **Span** is how many bytes the first N
+  characters take, with the count found. **ISO-8859-1**: decoding gives `?`
+  for a run or a character past U+00FF, and encoding maps each byte to its
+  character.
+- **Noncharacters** are U+FDD0 to U+FDEF and each plane's last two code
+  points. `wp_has_noncharacters` steps over malformed bytes and keeps
+  looking. `_wp_has_noncharacters_fallback` is deprecated since 7.1.0 and
+  reports itself through `_deprecated_function`; nothing else here does.
+- **`_wp_scan_utf8`** reads well-formed characters from `$at`. It stops
+  `max_bytes` past where it started (a character begun inside is read
+  whole), after `max_code_points`, or at a malformed run. `$at` is left
+  there and `$invalid_length` is the run's length, cut at the byte limit (0
+  when none). The count read is returned. `$has_noncharacters` comes back
+  false, and becomes 0 or 1 (OR'd across the scan) once a sequence that
+  could hold a noncharacter is read: an `EF` lead or any four-byte one.

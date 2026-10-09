@@ -138787,7 +138787,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Utf8.php",
-            "lines": 52,
+            "lines": 145,
             "doc": "UTF-8 as the reference reads it. Well-formed means no overlong forms,\nsurrogates, code points past U+10FFFF, stray continuation bytes or\ntruncated sequences; noncharacters, NUL and a byte order mark pass. Split\ninto characters (the multibyte fallbacks in compat.php), a malformed byte\nis one character and so is the longest start of a sequence that breaks\noff, so \"\\xE2\\x82\" counts once.",
             "implements": [],
             "extends": null,
@@ -138857,6 +138857,185 @@
                 },
                 {
                     "routes": [],
+                    "name": "scan",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scan(string $bytes, int $at, ?int $maxBytes = NULL, ?int $maxCodePoints = NULL): array",
+                    "doc": "Reads well-formed characters from $at, as the reference's scanner does\n(probe utf8). It stops $maxBytes past $at (a character begun before\nthat is read whole), after $maxCodePoints, or at a malformed byte. The\nanswer: the characters read, where it stopped, the length of the\nmalformed run there (a broken-off start of a sequence, else one byte,\ncut at the byte limit; 0 when there is none), and whether a character\nthat could be a noncharacter was one (null when none could be: only\nEF and four-byte sequences hold them).",
+                    "shapes": [
+                        "@return array{int, int, int, ?bool}"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxBytes",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxCodePoints",
+                            "type": "?int",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "isNoncharacter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isNoncharacter(int $code): bool",
+                    "doc": "Whether a code point is a noncharacter: U+FDD0 to U+FDEF, or the last two of any plane.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "code",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "hasNoncharacters",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hasNoncharacters(string $bytes): bool",
+                    "doc": "Whether any well-formed character is a noncharacter, malformed bytes stepped over.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 96
+                },
+                {
+                    "routes": [],
+                    "name": "scrub",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scrub(string $bytes): string",
+                    "doc": "The bytes with each malformed run (as characters() cuts them) replaced by U+FFFD.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 99,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "span",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "span(string $bytes, int $offset, int $maxCodePoints): array",
+                    "doc": "How many bytes from $offset the first $maxCodePoints characters take,\nand how many there were.",
+                    "shapes": [
+                        "@return array{int, int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "offset",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "maxCodePoints",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 117
+                },
+                {
+                    "routes": [],
+                    "name": "toLatin1",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "toLatin1(string $bytes): string",
+                    "doc": "UTF-8 as ISO-8859-1: a character past U+00FF, or a malformed run, becomes \"?\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 126
+                },
+                {
+                    "routes": [],
+                    "name": "fromLatin1",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromLatin1(string $bytes): string",
+                    "doc": "ISO-8859-1 as UTF-8: each byte the character of its value.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 132
+                },
+                {
+                    "routes": [],
                     "name": "fromCodePoint",
                     "static": true,
                     "visibility": "public",
@@ -138872,8 +139051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 51
+                    "line": 135,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -138892,8 +139071,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 65
+                    "line": 147,
+                    "end": 158
                 }
             ]
         },

@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 744,
+        "minn": 748,
         "composes": 1590,
         "leaf": 764,
-        "noop": 2452,
+        "noop": 2458,
         "placeholder": 279,
         "deadend": 1599,
-        "functions": 7351,
-        "minnMethods": 894,
+        "functions": 7361,
+        "minnMethods": 900,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -29698,6 +29698,17 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_wp_has_noncharacters_fallback": {
+            "file": "formatting.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Utf8::hasNoncharacters"
+            ],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
         "_wp_http_get_object": {
             "file": "http.php",
             "lines": 6,
@@ -29731,6 +29742,15 @@
                 "wp_filesize"
             ],
             "deadend": "admin"
+        },
+        "_wp_is_valid_utf8_fallback": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Utf8::isValid"
+            ],
+            "composes": []
         },
         "_wp_iso_convert": {
             "file": "formatting.php",
@@ -30216,6 +30236,24 @@
                 "wp_get_document_title"
             ]
         },
+        "_wp_scan_utf8": {
+            "file": "formatting.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Utf8::scan"
+            ],
+            "composes": []
+        },
+        "_wp_scrub_utf8_fallback": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Utf8::scrub"
+            ],
+            "composes": []
+        },
         "_wp_sidebars_changed": {
             "file": "theme.php",
             "lines": 1,
@@ -30295,6 +30333,42 @@
                 "current_time",
                 "get_option"
             ]
+        },
+        "_wp_utf8_codepoint_count": {
+            "file": "formatting.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Utf8::characters"
+            ],
+            "composes": []
+        },
+        "_wp_utf8_codepoint_span": {
+            "file": "formatting.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Utf8::span"
+            ],
+            "composes": []
+        },
+        "_wp_utf8_decode_fallback": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Utf8::toLatin1"
+            ],
+            "composes": []
+        },
+        "_wp_utf8_encode_fallback": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Utf8::fromLatin1"
+            ],
+            "composes": []
         },
         "_wptexturize_pushpop_element": {
             "file": "formatting.php",
@@ -58020,6 +58094,15 @@
                 "_wp_array_get"
             ]
         },
+        "wp_has_noncharacters": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Utf8::hasNoncharacters"
+            ],
+            "composes": []
+        },
         "wp_hash": {
             "file": "pluggable.php",
             "lines": 1,
@@ -62539,6 +62622,15 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": []
+        },
+        "wp_scrub_utf8": {
+            "file": "formatting.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Utf8::scrub"
+            ],
             "composes": []
         },
         "wp_send_json": {
