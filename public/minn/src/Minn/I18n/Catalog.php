@@ -9,7 +9,7 @@ namespace Minn\I18n;
  * keyed the gettext way (the context, a 0x04 byte, then the original; the
  * original alone without a context), each with its translated forms and,
  * where the file says, the original plural, and the file's plural rule.
- * An empty translation counts as none.
+ * An empty translation is still a translation: it is what the file says.
  */
 final readonly class Catalog
 {
@@ -45,23 +45,25 @@ final readonly class Catalog
         return null;
     }
 
-    /** The translation of a message, or null when the file has none. */
+    /** The translation of a message, empty when the file says so, or null when the file has no entry. */
     public function translate(string $key): ?string
     {
-        $first = $this->entries[$key]['translations'][0] ?? '';
-        return $first === '' ? null : $first;
+        return isset($this->entries[$key]) ? (string) ($this->entries[$key]['translations'][0] ?? '') : null;
     }
 
-    /** The form of a message a count takes under this file's rule, or null when the file has none. */
+    /** The form of a message a count takes under this file's rule (the first form when the file has fewer), or null when the file has no entry. */
     public function translatePlural(string $key, int $count): ?string
     {
-        $form = $this->entries[$key]['translations'][$this->plural->index($count)] ?? '';
-        return $form === '' ? null : $form;
+        if (!isset($this->entries[$key])) {
+            return null;
+        }
+        $forms = $this->entries[$key]['translations'];
+        return (string) ($forms[$this->plural->index($count)] ?? $forms[0] ?? '');
     }
 
-    /** Whether the file holds a translation for the message. */
+    /** Whether the file has an entry for the message. */
     public function has(string $key): bool
     {
-        return $this->translate($key) !== null;
+        return isset($this->entries[$key]);
     }
 }

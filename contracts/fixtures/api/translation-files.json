@@ -1,0 +1,730 @@
+[
+    [
+        "translation files opened",
+        [
+            [
+                "WP_Translation_File_MO",
+                "{dir}/zz-probe.mo",
+                null,
+                {
+                    "project-id-version": "Zz",
+                    "content-type": "text/plain; charset=UTF-8",
+                    "plural-forms": "nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
+                },
+                {
+                    "Empty": "",
+                    "Hello": "Witaj",
+                    "apple": "jabłko\u0000jabłka\u0000jabłek",
+                    "menu\u0004Open": "Otwórz"
+                },
+                "Witaj",
+                false,
+                "Otwórz",
+                [
+                    2,
+                    0,
+                    1,
+                    2,
+                    1,
+                    2,
+                    2
+                ]
+            ],
+            [
+                "WP_Translation_File_PHP",
+                "{dir}/zz-probe.l10n.php",
+                null,
+                {
+                    "project-id-version": "Zz PHP",
+                    "plural-forms": "nplurals=2; plural=(n != 1);"
+                },
+                {
+                    "Hello": "Hallo",
+                    "apple\u0000apples": "Apfel\u0000Äpfel",
+                    "menu\u0004Open": "Öffnen"
+                },
+                "Hallo",
+                false,
+                "Öffnen",
+                [
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "WP_Translation_File_MO",
+                "{dir}/zz-probe.mo",
+                null,
+                {
+                    "project-id-version": "Zz",
+                    "content-type": "text/plain; charset=UTF-8",
+                    "plural-forms": "nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
+                },
+                {
+                    "Empty": "",
+                    "Hello": "Witaj",
+                    "apple": "jabłko\u0000jabłka\u0000jabłek",
+                    "menu\u0004Open": "Otwórz"
+                },
+                "Witaj",
+                false,
+                "Otwórz",
+                [
+                    2,
+                    0,
+                    1,
+                    2,
+                    1,
+                    2,
+                    2
+                ]
+            ],
+            [
+                "WP_Translation_File_PHP",
+                "{dir}/zz-probe.l10n.php",
+                null,
+                {
+                    "project-id-version": "Zz PHP",
+                    "plural-forms": "nplurals=2; plural=(n != 1);"
+                },
+                {
+                    "Hello": "Hallo",
+                    "apple\u0000apples": "Apfel\u0000Äpfel",
+                    "menu\u0004Open": "Öffnen"
+                },
+                "Hallo",
+                false,
+                "Öffnen",
+                [
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            false,
+            false,
+            [
+                null,
+                []
+            ],
+            [
+                null,
+                []
+            ]
+        ]
+    ],
+    [
+        "the MO header checked",
+        [
+            "V",
+            "N",
+            false,
+            false,
+            "Magic marker does not exist",
+            2500072158,
+            "WP_Translation_File"
+        ]
+    ],
+    [
+        "translation files exported",
+        [
+            "6d76e3ecf4790f40b8da1f3e7ac80db6",
+            46,
+            "<?php\nreturn ['messages'=>[]];\n",
+            "<?php\nreturn ['project-id-version'=>'Zz','content-type'=>'text/plain; charset=UTF-8','plural-forms'=>'nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);','messages'=>['Empty'=>'','Hello'=>'Witaj','apple'=>'jabłko' . \"\\0\" . 'jabłka' . \"\\0\" . 'jabłek','menu\u0004Open'=>'Otwórz']];\n",
+            [
+                "64b3d38df25d4841f724b110601ea39d",
+                220
+            ],
+            false,
+            false
+        ]
+    ],
+    [
+        "plural form expressions",
+        [
+            [
+                "n != 1",
+                [
+                    1,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                1
+            ],
+            [
+                "n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2",
+                [
+                    2,
+                    0,
+                    1,
+                    1,
+                    1,
+                    2,
+                    2,
+                    2,
+                    1,
+                    2,
+                    1,
+                    1
+                ],
+                2
+            ],
+            [
+                "0",
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ],
+                0
+            ],
+            [
+                "n",
+                [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    11,
+                    21,
+                    22,
+                    101,
+                    102,
+                    104
+                ],
+                7
+            ],
+            [
+                "(n > 1)",
+                [
+                    0,
+                    0,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ],
+                1
+            ],
+            [
+                "n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3",
+                [
+                    3,
+                    0,
+                    1,
+                    2,
+                    2,
+                    3,
+                    3,
+                    3,
+                    3,
+                    0,
+                    1,
+                    2
+                ],
+                3
+            ],
+            [
+                "n +",
+                "built",
+                "Exception",
+                "Unknown symbol \"+\""
+            ],
+            [
+                "zz",
+                "built",
+                "Exception",
+                "Unknown symbol \"z\""
+            ],
+            [
+                "(n",
+                "built",
+                "Exception",
+                "Mismatched parentheses"
+            ],
+            [
+                "n)",
+                "built",
+                "Exception",
+                "Mismatched parentheses"
+            ],
+            [
+                "(n > 1",
+                "built",
+                "Exception",
+                "Mismatched parentheses"
+            ],
+            [
+                "n > 1)",
+                "built",
+                "Exception",
+                "Mismatched parentheses"
+            ],
+            [
+                "n n",
+                "evaluated",
+                "Exception",
+                "Too many values remaining on the stack"
+            ],
+            [
+                "1 2",
+                "evaluated",
+                "Exception",
+                "Too many values remaining on the stack"
+            ],
+            [
+                "",
+                "evaluated",
+                "Exception",
+                "Too many values remaining on the stack"
+            ],
+            [
+                ": 1",
+                "built",
+                "Exception",
+                "Missing starting \"?\" ternary operator"
+            ],
+            [
+                "n ? 1 : 2 : 3",
+                "built",
+                "Exception",
+                "Missing starting \"?\" ternary operator"
+            ],
+            [
+                "!n",
+                "built",
+                "Exception",
+                "Unknown operator \"!\""
+            ],
+            [
+                "?",
+                "evaluated",
+                "Exception",
+                "Unknown operator \"?\""
+            ],
+            [
+                "n ? 1",
+                "evaluated",
+                "Exception",
+                "Unknown operator \"?\""
+            ],
+            [
+                "n % 0",
+                "evaluated",
+                "DivisionByZeroError",
+                "Modulo by zero"
+            ],
+            [
+                "n / 2",
+                "built",
+                "Exception",
+                "Unknown symbol \"/\""
+            ],
+            [
+                "n * 2",
+                "built",
+                "Exception",
+                "Unknown symbol \"*\""
+            ],
+            [
+                "n - 1",
+                "built",
+                "Exception",
+                "Unknown symbol \"-\""
+            ],
+            [
+                "n ==",
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                "n >= ",
+                [
+                    1,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                "n == 1 && ",
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                "n ? 1 : ",
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "\tn\t!=\t1\t",
+                [
+                    1,
+                    0,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "n  >  1",
+                [
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "12 % 5",
+                [
+                    2,
+                    2,
+                    2,
+                    2,
+                    2
+                ]
+            ],
+            [
+                "n % 10 == 1 && n % 100 != 11",
+                [
+                    0,
+                    1,
+                    0,
+                    0,
+                    1
+                ]
+            ],
+            [
+                "n % 10 % 3",
+                [
+                    0,
+                    1,
+                    0,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "(n == 1) == 1",
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                "n == 1 == 1",
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                "n !=",
+                [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "n\n!= 1",
+                "built",
+                "Exception",
+                "Unknown symbol \"\n\""
+            ],
+            [
+                "n = 1",
+                "built",
+                "Exception",
+                "Unknown operator \"=\""
+            ],
+            [
+                "n & 1",
+                "built",
+                "Exception",
+                "Unknown operator \"&\""
+            ],
+            [
+                "n || 0 && 0",
+                [
+                    0,
+                    1,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            [
+                "1 ? 0 : 1 ? 4 : 5",
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+                ]
+            ],
+            [
+                "n ? 1 ? 2 : 3 : 4",
+                [
+                    4,
+                    2,
+                    2,
+                    2,
+                    2
+                ]
+            ],
+            [
+                "n > 1 > 0",
+                [
+                    0,
+                    0,
+                    1,
+                    1,
+                    1
+                ]
+            ],
+            null
+        ]
+    ],
+    [
+        "translations looked up across files",
+        [
+            [
+                "",
+                "A1",
+                "B2",
+                false,
+                "f0",
+                false
+            ],
+            [
+                [
+                    "f0",
+                    "f1",
+                    "f0"
+                ],
+                [
+                    "qb0",
+                    "qb1",
+                    "qb1"
+                ],
+                [
+                    "x",
+                    "y",
+                    "x"
+                ],
+                [
+                    "c0",
+                    "c1",
+                    "c0"
+                ],
+                [
+                    "full0",
+                    "full1",
+                    "full0"
+                ],
+                [
+                    "t0",
+                    "t1",
+                    "t1"
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    false,
+                    false,
+                    false
+                ],
+                [
+                    "f0",
+                    "f1",
+                    "f0"
+                ],
+                [
+                    "B2",
+                    "B2",
+                    "B2"
+                ],
+                [
+                    "",
+                    "",
+                    ""
+                ]
+            ],
+            [
+                true,
+                false,
+                true,
+                false
+            ],
+            {
+                "Empty": "Full",
+                "One": "B1",
+                "p\u0000ps": "f0\u0000f1",
+                "q": "qa0\u0000qa1",
+                "s": "x\u0000y",
+                "ctx\u0004c\u0000cs": "c0\u0000c1",
+                "both": "single0\u0000single1",
+                "both\u0000boths": "full0\u0000full1",
+                "Two": "B2",
+                "q\u0000qs": "qb0\u0000qb1",
+                "t\u0000ts\u0000tss": "t0\u0000t1"
+            },
+            {
+                "Project-Id-Version": "Second",
+                "X-Zz": "a",
+                "Plural-Forms": "nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);",
+                "X-Other": "b"
+            },
+            [
+                "",
+                "B2",
+                "zzs",
+                "zz"
+            ]
+        ]
+    ],
+    [
+        "an empty translation through the gettext functions",
+        [
+            "",
+            "P",
+            "",
+            "x",
+            "WP_Translations"
+        ]
+    ],
+    [
+        "the old translations object",
+        [
+            "Witaj",
+            "Nope",
+            "Otwórz",
+            "",
+            [
+                "jabłko",
+                "jabłka",
+                "jabłek"
+            ],
+            "pears",
+            "pear",
+            {
+                "Project-Id-Version": "Zz",
+                "Content-Type": "text/plain; charset=UTF-8",
+                "Plural-Forms": "nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);"
+            },
+            [
+                [
+                    "Translation_Entry",
+                    "Empty",
+                    null,
+                    null,
+                    [
+                        ""
+                    ]
+                ],
+                [
+                    "Translation_Entry",
+                    "Hello",
+                    null,
+                    null,
+                    [
+                        "Witaj"
+                    ]
+                ],
+                [
+                    "Translation_Entry",
+                    "apple",
+                    null,
+                    null,
+                    [
+                        "jabłko",
+                        "jabłka",
+                        "jabłek"
+                    ]
+                ],
+                [
+                    "Translation_Entry",
+                    "Open",
+                    null,
+                    "menu",
+                    [
+                        "Otwórz"
+                    ]
+                ]
+            ],
+            "unset"
+        ]
+    ]
+]

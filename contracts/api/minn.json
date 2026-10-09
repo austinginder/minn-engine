@@ -66860,8 +66860,8 @@
             "namespace": "Minn\\I18n",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/I18n/Catalog.php",
-            "lines": 54,
-            "doc": "One translation file's contents: its headers as written, its messages\nkeyed the gettext way (the context, a 0x04 byte, then the original; the\noriginal alone without a context), each with its translated forms and,\nwhere the file says, the original plural, and the file's plural rule.\nAn empty translation counts as none.",
+            "lines": 56,
+            "doc": "One translation file's contents: its headers as written, its messages\nkeyed the gettext way (the context, a 0x04 byte, then the original; the\noriginal alone without a context), each with its translated forms and,\nwhere the file says, the original plural, and the file's plural rule.\nAn empty translation is still a translation: it is what the file says.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -67020,7 +67020,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "translate(string $key): ?string",
-                    "doc": "The translation of a message, or null when the file has none.",
+                    "doc": "The translation of a message, empty when the file says so, or null when the file has no entry.",
                     "shapes": [],
                     "params": [
                         {
@@ -67032,7 +67032,7 @@
                         }
                     ],
                     "line": 49,
-                    "end": 53
+                    "end": 52
                 },
                 {
                     "routes": [],
@@ -67040,7 +67040,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "translatePlural(string $key, int $count): ?string",
-                    "doc": "The form of a message a count takes under this file's rule, or null when the file has none.",
+                    "doc": "The form of a message a count takes under this file's rule (the first form when the file has fewer), or null when the file has no entry.",
                     "shapes": [],
                     "params": [
                         {
@@ -67058,8 +67058,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 60
+                    "line": 55,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -67067,7 +67067,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "has(string $key): bool",
-                    "doc": "Whether the file holds a translation for the message.",
+                    "doc": "Whether the file has an entry for the message.",
                     "shapes": [],
                     "params": [
                         {
@@ -67078,8 +67078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 65,
+                    "end": 68
                 }
             ]
         },
@@ -67375,6 +67375,266 @@
                     ],
                     "line": 73,
                     "end": 83
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\LegacyPluralForms",
+            "short": "LegacyPluralForms",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/LegacyPluralForms.php",
+            "lines": 173,
+            "doc": "The plural expression reader the old POMO library carries (Plural_Forms),\nkept apart from PluralExpression because plugins see its quirks: it reads\nonly n, whole numbers, parentheses, % and the comparisons, && and ||, and\nthe ternary, skipping spaces and tabs alone. It turns the expression into\npostfix tokens once (operators of equal strength group to the left, the\nternary to the right) and runs them on a stack per number: an operand the\nstack lacks is null, == and != compare strictly, values stay as PHP left\nthem until the answer is cast to an integer, and % is PHP's own, so a zero\ndivisor throws. Every refusal is an Exception with the reference's words\n(probe translation-files).",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "OP_CHARS",
+                    "value": "'|&><!=%?:'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PRECEDENCE",
+                    "value": "array (   '%' => 6,   '<' => 5,   '<=' => 5,   '>' => 5,   '>=' => 5,   '==' => 4,   '!=' => 4,   '&&' => 3,   '||' => 2,   '?:' => 1,   '?' => 1,   '(' => 0,   ')' => 0, )",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "parse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "parse(string $expression): array",
+                    "doc": "The expression as postfix tokens: ['var'], ['value', int] or ['op', string].",
+                    "shapes": [
+                        "@return list<array{0: string, 1?: int|string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "execute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "execute(array $tokens, int $n): int",
+                    "doc": "The value of postfix tokens for one number.",
+                    "shapes": [
+                        "@param list<array{0: string, 1?: int|string}> $tokens"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1?: int|string}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "n",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "token",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "token(string $expression, int $at, array $output, array $stack): int",
+                    "doc": "Reads one token at an offset onto the output or the operator stack; the offset after it.",
+                    "shapes": [
+                        "@param list<array{0: string, 1?: int|string}> $output",
+                        "@param list<string> $stack"
+                    ],
+                    "params": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "output",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1?: int|string}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "operator",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "operator(string $expression, int $at, array $output, array $stack): int",
+                    "doc": "Reads the one- or two-character operator at an offset; its length.",
+                    "shapes": [
+                        "@param list<array{0: string, 1?: int|string}> $output",
+                        "@param list<string> $stack"
+                    ],
+                    "params": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "at",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "output",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1?: int|string}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "closeParenthesis",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "closeParenthesis(array $output, array $stack): void",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<array{0: string, 1?: int|string}> $output",
+                        "@param list<string> $stack"
+                    ],
+                    "params": [
+                        {
+                            "name": "output",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1?: int|string}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 140,
+                    "end": 149
+                },
+                {
+                    "routes": [],
+                    "name": "closeTernary",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "closeTernary(array $output, array $stack): void",
+                    "doc": "A \":\" moves operators out until its \"?\", which becomes the whole ternary.",
+                    "shapes": [
+                        "@param list<array{0: string, 1?: int|string}> $output",
+                        "@param list<string> $stack"
+                    ],
+                    "params": [
+                        {
+                            "name": "output",
+                            "type": "array",
+                            "shape": "list<array{0: string, 1?: int|string}>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 157,
+                    "end": 166
+                },
+                {
+                    "routes": [],
+                    "name": "apply",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "apply(string $operator, array $stack): mixed",
+                    "doc": "Runs one operator on the values it pops, rightmost first.",
+                    "shapes": [
+                        "@param list<mixed> $stack"
+                    ],
+                    "params": [
+                        {
+                            "name": "operator",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stack",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 192
                 }
             ]
         },
@@ -68308,7 +68568,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/TextDomains.php",
-            "lines": 163,
+            "lines": 171,
             "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. A lookup asks a domain's files in load order and\nthe first one with a translation answers, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
             "implements": [],
             "extends": null,
@@ -68589,9 +68849,11 @@
                     "name": "translatePlural",
                     "static": false,
                     "visibility": "public",
-                    "signature": "translatePlural(string $domain, string $key, int $count): ?string",
-                    "doc": "The first loaded plural form of a key for a count, or null.",
-                    "shapes": [],
+                    "signature": "translatePlural(string $domain, array $keys, int $count): ?string",
+                    "doc": "The first loaded plural form for a count, or null: each key is looked\nfor in every file before the next key (the full \"singular NUL plural\"\nkey, then the singular alone).",
+                    "shapes": [
+                        "@param list<string> $keys"
+                    ],
                     "params": [
                         {
                             "name": "domain",
@@ -68601,9 +68863,9 @@
                             "doc": ""
                         },
                         {
-                            "name": "key",
-                            "type": "string",
-                            "shape": "",
+                            "name": "keys",
+                            "type": "array",
+                            "shape": "list<string>",
                             "default": null,
                             "doc": ""
                         },
@@ -68615,8 +68877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 124
+                    "line": 122,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -68642,8 +68904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 131
+                    "line": 135,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -68669,8 +68931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 138
+                    "line": 142,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -68696,8 +68958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 155
+                    "line": 156,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -68716,8 +68978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 161
+                    "line": 166,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -68736,8 +68998,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 167
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -68750,8 +69012,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 174,
-                    "end": 177
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -68770,8 +69032,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 145
+                    "line": 148,
+                    "end": 153
                 }
             ]
         },

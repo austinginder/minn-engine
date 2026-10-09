@@ -74,7 +74,7 @@ final class Gettext
     {
         if (self::$loader !== null) {
             (self::$loader)($domain);
-            $form = Runtime::textDomains()->translatePlural($domain, Catalog::key($single, $context), $number);
+            $form = Runtime::textDomains()->translatePlural($domain, [Catalog::key($single . "\0" . $plural, $context), Catalog::key($single, $context)], $number);
             if ($form !== null) {
                 return $form;
             }

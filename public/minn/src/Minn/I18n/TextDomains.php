@@ -112,12 +112,20 @@ final class TextDomains
         return null;
     }
 
-    /** The first loaded plural form of a key for a count, or null. */
-    public function translatePlural(string $domain, string $key, int $count): ?string
+    /**
+     * The first loaded plural form for a count, or null: each key is looked
+     * for in every file before the next key (the full "singular NUL plural"
+     * key, then the singular alone).
+     *
+     * @param list<string> $keys
+     */
+    public function translatePlural(string $domain, array $keys, int $count): ?string
     {
-        foreach ($this->catalogs($domain) as $catalog) {
-            if ($catalog->has($key)) {
-                return $catalog->translatePlural($key, $count);
+        foreach ($keys as $key) {
+            foreach ($this->catalogs($domain) as $catalog) {
+                if ($catalog->has($key)) {
+                    return $catalog->translatePlural($key, $count);
+                }
             }
         }
         return null;

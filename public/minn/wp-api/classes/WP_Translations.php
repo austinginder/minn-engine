@@ -14,10 +14,11 @@ class WP_Translations
 
     public function __get(string $name)
     {
+        // The entries as a list, not keyed by original (probe translation-files).
         if ($name === 'entries') {
             $entries = [];
             foreach ($this->controller->get_entries($this->textdomain) as $original => $translations) {
-                $entries[$original] = $this->make_entry($original, $translations);
+                $entries[] = $this->make_entry($original, $translations);
             }
             return $entries;
         }

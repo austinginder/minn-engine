@@ -133,14 +133,19 @@ class WP_Translation_File_MO extends WP_Translation_File
 
     protected $uint32 = false;
 
+    /** The byte order the magic number says ('V' little-endian, 'N' big-endian), or false with the error recorded (probe translation-files). */
     protected function detect_endian_and_validate_file(string $header)
     {
-        $magic = unpack('V', substr($header, 0, 4))[1] ?? 0;
-        return match ($magic) {
+        $magic = strlen($header) >= 4 ? unpack('V', $header)[1] : 0;
+        $endian = match ($magic) {
             self::MAGIC_MARKER => 'V',
             0xde120495 => 'N',
             default => false,
         };
+        if ($endian === false) {
+            $this->error = 'Magic marker does not exist';
+        }
+        return $endian;
     }
 
     protected function parse_file(): bool
@@ -149,13 +154,14 @@ class WP_Translation_File_MO extends WP_Translation_File
         return $this->error === null;
     }
 
+    /** The headers and entries held, written as a .mo file; a file never read exports empty (probe translation-files). */
     public function export(): string
     {
         $entries = [];
-        foreach ($this->entries() as $key => $translation) {
+        foreach ($this->entries as $key => $translation) {
             $entries[(string) $key] = ['translations' => explode("\0", (string) $translation), 'plural' => null];
         }
-        return MoFile::write($this->headers(), $entries);
+        return MoFile::write($this->headers, $entries);
     }
 }
 
@@ -166,13 +172,22 @@ class WP_Translation_File_PHP extends WP_Translation_File
         parent::parse_file();
     }
 
+    /** The headers and entries held, written as a .l10n.php file; a file never read exports no messages (probe translation-files). */
     public function export(): string
     {
-        return '<?php' . PHP_EOL . 'return ' . $this->var_export($this->headers() + ['messages' => $this->entries()]) . ';' . PHP_EOL;
+        return '<?php' . PHP_EOL . 'return ' . $this->var_export($this->headers + ['messages' => $this->entries]) . ';' . PHP_EOL;
     }
 
+    /** PHP's own export without its spacing: arrays as [key=>value,...] on one line. */
     private function var_export($value): string
     {
-        return var_export($value, true);
+        if (!is_array($value)) {
+            return var_export($value, true);
+        }
+        $pairs = [];
+        foreach ($value as $key => $item) {
+            $pairs[] = var_export($key, true) . '=>' . $this->var_export($item);
+        }
+        return '[' . implode(',', $pairs) . ']';
     }
 }

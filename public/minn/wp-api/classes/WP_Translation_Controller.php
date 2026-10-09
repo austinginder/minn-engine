@@ -71,9 +71,11 @@ class WP_Translation_Controller
         return Runtime::textDomains()->translate($textdomain, Catalog::key($text, $context)) ?? false;
     }
 
+    /** The form a count takes: the plurals joined by NUL bytes are looked for in every file first, then the singular alone (probe translation-files). */
     public function translate_plural(array $plurals, int $number, string $context = '', string $textdomain = 'default', ?string $locale = null)
     {
-        return Runtime::textDomains()->translatePlural($textdomain, Catalog::key((string) ($plurals[0] ?? ''), $context), $number) ?? false;
+        $keys = [Catalog::key(implode("\0", $plurals), $context), Catalog::key((string) ($plurals[0] ?? ''), $context)];
+        return Runtime::textDomains()->translatePlural($textdomain, $keys, $number) ?? false;
     }
 
     public function get_headers(string $textdomain = 'default'): array
@@ -82,8 +84,9 @@ class WP_Translation_Controller
         if (!$this->is_textdomain_loaded($textdomain)) {
             return [];
         }
+        // Every file's headers in load order, a later file's value replacing an earlier one's (probe translation-files).
         $headers = [];
-        foreach (array_reverse(Runtime::textDomains()->catalogs($textdomain)) as $catalog) {
+        foreach (Runtime::textDomains()->catalogs($textdomain) as $catalog) {
             foreach ($catalog->headers as $name => $value) {
                 $headers[$this->normalize_header((string) $name)] = $value;
             }
@@ -102,8 +105,9 @@ class WP_Translation_Controller
         if (!$this->is_textdomain_loaded($textdomain)) {
             return [];
         }
+        // Every file's entries in load order, a later file's translation replacing an earlier one's (probe translation-files).
         $entries = [];
-        foreach (array_reverse(Runtime::textDomains()->catalogs($textdomain)) as $catalog) {
+        foreach (Runtime::textDomains()->catalogs($textdomain) as $catalog) {
             foreach ($catalog->entries as $key => $entry) {
                 $entries[$key] = implode("\0", $entry['translations']);
             }
@@ -126,7 +130,7 @@ class WP_Translation_Controller
         return array_values(array_filter(array_map(static fn (string $file) => WP_Translation_File::create($file), array_keys(Runtime::textDomains()->catalogs($textdomain)))));
     }
 
-    /** Whether the domain was loaded for the locale (the current one by default) and its catalog translates the string. */
+    /** Whether the domain was loaded for the locale (the current one by default) and a file has an entry for the key, empty or not. */
     public function has_translation(string $singular, string $textdomain = 'default', ?string $locale = null): bool
     {
         return isset($this->loaded_translations[$locale ?? $this->current_locale][$textdomain]) && Runtime::textDomains()->translate($textdomain, $singular) !== null;

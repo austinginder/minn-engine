@@ -9072,3 +9072,47 @@ widget's empty settings; the probe deletes them at the end.
 - **`WP_Widget_Block`.** `update` runs kses on the content for a user
   without `unfiltered_html`. Before, it was raw for everyone. Its display
   is proven too.
+
+## Translation files and lookups (2026-10-09)
+
+Probe `translation-files`. The probe writes its own MO and PHP files to a
+temporary folder, removes them at the end, and unloads its text domains.
+
+- **Shared fix: an empty translation is a translation.** A file entry whose
+  translation is empty now answers empty, through the controller and
+  through `__()` and `_n()`, as on the reference. Before, the engine treated
+  it as no translation and printed the original. A plural form the file
+  lacks (a Polish count against an entry with two forms) falls back to the
+  entry's first form.
+- **Shared fix: plural lookups.** `_n()` and `translate_plural` look for the
+  plurals joined by NUL bytes (with the context in front) in every loaded
+  file first, then for the singular alone. A PHP file keys plural entries
+  that way; an MO file keys them by the singular. Before, only the singular
+  was looked for, so a PHP file's plurals never matched.
+- **`WP_Translation_Controller`.** The first loaded file with an entry
+  answers. `get_entries` and `get_headers` merge every file in load order,
+  a later file's value replacing an earlier one's; before, the first file
+  won. `has_translation` is true for an empty entry too.
+- **`WP_Translations`.** `entries` is a list, not keyed by original.
+- **`WP_Translation_File`.**
+  - The MO header check records "Magic marker does not exist" as the
+    file's error when the magic number is wrong.
+  - `export` writes the headers and entries the object holds, without
+    reading its file first, so a file never read exports empty.
+  - The PHP export is PHP's own export without spacing:
+    `['key'=>'value',...]` on one line, headers first and `messages` last.
+- **`Plural_Forms`** runs on `Minn\I18n\LegacyPluralForms`, POMO's own
+  reader, kept apart from the engine's `PluralExpression` because plugins
+  see its quirks. Kept on purpose:
+  - Only `n`, whole numbers, parentheses, `%`, the comparisons, `&&`,
+    `||` and the ternary are read. `+`, `-`, `*`, `/` are "Unknown symbol",
+    and `!`, `=`, `&` alone are "Unknown operator".
+  - Only spaces and tabs are skipped; a newline is an unknown symbol.
+  - Operators of equal strength group to the left; the ternary groups to
+    the right.
+  - A missing operand is null, so `n ==` is 0 and `n ? 1 :` is 1.
+  - `==` and `!=` compare strictly, and results stay booleans until the
+    answer is cast, so `(n == 1) == 1` is always 0.
+  - `% 0` throws PHP's own `DivisionByZeroError`.
+  - Refusals of the expression's shape come from building it; an unmatched
+    `?`, values left over, and the empty expression come from evaluating it.

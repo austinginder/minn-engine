@@ -4,8 +4,8 @@
     "summary": {
         "minn": 773,
         "composes": 1831,
-        "leaf": 873,
-        "noop": 2656,
+        "leaf": 874,
+        "noop": 2655,
         "placeholder": 242,
         "deadend": 1664,
         "functions": 7961,
@@ -4425,7 +4425,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\I18n\\PluralExpression::evaluate"
+                "Minn\\I18n\\LegacyPluralForms::execute"
             ],
             "composes": []
         },
@@ -4438,10 +4438,10 @@
         },
         "Plural_Forms::parse": {
             "file": "classes/POMO.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\I18n\\PluralExpression::parse"
+                "Minn\\I18n\\LegacyPluralForms::parse"
             ],
             "composes": []
         },
@@ -24827,7 +24827,7 @@
         },
         "WP_Translation_Controller::get_entries": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
@@ -24845,7 +24845,7 @@
         },
         "WP_Translation_Controller::get_headers": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::textDomains"
@@ -24929,8 +24929,8 @@
         },
         "WP_Translation_Controller::translate_plural": {
             "file": "classes/WP_Translation_Controller.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
                 "Minn\\I18n\\Catalog::key",
                 "Minn\\Runtime\\Runtime::textDomains"
@@ -25062,7 +25062,7 @@
         },
         "WP_Translation_File_MO::detect_endian_and_validate_file": {
             "file": "classes/WP_Translation_File.php",
-            "lines": 6,
+            "lines": 10,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -25099,8 +25099,8 @@
         },
         "WP_Translation_File_PHP::var_export": {
             "file": "classes/WP_Translation_File.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -25113,7 +25113,7 @@
         },
         "WP_Translations::__get": {
             "file": "classes/WP_Translations.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "leaf",
             "minn": [],
             "composes": []

@@ -8,7 +8,7 @@
 
 use Minn\I18n\Catalog;
 use Minn\I18n\MoFile;
-use Minn\I18n\PluralExpression;
+use Minn\I18n\LegacyPluralForms;
 use Minn\I18n\PluralRule;
 
 #[AllowDynamicProperties]
@@ -334,13 +334,10 @@ class Plural_Forms
         $this->parse($str);
     }
 
+    /** The expression read into postfix tokens; an Exception names what it could not read (probe translation-files). */
     protected function parse($str)
     {
-        $tree = PluralExpression::parse((string) $str);
-        if ($tree === null) {
-            throw new Exception('Syntax error');
-        }
-        $this->tokens = $tree;
+        $this->tokens = LegacyPluralForms::parse((string) $str);
     }
 
     public function get($num)
@@ -350,6 +347,6 @@ class Plural_Forms
 
     public function execute($n)
     {
-        return PluralExpression::evaluate($this->tokens, (int) $n);
+        return LegacyPluralForms::execute($this->tokens, (int) $n);
     }
 }
