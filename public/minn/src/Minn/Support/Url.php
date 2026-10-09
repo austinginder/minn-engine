@@ -202,8 +202,9 @@ final class Url
     }
 
     /**
-     * A redirect target the site may send a browser to: http(s) only, no
-     * credentials, and a host the caller allows (local paths always pass).
+     * A redirect target the site may send a browser to: http(s) only and a
+     * host the caller allows (local paths always pass). Credentials before
+     * the host are kept, as the reference keeps them: the host decides.
      *
      * @param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host
      */
@@ -216,7 +217,7 @@ final class Url
         if (!is_array($parts) || !isset($parts['host'])) {
             return null;
         }
-        if ((isset($parts['scheme']) && !in_array($parts['scheme'], ['http', 'https'], true)) || isset($parts['user']) || isset($parts['pass'])) {
+        if (isset($parts['scheme']) && !in_array($parts['scheme'], ['http', 'https'], true)) {
             return null;
         }
         if ($parts['host'] !== 'placeholder.invalid' && !in_array($parts['host'], $allowedHosts($parts['host']), true)) {

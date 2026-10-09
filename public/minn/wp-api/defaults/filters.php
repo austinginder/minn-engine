@@ -428,6 +428,10 @@ add_filter('option_siteurl', '_config_wp_siteurl');
 add_action('init', 'smilies_init', 5);
 add_action('plugins_loaded', 'wp_maybe_load_widgets', 0);
 add_action('update_option_admin_email', 'wp_site_admin_email_change_notification', 10, 3);
+// A request to the site's own host or an allowed redirect host is let through; a home moved to https flags the
+// content for migration (probe https-helpers).
+add_filter('http_request_host_is_external', 'allowed_http_request_hosts', 10, 2);
+add_action('update_option_home', 'wp_update_https_migration_required', 10, 2);
 // oEmbed, as the reference registers it: a post's data made rich, a provider's iframe titled.
 add_filter('oembed_response_data', 'get_oembed_response_data_rich', 10, 4);
 add_filter('oembed_dataparse', 'wp_filter_oembed_iframe_title_attribute', 5, 3);

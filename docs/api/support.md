@@ -32,7 +32,7 @@ escaping, serialized readers, small helpers
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
-| [`Url`](#url) | final class | 214 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 215 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 154 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
@@ -999,8 +999,9 @@ The URL under a scheme, or scheme-and-host stripped for 'relative'; a protocol-r
 
 ### static `safeRedirect(string $location, Closure $allowedHosts): ?string`
 
-A redirect target the site may send a browser to: http(s) only, no
-credentials, and a host the caller allows (local paths always pass).
+A redirect target the site may send a browser to: http(s) only and a
+host the caller allows (local paths always pass). Credentials before
+the host are kept, as the reference keeps them: the host decides.
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 

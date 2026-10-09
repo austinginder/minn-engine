@@ -718,13 +718,10 @@ function wp_oembed_add_discovery_links()
     echo apply_filters('oembed_discovery_links', $output);
 }
 
-/** The Really Simple Discovery link the reference prints from wp_head. */
+/** The Really Simple Discovery link the reference prints from wp_head, to the site URL's xmlrpc.php?rsd. */
 function rsd_link()
 {
-    $head = Runtime::current()->get('classic_head');
-    if ($head instanceof \Minn\Theme\HeadLinks) {
-        echo $head->rsdLink();
-    }
+    echo '<link rel="EditURI" type="application/rsd+xml" title="RSD" href="' . esc_url(site_url('xmlrpc.php?rsd', 'rpc')) . '" />' . "\n";
 }
 
 function wp_generator()

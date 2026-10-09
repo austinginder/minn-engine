@@ -8448,3 +8448,74 @@ Probe `breadcrumbs`, section "the block rendered" (a facade renderer on
     pieces, and keeps a whitespace-only piece as an empty declaration
     (`a; ;b` is `a;;b`, `color:red; ;` keeps its trailing `;`). Before,
     every empty piece was dropped.
+
+## HTTPS detection and migration, and the request host helpers (2026-10-09)
+
+Probe `https-helpers`. The functions are in `wp-api/https.php`, with the
+https checks moved there from misc.php and formatting.php. The host helpers
+are in http.php.
+
+- **Hooks.** `allowed_http_request_hosts` on `http_request_host_is_external`
+  (10, 2) and `wp_update_https_migration_required` on `update_option_home`
+  (10, 2). Neither the multisite host check nor the old
+  `wp_https_detection` cron is hooked.
+- **`_wp_translate_php_url_constant_to_key`.** The constant is looked up as
+  an array key: `"1"` and `true` name the host, `false` the scheme, and
+  anything unknown is false. `_get_component_from_parsed_url_array` now
+  goes through it, so `"1"` gives the host there too, while `"-1"` gives
+  null (only the integer -1 means the whole URL).
+- **Request hosts.**
+  - `allowed_http_request_hosts` keeps any truthy answer as given (0 stays
+    0). Otherwise a host passes when `wp_validate_redirect('http://' . $host)`
+    does. That includes a port, a path, or `user@` before the home host,
+    but not a host in another case.
+  - `ms_allowed_http_request_hosts` keeps a truthy answer. Past that, the
+    reference asks the network and fails on a single site, because
+    `get_network()` is undefined there. The engine answers that no network
+    site matched.
+- **`wp_validate_redirect`.** It now keeps credentials before an allowed
+  host (`http://u:p@{home}/x`, `//u@{home}/` made `http://u@{home}/`), as
+  the reference does: the host decides. Before, any user or password was
+  refused.
+- **`wp_is_local_html_output`.** While wp_head has `rsd_link`, the page must
+  contain the RSD address from its `//` on (any scheme, case kept).
+  Otherwise, while wp_head has `rest_output_link_wp_head`, it must contain
+  the REST root's address. With neither, the answer is null.
+- **`wp_get_https_detection_errors`.**
+  - A WP_Error from `pre_wp_get_https_detection_errors` (given null) stands
+    for the errors, as its `errors` array. Any other answer is ignored.
+  - Otherwise there is a GET of `home_url('/', 'https')` with
+    `Cache-Control: no-cache` and sslverify. If it fails, whatever the
+    error, the GET is repeated without sslverify. A second failure gives
+    `https_request_failed` alone; a success gives `ssl_verification_failed`.
+  - Then a status other than 200 gives `bad_response_code` (with the
+    status message). A page that is not this site's (`=== false`, so a
+    null passes) gives `bad_response_source`.
+  - `wp_is_https_supported` is true when there are no errors; it neither
+    reads nor writes the stored option.
+  - The deprecated `wp_update_https_detection_errors` (6.4.0) stores them.
+- **`wp_update_https_migration_required`.**
+  - It does nothing while installing.
+  - The flag is set when the old URL and the new one, with `https://` made
+    `http://`, are equal ignoring trailing slashes (case kept). Its value is
+    true unless `fresh_site`; false on a missing option adds nothing. Any
+    other change deletes the flag.
+- **`wp_update_urls_to_https`.** Every `http://` in home and siteurl
+  becomes `https://`. Both are put back, and the answer is false, when
+  `wp_is_using_https()` still says no (a filtered home_url, or an ftp
+  home).
+- **Shared fixes.**
+  - `rsd_link()` prints from `site_url('xmlrpc.php?rsd', 'rpc')` wherever it
+    is called. Before, it printed only during a classic theme's render.
+  - `rest_output_link_wp_head()` prints the root link outside a classic
+    render, where there is no queried object.
+  - `wp_load_alloptions()` holds an option written in this request as it
+    was written (`true`, not `"1"`); arrays and objects stay as stored.
+- **Left open.**
+  - On a block theme the engine prints its head links itself, so wp_head
+    has neither `rsd_link` nor `rest_output_link_wp_head`, and the page
+    carries no EditURI link. The probe registers both. With the defaults
+    on a block theme, `wp_is_local_html_output` answers null and the https
+    check never reports `bad_response_source`.
+  - While `wp_installing()`, the reference's `get_option()` reads past its
+    cache. The engine's does not.

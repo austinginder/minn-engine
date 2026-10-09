@@ -25,6 +25,8 @@ final class Options
     private array $missing = [];
     /** @var array<string, string> values holding an object, as stored */
     private array $stored = [];
+    /** @var array<string, mixed> values written this request as the autoloaded list then holds them: scalars as given, arrays and objects as stored */
+    private array $written = [];
 
     /**
      * The options the engine keeps for itself: the symbol-gate cache a plugin
@@ -48,13 +50,18 @@ final class Options
         return in_array($name, self::GUARDED, true) || str_starts_with($name, self::GUARDED_PREFIX);
     }
 
-    /** Every autoloaded option as stored. @return array<string, string> */
+    /**
+     * Every autoloaded option as stored, except one written this request,
+     * which the reference's list holds as it was written (true stays true,
+     * not "1"). @return array<string, mixed>
+     */
     public function autoloaded(): array
     {
         $out = [];
         $in = implode(', ', array_fill(0, count(self::AUTOLOAD_VALUES), '?'));
         foreach ($this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE autoload IN ({$in})", self::AUTOLOAD_VALUES) as $row) {
-            $out[(string) $row['option_name']] = (string) $row['option_value'];
+            $name = (string) $row['option_name'];
+            $out[$name] = array_key_exists($name, $this->written) ? $this->written[$name] : (string) $row['option_value'];
         }
         return $out;
     }
@@ -173,6 +180,7 @@ final class Options
     private function remember(string $name, mixed $value): void
     {
         $stored = is_array($value) || is_object($value) ? self::toStorage($value) : '';
+        $this->written[$name] = $stored === '' ? $value : $stored;
         if (is_object($value) || self::holdsObject($stored)) {
             unset($this->cache[$name]);
             $this->stored[$name] = $stored;
@@ -215,7 +223,7 @@ final class Options
     public function delete(string $name): bool
     {
         $existed = $this->get($name) !== null;
-        unset($this->cache[$name], $this->stored[$name]);
+        unset($this->cache[$name], $this->stored[$name], $this->written[$name]);
         $this->missing[$name] = true;
         if (!$existed) {
             return false;
@@ -248,7 +256,7 @@ final class Options
     /** Drops an option from the cache. */
     public function forget(string $name): void
     {
-        unset($this->cache[$name], $this->stored[$name], $this->missing[$name]);
+        unset($this->cache[$name], $this->stored[$name], $this->missing[$name], $this->written[$name]);
     }
 
     /** What the reference stores: arrays and objects serialized, scalars as their string form. */

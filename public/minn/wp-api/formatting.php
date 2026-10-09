@@ -458,9 +458,14 @@ function wp_parse_url($url, $component = -1)
     return Url::parse((string) $url, (int) $component);
 }
 
+/** One part of a parsed URL (its key found as an array key would be, so "1" and true name the host), all of it for -1, null for no part. */
 function _get_component_from_parsed_url_array($url_parts, $component = -1)
 {
-    return $component === -1 ? $url_parts : ($url_parts[match ($component) { PHP_URL_SCHEME => 'scheme', PHP_URL_HOST => 'host', PHP_URL_PORT => 'port', PHP_URL_USER => 'user', PHP_URL_PASS => 'pass', PHP_URL_PATH => 'path', PHP_URL_QUERY => 'query', PHP_URL_FRAGMENT => 'fragment', default => '' }] ?? null);
+    if ($component === -1) {
+        return $url_parts;
+    }
+    $key = _wp_translate_php_url_constant_to_key($component);
+    return $key === false ? null : ($url_parts[$key] ?? null);
 }
 
 function set_url_scheme($url, $scheme = null)
@@ -761,23 +766,6 @@ function _wp_emoji_list($type = 'entities')
     static $list = null;
     $list ??= json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/emoji.json'), true) ?: ['entities' => [], 'partials' => []];
     return $list[$type === 'partials' ? 'partials' : 'entities'];
-}
-
-/** Whether content should have the site's http address made https: a site moved to https asked for it. */
-function wp_should_replace_insecure_home_url()
-{
-    $should = wp_is_using_https() && get_option('https_migration_required') && wp_parse_url(home_url(), PHP_URL_HOST) === wp_parse_url(site_url(), PHP_URL_HOST);
-    return (bool) apply_filters('wp_should_replace_insecure_home_url', $should);
-}
-
-/** The site's own http address made https in content, once the site moved to https. */
-function wp_replace_insecure_home_url($content)
-{
-    if (!wp_should_replace_insecure_home_url()) {
-        return $content;
-    }
-    $https = home_url('', 'https');
-    return Minn\Content\TextFilters::secureHome((string) $content, str_replace('https://', 'http://', $https), $https);
 }
 
 /** A feed carries an embedded post's iframe without the style that hides it until its script runs. */

@@ -1447,3 +1447,10 @@ function start_wp()
     $wp_query->next_post();
     setup_postdata(get_post());
 }
+
+/** Stores what a check of the https home finds in the https_detection_errors option. Deprecated in 6.4.0, nothing to use instead. */
+function wp_update_https_detection_errors()
+{
+    _deprecated_function(__FUNCTION__, '6.4.0');
+    update_option('https_detection_errors', wp_get_https_detection_errors());
+}

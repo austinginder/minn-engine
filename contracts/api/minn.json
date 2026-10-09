@@ -119102,7 +119102,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 258,
+            "lines": 266,
             "doc": "Options as plugin code sees them: PHP values, decoded from the stored\nblob by the engine's own reader, cached for the request so a value written\nand read again in one request keeps its PHP type (an int stays an int,\nfalse stays false) exactly as the reference shows. A value holding an\nobject is kept as its stored text and decoded afresh on every read, as\nthe reference does: a plugin that changes the object it was handed and\nsaves it must find the stored copy still different, or its change is\nnever written.",
             "implements": [],
             "extends": null,
@@ -119131,8 +119131,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 41,
-                "end": 43
+                "line": 43,
+                "end": 45
             },
             "cases": [],
             "constants": [
@@ -119184,6 +119184,15 @@
                     "promoted": false
                 },
                 {
+                    "name": "written",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
                     "name": "db",
                     "type": "Minn\\Db",
                     "readonly": true,
@@ -119211,8 +119220,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -119220,13 +119229,13 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "autoloaded(): array",
-                    "doc": "Every autoloaded option as stored. @return array<string, string>",
+                    "doc": "Every autoloaded option as stored, except one written this request,\nwhich the reference's list holds as it was written (true stays true,\nnot \"1\"). @return array<string, mixed>",
                     "shapes": [
-                        "@return array<string, string>"
+                        "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 52,
-                    "end": 60
+                    "line": 58,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -119252,8 +119261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 86
+                    "line": 76,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -119272,8 +119281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 110
+                    "line": 96,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -119292,8 +119301,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 116
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -119312,8 +119321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -119346,8 +119355,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 137
+                    "line": 137,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -119380,8 +119389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 154
+                    "line": 153,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -119414,8 +119423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 170
+                    "line": 164,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -119434,8 +119443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 195
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -119454,8 +119463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -119474,8 +119483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 225
+                    "line": 223,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -119503,8 +119512,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 246
+                    "line": 241,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -119523,8 +119532,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 252
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -119543,8 +119552,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 264
+                    "line": 263,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -119563,8 +119572,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 276
+                    "line": 275,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -119590,8 +119599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 183
+                    "line": 180,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -119610,8 +119619,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 189
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -119646,8 +119655,8 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 204,
-                    "end": 212
+                    "line": 212,
+                    "end": 220
                 }
             ]
         },
@@ -139920,7 +139929,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Url.php",
-            "lines": 214,
+            "lines": 215,
             "doc": "URL shaping the escaping and query helpers share: the character cleanup\nesc_url applies, bracket encoding outside the authority, and query\nargument merging. Behaviour pinned by contracts/fixtures/api/functions.json.",
             "implements": [],
             "extends": null,
@@ -140211,7 +140220,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "safeRedirect(string $location, Closure $allowedHosts): ?string",
-                    "doc": "A redirect target the site may send a browser to: http(s) only, no\ncredentials, and a host the caller allows (local paths always pass).",
+                    "doc": "A redirect target the site may send a browser to: http(s) only and a\nhost the caller allows (local paths always pass). Credentials before\nthe host are kept, as the reference keeps them: the host decides.",
                     "shapes": [
                         "@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host"
                     ],
@@ -140231,8 +140240,8 @@
                             "doc": "the hosts allowed for the target's host"
                         }
                     ],
-                    "line": 210,
-                    "end": 226
+                    "line": 211,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -142924,7 +142933,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/HeadLinks.php",
-            "lines": 126,
+            "lines": 120,
             "doc": "The links the reference puts in every head: the site and comments\nfeeds (plus the archive's own feed), the REST discovery link, the\nJSON alternate for the queried object, and the site icon set. The\nblock path prints them as one run; the classic path prints the same\npieces from the reference's wp_head hooks.",
             "implements": [],
             "extends": null,
@@ -143128,18 +143137,6 @@
                 },
                 {
                     "routes": [],
-                    "name": "rsdLink",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "rsdLink(): string",
-                    "doc": "The RSD link.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 128,
-                    "end": 131
-                },
-                {
-                    "routes": [],
                     "name": "shortlink",
                     "static": false,
                     "visibility": "public",
@@ -143155,8 +143152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 144
+                    "line": 128,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -143167,8 +143164,8 @@
                     "doc": "The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 150
+                    "line": 141,
+                    "end": 144
                 }
             ]
         },

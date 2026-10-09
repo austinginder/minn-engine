@@ -124,12 +124,6 @@ final readonly class HeadLinks
         return '<link rel="alternate" title="JSON" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
     }
 
-    /** The RSD link. */
-    public function rsdLink(): string
-    {
-        return '<link rel="EditURI" type="application/rsd+xml" title="RSD" href="' . Html::attr($this->permalinks->url('/xmlrpc.php?rsd')) . '" />' . "\n";
-    }
-
     /** Singular views only; posts and pages alike shortlink as ?p={id}, in the reference's single quotes. */
     public function shortlink(Resolution $resolution): string
     {

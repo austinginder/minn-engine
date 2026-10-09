@@ -52,7 +52,7 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`Options`](#options) | final class | 258 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 266 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
@@ -2268,9 +2268,11 @@ Whether plugin code is refused a write to this option.
 
 ### `autoloaded(): array`
 
-Every autoloaded option as stored. @return array<string, string>
+Every autoloaded option as stored, except one written this request,
+which the reference's list holds as it was written (true stays true,
+not "1"). @return array<string, mixed>
 
-- `@return array<string, string>`
+- `@return array<string, mixed>`
 
 ### `filtered(string $name, mixed ...$default): mixed`
 
@@ -2342,7 +2344,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `remember()` (private, line 173), `holdsObject()` (private, line 186), `switchAutoload()` (private, line 204)
+Internals: `remember()` (private, line 180), `holdsObject()` (private, line 194), `switchAutoload()` (private, line 212)
 
 
 ## Pages

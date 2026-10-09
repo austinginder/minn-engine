@@ -1,0 +1,1095 @@
+[
+    [
+        "the hooks",
+        [
+            10,
+            false,
+            10,
+            false,
+            false
+        ]
+    ],
+    [
+        "a PHP_URL constant named",
+        [
+            "scheme",
+            "host",
+            "port",
+            "user",
+            "pass",
+            "path",
+            "query",
+            "fragment",
+            false,
+            false,
+            "host",
+            false,
+            "host",
+            "scheme",
+            false
+        ]
+    ],
+    [
+        "a parsed URL's component",
+        [
+            {
+                "scheme": "https",
+                "host": "zz.example",
+                "path": "/p"
+            },
+            null,
+            "zz.example",
+            "zz.example",
+            "zz.example",
+            "https",
+            "https",
+            "/p",
+            null,
+            null,
+            null
+        ]
+    ],
+    [
+        "a request host allowed",
+        [
+            true,
+            false,
+            false,
+            true,
+            true,
+            0,
+            false,
+            false,
+            "yes",
+            true,
+            true,
+            true,
+            false,
+            true,
+            [
+                true,
+                false,
+                false,
+                false
+            ],
+            [
+                true,
+                "yes",
+                1
+            ],
+            true,
+            false
+        ]
+    ],
+    [
+        "a redirect with credentials",
+        [
+            "http://zz.example@{host}",
+            "http://user:pw@{host}/x",
+            "fallback",
+            "https://u@{host}",
+            "http://u@{host}/",
+            "http://:@{host}",
+            "http://@{host}",
+            "http://u:@{host}",
+            "http://:p@{host}",
+            "fallback"
+        ]
+    ],
+    [
+        "HTML from this site",
+        [
+            true,
+            false,
+            false,
+            false,
+            false,
+            true,
+            true,
+            true,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true,
+            [
+                false,
+                true,
+                false,
+                [
+                    true,
+                    false,
+                    true,
+                    false,
+                    true,
+                    true,
+                    false
+                ],
+                null,
+                null,
+                null,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "the https home checked",
+        [
+            [
+                [],
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_code": [
+                        "zz"
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_code": [
+                        "zz"
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "https_request_failed": [
+                        "HTTPS request failed."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_code": [
+                        ""
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_code": [
+                        "Not Found"
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                [],
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "https_request_failed": [
+                        "HTTPS request failed."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_code": [
+                        "zz"
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ],
+                    [
+                        "https://{host}/",
+                        "GET",
+                        false,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the check filtered first",
+        [
+            [
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "zz_code": [
+                        "zz said"
+                    ]
+                },
+                []
+            ],
+            [
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                },
+                [
+                    [
+                        "https://{host}/",
+                        "GET",
+                        true,
+                        {
+                            "Cache-Control": "no-cache"
+                        },
+                        5,
+                        5
+                    ]
+                ]
+            ],
+            [
+                [],
+                []
+            ],
+            [
+                {
+                    "zz_one": [
+                        "first",
+                        "second"
+                    ],
+                    "zz_two": [
+                        "third"
+                    ]
+                },
+                []
+            ],
+            [
+                [
+                    null
+                ]
+            ]
+        ]
+    ],
+    [
+        "https supported",
+        [
+            [
+                true,
+                1,
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                }
+            ],
+            [
+                false,
+                1,
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                }
+            ],
+            [
+                false,
+                1,
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                }
+            ],
+            [
+                true,
+                1,
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                }
+            ],
+            [
+                false,
+                0,
+                {
+                    "ssl_verification_failed": [
+                        "SSL verification failed."
+                    ],
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                }
+            ]
+        ]
+    ],
+    [
+        "the stored detection errors",
+        [
+            [
+                null,
+                1,
+                {
+                    "bad_response_source": [
+                        "It looks like the response did not come from this site."
+                    ]
+                }
+            ],
+            [
+                null,
+                1,
+                []
+            ],
+            [
+                null,
+                2,
+                {
+                    "https_request_failed": [
+                        "HTTPS request failed."
+                    ]
+                }
+            ],
+            [
+                null,
+                1,
+                []
+            ],
+            [
+                null,
+                {
+                    "zz_code": [
+                        "zz said"
+                    ]
+                }
+            ],
+            [
+                [
+                    "wp_update_https_detection_errors",
+                    "",
+                    "6.4.0"
+                ],
+                [
+                    "wp_update_https_detection_errors",
+                    "",
+                    "6.4.0"
+                ],
+                [
+                    "wp_update_https_detection_errors",
+                    "",
+                    "6.4.0"
+                ],
+                [
+                    "wp_update_https_detection_errors",
+                    "",
+                    "6.4.0"
+                ],
+                [
+                    "wp_update_https_detection_errors",
+                    "",
+                    "6.4.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the migration flag",
+        [
+            [
+                "http://{host} > https://{host}",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "http://{host} > https://{host}/",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "http://{host}/ > https://{host}",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "https://{host} > https://{host}",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "http://{host} > http://{host}",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "http://zz.example > https://{host}",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "http://{host}/sub > https://{host}/sub",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "HTTP://{host} > https://{host}",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "https://{host} > http://{host}",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "http://{host} > https://zz.example",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                " > https://{host}",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "http://{host} > ",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "http://{host}/http://x > https://{host}/https://x",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "http://{host}// > https://{host}",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                " > ",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "/ > ",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                " > ",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "http://{host} > https://{host}?q",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "set first",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "set first",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "fresh",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "fresh after set",
+                null,
+                [
+                    false,
+                    false
+                ]
+            ],
+            [
+                "fresh 1",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "installing",
+                null,
+                [
+                    true,
+                    true
+                ]
+            ],
+            [
+                "installed",
+                null,
+                [
+                    "unset",
+                    "not autoloaded"
+                ]
+            ],
+            [
+                "as an action",
+                [
+                    true,
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "the URLs moved to https",
+        [
+            [
+                true,
+                [
+                    [
+                        "home",
+                        "https://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}"
+                    ]
+                ],
+                {
+                    "home": "https://{host}",
+                    "siteurl": "https://{host}"
+                }
+            ],
+            [
+                true,
+                [
+                    [
+                        "home",
+                        "https://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}"
+                    ]
+                ],
+                {
+                    "home": "https://{host}",
+                    "siteurl": "https://{host}"
+                }
+            ],
+            [
+                true,
+                [
+                    [
+                        "home",
+                        "https://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}"
+                    ]
+                ],
+                {
+                    "home": "https://{host}",
+                    "siteurl": "https://{host}"
+                }
+            ],
+            [
+                true,
+                [
+                    [
+                        "home",
+                        "https://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}/wp"
+                    ]
+                ],
+                {
+                    "siteurl": "https://{host}/wp",
+                    "home": "https://{host}"
+                }
+            ],
+            [
+                true,
+                [
+                    [
+                        "home",
+                        "https://{host}/https://x"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}"
+                    ]
+                ],
+                {
+                    "home": "https://{host}/https://x",
+                    "siteurl": "https://{host}"
+                }
+            ],
+            [
+                false,
+                [
+                    [
+                        "home",
+                        "ftp://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}"
+                    ],
+                    [
+                        "home",
+                        "ftp://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "http://{host}"
+                    ]
+                ],
+                {
+                    "home": "ftp://{host}",
+                    "siteurl": "http://{host}"
+                }
+            ],
+            [
+                false,
+                [
+                    [
+                        "home",
+                        "https://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "https://{host}"
+                    ],
+                    [
+                        "home",
+                        "http://{host}"
+                    ],
+                    [
+                        "siteurl",
+                        "http://{host}"
+                    ]
+                ],
+                {
+                    "home": "http://{host}",
+                    "siteurl": "http://{host}"
+                }
+            ],
+            [
+                "https://{host}",
+                "https://{host}"
+            ]
+        ]
+    ]
+]

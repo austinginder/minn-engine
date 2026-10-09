@@ -204,6 +204,33 @@ function wp_http_validate_url($url)
     ) ?? false;
 }
 
+/** The parse_url() key a PHP_URL_* constant names, looked up as an array key (so "1" and true name the host), or false. */
+function _wp_translate_php_url_constant_to_key($constant)
+{
+    $keys = [PHP_URL_SCHEME => 'scheme', PHP_URL_HOST => 'host', PHP_URL_PORT => 'port', PHP_URL_USER => 'user', PHP_URL_PASS => 'pass', PHP_URL_PATH => 'path', PHP_URL_QUERY => 'query', PHP_URL_FRAGMENT => 'fragment'];
+    return $keys[$constant] ?? false;
+}
+
+/** A request host counts as external (on http_request_host_is_external) when it is one a redirect may go to: the home host or an allowed redirect host. Any truthy answer is kept as given. */
+function allowed_http_request_hosts($is_external, $host)
+{
+    if (!$is_external && wp_validate_redirect('http://' . $host)) {
+        $is_external = true;
+    }
+    return $is_external;
+}
+
+/**
+ * Multisite's version: a truthy answer is kept as given. Past that the
+ * reference asks the network for its sites, which only multisite loads (on
+ * a single site it fails there); the engine runs single sites, so no
+ * network site matches and the answer stays as it was.
+ */
+function ms_allowed_http_request_hosts($is_external, $host)
+{
+    return $is_external;
+}
+
 function get_http_origin()
 {
     $origin = (string) (Runtime::current()->request?->header('origin') ?? '');

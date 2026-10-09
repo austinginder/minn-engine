@@ -17,7 +17,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 103 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 493 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 126 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 120 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 146 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
@@ -509,10 +509,6 @@ No trailing newline: the reference prints the JSON alternate and the RSD link on
 ### `jsonAlternate(Minn\Front\Resolution $resolution): string`
 
 The wp/v2 alternate link for the resolution.
-
-### `rsdLink(): string`
-
-The RSD link.
 
 ### `shortlink(Minn\Front\Resolution $resolution): string`
 
