@@ -1,0 +1,192 @@
+[
+    [
+        "the server",
+        [
+            "WP_Sitemaps",
+            true,
+            {
+                "posts": "WP_Sitemaps_Posts",
+                "taxonomies": "WP_Sitemaps_Taxonomies",
+                "users": "WP_Sitemaps_Users"
+            },
+            "WP_Sitemaps_Index",
+            "WP_Sitemaps_Renderer"
+        ]
+    ],
+    [
+        "the registry",
+        [
+            true,
+            false,
+            {
+                "zz": "WP_Sitemaps_Posts"
+            },
+            "WP_Sitemaps_Posts",
+            null,
+            false,
+            [
+                true,
+                [
+                    [
+                        "WP_Sitemaps_Posts",
+                        "zz-heard"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the posts provider",
+        [
+            [
+                [
+                    "zz_sm"
+                ],
+                2,
+                [
+                    {
+                        "loc": "//{host}/zz-sm/zz-sm-a/",
+                        "lastmod": "2020-01-01T10:00:00+00:00"
+                    },
+                    {
+                        "loc": "//{host}/zz-sm/zz-sm-b/",
+                        "lastmod": "2021-02-02T11:00:00+00:00"
+                    }
+                ],
+                [
+                    {
+                        "loc": "//{host}/zz-sm/zz-sm-c/",
+                        "lastmod": "2022-03-03T12:00:00+00:00"
+                    }
+                ],
+                [],
+                [
+                    {
+                        "name": "zz_sm",
+                        "pages": 2
+                    }
+                ],
+                [
+                    {
+                        "loc": "//{host}/wp-sitemap-posts-zz_sm-1.xml"
+                    },
+                    {
+                        "loc": "//{host}/wp-sitemap-posts-zz_sm-2.xml"
+                    }
+                ],
+                "//{host}/wp-sitemap-posts-zz_sm-2.xml",
+                "//{host}/wp-sitemap-posts-1.xml"
+            ],
+            [
+                [],
+                0
+            ]
+        ]
+    ],
+    [
+        "the taxonomies provider",
+        [
+            [
+                [
+                    "zz_sm_tax"
+                ],
+                2,
+                [
+                    {
+                        "loc": "//{host}/zz-sm-tax/zz-sm-one/"
+                    },
+                    {
+                        "loc": "//{host}/zz-sm-tax/zz-sm-two/"
+                    }
+                ],
+                [
+                    {
+                        "loc": "//{host}/zz-sm-tax/zz-sm-three/"
+                    }
+                ],
+                [],
+                [
+                    {
+                        "name": "zz_sm_tax",
+                        "pages": 2
+                    }
+                ],
+                [
+                    {
+                        "loc": "//{host}/wp-sitemap-taxonomies-zz_sm_tax-1.xml"
+                    },
+                    {
+                        "loc": "//{host}/wp-sitemap-taxonomies-zz_sm_tax-2.xml"
+                    }
+                ],
+                "//{host}/wp-sitemap-taxonomies-zz_sm_tax-2.xml",
+                "//{host}/wp-sitemap-taxonomies-1.xml"
+            ],
+            [
+                [],
+                1
+            ]
+        ]
+    ],
+    [
+        "the users provider",
+        [
+            [],
+            1,
+            [
+                {
+                    "loc": "//{host}/author/zz-sm-ann/"
+                },
+                {
+                    "loc": "//{host}/author/zz-sm-bob/"
+                }
+            ],
+            [],
+            [],
+            [
+                {
+                    "name": "",
+                    "pages": 1
+                }
+            ],
+            [
+                {
+                    "loc": "//{host}/wp-sitemap-users-1.xml"
+                }
+            ],
+            "//{host}/wp-sitemap-users-2.xml",
+            "//{host}/wp-sitemap-users-1.xml"
+        ]
+    ],
+    [
+        "the index",
+        [
+            [
+                {
+                    "loc": "//{host}/wp-sitemap-posts-zz_sm-1.xml"
+                },
+                {
+                    "loc": "//{host}/wp-sitemap-posts-zz_sm-2.xml"
+                },
+                {
+                    "loc": "//{host}/wp-sitemap-users-1.xml"
+                }
+            ],
+            "//{host}/wp-sitemap.xml"
+        ]
+    ],
+    [
+        "the renderer",
+        [
+            "//{host}/wp-sitemap.xsl",
+            "//{host}/wp-sitemap-index.xsl",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap.xsl\" ?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc>https://zz.example/a?x=1&amp;y=2</loc><lastmod>2020-01-01T00:00:00+00:00</lastmod></url><url><loc>https://zz.example/b</loc></url></urlset>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap-index.xsl\" ?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><sitemap><loc>https://zz.example/s-1.xml</loc></sitemap><sitemap><loc>https://zz.example/s-2.xml</loc><lastmod>2021-01-01</lastmod></sitemap></sitemapindex>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap.xsl\" ?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"/>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap-index.xsl\" ?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"/>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap.xsl\" ?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url/></urlset>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap.xsl\" ?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><url><loc/></url><url><loc>https://zz.example/c</loc><lastmod/></url></urlset>\n",
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<?xml-stylesheet type=\"text/xsl\" href=\"//{host}/wp-sitemap-index.xsl\" ?>\n<sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><sitemap/><sitemap><loc/></sitemap></sitemapindex>\n"
+        ]
+    ]
+]

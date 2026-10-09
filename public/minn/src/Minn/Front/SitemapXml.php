@@ -6,7 +6,12 @@ namespace Minn\Front;
 
 use Minn\Html;
 
-/** The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. */
+/**
+ * The two sitemap documents, index and URL set, from entry maps; one
+ * builder for the engine's routes and the facade's renderer. An element
+ * with nothing inside closes itself, at every level, as the reference's
+ * XML writer prints it (probe sitemap-classes).
+ */
 final class SitemapXml
 {
     /**
@@ -16,7 +21,7 @@ final class SitemapXml
      */
     public static function index(array $entries, ?string $stylesheet): string
     {
-        return self::document($stylesheet, '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . self::elements('sitemap', $entries) . '</sitemapindex>');
+        return self::document($stylesheet, self::element('sitemapindex', self::elements('sitemap', $entries), ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'));
     }
 
     /**
@@ -26,22 +31,28 @@ final class SitemapXml
      */
     public static function urlset(array $entries, ?string $stylesheet): string
     {
-        return self::document($stylesheet, '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . self::elements('url', $entries) . '</urlset>');
+        return self::document($stylesheet, self::element('urlset', self::elements('url', $entries), ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'));
     }
 
     private static function elements(string $tag, array $entries): string
     {
         $out = '';
         foreach ($entries as $entry) {
-            $out .= "<{$tag}>";
+            $fields = '';
             foreach ($entry as $name => $value) {
                 if ($value !== null) {
-                    $out .= '<' . $name . '>' . Html::esc($value) . '</' . $name . '>';
+                    $fields .= self::element((string) $name, Html::esc($value));
                 }
             }
-            $out .= "</{$tag}>";
+            $out .= self::element($tag, $fields);
         }
         return $out;
+    }
+
+    /** One element: closed on itself when empty. */
+    private static function element(string $tag, string $inner, string $attributes = ''): string
+    {
+        return $inner === '' ? "<{$tag}{$attributes}/>" : "<{$tag}{$attributes}>{$inner}</{$tag}>";
     }
 
     private static function document(?string $stylesheet, string $body): string

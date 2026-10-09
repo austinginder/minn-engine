@@ -8909,3 +8909,32 @@ Probe `schema-and-menus`.
   `strip_tags` at 10. The engine applied the filters but hooked nothing, so
   a menu item's title attribute and description kept straight quotes and
   tags.
+
+## The sitemap classes proven (2026-10-09)
+
+Probe `sitemap-classes`. The probe uses its own public post type and
+taxonomy, its posts and terms, and two authors. It narrows the providers
+to them with `wp_sitemaps_post_types`, `wp_sitemaps_taxonomies` and
+`wp_sitemaps_users_query_args`, and sets two URLs to a page with
+`wp_sitemaps_max_urls`. It removes everything afterwards.
+
+- **What is now proven.**
+  - The server's providers (`posts`, `taxonomies`, `users`), its index
+    and its renderer.
+  - The registry: a second provider under the same name is refused;
+    `wp_sitemaps_add_provider` gets `(provider, name)`, and refuses
+    anything but a provider.
+  - Each provider's subtypes, page count, the URL list for each page (an
+    empty one past the end, and for an unknown subtype), its type data,
+    sitemap entries and sitemap URLs. An unknown taxonomy counts one page:
+    the reference turns the error into 1, with a warning.
+  - The index list and URL, and both stylesheet URLs.
+- **Shared fix: empty elements close themselves.** `SitemapXml` (the
+  engine's routes and the facade's renderer alike) now prints any element
+  with nothing inside as `<x/>`, at every level, as the reference's XML
+  writer does: an empty `<urlset/>` or `<sitemapindex/>`, an entry with no
+  fields, a field with an empty value. Before, they were written open and
+  closed.
+- **Left out on purpose.** `WP_Sitemaps_Stylesheet`'s text: the engine
+  serves its own stylesheet (770 bytes against the reference's 3,449), so
+  the class stays unproven rather than copying WordPress's XSL.

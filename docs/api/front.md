@@ -42,7 +42,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SingleQueries`](#singlequeries) | final readonly class | 100 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 70 | A sitemap request at template_redirect, as the reference's sitemaps |
-| [`SitemapXml`](#sitemapxml) | final class | 43 | The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer. |
+| [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`TermLists`](#termlists) | final class | 71 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
@@ -1393,7 +1393,10 @@ Internals: `page()` (private, line 62), `notFound()` (private, line 82)
 
 `final class Minn\Front\SitemapXml` · `public/minn/src/Minn/Front/SitemapXml.php`
 
-The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer.
+The two sitemap documents, index and URL set, from entry maps; one
+builder for the engine's routes and the facade's renderer. An element
+with nothing inside closes itself, at every level, as the reference's
+XML writer prints it (probe sitemap-classes).
 
 ### static `index(array $entries, ?string $stylesheet): string`
 
@@ -1407,7 +1410,7 @@ A sitemap urlset document.
 
 - `@param list<array<string, string|null>> $entries`
 
-Internals: `elements()` (private, line 32), `document()` (private, line 47)
+Internals: `elements()` (private, line 37), `element()` (private, line 53), `document()` (private, line 58)
 
 
 ## Sitemaps

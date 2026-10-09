@@ -50103,8 +50103,8 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/SitemapXml.php",
-            "lines": 43,
-            "doc": "The two sitemap documents, index and URL set, from entry maps; one builder for the engine's routes and the facade's renderer.",
+            "lines": 49,
+            "doc": "The two sitemap documents, index and URL set, from entry maps; one\nbuilder for the engine's routes and the facade's renderer. An element\nwith nothing inside closes itself, at every level, as the reference's\nXML writer prints it (probe sitemap-classes).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -50142,8 +50142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 17,
-                    "end": 20
+                    "line": 22,
+                    "end": 25
                 },
                 {
                     "routes": [],
@@ -50171,8 +50171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 30
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -50198,8 +50198,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 45
+                    "line": 37,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "element",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "element(string $tag, string $inner, string $attributes = ''): string",
+                    "doc": "One element: closed on itself when empty.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "inner",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attributes",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -50225,8 +50259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 51
+                    "line": 58,
+                    "end": 62
                 }
             ]
         },
