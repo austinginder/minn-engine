@@ -13,7 +13,7 @@ uploads, image sizes and attachment metadata
 | [`Metadata`](#metadata) | final class | 145 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
-| [`Sizing`](#sizing) | final class | 232 | The image size arithmetic the media functions share: the crop or scale a |
+| [`Sizing`](#sizing) | final class | 239 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
@@ -364,7 +364,7 @@ file's.
 - `@param Closure(int, int, int, int): bool $matchesRatio`
 - `@return array<string, mixed>|null`
 
-### static `sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio): array`
+### static `sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl): array`
 
 The srcset candidates by width: every size on the image's ratio (and
 the same edit, when the file was edited), the source itself winning a
@@ -392,7 +392,7 @@ image-downsize).
 
 - `@return array{0: string, 1: int, 2: int}|null the file's name, width and height`
 
-Internals: `join()` (private, line 224)
+Internals: `join()` (private, line 231)
 
 
 ## Upload

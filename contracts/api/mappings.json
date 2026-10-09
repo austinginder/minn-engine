@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 775,
-        "composes": 1849,
+        "composes": 1850,
         "leaf": 874,
-        "noop": 2645,
+        "noop": 2644,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7969,
@@ -39779,13 +39779,14 @@
         },
         "get_adjacent_image_link": {
             "file": "media.php",
-            "lines": 14,
+            "lines": 15,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
                 "get_children",
                 "get_post",
+                "get_the_title",
                 "wp_get_attachment_link"
             ]
         },
@@ -58594,6 +58595,7 @@
             ],
             "composes": [
                 "apply_filters",
+                "wp_get_upload_dir",
                 "wp_image_matches_ratio"
             ]
         },
@@ -63150,7 +63152,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_wp_image_editor_choose"
+            ]
         },
         "wp_image_file_matches_image_meta": {
             "file": "media.php",
@@ -64766,8 +64770,8 @@
         },
         "wp_max_upload_size": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",

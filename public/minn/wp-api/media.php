@@ -712,7 +712,7 @@ function wp_calculate_image_srcset($size_array, $image_src, $image_meta, $attach
     if (!is_array($image_meta)) {
         return false;
     }
-    $sources = Sizing::sources([(int) ($size_array[0] ?? 0), (int) ($size_array[1] ?? 0)], (string) $image_src, $image_meta, static fn (int $sw, int $sh, int $tw, int $th): bool => (bool) wp_image_matches_ratio($sw, $sh, $tw, $th));
+    $sources = Sizing::sources([(int) ($size_array[0] ?? 0), (int) ($size_array[1] ?? 0)], (string) $image_src, $image_meta, static fn (int $sw, int $sh, int $tw, int $th): bool => (bool) wp_image_matches_ratio($sw, $sh, $tw, $th), (string) wp_get_upload_dir()['baseurl']);
     if ($sources === []) {
         return false;
     }
@@ -973,9 +973,10 @@ function wp_get_image_editor_output_format($filename, $mime_type)
     return apply_filters('image_editor_output_format', $default, $filename, $mime_type);
 }
 
+/** Whether an editor can take the MIME type and methods asked for (probe media-remaining). */
 function wp_image_editor_supports($args = [])
 {
-    return WP_Image_Editor_GD::test($args);
+    return (bool) _wp_image_editor_choose($args);
 }
 
 function image_make_intermediate_size($file, $width, $height, $crop = false)
@@ -1814,18 +1815,19 @@ function get_adjacent_image_link($prev = true, $size = 'thumbnail', $text = fals
 {
     $post = get_post();
     $attachments = $post ? array_values((array) get_children(['post_parent' => (int) $post->post_parent, 'post_status' => 'inherit', 'post_type' => 'attachment', 'post_mime_type' => 'image', 'order' => 'ASC', 'orderby' => 'menu_order ID'])) : [];
+    // A post that is not among the images counts as the last of them (probe media-remaining).
     $at = null;
     foreach ($attachments as $index => $attachment) {
+        $at = $index;
         if ((int) $attachment->ID === (int) ($post->ID ?? 0)) {
-            $at = $index;
             break;
         }
     }
     $neighbour = $at === null ? null : ($attachments[$prev ? $at - 1 : $at + 1] ?? null);
-    $output = $neighbour === null
-        ? ''
-        : wp_get_attachment_link((int) $neighbour->ID, $size, true, false, $text);
-    return apply_filters($prev ? 'previous_image_link' : 'next_image_link', $output);
+    $id = $neighbour === null ? 0 : (int) $neighbour->ID;
+    // The image's alt is the neighbour's title.
+    $output = $id === 0 ? '' : wp_get_attachment_link($id, $size, true, false, $text, ['alt' => get_the_title($id)]);
+    return apply_filters($prev ? 'previous_image_link' : 'next_image_link', $output, $id, $size, $text);
 }
 
 function previous_image_link($size = 'thumbnail', $text = false)

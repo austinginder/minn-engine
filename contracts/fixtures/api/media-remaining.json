@@ -1,0 +1,555 @@
+[
+    [
+        "image size registration",
+        [
+            {
+                "1536x1536": {
+                    "width": 1536,
+                    "height": 1536,
+                    "crop": false
+                },
+                "2048x2048": {
+                    "width": 2048,
+                    "height": 2048,
+                    "crop": false
+                }
+            },
+            [],
+            {
+                "1536x1536": {
+                    "width": 1536,
+                    "height": 1536,
+                    "crop": false
+                },
+                "2048x2048": {
+                    "width": 2048,
+                    "height": 2048,
+                    "crop": false
+                }
+            },
+            {
+                "1536x1536": {
+                    "width": 1536,
+                    "height": 1536,
+                    "crop": false
+                },
+                "2048x2048": {
+                    "width": 2048,
+                    "height": 2048,
+                    "crop": false
+                },
+                "post-thumbnail": {
+                    "width": 320,
+                    "height": 180,
+                    "crop": true
+                }
+            },
+            {
+                "1536x1536": {
+                    "width": 1536,
+                    "height": 1536,
+                    "crop": false
+                },
+                "2048x2048": {
+                    "width": 2048,
+                    "height": 2048,
+                    "crop": false
+                },
+                "post-thumbnail": {
+                    "width": 0,
+                    "height": 0,
+                    "crop": false
+                }
+            },
+            {
+                "1536x1536": {
+                    "width": 1536,
+                    "height": 1536,
+                    "crop": false
+                },
+                "2048x2048": {
+                    "width": 2048,
+                    "height": 2048,
+                    "crop": false
+                },
+                "post-thumbnail": {
+                    "width": 640,
+                    "height": 0,
+                    "crop": [
+                        "center",
+                        "top"
+                    ]
+                }
+            }
+        ]
+    ],
+    [
+        "sizes from metadata and strings",
+        [
+            [
+                [
+                    150,
+                    150
+                ],
+                [
+                    1024,
+                    512
+                ],
+                [
+                    2000,
+                    1000
+                ],
+                false,
+                [
+                    500,
+                    400
+                ]
+            ],
+            false,
+            [
+                10,
+                0
+            ],
+            [
+                "width=\"100\" height=\"50\" ",
+                "height=\"50\" ",
+                "width=\"100\" ",
+                "width=\"100\" height=\"50\" ",
+                "",
+                "width=\"12\" height=\"3\" "
+            ],
+            [
+                true,
+                true,
+                false,
+                true,
+                true,
+                true,
+                true,
+                false
+            ]
+        ]
+    ],
+    [
+        "srcset and sizes",
+        [
+            "{uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w",
+            "{uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w",
+            false,
+            false,
+            false,
+            "{uploads}/2026/10/zz-md-wide.jpg 2000w, {uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w",
+            false,
+            "(max-width: 1024px) 100vw, 1024px",
+            "(max-width: 1024px) 100vw, 1024px",
+            "(max-width: 300px) 100vw, 300px",
+            "(max-width: 300px) 100vw, 300px",
+            false,
+            "(max-width: 2000px) 100vw, 2000px"
+        ]
+    ],
+    [
+        "srcset added to content images",
+        [
+            "<img src=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg\" width=\"1024\" height=\"512\" alt=\"\" class=\"wp-image-{wide}\" srcset=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" />",
+            "<img src=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg\" alt=\"\" srcset=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" />",
+            "<img src=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg\" width=\"1024\" height=\"512\" srcset=\"x.jpg 1x\" alt=\"\" srcset=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" />",
+            "<img src=\"https://elsewhere.example/zz.jpg\" width=\"1024\" height=\"512\" alt=\"\">",
+            "<img src=\"{uploads}/2026/10/zz-md-wide-300x150.jpg\" width=\"300\" height=\"150\" sizes=\"auto\" alt=\"\" srcset=\"{uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w\" />",
+            "<img src=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg?ver=2\" width=\"1024\" height=\"512\" alt=\"\" srcset=\"{uploads}/2026/10/zz-md-wide-1024x512.jpg 1024w, {uploads}/2026/10/zz-md-wide-300x150.jpg 300w, {uploads}/2026/10/zz-md-wide-768x384.jpg 768w, {uploads}/2026/10/zz-md-wide-1536x768.jpg 1536w, {uploads}/2026/10/zz-md-wide-600x300.webp 600w, {uploads}/2026/10/zz-md-wide.jpg 2000w\" sizes=\"(max-width: 1024px) 100vw, 1024px\" />"
+        ]
+    ],
+    [
+        "lazy loading defaults",
+        [
+            true,
+            true,
+            false,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "lazy loading filtered",
+        [
+            false,
+            true
+        ]
+    ],
+    [
+        "audio and video extensions",
+        [
+            [
+                "mp3",
+                "ogg",
+                "flac",
+                "m4a",
+                "wav"
+            ],
+            [
+                "mp4",
+                "m4v",
+                "webm",
+                "ogv",
+                "flv"
+            ]
+        ]
+    ],
+    [
+        "attached media",
+        [
+            [
+                [
+                    "{first}",
+                    "zz md first",
+                    "image/jpeg"
+                ],
+                [
+                    "{second}",
+                    "zz md second",
+                    "image/jpeg"
+                ],
+                [
+                    "{third}",
+                    "zz md third",
+                    "image/png"
+                ]
+            ],
+            [
+                [
+                    "{song}",
+                    "zz md song",
+                    "audio/mpeg"
+                ]
+            ],
+            [
+                [
+                    "{first}",
+                    "zz md first",
+                    "image/jpeg"
+                ],
+                [
+                    "{second}",
+                    "zz md second",
+                    "image/jpeg"
+                ],
+                [
+                    "{third}",
+                    "zz md third",
+                    "image/png"
+                ],
+                [
+                    "{song}",
+                    "zz md song",
+                    "audio/mpeg"
+                ]
+            ],
+            [
+                [
+                    "{third}",
+                    "zz md third",
+                    "image/png"
+                ]
+            ],
+            [],
+            true
+        ]
+    ],
+    [
+        "attachment taxonomies",
+        [
+            [],
+            []
+        ]
+    ],
+    [
+        "adjacent image links",
+        [
+            [
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'><img width=\"150\" height=\"150\" src=\"{uploads}/2026/10/zz-md-second-150x150.jpg\" class=\"attachment-thumbnail size-thumbnail\" alt=\"zz md second\" decoding=\"async\" /></a>",
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'>On</a>",
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'><b>x</b></a>",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'>1</a>"
+            ],
+            [
+                "<a href='{site}/zz-md-gallery/zz-md-first/'><img width=\"150\" height=\"150\" src=\"{uploads}/2026/10/zz-md-first-150x150.jpg\" class=\"attachment-thumbnail size-thumbnail\" alt=\"zz md first\" decoding=\"async\" /></a>",
+                "<a href='{site}/zz-md-gallery/zz-md-third/'><img width=\"150\" height=\"150\" src=\"{uploads}/2026/10/zz-md-third-150x150.jpg\" class=\"attachment-thumbnail size-thumbnail\" alt=\"zz md third\" decoding=\"async\" /></a>",
+                "<a href='{site}/zz-md-gallery/zz-md-first/'>Back</a>",
+                "<a href='{site}/zz-md-gallery/zz-md-third/'>On</a>",
+                "<a href='{site}/zz-md-gallery/zz-md-first/'>zz md first</a>",
+                "<a href='{site}/zz-md-gallery/zz-md-third/'><b>x</b></a>",
+                "<a href='{site}/zz-md-gallery/zz-md-third/'>1</a>"
+            ],
+            [
+                "<a href='{site}/zz-md-gallery/zz-md-second/'><img width=\"150\" height=\"150\" src=\"{uploads}/2026/10/zz-md-second-150x150.jpg\" class=\"attachment-thumbnail size-thumbnail\" alt=\"zz md second\" decoding=\"async\" loading=\"lazy\" /></a>",
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'>Back</a>",
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'>zz md second</a>",
+                "",
+                ""
+            ],
+            [
+                "<a href='{site}/zz-md-gallery/zz-md-second/'><img width=\"150\" height=\"150\" src=\"{uploads}/2026/10/zz-md-second-150x150.jpg\" class=\"attachment-thumbnail size-thumbnail\" alt=\"zz md second\" decoding=\"async\" loading=\"lazy\" /></a>",
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'>Back</a>",
+                "",
+                "<a href='{site}/zz-md-gallery/zz-md-second/'>zz md second</a>",
+                "",
+                ""
+            ]
+        ]
+    ],
+    [
+        "adjacent image link filters",
+        [
+            [
+                "previous_image_link",
+                "{first}",
+                "thumbnail",
+                false
+            ],
+            [
+                "next_image_link",
+                "{third}",
+                "thumbnail",
+                false
+            ],
+            [
+                "previous_image_link",
+                "{first}",
+                false,
+                "Back"
+            ],
+            [
+                "next_image_link",
+                "{third}",
+                "medium",
+                "On"
+            ],
+            [
+                "previous_image_link",
+                "{first}",
+                0,
+                false
+            ],
+            [
+                "next_image_link",
+                "{third}",
+                [
+                    40,
+                    40
+                ],
+                "<b>x</b>"
+            ],
+            [
+                "next_image_link",
+                "{third}",
+                0,
+                true
+            ],
+            [
+                "previous_image_link",
+                "{second}",
+                "thumbnail",
+                false
+            ],
+            [
+                "next_image_link",
+                0,
+                "thumbnail",
+                false
+            ],
+            [
+                "previous_image_link",
+                "{second}",
+                false,
+                "Back"
+            ],
+            [
+                "next_image_link",
+                0,
+                "medium",
+                "On"
+            ],
+            [
+                "previous_image_link",
+                "{second}",
+                0,
+                false
+            ],
+            [
+                "next_image_link",
+                0,
+                [
+                    40,
+                    40
+                ],
+                "<b>x</b>"
+            ],
+            [
+                "next_image_link",
+                0,
+                0,
+                true
+            ]
+        ]
+    ],
+    [
+        "image files",
+        [
+            [
+                {
+                    "0": 300,
+                    "1": 200,
+                    "2": 3,
+                    "3": "width=\"300\" height=\"200\"",
+                    "bits": 8,
+                    "mime": "image/png"
+                },
+                {
+                    "0": 300,
+                    "1": 200,
+                    "2": 2,
+                    "3": "width=\"300\" height=\"200\"",
+                    "bits": 8,
+                    "channels": 3,
+                    "mime": "image/jpeg"
+                },
+                true,
+                false,
+                false
+            ],
+            true,
+            false,
+            false,
+            true,
+            {
+                "file": "zz-md-red-100x100.png",
+                "width": 100,
+                "height": 100,
+                "mime-type": "image/png",
+                "filesize": "bytes"
+            },
+            {
+                "file": "zz-md-red-150x100.png",
+                "width": 150,
+                "height": 100,
+                "mime-type": "image/png",
+                "filesize": "bytes"
+            },
+            {
+                "file": "zz-md-red-120x80.jpg",
+                "width": 120,
+                "height": 80,
+                "mime-type": "image/jpeg",
+                "filesize": "bytes"
+            },
+            false,
+            false,
+            false,
+            [
+                true,
+                true,
+                true
+            ]
+        ]
+    ],
+    [
+        "editor support and output formats",
+        [
+            [
+                true,
+                true,
+                true,
+                false,
+                false,
+                false
+            ],
+            [
+                {
+                    "image/heic": "image/jpeg",
+                    "image/heif": "image/jpeg",
+                    "image/heic-sequence": "image/jpeg",
+                    "image/heif-sequence": "image/jpeg"
+                },
+                {
+                    "image/heic": "image/jpeg",
+                    "image/heif": "image/jpeg",
+                    "image/heic-sequence": "image/jpeg",
+                    "image/heif-sequence": "image/jpeg"
+                },
+                {
+                    "image/heic": "image/jpeg",
+                    "image/heif": "image/jpeg",
+                    "image/heic-sequence": "image/jpeg",
+                    "image/heif-sequence": "image/jpeg"
+                },
+                {
+                    "image/heic": "image/jpeg",
+                    "image/heif": "image/jpeg",
+                    "image/heic-sequence": "image/jpeg",
+                    "image/heif-sequence": "image/jpeg"
+                },
+                {
+                    "image/heic": "image/jpeg",
+                    "image/heif": "image/jpeg",
+                    "image/heic-sequence": "image/jpeg",
+                    "image/heif-sequence": "image/jpeg"
+                },
+                {
+                    "image/heic": "image/jpeg",
+                    "image/heif": "image/jpeg",
+                    "image/heic-sequence": "image/jpeg",
+                    "image/heif-sequence": "image/jpeg"
+                }
+            ]
+        ]
+    ],
+    [
+        "output formats filtered",
+        [
+            {
+                "image/heic": "image/jpeg",
+                "image/heif": "image/jpeg",
+                "image/heic-sequence": "image/jpeg",
+                "image/heif-sequence": "image/jpeg",
+                "image/png": "image/webp"
+            },
+            {
+                "image/heic": "image/jpeg",
+                "image/heif": "image/jpeg",
+                "image/heic-sequence": "image/jpeg",
+                "image/heif-sequence": "image/jpeg",
+                "image/png": "image/webp"
+            }
+        ]
+    ],
+    [
+        "upload size limit",
+        [
+            true,
+            true
+        ]
+    ],
+    [
+        "playlist scripts",
+        [
+            false,
+            false,
+            false,
+            false,
+            [
+                true,
+                true,
+                0,
+                0
+            ]
+        ]
+    ]
+]

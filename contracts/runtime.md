@@ -9529,3 +9529,42 @@ Fixed to match:
 Kept: the engine's probe runner has not run `init`. So the header markup's
 `wp-custom-header` enqueue raises the "too early" notice there and not under
 WP-CLI. That is the runner's doing, not the engine's.
+
+## The rest of media.php (2026-10-09)
+
+Probe `media-remaining` proves 23 media.php functions:
+- image size registration, sizes from metadata, width and height strings,
+  and ratio matches;
+- srcset and sizes for crafted metadata, and srcset added to content images;
+- lazy loading defaults, and the audio and video extensions;
+- attached media and attachment taxonomies;
+- the adjacent image links in an attachment's gallery;
+- real image files: sizes read, and an intermediate size made;
+- editor support and output formats;
+- the upload size limit and the playlist scripts.
+
+The reference picks Imagick and the engine GD (its Imagick editor is still a
+placeholder), so the probe compares file sizes by type only.
+`wp_enqueue_media` is left out: the engine does not run the media modal, and
+its version is empty.
+
+Fixed to match:
+
+- **Srcset (`wp_calculate_image_srcset`, `Media\Sizing::sources`).** The
+  source must name the image's folder and file, `2026/10/name-1024x512.jpg`.
+  Any host will do, a CDN's included. A source in another folder, or a bare
+  file name, gets no srcset. The candidates are addressed from the uploads
+  folder, not from the source's own folder.
+- **The adjacent image links:**
+  - A post that is not among the gallery's images counts as the last of
+    them.
+  - The image's alt is the neighbour's title (`get_the_title`), even over a
+    stored alt.
+  - `previous_image_link` and `next_image_link` hear the neighbour's id (0
+    when there is none), the size and the text.
+- **`wp_image_editor_supports`** asks `_wp_image_editor_choose`, so the MIME
+  type and methods count. It used to ask only whether GD was loaded.
+- **`upload_size_limit`** hears both PHP limits, not zeros.
+
+Owed: `wp_enqueue_media`, and the Imagick editor (on the reference,
+`wp_image_editor_supports` answers for Imagick).

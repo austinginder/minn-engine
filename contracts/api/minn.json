@@ -79021,7 +79021,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Sizing.php",
-            "lines": 232,
+            "lines": 239,
             "doc": "The image size arithmetic the media functions share: the crop or scale a\nresize needs, the registered size a requested box picks, and the srcset\ncandidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.",
             "implements": [],
             "extends": null,
@@ -79194,7 +79194,7 @@
                     "name": "sources",
                     "static": true,
                     "visibility": "public",
-                    "signature": "sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio): array",
+                    "signature": "sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl): array",
                     "doc": "The srcset candidates by width: every size on the image's ratio (and\nthe same edit, when the file was edited), the source itself winning a\nwidth clash.",
                     "shapes": [
                         "@param array{0: int, 1: int} $sizeArray",
@@ -79229,10 +79229,17 @@
                             "shape": "Closure(int, int, int, int): bool",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "uploadsUrl",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
                     "line": 152,
-                    "end": 186
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -79251,8 +79258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 199
+                    "line": 196,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -79301,8 +79308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 222
+                    "line": 209,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -79330,8 +79337,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 244
+                    "line": 243,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -79357,8 +79364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 227
+                    "line": 231,
+                    "end": 234
                 }
             ]
         },

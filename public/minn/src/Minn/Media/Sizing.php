@@ -149,9 +149,16 @@ final class Sizing
      * @param Closure(int, int, int, int): bool $matchesRatio
      * @return array<int, array{url: string, descriptor: string, value: int}>
      */
-    public static function sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio): array
+    public static function sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl): array
     {
         if (empty($meta['sizes']) || !isset($meta['file']) || !str_contains((string) $meta['file'], '.')) {
+            return [];
+        }
+        // The source must name the image's folder and file (any host will do); the candidates
+        // are addressed from the uploads folder, not from the source (probe media-remaining).
+        $folder = dirname((string) $meta['file']);
+        $folder = $folder === '.' ? '' : $folder . '/';
+        if (!str_contains($src, $folder . basename($src))) {
             return [];
         }
         $width = (int) $sizeArray[0];
@@ -161,7 +168,7 @@ final class Sizing
         }
         $sizes = $meta['sizes'];
         $sizes['full'] = ['width' => $meta['width'], 'height' => $meta['height'], 'file' => basename((string) $meta['file'])];
-        $baseUrl = str_replace(basename($src), '', $src);
+        $baseUrl = rtrim($uploadsUrl, '/') . '/' . $folder;
         $edited = preg_match('/-e[0-9]{13}/', basename((string) $meta['file']), $editHash);
         $sources = [];
         foreach ($sizes as $image) {
