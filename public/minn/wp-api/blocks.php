@@ -1416,6 +1416,47 @@ function _block_template_add_skip_link($template_html)
 }
 
 /** A block rendered inside a template (render_block_context) has no post: its postId and postType go. */
+/**
+ * An auto-draft template part (on save_post_wp_template_part; the post type
+ * is not checked) with no slug gets custom_slug_{uniqid}, and one with no
+ * wp_theme term gets the active theme's. Anything else is left alone.
+ */
+function wp_set_unique_slug_on_create_template_part($post_id)
+{
+    $post = get_post($post_id);
+    if (!$post instanceof WP_Post || $post->post_status !== 'auto-draft') {
+        return;
+    }
+    if (!$post->post_name) {
+        wp_update_post(['ID' => $post->ID, 'post_name' => 'custom_slug_' . uniqid()]);
+    }
+    $terms = get_the_terms($post->ID, 'wp_theme');
+    if (!is_array($terms) || $terms === []) {
+        wp_set_post_terms($post->ID, get_stylesheet(), 'wp_theme');
+    }
+}
+
+/** On wp_loaded: a request carrying _wp-find-template (whatever its value) has new posts' template queries resolved. */
+function _add_template_loader_filters()
+{
+    if (isset($_GET['_wp-find-template'])) {
+        add_action('pre_get_posts', '_resolve_template_for_new_post');
+    }
+}
+
+/**
+ * The site editor's template lookup for a new post, on pre_get_posts: it
+ * acts on the main query only, and unhooks itself there. Nothing else it
+ * does could be observed (probe template-loader-more).
+ */
+function _resolve_template_for_new_post($wp_query)
+{
+    if (!$wp_query instanceof WP_Query || !$wp_query->is_main_query()) {
+        return;
+    }
+    remove_action('pre_get_posts', '_resolve_template_for_new_post');
+}
+
 function _block_template_render_without_post_block_context($context)
 {
     if (($context['postType'] ?? null) === 'wp_template') {

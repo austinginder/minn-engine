@@ -83,6 +83,14 @@ function get_day_link($year, $month, $day)
     return apply_filters('day_link', $link, $year, $month, $day);
 }
 
+/** Sets the template path globals: $wp_stylesheet_path and $wp_template_path, the active theme's directories. */
+function wp_set_template_globals()
+{
+    global $wp_stylesheet_path, $wp_template_path;
+    $wp_stylesheet_path = get_stylesheet_directory();
+    $wp_template_path = get_template_directory();
+}
+
 function locate_template($template_names, $load = false, $load_once = true, $args = [])
 {
     $located = '';

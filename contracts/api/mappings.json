@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1816,
-        "leaf": 861,
+        "composes": 1821,
+        "leaf": 862,
         "noop": 2651,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7927,
+        "functions": 7933,
         "minnMethods": 934,
         "leafLinesOver15": 12
     },
@@ -27858,6 +27858,15 @@
             "composes": [],
             "deadend": "admin"
         },
+        "_add_template_loader_filters": {
+            "file": "blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action"
+            ]
+        },
         "_admin_bar_bump_cb": {
             "file": "admin-bar.php",
             "lines": 3,
@@ -30108,6 +30117,13 @@
                 "wp_should_load_block_assets_on_demand"
             ]
         },
+        "_minn_etc_zone_order": {
+            "file": "functions.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "_minn_excerpt_blocks": {
             "file": "blocks.php",
             "lines": 17,
@@ -30739,15 +30755,17 @@
         },
         "_minn_post_inputs": {
             "file": "post.php",
-            "lines": 20,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PostInsert::categories"
             ],
             "composes": [
+                "current_user_can",
                 "delete_post_meta",
                 "get_object_taxonomies",
                 "get_option",
+                "get_taxonomy",
                 "update_post_meta",
                 "wp_set_post_categories",
                 "wp_set_post_tags",
@@ -32188,6 +32206,15 @@
                 "_deprecated_function",
                 "get_option",
                 "resolve_block_template"
+            ]
+        },
+        "_resolve_template_for_new_post": {
+            "file": "blocks.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "remove_action"
             ]
         },
         "_rest_array_intersect_key_recursive": {
@@ -33869,6 +33896,15 @@
             "composes": [
                 "_deprecated_function",
                 "add_action"
+            ]
+        },
+        "_wp_timezone_choice_usort_callback": {
+            "file": "functions.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_etc_zone_order"
             ]
         },
         "_wp_tinycolor_bound_alpha": {
@@ -67734,6 +67770,29 @@
             "minn": [],
             "composes": [
                 "update_option"
+            ]
+        },
+        "wp_set_template_globals": {
+            "file": "template.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_stylesheet_directory",
+                "get_template_directory"
+            ]
+        },
+        "wp_set_unique_slug_on_create_template_part": {
+            "file": "blocks.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post",
+                "get_stylesheet",
+                "get_the_terms",
+                "wp_set_post_terms",
+                "wp_update_post"
             ]
         },
         "wp_set_up_cross_origin_isolation": {

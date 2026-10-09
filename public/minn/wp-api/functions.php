@@ -919,6 +919,41 @@ function wp_die($message = '', $title = '', $args = [])
 }
 
 /** A charset's usual spelling: UTF-8 and ISO-8859-1 however they were written, anything else as given. */
+/**
+ * The timezone menu's order: Etc entries among themselves by their own
+ * names (GMT+N falling, UTC between them and the rest, the rest
+ * naturally), Etc after every other continent, and the others by their
+ * translated continent, city, then subcity, naturally and caselessly.
+ */
+function _wp_timezone_choice_usort_callback($a, $b)
+{
+    if ($a['continent'] === 'Etc' && $b['continent'] === 'Etc') {
+        return _minn_etc_zone_order((string) $a['city'], (string) $b['city']);
+    }
+    if ($a['t_continent'] !== $b['t_continent']) {
+        if ($a['continent'] === 'Etc') {
+            return 1;
+        }
+        return $b['continent'] === 'Etc' ? -1 : strnatcasecmp($a['t_continent'], $b['t_continent']);
+    }
+    return $a['t_city'] === $b['t_city'] ? strnatcasecmp($a['t_subcity'], $b['t_subcity']) : strnatcasecmp($a['t_city'], $b['t_city']);
+}
+
+/** @internal two Etc zones in the timezone menu's order */
+function _minn_etc_zone_order(string $a, string $b): int
+{
+    if (str_starts_with($a, 'GMT+') && str_starts_with($b, 'GMT+')) {
+        return -1 * strnatcasecmp($a, $b);
+    }
+    if ($a === 'UTC') {
+        return str_starts_with($b, 'GMT+') ? 1 : -1;
+    }
+    if ($b === 'UTC') {
+        return str_starts_with($a, 'GMT+') ? -1 : 1;
+    }
+    return strnatcasecmp($a, $b);
+}
+
 function _canonical_charset($charset)
 {
     $name = strtolower((string) $charset);

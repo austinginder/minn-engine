@@ -8796,3 +8796,45 @@ connector there. It writes every connector option back as it was.
   feeds only wp-admin's connectors screen
   (`script_module_data_options-connectors-wp-admin`), next to the
   build/routes admin pages: an admin dead end?
+
+## More of template loading, the timezone order, and tax_input's capability (2026-10-09)
+
+Probe `template-loader-more`.
+
+- **`wp_set_template_globals`** sets `$wp_stylesheet_path` and
+  `$wp_template_path` to the active theme's directories. (Earlier notes
+  said it had no observable effect; it does.)
+- **`wp_set_unique_slug_on_create_template_part`** (on
+  `save_post_wp_template_part`, 10) works on auto-drafts only. One with no
+  slug gets `custom_slug_{uniqid}`, and one with no `wp_theme` term gets the
+  active stylesheet's. It does not check the post type: called directly on
+  a post, it renames that post too. For a missing post it returns nothing
+  (the reference warns, reading a null).
+- **`_add_template_loader_filters`** (on `wp_loaded`, 10) hooks
+  `_resolve_template_for_new_post` on `pre_get_posts` whenever
+  `_wp-find-template` is in the query string, whatever its value.
+- **`_resolve_template_for_new_post`** does nothing on a query other than
+  the main one. On the main one it unhooks itself. No change to the query
+  could be observed, with an auto-draft post or page as the id, as an
+  administrator or nobody. It serves the site editor's template lookup.
+- **`_wp_timezone_choice_usort_callback`**, proven by sorting PHP's whole
+  zone list with the Etc names added (453 entries) the same on both stacks:
+  - Etc entries compare by untranslated city. Two GMT+N fall in reverse;
+    UTC comes after GMT+ and before anything else; the rest compare
+    naturally (`GMT`, `GMT+12` … `GMT+0`, `UTC`, `GMT-0` … `GMT-14`,
+    `Greenwich`, `UCT`, `Universal`, `Zulu`).
+  - Etc goes after every other continent, whatever the translations.
+  - Everything else compares translated continent, then city, then
+    subcity, naturally and without case.
+- **Shared fix: `tax_input` needs the right to assign terms.**
+  `wp_insert_post` now sets a taxonomy's terms from `tax_input` only when
+  the current user has that taxonomy's `assign_terms` capability. With
+  nobody signed in, category and tags are left alone, so the default
+  category stands. Before, the engine applied them for anyone.
+- **Left open.**
+  - `wp_enqueue_block_template_skip_link` would print WordPress's own
+    skip-link stylesheet text (for Austin, with the skip-link CSS item).
+  - `wp_global_styles_render_svg_filters` needs
+    `wp_get_global_styles_svg_filters` to print the duotone filters; the
+    engine's answers `''`.
+  - `wp_map_sidebars_widgets` goes in a widgets batch.

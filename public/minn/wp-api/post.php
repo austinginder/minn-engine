@@ -1272,8 +1272,12 @@ function _minn_post_inputs(int $id, array $postarr, string $type, string $status
     if (isset($postarr['tags_input']) && in_array('post_tag', get_object_taxonomies($type), true)) {
         wp_set_post_tags($id, $postarr['tags_input']);
     }
+    // A taxonomy's terms are set only for a user who may assign them; the others are left as they were (probe template-loader-more).
     foreach (is_array($postarr['tax_input'] ?? null) ? $postarr['tax_input'] : [] as $taxonomy => $terms) {
-        wp_set_post_terms($id, $terms, (string) $taxonomy);
+        $object = get_taxonomy((string) $taxonomy);
+        if (!$object || current_user_can($object->cap->assign_terms)) {
+            wp_set_post_terms($id, $terms, (string) $taxonomy);
+        }
     }
     foreach (is_array($postarr['meta_input'] ?? null) ? $postarr['meta_input'] : [] as $key => $value) {
         update_post_meta($id, (string) $key, $value);

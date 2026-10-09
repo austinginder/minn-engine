@@ -438,6 +438,9 @@ add_filter('http_request_host_is_external', 'allowed_http_request_hosts', 10, 2)
 add_filter('term_link', '_post_format_link', 10, 3);
 // The settings answer masks connector credentials (probe abilities-lookup); the engine skips it on every other route.
 add_filter('rest_post_dispatch', '_wp_connectors_rest_settings_dispatch', 10, 3);
+// A new auto-draft template part gets a slug and the theme; the editor's find-template request is resolved (probe template-loader-more).
+add_action('save_post_wp_template_part', 'wp_set_unique_slug_on_create_template_part');
+add_action('wp_loaded', '_add_template_loader_filters');
 // A tabs block gives its inner blocks its id and its tabs' ids (probe tabs-and-parts).
 add_filter('render_block_context', 'block_core_tabs_provide_context', 10, 2);
 add_action('update_option_home', 'wp_update_https_migration_required', 10, 2);
