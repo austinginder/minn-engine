@@ -58717,6 +58717,7 @@
                 "Minn\\Http\\Ipv6",
                 "Minn\\Http\\IriParts",
                 "Minn\\Http\\Kernel",
+                "Minn\\Http\\LegacyHeaders",
                 "Minn\\Http\\Location",
                 "Minn\\Http\\Matched",
                 "Minn\\Http\\Method",
@@ -61978,6 +61979,70 @@
                     ],
                     "line": 35,
                     "end": 47
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\LegacyHeaders",
+            "short": "LegacyHeaders",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/LegacyHeaders.php",
+            "lines": 60,
+            "doc": "WP_Http's legacy readers, kept for plugins that still call them (probe\nhttp-classes). They read a header block the old way, and decode a chunked\nbody with the reference's quirk. RawResponse does both properly for the\nengine's own requests.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(array|string $headers): array",
+                    "doc": "A header block (a string, its folded lines joined, or a list of lines)\nread into the last status line's code and message, lower-cased\nheaders (a repeated one as a list) and the Set-Cookie values. Each\nstatus line starts the headers over.",
+                    "shapes": [
+                        "@param string|list<string> $headers",
+                        "@return array{response: array{code: int, message: string}, headers: array<string, string|list<string>>, cookies: list<string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array|string",
+                            "shape": "string|list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "dechunk",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "dechunk(string $body): string",
+                    "doc": "A chunked body decoded as the reference's WP_Http::chunkTransferDecode\ndecodes one. The CRLF after a chunk is not stepped over, so it decodes\nonly when chunks run into each other and a final 0 ends the body; any\nother shape comes back as it was.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 57,
+                    "end": 71
                 }
             ]
         },

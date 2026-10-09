@@ -17,6 +17,7 @@ request, response, routing, and the outgoing client
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
 | [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
+| [`LegacyHeaders`](#legacyheaders) | final class | 60 | WP_Http's legacy readers, kept for plugins that still call them (probe |
 | [`Location`](#location) | final class | 65 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
 | [`Matched`](#matched) | final readonly class | 15 | A route the router matched to a request and whose policy it judged: the |
 | [`Method`](#method) | enum | 33 |  |
@@ -515,6 +516,33 @@ __construct(Minn\Http\Router $router)
 Routes the request; a thrown failure becomes its response, and null means no route matched.
 
 Internals: `harden()` (private, line 35)
+
+
+## LegacyHeaders
+
+`final class Minn\Http\LegacyHeaders` · `public/minn/src/Minn/Http/LegacyHeaders.php`
+
+WP_Http's legacy readers, kept for plugins that still call them (probe
+http-classes). They read a header block the old way, and decode a chunked
+body with the reference's quirk. RawResponse does both properly for the
+engine's own requests.
+
+### static `read(array|string $headers): array`
+
+A header block (a string, its folded lines joined, or a list of lines)
+read into the last status line's code and message, lower-cased
+headers (a repeated one as a list) and the Set-Cookie values. Each
+status line starts the headers over.
+
+- `@param string|list<string> $headers`
+- `@return array{response: array{code: int, message: string}, headers: array<string, string|list<string>>, cookies: list<string>}`
+
+### static `dechunk(string $body): string`
+
+A chunked body decoded as the reference's WP_Http::chunkTransferDecode
+decodes one. The CRLF after a chunk is not stepped over, so it decodes
+only when chunks run into each other and a final 0 ends the body; any
+other shape comes back as it was.
 
 
 ## Location

@@ -2,14 +2,14 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 749,
-        "composes": 1596,
-        "leaf": 764,
-        "noop": 2458,
+        "minn": 750,
+        "composes": 1600,
+        "leaf": 767,
+        "noop": 2459,
         "placeholder": 279,
         "deadend": 1659,
-        "functions": 7428,
-        "minnMethods": 899,
+        "functions": 7436,
+        "minnMethods": 901,
         "leafLinesOver15": 13
     },
     "functions": {
@@ -26090,6 +26090,15 @@
             ],
             "deadend": "admin"
         },
+        "_get_first_available_transport": {
+            "file": "classes/WP_Http.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "_get_last_post_time": {
             "file": "post.php",
             "lines": 11,
@@ -32720,6 +32729,20 @@
             "minn": [],
             "composes": []
         },
+        "browser_redirect_compatibility": {
+            "file": "classes/WP_Http.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "buildCookieHeader": {
+            "file": "classes/WP_Http.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "build_comment_query_vars_from_block": {
             "file": "blocks.php",
             "lines": 27,
@@ -33016,6 +33039,15 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "chunkTransferDecode": {
+            "file": "classes/WP_Http.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Http\\LegacyHeaders::dechunk"
+            ],
+            "composes": []
         },
         "clamp": {
             "file": "compat.php",
@@ -41888,6 +41920,16 @@
                 "_deprecated_function"
             ]
         },
+        "handle_redirects": {
+            "file": "classes/WP_Http.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_remote_request"
+            ]
+        },
         "has_action": {
             "file": "hooks.php",
             "lines": 1,
@@ -44816,6 +44858,13 @@
             "minn": [],
             "composes": []
         },
+        "normalize_cookies": {
+            "file": "classes/WP_Http.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "normalize_whitespace": {
             "file": "post.php",
             "lines": 2,
@@ -45843,6 +45892,22 @@
             "minn": [],
             "composes": [],
             "deadend": "xmlrpc"
+        },
+        "processHeaders": {
+            "file": "classes/WP_Http.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Http\\LegacyHeaders::read"
+            ],
+            "composes": []
+        },
+        "processResponse": {
+            "file": "classes/WP_Http.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "process_response": {
             "file": "requests/Core.php",
@@ -48170,13 +48235,6 @@
             "minn": [],
             "composes": []
         },
-        "request_cookies": {
-            "file": "classes/WP_Http.php",
-            "lines": 9,
-            "kind": "leaf",
-            "minn": [],
-            "composes": []
-        },
         "request_filesystem_credentials": {
             "file": "admin.php",
             "lines": 5,
@@ -48203,7 +48261,7 @@
         },
         "request_options": {
             "file": "classes/WP_Http.php",
-            "lines": 33,
+            "lines": 32,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -52597,6 +52655,16 @@
             ],
             "composes": [],
             "deadend": "admin"
+        },
+        "validate_redirects": {
+            "file": "classes/WP_Http.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_http_validate_url"
+            ]
         },
         "validate_username": {
             "file": "user.php",

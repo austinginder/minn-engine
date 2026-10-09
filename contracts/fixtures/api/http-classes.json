@@ -1,0 +1,547 @@
+[
+    [
+        "raw responses",
+        [
+            {
+                "headers": "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nX-A: b",
+                "body": "the body\r\n\r\nmore"
+            },
+            {
+                "headers": "HTTP/1.1 100 Continue",
+                "body": "HTTP/1.1 201 Created\r\nX-B: c\r\n\r\nbody two"
+            },
+            {
+                "headers": "no separator at all",
+                "body": ""
+            },
+            {
+                "headers": "",
+                "body": ""
+            }
+        ]
+    ],
+    [
+        "headers parsed",
+        [
+            {
+                "response": {
+                    "code": 404,
+                    "message": "Not Found"
+                },
+                "headers": {
+                    "content-type": "text/html",
+                    "x-multi": [
+                        "one",
+                        "two"
+                    ],
+                    "set-cookie": [
+                        "a=1; path=/x; domain=example.com",
+                        "b=2  folded: line"
+                    ]
+                },
+                "cookies": [
+                    {
+                        "class": "WP_Http_Cookie",
+                        "name": "a",
+                        "value": "1",
+                        "expires": null,
+                        "path": "/x",
+                        "domain": "example.com",
+                        "port": null,
+                        "host_only": null
+                    },
+                    {
+                        "class": "WP_Http_Cookie",
+                        "name": "b",
+                        "value": "2  folded: line",
+                        "expires": null,
+                        "path": "//",
+                        "domain": "example.com",
+                        "port": null,
+                        "host_only": null
+                    }
+                ]
+            },
+            {
+                "response": {
+                    "code": 0,
+                    "message": "line"
+                },
+                "headers": [],
+                "cookies": []
+            },
+            {
+                "response": {
+                    "code": 200,
+                    "message": "OK"
+                },
+                "headers": {
+                    "x-last": "yes"
+                },
+                "cookies": []
+            },
+            {
+                "response": {
+                    "code": 0,
+                    "message": ""
+                },
+                "headers": [],
+                "cookies": []
+            }
+        ]
+    ],
+    [
+        "chunked bodies",
+        [
+            "4\r\nWiki\r\n5\r\npedia\r\n0\r\n\r\n",
+            "Wiki",
+            "not chunked at all",
+            "0123456789",
+            "",
+            "Wiki",
+            "4\r\nWiki\r\n5\r\npedia\r\n",
+            "4\r\nWiki",
+            "0\r\n\r\n",
+            "  4\r\nWiki\r\n0\r\n",
+            "Wiki",
+            "4\r\nWikipedia\r\n0\r\n",
+            "Wikipedia",
+            "g\r\nWiki\r\n0\r\n"
+        ]
+    ],
+    [
+        "cookies built",
+        [
+            {
+                "class": "WP_Http_Cookie",
+                "name": "zz",
+                "value": "v v",
+                "expires": 2208988800,
+                "path": "/blog",
+                "domain": ".example.com",
+                "port": "443,8443",
+                "host_only": false
+            },
+            {
+                "class": "WP_Http_Cookie",
+                "name": "session",
+                "value": "abc d",
+                "expires": 1924992000,
+                "path": "/",
+                "domain": "example.com",
+                "port": null,
+                "host_only": null
+            },
+            {
+                "class": "WP_Http_Cookie",
+                "name": "solo",
+                "value": "1",
+                "expires": null,
+                "path": "/dir/",
+                "domain": "example.com",
+                "port": null,
+                "host_only": null
+            },
+            "zz=v v",
+            "session=abc d",
+            "Cookie: zz=v v",
+            {
+                "expires": 2208988800,
+                "path": "/blog",
+                "domain": ".example.com"
+            },
+            {
+                "expires": 1924992000,
+                "path": "/",
+                "domain": "example.com"
+            },
+            {
+                "class": "WP_Http_Cookie",
+                "name": "",
+                "value": "",
+                "expires": null,
+                "path": "/",
+                "domain": null,
+                "port": null,
+                "host_only": null
+            },
+            {
+                "class": "WP_Http_Cookie",
+                "name": "n",
+                "value": null,
+                "expires": null,
+                "path": "/",
+                "domain": null,
+                "port": null,
+                "host_only": null
+            }
+        ]
+    ],
+    [
+        "cookies tested",
+        {
+            "plain": [
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true,
+                false,
+                true,
+                false
+            ],
+            "header": [
+                true,
+                true,
+                true
+            ],
+            "host only": [
+                true,
+                true,
+                false
+            ],
+            "expired": false
+        }
+    ],
+    [
+        "cookie headers built",
+        [
+            {
+                "X-Keep": "kept",
+                "cookie": "plain=one two; num=5; zz=v v"
+            },
+            [
+                "cookies",
+                "headers"
+            ],
+            {
+                "cookies": []
+            }
+        ]
+    ],
+    [
+        "cookies normalised",
+        [
+            "WpOrg\\Requests\\Cookie\\Jar",
+            {
+                "plain": [
+                    "WpOrg\\Requests\\Cookie",
+                    "plain",
+                    "one"
+                ],
+                "num": [
+                    "WpOrg\\Requests\\Cookie",
+                    "num",
+                    "5"
+                ],
+                "zz": [
+                    "WpOrg\\Requests\\Cookie",
+                    "zz",
+                    "v v"
+                ]
+            }
+        ]
+    ],
+    [
+        "redirects, browser style",
+        [
+            [
+                301,
+                "POST",
+                {
+                    "type": "POST",
+                    "zz": "kept"
+                },
+                {
+                    "a": 1
+                }
+            ],
+            [
+                302,
+                "POST",
+                {
+                    "type": "GET",
+                    "zz": "kept"
+                },
+                {
+                    "a": 1
+                }
+            ],
+            [
+                303,
+                "POST",
+                {
+                    "type": "POST",
+                    "zz": "kept"
+                },
+                {
+                    "a": 1
+                }
+            ],
+            [
+                303,
+                "GET",
+                {
+                    "type": "GET",
+                    "zz": "kept"
+                },
+                {
+                    "a": 1
+                }
+            ],
+            [
+                307,
+                "POST",
+                {
+                    "type": "POST",
+                    "zz": "kept"
+                },
+                {
+                    "a": 1
+                }
+            ],
+            [
+                302,
+                "HEAD",
+                {
+                    "type": "GET",
+                    "zz": "kept"
+                },
+                {
+                    "a": 1
+                }
+            ]
+        ]
+    ],
+    [
+        "redirects validated",
+        [
+            "allowed",
+            [
+                "WpOrg\\Requests\\Exception",
+                "A valid URL was not provided.",
+                "wp_http.redirect_failed_validation"
+            ],
+            [
+                "WpOrg\\Requests\\Exception",
+                "A valid URL was not provided.",
+                "wp_http.redirect_failed_validation"
+            ],
+            [
+                "WpOrg\\Requests\\Exception",
+                "A valid URL was not provided.",
+                "wp_http.redirect_failed_validation"
+            ],
+            [
+                "WpOrg\\Requests\\Exception",
+                "A valid URL was not provided.",
+                "wp_http.redirect_failed_validation"
+            ],
+            [
+                "WpOrg\\Requests\\Exception",
+                "A valid URL was not provided.",
+                "wp_http.redirect_failed_validation"
+            ]
+        ]
+    ],
+    [
+        "redirects followed",
+        [
+            [
+                "from https://example.com/b",
+                200
+            ],
+            [
+                [
+                    "https://example.com/b",
+                    "GET",
+                    2
+                ]
+            ],
+            [
+                "from https://example.com/relative/path",
+                200
+            ],
+            [
+                "from https://example.com/c",
+                200
+            ],
+            [
+                "error",
+                [
+                    "http_request_failed"
+                ],
+                [
+                    "Too many redirects."
+                ]
+            ],
+            false,
+            false,
+            [
+                "from https://example.com/d",
+                200
+            ],
+            [
+                "from https://example.com/y",
+                200
+            ],
+            [
+                "from https://example.com/a",
+                200
+            ],
+            [
+                "from https://example.com/e",
+                200
+            ],
+            [
+                "from https://example.com/f",
+                200
+            ],
+            [
+                "from https://example.com/g",
+                200
+            ],
+            [
+                "from https://example.com/h",
+                200
+            ],
+            [
+                [
+                    "https://example.com/b",
+                    "GET",
+                    2
+                ],
+                [
+                    "https://example.com/relative/path",
+                    "GET",
+                    2
+                ],
+                [
+                    "https://example.com/c",
+                    "POST",
+                    2
+                ],
+                [
+                    "https://example.com/d",
+                    "HEAD",
+                    2
+                ],
+                [
+                    "https://example.com/y",
+                    "GET",
+                    0
+                ],
+                [
+                    "https://example.com/a",
+                    "GET",
+                    2
+                ],
+                [
+                    "https://example.com/e",
+                    "GET",
+                    2
+                ],
+                [
+                    "https://example.com/f",
+                    "GET",
+                    2
+                ],
+                [
+                    "https://example.com/g",
+                    "POST",
+                    2
+                ],
+                [
+                    "https://example.com/h",
+                    "GET",
+                    2
+                ]
+            ]
+        ]
+    ],
+    [
+        "first transport",
+        [
+            "WP_Http_Curl",
+            "WP_Http_Curl",
+            "WP_Http_Curl"
+        ]
+    ],
+    [
+        "response wrapper",
+        [
+            {
+                "a": 1
+            },
+            202,
+            {
+                "X-One": "1, again",
+                "X-Two": "2"
+            },
+            "{\"data\":{\"a\":1},\"headers\":{\"X-One\":\"1, again\",\"X-Two\":\"2\"},\"status\":202}"
+        ]
+    ],
+    [
+        "requests response wrapper",
+        [
+            "WpOrg\\Requests\\Response",
+            404,
+            "nothing here",
+            {
+                "content-type": "text/plain",
+                "x-many": [
+                    "a",
+                    "b"
+                ]
+            },
+            [
+                {
+                    "class": "WP_Http_Cookie",
+                    "name": "c",
+                    "value": "v",
+                    "expires": null,
+                    "path": "/",
+                    "domain": "example.com",
+                    "port": null,
+                    "host_only": true
+                }
+            ],
+            {
+                "headers": {
+                    "content-type": "text/plain",
+                    "x-many": [
+                        "a",
+                        "b"
+                    ]
+                },
+                "body": "nothing here",
+                "response": {
+                    "code": 404,
+                    "message": "Not Found"
+                },
+                "cookies": [
+                    {
+                        "class": "WP_Http_Cookie",
+                        "name": "c",
+                        "value": "v",
+                        "expires": null,
+                        "path": "/",
+                        "domain": "example.com",
+                        "port": null,
+                        "host_only": true
+                    }
+                ],
+                "filename": "/tmp/zz-file"
+            },
+            [
+                500,
+                "changed",
+                {
+                    "x-only": "o"
+                }
+            ]
+        ]
+    ]
+]

@@ -6899,3 +6899,45 @@ admin dead end.
   `$_COOKIE` as the reference does. The reference's refusal of the
   logged-in cookie on wp-admin screens is left out, since Minn Admin is not
   served from `/wp-admin/`.
+
+## The HTTP classes (2026-10-08)
+
+Probe `http-classes` (`tests/tools/http-classes-probe.php`). It proves
+`WP_Http`, `WP_Http_Cookie`, `WP_HTTP_Response` and
+`WP_HTTP_Requests_Response`, and adds WP_Http's ten missing methods. No
+request leaves: redirects answer through `pre_http_request`.
+
+- **Legacy readers** (`Http\LegacyHeaders`):
+  - `processResponse` splits at the first blank line.
+  - `processHeaders` unfolds folded lines and lower-cases names. A repeated
+    header becomes a list. Every status line starts the headers over, and a
+    line with no colon counts as one (`explode(' ', 3)`). Set-Cookie values
+    become `WP_Http_Cookie`s read against the URL.
+  - `chunkTransferDecode` keeps the reference's quirk: the CRLF after a
+    chunk is never stepped over, so a body decodes only when chunks run
+    straight into each other and a final `0` ends it. Any other shape comes
+    back unchanged. The engine's own requests use `RawResponse::unchunk`.
+- **Cookies.** A Set-Cookie value is URL-decoded. Its domain defaults to the
+  URL's host, and its path to the URL's directory (`/page` gives `//`, as
+  the reference does), else `/`. An expiry given as a date becomes a
+  timestamp. `test()` checks four things:
+  - the cookie hasn't expired;
+  - the host ends with the domain (dot trimmed, case-sensitive, no label
+    boundary, so `notexample.com` passes);
+  - the path starts with the cookie's path;
+  - the URL's port (or 80/443) is among the cookie's ports.
+
+  `buildCookieHeader` writes one lower-case `cookie` header from raw
+  name=value pairs. `normalize_cookies` (the jar `request()` now sends)
+  keys a Requests jar by cookie name.
+- **Redirects.** `browser_redirect_compatibility` turns any 302 into a GET.
+  `request()` now registers it, and also registers `validate_redirects`
+  when `reject_unsafe_urls` is set, so a safe request refuses unsafe
+  redirect targets. `validate_redirects` throws
+  `wp_http.redirect_failed_validation`. `handle_redirects` follows any
+  3xx's Location (the last of several, resolved against the URL) with one
+  fewer redirect left. A POST answered by 302 or 303 becomes a GET, while
+  301 and 307 keep it. It returns false without a Location or a 3xx, and
+  "Too many redirects." when none are left.
+- `_get_first_available_transport` gives `WP_Http_Curl` (then
+  `WP_Http_Streams`) through `http_api_transports`.

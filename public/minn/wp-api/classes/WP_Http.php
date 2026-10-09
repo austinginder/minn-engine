@@ -148,11 +148,17 @@ namespace {
         public $port;
         public $host_only;
 
+        /**
+         * A cookie from a Set-Cookie value (the value URL-decoded; its domain and path, when it names
+         * none, from the URL it came from: the host, and the URL's directory)
+         * or from its fields. The path is "/" when nothing gives one; an
+         * expiry given as a date becomes a timestamp (probe http-classes).
+         */
         public function __construct($data, $requested_url = '')
         {
             if (is_string($data)) {
                 $parsed = \Minn\Http\CookieText::parse($data);
-                [$this->name, $this->value] = [$parsed['name'], $parsed['value']];
+                [$this->name, $this->value] = [$parsed['name'], urldecode((string) $parsed['value'])];
                 foreach ($parsed['attributes'] as $key => $val) {
                     $key = strtolower((string) $key);
                     $val = $val === true ? '' : (string) $val;
@@ -160,13 +166,42 @@ namespace {
                         $this->{$key} = $key === 'expires' ? strtotime($val) : $val;
                     }
                 }
-                return;
-            }
-            foreach ((array) $data as $key => $val) {
-                if (property_exists($this, $key)) {
-                    $this->{$key} = $val;
+                if ($requested_url !== '' && ($from = parse_url((string) $requested_url)) !== false) {
+                    $this->domain ??= $from['host'] ?? null;
+                    $path = $from['path'] ?? '/';
+                    $this->path ??= str_ends_with($path, '/') ? $path : dirname($path) . '/';
+                }
+            } else {
+                foreach ((array) $data as $key => $val) {
+                    if (property_exists($this, $key)) {
+                        $this->{$key} = $val;
+                    }
+                }
+                if (is_string($this->expires) && !is_numeric($this->expires)) {
+                    $this->expires = strtotime($this->expires);
                 }
             }
+            $this->path ??= '/';
+        }
+
+        /** Whether the cookie goes with a request to a URL: not expired, the host ending with its domain, the path starting with its path, the port among its ports. */
+        public function test($url)
+        {
+            if ($this->name === null || ($this->expires !== null && time() > (int) $this->expires)) {
+                return false;
+            }
+            $parts = parse_url((string) $url);
+            if ($parts === false || !isset($parts['host'])) {
+                return false;
+            }
+            $port = $parts['port'] ?? (($parts['scheme'] ?? '') === 'https' ? 443 : 80);
+            if (!empty($this->port) && !in_array($port, array_map('intval', explode(',', (string) $this->port)), true)) {
+                return false;
+            }
+            if (!str_starts_with($parts['path'] ?? '/', (string) $this->path)) {
+                return false;
+            }
+            return str_ends_with($parts['host'], ltrim((string) ($this->domain ?? $parts['host']), '.'));
         }
 
         public function getHeaderValue()
@@ -262,12 +297,11 @@ namespace {
         private function request_options(string $url, array $args): array
         {
             $hooks = new WP_HTTP_Requests_Hooks($url, $args);
-            // A 302 answering a POST is followed with a GET, as browsers do.
-            $hooks->register('requests.before_redirect', static function (&$location, &$headers, &$data, &$options, $original): void {
-                if ($original->status_code === 302 && $options['type'] === \WpOrg\Requests\Requests::POST) {
-                    $options['type'] = \WpOrg\Requests\Requests::GET;
-                }
-            });
+            $hooks->register('requests.before_redirect', [self::class, 'browser_redirect_compatibility']);
+            // A request that refuses unsafe URLs refuses them as redirect targets too.
+            if (!empty($args['reject_unsafe_urls'])) {
+                $hooks->register('requests.before_redirect', [self::class, 'validate_redirects']);
+            }
             $options = ['timeout' => (float) $args['timeout'], 'useragent' => (string) $args['user-agent'], 'blocking' => (bool) $args['blocking'], 'hooks' => $hooks];
             if ($args['stream']) {
                 $options['filename'] = $args['filename'];
@@ -281,7 +315,7 @@ namespace {
                 $options['max_bytes'] = (int) $args['limit_response_size'];
             }
             if (!empty($args['cookies'])) {
-                $options['cookies'] = self::request_cookies((array) $args['cookies']);
+                $options['cookies'] = self::normalize_cookies((array) $args['cookies']);
             }
             // Verification as plugins leave it: off, the certificate bundle given, or on.
             $verify = !$args['sslverify'] ? false : (!empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : true);
@@ -296,11 +330,11 @@ namespace {
             return $options;
         }
 
-        /** The cookies a request carries, as the library's jar: WordPress cookie objects and name => value pairs alike. */
-        private static function request_cookies(array $cookies): \WpOrg\Requests\Cookie\Jar
+        /** The cookies a request carries, as the library's jar keyed by name: WordPress cookie objects and name => value pairs alike. */
+        public static function normalize_cookies($cookies)
         {
             $jar = new \WpOrg\Requests\Cookie\Jar();
-            foreach ($cookies as $name => $cookie) {
+            foreach ((array) $cookies as $name => $cookie) {
                 if ($cookie instanceof WP_Http_Cookie) {
                     $jar[(string) $cookie->name] = new \WpOrg\Requests\Cookie((string) $cookie->name, (string) $cookie->value, array_filter($cookie->get_attributes(), static fn ($value) => $value !== null));
                 } elseif (is_scalar($cookie)) {
@@ -359,6 +393,95 @@ namespace {
                 return $maybe_relative_path;
             }
             return \Minn\Http\Location::resolve((string) $url, (string) $maybe_relative_path);
+        }
+
+        /** A raw response split at its first blank line into the header block and the body. */
+        public static function processResponse($response)
+        {
+            $parts = explode("\r\n\r\n", (string) $response, 2);
+            return ['headers' => $parts[0], 'body' => $parts[1] ?? ''];
+        }
+
+        /** A header block read into its status, lower-cased headers and Set-Cookie cookies (read against the URL): Minn\Http\LegacyHeaders::read. */
+        public static function processHeaders($headers, $url = '')
+        {
+            $read = \Minn\Http\LegacyHeaders::read(is_array($headers) ? $headers : (string) $headers);
+            $read['cookies'] = array_map(static fn (string $value): WP_Http_Cookie => new WP_Http_Cookie($value, $url), $read['cookies']);
+            return $read;
+        }
+
+        /** The request's cookies as one Cookie header (each name=value as given), when it has any. */
+        public static function buildCookieHeader(&$r)
+        {
+            if (empty($r['cookies'])) {
+                return;
+            }
+            $pairs = [];
+            foreach ((array) $r['cookies'] as $name => $value) {
+                $pairs[] = $value instanceof WP_Http_Cookie ? $value->getHeaderValue() : $name . '=' . $value;
+            }
+            $r['headers']['cookie'] = implode('; ', $pairs);
+        }
+
+        /** A chunked body decoded with the reference's quirk (Minn\Http\LegacyHeaders::dechunk); a body that is not chunked comes back as it was. */
+        public static function chunkTransferDecode($body)
+        {
+            return preg_match('/^[0-9a-f]+[^\r\n]*\r\n/i', trim((string) $body)) === 1 ? \Minn\Http\LegacyHeaders::dechunk((string) $body) : $body;
+        }
+
+        /** A 302 is followed with a GET, as browsers do (the Requests library's before_redirect hook). */
+        public static function browser_redirect_compatibility($location, $headers, $data, &$options, $original)
+        {
+            if ($original->status_code === 302) {
+                $options['type'] = \WpOrg\Requests\Requests::GET;
+            }
+        }
+
+        /** A redirect target refused unless it is a URL WordPress may request (wp_http_validate_url). */
+        public static function validate_redirects($location)
+        {
+            if (!wp_http_validate_url($location)) {
+                throw new \WpOrg\Requests\Exception(__('A valid URL was not provided.'), 'wp_http.redirect_failed_validation');
+            }
+        }
+
+        /**
+         * A 3xx response's Location followed (the last when there are several,
+         * read against the URL), with one fewer redirect left; a POST answered
+         * by 302 or 303 goes on as a GET. False for no Location or no 3xx;
+         * an error when no redirects are left.
+         */
+        public static function handle_redirects($url, $args, $response)
+        {
+            $code = (int) ($response['response']['code'] ?? 0);
+            if (!isset($response['headers']['location']) || $code < 300 || $code > 399) {
+                return false;
+            }
+            if ($args['redirection']-- <= 0) {
+                return new WP_Error('http_request_failed', __('Too many redirects.'));
+            }
+            $location = $response['headers']['location'];
+            $location = self::make_absolute_url(is_array($location) ? end($location) : $location, $url);
+            if (($args['method'] ?? '') === 'POST' && in_array($code, [302, 303], true)) {
+                $args['method'] = 'GET';
+            }
+            return wp_remote_request($location, $args);
+        }
+
+        /** The first transport (http_api_transports, curl then streams) this PHP can use, by its WP_Http_ class name; false for none. */
+        public function _get_first_available_transport($args, $url = null)
+        {
+            foreach ((array) apply_filters('http_api_transports', ['curl', 'streams'], $args, $url) as $transport) {
+                $usable = match ($transport) {
+                    'curl' => function_exists('curl_init') && function_exists('curl_exec'),
+                    'streams' => (bool) ini_get('allow_url_fopen'),
+                    default => false,
+                };
+                if ($usable) {
+                    return 'WP_Http_' . ucfirst((string) $transport);
+                }
+            }
+            return false;
         }
 
         public function block_request($uri)
