@@ -67,12 +67,6 @@ function wp_enqueue_global_styles_css_custom_properties()
     return null;
 }
 
-function wp_get_post_autosave($post_id, $user_id = 0)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_get_post_autosave');
-    return null;
-}
-
 function wp_heartbeat_settings($settings)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_heartbeat_settings');

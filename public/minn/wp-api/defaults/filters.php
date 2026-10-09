@@ -83,6 +83,9 @@ add_filter('term_name_rss', 'convert_chars');
 add_filter('term_description', 'wptexturize');
 // A post type archive's description is dressed as a term's is (probe general-template-more).
 add_filter('get_the_post_type_description', 'wptexturize');
+// A preview link's nonce is checked on init; a restored revision brings its revisioned meta (probe revision-more).
+add_action('init', '_show_post_preview');
+add_action('wp_restore_post_revision', 'wp_restore_post_revision_meta', 10, 2);
 // Term meta answers nothing on a database older than term meta (probe taxonomy-more).
 foreach (['get_term_metadata', 'add_term_metadata', 'update_term_metadata', 'delete_term_metadata', 'get_term_metadata_by_mid', 'update_term_metadata_by_mid', 'delete_term_metadata_by_mid', 'update_term_metadata_cache'] as $minnTermMetaHook) {
     add_filter($minnTermMetaHook, 'wp_check_term_meta_support_prefilter');

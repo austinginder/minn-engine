@@ -35,7 +35,7 @@ final class PostRevisions
         if ($latest !== null && \apply_filters('wp_save_post_revision_check_for_changes', true, $latest, $post) && !self::changed($latest, $post)) {
             return null;
         }
-        $revisionId = self::put($post);
+        $revisionId = self::put(\_wp_post_revision_data($post));
         self::prune($post);
         return $revisionId;
     }
@@ -53,10 +53,14 @@ final class PostRevisions
         return (bool) \apply_filters('wp_save_post_revision_post_has_changed', $changed, $latest, $post);
     }
 
-    /** The revision written through wp_insert_post, then _wp_put_post_revision; its id. */
-    public static function put(\WP_Post $post): ?int
+    /**
+     * The revision (or autosave) row _wp_post_revision_data made, written
+     * through wp_insert_post, then _wp_put_post_revision; its id.
+     *
+     * @param array<string, mixed> $data
+     */
+    public static function put(array $data): ?int
     {
-        $data = \_wp_post_revision_data($post);
         $revisionId = \wp_insert_post(Slashes::add($data), true);
         if (!is_int($revisionId) || $revisionId < 1) {
             return null;

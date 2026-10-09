@@ -827,11 +827,11 @@ function _minn_revision_source($post): array
     return is_object($post) ? get_object_vars($post) : [];
 }
 
-/** A revision written through wp_insert_post, then _wp_put_post_revision. */
+/** A revision, or with $autosave the autosave ({id}-autosave-v1), of a post or of the post fields given, written through wp_insert_post, then _wp_put_post_revision. */
 function _wp_put_post_revision($post = null, $autosave = false)
 {
-    $post = get_post($post);
-    return $post === null ? null : PostRevisions::put($post);
+    $source = _minn_revision_source($post);
+    return empty($source['ID']) ? null : PostRevisions::put(_wp_post_revision_data($source, (bool) $autosave));
 }
 
 /** The meta keys a type's revisions keep: those registered with revisions_enabled, through wp_post_revision_meta_keys. */
@@ -1331,6 +1331,132 @@ function wp_restore_post_revision($revision, $fields = null)
     update_post_meta($post_id, '_edit_last', get_current_user_id());
     do_action('wp_restore_post_revision', $post_id, $revision['ID']);
     return $post_id;
+}
+
+/** Every value of one meta key added from one post (a revision too) to another, which keeps its own. */
+function _wp_copy_post_meta($source_post_id, $target_post_id, $meta_key)
+{
+    foreach (get_post_meta($source_post_id, $meta_key) as $meta_value) {
+        add_metadata('post', $target_post_id, $meta_key, wp_slash($meta_value));
+    }
+}
+
+/** The post type's revisioned meta put back from a revision: each key's values on the post replaced by the revision's, or removed when it has none. */
+function wp_restore_post_revision_meta($post_id, $revision_id)
+{
+    $post_type = get_post_type($post_id);
+    if (!$post_type) {
+        return;
+    }
+    foreach (wp_post_revision_meta_keys($post_type) as $meta_key) {
+        delete_metadata('post', $post_id, $meta_key);
+        _wp_copy_post_meta($revision_id, $post_id, $meta_key);
+    }
+}
+
+/** A post's newest autosave (by date), by one author or, given 0, any; false when there is none. */
+function wp_get_post_autosave($post_id, $user_id = 0)
+{
+    $autosave = _minn_posts()->newestAutosave((int) $post_id, (int) $user_id);
+    return $autosave === null ? false : get_post($autosave->id);
+}
+
+/** The preview link's check, on init: with preview_id and preview_nonce, a bad nonce dies (403), a good one sets the preview up (the_preview). */
+function _show_post_preview()
+{
+    if (!isset($_GET['preview_id'], $_GET['preview_nonce'])) {
+        return;
+    }
+    if (!wp_verify_nonce($_GET['preview_nonce'], 'post_preview_' . (int) $_GET['preview_id'])) {
+        wp_die(__('Sorry, you are not allowed to preview drafts.'), 403);
+    }
+    add_filter('the_preview', '_set_preview');
+}
+
+/** The previewed post: the newest autosave's title, content and excerpt (any author's) on the object handed in, and the preview's meta and terms filters. */
+function _set_preview($post)
+{
+    if (!is_object($post)) {
+        return $post;
+    }
+    $preview = wp_get_post_autosave($post->ID);
+    if ($preview instanceof WP_Post) {
+        $post->post_content = $preview->post_content;
+        $post->post_title = $preview->post_title;
+        $post->post_excerpt = $preview->post_excerpt;
+    }
+    add_filter('get_the_terms', '_wp_preview_terms_filter', 10, 3);
+    add_filter('get_post_metadata', '_wp_preview_post_thumbnail_filter', 10, 3);
+    add_filter('get_post_metadata', '_wp_preview_meta_filter', 10, 4);
+    return $post;
+}
+
+/** A previewed post's revisioned meta read from its newest autosave; any other read as it was. */
+function _wp_preview_meta_filter($value, $object_id, $meta_key, $single)
+{
+    $post = get_post();
+    if (!$post || (int) $post->ID !== (int) $object_id || !in_array($meta_key, wp_post_revision_meta_keys($post->post_type), true)) {
+        return $value;
+    }
+    $preview = wp_get_post_autosave($post->ID);
+    return $preview instanceof WP_Post ? get_post_meta($preview->ID, $meta_key, $single) : $value;
+}
+
+/** A previewed post's featured image from the request's _thumbnail_id (as a string, "" when not positive), when preview_id names it. */
+function _wp_preview_post_thumbnail_filter($value, $post_id, $meta_key)
+{
+    $post = get_post();
+    if (!$post || (int) $post->ID !== (int) $post_id || $meta_key !== '_thumbnail_id' || empty($_REQUEST['_thumbnail_id']) || empty($_REQUEST['preview_id']) || (int) $post->ID !== (int) $_REQUEST['preview_id']) {
+        return $value;
+    }
+    $thumbnail_id = (int) $_REQUEST['_thumbnail_id'];
+    return $thumbnail_id <= 0 ? '' : (string) $thumbnail_id;
+}
+
+/** A previewed post's format from the request's post_format: none for standard, the format's term when it exists. */
+function _wp_preview_terms_filter($terms, $post_id, $taxonomy)
+{
+    $post = get_post();
+    if (!$post || (int) $post->ID !== (int) $post_id || $taxonomy !== 'post_format' || empty($_REQUEST['post_format'])) {
+        return $terms;
+    }
+    if ($_REQUEST['post_format'] === 'standard') {
+        return [];
+    }
+    $term = get_term_by('slug', 'post-format-' . sanitize_key($_REQUEST['post_format']), 'post_format');
+    return $term ? [$term] : $terms;
+}
+
+/**
+ * Revisions named before 3.6 ({id}-revision, {id}-autosave) given their -v1
+ * names. When the newest was one of those and differs from the post (or
+ * there are none), a revision of the post itself is added. Always true.
+ */
+function _wp_upgrade_revisions_of_post($post, $revisions)
+{
+    global $wpdb;
+    $newest = reset($revisions);
+    foreach ($revisions as $revision) {
+        if (!str_contains((string) $revision->post_name, '-v1')) {
+            $wpdb->update($wpdb->posts, ['post_name' => $revision->post_name . '-v1'], ['ID' => $revision->ID]);
+            clean_post_cache($revision->ID);
+        }
+    }
+    if ($newest === false || (!str_contains((string) $newest->post_name, '-v1') && _minn_revision_differs($post, $newest))) {
+        _wp_put_post_revision($post);
+    }
+    return true;
+}
+
+/** @internal Whether a revision's revisioned fields differ from the post's. */
+function _minn_revision_differs(WP_Post $post, WP_Post $revision): bool
+{
+    foreach (array_keys(_wp_post_revision_fields($post)) as $field) {
+        if ((string) $post->$field !== (string) $revision->$field) {
+            return true;
+        }
+    }
+    return false;
 }
 
 /** Posts into the object cache, each only where none is cached yet. */

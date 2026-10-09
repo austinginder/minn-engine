@@ -6775,3 +6775,42 @@ functions real. The five WordPress 4.2 shared-term splitting routines
   `term_template` pass through. Non-public taxonomies are listed too.
 - `wp_get_split_terms`: the `_split_terms` record for the old id (taxonomy to
   new id), `[]` when there is none.
+
+## revision.php's remaining functions (2026-10-08)
+
+Probe `revision-more` (`tests/tools/revision-more-probe.php`). Eight
+functions, plus `wp_get_post_autosave` (a placeholder before), all real.
+
+- **Autosaves.** `_wp_put_post_revision` now honours `$autosave` (it wrote a
+  plain `{id}-revision-v1` before) and takes post fields as an array as well
+  as a post; the row comes from `_wp_post_revision_data`. `wp_get_post_autosave`
+  answers the post's newest autosave by `post_date`, then id. With an author
+  it answers that author's, and with 0 anyone's. The block renderer's preview
+  (`PostBlocks`) reads the same one, so a preview shows the newest autosave
+  whoever wrote it, as on the reference, and it carries the excerpt too.
+- **The preview link.** `_show_post_preview` is hooked on `init`. With both
+  `preview_id` and `preview_nonce`, a nonce that is not the reader's dies with
+  403 "Sorry, you are not allowed to preview drafts." (the engine redirected
+  such a link before), and a good one hooks `_set_preview` on `the_preview`.
+  `_set_preview` puts the autosave's title, content and excerpt, as stored, on
+  the object handed in. Autosave or not, it adds the three preview filters
+  (`get_the_terms` 3 args, `get_post_metadata` thumbnail 3 and meta 4).
+- **The preview filters** act when the global post is the one asked about
+  (no `is_preview()` needed). The meta filter reads a revisioned key from the
+  newest autosave (`''` or `[]` when it lacks one, whatever came in). The
+  thumbnail filter answers the request's `_thumbnail_id` as a string (`''`
+  when not positive, untouched when empty or `'0'`) only when `preview_id`
+  is the post. The terms filter answers `post_format` from the request
+  (`standard` gives none, else the `post-format-{sanitize_key}` term when
+  it exists).
+- **Revisioned meta.** `_wp_copy_post_meta` adds each value of the key to the
+  target, which keeps its own. `wp_restore_post_revision_meta` (hooked on
+  `wp_restore_post_revision`) replaces each revisioned key on the post with
+  the revision's values, or removes it when the revision has none.
+- **Pre-3.6 revisions.** `_wp_upgrade_revisions_of_post` renames every
+  revision without `-v1` (`{id}-revision`, `{id}-autosave`) to its `-v1`
+  name. When the newest one was old-named and differs from the post in title,
+  content or excerpt, or there are no revisions at all, it adds a revision of
+  the post. Always true.
+- The reader suite's anonymous-preview check now compares both stacks: 403 on
+  each.

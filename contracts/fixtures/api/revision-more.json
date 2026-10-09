@@ -1,0 +1,534 @@
+[
+    [
+        "meta copied",
+        [
+            null,
+            [
+                "old target value",
+                "one",
+                {
+                    "two": 2
+                }
+            ],
+            [],
+            null,
+            [],
+            [
+                "back\\slash and \\\"quote\\\""
+            ],
+            [
+                "back\\slash and \\\"quote\\\""
+            ]
+        ]
+    ],
+    [
+        "where the revision functions are hooked",
+        [
+            10,
+            10,
+            false
+        ]
+    ],
+    [
+        "revisioned meta restored",
+        [
+            [
+                "footnotes",
+                "zz_rm_revisioned",
+                "zz_rm_revisioned_too"
+            ],
+            null,
+            [
+                "from the revision"
+            ],
+            [
+                "current plain"
+            ],
+            []
+        ]
+    ],
+    [
+        "no autosave yet",
+        [
+            false,
+            false
+        ]
+    ],
+    [
+        "autosave found",
+        [
+            "0",
+            {
+                "ID": "{autosave}",
+                "post_author": "1",
+                "post_content": "autosaved content",
+                "post_title": "zz rm autosaved title",
+                "post_excerpt": "autosaved excerpt",
+                "post_status": "inherit",
+                "post_name": "{autosaved}-autosave-v1",
+                "post_parent": "{autosaved}",
+                "post_type": "revision"
+            },
+            {
+                "ID": "{autosave}",
+                "post_author": "1",
+                "post_content": "autosaved content",
+                "post_title": "zz rm autosaved title",
+                "post_excerpt": "autosaved excerpt",
+                "post_status": "inherit",
+                "post_name": "{autosaved}-autosave-v1",
+                "post_parent": "{autosaved}",
+                "post_type": "revision"
+            },
+            false,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "two authors' autosaves",
+        [
+            true,
+            "{first autosave}",
+            "{first autosave}",
+            "{second autosave}"
+        ]
+    ],
+    [
+        "two authors' autosaves, dates the other way",
+        [
+            "{second autosave b}"
+        ]
+    ],
+    [
+        "preview set, nobody signed in",
+        [
+            {
+                "ID": "{autosaved}",
+                "post_author": "1",
+                "post_content": "autosaved content",
+                "post_title": "zz rm autosaved title",
+                "post_excerpt": "autosaved excerpt",
+                "post_status": "publish",
+                "post_name": "zz-rm-autosaved",
+                "post_parent": 0,
+                "post_type": "post"
+            },
+            false,
+            "x",
+            10
+        ]
+    ],
+    [
+        "preview set, another user",
+        {
+            "ID": "{autosaved}",
+            "post_author": "1",
+            "post_content": "autosaved content",
+            "post_title": "zz rm autosaved title",
+            "post_excerpt": "autosaved excerpt",
+            "post_status": "publish",
+            "post_name": "zz-rm-autosaved",
+            "post_parent": 0,
+            "post_type": "post"
+        }
+    ],
+    [
+        "preview set, the object handed is the one changed",
+        [
+            true,
+            "zz rm autosaved"
+        ]
+    ],
+    [
+        "preview set, the autosave author",
+        [
+            {
+                "ID": "{autosaved}",
+                "post_author": "1",
+                "post_content": "autosaved content",
+                "post_title": "zz rm autosaved title",
+                "post_excerpt": "autosaved excerpt",
+                "post_status": "publish",
+                "post_name": "zz-rm-autosaved",
+                "post_parent": 0,
+                "post_type": "post"
+            },
+            [
+                10,
+                4
+            ],
+            [
+                10,
+                3
+            ],
+            [
+                10,
+                3
+            ]
+        ]
+    ],
+    [
+        "preview set, a post without an autosave",
+        [
+            {
+                "ID": "{source}",
+                "post_author": "0",
+                "post_content": "x",
+                "post_title": "zz rm source",
+                "post_excerpt": "",
+                "post_status": "publish",
+                "post_name": "zz-rm-source",
+                "post_parent": 0,
+                "post_type": "post"
+            },
+            10,
+            10
+        ]
+    ],
+    [
+        "preview set, fields as stored",
+        [
+            {
+                "ID": "{tricky}",
+                "post_author": "1",
+                "post_content": "<p>Line one\r\nline two</p>\n\n<!-- wp:paragraph --><p>x</p><!-- /wp:paragraph -->",
+                "post_title": "Spaced <b>title</b> & \"quoted\"",
+                "post_excerpt": "Excerpt\twith tab",
+                "post_status": "publish",
+                "post_name": "zz-rm-tricky",
+                "post_parent": 0,
+                "post_type": "post"
+            },
+            "Spaced <b>title</b> & \"quoted\""
+        ]
+    ],
+    [
+        "preview meta filter, in a preview",
+        [
+            true,
+            "autosave meta",
+            "autosave meta",
+            [
+                "autosave meta"
+            ],
+            null,
+            null,
+            null,
+            null,
+            "",
+            [],
+            "",
+            null
+        ]
+    ],
+    [
+        "preview filters, the post global but not a preview",
+        [
+            false,
+            "autosave meta",
+            "77",
+            [
+                "post-format-aside"
+            ]
+        ]
+    ],
+    [
+        "preview meta filter, another user reading",
+        "autosave meta"
+    ],
+    [
+        "preview meta filter, in a preview of another post",
+        [
+            null,
+            null
+        ]
+    ],
+    [
+        "preview thumbnail filter, in a preview",
+        [
+            null,
+            "77",
+            "77",
+            null,
+            null,
+            "",
+            [
+                "abc",
+                ""
+            ],
+            [
+                "0",
+                null
+            ],
+            [
+                " 12",
+                "12"
+            ],
+            [
+                "12abc",
+                "12"
+            ],
+            [
+                "preview_id elsewhere",
+                null,
+                null
+            ],
+            [
+                "no preview_id",
+                null
+            ]
+        ]
+    ],
+    [
+        "preview terms filter, in a preview",
+        [
+            [
+                "given"
+            ],
+            [
+                [
+                    "post-format-aside",
+                    "post_format",
+                    "Aside"
+                ]
+            ],
+            [
+                "given"
+            ],
+            [
+                "given"
+            ],
+            [],
+            [
+                "given"
+            ],
+            [
+                "Aside",
+                [
+                    "post-format-aside"
+                ]
+            ],
+            [
+                "preview_id elsewhere",
+                [
+                    "post-format-aside"
+                ],
+                [
+                    "given"
+                ]
+            ],
+            [
+                "no preview_id",
+                [
+                    "post-format-aside"
+                ]
+            ],
+            [
+                "gallery",
+                [
+                    "given"
+                ],
+                false
+            ]
+        ]
+    ],
+    [
+        "preview meta filter",
+        [
+            "given",
+            null,
+            null
+        ]
+    ],
+    [
+        "preview thumbnail filter",
+        [
+            "given",
+            null,
+            [
+                null,
+                null,
+                null
+            ]
+        ]
+    ],
+    [
+        "preview terms filter",
+        [
+            [
+                "given"
+            ],
+            [
+                "given"
+            ],
+            [
+                [
+                    "given"
+                ],
+                [
+                    "given"
+                ],
+                [
+                    "given"
+                ],
+                [
+                    "given"
+                ]
+            ]
+        ]
+    ],
+    [
+        "preview link checks",
+        [
+            false,
+            10,
+            {
+                "the_preview": 1
+            },
+            [
+                "bad nonce",
+                [
+                    "Sorry, you are not allowed to preview drafts.",
+                    "",
+                    403
+                ]
+            ],
+            [
+                "no nonce",
+                "returned",
+                false
+            ]
+        ]
+    ],
+    [
+        "pre-3.6 revisions",
+        [
+            "{old revisions}-revision",
+            true,
+            "{old revisions}-revision-v1",
+            {
+                "ID": "{old revision}",
+                "post_author": "0",
+                "post_content": "x",
+                "post_title": "zz rm old revision",
+                "post_excerpt": "",
+                "post_status": "inherit",
+                "post_name": "{old revisions}-revision-v1",
+                "post_parent": "{old revisions}",
+                "post_type": "revision"
+            },
+            true,
+            true,
+            [
+                {
+                    "ID": "{old revision}",
+                    "post_name": "{old revisions}-revision-v1",
+                    "post_title": "zz rm old revision",
+                    "post_author": "0",
+                    "recent": false
+                },
+                {
+                    "ID": "{old autosave}",
+                    "post_name": "{old revisions}-autosave-v1",
+                    "post_title": "zz rm old autosave",
+                    "post_author": "0",
+                    "recent": false
+                },
+                {
+                    "ID": "{added revision}",
+                    "post_name": "{old revisions}-revision-v1",
+                    "post_title": "zz rm old revisions",
+                    "post_author": "0",
+                    "recent": true
+                }
+            ],
+            [],
+            [
+                {
+                    "ID": "{added revision}",
+                    "post_name": "{source}-revision-v1",
+                    "post_title": "zz rm source",
+                    "post_author": "0",
+                    "recent": true
+                }
+            ],
+            []
+        ]
+    ],
+    [
+        "pre-3.6 revisions, the latest already the post",
+        [
+            true,
+            [
+                {
+                    "ID": "{same revision}",
+                    "post_name": "{same revisions}-revision-v1",
+                    "post_title": "zz rm same revisions",
+                    "post_author": "0",
+                    "recent": false
+                }
+            ]
+        ]
+    ],
+    [
+        "3.6 revisions, the latest not the post",
+        [
+            true,
+            [
+                {
+                    "ID": "{modern revision}",
+                    "post_name": "{modern revisions}-revision-v1",
+                    "post_title": "zz rm an older title",
+                    "post_author": "0",
+                    "recent": false
+                }
+            ]
+        ]
+    ],
+    [
+        "revisions, the newest upgraded and an older one not",
+        [
+            true,
+            [
+                {
+                    "ID": "{mixed old}",
+                    "post_name": "{mixed revisions}-revision-v1",
+                    "post_title": "zz rm mixed old",
+                    "post_author": "0",
+                    "recent": false
+                },
+                {
+                    "ID": "{mixed new}",
+                    "post_name": "{mixed revisions}-revision-v1",
+                    "post_title": "zz rm mixed new",
+                    "post_author": "0",
+                    "recent": false
+                }
+            ]
+        ]
+    ],
+    [
+        "pre-3.6 revisions, the latest differs only in its excerpt",
+        [
+            true,
+            [
+                {
+                    "ID": "{excerpt revision}",
+                    "post_name": "{excerpt revisions}-revision-v1",
+                    "post_title": "zz rm excerpt revisions",
+                    "post_author": "0",
+                    "recent": false
+                },
+                {
+                    "ID": "{added revision}",
+                    "post_name": "{excerpt revisions}-revision-v1",
+                    "post_title": "zz rm excerpt revisions",
+                    "post_author": "0",
+                    "recent": true
+                }
+            ]
+        ]
+    ]
+]

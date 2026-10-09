@@ -73,7 +73,7 @@ the WordPress runtime plugins load against
 | [`PostQueryStatus`](#postquerystatus) | final class | 165 | WP_Query's post type and status clause as the reference writes it (probe |
 | [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
 | [`PostQueryWhere`](#postquerywhere) | final class | 263 | The WHERE fragments WP_Query writes from its variables, in the reference's |
-| [`PostRevisions`](#postrevisions) | final class | 63 | A post's revisions as the reference's wp_save_post_revision keeps them |
+| [`PostRevisions`](#postrevisions) | final class | 67 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 210 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 186 | The conditional flags a set of query variables implies (is_single, is_archive, |
@@ -3196,11 +3196,14 @@ wp_save_post_revision_revisions_before_deletion.
 
 The new revision's id, or null when none was called for.
 
-### static `put(WP_Post $post): ?int`
+### static `put(array $data): ?int`
 
-The revision written through wp_insert_post, then _wp_put_post_revision; its id.
+The revision (or autosave) row _wp_post_revision_data made, written
+through wp_insert_post, then _wp_put_post_revision; its id.
 
-Internals: `changed()` (private, line 44), `prune()` (private, line 69)
+- `@param array<string, mixed> $data`
+
+Internals: `changed()` (private, line 44), `prune()` (private, line 73)
 
 
 ## PostSave

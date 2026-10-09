@@ -192,7 +192,8 @@ $e = page($ENGINE . $path, '', [sessionCookie($author, $ENGINE)]);
 $r = page($REF . $path, '', [sessionCookie($author, $REF)]);
 check($e['status'] === '200' && str_contains($e['body'], 'zz reader autosave words') && str_contains($e['body'], 'zz reader autosaved title'), 'the engine shows the autosave to its author', $e['status']);
 check($r['status'] === '200' && str_contains($r['body'], 'zz reader autosave words'), 'the reference accepts the engine\'s preview nonce and shows the same autosave', $r['status']);
-check(page($ENGINE . $path)['status'] === '404', 'the preview link is nothing to an anonymous reader');
+$anonymous = [page($ENGINE . $path)['status'], page($REF . $path)['status']];
+check($anonymous === ['403', '403'], 'an anonymous reader is refused the preview link (its nonce is not theirs), as on the reference', json_encode($anonymous));
 $plain = page("$ENGINE/?p=10", '', [sessionCookie($author, $ENGINE)]);
 check($plain['status'] === '200' && !str_contains($plain['body'], 'zz reader autosave words'), 'without the preview link the draft shows its stored content');
 

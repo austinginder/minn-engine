@@ -391,13 +391,14 @@ final readonly class Posts
         return $row === null ? null : [(int) $row['y'], (int) $row['m']];
     }
 
-    /** The newest autosave of a post by one author, or null. */
-    public function newestAutosave(int $postId, int $userId): ?PostRecord
+    /** The newest autosave of a post (by date, then id), by one author or, given 0, any (probe revision-more); null when there is none. */
+    public function newestAutosave(int $postId, int $userId = 0): ?PostRecord
     {
+        $byAuthor = $userId > 0 ? ' AND post_author = ?' : '';
         return self::record($this->db->row(
-            "SELECT * FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ? AND post_author = ?
-             ORDER BY post_modified DESC, ID DESC LIMIT 1",
-            [$postId, $postId . '-autosave%', $userId],
+            "SELECT * FROM {$this->db->table('posts')} WHERE post_parent = ? AND post_type = 'revision' AND post_name LIKE ?{$byAuthor}
+             ORDER BY post_date DESC, ID DESC LIMIT 1",
+            $userId > 0 ? [$postId, $postId . '-autosave%', $userId] : [$postId, $postId . '-autosave%'],
         ));
     }
 

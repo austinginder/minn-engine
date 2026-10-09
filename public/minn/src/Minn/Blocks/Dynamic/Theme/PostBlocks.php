@@ -256,14 +256,14 @@ final readonly class PostBlocks
      *
      * @param list<string> $classes
      */
-    /** On a preview, the reader's newest autosave of this post stands in for its stored fields. */
+    /** On a preview, the post's newest autosave, whoever wrote it, stands in for its stored fields (as _set_preview does). */
     private function previewSource(PostRecord $post, \Minn\Front\Resolution $resolution): ?PostRecord
     {
         if (!$resolution->preview || $resolution->id() !== $post->id) {
             return null;
         }
-        $autosave = $this->posts->newestAutosave($post->id, Reader::current()->userId);
-        return $autosave === null ? null : PostRecord::fromRow(['post_content' => $autosave->content, 'post_title' => $autosave->title] + $post->row());
+        $autosave = $this->posts->newestAutosave($post->id);
+        return $autosave === null ? null : PostRecord::fromRow(['post_content' => $autosave->content, 'post_title' => $autosave->title, 'post_excerpt' => $autosave['post_excerpt']] + $post->row());
     }
 
     private static function target(Block $block): string

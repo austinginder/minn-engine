@@ -14810,7 +14810,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "previewSource(Minn\\Content\\PostRecord $post, Minn\\Front\\Resolution $resolution): ?Minn\\Content\\PostRecord",
-                    "doc": "On a preview, the reader's newest autosave of this post stands in for its stored fields.",
+                    "doc": "On a preview, the post's newest autosave, whoever wrote it, stands in for its stored fields (as _set_preview does).",
                     "shapes": [],
                     "params": [
                         {
@@ -31877,7 +31877,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Posts.php",
-            "lines": 405,
+            "lines": 406,
             "doc": "Reads over the posts table. A post comes back as a PostRecord; a listing\nis the main query's (WP_Query); rendering and escaping happen elsewhere.",
             "implements": [],
             "extends": null,
@@ -32632,8 +32632,8 @@
                     "name": "newestAutosave",
                     "static": false,
                     "visibility": "public",
-                    "signature": "newestAutosave(int $postId, int $userId): ?Minn\\Content\\PostRecord",
-                    "doc": "The newest autosave of a post by one author, or null.",
+                    "signature": "newestAutosave(int $postId, int $userId = 0): ?Minn\\Content\\PostRecord",
+                    "doc": "The newest autosave of a post (by date, then id), by one author or, given 0, any (probe revision-more); null when there is none.",
                     "shapes": [],
                     "params": [
                         {
@@ -32647,12 +32647,12 @@
                             "name": "userId",
                             "type": "int",
                             "shape": "",
-                            "default": null,
+                            "default": "0",
                             "doc": ""
                         }
                     ],
                     "line": 395,
-                    "end": 402
+                    "end": 403
                 },
                 {
                     "routes": [],
@@ -32671,8 +32671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 416
+                    "line": 406,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -123368,7 +123368,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostRevisions.php",
-            "lines": 63,
+            "lines": 67,
             "doc": "A post's revisions as the reference's wp_save_post_revision keeps them\n(probe revisions): only for a type that supports revisions and while\nwp_revisions_to_keep allows any; compared with the latest revision\n(wp_save_post_revision_check_for_changes, the revision fields with their\nwhitespace evened out, wp_save_post_revision_post_has_changed, whose\ndefault also compares the revisioned meta); saved through wp_insert_post\nand _wp_put_post_revision (whose default copies the revisioned meta);\nthen the oldest dropped past the limit, after\nwp_save_post_revision_revisions_before_deletion.",
             "implements": [],
             "extends": null,
@@ -123406,20 +123406,22 @@
                     "name": "put",
                     "static": true,
                     "visibility": "public",
-                    "signature": "put(WP_Post $post): ?int",
-                    "doc": "The revision written through wp_insert_post, then _wp_put_post_revision; its id.",
-                    "shapes": [],
+                    "signature": "put(array $data): ?int",
+                    "doc": "The revision (or autosave) row _wp_post_revision_data made, written\nthrough wp_insert_post, then _wp_put_post_revision; its id.",
+                    "shapes": [
+                        "@param array<string, mixed> $data"
+                    ],
                     "params": [
                         {
-                            "name": "post",
-                            "type": "WP_Post",
-                            "shape": "",
+                            "name": "data",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 66
+                    "line": 62,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -123465,8 +123467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 81
+                    "line": 73,
+                    "end": 85
                 }
             ]
         },
