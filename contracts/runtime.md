@@ -7876,3 +7876,66 @@ scripts.
     `wp_load_classic_theme_block_styles_on_demand` need a classic theme
     to observe.
   - The editor and admin enqueuers.
+
+## Canonical redirect helpers (2026-10-09)
+
+Probe `canonical-helpers`, plus admin paths in the permalinks suite. It
+covers fragments stripped, query args checked against a URL, the 404
+guess, the old-slug and old-date finders with their cache, salted cache
+entries, and the admin and login addresses a 404 redirects.
+
+- **Fragments.**
+  - A URL that names a host is rebuilt as scheme (when present), `//`,
+    host, port, path, then `?query`. User and password are dropped.
+  - Anything without a host (`/rel#f`, `zz.example/a#f`) is returned as
+    given, fragment and all.
+- **Query args against a URL.** Each arg to check that the URL's own
+  query lacks is removed with `remove_query_arg`; names match exactly, and
+  an arg with no value counts as present. Removing everything gives `''`.
+- **The 404 guess.**
+  - `do_redirect_guess_404_permalink` false turns guessing off, and a
+    non-null `pre_redirect_guess_404_permalink` answers first. With no
+    `name` var the answer is false.
+  - The types are the public types not excluded from search, in
+    registration order. A named string type must be one of them, and is
+    then `post_type = '…'`. A named list is narrowed to them in its own
+    order, and is false with no query when nothing is left; an empty list
+    means the defaults.
+  - The query is `post_name LIKE 'name%'` (`esc_like`), or `post_name =`
+    under `strict_redirect_guess_404_permalink`. Then the type clause,
+    `YEAR/MONTH/DAYOFMONTH(post_date)` for each date var that is truthy
+    (`'abc'` gives 0), and `post_status IN ('publish')`, with no ORDER BY.
+    Both stacks issue the same SQL on one database, so they pick the same
+    row.
+  - The answer is the comments feed link when a `feed` var is set, else the
+    permalink plus `page/` when `page > 1` (PHP's comparison, so `'x'`
+    counts), else the permalink.
+- **Old slugs and dates.**
+  - `_find_post_by_old_slug` joins postmeta `_wp_old_slug`, with the date
+    clauses on `post_date`.
+  - `_find_post_by_old_date` asks only when a date var is set. It looks by
+    name with `_wp_old_date`, then by `_wp_old_slug` with `_wp_old_date`,
+    the date clauses on `pm_date.meta_value`.
+  - Both are ints (0 for none). They are cached in `post-queries` under
+    `find_post_by_old_{slug|date}:md5(first query)`, salted with posts'
+    `last_changed`. A planted entry is honoured, and a posts change asks
+    again.
+- **Salted entries.**
+  - `wp_cache_set_salted` stores `['data' => …, 'salt' => …]`, a list of
+    salts joined by `:`.
+  - `wp_cache_get_salted` gives the data only under the same salt (string
+    compare) when both keys are set, so null data reads as false; anything
+    else is false. The multiple versions map key by key.
+- **Admin locations** (`template_redirect` 1000).
+  - On a 404, the request URI with its trailing slashes removed (query
+    string kept, case-sensitive) is checked against `wp-admin`,
+    `dashboard` and `admin`, as home-relative and site-relative paths. A
+    match is a 302 to `admin_url()`. `wp-login.php`, `login.php` and
+    `login` give a 302 to `wp_login_url()`.
+  - The engine 404'd these before. The probe makes WP-CLI's scheme-forced
+    relative URLs relative again, and catches the redirect in a
+    `wp_redirect` filter that throws.
+- **Still owed.** `url_to_postid` is a path heuristic on the engine, not
+  the rule table. It misses a page address with a page number
+  (`/zz-page/2/`, which the reference finds); its own batch should move it
+  onto `Front\RuleTable`.

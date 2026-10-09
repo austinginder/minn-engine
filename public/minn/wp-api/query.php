@@ -447,6 +447,46 @@ function wp_old_slug_redirect()
     }
 }
 
+/** The post of a type that used to have the requested name, on the date the request names; 0 when none. Cached until posts change. */
+function _find_post_by_old_slug($post_type)
+{
+    global $wpdb;
+    $sql = $wpdb->prepare("SELECT post_id FROM {$wpdb->postmeta}, {$wpdb->posts} WHERE ID = post_id AND post_type = %s AND meta_key = '_wp_old_slug' AND meta_value = %s", $post_type, get_query_var('name')) . _minn_query_date_sql('post_date');
+    return _minn_cached_post_query('find_post_by_old_slug', $sql, static fn () => (int) $wpdb->get_var($sql));
+}
+
+/**
+ * The post of a type that had the requested date when the request names
+ * one: by its name and an old date, else by an old name and an old date;
+ * 0 when none, or when the request names no date. Cached until posts change.
+ */
+function _find_post_by_old_date($post_type)
+{
+    global $wpdb;
+    $date = _minn_query_date_sql('pm_date.meta_value');
+    if ($date === '') {
+        return 0;
+    }
+    $name = get_query_var('name');
+    $sql = $wpdb->prepare("SELECT post_id FROM {$wpdb->postmeta} AS pm_date, {$wpdb->posts} WHERE ID = post_id AND post_type = %s AND meta_key = '_wp_old_date' AND post_name = %s", $post_type, $name) . $date;
+    $renamed = $wpdb->prepare("SELECT ID FROM {$wpdb->posts}, {$wpdb->postmeta} AS pm_slug, {$wpdb->postmeta} AS pm_date WHERE ID = pm_slug.post_id AND ID = pm_date.post_id AND post_type = %s AND pm_slug.meta_key = '_wp_old_slug' AND pm_slug.meta_value = %s AND pm_date.meta_key = '_wp_old_date'", $post_type, $name) . $date;
+    return _minn_cached_post_query('find_post_by_old_date', $sql, static fn () => (int) $wpdb->get_var($sql) ?: (int) $wpdb->get_var($renamed));
+}
+
+/** @internal a lookup's answer from the post-queries cache, salted with posts' last_changed, keyed by its first query */
+function _minn_cached_post_query(string $prefix, string $sql, Closure $find): int
+{
+    $key = $prefix . ':' . md5($sql);
+    $salt = wp_cache_get_last_changed('posts');
+    $cached = wp_cache_get_salted($key, 'post-queries', $salt);
+    if ($cached !== false) {
+        return (int) $cached;
+    }
+    $id = $find();
+    wp_cache_set_salted($key, $id, 'post-queries', $salt);
+    return $id;
+}
+
 /**
  * The canonical form of a URL by the engine's resolution, through the redirect_canonical filter: moves there (ending
  * the request), or hands it back when told not to. At template_redirect it is the move the engine found for this request.

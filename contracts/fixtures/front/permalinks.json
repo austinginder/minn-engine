@@ -1391,5 +1391,56 @@
         "status": 301,
         "location": "/hello-world/",
         "classes": []
+    },
+    "/admin": {
+        "status": 302,
+        "location": "/wp-admin/",
+        "classes": []
+    },
+    "/admin/": {
+        "status": 302,
+        "location": "/wp-admin/",
+        "classes": []
+    },
+    "/dashboard": {
+        "status": 302,
+        "location": "/wp-admin/",
+        "classes": []
+    },
+    "/dashboard/": {
+        "status": 302,
+        "location": "/wp-admin/",
+        "classes": []
+    },
+    "/login": {
+        "status": 302,
+        "location": "/wp-login.php",
+        "classes": []
+    },
+    "/login.php": {
+        "status": 302,
+        "location": "/wp-login.php",
+        "classes": []
+    },
+    "/admin?x=1": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/Admin": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
+    },
+    "/x/admin": {
+        "status": 404,
+        "location": null,
+        "classes": [
+            "error404"
+        ]
     }
 }

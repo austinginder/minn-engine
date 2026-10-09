@@ -1,0 +1,468 @@
+[
+    [
+        "fragments stripped",
+        [
+            "https://zz.example/a/",
+            "https://zz.example/a/?x=1",
+            "/rel#f",
+            "#only",
+            "https://zz.example",
+            "https://zz.example:8080/p?q=1",
+            "zz.example/a#f",
+            "",
+            "https://zz.example/a",
+            "https://zz.example/a?x=1",
+            "https://zz.example/a/?x=1&y=2",
+            "http://zz.example/a",
+            "//zz.example/a",
+            "https://zz.example:8080/a"
+        ]
+    ],
+    [
+        "query args kept only when the URL has them",
+        [
+            "?page=2",
+            "",
+            "?p=1&page=2",
+            "p=1&x=y",
+            "",
+            "?p=1",
+            "",
+            "",
+            "?p=1"
+        ]
+    ],
+    [
+        "a 404 guesses",
+        [
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            false,
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            false,
+            false,
+            [
+                "page",
+                "https://{host}/zz-guessable-page/2/"
+            ],
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            false,
+            false,
+            false,
+            [
+                0,
+                "https://zz.example/pre/"
+            ],
+            false,
+            [
+                "page",
+                "https://{host}/zz-guessable-page/"
+            ],
+            false,
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            false,
+            false,
+            false,
+            false,
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            false,
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            false,
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/3/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/x/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/feed/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/feed/feed/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/feed/atom/"
+            ],
+            [
+                "post",
+                "https://{host}/zz-guessable-post/"
+            ]
+        ]
+    ],
+    [
+        "found by an old slug",
+        [
+            [
+                "integer",
+                "moved"
+            ],
+            [
+                "integer",
+                "moved"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                "moved"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                "moved"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                "moved"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                "moved page"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ]
+        ]
+    ],
+    [
+        "found by an old date",
+        [
+            [
+                "integer",
+                "redated"
+            ],
+            [
+                "integer",
+                "redated"
+            ],
+            [
+                "integer",
+                "redated"
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ],
+            [
+                "integer",
+                0
+            ]
+        ]
+    ],
+    [
+        "the queries they ask",
+        [
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz-guessable%' AND post_type IN ('post', 'page', 'attachment', 'zzpub') AND post_status IN ('publish')"
+            ],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz-guessable%' AND post_type = 'page' AND YEAR(post_date) = 2021 AND MONTH(post_date) = 3 AND DAYOFMONTH(post_date) = 4 AND post_status IN ('publish')"
+            ],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz-guessable%' AND post_type IN ('page', 'post') AND MONTH(post_date) = 3 AND post_status IN ('publish')"
+            ],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz-guessable%' AND post_type IN ('post', 'page', 'attachment', 'zzpub') AND YEAR(post_date) = 0 AND post_status IN ('publish')"
+            ],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name = 'zz-guessable' AND post_type IN ('post', 'page', 'attachment', 'zzpub') AND post_status IN ('publish')"
+            ],
+            [],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz-guessable%' AND post_type IN ('zzpub') AND post_status IN ('publish')"
+            ],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz-guessable%' AND post_type IN ('post', 'page', 'attachment', 'zzpub') AND post_status IN ('publish')"
+            ],
+            [],
+            [
+                "SELECT post_id FROM wp_postmeta AS pm_date, wp_posts WHERE ID = post_id AND post_type = 'page' AND meta_key = '_wp_old_date' AND post_name = 'zz-moved-old' AND YEAR(pm_date.meta_value) = 2020 AND MONTH(pm_date.meta_value) = 1 AND DAYOFMONTH(pm_date.meta_value) = 2",
+                "SELECT ID FROM wp_posts, wp_postmeta AS pm_slug, wp_postmeta AS pm_date WHERE ID = pm_slug.post_id AND ID = pm_date.post_id AND post_type = 'page' AND pm_slug.meta_key = '_wp_old_slug' AND pm_slug.meta_value = 'zz-moved-old' AND pm_date.meta_key = '_wp_old_date' AND YEAR(pm_date.meta_value) = 2020 AND MONTH(pm_date.meta_value) = 1 AND DAYOFMONTH(pm_date.meta_value) = 2"
+            ],
+            [
+                "SELECT post_id FROM wp_postmeta, wp_posts WHERE ID = post_id AND post_type = 'post' AND meta_key = '_wp_old_slug' AND meta_value = 'zz-never-x' AND DAYOFMONTH(post_date) = 9",
+                "SELECT post_id FROM wp_postmeta AS pm_date, wp_posts WHERE ID = post_id AND post_type = 'post' AND meta_key = '_wp_old_date' AND post_name = 'zz-never-x' AND DAYOFMONTH(pm_date.meta_value) = 9",
+                "SELECT ID FROM wp_posts, wp_postmeta AS pm_slug, wp_postmeta AS pm_date WHERE ID = pm_slug.post_id AND ID = pm_date.post_id AND post_type = 'post' AND pm_slug.meta_key = '_wp_old_slug' AND pm_slug.meta_value = 'zz-never-x' AND pm_date.meta_key = '_wp_old_date' AND DAYOFMONTH(pm_date.meta_value) = 9"
+            ],
+            [
+                "SELECT ID FROM wp_posts WHERE post_name LIKE 'zz\\'q\\\\_\\\\%%' AND post_type IN ('post', 'page', 'attachment', 'zzpub') AND YEAR(post_date) = 2020 AND post_status IN ('publish')",
+                "SELECT post_id FROM wp_postmeta, wp_posts WHERE ID = post_id AND post_type = 'post' AND meta_key = '_wp_old_slug' AND meta_value = 'zz\\'q_%' AND YEAR(post_date) = 2020",
+                "SELECT post_id FROM wp_postmeta AS pm_date, wp_posts WHERE ID = post_id AND post_type = 'post' AND meta_key = '_wp_old_date' AND post_name = 'zz\\'q_%' AND YEAR(pm_date.meta_value) = 2020",
+                "SELECT ID FROM wp_posts, wp_postmeta AS pm_slug, wp_postmeta AS pm_date WHERE ID = pm_slug.post_id AND ID = pm_date.post_id AND post_type = 'post' AND pm_slug.meta_key = '_wp_old_slug' AND pm_slug.meta_value = 'zz\\'q_%' AND pm_date.meta_key = '_wp_old_date' AND YEAR(pm_date.meta_value) = 2020"
+            ]
+        ]
+    ],
+    [
+        "salted cache entries",
+        [
+            true,
+            {
+                "data": {
+                    "a": 1
+                },
+                "salt": "salt-1"
+            },
+            {
+                "a": 1
+            },
+            false,
+            false,
+            true,
+            {
+                "data": "v",
+                "salt": "s1:s2"
+            },
+            "v",
+            false,
+            false,
+            "v",
+            true,
+            false,
+            true,
+            false,
+            [
+                false,
+                "shaped",
+                false
+            ],
+            {
+                "zz-m1": true,
+                "zz-m2": true,
+                "zz-m3": true
+            },
+            {
+                "zz-m1": {
+                    "data": 1,
+                    "salt": "ms"
+                },
+                "zz-m2": {
+                    "data": [
+                        2
+                    ],
+                    "salt": "ms"
+                }
+            },
+            {
+                "zz-m1": 1,
+                "zz-m2": [
+                    2
+                ],
+                "zz-m3": false,
+                "zz-m-never": false,
+                "zz-salted": false
+            },
+            {
+                "zz-m1": false,
+                "zz-salted": {
+                    "a": 1
+                }
+            },
+            [],
+            []
+        ]
+    ],
+    [
+        "old slugs are cached until posts change",
+        [
+            3,
+            0,
+            1,
+            [
+                0,
+                0
+            ],
+            4242,
+            3
+        ]
+    ],
+    [
+        "admin locations",
+        {
+            "not a 404": [],
+            "/admin": [
+                [
+                    "https://{host}/wp-admin/",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/admin/": [
+                [
+                    "https://{host}/wp-admin/",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/dashboard": [
+                [
+                    "https://{host}/wp-admin/",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/dashboard/": [
+                [
+                    "https://{host}/wp-admin/",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/login": [
+                [
+                    "https://{host}/wp-login.php",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/login.php": [
+                [
+                    "https://{host}/wp-login.php",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/wp-admin": [
+                [
+                    "https://{host}/wp-admin/",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/wp-login.php": [
+                [
+                    "https://{host}/wp-login.php",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/admin?x=1": [],
+            "/x/admin": [],
+            "/ADMIN": [],
+            "/admin//": [
+                [
+                    "https://{host}/wp-admin/",
+                    302
+                ],
+                "zz-redirect"
+            ],
+            "/zz": [],
+            "/signin": [],
+            "/wp-login": [],
+            "/admin.php": []
+        }
+    ],
+    [
+        "the hooks",
+        [
+            1000,
+            10,
+            10
+        ]
+    ]
+]

@@ -69,6 +69,8 @@ $cases = [
     '/hello', '/hello-wor', '/hello-wor/page/2/', '/s', '/sc', '/sa', '/e', '/ex', '/ed', '/p', '/t', '/b', '/h', '/d', '/x',
     '/sample-page/s', '/sample-page/e',
     '/index.php/hello-world/',
+    // A 404 for the admin and login addresses people type goes to the real one (wp_redirect_admin_locations).
+    '/admin', '/admin/', '/dashboard', '/dashboard/', '/login', '/login.php', '/admin?x=1', '/Admin', '/x/admin',
 ];
 
 function permalink_fetch(string $base, string $path): array

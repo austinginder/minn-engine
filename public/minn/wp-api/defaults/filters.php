@@ -468,6 +468,8 @@ add_action('template_redirect', 'wp_shortlink_header', 11, 0);
 add_action('init', 'wp_sitemaps_get_server');
 add_action('template_redirect', '_minn_sitemap_canonical');
 add_action('template_redirect', 'wp_old_slug_redirect');
+// A 404 for /admin, /dashboard, /login and the like goes to the real address (probe canonical-helpers).
+add_action('template_redirect', 'wp_redirect_admin_locations', 1000);
 add_action('template_redirect', 'redirect_canonical');
 add_action('do_robots', 'do_robots');
 // The load after a theme switch tells plugins (after_switch_theme), whose defaults map the menus and look the widgets over.

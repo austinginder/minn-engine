@@ -299,6 +299,50 @@ function wp_cache_delete_multiple(array $keys, $group = '')
 }
 endif;
 
+// Salted entries (probe canonical-helpers): the data is stored with the salt it is good for (a last_changed stamp,
+// or several joined by colons), and read back only under that salt.
+
+/** @internal a salt as stored: a list of salts joined by colons */
+function _minn_cache_salt($salt): string
+{
+    return is_array($salt) ? implode(':', $salt) : (string) $salt;
+}
+
+/** @internal a salted entry's data when it was stored under this salt; false otherwise, and for null data */
+function _minn_cache_salted_data($cache, $salt)
+{
+    return is_array($cache) && isset($cache['data'], $cache['salt']) && $cache['salt'] === _minn_cache_salt($salt) ? $cache['data'] : false;
+}
+
+if (!function_exists('wp_cache_get_salted')) :
+function wp_cache_get_salted($cache_key, $group, $salt)
+{
+    return _minn_cache_salted_data(wp_cache_get($cache_key, $group), $salt);
+}
+endif;
+
+if (!function_exists('wp_cache_set_salted')) :
+function wp_cache_set_salted($cache_key, $data, $group, $salt, $expire = 0)
+{
+    return wp_cache_set($cache_key, ['data' => $data, 'salt' => _minn_cache_salt($salt)], $group, $expire);
+}
+endif;
+
+if (!function_exists('wp_cache_get_multiple_salted')) :
+function wp_cache_get_multiple_salted($cache_keys, $group, $salt)
+{
+    return array_map(static fn ($cache) => _minn_cache_salted_data($cache, $salt), wp_cache_get_multiple($cache_keys, $group));
+}
+endif;
+
+if (!function_exists('wp_cache_set_multiple_salted')) :
+function wp_cache_set_multiple_salted($data, $group, $salt, $expire = 0)
+{
+    $salt = _minn_cache_salt($salt);
+    return wp_cache_set_multiple(array_map(static fn ($value) => ['data' => $value, 'salt' => $salt], (array) $data), $group, $expire);
+}
+endif;
+
 if (!function_exists('wp_cache_incr')) :
 function wp_cache_incr($key, $offset = 1, $group = '')
 {
