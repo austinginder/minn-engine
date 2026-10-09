@@ -298,5 +298,102 @@
             "null"
         ],
         "default": null
+    },
+    "icon": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "icon",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "The icon name.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "label": {
+                "description": "The icon label.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "content": {
+                "description": "The icon content (SVG markup).",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "collection": {
+                "description": "The slug of the collection this icon belongs to.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            }
+        }
+    },
+    "icon-collection-param": {
+        "description": "Limit results to icons belonging to the given collection slug.",
+        "type": "string",
+        "pattern": "^[a-z0-9]([a-z0-9_-]*[a-z0-9])?$"
+    },
+    "icon-name": {
+        "description": "Icon name.",
+        "type": "string"
+    },
+    "icon-collection": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "icon-collection",
+        "type": "object",
+        "properties": {
+            "slug": {
+                "description": "The icon collection slug.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "label": {
+                "description": "The icon collection label.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "description": {
+                "description": "The icon collection description.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            }
+        }
+    },
+    "icon-collection-slug": {
+        "description": "Icon collection slug.",
+        "type": "string"
     }
 }

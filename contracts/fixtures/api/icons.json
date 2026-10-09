@@ -1,0 +1,1179 @@
+[
+    [
+        "the registries",
+        [
+            true,
+            true,
+            [
+                {
+                    "description": "Default icon collection.",
+                    "label": "WordPress",
+                    "slug": "core"
+                }
+            ],
+            true
+        ]
+    ],
+    [
+        "collections registered",
+        [
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::register",
+                        "Icon collection is already registered.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::register",
+                        "Icon collection slug must start and end with a lowercase letter or digit and contain only lowercase letters, digits, hyphens, and underscores.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::register",
+                        "Icon collection label must be a string.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::register",
+                        "Invalid icon collection property: \"other\".",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::register",
+                        "Icon collection description must be a string.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::register",
+                        "Icon collection slug must start and end with a lowercase letter or digit and contain only lowercase letters, digits, hyphens, and underscores.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                {
+                    "description": "Probe icons.",
+                    "label": "Zz Set",
+                    "slug": "zz-set"
+                },
+                []
+            ],
+            [
+                {
+                    "description": "",
+                    "label": "Only label",
+                    "slug": "zz-onlylabel"
+                },
+                []
+            ],
+            [
+                null,
+                []
+            ],
+            true,
+            false
+        ]
+    ],
+    [
+        "icons registered",
+        [
+            [
+                true,
+                []
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon is already registered.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon collection \"zz-none\" is not registered.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon name must be namespaced in the form \"collection/icon-name\".",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon names must not contain uppercase characters.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon label must be a string.",
+                        "7.0.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icons must provide either `content` or `file_path`.",
+                        "7.0.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icons must provide either `content` or `file_path`.",
+                        "7.0.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Invalid icon property: \"zz\".",
+                        "7.0.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon names must start and end with a lowercase letter or digit and contain only lowercase letters, digits, hyphens, and underscores.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon names must start and end with a lowercase letter or digit and contain only lowercase letters, digits, hyphens, and underscores.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::register",
+                        "Icon content must be a string.",
+                        "7.0.0"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "content",
+        [
+            {
+                "label": "Zz Star",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                "name": "zz-set/star",
+                "collection": "zz-set"
+            },
+            {
+                "label": "Zz Square",
+                "file_path": "{file}",
+                "name": "zz-set/square",
+                "collection": "zz-set",
+                "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>"
+            },
+            {
+                "label": "Unsafe",
+                "content": "<svg viewbox=\"0 0 24 24\">alert(1)<path d=\"M0 0\" />x</svg>",
+                "name": "zz-set/unsafe",
+                "collection": "zz-set"
+            },
+            [
+                null,
+                []
+            ],
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>",
+            null,
+            "<svg viewbox=\"0 0 24 24\" class=\"x\" aria-hidden=\"true\" focusable=\"false\"><polygon points=\"0,0 1,1\" /></svg>",
+            "<svg><path d=\"M0\" /></svg>",
+            "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1\" height=\"2\" viewbox=\"0 0 1 1\" role=\"img\" class=\"c\" focusable=\"false\" aria-hidden=\"true\">TD<path d=\"M0\" fill=\"f\" fill-rule=\"evenodd\" transform=\"t\" /><polygon points=\"0,0\" fill=\"f\" fill-rule=\"r\" transform=\"t\" />t<path d=\"M1\" /></svg>",
+            "",
+            "plain text"
+        ]
+    ],
+    [
+        "lookups",
+        [
+            true,
+            false,
+            [
+                "zz-set/star",
+                "zz-set/square",
+                "zz-set/missing-file",
+                "zz-set/unsafe",
+                "zz-set/not-svg",
+                "zz-set/under_score"
+            ],
+            [
+                "zz-set/star"
+            ],
+            [
+                "zz-set/square"
+            ],
+            [
+                "zz-set/star",
+                "zz-set/square",
+                "zz-set/missing-file",
+                "zz-set/unsafe",
+                "zz-set/not-svg",
+                "zz-set/under_score"
+            ]
+        ]
+    ],
+    [
+        "icons printed",
+        [
+            "<svg aria-hidden=\"true\" focusable=\"false\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "<svg aria-hidden=\"true\" class=\"zz-extra\" focusable=\"false\" height=\"32\" width=\"32\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>",
+            "<svg aria-label=\"A star\" role=\"img\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "<svg aria-label=\"A star\" height=\"32\" role=\"img\" width=\"32\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "<svg aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "<svg aria-hidden=\"true\" focusable=\"false\" height=\"48\" width=\"48\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "<svg aria-hidden=\"true\" focusable=\"false\" height=\"0\" width=\"0\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "<svg aria-hidden=\"true\" class=\"a b\" focusable=\"false\" height=\"24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+            "",
+            "",
+            [
+                "",
+                []
+            ],
+            [
+                "",
+                []
+            ]
+        ]
+    ],
+    [
+        "rest permissions, nobody",
+        [
+            [
+                "error",
+                "rest_cannot_view",
+                "Sorry, you are not allowed to view the registered icons.",
+                {
+                    "status": 401
+                }
+            ],
+            [
+                "error",
+                "rest_cannot_view",
+                "Sorry, you are not allowed to view the registered icons.",
+                {
+                    "status": 401
+                }
+            ],
+            [
+                "error",
+                "rest_cannot_view",
+                "Sorry, you are not allowed to view the registered icon collections.",
+                {
+                    "status": 401
+                }
+            ],
+            [
+                "error",
+                "rest_cannot_view",
+                "Sorry, you are not allowed to view the registered icon collections.",
+                {
+                    "status": 401
+                }
+            ]
+        ]
+    ],
+    [
+        "rest permissions, signed in",
+        [
+            [
+                [
+                    "error",
+                    "rest_cannot_view",
+                    "Sorry, you are not allowed to view the registered icons.",
+                    {
+                        "status": 403
+                    }
+                ],
+                [
+                    "error",
+                    "rest_cannot_view",
+                    "Sorry, you are not allowed to view the registered icon collections.",
+                    {
+                        "status": 403
+                    }
+                ]
+            ],
+            [
+                [
+                    "value",
+                    true
+                ],
+                [
+                    "value",
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "rest schemas",
+        [
+            "WP_REST_Controller",
+            "WP_REST_Controller",
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "icon",
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The icon name.",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    },
+                    "label": {
+                        "description": "The icon label.",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    },
+                    "content": {
+                        "description": "The icon content (SVG markup).",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    },
+                    "collection": {
+                        "description": "The slug of the collection this icon belongs to.",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    }
+                }
+            },
+            {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view"
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg",
+                    "minimum": 1
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_text_field",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "collection": {
+                    "description": "Limit results to icons belonging to the given collection slug.",
+                    "type": "string",
+                    "pattern": "^[a-z0-9]([a-z0-9_-]*[a-z0-9])?$"
+                }
+            },
+            {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "title": "icon-collection",
+                "type": "object",
+                "properties": {
+                    "slug": {
+                        "description": "The icon collection slug.",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    },
+                    "label": {
+                        "description": "The icon collection label.",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    },
+                    "description": {
+                        "description": "The icon collection description.",
+                        "type": "string",
+                        "readonly": true,
+                        "context": [
+                            "view",
+                            "edit",
+                            "embed"
+                        ]
+                    }
+                }
+            },
+            {
+                "context": {
+                    "description": "Scope under which the request is made; determines fields present in response.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_key",
+                    "validate_callback": "rest_validate_request_arg",
+                    "enum": [
+                        "view",
+                        "embed",
+                        "edit"
+                    ],
+                    "default": "view"
+                },
+                "page": {
+                    "description": "Current page of the collection.",
+                    "type": "integer",
+                    "default": 1,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg",
+                    "minimum": 1
+                },
+                "per_page": {
+                    "description": "Maximum number of items to be returned in result set.",
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "sanitize_callback": "absint",
+                    "validate_callback": "rest_validate_request_arg"
+                },
+                "search": {
+                    "description": "Limit results to those matching a string.",
+                    "type": "string",
+                    "sanitize_callback": "sanitize_text_field",
+                    "validate_callback": "rest_validate_request_arg"
+                }
+            }
+        ]
+    ],
+    [
+        "rest icons",
+        [
+            [
+                200,
+                [
+                    {
+                        "name": "zz-set/star",
+                        "label": "Zz Star",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/square",
+                        "label": "Zz Square",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/missing-file",
+                        "label": "Missing",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/unsafe",
+                        "label": "Unsafe",
+                        "content": "<svg viewbox=\"0 0 24 24\">alert(1)<path d=\"M0 0\" />x</svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/not-svg",
+                        "label": "Not SVG",
+                        "content": "not an svg",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/under_score",
+                        "label": "Under",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    }
+                ],
+                [],
+                []
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz-set/star",
+                        "label": "Zz Star",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    }
+                ],
+                [],
+                []
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz-set/star",
+                        "label": "Zz Star",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/square",
+                        "label": "Zz Square",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/missing-file",
+                        "label": "Missing",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/unsafe",
+                        "label": "Unsafe",
+                        "content": "<svg viewbox=\"0 0 24 24\">alert(1)<path d=\"M0 0\" />x</svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/not-svg",
+                        "label": "Not SVG",
+                        "content": "not an svg",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/under_score",
+                        "label": "Under",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    }
+                ],
+                [],
+                []
+            ],
+            [
+                "error",
+                "rest_icon_collection_not_found",
+                "Icon collection not found: \"zz-none\".",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                200,
+                {
+                    "name": "zz-set/star",
+                    "label": "Zz Star",
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                    "collection": "zz-set"
+                },
+                [],
+                []
+            ],
+            [
+                "error",
+                "rest_icon_not_found",
+                "Icon not found: \"zz-set/never\".",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                "value",
+                {
+                    "label": "Zz Square",
+                    "file_path": "{file}",
+                    "name": "zz-set/square",
+                    "collection": "zz-set",
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>"
+                }
+            ],
+            [
+                "error",
+                "rest_icon_not_found",
+                "Icon not found: \"zz-set/never\".",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                200,
+                {
+                    "name": "zz-set/star",
+                    "label": "Zz Star"
+                },
+                [],
+                []
+            ]
+        ]
+    ],
+    [
+        "rest icon collections",
+        [
+            [
+                200,
+                [
+                    {
+                        "slug": "core",
+                        "label": "WordPress",
+                        "description": "Default icon collection."
+                    },
+                    {
+                        "slug": "zz-set",
+                        "label": "Zz Set",
+                        "description": "Probe icons."
+                    },
+                    {
+                        "slug": "zz-onlylabel",
+                        "label": "Only label",
+                        "description": ""
+                    },
+                    {
+                        "slug": "zz_under",
+                        "label": "Under",
+                        "description": ""
+                    }
+                ],
+                [],
+                []
+            ],
+            [
+                200,
+                {
+                    "slug": "zz-set",
+                    "label": "Zz Set",
+                    "description": "Probe icons."
+                },
+                [],
+                []
+            ],
+            [
+                "error",
+                "rest_icon_collection_not_found",
+                "Icon collection not found: \"zz-none\".",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                "value",
+                {
+                    "description": "Probe icons.",
+                    "label": "Zz Set",
+                    "slug": "zz-set"
+                }
+            ],
+            [
+                "error",
+                "rest_icon_collection_not_found",
+                "Icon collection not found: \"zz-none\".",
+                {
+                    "status": 404
+                }
+            ],
+            [
+                200,
+                {
+                    "slug": "zz-set",
+                    "label": "Zz Set",
+                    "description": "Probe icons."
+                },
+                [],
+                []
+            ]
+        ]
+    ],
+    [
+        "routed",
+        [
+            [
+                200,
+                [
+                    {
+                        "name": "zz-set/star",
+                        "label": "Zz Star",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/square",
+                        "label": "Zz Square",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/missing-file",
+                        "label": "Missing",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/unsafe",
+                        "label": "Unsafe",
+                        "content": "<svg viewbox=\"0 0 24 24\">alert(1)<path d=\"M0 0\" />x</svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/not-svg",
+                        "label": "Not SVG",
+                        "content": "not an svg",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/under_score",
+                        "label": "Under",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    }
+                ],
+                []
+            ],
+            [
+                200,
+                [
+                    {
+                        "name": "zz-set/star",
+                        "label": "Zz Star",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/square",
+                        "label": "Zz Square",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M1 1h22v22H1z\" /></svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/missing-file",
+                        "label": "Missing",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/unsafe",
+                        "label": "Unsafe",
+                        "content": "<svg viewbox=\"0 0 24 24\">alert(1)<path d=\"M0 0\" />x</svg>",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/not-svg",
+                        "label": "Not SVG",
+                        "content": "not an svg",
+                        "collection": "zz-set"
+                    },
+                    {
+                        "name": "zz-set/under_score",
+                        "label": "Under",
+                        "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                        "collection": "zz-set"
+                    }
+                ],
+                []
+            ],
+            [
+                200,
+                {
+                    "name": "zz-set/star",
+                    "label": "Zz Star",
+                    "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 24 24\"><path d=\"M12 2l3 7h7l-6 4 2 7-6-4-6 4 2-7-6-4h7z\" /></svg>",
+                    "collection": "zz-set"
+                },
+                []
+            ],
+            [
+                404,
+                {
+                    "code": "rest_icon_not_found",
+                    "message": "Icon not found: \"zz-set/never\".",
+                    "data": {
+                        "status": 404
+                    }
+                },
+                []
+            ],
+            [
+                200,
+                [
+                    {
+                        "slug": "core",
+                        "label": "WordPress",
+                        "description": "Default icon collection."
+                    },
+                    {
+                        "slug": "zz-set",
+                        "label": "Zz Set",
+                        "description": "Probe icons."
+                    },
+                    {
+                        "slug": "zz-onlylabel",
+                        "label": "Only label",
+                        "description": ""
+                    }
+                ],
+                []
+            ],
+            [
+                200,
+                {
+                    "slug": "zz-set",
+                    "label": "Zz Set",
+                    "description": "Probe icons."
+                },
+                []
+            ],
+            {
+                "/wp/v2/icons": [
+                    [
+                        [
+                            "GET"
+                        ],
+                        [
+                            "WP_REST_Icons_Controller",
+                            "get_items"
+                        ],
+                        "get_items_permissions_check",
+                        {
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            },
+                            "page": {
+                                "description": "Current page of the collection.",
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1
+                            },
+                            "per_page": {
+                                "description": "Maximum number of items to be returned in result set.",
+                                "type": "integer",
+                                "default": 10,
+                                "minimum": 1,
+                                "maximum": 100
+                            },
+                            "search": {
+                                "description": "Limit results to those matching a string.",
+                                "type": "string"
+                            },
+                            "collection": {
+                                "description": "Limit results to icons belonging to the given collection slug.",
+                                "type": "string",
+                                "pattern": "^[a-z0-9]([a-z0-9_-]*[a-z0-9])?$"
+                            }
+                        }
+                    ]
+                ],
+                "/wp/v2/icons/(?P<collection>[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)": [
+                    [
+                        [
+                            "GET"
+                        ],
+                        [
+                            "WP_REST_Icons_Controller",
+                            "get_items"
+                        ],
+                        "get_items_permissions_check",
+                        {
+                            "collection": {
+                                "description": "Limit results to icons belonging to the given collection slug.",
+                                "type": "string",
+                                "pattern": "^[a-z0-9]([a-z0-9_-]*[a-z0-9])?$"
+                            },
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            },
+                            "page": {
+                                "description": "Current page of the collection.",
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1
+                            },
+                            "per_page": {
+                                "description": "Maximum number of items to be returned in result set.",
+                                "type": "integer",
+                                "default": 10,
+                                "minimum": 1,
+                                "maximum": 100
+                            },
+                            "search": {
+                                "description": "Limit results to those matching a string.",
+                                "type": "string"
+                            }
+                        }
+                    ]
+                ],
+                "/wp/v2/icons/(?P<name>[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?/[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)": [
+                    [
+                        [
+                            "GET"
+                        ],
+                        [
+                            "WP_REST_Icons_Controller",
+                            "get_item"
+                        ],
+                        "get_item_permissions_check",
+                        {
+                            "name": {
+                                "description": "Icon name.",
+                                "type": "string"
+                            },
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            }
+                        }
+                    ]
+                ],
+                "/wp/v2/icon-collections": [
+                    [
+                        [
+                            "GET"
+                        ],
+                        [
+                            "WP_REST_Icon_Collections_Controller",
+                            "get_items"
+                        ],
+                        "get_items_permissions_check",
+                        {
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            },
+                            "page": {
+                                "description": "Current page of the collection.",
+                                "type": "integer",
+                                "default": 1,
+                                "minimum": 1
+                            },
+                            "per_page": {
+                                "description": "Maximum number of items to be returned in result set.",
+                                "type": "integer",
+                                "default": 10,
+                                "minimum": 1,
+                                "maximum": 100
+                            },
+                            "search": {
+                                "description": "Limit results to those matching a string.",
+                                "type": "string"
+                            }
+                        }
+                    ]
+                ],
+                "/wp/v2/icon-collections/(?P<slug>[a-z0-9](?:[a-z0-9_-]*[a-z0-9])?)": [
+                    [
+                        [
+                            "GET"
+                        ],
+                        [
+                            "WP_REST_Icon_Collections_Controller",
+                            "get_item"
+                        ],
+                        "get_item_permissions_check",
+                        {
+                            "slug": {
+                                "description": "Icon collection slug.",
+                                "type": "string"
+                            },
+                            "context": {
+                                "description": "Scope under which the request is made; determines fields present in response.",
+                                "type": "string",
+                                "enum": [
+                                    "view",
+                                    "embed",
+                                    "edit"
+                                ],
+                                "default": "view"
+                            }
+                        }
+                    ]
+                ]
+            }
+        ]
+    ],
+    [
+        "unregistered",
+        [
+            [
+                true,
+                []
+            ],
+            false,
+            [
+                false,
+                [
+                    [
+                        "WP_Icons_Registry::unregister",
+                        "Icon \"zz-set/star\" is not registered.",
+                        "7.1.0"
+                    ]
+                ]
+            ],
+            [
+                true,
+                []
+            ],
+            false,
+            false,
+            [
+                false,
+                [
+                    [
+                        "WP_Icon_Collections_Registry::unregister",
+                        "Icon collection \"zz-set\" not found.",
+                        "7.1.0"
+                    ]
+                ]
+            ]
+        ]
+    ]
+]

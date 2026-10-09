@@ -2,13 +2,13 @@
     "generated": "2026-10-09",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 767,
-        "composes": 1650,
-        "leaf": 813,
-        "noop": 2537,
+        "minn": 769,
+        "composes": 1665,
+        "leaf": 818,
+        "noop": 2560,
         "placeholder": 250,
         "deadend": 1659,
-        "functions": 7598,
+        "functions": 7643,
         "minnMethods": 924,
         "leafLinesOver15": 12
     },
@@ -13162,6 +13162,152 @@
             "minn": [],
             "composes": []
         },
+        "WP_Icon_Collections_Registry::get_all_registered": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icon_Collections_Registry::get_instance": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_register_default_icon_collections"
+            ]
+        },
+        "WP_Icon_Collections_Registry::get_registered": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icon_Collections_Registry::is_registered": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icon_Collections_Registry::refusal": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "reset"
+            ]
+        },
+        "WP_Icon_Collections_Registry::register": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Icon_Collections_Registry::unregister": {
+            "file": "classes/WP_Icon_Collections_Registry.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Icons_Registry::__construct": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icons_Registry::forget_collection": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icons_Registry::get_content": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_trigger_error"
+            ]
+        },
+        "WP_Icons_Registry::get_instance": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_register_default_icons"
+            ]
+        },
+        "WP_Icons_Registry::get_registered_icon": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icons_Registry::get_registered_icons": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icons_Registry::is_registered": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Icons_Registry::refusal": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "reset"
+            ]
+        },
+        "WP_Icons_Registry::register": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
+        "WP_Icons_Registry::sanitize_icon_content": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_kses"
+            ]
+        },
+        "WP_Icons_Registry::unregister": {
+            "file": "classes/WP_Icons_Registry.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_doing_it_wrong"
+            ]
+        },
         "WP_Image_Editor::__construct": {
             "file": "classes/WP_Image_Editor.php",
             "lines": 1,
@@ -17603,6 +17749,180 @@
             "minn": [],
             "composes": [],
             "deadend": "editor"
+        },
+        "WP_REST_Icon_Collections_Controller::__construct": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icon_Collections_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icon_Collections_Controller::get_icon_collection": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icon_Collections_Controller::get_item": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Icon_Collections_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icon_Collections_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Icon_Collections_Controller::get_items": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Icon_Collections_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Icon_Collections_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response",
+                "rest_is_field_included"
+            ]
+        },
+        "WP_REST_Icon_Collections_Controller::register_routes": {
+            "file": "classes/WP_REST_Icon_Collections_Controller.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": [
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Icons_Controller::__construct": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icons_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Icons_Controller::get_icon": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icons_Controller::get_item": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Icons_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Icons_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Icons_Controller::get_items": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Icons_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Icons_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response",
+                "rest_is_field_included"
+            ]
+        },
+        "WP_REST_Icons_Controller::register_routes": {
+            "file": "classes/WP_REST_Icons_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": [
+                "register_rest_route"
+            ]
         },
         "WP_REST_Menu_Items_Controller::check_has_read_only_access": {
             "file": "classes/placeholders/Placeholders.php",
@@ -31892,6 +32212,22 @@
                 "register_setting",
                 "wp_get_connectors"
             ]
+        },
+        "_wp_register_default_icon_collections": {
+            "file": "icons.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "_wp_register_default_icons": {
+            "file": "icons.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "_wp_register_meta_args_allowed_list": {
             "file": "meta.php",
@@ -58776,6 +59112,13 @@
             "minn": [],
             "composes": []
         },
+        "wp_get_icon": {
+            "file": "icons.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wp_get_image_alttext": {
             "file": "deadends.php",
             "lines": 2,
@@ -63282,6 +63625,20 @@
             "composes": [],
             "deadend": "admin"
         },
+        "wp_register_icon": {
+            "file": "icons.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_register_icon_collection": {
+            "file": "icons.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_register_layout_support": {
             "file": "block-supports.php",
             "lines": 3,
@@ -65776,6 +66133,20 @@
         },
         "wp_unregister_ability_category": {
             "file": "abilities.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_unregister_icon": {
+            "file": "icons.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "wp_unregister_icon_collection": {
+            "file": "icons.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],

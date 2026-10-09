@@ -7442,3 +7442,58 @@ and extraction.
   - Anything else gathers tokens until a closer drops below its depth, and
     stops on that closer. This also applies when called on a closer or at
     the end, which gives a block named after the closer or a null block.
+
+## The icons API (2026-10-09)
+
+Probe `icons` (`tests/tools/icons-probe.php`) proves the icon functions,
+`WP_Icons_Registry`, `WP_Icon_Collections_Registry`,
+`WP_REST_Icons_Controller` and `WP_REST_Icon_Collections_Controller`.
+
+- **The default library is GPL art.** The reference's 88 icons are SVG
+  files the engine does not ship. `_wp_register_default_icons()`
+  registers nothing, and the probe narrows lists to its own collection.
+  The default collection (`core`, "WordPress") is registered, as the
+  reference registers it. Each registry registers its defaults when it is
+  first made.
+- **Collections.**
+  - The slug is lowercase letters, digits, `-` and `_`, starting and
+    ending with a letter or digit.
+  - Refusals come in this order: duplicate, slug, unknown property, label
+    not a string, description not a string (7.1.0).
+  - Stored as description (default `''`), label, slug.
+  - Unregistering a collection drops its icons.
+- **Icons.**
+  - Named `collection/icon`. The name is refused first: duplicate, no
+    namespace, uppercase, then characters, then an unregistered
+    collection (7.1.0).
+  - Then the properties: unknown, label not a string, not exactly one of
+    `content` and `file_path`, content not a string (7.0.0).
+  - Content is sanitized when registered. It keeps only `svg` (xmlns,
+    width, height, viewbox, role, class, focusable, aria-hidden), `path`
+    (d, fill, fill-rule, transform) and `polygon` (points, fill,
+    fill-rule, transform); the text of tags it strips stays.
+  - A file is read, sanitized and kept the first time it is needed. A
+    missing file gets a `wp_trigger_error` notice and no content.
+  - Search matches the name or the label, ignoring case.
+- **`wp_get_icon`.**
+  - A label makes the SVG `role="img"` with an `aria-label`; without one
+    it gets `aria-hidden="true" focusable="false"`.
+  - A numeric size (24 by default) sets width and height; anything else
+    sets neither. A class is added.
+  - New attributes come before the SVG's own, sorted.
+  - An unknown icon, or one without an SVG, gives `''`.
+- **REST.**
+  - Both controllers are registered in `create_initial_rest_routes()`
+    with the reference's routes, including `/icons/{collection}`.
+  - Reading needs `edit_posts`; otherwise `rest_cannot_view` at the
+    authorization status.
+  - The icon list narrows by `collection`, where an unknown one is
+    `rest_icon_collection_not_found` (404), and by `search`. It isn't
+    paged.
+  - Items carry name, label, content (left out when there is none) and
+    collection, narrowed by `_fields` and context. Collections carry
+    slug, label and description.
+  - The controllers' collection parameters give context a default of
+    view. Schemas are captured in `data/rest-schemas.json`.
+  - Over HTTP, the OPTIONS answers and the namespace index match the
+    reference byte for byte.

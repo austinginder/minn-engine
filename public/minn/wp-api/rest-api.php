@@ -705,8 +705,8 @@ function rest_output_rsd()
 /** Nothing to register: the engine's core routes answer on every request without being added to the server. */
 function create_initial_rest_routes()
 {
-    // The engine answers wp/v2 itself; the abilities namespace is served by its controller classes (probe abilities-rest-controllers).
-    foreach ([new WP_REST_Abilities_V1_Categories_Controller(), new WP_REST_Abilities_V1_Run_Controller(), new WP_REST_Abilities_V1_List_Controller()] as $controller) {
+    // The engine answers most of wp/v2 itself; these routes are served by their controller classes (probes abilities-rest-controllers, icons).
+    foreach ([new WP_REST_Icons_Controller(), new WP_REST_Icon_Collections_Controller(), new WP_REST_Abilities_V1_Categories_Controller(), new WP_REST_Abilities_V1_Run_Controller(), new WP_REST_Abilities_V1_List_Controller()] as $controller) {
         $controller->register_routes();
     }
 }
