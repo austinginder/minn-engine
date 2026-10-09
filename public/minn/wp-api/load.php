@@ -225,10 +225,131 @@ function wp_raise_memory_limit($context = 'admin')
     return $limit !== false && ini_set('memory_limit', (string) $limit) !== false ? $limit : false;
 }
 
-/** A JSONP request names its callback in `_jsonp`; the value is not checked here. */
+/** A JSONP request names a callback in `_jsonp` that passes wp_check_jsonp_callback (empty does), while rest_jsonp_enabled allows it. */
 function wp_is_jsonp_request()
 {
-    return isset($_GET['_jsonp']);
+    return isset($_GET['_jsonp']) && wp_check_jsonp_callback($_GET['_jsonp']) && apply_filters('rest_jsonp_enabled', true);
+}
+
+/** Stops the request with a 500 when PHP is older than the engine needs (8.3) or the mysqli extension is missing; nothing otherwise. */
+function wp_check_php_mysql_versions()
+{
+    if (version_compare(PHP_VERSION, '8.3', '<')) {
+        $problem = sprintf('Your server is running PHP version %1$s but Minn requires at least %2$s.', PHP_VERSION, '8.3');
+    } elseif (!extension_loaded('mysqli') && !file_exists(WP_CONTENT_DIR . '/db.php')) {
+        $problem = 'Your PHP installation appears to be missing the MySQL extension which is required by Minn.';
+    } else {
+        return;
+    }
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: text/html; charset=utf-8');
+    }
+    echo $problem;
+    exit;
+}
+
+/** Sends a request for exactly /favicon.ico away with an empty icon; any other path passes. */
+function wp_favicon_request()
+{
+    if (($_SERVER['REQUEST_URI'] ?? '') === '/favicon.ico') {
+        if (!headers_sent()) {
+            header('Content-Type: image/vnd.microsoft.icon');
+        }
+        exit;
+    }
+}
+
+/**
+ * While maintenance mode holds, the request stops: wp-content/maintenance.php
+ * when the site has one, else a 503 "Briefly unavailable" through wp_die,
+ * with Retry-After: 600.
+ */
+function wp_maintenance()
+{
+    if (!wp_is_maintenance_mode()) {
+        return;
+    }
+    if (file_exists(WP_CONTENT_DIR . '/maintenance.php')) {
+        require_once WP_CONTENT_DIR . '/maintenance.php';
+        exit;
+    }
+    if (!headers_sent()) {
+        header('Retry-After: 600');
+    }
+    wp_die(__('Briefly unavailable for scheduled maintenance. Check back in a minute.'), __('Maintenance'), 503);
+}
+
+/** An installed site (or one installing) passes; otherwise the request goes to the installer. */
+function wp_not_installed()
+{
+    if (is_blog_installed() || wp_installing()) {
+        return;
+    }
+    nocache_headers();
+    wp_redirect(wp_guess_url() . '/wp-admin/install.php');
+    exit;
+}
+
+/**
+ * The file editor's scrape check, on a request carrying wp_scrape_key and
+ * wp_scrape_nonce: nothing unless both are there, the key (sanitized) is
+ * not empty, and a scrape_key_{key} transient exists. A nonce other than
+ * the transient's prints scrape_nonce_failure between the result markers
+ * and stops; the right one has the result printed when the request ends.
+ */
+function wp_start_scraping_edited_file_errors()
+{
+    if (!isset($_REQUEST['wp_scrape_key'], $_REQUEST['wp_scrape_nonce'])) {
+        return;
+    }
+    $key = sanitize_key(wp_unslash($_REQUEST['wp_scrape_key']));
+    $nonce = wp_unslash($_REQUEST['wp_scrape_nonce']);
+    if ($key === '' || empty($nonce)) {
+        return;
+    }
+    $expected = get_transient('scrape_key_' . $key);
+    if ($expected === false) {
+        return;
+    }
+    if ($expected !== $nonce) {
+        echo "###### wp_scraping_result_start:{$key} ######";
+        echo wp_json_encode(['code' => 'scrape_nonce_failure', 'message' => __('Scrape key check failed. Please try again.')]);
+        echo "###### wp_scraping_result_end:{$key} ######";
+        exit;
+    }
+    register_shutdown_function('wp_finalize_scraping_edited_file_errors', $key);
+}
+
+/** Prints the scrape's result between its markers (the key as given): the last error when it was fatal, else true. */
+function wp_finalize_scraping_edited_file_errors($scrape_key)
+{
+    $error = error_get_last();
+    $fatal = is_array($error) && in_array($error['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR], true);
+    echo "\n###### wp_scraping_result_start:{$scrape_key} ######\n";
+    echo wp_json_encode($fatal ? $error : true);
+    echo "\n###### wp_scraping_result_end:{$scrape_key} ######\n";
+}
+
+/** Whether the fatal error handler is on: unless WP_DISABLE_FATAL_ERROR_HANDLER says otherwise, as wp_fatal_error_handler_enabled answers (as given). */
+function wp_is_fatal_error_handler_enabled()
+{
+    $enabled = !defined('WP_DISABLE_FATAL_ERROR_HANDLER') || !WP_DISABLE_FATAL_ERROR_HANDLER;
+    return apply_filters('wp_fatal_error_handler_enabled', $enabled);
+}
+
+/** An extension's error in a sentence: its type by the E_* constant's name (the value itself when none has it), line, file and message, each in <code>, none escaped. */
+function wp_get_extension_error_description($error)
+{
+    $names = [];
+    foreach (get_defined_constants(true)['Core'] ?? [] as $name => $value) {
+        if (str_starts_with($name, 'E_')) {
+            $names[$value] = $name;
+        }
+    }
+    $type = $names[$error['type']] ?? $error['type'];
+    /* translators: 1: Error type, 2: Error line number, 3: Error file name, 4: Error message. */
+    return sprintf(__('An error of type %1$s was caused in line %2$s of the file %3$s. Error message: %4$s'), "<code>{$type}</code>", "<code>{$error['line']}</code>", "<code>{$error['file']}</code>", "<code>{$error['message']}</code>");
 }
 
 function wp_clone($input_object)

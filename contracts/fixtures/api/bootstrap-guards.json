@@ -1,0 +1,482 @@
+[
+    [
+        "the constants settled at boot",
+        [
+            null,
+            null,
+            "",
+            true,
+            {
+                "KB_IN_BYTES": 1024,
+                "MB_IN_BYTES": 1048576,
+                "GB_IN_BYTES": 1073741824,
+                "TB_IN_BYTES": 1099511627776,
+                "WP_MEMORY_LIMIT": "40M",
+                "WP_MAX_MEMORY_LIMIT": "8G",
+                "WP_DEVELOPMENT_MODE": "",
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": false,
+                "WP_DEBUG_LOG": true,
+                "WP_CACHE": false,
+                "SCRIPT_DEBUG": false,
+                "MEDIA_TRASH": false,
+                "SHORTINIT": false,
+                "WP_FEATURE_BETTER_PASSWORDS": true,
+                "MINUTE_IN_SECONDS": 60,
+                "HOUR_IN_SECONDS": 3600,
+                "DAY_IN_SECONDS": 86400,
+                "WEEK_IN_SECONDS": 604800,
+                "MONTH_IN_SECONDS": 2592000,
+                "YEAR_IN_SECONDS": 31536000,
+                "AUTOSAVE_INTERVAL": 60,
+                "EMPTY_TRASH_DAYS": 30,
+                "WP_POST_REVISIONS": true,
+                "WP_CRON_LOCK_TIMEOUT": 60
+            },
+            [
+                1,
+                true,
+                true
+            ]
+        ]
+    ],
+    [
+        "a request passes the guards",
+        [
+            null,
+            null,
+            [
+                "/zz/",
+                null
+            ],
+            [
+                "/favicon.ico/",
+                null
+            ],
+            [
+                "/FAVICON.ICO",
+                null
+            ],
+            [
+                "/favicon.ico?x",
+                null
+            ],
+            [
+                "favicon.ico",
+                null
+            ],
+            [
+                "/sub/favicon.ico",
+                null
+            ],
+            [
+                "",
+                null
+            ],
+            null
+        ]
+    ],
+    [
+        "maintenance",
+        [
+            [
+                null,
+                "",
+                []
+            ],
+            [
+                700,
+                [
+                    null,
+                    "",
+                    []
+                ],
+                false
+            ],
+            [
+                0,
+                [
+                    null,
+                    "",
+                    [
+                        [
+                            "wp_die_handler",
+                            "Briefly unavailable for scheduled maintenance. Check back in a minute.",
+                            "Maintenance",
+                            {
+                                "response": 503
+                            }
+                        ]
+                    ]
+                ],
+                true
+            ],
+            [
+                599,
+                [
+                    null,
+                    "",
+                    [
+                        [
+                            "wp_die_handler",
+                            "Briefly unavailable for scheduled maintenance. Check back in a minute.",
+                            "Maintenance",
+                            {
+                                "response": 503
+                            }
+                        ]
+                    ]
+                ],
+                true
+            ],
+            [
+                -30,
+                [
+                    null,
+                    "",
+                    [
+                        [
+                            "wp_die_handler",
+                            "Briefly unavailable for scheduled maintenance. Check back in a minute.",
+                            "Maintenance",
+                            {
+                                "response": 503
+                            }
+                        ]
+                    ]
+                ],
+                true
+            ],
+            [
+                "refused",
+                [
+                    null,
+                    "",
+                    []
+                ],
+                [
+                    [
+                        true,
+                        1,
+                        true
+                    ]
+                ]
+            ],
+            [
+                "no time",
+                [
+                    null,
+                    "",
+                    [
+                        [
+                            "wp_die_handler",
+                            "Briefly unavailable for scheduled maintenance. Check back in a minute.",
+                            "Maintenance",
+                            {
+                                "response": 503
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "installing",
+                false,
+                [
+                    null,
+                    "",
+                    []
+                ]
+            ],
+            [
+                "removed",
+                [
+                    null,
+                    "",
+                    []
+                ]
+            ]
+        ]
+    ],
+    [
+        "the database error page",
+        [
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "<h1>Error establishing a database connection</h1>",
+                        "Database Error",
+                        []
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "<h1>Error establishing a database connection</h1>",
+                        "Database Error",
+                        []
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "zz db error",
+                        "",
+                        []
+                    ],
+                    [
+                        "wp_die_handler",
+                        "<h1>Error establishing a database connection</h1>",
+                        "Database Error",
+                        []
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        [
+                            "WP_Error",
+                            [
+                                "zz_db"
+                            ],
+                            {
+                                "status": 503
+                            }
+                        ],
+                        "",
+                        []
+                    ],
+                    [
+                        "wp_die_handler",
+                        "<h1>Error establishing a database connection</h1>",
+                        "Database Error",
+                        []
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "the favicon redirect",
+        [
+            [
+                "//{host}/wp-includes/images/w-logo-gray-white-bg.png",
+                302
+            ],
+            [
+                [
+                    "do_faviconico",
+                    [
+                        ""
+                    ]
+                ],
+                [
+                    "get_site_icon_url",
+                    "//{host}/wp-includes/images/w-logo-gray-white-bg.png",
+                    [
+                        32,
+                        0
+                    ]
+                ]
+            ],
+            [
+                "https://zz.example/icon.png",
+                302
+            ]
+        ]
+    ],
+    [
+        "the JSONP die handler",
+        [
+            "/**/zz.cb({\"code\":\"wp_die\",\"message\":\"msg <b> \\\"q\\\"\",\"data\":{\"status\":500},\"additional_errors\":[]})",
+            "/**/zz.cb({\"code\":\"zz_code\",\"message\":\"msg\",\"data\":{\"status\":418},\"additional_errors\":[]})",
+            "/**/cb({\"code\":\"zz_first\",\"message\":\"First <b>\",\"data\":{\"status\":409},\"additional_errors\":[{\"code\":\"zz_second\",\"message\":\"Second\",\"data\":\"string data\"},{\"code\":\"zz_third\",\"message\":\"Third\",\"data\":null}]})",
+            "/**/cb({\"code\":\"zz_first\",\"message\":\"First <b>\",\"data\":{\"status\":401},\"additional_errors\":[{\"code\":\"zz_second\",\"message\":\"Second\",\"data\":\"string data\"},{\"code\":\"zz_third\",\"message\":\"Third\",\"data\":null}]})",
+            "/**/({\"code\":\"wp_die\",\"message\":\"no callback\",\"data\":{\"status\":500},\"additional_errors\":[]})",
+            "/**/({\"code\":\"wp_die\",\"message\":\"empty callback\",\"data\":{\"status\":500},\"additional_errors\":[]})",
+            "/**/bad()({\"code\":\"wp_die\",\"message\":\"bad callback\",\"data\":{\"status\":500},\"additional_errors\":[]})",
+            "/**/cb({\"code\":\"wp_die\",\"message\":\"\",\"data\":{\"status\":500},\"additional_errors\":[]})",
+            "/**/cb({\"code\":\"wp_die\",\"message\":\"x\",\"data\":{\"status\":\"404\"},\"additional_errors\":[]})",
+            "/**/cb({\"code\":\"wp_die\",\"message\":[\"an\",\"array\"],\"data\":{\"status\":500},\"additional_errors\":[]})"
+        ]
+    ],
+    [
+        "an extension's error described",
+        [
+            "An error of type <code>E_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_WARNING</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_PARSE</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_NOTICE</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_CORE_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_CORE_WARNING</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_COMPILE_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_COMPILE_WARNING</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_USER_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_USER_WARNING</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_USER_NOTICE</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_STRICT</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_RECOVERABLE_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_DEPRECATED</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_USER_DEPRECATED</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_ALL</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>3</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>99</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>0</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>",
+            "An error of type <code>E_ERROR</code> was caused in line <code>12</code> of the file <code>/zz/path/file.php</code>. Error message: <code>Boom <b> & \"q\"</code>"
+        ]
+    ],
+    [
+        "the fatal error handler enabled",
+        [
+            true,
+            false,
+            "yes",
+            0,
+            null,
+            "0"
+        ]
+    ],
+    [
+        "the file editor's scrape",
+        [
+            [
+                null,
+                ""
+            ],
+            [
+                null,
+                ""
+            ],
+            [
+                null,
+                ""
+            ],
+            [
+                null,
+                ""
+            ],
+            [
+                null,
+                ""
+            ],
+            [
+                null,
+                ""
+            ],
+            [
+                null,
+                "\n###### wp_scraping_result_start:zz-key ######\ntrue\n###### wp_scraping_result_end:zz-key ######\n"
+            ],
+            [
+                null,
+                "\n###### wp_scraping_result_start:Zz Key! <b> ######\ntrue\n###### wp_scraping_result_end:Zz Key! <b> ######\n"
+            ],
+            [
+                null,
+                "\n###### wp_scraping_result_start: ######\ntrue\n###### wp_scraping_result_end: ######\n"
+            ],
+            "\n###### wp_scraping_result_start:clean ######\ntrue\n###### wp_scraping_result_end:clean ######\n"
+        ]
+    ],
+    [
+        "wp_die picks the JSONP handler",
+        [
+            [
+                false,
+                true,
+                false,
+                true,
+                true,
+                false
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "before REST",
+                        "",
+                        []
+                    ]
+                ]
+            ],
+            [
+                false,
+                true,
+                false,
+                true,
+                true,
+                false
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_jsonp_handler",
+                        "jsonp",
+                        "",
+                        []
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "bad callback",
+                        "",
+                        []
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "jsonp off",
+                        "",
+                        []
+                    ]
+                ]
+            ],
+            [
+                null,
+                "",
+                [
+                    [
+                        "wp_die_handler",
+                        "plain REST",
+                        "",
+                        []
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "a favicon request ends it",
+        true
+    ]
+]

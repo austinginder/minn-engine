@@ -738,6 +738,16 @@ function wp_plugin_directory_constants()
 {
 }
 
+/** Runtime\Constants::define() already defined the initial constants (sizes, memory limits, debug, the time spans) at boot; calling again changes none. */
+function wp_initial_constants()
+{
+}
+
+/** Runtime\Constants::define() already defined AUTOSAVE_INTERVAL, EMPTY_TRASH_DAYS, WP_POST_REVISIONS and WP_CRON_LOCK_TIMEOUT at boot. */
+function wp_functionality_constants()
+{
+}
+
 /** JSONP callback names: word characters and dots only (probed: my.Fn_2 yes, bad() and a-b no). */
 function wp_check_jsonp_callback($callback)
 {
@@ -774,15 +784,16 @@ function get_main_network_id()
     return 1;
 }
 
-/** True only while a .maintenance file at the webroot is fresh. */
+/** True only while a .maintenance file at the webroot is fresh, and never while installing. Its $upgrading is the global one, so a file that sets none keeps the last. */
 function wp_is_maintenance_mode()
 {
+    global $upgrading;
     $file = ABSPATH . '.maintenance';
-    if (!file_exists($file)) {
+    if (!file_exists($file) || wp_installing()) {
         return false;
     }
-    $upgrading = 0;
     include $file;
+    $upgrading = (int) $upgrading;
     return $upgrading >= time() - 600 && (bool) apply_filters('enable_maintenance_mode', true, $upgrading);
 }
 

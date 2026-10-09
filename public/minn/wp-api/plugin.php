@@ -297,6 +297,8 @@ function _minn_bind_hook_globals(): void
     $GLOBALS['shortcode_tags'] = &Runtime::shortcodes()->tags();
     // The page timer runs from boot, as timer_start() starts it on the reference (timer_float, timer_stop).
     $GLOBALS['timestart'] ??= microtime(true);
+    // A single site is blog 1, as wp_initial_constants() sets it on the reference.
+    $GLOBALS['blog_id'] ??= 1;
     // A fresh roles object for each boot; wp_roles() hands it out from then on.
     $GLOBALS['wp_roles'] = new WP_Roles();
     $GLOBALS['wp_embed'] ??= new WP_Embed();

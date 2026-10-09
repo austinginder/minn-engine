@@ -906,6 +906,8 @@ function wp_die($message = '', $title = '', $args = [])
         $callback = apply_filters('wp_die_ajax_handler', '_ajax_wp_die_handler');
     } elseif (wp_is_json_request()) {
         $callback = apply_filters('wp_die_json_handler', '_json_wp_die_handler');
+    } elseif (defined('REST_REQUEST') && REST_REQUEST && wp_is_jsonp_request()) {
+        $callback = apply_filters('wp_die_jsonp_handler', '_jsonp_wp_die_handler');
     } elseif (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) {
         $callback = apply_filters('wp_die_xmlrpc_handler', '_xmlrpc_wp_die_handler');
     } elseif (wp_is_xml_request() || (isset($GLOBALS['wp_query']) && (is_feed() || is_comment_feed() || is_trackback()))) {
@@ -939,7 +941,12 @@ function _wp_die_process_input($message, $title = '', $args = [])
             $data = $message->get_error_data($code);
             $errors[] = ['code' => $code, 'message' => $message->get_error_message($code), 'data' => $data];
         }
-        $args = wp_parse_args($args, $defaults + ($errors[0]['data'] ?? []) );
+        $data = $errors[0]['data'] ?? [];
+        // The first error's status is the response unless the caller names one.
+        if (is_array($data) && isset($data['status'])) {
+            $defaults['response'] = $data['status'];
+        }
+        $args = wp_parse_args($args, $defaults + (is_array($data) ? $data : []));
         $args['code'] = $errors[0]['code'] ?? '';
         $message = $errors[0]['message'] ?? '';
         if ($title === '' && isset($errors[0]['data']['title'])) {
@@ -1028,6 +1035,48 @@ function _json_wp_die_handler($message, $title = '', $args = [])
     if ($args['exit']) {
         exit;
     }
+}
+
+/** The error as a JSONP call: the JSON handler's body passed to the _jsonp callback as given (empty when there is none), behind an empty comment. */
+function _jsonp_wp_die_handler($message, $title = '', $args = [])
+{
+    [$message, $title, $args] = _wp_die_process_input($message, $title, $args);
+    if (!headers_sent()) {
+        http_response_code((int) $args['response']);
+        header('Content-Type: application/javascript; charset=' . $args['charset']);
+        header('X-Content-Type-Options: nosniff');
+    }
+    $body = wp_json_encode(['code' => $args['code'], 'message' => $message, 'data' => ['status' => $args['response']], 'additional_errors' => $args['additional_errors']]);
+    echo '/**/' . ($_GET['_jsonp'] ?? '') . '(' . $body . ')';
+    if ($args['exit']) {
+        exit;
+    }
+}
+
+/**
+ * The page a lost database connection shows: wp-content/db-error.php when
+ * the site has one, else, while installing, the database's own error, and
+ * then "Error establishing a database connection" through wp_die.
+ */
+function dead_db()
+{
+    global $wpdb;
+    if (file_exists(WP_CONTENT_DIR . '/db-error.php')) {
+        require_once WP_CONTENT_DIR . '/db-error.php';
+        exit;
+    }
+    if (wp_installing()) {
+        wp_die($wpdb->error ?? '');
+    }
+    wp_die('<h1>' . __('Error establishing a database connection') . '</h1>', __('Database Error'));
+}
+
+/** A favicon request: do_faviconico, then a 302 to the 32px site icon (the reference's grey W logo when there is none), and the request ends. */
+function do_favicon()
+{
+    do_action('do_faviconico');
+    wp_redirect(get_site_icon_url(32, includes_url('images/w-logo-gray-white-bg.png')));
+    exit;
 }
 
 function _xmlrpc_wp_die_handler($message, $title = '', $args = [])

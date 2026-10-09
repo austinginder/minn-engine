@@ -8519,3 +8519,76 @@ are in http.php.
     check never reports `bad_response_source`.
   - While `wp_installing()`, the reference's `get_option()` reads past its
     cache. The engine's does not.
+
+## Bootstrap guards and the pages that stop a request (2026-10-09)
+
+Probe `bootstrap-guards`. A page that would end the request is caught
+where it is handed over: at wp_die's handler (which returns) or at
+wp_redirect (which throws). The favicon request really does end the run,
+so the probe prints its log as the run shuts down.
+
+- **Constants.**
+  - `wp_initial_constants` and `wp_functionality_constants` change
+    nothing: `Runtime\Constants` defined them at boot. The reference
+    redefines some of them unguarded, and its warnings go to stderr.
+  - `$blog_id` is now 1 from boot.
+- **Guards a normal request passes** (null, nothing printed).
+  - `wp_check_php_mysql_versions` (the engine's floor is PHP 8.3 with
+    mysqli) and `wp_not_installed` (installed, or installing).
+  - `wp_favicon_request`, for any path but exactly `/favicon.ico`, which
+    ends the request. `/favicon.ico/`, `/FAVICON.ICO` and `/favicon.ico?x`
+    pass.
+- **Maintenance.**
+  - `wp_maintenance` stops a request while `.maintenance` is fresh (under
+    600 seconds): `wp_die("Briefly unavailable for scheduled maintenance.
+    Check back in a minute.", "Maintenance", 503)` with `Retry-After: 600`,
+    or the site's `maintenance.php` when there is one.
+  - `wp_is_maintenance_mode` is false while installing. Its `$upgrading`
+    is the global, so a file that sets none keeps the last value read (as
+    on the reference; before, it was a local).
+  - The probe clears `enable_maintenance_mode` first: WP-CLI switches
+    maintenance off for its own commands. The filter is handed
+    `(true, $upgrading)`.
+  - The front door's own check (`Front\Maintenance`) is unchanged.
+- **`dead_db`.** The site's `db-error.php` when there is one. Otherwise,
+  while installing, `wp_die($wpdb->error)` first. Then
+  `wp_die("<h1>Error establishing a database connection</h1>",
+  "Database Error")`.
+- **`do_favicon`.** It fires `do_faviconico` (with no argument), then
+  redirects 302 to `get_site_icon_url(32, includes_url('images/w-logo-gray-white-bg.png'))`,
+  then exits. The `/favicon.ico` route keeps its engine-defined 404
+  without a site icon, since the engine ships no WordPress logo.
+- **JSONP.**
+  - `wp_is_jsonp_request` needs `_jsonp` to pass `wp_check_jsonp_callback`
+    (an empty one does) and `rest_jsonp_enabled` to allow it. Before, only
+    `isset` was checked.
+  - `wp_die` picks `wp_die_jsonp_handler` only on a REST request, after
+    the JSON check.
+  - `_jsonp_wp_die_handler` prints `/**/{callback}({json})`, with the
+    callback raw (empty when missing) and the JSON handler's body.
+- **Shared fix.** `_wp_die_process_input` takes the first error's
+  `status` as the response unless the caller names one (409 from the
+  error, 401 from the args). Before, a WP_Error's status was ignored and
+  the response was 500.
+- **`wp_get_extension_error_description`.** The type is named by its
+  `E_*` constant (`E_ALL` and `E_STRICT` too, `"1"` as `E_ERROR`); a type
+  with no name is printed as given. Line, file and message go in `<code>`
+  unescaped.
+- **`wp_is_fatal_error_handler_enabled`.** True unless
+  `WP_DISABLE_FATAL_ERROR_HANDLER`, as `wp_fatal_error_handler_enabled`
+  answers (as given).
+- **The file editor's scrape.**
+  - `wp_start_scraping_edited_file_errors` does nothing without both
+    fields, with an empty sanitized key or nonce, or with no
+    `scrape_key_{key}` transient.
+  - A wrong nonce prints the `scrape_nonce_failure` JSON between the
+    markers and stops (captured once by hand, outside the probe, since
+    it exits).
+  - `wp_finalize_scraping_edited_file_errors` prints `true` between the
+    markers, with the key as given. Its fatal-error branch cannot be
+    reached from a probe.
+- **Not proven by the probe.** The pages that exit: the db-error and
+  maintenance drop-ins, the PHP version page and the installer redirect.
+  `wp_is_json_request` reads the request's headers as received, not
+  `$_SERVER` at call time, so the JSON-over-JSONP precedence is set in
+  code but not probed.
