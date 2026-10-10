@@ -1,0 +1,176 @@
+[
+    [
+        "the shared HTTP object",
+        [
+            "WP_Http",
+            true
+        ]
+    ],
+    [
+        "the safe request helpers",
+        {
+            "head": [
+                "answered",
+                [
+                    [
+                        "https://zz.example/head",
+                        "HEAD",
+                        true,
+                        null,
+                        5,
+                        0,
+                        []
+                    ]
+                ]
+            ],
+            "post": [
+                "answered",
+                [
+                    [
+                        "https://zz.example/post",
+                        "POST",
+                        true,
+                        {
+                            "a": "1"
+                        },
+                        3,
+                        5,
+                        []
+                    ]
+                ]
+            ],
+            "request": [
+                "answered",
+                [
+                    [
+                        "https://zz.example/request",
+                        "PUT",
+                        true,
+                        null,
+                        5,
+                        0,
+                        {
+                            "X-Zz": "yes"
+                        }
+                    ]
+                ]
+            ],
+            "request, a local address": [
+                "answered",
+                [
+                    [
+                        "http://127.0.0.1:1/x",
+                        "GET",
+                        true,
+                        null,
+                        5,
+                        5,
+                        []
+                    ]
+                ]
+            ],
+            "post, no scheme": [
+                "answered",
+                [
+                    [
+                        "zz.example/no-scheme",
+                        "POST",
+                        true,
+                        null,
+                        5,
+                        5,
+                        []
+                    ]
+                ]
+            ],
+            "head, credentials in the address": [
+                "answered",
+                [
+                    [
+                        "https://user:pass@zz.example/",
+                        "HEAD",
+                        true,
+                        null,
+                        5,
+                        0,
+                        []
+                    ]
+                ]
+            ]
+        }
+    ],
+    [
+        "cookies read back",
+        [
+            [
+                "zz_one",
+                "first",
+                "zz.example"
+            ],
+            [
+                "zz_two",
+                "second value",
+                null
+            ],
+            "",
+            "",
+            "",
+            "first",
+            "second value",
+            "",
+            ""
+        ]
+    ],
+    [
+        "the allowed origins",
+        [
+            [
+                "http://{host}",
+                "https://{host}"
+            ],
+            [
+                "http://{host}",
+                "https://{host}",
+                "https://zz-partner.example",
+                "http://{host}"
+            ],
+            [
+                [
+                    "https://{host}",
+                    "https://{host}",
+                    "https://{host}"
+                ],
+                [
+                    "http://{host}",
+                    "http://{host}",
+                    "http://{host}"
+                ],
+                [
+                    "https://zz-partner.example",
+                    "https://zz-partner.example",
+                    "https://zz-partner.example"
+                ],
+                [
+                    "https://zz-stranger.example",
+                    "https://zz-stranger.example",
+                    false
+                ],
+                [
+                    "",
+                    "",
+                    false
+                ],
+                [
+                    "null",
+                    "null",
+                    false
+                ],
+                [
+                    "no origin",
+                    "",
+                    false
+                ]
+            ]
+        ]
+    ]
+]

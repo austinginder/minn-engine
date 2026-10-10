@@ -40130,7 +40130,7 @@
         },
         "get_allowed_http_origins": {
             "file": "http.php",
-            "lines": 4,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -42159,7 +42159,7 @@
         },
         "get_http_origin": {
             "file": "http.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",

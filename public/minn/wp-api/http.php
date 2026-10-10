@@ -233,7 +233,8 @@ function ms_allowed_http_request_hosts($is_external, $host)
 
 function get_http_origin()
 {
-    $origin = (string) (Runtime::current()->request?->header('origin') ?? '');
+    // The request's Origin header as PHP sees it, as the reference reads it; a request built without $_SERVER gives its own (probe http-remaining).
+    $origin = isset($_SERVER['HTTP_ORIGIN']) ? (string) $_SERVER['HTTP_ORIGIN'] : (string) (Runtime::current()->request?->header('origin') ?? '');
     return apply_filters('http_origin', $origin);
 }
 
@@ -241,8 +242,9 @@ function get_allowed_http_origins()
 {
     $home = parse_url(home_url());
     $site = parse_url(site_url());
-    $origins = ['http://' . ($home['host'] ?? ''), 'https://' . ($home['host'] ?? ''), 'http://' . ($site['host'] ?? ''), 'https://' . ($site['host'] ?? '')];
-    return array_unique(apply_filters('allowed_http_origins', $origins));
+    // Repeats go before the filter; what the filter adds is kept as given (probe http-remaining).
+    $origins = array_values(array_unique(['http://' . ($home['host'] ?? ''), 'https://' . ($home['host'] ?? ''), 'http://' . ($site['host'] ?? ''), 'https://' . ($site['host'] ?? '')]));
+    return apply_filters('allowed_http_origins', $origins);
 }
 
 function is_allowed_http_origin($origin = null)

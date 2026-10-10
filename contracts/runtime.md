@@ -10463,3 +10463,28 @@ both stacks.
   `pre_wp_unique_post_slug`, so templates saved through the engine now get
   the reference's slugs.
 - Everything else already matched.
+
+## The rest of http.php (2026-10-10)
+
+Probe `http-remaining` proves the eight http.php functions that were left. It
+covers:
+- the shared HTTP object;
+- the safe request helpers: what they pass on, heard through
+  `pre_http_request` and answered there, so nothing leaves the machine;
+- cookies read back from a response;
+- the allowed origins, and the origin headers' answer for each request
+  origin.
+
+- **Fix: `get_allowed_http_origins`** removes repeats before the
+  `allowed_http_origins` filter. What the filter adds is kept as given,
+  repeats included, in a plain list. The engine used to remove repeats after
+  the filter, which also left gaps in the keys.
+- **Fix: `get_http_origin`** reads `$_SERVER['HTTP_ORIGIN']`, as the reference
+  does. It falls back to the request's own Origin header when `$_SERVER` has
+  none.
+- The safe helpers run `pre_http_request` before any check of the address, so
+  a filter answering there answers for local and malformed addresses too.
+
+Left owed: `send_frame_options_header`, `send_nosniff_header` and
+`cache_javascript_headers` only send headers. Under the CLI, PHP keeps no
+header list, so neither stack's headers can be compared.
