@@ -6121,17 +6121,8 @@
             "handler": "Minn\\Rest\\SidebarsController::sidebars",
             "summary": "Every sidebar: those the sidebars option lists, then any other registered one.",
             "policy": {
-                "access": "Cap",
-                "describe": "cap edit_theme_options",
-                "cap": "edit_theme_options",
-                "signIn": {
-                    "code": "rest_cannot_manage_widgets",
-                    "message": "Sorry, you are not allowed to manage widgets on this site."
-                },
-                "refuse": {
-                    "code": "rest_cannot_manage_widgets",
-                    "message": "Sorry, you are not allowed to manage widgets on this site."
-                }
+                "access": "Public",
+                "describe": "public"
             },
             "args": {
                 "context": {
@@ -6154,19 +6145,10 @@
             "pattern": "/wp/v2/sidebars/{id:[\\w-]+}",
             "name": "Minn\\Rest\\SidebarsController::sidebar",
             "handler": "Minn\\Rest\\SidebarsController::sidebar",
-            "summary": "One sidebar.",
+            "summary": "One sidebar: anyone's to read when it is shown in REST, otherwise for someone who can edit theme options.",
             "policy": {
-                "access": "Cap",
-                "describe": "cap edit_theme_options",
-                "cap": "edit_theme_options",
-                "signIn": {
-                    "code": "rest_cannot_manage_widgets",
-                    "message": "Sorry, you are not allowed to manage widgets on this site."
-                },
-                "refuse": {
-                    "code": "rest_cannot_manage_widgets",
-                    "message": "Sorry, you are not allowed to manage widgets on this site."
-                }
+                "access": "Public",
+                "describe": "public"
             },
             "args": {
                 "context": {

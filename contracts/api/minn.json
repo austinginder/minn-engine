@@ -106010,7 +106010,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/SidebarsController.php",
-            "lines": 192,
+            "lines": 206,
             "doc": "wp/v2/sidebars and wp/v2/widget-types as the reference answers them\n(probe rest-widgets), for anyone who can edit theme options. A sidebar\nis a registered one or the inactive widgets, with its wrapping markup,\nthe registered widgets it holds, and its status: active when registered\nunder a classic theme (a block theme renders none). Saving a sidebar's\nwidgets takes them from any other sidebar and sends the ones it drops to\nthe inactive widgets. The widget types are the registered widgets by id\nbase, in id order.",
             "implements": [],
             "extends": null,
@@ -106056,14 +106056,20 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 34
+                "line": 33,
+                "end": 35
             },
             "cases": [],
             "constants": [
                 {
                     "name": "BODY",
                     "value": "array (   'widgets' =>    array (     'description' => 'Nested widgets.',     'type' => 'array',     'items' =>      array (       'type' =>        array (         0 => 'object',         1 => 'string',       ),     ),     'required' => false,   ), )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "REFUSAL",
+                    "value": "'Sorry, you are not allowed to manage widgets on this site.'",
                     "doc": "",
                     "visibility": "private"
                 }
@@ -106091,13 +106097,13 @@
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/sidebars (cap edit_theme_options)"
+                        "GET /wp/v2/sidebars (public)"
                     ],
                     "name": "sidebars",
                     "static": false,
                     "visibility": "public",
                     "signature": "sidebars(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Every sidebar: those the sidebars option lists, then any other registered one.",
+                    "doc": "Every sidebar: those the sidebars option lists, then any other\nregistered one. Someone who cannot edit theme options sees only the\nsidebars shown in REST, and is refused when there are none (probe\nrest-sidebar-classes).",
                     "shapes": [],
                     "params": [
                         {
@@ -106108,18 +106114,18 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 48
+                    "line": 44,
+                    "end": 59
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/sidebars/{id:[\\w-]+} (cap edit_theme_options)"
+                        "GET /wp/v2/sidebars/{id:[\\w-]+} (public)"
                     ],
                     "name": "sidebar",
                     "static": false,
                     "visibility": "public",
                     "signature": "sidebar(Minn\\Http\\Request $request, string $id): Minn\\Http\\Response",
-                    "doc": "One sidebar.",
+                    "doc": "One sidebar: anyone's to read when it is shown in REST, otherwise for someone who can edit theme options.",
                     "shapes": [],
                     "params": [
                         {
@@ -106137,8 +106143,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 57
+                    "line": 63,
+                    "end": 71
                 },
                 {
                     "routes": [
@@ -106168,8 +106174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 80
+                    "line": 77,
+                    "end": 94
                 },
                 {
                     "routes": [
@@ -106190,8 +106196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 91
+                    "line": 98,
+                    "end": 105
                 },
                 {
                     "routes": [
@@ -106219,8 +106225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 103
+                    "line": 109,
+                    "end": 117
                 },
                 {
                     "routes": [
@@ -106248,8 +106254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 143
+                    "line": 126,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -106260,8 +106266,8 @@
                     "doc": "The widgets are registered on init; a runtime that stopped short of it\nregisters them now. Without the runtime there are no widgets to serve.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 157
+                    "line": 163,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -106282,8 +106288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 183
+                    "line": 174,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -106304,8 +106310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 200
+                    "line": 200,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -106318,8 +106324,8 @@
                         "@return array<string, \\WP_Widget> by id base, in id order"
                     ],
                     "params": [],
-                    "line": 203,
-                    "end": 211
+                    "line": 217,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -106338,8 +106344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 218
+                    "line": 227,
+                    "end": 232
                 }
             ]
         },

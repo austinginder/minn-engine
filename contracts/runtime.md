@@ -10913,3 +10913,54 @@ Fixed along the way, each proven by this probe:
 
 Owed: the engine's `/wp/v2/menus`, menu-items and menu-locations routes
 don't yet honour `rest_menu_read_access`.
+
+## The REST widget-type and sidebar controllers (2026-10-10)
+
+Probe `rest-sidebar-classes` proves `WP_REST_Widget_Types_Controller` and
+`WP_REST_Sidebars_Controller`: two classes that were missing, 30
+methods. They are called directly by nobody, an administrator and a
+contributor. It covers:
+- their schemas and parameters;
+- each permission check;
+- the widget types (a widget the probe registers among them) with their
+  helpers;
+- settings encoded from an instance, a bad hash, and form data, given as
+  a string and as the array the route hands on;
+- a render;
+- the sidebars (one the probe registers, one shown in REST, the inactive
+  widgets) with their helpers;
+- a sidebar's widgets saved three ways.
+
+The probe puts back the widget options and the theme's mods.
+
+- **Widget types:** the widgets registered so far, one per id base in id
+  order. The last instance registered speaks for its base. A widget
+  registered after `widgets_init` has no instance yet, so it is not a type
+  until one is registered. `encode_form_data` decodes the instance when
+  its hash holds, and otherwise refuses it as malformed. It takes form
+  data only as an array (the route turns the string into one), and
+  answers the form, the `the_widget` preview, and the settings encoded
+  again (with `raw` when the widget shows its instance in REST). An
+  unknown type "does not extend WP_Widget". `render` answers a whole
+  preview page, even for an unknown type. Only its shape, and that it
+  holds the widget's markup, are compared.
+- **Sidebars:** anyone may read a sidebar registered with `show_in_rest`.
+  Everything else needs `edit_theme_options`, and nobody's list keeps only
+  the public ones. An item carries every schema property it has a valid
+  value for (or the default), whatever fields were asked for. Its widgets
+  are those registered, and links come only when `_links` is wanted.
+  Saving takes the widgets given from every other sidebar, sends the ones
+  dropped to the inactive widgets, and answers in the edit context.
+
+Fixed along the way: the engine's own sidebars route now lets anyone read
+a sidebar shown in REST (only those, for someone who cannot edit theme
+options). A self link to one therefore hints GET.
+
+Owed: `retrieve_widgets`. Under this block theme the reference returns
+every registered sidebar's widgets to the inactive list, lost widgets
+first. The engine keeps them in their sidebars. `wp_map_sidebars_widgets`
+is still missing, though the reference's maps a sidebar onto the same id
+or the matching slug. The probe starts from a state both stacks leave
+alone. A theme switch elsewhere in the suites leaves a stash of the old
+theme's widgets in the theme's mods, and the probe sets it aside for its
+run.

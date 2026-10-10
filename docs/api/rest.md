@@ -69,7 +69,7 @@ the wp/v2 surface: shapes and controllers
 | [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
-| [`SidebarsController`](#sidebarscontroller) | final readonly class | 192 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
+| [`SidebarsController`](#sidebarscontroller) | final readonly class | 206 | wp/v2/sidebars and wp/v2/widget-types as the reference answers them |
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
@@ -3033,6 +3033,7 @@ the inactive widgets. The widget types are the registered widgets by id
 base, in id order.
 
 - const `BODY` = `array (   'widgets' =>    array (     'description' => 'Nested widgets.',     'type' => 'array',     'items' =>      array (       'type' =>        array (         0 => 'object',         1 => 'string',       ),     ),     'required' => false,   ), )`
+- const `REFUSAL` = `'Sorry, you are not allowed to manage widgets on this site.'`
 
 Used by: `Minn\Rest\Api`, `Minn\Rest\WidgetsController`
 
@@ -3043,15 +3044,18 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
 
 ### `sidebars(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/sidebars (cap edit_theme_options)`
+Route: `GET /wp/v2/sidebars (public)`
 
-Every sidebar: those the sidebars option lists, then any other registered one.
+Every sidebar: those the sidebars option lists, then any other
+registered one. Someone who cannot edit theme options sees only the
+sidebars shown in REST, and is refused when there are none (probe
+rest-sidebar-classes).
 
 ### `sidebar(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/sidebars/{id:[\w-]+} (cap edit_theme_options)`
+Route: `GET /wp/v2/sidebars/{id:[\w-]+} (public)`
 
-One sidebar.
+One sidebar: anyone's to read when it is shown in REST, otherwise for someone who can edit theme options.
 
 ### `save(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
@@ -3089,7 +3093,7 @@ as the_widget shows it, and the settings encoded again.
 The widgets are registered on init; a runtime that stopped short of it
 registers them now. Without the runtime there are no widgets to serve.
 
-Internals: `item()` (private, line 160), `type()` (private, line 186), `widgetTypes()` (private, line 203), `requireSidebar()` (private, line 213)
+Internals: `item()` (private, line 174), `type()` (private, line 200), `widgetTypes()` (private, line 217), `requireSidebar()` (private, line 227)
 
 
 ## StatusesController

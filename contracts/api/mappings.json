@@ -2,13 +2,13 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 781,
-        "composes": 1959,
-        "leaf": 892,
-        "noop": 2664,
+        "minn": 783,
+        "composes": 1978,
+        "leaf": 896,
+        "noop": 2670,
         "placeholder": 214,
         "deadend": 1662,
-        "functions": 8094,
+        "functions": 8125,
         "minnMethods": 948,
         "leafLinesOver15": 12
     },
@@ -20983,6 +20983,145 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_Sidebars_Controller::__construct": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Sidebars_Controller::check_read_permission": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Sidebars_Controller::do_permissions_check": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::get_item": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Sidebars_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Sidebars_Controller::get_items": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "rest_ensure_response",
+                "wp_get_sidebars_widgets"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_sidebars_widgets"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::get_sidebar": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "wp_get_sidebar"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 29,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "rest_ensure_response",
+                "rest_is_field_included",
+                "rest_validate_value_from_schema",
+                "wp_get_sidebars_widgets",
+                "wp_is_block_theme",
+                "wp_sidebar_description"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::prepare_links": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_query_arg",
+                "rest_url"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::register_routes": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::retrieve_widgets": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Sidebars_Controller::update_item": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 21,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "wp_get_sidebars_widgets",
+                "wp_set_sidebars_widgets"
+            ]
+        },
+        "WP_REST_Sidebars_Controller::update_item_permissions_check": {
+            "file": "classes/WP_REST_Sidebars_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_REST_Taxonomies_Controller::__construct": {
             "file": "classes/WP_REST_Taxonomies_Controller.php",
             "lines": 2,
@@ -21422,6 +21561,170 @@
             "kind": "placeholder",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Widget_Types_Controller::__construct": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Widget_Types_Controller::check_read_permission": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::encode_form_data": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "get_class",
+                "is_wp_error",
+                "rest_ensure_response",
+                "the_widget",
+                "wp_hash"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Widget_Types_Controller::get_item": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Widget_Types_Controller::get_items": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Widget_Types_Controller::get_widget": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::get_widgets": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 21,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_bloginfo",
+                "get_class",
+                "wp_parse_widget_id"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::minn_instance": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "unserialize",
+                "wp_hash"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "rest_ensure_response",
+                "rest_is_field_included",
+                "rest_sanitize_value_from_schema"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::prepare_links": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_url"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::register_routes": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route",
+                "wp_parse_str"
+            ]
+        },
+        "WP_REST_Widget_Types_Controller::render": {
+            "file": "classes/WP_REST_Widget_Types_Controller.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_attr",
+                "get_bloginfo",
+                "get_body_class",
+                "get_class",
+                "get_language_attributes",
+                "is_wp_error",
+                "the_widget",
+                "wp_footer",
+                "wp_head"
+            ]
         },
         "WP_Recovery_Mode_Link_Service::__construct": {
             "file": "classes/placeholders/Placeholders.php",

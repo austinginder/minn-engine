@@ -28,30 +28,44 @@ use Minn\Runtime\WidgetAreas;
 final readonly class SidebarsController
 {
     private const BODY = ['widgets' => ['description' => 'Nested widgets.', 'type' => 'array', 'items' => ['type' => ['object', 'string']], 'required' => false]];
+    private const REFUSAL = 'Sorry, you are not allowed to manage widgets on this site.';
 
     public function __construct(private RestUrl $url, private Caller $caller)
     {
     }
 
-    /** Every sidebar: those the sidebars option lists, then any other registered one. */
-    #[Route(Method::Get, '/wp/v2/sidebars', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_manage_widgets', signInMessage: 'Sorry, you are not allowed to manage widgets on this site.', refuse: 'rest_cannot_manage_widgets', message: 'Sorry, you are not allowed to manage widgets on this site.'), args: [Args::CONTEXT])]
+    /**
+     * Every sidebar: those the sidebars option lists, then any other
+     * registered one. Someone who cannot edit theme options sees only the
+     * sidebars shown in REST, and is refused when there are none (probe
+     * rest-sidebar-classes).
+     */
+    #[Route(Method::Get, '/wp/v2/sidebars', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
     public function sidebars(Request $request): Response
     {
         self::ready();
+        $manages = $this->caller->can('edit_theme_options');
         $out = [];
         foreach (array_keys(\retrieve_widgets()) as $id) {
-            if (WidgetAreas::sidebar((string) $id) !== null) {
+            $sidebar = WidgetAreas::sidebar((string) $id);
+            if ($sidebar !== null && ($manages || !empty($sidebar['show_in_rest']))) {
                 $out[] = $this->item((string) $id);
             }
+        }
+        if ($out === [] && !$manages) {
+            throw $this->caller->refuse('rest_cannot_manage_widgets', self::REFUSAL);
         }
         return Reply::item($out, Fields::fromQuery($request->query));
     }
 
-    /** One sidebar. */
-    #[Route(Method::Get, '/wp/v2/sidebars/{id:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_manage_widgets', signInMessage: 'Sorry, you are not allowed to manage widgets on this site.', refuse: 'rest_cannot_manage_widgets', message: 'Sorry, you are not allowed to manage widgets on this site.'), args: [Args::CONTEXT])]
+    /** One sidebar: anyone's to read when it is shown in REST, otherwise for someone who can edit theme options. */
+    #[Route(Method::Get, '/wp/v2/sidebars/{id:[\w-]+}', policy: new Policy(Access::Public), args: [Args::CONTEXT])]
     public function sidebar(Request $request, string $id): Response
     {
         self::ready();
+        if (empty(WidgetAreas::sidebar($id)['show_in_rest']) && !$this->caller->can('edit_theme_options')) {
+            throw $this->caller->refuse('rest_cannot_manage_widgets', self::REFUSAL);
+        }
         self::requireSidebar($id);
         return Reply::item($this->item($id), Fields::fromQuery($request->query));
     }
