@@ -1,0 +1,461 @@
+[
+    [
+        "slashed filters",
+        [
+            [
+                "<b>bold</b> alert(1) <a href=\\\"x\\\">link</a>",
+                "slashed \\\"quotes\\\"",
+                "plain &amp; simple",
+                "",
+                "styled",
+                "<em>kept</em>",
+                "it\\'s"
+            ],
+            [
+                "<b>bold</b> alert(1) <a href=\\\"x\\\">link</a>",
+                "<p class=\\\"zz\\\">slashed \\\"quotes\\\"</p>",
+                "plain &amp; simple",
+                "<img src=\\\"https://zz.example/a.png\\\" alt=\\\"A\\\">",
+                "<div style=\\\"color: red\\\">styled</div>",
+                "<em>kept</em>",
+                "it\\'s"
+            ]
+        ]
+    ],
+    [
+        "the post filter deep",
+        [
+            {
+                "a": "<b>x</b>s",
+                "b": [
+                    "<i>i</i>",
+                    "5",
+                    "1",
+                    ""
+                ],
+                "c": {
+                    "d": "<u>u</u>z"
+                }
+            },
+            "<b>string</b>s",
+            "42",
+            ""
+        ]
+    ],
+    [
+        "lower-cased lists",
+        [
+            {
+                "a": {
+                    "href": true,
+                    "title": {
+                        "X": 1
+                    }
+                },
+                "b": [],
+                "img": {
+                    "src": true
+                }
+            },
+            [],
+            {
+                "a": [
+                    true
+                ]
+            }
+        ]
+    ],
+    [
+        "the attribute check",
+        [
+            [
+                "href",
+                true,
+                "href",
+                "https://zz.example",
+                "href=\"https://zz.example\"",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "data-zz",
+                true,
+                "data-zz",
+                "1",
+                "data-zz=\"1\"",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "disabled",
+                true,
+                "disabled",
+                "",
+                "disabled",
+                "y"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "maxlength",
+                true,
+                "maxlength",
+                "50",
+                "maxlength=\"50\"",
+                "n"
+            ],
+            [
+                "style",
+                true,
+                "style",
+                "color: red",
+                "style=\"color: red\"",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "target",
+                true,
+                "target",
+                "_self",
+                "target=\"_self\"",
+                "n"
+            ],
+            [
+                "",
+                false,
+                "",
+                "",
+                "",
+                "n"
+            ],
+            [
+                "HREF",
+                true,
+                "HREF",
+                "x",
+                "HREF=\"x\"",
+                "n"
+            ]
+        ]
+    ],
+    [
+        "bad protocols once",
+        [
+            "alert(1)",
+            "https://zz.example",
+            "x",
+            "javascript:x",
+            "javascript:x",
+            "mailto:a@b",
+            "x",
+            "x",
+            "text/html,x",
+            "x",
+            "x"
+        ]
+    ],
+    [
+        "bad protocols with spaces",
+        [
+            [
+                "https://zz.example",
+                "https://zz.example"
+            ],
+            [
+                "https://zz.example ",
+                "https://zz.example"
+            ],
+            [
+                "https://zz.example",
+                "https://zz.example"
+            ],
+            [
+                "x",
+                "x"
+            ],
+            [
+                "http://a b ",
+                "http://a b"
+            ],
+            [
+                "http://x",
+                "http://x"
+            ],
+            [
+                "https://x",
+                "https://x"
+            ],
+            [
+                "//x",
+                "//x"
+            ],
+            [
+                "x",
+                "x"
+            ],
+            [
+                "https:x",
+                "https:x"
+            ]
+        ]
+    ],
+    [
+        "entities decoded",
+        [
+            "ja",
+            "ja",
+            "&amp;&lt;&gt;",
+            "\u0000�",
+            ":",
+            "plain",
+            ":",
+            "'&quot;"
+        ]
+    ],
+    [
+        "attributes split",
+        [
+            {
+                "href": {
+                    "name": "href",
+                    "value": "https://zz.example",
+                    "whole": "href=\"https://zz.example\"",
+                    "vless": "n"
+                },
+                "title": {
+                    "name": "title",
+                    "value": "T",
+                    "whole": "title=\"T\"",
+                    "vless": "n"
+                },
+                "disabled": {
+                    "name": "disabled",
+                    "value": "",
+                    "whole": "disabled",
+                    "vless": "y"
+                }
+            },
+            {
+                "href": {
+                    "name": "href",
+                    "value": "x",
+                    "whole": "href=\"x\"",
+                    "vless": "n"
+                },
+                "onclick": {
+                    "name": "onclick",
+                    "value": "y",
+                    "whole": "onclick=\"y\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "a": {
+                    "name": "a",
+                    "value": "1",
+                    "whole": "a=\"1\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "data-x": {
+                    "name": "data-x",
+                    "value": "Y",
+                    "whole": "data-x=\"Y\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "class": {
+                    "name": "class",
+                    "value": "a b",
+                    "whole": "class=\"a b\"",
+                    "vless": "n"
+                },
+                "style": {
+                    "name": "style",
+                    "value": "c",
+                    "whole": "style=\"c\"",
+                    "vless": "n"
+                }
+            },
+            [],
+            [],
+            {
+                "src": {
+                    "name": "src",
+                    "value": "https://zz.example/x.png",
+                    "whole": "src=\"https://zz.example/x.png\"",
+                    "vless": "n"
+                },
+                "alt": {
+                    "name": "alt",
+                    "value": "",
+                    "whole": "alt=\"\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": "a&quot;b",
+                    "whole": "title=\"a&quot;b\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": "a&apos;b",
+                    "whole": "title=\"a&apos;b\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": "a&amp;b",
+                    "whole": "title=\"a&amp;b\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": "a&lt;b&gt;c",
+                    "whole": "title=\"a&lt;b&gt;c\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": " x ",
+                    "whole": "title=\" x \"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": "&amp;zz; &amp; &amp; ©",
+                    "whole": "title=\"&amp;zz; &amp; &amp; ©\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "href": {
+                    "name": "href",
+                    "value": "https://zz.example",
+                    "whole": "href=\"https://zz.example\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "href": {
+                    "name": "href",
+                    "value": "  //zz.example/a b ",
+                    "whole": "href=\"  //zz.example/a b \"",
+                    "vless": "n"
+                }
+            },
+            {
+                "title": {
+                    "name": "title",
+                    "value": "",
+                    "whole": "title=\"\"",
+                    "vless": "n"
+                }
+            },
+            {
+                "data-a": {
+                    "name": "data-a",
+                    "value": "1",
+                    "whole": "data-a=\"1\"",
+                    "vless": "n"
+                },
+                "data-b": {
+                    "name": "data-b",
+                    "value": "",
+                    "whole": "data-b",
+                    "vless": "y"
+                }
+            }
+        ]
+    ],
+    [
+        "the pre_kses hook",
+        [
+            "swapped here|post|1",
+            "x|array|0"
+        ]
+    ],
+    [
+        "slashes off quotes",
+        [
+            "say \"hi\"",
+            "it\\'s",
+            "back\\\\slash",
+            "none",
+            "\"\""
+        ]
+    ],
+    [
+        "the version",
+        [
+            "0.2.2"
+        ]
+    ]
+]

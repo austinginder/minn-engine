@@ -64075,7 +64075,7 @@
         },
         "wp_kses_array_lc": {
             "file": "kses.php",
-            "lines": 5,
+            "lines": 6,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -64093,13 +64093,14 @@
         },
         "wp_kses_attr_check": {
             "file": "kses.php",
-            "lines": 2,
+            "lines": 14,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\KsesValues::satisfies"
             ],
             "composes": [
                 "_minn_kses_policy",
+                "safecss_filter_attr",
                 "wp_allowed_protocols"
             ]
         },
@@ -64114,7 +64115,7 @@
         },
         "wp_kses_bad_protocol": {
             "file": "kses.php",
-            "lines": 7,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -64124,7 +64125,7 @@
         },
         "wp_kses_bad_protocol_once": {
             "file": "kses.php",
-            "lines": 18,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -64168,7 +64169,7 @@
         },
         "wp_kses_hair": {
             "file": "kses.php",
-            "lines": 9,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\Kses::attributeList"

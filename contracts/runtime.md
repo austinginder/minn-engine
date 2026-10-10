@@ -9896,3 +9896,42 @@ Fixed to match:
   - An empty list is `[]`, and a taxonomy that does not exist is not an
     error.
 - **`clean_taxonomy_cache`** marks the terms cache as changed.
+
+## The rest of kses.php (2026-10-09)
+
+Probe `kses-remaining` proves the 11 kses.php functions that were left:
+- the slashed title and post filters, and the post filter applied deep;
+- lower-cased allowed lists;
+- the attribute check, by reference;
+- a bad protocol taken off, once and in full, with spaces;
+- entities decoded;
+- attributes split into pairs;
+- the `pre_kses` hook;
+- slashes taken off quotes;
+- the version.
+
+Fixed to match:
+
+- **`wp_kses_hair`** reads each value as HTML and writes it back with `&`,
+  `<`, `>`, `"` and `'` encoded (`&apos;` for the last). Other characters,
+  spaces included, stay as they were. `whole` is always `name="value"`, or
+  the bare name for an attribute with no value, so single quotes, unquoted
+  values and spaces around `=` all come out the same way. A URI attribute's
+  value is checked for its protocol between the two steps. The engine's own
+  kses does not use `whole`.
+- **`wp_kses_bad_protocol`** (shared fix).
+  - An address that already starts with an allowed `https://` or `http://`,
+    in lower case, is left exactly as it is, trailing space included.
+  - Everything else goes through `wp_kses_bad_protocol_once`, which now
+    trims what follows the protocol, whether it keeps the protocol or drops
+    it. So ` https://zz.example ` becomes `https://zz.example`, and
+    ` javascript:x ` becomes `x`.
+  - Every kses probe gave the same answers after the change.
+- **`wp_kses_attr_check`** empties the name, value and whole when it refuses
+  an attribute. A style keeps only what `safecss_filter_attr` leaves, and is
+  refused when nothing is left (`behavior: url(x)`).
+- **`wp_kses_array_lc`** turns each element's rules into a list with
+  lower-cased keys; `true` becomes `[true]`.
+
+The probe encodes its JSON with invalid UTF-8 substituted, since decoding
+`&#99999999;` yields a byte sequence `json_encode` refuses.

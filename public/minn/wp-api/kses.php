@@ -111,6 +111,12 @@ function wp_kses_normalize_entities($content, $context = 'html')
 function wp_kses_bad_protocol($content, $allowed_protocols)
 {
     $content = wp_kses_no_null((string) $content);
+    // An address already written as an allowed https:// or http:// one is left as it is (probe kses-remaining).
+    foreach (['https', 'http'] as $scheme) {
+        if (str_starts_with($content, "{$scheme}://") && in_array($scheme, (array) $allowed_protocols, true)) {
+            return $content;
+        }
+    }
     $iterations = 0;
     do {
         $original = $content;
@@ -133,10 +139,11 @@ function wp_kses_bad_protocol_once($content, $allowed_protocols, $count = 1)
                 break;
             }
         }
+        // What follows the protocol is trimmed, whichever way it goes (probe kses-remaining).
         if (!$allowed) {
-            return $parts[1];
+            return trim($parts[1]);
         }
-        return strtolower($protocol) . ':' . $parts[1];
+        return strtolower($protocol) . ':' . trim($parts[1]);
     }
     return $content;
 }
@@ -163,10 +170,28 @@ function wp_kses_version()
     return '0.2.2';
 }
 
+/**
+ * Whether an attribute may stay on an element (probe kses-remaining): a
+ * style keeps only what safecss_filter_attr leaves, and is refused when
+ * nothing is left; a refused attribute has its name, value and whole
+ * emptied.
+ */
 function wp_kses_attr_check(&$name, &$value, &$whole, $vless, $element, $allowed_html)
 {
     $rules = _minn_kses_policy($allowed_html, wp_allowed_protocols())->rules(strtolower((string) $element), strtolower((string) $name));
-    return $rules !== null && KsesValues::satisfies((string) $value, (string) $vless, $rules);
+    $allowed = $rules !== null && KsesValues::satisfies((string) $value, (string) $vless, $rules);
+    if ($allowed && strtolower((string) $name) === 'style') {
+        $filtered = safecss_filter_attr((string) $value);
+        $allowed = $filtered !== '';
+        if ($allowed && $filtered !== $value) {
+            $value = $filtered;
+            $whole = "{$name}=\"{$filtered}\"";
+        }
+    }
+    if (!$allowed) {
+        $name = $value = $whole = '';
+    }
+    return $allowed;
 }
 
 function wp_kses_check_attr_val($value, $vless, $checkname, $checkvalue)
@@ -194,12 +219,19 @@ function safecss_filter_attr($css, $deprecated = '')
 function wp_kses_hair($attr, $allowed_protocols)
 {
     $out = [];
+    // A value is read as HTML and written back with &, <, >, " and ' encoded, and the whole
+    // attribute as name="value" (probe kses-remaining).
     foreach (Kses::attributeList((string) $attr) ?? [] as $name => $attribute) {
-        $value = $attribute['value'] ?? '';
-        if ($attribute['value'] !== null && in_array($name, wp_kses_uri_attributes(), true)) {
+        if ($attribute['value'] === null) {
+            $out[$name] = ['name' => $name, 'value' => '', 'whole' => $name, 'vless' => 'y'];
+            continue;
+        }
+        $value = html_entity_decode((string) $attribute['value'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        if (in_array($name, wp_kses_uri_attributes(), true)) {
             $value = wp_kses_bad_protocol($value, $allowed_protocols);
         }
-        $out[$name] = ['name' => $name, 'value' => $value, 'whole' => $attribute['whole'], 'vless' => $attribute['value'] === null ? 'y' : 'n'];
+        $value = htmlspecialchars($value, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
+        $out[$name] = ['name' => $name, 'value' => $value, 'whole' => "{$name}=\"{$value}\"", 'vless' => 'n'];
     }
     return $out;
 }
@@ -218,7 +250,8 @@ function wp_kses_array_lc($inarray)
 {
     $out = [];
     foreach ((array) $inarray as $k => $v) {
-        $out[strtolower((string) $k)] = is_array($v) ? array_change_key_case($v) : $v;
+        // Each element's rules become a list with lower-cased keys, true included (probe kses-remaining).
+        $out[strtolower((string) $k)] = array_change_key_case((array) $v);
     }
     return $out;
 }
