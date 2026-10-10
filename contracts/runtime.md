@@ -10320,3 +10320,29 @@ back afterwards, and checked on both stacks.
 - Everything else already matched. Removing a page's items renumbers the
   menu's other items. Only a top-level page published from another status is
   added. The theme-switch option is gone afterwards.
+
+## The rest of capabilities.php (2026-10-10)
+
+Probe `capabilities-remaining` proves the seven capabilities.php functions
+that were left. The engine already matched; this batch only adds proof. It
+covers:
+- what a post's author can do: primitive and meta capabilities, for an
+  editor, an author's draft, a subscriber, an author who is gone, and a
+  missing post;
+- the current user's capabilities for a site, as the administrator, an
+  editor, a subscriber and nobody;
+- super admin granted and revoked on a single site;
+- the capabilities granted from the ones that imply them, alone and as
+  `user_has_cap` filters on real users.
+
+What the reference does here:
+- A post whose author is gone can do nothing.
+- On a single site, any site id answers for the current site, so
+  `current_user_can_for_site(999, 'read')` is true for a signed-in reader.
+- On a single site, `grant_super_admin` and `revoke_super_admin` return
+  false and store nothing; the administrator is still a super admin.
+- `install_languages` comes from `update_core`, `install_plugins` or
+  `install_themes`.
+- `resume_plugins` comes from `activate_plugins`, and `resume_themes` from
+  `switch_themes`.
+- `view_site_health_checks` comes from `install_plugins`.
