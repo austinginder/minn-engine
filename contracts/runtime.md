@@ -10370,3 +10370,25 @@ Fixes:
   survives. The engine's cache keeps its data in the runtime's store, so a
   restart empties that store. The first start, at boot, leaves it alone, so
   boot behaves as before.
+
+## The rest of option.php (2026-10-10)
+
+Probe `option-remaining` proves the seven option.php functions that were
+left. It covers:
+- network options on a single site: added, read, updated and deleted through
+  their hooks, with the network id given and not, a pre filter answering, and
+  the stored row and its autoload;
+- an option's autoload set alone;
+- a registered setting's default given back when none is passed;
+- the core settings registered.
+
+Fixes:
+
+- **The network option hooks** hear the network id asked for (7 when 7 is
+  passed), else the current network's. They used to hear 1 always.
+- **Autoload:** only `false`, `'no'` and `'off'` mean off (with `'auto-off'`
+  and 0). Anything else means on, including `null` and `'auto'`. The engine
+  used to require an explicit yes.
+- **`register_initial_settings`** registers only core's own settings. The
+  site logo and site icon settings are the block library's, registered on
+  `rest_api_init` right after it, so the REST settings keep their order.

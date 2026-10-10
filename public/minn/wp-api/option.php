@@ -30,7 +30,8 @@ function get_site_option($option, $default_value = false, $deprecated = true)
 function get_network_option($network_id, $option, $default_value = false)
 {
     $option = (string) $option;
-    $network = 1;
+    // The hooks hear the network asked for, else the current one (probe option-remaining).
+    $network = $network_id ? (int) $network_id : get_current_network_id();
     $pre = apply_filters("pre_site_option_{$option}", false, $option, $network, $default_value);
     $pre = apply_filters('pre_site_option', $pre, $option, $network, $default_value);
     if ($pre !== false) {
@@ -43,12 +44,13 @@ function get_network_option($network_id, $option, $default_value = false)
 function add_network_option($network_id, $option, $value)
 {
     $option = (string) $option;
-    $value = apply_filters("pre_add_site_option_{$option}", $value, $option, 1);
+    $network = $network_id ? (int) $network_id : get_current_network_id();
+    $value = apply_filters("pre_add_site_option_{$option}", $value, $option, $network);
     if (!add_option($option, $value, '', false)) {
         return false;
     }
-    do_action("add_site_option_{$option}", $option, $value, 1);
-    do_action('add_site_option', $option, $value, 1);
+    do_action("add_site_option_{$option}", $option, $value, $network);
+    do_action('add_site_option', $option, $value, $network);
     return true;
 }
 
@@ -56,8 +58,9 @@ function add_network_option($network_id, $option, $value)
 function update_network_option($network_id, $option, $value)
 {
     $option = (string) $option;
+    $network = $network_id ? (int) $network_id : get_current_network_id();
     $old = get_network_option($network_id, $option);
-    $value = apply_filters("pre_update_site_option_{$option}", $value, $old, $option, 1);
+    $value = apply_filters("pre_update_site_option_{$option}", $value, $old, $option, $network);
     if ($value === $old || maybe_serialize($value) === maybe_serialize($old)) {
         return false;
     }
@@ -67,20 +70,21 @@ function update_network_option($network_id, $option, $value)
     if (!update_option($option, $value, false)) {
         return false;
     }
-    do_action("update_site_option_{$option}", $option, $value, $old, 1);
-    do_action('update_site_option', $option, $value, $old, 1);
+    do_action("update_site_option_{$option}", $option, $value, $old, $network);
+    do_action('update_site_option', $option, $value, $old, $network);
     return true;
 }
 
 function delete_network_option($network_id, $option)
 {
     $option = (string) $option;
-    do_action("pre_delete_site_option_{$option}", $option, 1);
+    $network = $network_id ? (int) $network_id : get_current_network_id();
+    do_action("pre_delete_site_option_{$option}", $option, $network);
     if (!delete_option($option)) {
         return false;
     }
-    do_action("delete_site_option_{$option}", $option, 1);
-    do_action('delete_site_option', $option, 1);
+    do_action("delete_site_option_{$option}", $option, $network);
+    do_action('delete_site_option', $option, $network);
     return true;
 }
 
@@ -628,7 +632,8 @@ function wp_set_option_autoload_values($options)
 {
     $results = [];
     foreach ((array) $options as $name => $autoload) {
-        $on = in_array($autoload, [true, 'yes', 'on', 'auto-on'], true) || $autoload === 1;
+        // Only these mean off; anything else, null and 'auto' among them, means on (probe option-remaining).
+        $on = !in_array($autoload, [false, 'no', 'off', 'auto-off', 0], true);
         $results[$name] = $on ? Runtime::options()->markAutoload((string) $name) : Runtime::options()->unmarkAutoload((string) $name);
     }
     return $results;

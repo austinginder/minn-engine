@@ -419,6 +419,9 @@ add_action('init', '_wp_connectors_pass_default_keys_to_ai_client', 20);
 add_action('rest_api_init', 'rest_api_default_filters', 10, 1);
 // Core's settings are registered as the server starts, after a plugin's on init (probe rest-settings).
 add_action('rest_api_init', 'register_initial_settings', 10);
+// The site logo and icon settings are the block library's, registered after core's (probe option-remaining).
+add_action('rest_api_init', 'register_block_core_site_logo_setting', 10);
+add_action('rest_api_init', 'register_block_core_site_icon_setting', 10);
 // The REST API notes how the cookie and the application password sign-ins went, then answers rest_authentication_errors with it (probe rest-validators).
 foreach (['auth_cookie_malformed', 'auth_cookie_expired', 'auth_cookie_bad_username', 'auth_cookie_bad_hash', 'auth_cookie_valid'] as $minnCookieHook) {
     add_action($minnCookieHook, 'rest_cookie_collect_status');

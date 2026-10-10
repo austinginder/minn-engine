@@ -34832,13 +34832,14 @@
         },
         "add_network_option": {
             "file": "option.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "add_option",
                 "apply_filters",
-                "do_action"
+                "do_action",
+                "get_current_network_id"
             ]
         },
         "add_object_page": {
@@ -37922,12 +37923,13 @@
         },
         "delete_network_option": {
             "file": "option.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "delete_option",
-                "do_action"
+                "do_action",
+                "get_current_network_id"
             ]
         },
         "delete_option": {
@@ -42608,11 +42610,12 @@
         },
         "get_network_option": {
             "file": "option.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "get_current_network_id",
                 "get_option"
             ]
         },
@@ -55826,13 +55829,14 @@
         },
         "update_network_option": {
             "file": "option.php",
-            "lines": 15,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "add_network_option",
                 "apply_filters",
                 "do_action",
+                "get_current_network_id",
                 "get_network_option",
                 "maybe_serialize",
                 "update_option"
@@ -68269,7 +68273,7 @@
         },
         "wp_set_option_autoload_values": {
             "file": "option.php",
-            "lines": 6,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::options"

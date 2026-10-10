@@ -1,0 +1,494 @@
+[
+    [
+        "network options on a single site",
+        [
+            "fallback",
+            true,
+            {
+                "option_value": "first",
+                "autoload": "off"
+            },
+            false,
+            "first",
+            "first",
+            true,
+            false,
+            [
+                "second",
+                "second",
+                "second",
+                {
+                    "option_value": "second",
+                    "autoload": "off"
+                }
+            ],
+            true,
+            [
+                {
+                    "option_value": "a:1:{s:1:\"a\";i:1;}",
+                    "autoload": "off"
+                },
+                {
+                    "a": 1
+                }
+            ],
+            true,
+            false,
+            "gone",
+            false,
+            [
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    "fallback"
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    "fallback",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "fallback",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_add_site_option_zz_or_net",
+                    "first",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "add_site_option_zz_or_net",
+                    "zz_or_net",
+                    "first",
+                    1
+                ],
+                [
+                    "add_site_option",
+                    "zz_or_net",
+                    "first",
+                    1
+                ],
+                [
+                    "pre_add_site_option_zz_or_net",
+                    "again",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    false
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "first",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    7,
+                    false
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    7
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "first",
+                    "zz_or_net",
+                    7
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    false
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "first",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_update_site_option_zz_or_net",
+                    "second",
+                    "first",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "update_site_option_zz_or_net",
+                    "zz_or_net",
+                    "second",
+                    "first",
+                    1
+                ],
+                [
+                    "update_site_option",
+                    "zz_or_net",
+                    "second",
+                    "first",
+                    1
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    false
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "second",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_update_site_option_zz_or_net",
+                    "second",
+                    "second",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    false
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "second",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    false
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "second",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_delete_site_option_zz_or_net",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "delete_site_option_zz_or_net",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "delete_site_option",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_delete_site_option_zz_or_net",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "pre_site_option_zz_or_net",
+                    false,
+                    "zz_or_net",
+                    1,
+                    "gone"
+                ],
+                [
+                    "default_site_option_zz_or_net",
+                    "gone",
+                    "zz_or_net",
+                    1
+                ],
+                [
+                    "site_option_zz_or_net",
+                    "gone",
+                    "zz_or_net",
+                    1
+                ]
+            ],
+            [
+                "from the pre filter",
+                [
+                    [
+                        "pre_site_option_zz_or_net",
+                        false,
+                        "zz_or_net",
+                        1,
+                        "unused"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "an option autoload set alone",
+        [
+            "on",
+            "off",
+            [
+                true,
+                "off"
+            ],
+            [
+                false,
+                "off"
+            ],
+            [
+                true,
+                "on"
+            ],
+            [
+                true,
+                "on"
+            ],
+            [
+                true,
+                "off"
+            ],
+            [
+                true,
+                "on"
+            ],
+            [
+                true,
+                "off"
+            ],
+            [
+                true,
+                "on"
+            ],
+            [
+                false,
+                "on"
+            ],
+            [
+                false,
+                null
+            ]
+        ]
+    ],
+    [
+        "a registered default",
+        [
+            "registered default",
+            "given",
+            "registered default",
+            false,
+            "registered default",
+            "passed",
+            10,
+            false
+        ]
+    ],
+    [
+        "the core settings registered",
+        {
+            "blogname": {
+                "description": "Site title.",
+                "group": "general",
+                "label": "Title",
+                "show_in_rest": [
+                    "name"
+                ],
+                "type": "string"
+            },
+            "blogdescription": {
+                "description": "Site tagline.",
+                "group": "general",
+                "label": "Tagline",
+                "show_in_rest": [
+                    "name"
+                ],
+                "type": "string"
+            },
+            "siteurl": {
+                "description": "Site URL.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": [
+                    "name",
+                    "schema"
+                ],
+                "type": "string"
+            },
+            "home": null,
+            "admin_email": {
+                "description": "This address is used for admin purposes, like new user notification.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": [
+                    "name",
+                    "schema"
+                ],
+                "type": "string"
+            },
+            "timezone_string": {
+                "description": "A city in the same timezone as you.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": [
+                    "name"
+                ],
+                "type": "string"
+            },
+            "date_format": {
+                "description": "A date format for all date strings.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": true,
+                "type": "string"
+            },
+            "time_format": {
+                "description": "A time format for all time strings.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": true,
+                "type": "string"
+            },
+            "start_of_week": {
+                "description": "A day number of the week that the week should start on.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": true,
+                "type": "integer"
+            },
+            "WPLANG": {
+                "default": "en_US",
+                "description": "WordPress locale code.",
+                "group": "general",
+                "label": "",
+                "show_in_rest": [
+                    "name"
+                ],
+                "type": "string"
+            },
+            "use_smilies": {
+                "default": true,
+                "description": "Convert emoticons like :-) and :-P to graphics on display.",
+                "group": "writing",
+                "label": "",
+                "show_in_rest": true,
+                "type": "boolean"
+            },
+            "default_category": {
+                "description": "Default post category.",
+                "group": "writing",
+                "label": "",
+                "show_in_rest": true,
+                "type": "integer"
+            },
+            "default_post_format": {
+                "description": "Default post format.",
+                "group": "writing",
+                "label": "",
+                "show_in_rest": true,
+                "type": "string"
+            },
+            "posts_per_page": {
+                "default": 10,
+                "description": "Blog pages show at most.",
+                "group": "reading",
+                "label": "Maximum posts per page",
+                "show_in_rest": true,
+                "type": "integer"
+            },
+            "show_on_front": {
+                "description": "What to show on the front page",
+                "group": "reading",
+                "label": "Show on front",
+                "show_in_rest": true,
+                "type": "string"
+            },
+            "page_on_front": {
+                "description": "The ID of the page that should be displayed on the front page",
+                "group": "reading",
+                "label": "Page on front",
+                "show_in_rest": true,
+                "type": "integer"
+            },
+            "page_for_posts": {
+                "description": "The ID of the page that should display the latest posts",
+                "group": "reading",
+                "label": "",
+                "show_in_rest": true,
+                "type": "integer"
+            },
+            "default_ping_status": {
+                "description": "Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.",
+                "group": "discussion",
+                "label": "",
+                "show_in_rest": [
+                    "schema"
+                ],
+                "type": "string"
+            },
+            "default_comment_status": {
+                "description": "Allow people to submit comments on new posts.",
+                "group": "discussion",
+                "label": "Allow comments on new posts",
+                "show_in_rest": [
+                    "schema"
+                ],
+                "type": "string"
+            },
+            "site_logo": null,
+            "site_icon": null
+        }
+    ]
+]

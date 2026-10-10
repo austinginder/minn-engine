@@ -41,8 +41,6 @@ final class RegisteredSettings
         'page_for_posts' => ['reading', 'integer', '', 'The ID of the page that should display the latest posts', true],
         'default_ping_status' => ['discussion', 'string', '', 'Allow link notifications from other blogs (pingbacks and trackbacks) on new articles.', ['schema' => ['enum' => ['open', 'closed']]]],
         'default_comment_status' => ['discussion', 'string', 'Allow comments on new posts', 'Allow people to submit comments on new posts.', ['schema' => ['enum' => ['open', 'closed']]]],
-        'site_logo' => ['general', 'integer', 'Logo', 'Site logo.', ['name' => 'site_logo']],
-        'site_icon' => ['general', 'integer', 'Icon', 'Site icon.', true],
     ];
 
     /** Every registered setting by option name, in registration order. @return array<string, array<string, mixed>> */
