@@ -11,6 +11,15 @@ use WpOrg\Requests\Session;
 
 $base = rtrim((string) getenv('MINN_REQUESTS_BASE'), '/');
 $echo = "{$base}/echo.php";
+// The endpoint is served over HTTPS by the local server, whose authority no bundled certificate list trusts: both stacks are told to trust it.
+$authority = getenv('HOME') . '/Library/Application Support/Caddy/pki/authorities/local/root.crt';
+if (str_starts_with($base, 'https://') && is_file($authority)) {
+    Requests::set_certificate_path($authority);
+    add_filter('http_request_args', static function ($args) use ($authority) {
+        $args['sslcertificates'] = $authority;
+        return $args;
+    });
+}
 $plain = static fn ($v) => is_string($v) ? str_replace($base, '{base}', $v) : $v;
 // What the endpoint saw, without the parts that vary by server (host and port).
 $seen = static function ($response) {

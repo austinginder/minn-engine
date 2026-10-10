@@ -2,13 +2,13 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 771,
-        "composes": 1903,
-        "leaf": 879,
-        "noop": 2652,
+        "minn": 772,
+        "composes": 1910,
+        "leaf": 883,
+        "noop": 2654,
         "placeholder": 214,
         "deadend": 1662,
-        "functions": 8003,
+        "functions": 8017,
         "minnMethods": 947,
         "leafLinesOver15": 12
     },
@@ -13539,6 +13539,34 @@
             "minn": [],
             "composes": []
         },
+        "WP_Http_Curl::request": {
+            "file": "classes/WP_Http_Curl.php",
+            "lines": 23,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Http::__construct",
+                "Minn\\Http\\Outbound::__construct"
+            ],
+            "composes": [
+                "_minn_http_transport_answer",
+                "_minn_http_transport_args",
+                "_minn_http_transport_body",
+                "_minn_http_transport_file",
+                "_minn_http_transport_headers",
+                "_minn_http_transport_unanswered",
+                "apply_filters",
+                "do_action_ref_array"
+            ]
+        },
+        "WP_Http_Curl::test": {
+            "file": "classes/WP_Http_Curl.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "WP_Http_Encoding::accept_encoding": {
             "file": "classes/WP_Http_Encoding.php",
             "lines": 3,
@@ -13588,6 +13616,54 @@
         "WP_Http_Encoding::should_decode": {
             "file": "classes/WP_Http_Encoding.php",
             "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Http_Streams::minn_read": {
+            "file": "classes/WP_Http_Streams.php",
+            "lines": 13,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Http_Streams::minn_request_text": {
+            "file": "classes/WP_Http_Streams.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_http_transport_body",
+                "_minn_http_transport_headers"
+            ]
+        },
+        "WP_Http_Streams::request": {
+            "file": "classes/WP_Http_Streams.php",
+            "lines": 34,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_http_transport_answer",
+                "_minn_http_transport_args",
+                "_minn_http_transport_file",
+                "_minn_http_transport_unanswered",
+                "apply_filters",
+                "parse_url"
+            ]
+        },
+        "WP_Http_Streams::test": {
+            "file": "classes/WP_Http_Streams.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Http_Streams::verify_ssl_certificate": {
+            "file": "classes/WP_Http_Streams.php",
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -30833,6 +30909,61 @@
                 "apply_filters"
             ]
         },
+        "_minn_http_transport_answer": {
+            "file": "http.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_http_transport_decoded"
+            ]
+        },
+        "_minn_http_transport_args": {
+            "file": "http.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_args"
+            ]
+        },
+        "_minn_http_transport_body": {
+            "file": "http.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_http_transport_decoded": {
+            "file": "http.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_http_transport_file": {
+            "file": "http.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "_minn_http_transport_headers": {
+            "file": "http.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_http_transport_unanswered": {
+            "file": "http.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "_minn_image_lightbox_state": {
             "file": "core-blocks-content.php",
             "lines": 19,
@@ -36756,7 +36887,7 @@
         },
         "buildCookieHeader": {
             "file": "classes/WP_Http.php",
-            "lines": 8,
+            "lines": 10,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -40177,7 +40308,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "getIterator": {
             "file": "requests/Utility.php",
@@ -46071,7 +46204,7 @@
         },
         "handle_redirects": {
             "file": "classes/WP_Http.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -48761,7 +48894,7 @@
         },
         "minn_outbound": {
             "file": "requests/Core.php",
-            "lines": 19,
+            "lines": 20,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Outbound::__construct"

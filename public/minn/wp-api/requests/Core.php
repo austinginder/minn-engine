@@ -600,7 +600,7 @@ namespace WpOrg\Requests\Transport {
             return empty($capabilities[Capability::SSL]) || (bool) (curl_version()['features'] & CURL_VERSION_SSL);
         }
 
-        /** Data goes in the query for GET, HEAD and DELETE and in the body otherwise; curl negotiates compression; the connection closes after. */
+        /** Data goes in the query for GET, HEAD and DELETE and in the body otherwise; curl negotiates compression; HTTP/1.1 whatever version is asked for (probe http-transports); the connection closes after. */
         private function minn_outbound(string $url, array $headers, $data, array $options, Hooks $hooks): Outbound
         {
             $method = strtoupper((string) ($options['type'] ?? Requests::GET));
@@ -618,6 +618,7 @@ namespace WpOrg\Requests\Transport {
             $verify = $options['verify'] ?? Requests::get_certificate_path();
             $prepare = static function (\CurlHandle $handle) use ($hooks): void {
                 curl_setopt($handle, CURLOPT_ENCODING, '');
+                curl_setopt($handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
                 $hooks->dispatch('curl.before_request', [&$handle]);
                 $hooks->dispatch('curl.before_send', [&$handle]);
             };

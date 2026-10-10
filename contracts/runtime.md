@@ -10726,3 +10726,76 @@ They are built in the facade from WordPress functions.
 Owed: the engine's own `/wp/v2/search` still answers only `type=post`.
 Serving `term` and `post-format` through these handlers would complete the
 route.
+
+## The legacy HTTP transports (2026-10-10)
+
+Probe `http-transports` proves `WP_Http_Curl`, `WP_Http_Streams` and
+`WP_HTTP_Fsockopen`: three classes that were missing, five methods. They
+send to the test site itself, so the same server answers both stacks. It
+covers:
+- a file the probe writes into uploads: GET, HEAD, HTTP/1.1, a byte limit,
+  streamed to a file, and not waiting;
+- the REST API's refusals for a JSON body and for each method, with and
+  without a Content-Length;
+- a 404, and the login redirect kept and followed;
+- the errors for a refused port, an unknown host, a TLS handshake that
+  fails, and a certificate no bundle trusts;
+- what each `test()` answers and the filters it asks;
+- the hooks a request runs and the arguments `http_api_curl` is handed;
+- `WP_Http::handle_redirects` with `_redirection`;
+- the streams transport's certificate check.
+
+The classes live in the facade, with helpers in `http.php`.
+
+- **Shared:** both transports merge the caller's arguments over their own
+  defaults, in their own order (`decompress` is off by default). Cookies
+  become `WP_Http_Cookie` objects and a Cookie header. Certificate checking
+  goes through `https_ssl_verify`. A response comes back as
+  `WP_Http::processHeaders` reads it, cut to `limit_response_size`. When the
+  request streams, the body goes to the file and the answer's body is
+  empty; a file that cannot be opened is `Could not open handle for fopen()
+  to …`, before anything is sent. A 3xx goes to `handle_redirects`, which
+  answers through `WP_Http` (a case-insensitive header dictionary and
+  `http_response`). A request that does not wait answers with no status and
+  no `filename` key.
+- **Curl:** sent through the engine's curl client. It uses HTTP/1.0 unless
+  1.1 is asked for. When verifying, it uses `sslcertificates` even when
+  empty, so curl reports the empty bundle. `http_api_curl` receives the
+  handle, the arguments and the URL. A failure is curl's own words with no
+  `cURL error N:` prefix.
+- **Streams:** written to a socket and read to the end. It adds no
+  Content-Length of its own, so an HTTP/1.0 body without one never reaches
+  the server. A request to `localhost` connects to 127.0.0.1. A socket
+  that will not open fails as `{errno}: {errstr}`. A secure socket that
+  fails with neither, and a certificate whose names miss the host, both
+  fail as "The SSL certificate for the host could not be verified."
+  `verify_ssl_certificate` reads the captured certificate's alternative
+  names, ignoring case. A stream without a captured certificate is false.
+- **Fsockopen** is the streams transport under its older name.
+
+Fixed in `WP_Http` along the way, each proven by this probe:
+- `buildCookieHeader` turns name => value pairs into `WP_Http_Cookie`
+  objects in place.
+- `WP_Http_Cookie::getHeaderValue` passes the value through
+  `wp_http_cookie_value`.
+- `handle_redirects` keeps the 3xx when `_redirection` is 0.
+- `WP_Http::request` hands on `_redirection`: the redirects first asked
+  for, last among the arguments.
+- The Requests transport speaks HTTP/1.1 whatever version is asked for, as
+  the reference does. The engine had been negotiating HTTP/2, so servers
+  answered differently: a dynamic page came back with a Content-Length.
+  The requests suite proves it too.
+
+The requests suite compares again. Since the suites moved to the HTTPS
+twins, the reference's bundled certificates had refused the local server.
+Its network probe now trusts the server's own authority on both stacks.
+
+Kept differently on purpose:
+- Over HTTP/1.1 the streams transport asks the server to close the
+  connection. The reference waits on a kept-alive connection until the
+  server drops it, so the probe sends `Connection: close` itself.
+- The probe leaves out the reference's fatal for an empty bundle on
+  streams.
+- A HEAD over streams is also left out, because it hangs on the reference.
+- An array body is form-encoded by both transports. On streams the
+  reference sends the word "Array".

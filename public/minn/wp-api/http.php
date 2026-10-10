@@ -293,3 +293,90 @@ function download_url($url, $timeout = 300, $signature_verification = false)
     }
     return $tmpfname;
 }
+
+/**
+ * The arguments a legacy transport (WP_Http_Curl, WP_Http_Streams) sends
+ * with: the caller's over the transports' own defaults, in their order, and
+ * the cookies made into WP_Http_Cookie objects and a Cookie header (probe
+ * http-transports).
+ */
+function _minn_http_transport_args($args): array
+{
+    $args = wp_parse_args($args, ['method' => 'GET', 'timeout' => 5, 'redirection' => 5, 'httpversion' => '1.0', 'blocking' => true, 'headers' => [], 'body' => null, 'cookies' => [], 'decompress' => false, 'stream' => false, 'filename' => null]);
+    WP_Http::buildCookieHeader($args);
+    return $args;
+}
+
+/**
+ * A transport's request headers as "Name: value" lines, from a list of
+ * name => value or a raw header block.
+ *
+ * @return list<string>
+ */
+function _minn_http_transport_headers($headers): array
+{
+    if (is_string($headers)) {
+        return array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $headers) ?: []), static fn ($line) => str_contains($line, ':')));
+    }
+    $lines = [];
+    foreach ((array) $headers as $name => $value) {
+        foreach ((array) $value as $one) {
+            $lines[] = $name . ': ' . $one;
+        }
+    }
+    return $lines;
+}
+
+/** A transport's request body as sent: a list form-encoded, nothing as null. */
+function _minn_http_transport_body($body): ?string
+{
+    return is_array($body) ? http_build_query($body, '', '&') : ($body === null ? null : (string) $body);
+}
+
+/** The file a streaming request writes to, opened before anything is sent; null for a request that does not stream. */
+function _minn_http_transport_file(array $args)
+{
+    if (empty($args['stream'])) {
+        return null;
+    }
+    $handle = @fopen((string) $args['filename'], 'w+');
+    return $handle === false ? new WP_Error('http_request_failed', sprintf(__('Could not open handle for %1$s to %2$s.'), 'fopen()', $args['filename'])) : $handle;
+}
+
+/** What a transport answers when it does not wait for the response. */
+function _minn_http_transport_unanswered(): array
+{
+    return ['headers' => [], 'body' => '', 'response' => ['code' => false, 'message' => false], 'cookies' => []];
+}
+
+/** A response body as a legacy transport keeps it: a chunked one joined, a compressed one inflated when the request decompresses, cut to limit_response_size. */
+function _minn_http_transport_decoded(array $headers, string $body, array $args): string
+{
+    if (($headers['transfer-encoding'] ?? '') === 'chunked') {
+        $body = WP_Http::chunkTransferDecode($body);
+    }
+    if (!empty($args['decompress']) && WP_Http_Encoding::should_decode($headers)) {
+        $body = WP_Http_Encoding::decompress($body);
+    }
+    return isset($args['limit_response_size']) ? substr($body, 0, (int) $args['limit_response_size']) : $body;
+}
+
+/**
+ * A legacy transport's answer from the head and body it read: the status,
+ * headers and cookies as WP_Http::processHeaders reads them, the body
+ * decoded and written to the open file when the request streams (the body
+ * then empty), and a redirect handed to WP_Http::handle_redirects.
+ */
+function _minn_http_transport_answer(string $url, array $args, string $head, string $body, $file)
+{
+    $processed = WP_Http::processHeaders($head, $url);
+    $body = _minn_http_transport_decoded($processed['headers'], $body, $args);
+    if (is_resource($file)) {
+        fwrite($file, $body);
+        fclose($file);
+        $body = '';
+    }
+    $response = ['headers' => $processed['headers'], 'body' => $body, 'response' => $processed['response'], 'cookies' => $processed['cookies'], 'filename' => $args['filename']];
+    $redirect = WP_Http::handle_redirects($url, $args, $response);
+    return $redirect === false ? $response : $redirect;
+}

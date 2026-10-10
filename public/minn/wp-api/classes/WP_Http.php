@@ -204,9 +204,10 @@ namespace {
             return str_ends_with($parts['host'], ltrim((string) ($this->domain ?? $parts['host']), '.'));
         }
 
+        /** name=value for a Cookie header, the value through wp_http_cookie_value (probe http-transports). */
         public function getHeaderValue()
         {
-            return $this->name === null ? '' : $this->name . '=' . $this->value;
+            return $this->name === null ? '' : $this->name . '=' . apply_filters('wp_http_cookie_value', $this->value, $this->name);
         }
 
         public function getFullHeader()
@@ -243,6 +244,8 @@ namespace {
             if (($args['method'] ?? '') === 'HEAD') {
                 $defaults['redirection'] = 0;
             }
+            // The redirects first asked for, which handle_redirects reads as the hops go down (probe http-transports).
+            $defaults['_redirection'] = $args['redirection'] ?? $defaults['redirection'];
             $parsed_args = apply_filters('http_request_args', wp_parse_args($args, $defaults), $url);
             $pre = apply_filters('pre_http_request', false, $parsed_args, $url);
             if ($pre !== false) {
@@ -415,16 +418,19 @@ namespace {
         }
 
         /** The request's cookies as one Cookie header (each name=value as given), when it has any. */
+        /** The request's cookies made WP_Http_Cookie objects in place (name => value pairs too) and joined into its Cookie header (probe http-transports). */
         public static function buildCookieHeader(&$r)
         {
             if (empty($r['cookies'])) {
                 return;
             }
-            $pairs = [];
-            foreach ((array) $r['cookies'] as $name => $value) {
-                $pairs[] = $value instanceof WP_Http_Cookie ? $value->getHeaderValue() : $name . '=' . $value;
+            $r['cookies'] = (array) $r['cookies'];
+            foreach ($r['cookies'] as $name => $value) {
+                if (!$value instanceof WP_Http_Cookie) {
+                    $r['cookies'][$name] = new WP_Http_Cookie(['name' => $name, 'value' => $value]);
+                }
             }
-            $r['headers']['cookie'] = implode('; ', $pairs);
+            $r['headers']['cookie'] = implode('; ', array_map(static fn (WP_Http_Cookie $cookie) => $cookie->getHeaderValue(), $r['cookies']));
         }
 
         /** A chunked body decoded with the reference's quirk (Minn\Http\LegacyHeaders::dechunk); a body that is not chunked comes back as it was. */
@@ -458,7 +464,8 @@ namespace {
         public static function handle_redirects($url, $args, $response)
         {
             $code = (int) ($response['response']['code'] ?? 0);
-            if (!isset($response['headers']['location']) || $code < 300 || $code > 399) {
+            // A request that asked for no redirects (_redirection 0) keeps the 3xx (probe http-transports).
+            if (!isset($response['headers']['location']) || $code < 300 || $code > 399 || ($args['_redirection'] ?? null) === 0) {
                 return false;
             }
             if ($args['redirection']-- <= 0) {
