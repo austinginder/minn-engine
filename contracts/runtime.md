@@ -11437,3 +11437,44 @@ Left:
   styles) is still missing.
 - The engine's `WP_Theme_JSON` keeps a style variation its block does not
   have, where the reference drops it.
+
+## The view configuration functions (2026-10-10)
+
+Probe `view-config-functions` proves the 7 missing functions of
+`view-config.php`, in a new `wp-api/view-config.php`. They are
+`wp_get_entity_view_config`, its filter name, the default post type form,
+and the core types' patches for pages, patterns, templates and template
+parts. Registrations and filters live for the request only. It covers:
+- each patch, called on an empty configuration and on one with values of
+  its own;
+- the hooks that apply the patches;
+- the configuration of core types, a plugin's type, a missing type, the
+  site and a taxonomy, asked in another case too;
+- configurations a plugin patches on its filter.
+
+- **One path.** The REST view-config controller now asks
+  `wp_get_entity_view_config` for an entity's configuration. It used to
+  build the configuration itself.
+- **The start.** A post type (kind `postType`, in exactly that case)
+  starts from the generic configuration. Its first view is titled with the
+  type's `all_items` label ("All items" for a missing type), and its form
+  is `_wp_get_default_posttype_form()`. Every other kind starts from the
+  plain default.
+- **The filter** is `get_entity_view_config_{kind}_{name}` with both in
+  lower case (`wp_get_entity_view_config_hook_name`). `WP_View_Config_Data`
+  used to leave the name as given; it now uses the same name. So
+  `posttype`/`page` starts from the plain default but still gets the page
+  patch, and `ZZView` gets the `zzview` filter.
+- **The core patches**, hooked at 5, each answer the configuration they
+  were handed.
+  - Pages set their default view and layouts, and add their status views
+    (Published to Trash) after whatever views are there. The form is left
+    alone.
+  - Patterns, templates and template parts set all four keys. Patterns'
+    views list the pattern categories with Uncategorized, by title
+    regardless of case. Templates' views list the theme. Template parts'
+    views list the areas, General last.
+
+Left: core's own pattern categories and patterns
+(`_register_core_block_patterns_and_categories`) are still not
+registered, so the probe compares the patterns' views without them.

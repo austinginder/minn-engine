@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 795,
-        "composes": 2039,
-        "leaf": 910,
-        "noop": 2710,
+        "composes": 2043,
+        "leaf": 909,
+        "noop": 2712,
         "placeholder": 213,
         "deadend": 1662,
-        "functions": 8251,
+        "functions": 8256,
         "minnMethods": 958,
         "leafLinesOver15": 11
     },
@@ -22148,7 +22148,8 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "rest_ensure_response"
+                "rest_ensure_response",
+                "wp_get_entity_view_config"
             ]
         },
         "WP_REST_View_Config_Controller::get_items_permissions_check": {
@@ -22198,45 +22199,6 @@
                 "Minn\\Rest\\SchemaData::of"
             ],
             "composes": []
-        },
-        "WP_REST_View_Config_Controller::minn_area_views": {
-            "file": "classes/WP_REST_View_Config_Controller.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_allowed_block_template_part_areas"
-            ]
-        },
-        "WP_REST_View_Config_Controller::minn_defaults": {
-            "file": "classes/WP_REST_View_Config_Controller.php",
-            "lines": 17,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Json::file"
-            ],
-            "composes": [
-                "__",
-                "get_post_type_object"
-            ]
-        },
-        "WP_REST_View_Config_Controller::minn_pattern_views": {
-            "file": "classes/WP_REST_View_Config_Controller.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__"
-            ]
-        },
-        "WP_REST_View_Config_Controller::minn_template_views": {
-            "file": "classes/WP_REST_View_Config_Controller.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_get_theme"
-            ]
         },
         "WP_REST_View_Config_Controller::register_routes": {
             "file": "classes/WP_REST_View_Config_Controller.php",
@@ -28567,9 +28529,11 @@
         "WP_View_Config_Data::apply_filters": {
             "file": "classes/WP_View_Config_Data.php",
             "lines": 4,
-            "kind": "leaf",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_get_entity_view_config_hook_name"
+            ]
         },
         "WP_View_Config_Data::get_data": {
             "file": "classes/WP_View_Config_Data.php",
@@ -34830,6 +34794,24 @@
             ],
             "composes": []
         },
+        "_minn_view_config_set": {
+            "file": "view-config.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_view_configs"
+            ]
+        },
+        "_minn_view_configs": {
+            "file": "view-config.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Json::file"
+            ],
+            "composes": []
+        },
         "_minn_widget_factory": {
             "file": "widgets.php",
             "lines": 4,
@@ -36336,6 +36318,54 @@
             "composes": [
                 "apply_filters",
                 "wp_set_current_user"
+            ]
+        },
+        "_wp_get_default_posttype_form": {
+            "file": "view-config.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_view_configs"
+            ]
+        },
+        "_wp_get_entity_view_config_posttype_page": {
+            "file": "view-config.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_view_configs"
+            ]
+        },
+        "_wp_get_entity_view_config_posttype_wp_block": {
+            "file": "view-config.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_view_config_set"
+            ]
+        },
+        "_wp_get_entity_view_config_posttype_wp_template": {
+            "file": "view-config.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_view_config_set",
+                "wp_get_theme"
+            ]
+        },
+        "_wp_get_entity_view_config_posttype_wp_template_part": {
+            "file": "view-config.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_view_config_set",
+                "get_allowed_block_template_part_areas"
             ]
         },
         "_wp_get_iframed_editor_assets": {
@@ -64501,6 +64531,25 @@
             "minn": [
                 "Minn\\Blocks\\RenderState::current"
             ],
+            "composes": []
+        },
+        "wp_get_entity_view_config": {
+            "file": "view-config.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_view_configs",
+                "_wp_get_default_posttype_form",
+                "get_post_type_object"
+            ]
+        },
+        "wp_get_entity_view_config_hook_name": {
+            "file": "view-config.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "wp_get_environment_type": {

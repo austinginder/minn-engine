@@ -434,6 +434,11 @@ add_filter('rest_authentication_errors', 'rest_cookie_check_errors', 100);
 add_filter('rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10, 4);
 add_action('xmlrpc_rsd_apis', 'rest_output_rsd');
 add_action('rest_api_init', 'create_initial_rest_routes', 99);
+// The core types patch their view configurations (probe view-config-functions).
+add_filter('get_entity_view_config_posttype_page', '_wp_get_entity_view_config_posttype_page', 5);
+add_filter('get_entity_view_config_posttype_wp_block', '_wp_get_entity_view_config_posttype_wp_block', 5);
+add_filter('get_entity_view_config_posttype_wp_template_part', '_wp_get_entity_view_config_posttype_wp_template_part', 5);
+add_filter('get_entity_view_config_posttype_wp_template', '_wp_get_entity_view_config_posttype_wp_template', 5);
 // While a post thumbnail is fetched its image takes wp-post-image and the the_post_thumbnail context (probe media-tags).
 add_action('begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_class_filter_add');
 add_action('begin_fetch_post_thumbnail_html', '_wp_post_thumbnail_context_filter_add');

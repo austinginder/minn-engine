@@ -1,6 +1,5 @@
 <?php
 
-use Minn\Json;
 use Minn\Rest\Schema;
 use Minn\Rest\SchemaData;
 
@@ -11,11 +10,8 @@ require_once __DIR__ . '/WP_REST_Controller.php';
  * show an entity (a post type shown in REST, a taxonomy shown in REST, or
  * any other kind), for someone who holds the capability the entity asks:
  * a type's edit_posts, a taxonomy's manage_terms, manage_options for the
- * root, edit_posts otherwise. The configuration starts from the
- * reference's (data/view-configs.json: core types of their own, a generic
- * one for other types, another for every other kind), its first view
- * titled with the type's all-items label; patterns list their categories,
- * templates the theme, template parts their areas. Plugins patch it
+ * root, edit_posts otherwise. The configuration is the entity's
+ * (wp_get_entity_view_config, wp-api/view-config.php), as plugins patch it
  * through WP_View_Config_Data; empty objects are cast by the schema.
  */
 class WP_REST_View_Config_Controller extends WP_REST_Controller
@@ -64,7 +60,7 @@ class WP_REST_View_Config_Controller extends WP_REST_Controller
     {
         $kind = (string) $request['kind'];
         $name = (string) $request['name'];
-        $config = (new WP_View_Config_Data(['version' => 1] + $this->minn_defaults($kind, $name)))->apply_filters($kind, $name);
+        $config = wp_get_entity_view_config($kind, $name);
         return rest_ensure_response($this->cast_empty_objects(['kind' => $kind, 'name' => $name, 'version' => 1] + $config, $this->get_item_schema()));
     }
 
@@ -123,54 +119,5 @@ class WP_REST_View_Config_Controller extends WP_REST_Controller
     protected function get_form_schema()
     {
         return SchemaData::of('view-config-form');
-    }
-
-    /** The configuration an entity starts from, its views filled in from what is registered. @return array<string, mixed> */
-    private function minn_defaults(string $kind, string $name): array
-    {
-        static $all = null;
-        $all ??= (array) Json::file(MINN_ENGINE_DIR . '/data/view-configs.json');
-        if ($kind !== 'postType') {
-            return $all['default'];
-        }
-        $config = $all[$name] ?? $all['postType'];
-        $config['view_list'] = match ($name) {
-            'wp_block' => array_merge($config['view_list'], $this->minn_pattern_views()),
-            'wp_template' => array_merge($config['view_list'], $this->minn_template_views()),
-            'wp_template_part' => array_merge($config['view_list'], $this->minn_area_views()),
-            default => $config['view_list'],
-        };
-        if (($config['view_list'][0]['title'] ?? '') === '{all_items}') {
-            $type = get_post_type_object($name);
-            $config['view_list'][0]['title'] = $type ? $type->labels->all_items : __('All items');
-        }
-        return $config;
-    }
-
-    /** A view per pattern category, Uncategorized among them, by title regardless of case. @return list<array<string, string>> */
-    private function minn_pattern_views(): array
-    {
-        $views = [];
-        foreach (WP_Block_Pattern_Categories_Registry::get_instance()->get_all_registered() as $category) {
-            $views[] = ['title' => $category['label'], 'slug' => $category['name']];
-        }
-        $views[] = ['title' => __('Uncategorized'), 'slug' => 'uncategorized'];
-        usort($views, static fn ($a, $b) => strcasecmp($a['title'], $b['title']));
-        return $views;
-    }
-
-    /** A view for the active theme's templates, filtered by its name. @return list<array<string, mixed>> */
-    private function minn_template_views(): array
-    {
-        $author = (string) wp_get_theme()->get('Name');
-        return [['title' => $author, 'slug' => $author, 'view' => ['filters' => [['field' => 'author', 'operator' => 'is', 'value' => $author, 'isLocked' => true]]]]];
-    }
-
-    /** A view per template part area, General last. @return list<array<string, mixed>> */
-    private function minn_area_views(): array
-    {
-        $areas = get_allowed_block_template_part_areas();
-        usort($areas, static fn ($a, $b) => ($a['area'] === 'uncategorized') <=> ($b['area'] === 'uncategorized'));
-        return array_map(static fn ($area) => ['title' => $area['label'], 'slug' => $area['area'], 'view' => ['filters' => [['field' => 'area', 'operator' => 'is', 'value' => $area['area'], 'isLocked' => true]]]], $areas);
     }
 }

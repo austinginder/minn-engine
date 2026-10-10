@@ -6,8 +6,8 @@ use Minn\Rest\ViewConfigPatch;
  * A view configuration a plugin may patch (probe rest-view-config): set,
  * merge, replace and remove, each for schema version 1 and the documented
  * keys only (Minn\Rest\ViewConfigPatch), each answering the data itself so
- * patches chain. apply_filters hands it to
- * get_entity_view_config_{kind}_{name} and answers the result without its
+ * patches chain. apply_filters hands it to the entity's filter
+ * (wp_get_entity_view_config_hook_name) and answers the result without its
  * version. Each mistake is a _doing_it_wrong.
  */
 class WP_View_Config_Data
@@ -23,7 +23,7 @@ class WP_View_Config_Data
 
     public function apply_filters($kind, $name)
     {
-        apply_filters('get_entity_view_config_' . strtolower((string) $kind) . '_' . $name, $this, ['kind' => $kind, 'name' => $name]);
+        apply_filters(wp_get_entity_view_config_hook_name($kind, $name), $this, ['kind' => $kind, 'name' => $name]);
         $data = $this->config;
         unset($data['version']);
         return $data;
