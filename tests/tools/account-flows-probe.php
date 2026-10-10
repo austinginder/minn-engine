@@ -26,7 +26,12 @@ add_action('all', static function (string $hook) use (&$fired): void {
     }
 });
 $made = [];
-$userId = (int) wp_insert_user(['user_login' => 'zz_flows', 'user_pass' => 'Zz-old-pass-1', 'user_email' => 'zz-flows@example.com', 'role' => 'subscriber']);
+$userId = wp_insert_user(['user_login' => 'zz_flows', 'user_pass' => 'Zz-old-pass-1', 'user_email' => 'zz-flows@example.com', 'role' => 'subscriber']);
+// A failed insert (a zz_flows left by an earlier run) must stop here: cast, its WP_Error is user 1.
+if (!is_int($userId) || $userId < 2) {
+    fwrite(STDERR, "account-flows: the probe user could not be made\n");
+    exit(1);
+}
 $made[] = $userId;
 $site = (string) get_option('blogname');
 $admin = (string) get_option('admin_email');
@@ -84,6 +89,8 @@ if (!function_exists('wp_delete_user')) {
     require_once ABSPATH . 'wp-admin/includes/user.php';
 }
 foreach (array_merge($made, array_filter([username_exists('zz_flows_other')])) as $id) {
-    wp_delete_user((int) $id, 1);
+    if (is_int($id) && $id > 1) {
+        wp_delete_user($id, 1);
+    }
 }
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";
