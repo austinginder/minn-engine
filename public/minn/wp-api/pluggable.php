@@ -57,7 +57,8 @@ endif;
 if (!function_exists('check_admin_referer')) :
 function check_admin_referer($action = -1, $query_arg = '_wpnonce')
 {
-    $nonce = (string) (Runtime::current()->request?->form[$query_arg] ?? Runtime::current()->request?->query[$query_arg] ?? '');
+    // The nonce comes from $_REQUEST, as on the reference (probe pluggable-remaining).
+    $nonce = (string) ($_REQUEST[$query_arg] ?? '');
     $result = wp_verify_nonce($nonce, $action);
     do_action('check_admin_referer', $action, $result);
     if (!$result) {
@@ -70,10 +71,9 @@ endif;
 if (!function_exists('check_ajax_referer')) :
 function check_ajax_referer($action = -1, $query_arg = false, $stop = true)
 {
-    $request = Runtime::current()->request;
     $nonce = '';
     foreach (array_filter([$query_arg ?: null, '_ajax_nonce', '_wpnonce']) as $key) {
-        $nonce = (string) ($request?->form[$key] ?? $request?->query[$key] ?? '');
+        $nonce = (string) ($_REQUEST[$key] ?? '');
         if ($nonce !== '') {
             break;
         }
@@ -156,7 +156,7 @@ endif;
 if (!function_exists('wp_salt')) :
 function wp_salt($scheme = 'auth')
 {
-    return Salts::for($scheme);
+    return apply_filters('salt', Salts::for($scheme), $scheme);
 }
 endif;
 
@@ -194,9 +194,11 @@ endif;
 if (!function_exists('wp_set_password')) :
 function wp_set_password($password, $user_id)
 {
+    // The action also hears the user as they were before the change (probe pluggable-remaining).
+    $old_user_data = get_userdata((int) $user_id);
     (new Users(Runtime::current()->db))->setPassword((int) $user_id, wp_hash_password($password));
     clean_user_cache((int) $user_id);
-    do_action('wp_set_password', $password, $user_id);
+    do_action('wp_set_password', $password, $user_id, $old_user_data);
 }
 endif;
 
@@ -253,7 +255,13 @@ function wp_notify_moderator($comment_id)
         return false;
     }
     $notice = \Minn\Mail\Mailer::noticesFor(Runtime::current()->site)->moderation((string) get_option('admin_email'), (string) $post->post_title, (string) $comment->comment_author, (string) $comment->comment_content);
-    $emails = (array) apply_filters('comment_moderation_recipients', $notice->to, (int) $comment_id);
+    // The post's author hears too when they may moderate the comment (probe pluggable-remaining).
+    $recipients = array_values(array_map('strval', (array) $notice->to));
+    $author = get_userdata((int) $post->post_author);
+    if ($author instanceof WP_User && (string) $author->user_email !== '' && user_can($author->ID, 'edit_comment', (int) $comment_id) && !in_array((string) $author->user_email, $recipients, true)) {
+        $recipients[] = (string) $author->user_email;
+    }
+    $emails = (array) apply_filters('comment_moderation_recipients', $recipients, (int) $comment_id);
     $headers = apply_filters('comment_moderation_headers', '', (int) $comment_id);
     $text = apply_filters('comment_moderation_text', $notice->body, (int) $comment_id);
     $subject = apply_filters('comment_moderation_subject', $notice->subject, (int) $comment_id);
@@ -314,8 +322,18 @@ function wp_text_diff($left_string, $right_string, $args = null)
 endif;
 
 if (!function_exists('cache_users')) :
+/** The users not yet cached, read in one query and cached with their meta (probe pluggable-remaining). */
 function cache_users($user_ids)
 {
+    global $wpdb;
+    $ids = array_values(array_filter(_get_non_cached_ids($user_ids, 'users')));
+    if ($ids === []) {
+        return;
+    }
+    foreach ($wpdb->get_results('SELECT * FROM ' . $wpdb->users . ' WHERE ID IN (' . implode(',', array_map('intval', $ids)) . ')') as $row) {
+        update_user_caches($row);
+    }
+    update_meta_cache('user', $ids);
 }
 endif;
 
@@ -395,16 +413,29 @@ function wp_validate_logged_in_cookie($user_id)
 endif;
 
 if (!function_exists('wp_logout')) :
+/** The current session ends, the sign-in cookies go, and no one is signed in; then wp_logout (probe pluggable-remaining). */
 function wp_logout()
 {
-    do_action('wp_logout', get_current_user_id());
+    $user_id = get_current_user_id();
+    wp_destroy_current_session();
+    wp_clear_auth_cookie();
+    wp_set_current_user(0);
+    do_action('wp_logout', $user_id);
 }
 endif;
 
 if (!function_exists('wp_clear_auth_cookie')) :
+/** Every sign-in cookie expired, unless send_auth_cookies says not to (probe pluggable-remaining). */
 function wp_clear_auth_cookie()
 {
     do_action('clear_auth_cookie');
+    if (!apply_filters('send_auth_cookies', true, 0, 0, 0, '', '') || headers_sent()) {
+        return;
+    }
+    $hash = (new AuthCookies(Runtime::current()->db, new Cookie(Runtime::current()->db, new Users(Runtime::current()->db), new Sessions(new Users(Runtime::current()->db)))))->hash();
+    foreach ([['wordpress_' . $hash, '/wp-admin'], ['wordpress_' . $hash, '/wp-content/plugins'], ['wordpress_sec_' . $hash, '/wp-admin'], ['wordpress_sec_' . $hash, '/wp-content/plugins'], ['wordpress_logged_in_' . $hash, '/']] as [$name, $path]) {
+        setcookie($name, ' ', ['expires' => time() - YEAR_IN_SECONDS, 'path' => $path, 'httponly' => true]);
+    }
 }
 endif;
 
@@ -486,7 +517,8 @@ function wp_parse_auth_cookie($cookie = '', $scheme = '')
 {
     if ((string) $cookie === '') {
         $names = ['auth' => defined('AUTH_COOKIE') ? AUTH_COOKIE : '', 'secure_auth' => defined('SECURE_AUTH_COOKIE') ? SECURE_AUTH_COOKIE : '', 'logged_in' => defined('LOGGED_IN_COOKIE') ? LOGGED_IN_COOKIE : ''];
-        if ($scheme === '') {
+        // No scheme, or one it does not know, reads the auth cookie for the connection (probe pluggable-remaining).
+        if (!isset($names[$scheme])) {
             $scheme = is_ssl() ? 'secure_auth' : 'auth';
         }
         $name = $names[$scheme] ?? '';

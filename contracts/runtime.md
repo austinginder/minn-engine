@@ -9688,3 +9688,46 @@ Fixed to match:
     (`metadata.patternName`, and `metadata.name` from the pattern's title).
   - A pattern inside itself is dropped.
   - One that does not exist stays as a pattern block.
+
+## The rest of pluggable.php (2026-10-09)
+
+Probe `pluggable-remaining` proves 16 of the 18 pluggable.php functions that
+were left:
+- users cached in bulk;
+- nonce ticks;
+- salts, judged against the site's own keys;
+- auth cookies parsed, set and cleared, heard through their actions;
+- signing out;
+- nonce checks;
+- redirects and safe redirects, heard through their filters;
+- passwords set;
+- the new user, password change and comment notifications.
+
+The cookies are set with a given session token, so no session is made.
+`auth_redirect` stays unproven because it ends the request. `wp_text_diff`
+stays unproven until the engine draws the reference's diff table; it still
+answers an empty string. The probe clears a `do_pings` event it caused and
+puts back `wp_update_user_counts` and `moderation_notify`.
+
+Fixed to match:
+
+- **`check_admin_referer` and `check_ajax_referer`** read the nonce from
+  `$_REQUEST`, not the engine's request. A nonce that was only in
+  `$_REQUEST` failed and stopped the request.
+- **`wp_logout`** ends the current session, clears the sign-in cookies,
+  signs everyone out (`wp_set_current_user(0)`), then fires `wp_logout`. It
+  only fired the action.
+- **`wp_clear_auth_cookie`** runs `send_auth_cookies` (`true, 0, 0, 0, '',
+  ''`) and expires the five sign-in cookies it names. It only fired
+  `clear_auth_cookie`.
+- **`wp_parse_auth_cookie`** with a scheme it does not know reads the auth
+  cookie for the connection.
+- **`wp_salt`** runs the `salt` filter.
+- **`cache_users`** and **`update_user_caches`** put users' rows in the
+  object cache, with login, email and nicename pointing at the id. The
+  engine itself still reads users from the database; this is for plugins
+  that read the cache, and `clean_user_cache` empties it again.
+- **`wp_notify_moderator`** also tells the post's author when they may
+  moderate the comment.
+- **`wp_set_password`** gives its action the user as they were before the
+  change, as a third argument.

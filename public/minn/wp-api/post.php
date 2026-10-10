@@ -2576,9 +2576,23 @@ function update_postmeta_cache($post_ids)
     return update_meta_cache('post', $post_ids);
 }
 
+/**
+ * A user's row in the object cache, with its login, email and nicename
+ * pointing at the id (probe pluggable-remaining). The engine reads users from
+ * the database; this is for the plugins that read the cache, and
+ * clean_user_cache empties it again.
+ */
 function update_user_caches($user)
 {
-    // Users are read straight from the database; there is nothing to cache.
+    if (!is_object($user) || empty($user->ID)) {
+        return false;
+    }
+    $row = $user instanceof WP_User ? $user->data : $user;
+    wp_cache_add((int) $row->ID, $row, 'users');
+    wp_cache_add((string) $row->user_login, (int) $row->ID, 'userlogins');
+    wp_cache_add((string) $row->user_email, (int) $row->ID, 'useremail');
+    wp_cache_add((string) $row->user_nicename, (int) $row->ID, 'userslugs');
+    return null;
 }
 
 function set_post_type($post_id = 0, $post_type = 'post')

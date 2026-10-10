@@ -1,0 +1,631 @@
+[
+    [
+        "users cached in bulk",
+        [
+            false,
+            false,
+            [
+                true,
+                true,
+                "{user}",
+                "{user}",
+                "{user}",
+                false
+            ]
+        ]
+    ],
+    [
+        "nonce ticks",
+        [
+            false,
+            true,
+            true,
+            false,
+            true
+        ]
+    ],
+    [
+        "salts",
+        [
+            [
+                "auth",
+                true,
+                true
+            ],
+            [
+                "secure_auth",
+                true,
+                true
+            ],
+            [
+                "logged_in",
+                true,
+                true
+            ],
+            [
+                "nonce",
+                true,
+                true
+            ],
+            [
+                "zz-salted",
+                true
+            ]
+        ]
+    ],
+    [
+        "auth cookies parsed",
+        [
+            {
+                "username": "zz_pl_user",
+                "expiration": "{expiration}",
+                "token": "zz-token",
+                "hmac": 64,
+                "scheme": ""
+            },
+            {
+                "username": "zz_pl_user",
+                "expiration": "{expiration}",
+                "token": "zz-token",
+                "hmac": 64,
+                "scheme": "auth"
+            },
+            false,
+            false,
+            {
+                "username": "zz_pl_user",
+                "expiration": "{expiration}",
+                "token": "zz-cookie-token",
+                "hmac": 3,
+                "scheme": "auth"
+            },
+            {
+                "username": "zz_pl_user",
+                "expiration": "{expiration}",
+                "token": "zz-logged-token",
+                "hmac": 3,
+                "scheme": "logged_in"
+            },
+            {
+                "username": "zz_pl_user",
+                "expiration": "{expiration}",
+                "token": "zz-cookie-token",
+                "hmac": 3,
+                "scheme": "auth"
+            },
+            {
+                "username": "zz_pl_user",
+                "expiration": "{expiration}",
+                "token": "zz-cookie-token",
+                "hmac": 3,
+                "scheme": "auth"
+            },
+            false
+        ]
+    ],
+    [
+        "auth cookies set and cleared, and signing out",
+        [
+            [
+                [
+                    "auth_cookie_expiration",
+                    172800,
+                    "{user}",
+                    false
+                ],
+                [
+                    "set_auth_cookie",
+                    [
+                        {
+                            "username": "zz_pl_user",
+                            "expiration": "two days on",
+                            "token": "zz-token",
+                            "hmac": 64,
+                            "scheme": "auth"
+                        },
+                        0,
+                        "two days on",
+                        "{user}",
+                        "auth",
+                        "zz-token"
+                    ]
+                ],
+                [
+                    "set_logged_in_cookie",
+                    [
+                        {
+                            "username": "zz_pl_user",
+                            "expiration": "two days on",
+                            "token": "zz-token",
+                            "hmac": 64,
+                            "scheme": "logged_in"
+                        },
+                        0,
+                        "two days on",
+                        "{user}",
+                        "logged_in",
+                        "zz-token"
+                    ]
+                ],
+                [
+                    "send_auth_cookies",
+                    true,
+                    5
+                ],
+                [
+                    "auth_cookie_expiration",
+                    1209600,
+                    "{user}",
+                    true
+                ],
+                [
+                    "set_auth_cookie",
+                    [
+                        {
+                            "username": "zz_pl_user",
+                            "expiration": "two weeks on",
+                            "token": "zz-token",
+                            "hmac": 64,
+                            "scheme": "secure_auth"
+                        },
+                        "two weeks on",
+                        "two weeks on",
+                        "{user}",
+                        "secure_auth",
+                        "zz-token"
+                    ]
+                ],
+                [
+                    "set_logged_in_cookie",
+                    [
+                        {
+                            "username": "zz_pl_user",
+                            "expiration": "two weeks on",
+                            "token": "zz-token",
+                            "hmac": 64,
+                            "scheme": "logged_in"
+                        },
+                        "two weeks on",
+                        "two weeks on",
+                        "{user}",
+                        "logged_in",
+                        "zz-token"
+                    ]
+                ],
+                [
+                    "send_auth_cookies",
+                    true,
+                    5
+                ],
+                [
+                    "clear_auth_cookie",
+                    [
+                        ""
+                    ]
+                ],
+                [
+                    "send_auth_cookies",
+                    true,
+                    5
+                ],
+                [
+                    "clear_auth_cookie",
+                    [
+                        ""
+                    ]
+                ],
+                [
+                    "send_auth_cookies",
+                    true,
+                    5
+                ],
+                [
+                    "wp_logout",
+                    [
+                        "{user}"
+                    ]
+                ]
+            ],
+            0,
+            [
+                ""
+            ]
+        ]
+    ],
+    [
+        "nonce checks",
+        [
+            [
+                1,
+                1,
+                1,
+                1,
+                false,
+                1
+            ],
+            [
+                [
+                    "check_admin_referer",
+                    "zz-action",
+                    1
+                ],
+                [
+                    "check_ajax_referer",
+                    "zz-action",
+                    1
+                ],
+                [
+                    "check_ajax_referer",
+                    "zz-missing",
+                    false
+                ]
+            ]
+        ]
+    ],
+    [
+        "redirects",
+        [
+            [
+                "wp_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "{site}/zz-target/",
+                        302
+                    ],
+                    [
+                        "wp_redirect_status",
+                        302,
+                        "{site}/zz-target/"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "WordPress",
+                        302,
+                        "{site}/zz-target/"
+                    ]
+                ]
+            ],
+            [
+                "wp_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "/relative path?a=b c",
+                        301
+                    ],
+                    [
+                        "wp_redirect_status",
+                        301,
+                        "/relative path?a=b c"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "Zz",
+                        301,
+                        "/relative%20path?a=b%20c"
+                    ]
+                ]
+            ],
+            [
+                "wp_redirect",
+                false,
+                [
+                    [
+                        "wp_redirect",
+                        "",
+                        302
+                    ],
+                    [
+                        "wp_redirect_status",
+                        302,
+                        ""
+                    ]
+                ]
+            ],
+            [
+                "wp_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "https://zz.example/x\r\nInjected: {admin}",
+                        302
+                    ],
+                    [
+                        "wp_redirect_status",
+                        302,
+                        "https://zz.example/x\r\nInjected: {admin}"
+                    ],
+                    [
+                        "x_redirect_by",
+                        false,
+                        302,
+                        "https://zz.example/xInjected:%201"
+                    ]
+                ]
+            ],
+            [
+                "wp_safe_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "{site}/safe/",
+                        302
+                    ],
+                    [
+                        "wp_redirect_status",
+                        302,
+                        "{site}/safe/"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "WordPress",
+                        302,
+                        "{site}/safe/"
+                    ]
+                ]
+            ],
+            [
+                "wp_safe_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "{site}/wp-admin/",
+                        302
+                    ],
+                    [
+                        "wp_redirect_status",
+                        302,
+                        "{site}/wp-admin/"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "WordPress",
+                        302,
+                        "{site}/wp-admin/"
+                    ]
+                ]
+            ],
+            [
+                "wp_safe_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "{site}/wp-admin/",
+                        307
+                    ],
+                    [
+                        "wp_redirect_status",
+                        307,
+                        "{site}/wp-admin/"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "WordPress",
+                        307,
+                        "{site}/wp-admin/"
+                    ]
+                ]
+            ],
+            [
+                "wp_safe_redirect",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "/local",
+                        303
+                    ],
+                    [
+                        "wp_redirect_status",
+                        303,
+                        "/local"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "Zz",
+                        303,
+                        "/local"
+                    ]
+                ]
+            ],
+            [
+                "wp_safe_redirect, allowed host",
+                true,
+                [
+                    [
+                        "wp_redirect",
+                        "https://partner.example/ok",
+                        302
+                    ],
+                    [
+                        "wp_redirect_status",
+                        302,
+                        "https://partner.example/ok"
+                    ],
+                    [
+                        "x_redirect_by",
+                        "WordPress",
+                        302,
+                        "https://partner.example/ok"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "passwords set",
+        [
+            null,
+            true,
+            false,
+            "",
+            [
+                "zzhash"
+            ],
+            [
+                [
+                    "wp_set_password",
+                    "zz-new-pass",
+                    "{user}",
+                    "zz_pl_user"
+                ]
+            ]
+        ]
+    ],
+    [
+        "new user and password notifications",
+        [
+            [
+                "",
+                null,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] New User Registration",
+                        "(a message)"
+                    ]
+                ],
+                false
+            ],
+            [
+                "admin",
+                null,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] New User Registration",
+                        "(a message)"
+                    ]
+                ],
+                false
+            ],
+            [
+                "user",
+                null,
+                [
+                    [
+                        "zz-pl-other@zz.example",
+                        "[Minn] Login Details",
+                        "(a message)"
+                    ]
+                ],
+                true
+            ],
+            [
+                "both",
+                null,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] New User Registration",
+                        "(a message)"
+                    ],
+                    [
+                        "zz-pl-other@zz.example",
+                        "[Minn] Login Details",
+                        "(a message)"
+                    ]
+                ],
+                true
+            ],
+            [
+                "both, admin turned off",
+                [
+                    [
+                        "zz-pl-other@zz.example",
+                        "[Minn] Login Details",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "password changed",
+                "zz_pl_other",
+                null,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Password Changed",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "password changed",
+                "admin",
+                null,
+                []
+            ]
+        ]
+    ],
+    [
+        "comment notifications",
+        [
+            [
+                "wp_notify_postauthor",
+                true,
+                [
+                    [
+                        "zz-pl-user@zz.example",
+                        "[Minn] Comment: \"zz pl post\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "wp_notify_postauthor",
+                false,
+                []
+            ],
+            [
+                "wp_notify_postauthor",
+                false,
+                []
+            ],
+            [
+                "wp_notify_moderator",
+                true,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz pl post\"",
+                        "(a message)"
+                    ],
+                    [
+                        "zz-pl-user@zz.example",
+                        "[Minn] Please moderate: \"zz pl post\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "wp_notify_moderator",
+                true,
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] Please moderate: \"zz pl post\"",
+                        "(a message)"
+                    ],
+                    [
+                        "zz-pl-user@zz.example",
+                        "[Minn] Please moderate: \"zz pl post\"",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "moderation off",
+                true,
+                []
+            ]
+        ]
+    ]
+]
