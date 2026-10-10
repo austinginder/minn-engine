@@ -10069,3 +10069,67 @@ Left out:
 - What `__clear_multi_author_cache` clears, because the reference's object
   cache shows no key for it. The probe only checks that it returns nothing and
   that `is_multi_author` gives the same answer afterwards.
+
+## The rest of general-template.php (2026-10-10)
+
+Probe `general-template-remaining` proves 35 of the 36 general-template.php
+functions that were left. It covers:
+- the checked/selected helper and `wp_readonly`;
+- the calendar's week arithmetic;
+- the generator in every form;
+- titles for the views a theme renders: `wp_title`, the document title, the
+  single post title, and archive titles and descriptions, with their filters;
+- modified dates and times, and the search query;
+- the rich editor checks;
+- the lost password and registration links;
+- the referrer meta and resource hints;
+- the site icon;
+- the extra feed links;
+- header, footer and sidebar templates, loaded from files the probe writes
+  into the theme;
+- the head, body and footer hooks.
+
+Changes:
+
+- **`wp_title`** is real now; it was a stub that only ran its filter.
+  - **Parts:** a taxonomy's name then the term; a year, month and day; or
+    "Search Results " then the words.
+  - **Separator on the left:** the separator joins the parts and also leads the
+    title.
+  - **Separator on the right:** the parts are reversed and the separator trails.
+  - **`wp_title_parts`:** hears the parts in reading order, even when there are
+    none.
+  - **Dates:** a date archive takes its parts from `m` when given, where a year
+    alone counts. From the year and month query vars, a year alone gives no
+    title, as on the reference.
+- **Shared fix: the reference's default title filters are registered.**
+  - `single_post_title`, `single_cat_title`, `single_tag_title` and
+    `single_month_title` run `wptexturize` and `strip_tags`.
+  - `wp_title` and `document_title` run `wptexturize`, `convert_chars`,
+    `esc_html`, and then `capital_P_dangit` at 11.
+  - `wp_get_document_title` no longer texturizes and escapes by hand: the
+    filter's defaults do it, so removing one works as on the reference.
+- **`get_the_archive_title`** works from the main query, not the classic
+  renderer's resolution, so it works anywhere.
+  - A view that is not an archive (search included) is "Archives" with no
+    prefix.
+  - The prefix goes through `get_the_archive_title_prefix`; an empty prefix
+    leaves the bare name.
+  - The block theme's query-title block still builds its title from the
+    resolution (`Theme\ArchiveTitle`).
+- **`feed_links_extra`** works from the main query, with the reference's
+  default title formats and its filters. A singular view's comments feed shows
+  while comments or pings are open or it has comments, and both
+  comments-feed filters can hide it. Each archive kind and search has its own
+  `feed_links_extra_show_{kind}_feed` filter.
+- **`wp_site_icon`** prints its four tags through `site_icon_meta_tags`.
+- **`calendar_week_mod`** is never negative and never minus zero.
+- The front renderers still print their head links through `Theme\HeadLinks`,
+  which `feed_links_extra` and `wp_site_icon` now duplicate. Folding those
+  into one path is owed.
+
+Left as found:
+- **`_wp_render_title_tag`** prints nothing in the probe on both stacks: under
+  WP-CLI the reference refuses title-tag support once `wp_loaded` has run.
+  The engine's version checks theme support the same way.
+- **`wp_enqueue_editor`** is not probed: the engine has no editor scripts.

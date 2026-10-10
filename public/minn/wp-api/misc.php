@@ -788,7 +788,9 @@ function wp_check_jsonp_callback($callback)
 
 function calendar_week_mod($num)
 {
-    return fmod((float) $num, 7);
+    // Never negative, and never minus zero (probe general-template-remaining).
+    $mod = fmod((float) $num, 7) + 0.0;
+    return $mod < 0 ? $mod + 7 : $mod;
 }
 
 /** Recursive key sort in place, the probed shape. */

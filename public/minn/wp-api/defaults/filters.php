@@ -36,6 +36,16 @@ add_filter('the_title', 'wptexturize');
 add_filter('the_title', 'convert_chars');
 add_filter('the_title', 'trim');
 add_filter('the_title', 'capital_P_dangit', 11);
+foreach (['single_post_title', 'single_cat_title', 'single_tag_title', 'single_month_title'] as $filter) {
+    add_filter($filter, 'wptexturize');
+    add_filter($filter, 'strip_tags');
+}
+foreach (['wp_title', 'document_title'] as $filter) {
+    add_filter($filter, 'wptexturize');
+    add_filter($filter, 'convert_chars');
+    add_filter($filter, 'esc_html');
+    add_filter($filter, 'capital_P_dangit', 11);
+}
 add_filter('get_the_excerpt', 'wp_trim_excerpt', 10, 2);
 add_filter('excerpt_more', 'wp_embed_excerpt_more', 20);
 add_filter('the_excerpt', 'wptexturize');

@@ -224,14 +224,58 @@ function is_favicon()
     return _minn_main_query()->is_favicon();
 }
 
+/**
+ * The view's title for a classic theme (probe general-template-remaining):
+ * its parts (a taxonomy's name then the term, a year then month then day,
+ * "Search Results" then the words) joined by the separator, which also
+ * leads the title, or trails it with the parts reversed when the separator
+ * goes on the right. A year query var alone and the posts page have none.
+ * wp_title_parts hears the parts in reading order, even when there are none;
+ * the wp_title filter's defaults texturize and escape the result.
+ */
 function wp_title($sep = '&raquo;', $display = true, $seplocation = '')
 {
-    $title = apply_filters('wp_title', '', $sep, $seplocation);
+    $parts = (array) apply_filters('wp_title_parts', _minn_wp_title_parts());
+    $title = '';
+    if ($parts !== []) {
+        $title = $seplocation === 'right' ? implode(" {$sep} ", array_reverse($parts)) . " {$sep} " : " {$sep} " . implode(" {$sep} ", $parts);
+    }
+    $title = apply_filters('wp_title', $title, $sep, $seplocation);
     if ($display) {
         echo $title;
         return null;
     }
     return $title;
+}
+
+/** @internal the parts of the main query's wp_title, empty for a view with none */
+function _minn_wp_title_parts(): array
+{
+    $object = get_queried_object();
+    $title = match (true) {
+        is_search() => ['Search Results ', ' ' . strip_tags((string) get_search_query(false))],
+        is_404() => [__('Page not found')],
+        is_home() || is_singular() => [(string) single_post_title('', false)],
+        is_category() || is_tag() => [(string) single_term_title('', false)],
+        is_tax() && $object instanceof WP_Term => [(string) (get_taxonomy($object->taxonomy)->labels->name ?? ''), (string) single_term_title('', false)],
+        is_post_type_archive() => [(string) post_type_archive_title('', false)],
+        is_author() && $object instanceof WP_User => [$object->display_name],
+        is_archive() => _minn_wp_title_date(),
+        default => [],
+    };
+    return $title === [''] ? [] : $title;
+}
+
+/** @internal a date archive's wp_title parts: from m when given (a year alone counts), else from the year and month (a year alone does not) */
+function _minn_wp_title_date(): array
+{
+    $m = (string) get_query_var('m');
+    [$year, $month, $day] = $m !== '' ? [substr($m, 0, 4), substr($m, 4, 2), substr($m, 6, 2)] : [(string) get_query_var('year'), (int) get_query_var('monthnum') ? zeroise((int) get_query_var('monthnum'), 2) : '', ''];
+    if ($m === '' && $month === '') {
+        return [];
+    }
+    $day = $m === '' && get_query_var('day') ? zeroise((int) get_query_var('day'), 2) : $day;
+    return array_values(array_filter([$year, $month === '' ? '' : $GLOBALS['wp_locale']->get_month($month), $day], static fn ($part) => $part !== ''));
 }
 
 function single_post_title($prefix = '', $display = true)
@@ -251,29 +295,31 @@ function single_post_title($prefix = '', $display = true)
 /** The reference titles archives as a label prefix around the bare name: `Category: <span>Uncategorized</span>`. */
 function get_the_archive_title()
 {
-    [$prefix, $name] = _minn_archive_title_parts();
-    if (is_search()) {
-        $original = $title = 'Search Results for: ' . get_search_query();
-    } else {
-        $original = $name;
-        $title = $prefix === '' ? $name : $prefix . ' <span>' . $name . '</span>';
-    }
-    return apply_filters('get_the_archive_title', $title, $original, $prefix === '' ? '' : $prefix);
+    [$prefix, $original] = _minn_archive_title_parts();
+    $prefix = $prefix === '' ? '' : (string) apply_filters('get_the_archive_title_prefix', $prefix);
+    $title = $prefix === '' ? $original : $prefix . ' <span>' . $original . '</span>';
+    return apply_filters('get_the_archive_title', $title, $original, $prefix);
 }
 
-/** @internal @return array{string, string} the label prefix (with its trailing colon) and the escaped bare name */
-function _minn_archive_title_parts()
+/**
+ * @internal The archive title's prefix and name for the main query (probe
+ * general-template-remaining): "Archives" with no prefix for a view that
+ * is not an archive, search included.
+ */
+function _minn_archive_title_parts(): array
 {
-    if (is_post_type_archive()) {
-        $object = get_queried_object();
-        return ['Archives:', $object instanceof WP_Post_Type ? esc_html((string) $object->labels->name) : ''];
-    }
-    $resolution = Runtime::current()->get('classic_resolution');
-    if (!$resolution instanceof \Minn\Front\Resolution) {
-        return ['', ''];
-    }
-    [$label, $name] = \Minn\Theme\ArchiveTitle::parts($resolution, (string) get_option('date_format'));
-    return [$label === '' || $name === '' ? '' : $label . ':', $name];
+    $object = get_queried_object();
+    return match (true) {
+        is_category() => [_x('Category:', 'category archive title prefix'), (string) single_cat_title('', false)],
+        is_tag() => [_x('Tag:', 'tag archive title prefix'), (string) single_tag_title('', false)],
+        is_author() && $object instanceof WP_User => [_x('Author:', 'author archive title prefix'), $object->display_name],
+        is_year() => [_x('Year:', 'date archive title prefix'), get_the_date(_x('Y', 'yearly archives date format'))],
+        is_month() => [_x('Month:', 'date archive title prefix'), get_the_date(_x('F Y', 'monthly archives date format'))],
+        is_day() => [_x('Day:', 'date archive title prefix'), get_the_date(_x('F j, Y', 'daily archives date format'))],
+        is_post_type_archive() => [_x('Archives:', 'post type archive title prefix'), (string) post_type_archive_title('', false)],
+        is_tax() && $object instanceof WP_Term => [(get_taxonomy($object->taxonomy)->labels->singular_name ?? '') . ':', (string) single_term_title('', false)],
+        default => ['', __('Archives')],
+    };
 }
 
 function get_the_archive_description()
@@ -398,12 +444,8 @@ function wp_get_document_title()
     }
     $sep = apply_filters('document_title_separator', '-');
     $parts = apply_filters('document_title_parts', _minn_query_title_parts());
-    $title = implode(" $sep ", array_filter((array) $parts));
-    $title = wptexturize($title);
-    $title = convert_chars($title);
-    $title = esc_html($title);
-    $title = capital_P_dangit($title);
-    return (string) apply_filters('document_title', $title);
+    // The document_title filter's defaults texturize and escape it.
+    return (string) apply_filters('document_title', implode(" $sep ", array_filter((array) $parts)));
 }
 
 /** @internal the document title's parts as the reference makes them from the main query's state (probe feed-tags) */

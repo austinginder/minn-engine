@@ -1,0 +1,477 @@
+[
+    [
+        "checked and readonly helpers",
+        [
+            " checked='checked'",
+            " selected='selected'",
+            " disabled='disabled'",
+            "",
+            "",
+            " zz-type='zz-type'",
+            " readonly='readonly'",
+            "",
+            " readonly='readonly'",
+            " readonly='readonly'",
+            " readonly='readonly'"
+        ]
+    ],
+    [
+        "calendar arithmetic",
+        [
+            [
+                0,
+                1,
+                6,
+                0,
+                1,
+                6,
+                0,
+                1,
+                6,
+                0,
+                3.5
+            ],
+            null
+        ]
+    ],
+    [
+        "the generator",
+        [
+            [
+                "",
+                "<meta name=\"generator\" content=\"WordPress 7.1.3\">",
+                "<meta name=\"generator\" content=\"WordPress 7.1.3\" />",
+                "<generator uri=\"https://wordpress.org/\" version=\"7.1.3\">WordPress</generator>",
+                "<generator>https://wordpress.org/?v=7.1.3</generator>",
+                "<admin:generatorAgent rdf:resource=\"https://wordpress.org/?v=7.1.3\" />",
+                "<!-- generator=\"WordPress/7.1.3\" -->",
+                "<!-- generator=\"WordPress/7.1.3\" created=\"{now}\" -->"
+            ],
+            "<meta name=\"generator\" content=\"WordPress 7.1.3\">\n",
+            "<!-- generator=\"WordPress/7.1.3\" -->\n",
+            "<meta name=\"generator\" content=\"WordPress 7.1.3\" />\n"
+        ]
+    ],
+    [
+        "titles",
+        {
+            "a post": [
+                " &raquo; zz gt single &#8220;q&#8221; &#038; co",
+                "zz gt single &#8220;q&#8221; &#038; co | ",
+                " &raquo; zz gt single &#8220;q&#8221; &#038; co",
+                "zz gt single &#8220;q&#8221; &#038; co &#8211; Minn",
+                "Prefix: zz gt single &#8220;q&#8221; &#038; co",
+                "Archives",
+                "",
+                "<h1>Archives</h1>",
+                ""
+            ],
+            "a page": [
+                " &raquo; zz gt page",
+                "zz gt page | ",
+                " &raquo; zz gt page",
+                "zz gt page &#8211; Minn",
+                "Prefix: zz gt page",
+                "Archives",
+                "",
+                "<h1>Archives</h1>",
+                ""
+            ],
+            "a book": [
+                " &raquo; zz gt book",
+                "zz gt book | ",
+                " &raquo; zz gt book",
+                "zz gt book &#8211; Minn",
+                "Prefix: zz gt book",
+                "Archives",
+                "",
+                "<h1>Archives</h1>",
+                ""
+            ],
+            "a category": [
+                " &raquo; zz gt cat",
+                "zz gt cat | ",
+                " &raquo; zz gt cat",
+                "zz gt cat &#8211; Minn",
+                null,
+                "Category: <span>zz gt cat</span>",
+                "<p>Cat <b>description</b> &amp; more</p>\n",
+                "<h1>Category: <span>zz gt cat</span></h1>",
+                "<div><p>Cat <b>description</b> &amp; more</p>\n</div>"
+            ],
+            "a tag": [
+                " &raquo; zz gt tag",
+                "zz gt tag | ",
+                " &raquo; zz gt tag",
+                "zz gt tag &#8211; Minn",
+                null,
+                "Tag: <span>zz gt tag</span>",
+                "",
+                "<h1>Tag: <span>zz gt tag</span></h1>",
+                ""
+            ],
+            "a genre": [
+                " &raquo; ZZ Genres &raquo; zz gt genre",
+                "zz gt genre | ZZ Genres | ",
+                " &raquo; ZZ Genres &raquo; zz gt genre",
+                "zz gt genre &#8211; Minn",
+                null,
+                "ZZ Genre: <span>zz gt genre</span>",
+                "<p>Genre words</p>\n",
+                "<h1>ZZ Genre: <span>zz gt genre</span></h1>",
+                "<div><p>Genre words</p>\n</div>"
+            ],
+            "the books": [
+                " &raquo; ZZ Books",
+                "ZZ Books | ",
+                " &raquo; ZZ Books",
+                "ZZ Books &#8211; Minn",
+                null,
+                "Archives: <span>ZZ Books</span>",
+                "",
+                "<h1>Archives: <span>ZZ Books</span></h1>",
+                ""
+            ],
+            "an author": [
+                " &raquo; admin",
+                "admin | ",
+                " &raquo; admin",
+                "admin &#8211; Minn",
+                null,
+                "Author: <span>admin</span>",
+                "",
+                "<h1>Author: <span>admin</span></h1>",
+                ""
+            ],
+            "a year": [
+                "",
+                "",
+                "",
+                "1986 &#8211; Minn",
+                null,
+                "Year: <span>1986</span>",
+                "",
+                "<h1>Year: <span>1986</span></h1>",
+                ""
+            ],
+            "a month": [
+                " &raquo; 1986 &raquo; May",
+                "May | 1986 | ",
+                " &raquo; 1986 &raquo; May",
+                "May 1986 &#8211; Minn",
+                null,
+                "Month: <span>May 1986</span>",
+                "",
+                "<h1>Month: <span>May 1986</span></h1>",
+                ""
+            ],
+            "a day": [
+                " &raquo; 1986 &raquo; May &raquo; 06",
+                "06 | May | 1986 | ",
+                " &raquo; 1986 &raquo; May &raquo; 06",
+                "May 6, 1986 &#8211; Minn",
+                null,
+                "Day: <span>May 6, 1986</span>",
+                "",
+                "<h1>Day: <span>May 6, 1986</span></h1>",
+                ""
+            ],
+            "search": [
+                " &raquo; Search Results  &raquo;  zz gt single",
+                " zz gt single | Search Results  | ",
+                " &raquo; Search Results  &raquo;  zz gt single",
+                "Search Results for &#8220;zz gt single&#8221; &#8211; Minn",
+                null,
+                "Archives",
+                "",
+                "<h1>Archives</h1>",
+                ""
+            ],
+            "nothing found": [
+                " &raquo; Page not found",
+                "Page not found | ",
+                " &raquo; Page not found",
+                "Page not found &#8211; Minn",
+                null,
+                "Archives",
+                "",
+                "<h1>Archives</h1>",
+                ""
+            ],
+            "the home page": [
+                "",
+                "",
+                "",
+                "Minn &#8211; Indistinguishable at the seams. Radically simpler inside.",
+                null,
+                "Archives",
+                "",
+                "<h1>Archives</h1>",
+                ""
+            ],
+            "a paged category": [
+                " &raquo; zz gt cat",
+                "zz gt cat | ",
+                " &raquo; zz gt cat",
+                "zz gt cat &#8211; Minn",
+                null,
+                "Category: <span>zz gt cat</span>",
+                "<p>Cat <b>description</b> &amp; more</p>\n",
+                "<h1>Category: <span>zz gt cat</span></h1>",
+                "<div><p>Cat <b>description</b> &amp; more</p>\n</div>"
+            ],
+            "m as a month": [
+                " &raquo; 1986 &raquo; May",
+                "May | 1986 | ",
+                " &raquo; 1986 &raquo; May",
+                "May 1986 &#8211; Minn",
+                null,
+                "Month: <span>May 1986</span>",
+                "",
+                "<h1>Month: <span>May 1986</span></h1>",
+                ""
+            ],
+            "m as a year": [
+                " &raquo; 1986",
+                "1986 | ",
+                " &raquo; 1986",
+                "1986 &#8211; Minn",
+                null,
+                "Year: <span>1986</span>",
+                "",
+                "<h1>Year: <span>1986</span></h1>",
+                ""
+            ]
+        }
+    ],
+    [
+        "title filters",
+        [
+            [
+                "zz gt cat",
+                "Zz Title ~ Minn",
+                "zz gt cat &#8211; ",
+                [
+                    " &#8211; 1986 &#8211; May",
+                    "May &#8211; 1986 &#8211; "
+                ],
+                [
+                    "",
+                    ""
+                ],
+                "Zz Short Circuit"
+            ],
+            [
+                [
+                    "get_the_archive_title",
+                    "zz gt cat",
+                    "zz gt cat",
+                    ""
+                ],
+                [
+                    "document_title_parts",
+                    {
+                        "title": "zz gt cat",
+                        "site": "Minn"
+                    }
+                ],
+                [
+                    "wp_title_parts",
+                    [
+                        "zz gt cat"
+                    ]
+                ],
+                [
+                    "wp_title",
+                    "zz gt cat &#8211; ",
+                    "-",
+                    "right"
+                ],
+                [
+                    "wp_title_parts",
+                    [
+                        "1986",
+                        "May"
+                    ]
+                ],
+                [
+                    "wp_title",
+                    " &#8211; 1986 &#8211; May",
+                    "-",
+                    ""
+                ],
+                [
+                    "wp_title_parts",
+                    [
+                        "1986",
+                        "May"
+                    ]
+                ],
+                [
+                    "wp_title",
+                    "May &#8211; 1986 &#8211; ",
+                    "-",
+                    "right"
+                ],
+                [
+                    "wp_title_parts",
+                    []
+                ],
+                [
+                    "wp_title",
+                    "",
+                    "-",
+                    ""
+                ],
+                [
+                    "wp_title_parts",
+                    []
+                ],
+                [
+                    "wp_title",
+                    "",
+                    "-",
+                    "right"
+                ]
+            ]
+        ]
+    ],
+    [
+        "dates and times",
+        [
+            "7:08 am",
+            "1986-05-06 07:08",
+            "June 7, 1987",
+            "<b>1987</b>",
+            "[June 7, 1987]",
+            "8:09 am",
+            "08:09",
+            550051750,
+            "1987-06-07 12:09:10",
+            550051750,
+            false,
+            "year"
+        ]
+    ],
+    [
+        "the search query",
+        [
+            "zz &quot;quoted&quot; &lt;b&gt; &amp; co",
+            ""
+        ]
+    ],
+    [
+        "the rich editor",
+        [
+            false,
+            "tinymce"
+        ]
+    ],
+    [
+        "links",
+        [
+            "{site}/wp-login.php?action=lostpassword",
+            "{site}/wp-login.php?action=lostpassword&redirect_to=https%3A%2F%2Fzz.example%2Fafter%3Fa%3D1%26b%3D2",
+            "{site}/wp-login.php?action=lostpassword&redirect_to=https%3A%2F%2Fminn.localhost%2Fzz-back%2F",
+            "{site}/wp-login.php?action=register"
+        ]
+    ],
+    [
+        "referrer and hints",
+        [
+            "\t<meta name='referrer' content='strict-origin-when-cross-origin' />\n\t",
+            ""
+        ]
+    ],
+    [
+        "the site icon",
+        [
+            "",
+            "",
+            "https://zz.example/fallback.png?a=1&#038;b=2",
+            "<link rel=\"icon\" href=\"{site}/wp-content/uploads/2026/10/zzgt-icon-32x32.png\" sizes=\"32x32\" />\n<link rel=\"icon\" href=\"{site}/wp-content/uploads/2026/10/zzgt-icon-192x192.png\" sizes=\"192x192\" />\n<link rel=\"apple-touch-icon\" href=\"{site}/wp-content/uploads/2026/10/zzgt-icon-180x180.png\" />\n<meta name=\"msapplication-TileImage\" content=\"{site}/wp-content/uploads/2026/10/zzgt-icon-270x270.png\" />\n",
+            "{site}/wp-content/uploads/2026/10/zzgt-icon.png",
+            "{site}/wp-content/uploads/2026/10/zzgt-icon-32x32.png",
+            "<link rel=\"icon\" href=\"{site}/wp-content/uploads/2026/10/zzgt-icon-32x32.png\" sizes=\"32x32\" />\n<meta name=\"zz-icon\" content=\"1\" />\n"
+        ]
+    ],
+    [
+        "extra feed links",
+        {
+            "a post": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; zz gt single &#8220;q&#8221; &#038; co Comments Feed\" href=\"{site}/zz-gt-single-q-co/feed/\" />\n",
+            "a page": "",
+            "a category": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; zz gt cat Category Feed\" href=\"{site}/category/zz-gt-cat/feed/\" />\n",
+            "a tag": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; zz gt tag Tag Feed\" href=\"{site}/tag/zz-gt-tag/feed/\" />\n",
+            "a genre": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; zz gt genre ZZ Genre Feed\" href=\"{site}/zz_gt_genre/zz-gt-genre/feed/\" />\n",
+            "the books": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; ZZ Books Feed\" href=\"{site}/zz_gt_book/feed/\" />\n",
+            "an author": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; Posts by admin Feed\" href=\"{site}/author/admin/feed/\" />\n",
+            "search": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn &raquo; Search Results for &#8220;zz gt single&#8221; Feed\" href=\"{site}/search/zz+gt+single/feed/rss2/\" />\n",
+            "the home page": "",
+            "a category, given words": "<link rel=\"alternate\" type=\"application/rss+xml\" title=\"Minn | [zz gt cat]\" href=\"{site}/category/zz-gt-cat/feed/\" />\n",
+            "a post, comments feed hidden": "",
+            "a post, its comments feed hidden": "",
+            "category, hidden": "",
+            "tag, hidden": "",
+            "tax, hidden": "",
+            "post_type_archive, hidden": "",
+            "author, hidden": "",
+            "search, hidden": ""
+        }
+    ],
+    [
+        "header, footer and sidebar",
+        {
+            "header": [
+                null,
+                "[header-zzgt.php {\"zz\":\"header\"}]"
+            ],
+            "footer": [
+                null,
+                "[footer-zzgt.php {\"zz\":\"footer\"}]"
+            ],
+            "sidebar": [
+                null,
+                "[sidebar-zzgt.php {\"zz\":\"sidebar\"}]"
+            ],
+            "0": [
+                [
+                    "get_header",
+                    "zzgt",
+                    {
+                        "zz": "header"
+                    }
+                ],
+                [
+                    "get_footer",
+                    "zzgt",
+                    {
+                        "zz": "footer"
+                    }
+                ],
+                [
+                    "get_sidebar",
+                    "zzgt",
+                    {
+                        "zz": "sidebar"
+                    }
+                ]
+            ]
+        }
+    ],
+    [
+        "the head, body and footer hooks",
+        [
+            "",
+            [
+                "[wp_head [\"\"]]",
+                "[wp_body_open [\"\"]]",
+                "[wp_footer [\"\"]]"
+            ],
+            [
+                1,
+                1,
+                1
+            ]
+        ]
+    ]
+]

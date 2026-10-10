@@ -671,11 +671,37 @@ function feed_links($args = [])
 
 function feed_links_extra($args = [])
 {
-    $head = Runtime::current()->get('classic_head');
-    $resolution = Runtime::current()->get('classic_resolution');
-    if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution && current_theme_supports('automatic-feed-links')) {
-        echo $head->extraFeedLink($resolution);
+    $args = wp_parse_args($args, ['separator' => _x('&raquo;', 'feed link'), 'singletitle' => __('%1$s %2$s %3$s Comments Feed'), 'cattitle' => __('%1$s %2$s %3$s Category Feed'), 'tagtitle' => __('%1$s %2$s %3$s Tag Feed'), 'taxtitle' => __('%1$s %2$s %3$s %4$s Feed'), 'authortitle' => __('%1$s %2$s Posts by %3$s Feed'), 'searchtitle' => __('%1$s %2$s Search Results for &#8220;%3$s&#8221; Feed'), 'posttypetitle' => __('%1$s %2$s %3$s Feed')]);
+    [$title, $href] = _minn_extra_feed($args, get_bloginfo('name'), $args['separator']);
+    if ($href !== '') {
+        echo '<link rel="alternate" type="' . feed_content_type() . '" title="' . esc_attr($title) . '" href="' . esc_url($href) . '" />' . "\n";
     }
+}
+
+/**
+ * @internal The main query's own feed, as a title and a link (probe
+ * general-template-remaining): a singular view's comments feed while
+ * comments or pings are open or it has comments (both comments-feed filters
+ * can hide it), else the archive's or the search's feed, each behind its
+ * feed_links_extra_show_{kind}_feed filter. Nothing for the posts page.
+ */
+function _minn_extra_feed(array $args, string $site, string $sep): array
+{
+    $object = get_queried_object();
+    $post = is_singular() ? get_post() : null;
+    $type = get_query_var('post_type');
+    [$kind, $title, $href] = match (true) {
+        $post instanceof WP_Post => (comments_open($post) || pings_open($post) || (int) $post->comment_count > 0) && apply_filters('feed_links_show_comments_feed', true)
+            ? ['post_comments', sprintf($args['singletitle'], $site, $sep, the_title_attribute(['echo' => false, 'post' => $post])), get_post_comments_feed_link($post->ID)] : ['', '', ''],
+        is_post_type_archive() => ['post_type_archive', sprintf($args['posttypetitle'], $site, $sep, post_type_archive_title('', false)), get_post_type_archive_feed_link((string) (is_array($type) ? reset($type) : $type))],
+        is_category() && $object instanceof WP_Term => ['category', sprintf($args['cattitle'], $site, $sep, $object->name), get_category_feed_link($object->term_id)],
+        is_tag() && $object instanceof WP_Term => ['tag', sprintf($args['tagtitle'], $site, $sep, $object->name), get_tag_feed_link($object->term_id)],
+        is_tax() && $object instanceof WP_Term => ['tax', sprintf($args['taxtitle'], $site, $sep, $object->name, get_taxonomy($object->taxonomy)->labels->singular_name ?? ''), get_term_feed_link($object->term_id, $object->taxonomy)],
+        is_author() => ['author', sprintf($args['authortitle'], $site, $sep, get_the_author_meta('display_name', (int) get_query_var('author'))), get_author_feed_link((int) get_query_var('author'))],
+        is_search() => ['search', sprintf($args['searchtitle'], $site, $sep, get_search_query(false)), get_search_feed_link()],
+        default => ['', '', ''],
+    };
+    return $kind !== '' && apply_filters("feed_links_extra_show_{$kind}_feed", true) ? [$title, (string) $href] : ['', ''];
 }
 
 /**
@@ -714,11 +740,24 @@ function wp_resource_hints()
     }
 }
 
+/**
+ * The site icon's head tags (probe general-template-remaining): the 32 and
+ * 192 pixel icons, the Apple touch icon and the tile image, through
+ * site_icon_meta_tags, one per line. Nothing when the site has no icon.
+ */
 function wp_site_icon()
 {
-    $head = Runtime::current()->get('classic_head');
-    if ($head instanceof \Minn\Theme\HeadLinks) {
-        echo $head->icons();
+    if (!has_site_icon() && !is_customize_preview()) {
+        return;
+    }
+    $tags = apply_filters('site_icon_meta_tags', [
+        sprintf('<link rel="icon" href="%s" sizes="32x32" />', esc_url(get_site_icon_url(32))),
+        sprintf('<link rel="icon" href="%s" sizes="192x192" />', esc_url(get_site_icon_url(192))),
+        sprintf('<link rel="apple-touch-icon" href="%s" />', esc_url(get_site_icon_url(180))),
+        sprintf('<meta name="msapplication-TileImage" content="%s" />', esc_url(get_site_icon_url(270))),
+    ]);
+    foreach (array_filter((array) $tags) as $tag) {
+        echo $tag . "\n";
     }
 }
 
