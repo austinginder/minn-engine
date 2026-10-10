@@ -804,6 +804,10 @@ function wp_get_post_revisions($post = 0, $args = null)
     }
     $rows = _minn_post_lookup()->revisionsOf($post->ID);
     $rows = strtoupper((string) $args['order']) === 'ASC' ? array_reverse($rows) : $rows;
+    if (($args['fields'] ?? '') === 'ids') {
+        // A plain list of ids, in the same order (probe revision-remaining).
+        return array_map(static fn (array $row): int => (int) $row['ID'], array_values($rows));
+    }
     $out = [];
     foreach ($rows as $row) {
         $out[(int) $row['ID']] = new WP_Post((object) $row);
@@ -1835,8 +1839,9 @@ function _minn_post_remove(WP_Post $post): WP_Post
 function wp_delete_post_revision($revision)
 {
     $revision = get_post($revision);
+    // Anything but a revision is left alone, and nothing comes back (probe revision-remaining).
     if ($revision === null || $revision->post_type !== 'revision') {
-        return $revision;
+        return null;
     }
     $removed = wp_delete_post($revision->ID);
     if ($removed) {

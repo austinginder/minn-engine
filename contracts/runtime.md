@@ -10268,3 +10268,33 @@ Fixes:
   (`max-video-preview:`). Any other truthy value prints bare: a number or a
   list counts. Falsy values are left out. Contradictory pairs (`index` with
   `noindex`, `follow` with `nofollow`) both print, in the order given.
+
+## The rest of revision.php (2026-10-10)
+
+Probe `revision-remaining` proves the nine revision.php functions that were
+left. It covers:
+- the revisioned fields and their filter;
+- the data a revision or an autosave is made from, given an array, a post, or
+  a partial array;
+- whether revisions are enabled, by type and by the keep filters;
+- revisions saved by hand: a change, no change, a type without revisions,
+  a draft, a missing post;
+- the latest revision and the count;
+- the revision on insert;
+- a revision deleted, with its action;
+- meta registered as revisioned: whether it changed, and copied onto a
+  revision or another post.
+
+Fixes:
+
+- **`wp_get_post_revisions` with `'fields' => 'ids'`** returns a plain list of
+  ids in the requested order. It used to return the post objects keyed by id.
+- **`wp_delete_post_revision`** given anything but a revision returns null and
+  leaves it alone. It used to hand back the post.
+
+The first engine run of this probe exposed the `fields` bug the hard way. The
+probe's cleanup cast each returned revision to an int; each was a post object,
+so the cast gave 1 and post 1 (Hello world!) was force-deleted from the shared
+database. It was restored from the marketing site's database, which still holds
+the install's rows, with the guid set back to the test site's host. The probe
+now deletes only positive integer ids of actual revisions.

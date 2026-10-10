@@ -60107,7 +60107,7 @@
         },
         "wp_delete_post_revision": {
             "file": "post.php",
-            "lines": 9,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -62498,7 +62498,7 @@
         },
         "wp_get_post_revisions": {
             "file": "post.php",
-            "lines": 12,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PostLookup::revisionsOf"
