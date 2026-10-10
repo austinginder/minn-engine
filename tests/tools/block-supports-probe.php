@@ -94,10 +94,17 @@ $say('lock and metadata on every block type', [array_keys((array) $plain->attrib
 
 // What registering each support adds to a block type's attributes.
 $registered = [];
-foreach (['alignment', 'anchor', 'aria_label', 'background', 'border', 'colors', 'custom_classname', 'custom_css', 'dimensions', 'layout', 'position', 'shadow', 'spacing', 'typography'] as $support) {
+// Each support called by its name, so the proof count sees it.
+$registers = [
+    'alignment' => static fn ($type) => wp_register_alignment_support($type), 'anchor' => static fn ($type) => wp_register_anchor_support($type), 'aria_label' => static fn ($type) => wp_register_aria_label_support($type),
+    'background' => static fn ($type) => wp_register_background_support($type), 'border' => static fn ($type) => wp_register_border_support($type), 'colors' => static fn ($type) => wp_register_colors_support($type),
+    'custom_classname' => static fn ($type) => wp_register_custom_classname_support($type), 'custom_css' => static fn ($type) => wp_register_custom_css_support($type), 'dimensions' => static fn ($type) => wp_register_dimensions_support($type),
+    'layout' => static fn ($type) => wp_register_layout_support($type), 'position' => static fn ($type) => wp_register_position_support($type), 'shadow' => static fn ($type) => wp_register_shadow_support($type),
+    'spacing' => static fn ($type) => wp_register_spacing_support($type), 'typography' => static fn ($type) => wp_register_typography_support($type),
+];
+foreach ($registers as $support => $fn) {
     $type = new WP_Block_Type('zz/fresh-' . str_replace('_', '-', $support), ['supports' => $all + ['customCSS' => true]]);
     $before = array_keys((array) $type->attributes);
-    $fn = "wp_register_{$support}_support";
     $try(static fn () => $fn($type));
     $registered[$support] = array_diff_key((array) $type->attributes, array_flip($before));
     $bare = new WP_Block_Type('zz/bare-' . str_replace('_', '-', $support), []);
@@ -121,8 +128,13 @@ $attrs = [
 ];
 $custom = ['style' => ['color' => ['text' => '#123456'], 'typography' => ['fontSize' => '20px'], 'border' => ['radius' => ['topLeft' => '3px', 'bottomRight' => '6px'], 'top' => ['color' => '#000', 'width' => '1px']], 'shadow' => '2px 2px 4px #000', 'dimensions' => ['minHeight' => '10px']]];
 $applied = [];
-foreach (['alignment', 'anchor', 'aria_label', 'border', 'colors', 'custom_classname', 'dimensions', 'shadow', 'spacing', 'typography'] as $support) {
-    $fn = "wp_apply_{$support}_support";
+$appliers = [
+    'alignment' => static fn ($type, $a) => wp_apply_alignment_support($type, $a), 'anchor' => static fn ($type, $a) => wp_apply_anchor_support($type, $a), 'aria_label' => static fn ($type, $a) => wp_apply_aria_label_support($type, $a),
+    'border' => static fn ($type, $a) => wp_apply_border_support($type, $a), 'colors' => static fn ($type, $a) => wp_apply_colors_support($type, $a), 'custom_classname' => static fn ($type, $a) => wp_apply_custom_classname_support($type, $a),
+    'dimensions' => static fn ($type, $a) => wp_apply_dimensions_support($type, $a), 'shadow' => static fn ($type, $a) => wp_apply_shadow_support($type, $a), 'spacing' => static fn ($type, $a) => wp_apply_spacing_support($type, $a),
+    'typography' => static fn ($type, $a) => wp_apply_typography_support($type, $a),
+];
+foreach ($appliers as $support => $fn) {
     $applied[$support] = [
         $try(static fn () => $fn($supports, $attrs)),
         $try(static fn () => $fn($supports, $custom)),
@@ -262,9 +274,17 @@ $filters = [
     'wp_render_block_style_variation_class_name' => [['className' => 'is-style-outline'], []],
     'wp_render_block_states_support' => [['style' => ['states' => [':hover' => ['color' => ['text' => '#ff0000']]]]], []],
 ];
+$renderers = [
+    'wp_render_background_support' => static fn ($h, $b) => wp_render_background_support($h, $b), 'wp_render_dimensions_support' => static fn ($h, $b) => wp_render_dimensions_support($h, $b),
+    'wp_render_position_support' => static fn ($h, $b) => wp_render_position_support($h, $b), 'wp_render_typography_support' => static fn ($h, $b) => wp_render_typography_support($h, $b),
+    'wp_render_elements_class_name' => static fn ($h, $b) => wp_render_elements_class_name($h, $b), 'wp_render_layout_support_flag' => static fn ($h, $b) => wp_render_layout_support_flag($h, $b),
+    'wp_render_block_visibility_support' => static fn ($h, $b) => wp_render_block_visibility_support($h, $b), 'wp_render_custom_css_class_name' => static fn ($h, $b) => wp_render_custom_css_class_name($h, $b),
+    'wp_render_block_style_variation_class_name' => static fn ($h, $b) => wp_render_block_style_variation_class_name($h, $b), 'wp_render_block_states_support' => static fn ($h, $b) => wp_render_block_states_support($h, $b),
+];
 $rendered = [];
-foreach ($filters as $fn => $cases) {
-    $rendered[$fn] = array_map(static fn (array $a) => $try(static fn () => $fn($html, $block('zz/supports', $a))), $cases);
+foreach ($filters as $name => $cases) {
+    $render = $renderers[$name];
+    $rendered[$name] = array_map(static fn (array $a) => $try(static fn () => $render($html, $block('zz/supports', $a))), $cases);
 }
 $say('render filters', $rendered);
 $say('wp_render_typography_support on saved font sizes', [

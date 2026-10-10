@@ -1,0 +1,112 @@
+[
+    [
+        "custom CSS taken out of saved markup",
+        [
+            "<!-- wp:paragraph --><p>One</p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph {\\\"style\\\":{\\\"color\\\":{\\\"text\\\":\\\"#111111\\\"}}} --><p>Two</p><!-- /wp:paragraph -->",
+            "<!-- wp:group --><div class=\\\"wp-block-group\\\"><!-- wp:paragraph --><p>Nested</p><!-- /wp:paragraph --></div><!-- /wp:group -->",
+            "<!-- wp:paragraph --><p>Slashed</p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph --><p>Slashed whole</p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph --><p>No css</p><!-- /wp:paragraph -->",
+            "<p>Classic content with \"css\" in it.</p>",
+            ""
+        ]
+    ],
+    [
+        "the save filters",
+        [
+            [
+                8,
+                8
+            ],
+            [
+                8,
+                8
+            ],
+            [
+                8,
+                8
+            ],
+            [
+                false,
+                false
+            ],
+            [
+                false,
+                false
+            ]
+        ]
+    ],
+    [
+        "the elements support styles",
+        {
+            "a link color": {
+                "className": "wp-elements-{hash}",
+                "keys": [
+                    "style",
+                    "className"
+                ],
+                "same": false
+            },
+            "a link color and a class": {
+                "className": "zz-own wp-elements-{hash}",
+                "keys": [
+                    "className",
+                    "style"
+                ],
+                "same": false
+            },
+            "a heading color": {
+                "className": "wp-elements-{hash}",
+                "keys": [
+                    "style",
+                    "className"
+                ],
+                "same": false
+            },
+            "a button color": {
+                "className": "wp-elements-{hash}",
+                "keys": [
+                    "style",
+                    "className"
+                ],
+                "same": false
+            },
+            "a preset link color": {
+                "className": "wp-elements-{hash}",
+                "keys": [
+                    "style",
+                    "className"
+                ],
+                "same": false
+            },
+            "no elements": {
+                "className": null,
+                "keys": [
+                    "style"
+                ],
+                "same": true
+            },
+            "nothing": {
+                "className": null,
+                "keys": [],
+                "same": true
+            },
+            "a block without the support": {
+                "className": "wp-elements-{hash}",
+                "keys": [
+                    "style",
+                    "className"
+                ],
+                "same": false
+            },
+            "an unknown block": {
+                "className": null,
+                "keys": [
+                    "style"
+                ],
+                "same": true
+            }
+        }
+    ]
+]

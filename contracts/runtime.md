@@ -10392,3 +10392,26 @@ Fixes:
 - **`register_initial_settings`** registers only core's own settings. The
   site logo and site icon settings are the block library's, registered on
   `rest_api_init` right after it, so the REST settings keep their order.
+
+## The rest of the block supports (2026-10-10)
+
+The 32 block-supports functions left unproven fall into two groups.
+
+**28 were already compared, but called through variable names.** Probe
+`block-supports` called the register, apply and render functions as
+`$fn = "wp_register_{$support}_support"`, which the proof count cannot see.
+The three loops now call each function by name, through a map of closures.
+The labels and order are unchanged, and both stacks still match the existing
+fixture byte for byte.
+
+**The last four get probe `block-supports-remaining`:** custom CSS taken out
+of saved block markup, the save filters that do it, and the elements
+support's styles for a parsed block. Fixes:
+
+- **`wp_strip_custom_css_from_blocks`** leaves content it took nothing out of
+  exactly as it came. Classic content that merely mentions `"css"` used to
+  come back re-serialized and slashed. Content with CSS taken out comes back
+  slashed, as before.
+- **`wp_render_elements_support_styles`** leaves a block nobody registered
+  alone. A registered block gets its elements class even when its type
+  declares no color support, as on the reference.

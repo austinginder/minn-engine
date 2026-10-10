@@ -67398,7 +67398,7 @@
         },
         "wp_render_elements_support_styles": {
             "file": "block-supports-render.php",
-            "lines": 6,
+            "lines": 10,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Elements::className"
@@ -68896,7 +68896,7 @@
         },
         "wp_strip_custom_css_from_blocks": {
             "file": "kses.php",
-            "lines": 17,
+            "lines": 21,
             "kind": "composes",
             "minn": [],
             "composes": [

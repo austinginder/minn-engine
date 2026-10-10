@@ -191,7 +191,11 @@ function wp_should_add_elements_class_name($block, $options)
 function wp_render_elements_support_styles($parsed_block)
 {
     $block_type = WP_Block_Type_Registry::get_instance()->get_registered((string) ($parsed_block['blockName'] ?? ''));
-    $class = Elements::className((array) ($parsed_block['attrs'] ?? []), $block_type instanceof WP_Block_Type ? (array) $block_type->supports : []);
+    // A block nobody registered is left alone (probe block-supports-remaining).
+    if (!$block_type instanceof WP_Block_Type) {
+        return $parsed_block;
+    }
+    $class = Elements::className((array) ($parsed_block['attrs'] ?? []), (array) $block_type->supports);
     if ($class !== null) {
         $parsed_block['attrs']['className'] = trim(($parsed_block['attrs']['className'] ?? '') . ' ' . $class);
     }

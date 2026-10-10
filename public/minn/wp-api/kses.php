@@ -299,9 +299,12 @@ function wp_strip_custom_css_from_blocks($content)
     if (!str_contains($plain, '"css"')) {
         return $content;
     }
-    $strip = static function (array $blocks) use (&$strip): array {
+    // Nothing taken out leaves the content as it came (probe block-supports-remaining).
+    $changed = false;
+    $strip = static function (array $blocks) use (&$strip, &$changed): array {
         foreach ($blocks as $i => $block) {
             if (isset($block['attrs']['style']['css'])) {
+                $changed = true;
                 unset($blocks[$i]['attrs']['style']['css']);
                 if ($blocks[$i]['attrs']['style'] === []) {
                     unset($blocks[$i]['attrs']['style']);
@@ -311,7 +314,8 @@ function wp_strip_custom_css_from_blocks($content)
         }
         return $blocks;
     };
-    return wp_slash(serialize_blocks($strip(parse_blocks($plain))));
+    $blocks = $strip(parse_blocks($plain));
+    return $changed ? wp_slash(serialize_blocks($blocks)) : $content;
 }
 
 /** A tag's allowed attributes with the ones every tag may carry (aria, class, data-*, dir, hidden, id, lang, style, tabindex, title, role, xml:lang); true means none of its own. */
