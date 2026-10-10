@@ -9854,3 +9854,45 @@ Fixed to match:
 Seen once and not since: the api suite's `wp-user-query-sql` "by url" case
 returned users with equal (empty) addresses in a different order. That is
 the database's choice for ties, and three reruns matched.
+
+## The rest of taxonomy.php (2026-10-09)
+
+Probe `taxonomy-remaining` proves the 14 taxonomy.php functions that were
+left:
+- taxonomy labels built from a taxonomy's own;
+- viewable taxonomies, and a term to edit;
+- terms added to and removed from objects, and whether an object is in a
+  term;
+- term children and padded counts;
+- hierarchy loops;
+- term counts: now, deferred, and generic;
+- the taxonomy cache;
+- a category deleted.
+
+The probe removes every term in its taxonomies at the end (a numeric string
+given as a term makes a term of that name), their `_children` options, and
+the `do_pings` event it caused. It puts `category_children` back.
+
+Fixed to match:
+
+- **`get_taxonomy_labels`** builds the labels (`Runtime\Registry::taxonomyLabels`),
+  then runs `taxonomy_labels_{$name}`. It used to return the stored labels.
+  - Derived as a type's are: name, singular name, admin bar name, menu name,
+    all items, archives.
+  - The base labels are category's for a hierarchical taxonomy, tag's for
+    any other.
+  - A taxonomy that names no template takes "%s Archives" with the singular
+    name it ends up with, so a bare one is "Tag Archives".
+  - `register_taxonomy` builds its labels the same way. A taxonomy
+    registered without a label takes the base labels ("Tags"), not its own
+    name.
+- **`get_term_to_edit`** answers the term sanitized for editing (escaped,
+  filter `edit`), or `''` for none. It used to return the term as stored.
+- **`_get_term_children`** follows the stored hierarchy
+  (`_get_term_hierarchy`), not the parent links in the list it is given.
+  - A term with no recorded children has none.
+  - Term 0 lists its direct children and goes down only through terms the
+    hierarchy says have children.
+  - An empty list is `[]`, and a taxonomy that does not exist is not an
+    error.
+- **`clean_taxonomy_cache`** marks the terms cache as changed.

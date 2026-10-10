@@ -127727,7 +127727,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 427,
+            "lines": 448,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -127992,7 +127992,51 @@
                         }
                     ],
                     "line": 200,
-                    "end": 224
+                    "end": 209
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyLabels",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "taxonomyLabels(array $labels, ?string $label, string $base, string $name): array",
+                    "doc": "A taxonomy's labels from its own (probe taxonomy-remaining): derived as a\ntype's are, under the category labels for a hierarchical taxonomy or the\ntag labels for any other; one that names no template takes \"%s\nArchives\" with the singular name it ends up with.",
+                    "shapes": [
+                        "@param array<string, mixed> $labels",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "labels",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 220,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -128028,8 +128072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 263
+                    "line": 263,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -128048,8 +128092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 276
+                    "line": 295,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -128082,8 +128126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 291
+                    "line": 312,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -128109,8 +128153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 297
+                    "line": 323,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -128131,8 +128175,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 307
+                    "line": 333,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -128167,8 +128211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 314,
-                    "end": 374
+                    "line": 343,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -128179,8 +128223,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 377,
-                    "end": 380
+                    "line": 398,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -128199,8 +128243,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 390
+                    "line": 404,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -128226,8 +128270,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 402
+                    "line": 414,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -128253,8 +128297,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 412
+                    "line": 426,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -128282,8 +128326,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 441
+                    "line": 440,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -128306,6 +128350,43 @@
                     ],
                     "line": 173,
                     "end": 184
+                },
+                {
+                    "routes": [],
+                    "name": "derivedLabels",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "derivedLabels(array $labels, ?string $label, string $name): array",
+                    "doc": "The labels a type or taxonomy gets from its own: a missing name from\nits label, a missing singular name from the name, the menu name from\nthe name, all items from the menu name, archives from all items, and\nthe admin bar name from the singular name or else its own name.",
+                    "shapes": [
+                        "@param array<string, mixed> $labels",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "labels",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 238,
+                    "end": 253
                 }
             ]
         },

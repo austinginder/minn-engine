@@ -199,6 +199,44 @@ final class Registry
      */
     public function labels(array $labels, ?string $label, string $base, string $name): array
     {
+        $labels = self::derivedLabels($labels, $label, $name);
+        $defaults = array_diff_key((array) ($this->postTypes[$base]['labels'] ?? []), ['name_admin_bar' => true, 'template_name' => true]);
+        $merged = array_merge($defaults, $labels);
+        if (!isset($merged['template_name']) && isset($labels['singular_name'])) {
+            $merged['template_name'] = sprintf(\function_exists('__') ? Gettext::text('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
+        }
+        return $merged;
+    }
+
+    /**
+     * A taxonomy's labels from its own (probe taxonomy-remaining): derived as a
+     * type's are, under the category labels for a hierarchical taxonomy or the
+     * tag labels for any other; one that names no template takes "%s
+     * Archives" with the singular name it ends up with.
+     *
+     * @param array<string, mixed> $labels
+     * @return array<string, mixed>
+     */
+    public function taxonomyLabels(array $labels, ?string $label, string $base, string $name): array
+    {
+        $labels = self::derivedLabels($labels, $label, $name);
+        $defaults = array_diff_key((array) ($this->taxonomies[$base]['labels'] ?? []), ['name_admin_bar' => true, 'template_name' => true, 'archives' => true]);
+        $merged = array_merge($defaults, $labels);
+        $merged['template_name'] ??= sprintf(\function_exists('__') ? Gettext::text('%s Archives') : '%s Archives', (string) ($merged['singular_name'] ?? ''));
+        return $merged;
+    }
+
+    /**
+     * The labels a type or taxonomy gets from its own: a missing name from
+     * its label, a missing singular name from the name, the menu name from
+     * the name, all items from the menu name, archives from all items, and
+     * the admin bar name from the singular name or else its own name.
+     *
+     * @param array<string, mixed> $labels
+     * @return array<string, mixed>
+     */
+    private static function derivedLabels(array $labels, ?string $label, string $name): array
+    {
         if (!isset($labels['name']) && $label !== null) {
             $labels['name'] = $label;
         }
@@ -206,21 +244,12 @@ final class Registry
             $labels['singular_name'] = $labels['name'];
         }
         $labels['name_admin_bar'] ??= $labels['singular_name'] ?? $name;
-        if (!isset($labels['menu_name']) && isset($labels['name'])) {
-            $labels['menu_name'] = $labels['name'];
+        foreach (['menu_name' => 'name', 'all_items' => 'menu_name', 'archives' => 'all_items'] as $key => $from) {
+            if (!isset($labels[$key]) && isset($labels[$from])) {
+                $labels[$key] = $labels[$from];
+            }
         }
-        if (!isset($labels['all_items']) && isset($labels['menu_name'])) {
-            $labels['all_items'] = $labels['menu_name'];
-        }
-        if (!isset($labels['archives']) && isset($labels['all_items'])) {
-            $labels['archives'] = $labels['all_items'];
-        }
-        $defaults = array_diff_key((array) ($this->postTypes[$base]['labels'] ?? []), ['name_admin_bar' => true, 'template_name' => true]);
-        $merged = array_merge($defaults, $labels);
-        if (!isset($merged['template_name']) && isset($labels['singular_name'])) {
-            $merged['template_name'] = sprintf(\function_exists('__') ? Gettext::text('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
-        }
-        return $merged;
+        return $labels;
     }
 
     /**
@@ -314,17 +343,9 @@ final class Registry
     public function registerTaxonomy(string $name, array $objectTypes, array $args): array
     {
         $hierarchical = (bool) ($args['hierarchical'] ?? false);
-        $base = $this->taxonomies[$hierarchical ? 'category' : 'post_tag'];
-        $label = (string) ($args['label'] ?? ($args['labels']['name'] ?? $name));
-        $labels = $base['labels'];
-        $labels['name'] = $label;
-        $labels['singular_name'] = (string) ($args['labels']['singular_name'] ?? $label);
-        $labels['menu_name'] = (string) ($args['labels']['menu_name'] ?? $label);
-        $labels['all_items'] = (string) ($args['labels']['all_items'] ?? $label);
-        $labels['name_admin_bar'] = $labels['singular_name'];
-        foreach ((array) ($args['labels'] ?? []) as $key => $value) {
-            $labels[$key] = $value;
-        }
+        // A taxonomy registered with no label takes the category or tag labels (probe taxonomy-remaining).
+        $labels = $this->taxonomyLabels((array) ($args['labels'] ?? []), isset($args['label']) ? (string) $args['label'] : null, $hierarchical ? 'category' : 'post_tag', $name);
+        $label = (string) $labels['name'];
         $public = (bool) ($args['public'] ?? true);
         $publiclyQueryable = (bool) ($args['publicly_queryable'] ?? $public);
         $showUi = (bool) ($args['show_ui'] ?? $public);

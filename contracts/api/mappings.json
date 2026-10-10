@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 769,
-        "composes": 1866,
+        "composes": 1868,
         "leaf": 876,
-        "noop": 2634,
+        "noop": 2632,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7971,
@@ -29036,14 +29036,13 @@
         },
         "_get_term_children": {
             "file": "taxonomy.php",
-            "lines": 19,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Support\\Lists::descendants"
-            ],
+            "lines": 29,
+            "kind": "composes",
+            "minn": [],
             "composes": [
+                "_get_term_hierarchy",
                 "get_term",
-                "taxonomy_exists"
+                "is_wp_error"
             ]
         },
         "_get_term_hierarchy": {
@@ -36785,14 +36784,15 @@
         },
         "clean_taxonomy_cache": {
             "file": "taxonomy.php",
-            "lines": 5,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_get_term_hierarchy",
                 "delete_option",
                 "do_action",
-                "wp_cache_delete"
+                "wp_cache_delete",
+                "wp_cache_set_terms_last_changed"
             ]
         },
         "clean_term_cache": {
@@ -44293,10 +44293,14 @@
         },
         "get_taxonomy_labels": {
             "file": "taxonomy.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::registry"
+            ],
+            "composes": [
+                "apply_filters"
+            ]
         },
         "get_taxonomy_template": {
             "file": "template.php",
@@ -44482,11 +44486,13 @@
         },
         "get_term_to_edit": {
             "file": "taxonomy.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "get_term"
+                "get_term",
+                "is_wp_error",
+                "sanitize_term"
             ]
         },
         "get_terms": {

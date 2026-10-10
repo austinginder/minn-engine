@@ -182,9 +182,12 @@ function unregister_taxonomy_for_object_type($taxonomy, $object_type)
     return $removed;
 }
 
+/** A taxonomy's full labels from its own, then taxonomy_labels_{$name} (Runtime\Registry::taxonomyLabels; probe taxonomy-remaining). */
 function get_taxonomy_labels($tax)
 {
-    return $tax->labels;
+    $name = (string) ($tax->name ?? '');
+    $labels = Runtime::registry()->taxonomyLabels((array) ($tax->labels ?? []), isset($tax->label) ? (string) $tax->label : null, empty($tax->hierarchical) ? 'post_tag' : 'category', $name);
+    return apply_filters("taxonomy_labels_{$name}", (object) $labels);
 }
 
 /** @internal a fetched term's numbers as integers: its id, group, taxonomy id, parent and count */
@@ -859,9 +862,14 @@ function _split_shared_term($term_id, $term_taxonomy_id, $record = true)
     return (int) $term_id;
 }
 
+/** A term made ready for an edit form, '' for none (probe taxonomy-remaining). */
 function get_term_to_edit($id, $taxonomy)
 {
-    return get_term($id, $taxonomy);
+    $term = get_term($id, $taxonomy);
+    if (is_wp_error($term)) {
+        return $term;
+    }
+    return is_object($term) ? sanitize_term($term, $taxonomy, 'edit') : '';
 }
 
 function term_description($term = 0, $deprecated = null)
@@ -1247,25 +1255,35 @@ function wp_dropdown_categories($args = '')
 /** Every descendant of one term within the caller's own list (ids or term objects), preorder; ancestors guard against loops. */
 function _get_term_children($term_id, $terms, $taxonomy, &$ancestors = [])
 {
-    if ((int) $term_id === 0 && !taxonomy_exists((string) $taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+    // The stored hierarchy says which terms have children; only those are followed (probe taxonomy-remaining).
+    if (empty($terms)) {
+        return [];
     }
-    return \Minn\Support\Lists::descendants(
-        array_values((array) $terms),
-        (int) $term_id,
-        static fn ($t) => (int) (is_object($t) ? $t->term_id : (is_array($t) ? ($t['term_id'] ?? 0) : $t)),
-        static function ($t) use ($taxonomy) {
-            if (is_object($t)) {
-                return (int) $t->parent;
-            }
-            if (is_array($t)) {
-                return (int) ($t['parent'] ?? 0);
-            }
-            $term = get_term((int) $t, (string) $taxonomy);
-            return $term instanceof WP_Term ? (int) $term->parent : -1;
-        },
-        array_map('intval', (array) $ancestors),
-    );
+    $term_id = (int) $term_id;
+    $has_children = _get_term_hierarchy((string) $taxonomy);
+    if ($term_id !== 0 && !isset($has_children[$term_id])) {
+        return [];
+    }
+    if ($ancestors === []) {
+        $ancestors[$term_id] = 1;
+    }
+    $list = [];
+    foreach ((array) $terms as $term) {
+        $given_id = !is_object($term);
+        $term = $given_id ? get_term($term, (string) $taxonomy) : $term;
+        if (is_wp_error($term)) {
+            return $term;
+        }
+        if (!is_object($term) || isset($ancestors[(int) $term->term_id]) || (int) $term->parent !== $term_id) {
+            continue;
+        }
+        $list[] = $given_id ? (int) $term->term_id : $term;
+        if (isset($has_children[(int) $term->term_id])) {
+            $ancestors[(int) $term->term_id] = 1;
+            $list = array_merge($list, (array) _get_term_children((int) $term->term_id, $terms, $taxonomy, $ancestors));
+        }
+    }
+    return $list;
 }
 
 /** Whether the object has one of the terms (ids, slugs, or names), or any term of the taxonomy at all. */
@@ -1472,6 +1490,7 @@ function clean_taxonomy_cache($taxonomy)
     delete_option("{$taxonomy}_children");
     _get_term_hierarchy($taxonomy);
     do_action('clean_taxonomy_cache', $taxonomy);
+    wp_cache_set_terms_last_changed();
 }
 
 function term_is_ancestor_of($term1, $term2, $taxonomy)

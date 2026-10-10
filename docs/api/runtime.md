@@ -80,7 +80,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 104 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 427 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 448 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 373 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
@@ -3658,6 +3658,16 @@ template.
 - `@param array<string, mixed> $labels`
 - `@return array<string, mixed>`
 
+### `taxonomyLabels(array $labels, ?string $label, string $base, string $name): array`
+
+A taxonomy's labels from its own (probe taxonomy-remaining): derived as a
+type's are, under the category labels for a hierarchical taxonomy or the
+tag labels for any other; one that names no template takes "%s
+Archives" with the singular name it ends up with.
+
+- `@param array<string, mixed> $labels`
+- `@return array<string, mixed>`
+
 ### static `capabilities(array|string $capabilityType, array $overrides, bool $mapMetaCap): array`
 
 A type's capability names (probe post-remaining): the eight primitive
@@ -3715,7 +3725,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsFrom()` (private, line 173)
+Internals: `supportsFrom()` (private, line 173), `derivedLabels()` (private, line 238)
 
 
 ## RewriteRules
