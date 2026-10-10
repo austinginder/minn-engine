@@ -10519,3 +10519,27 @@ Fixes:
 `create_initial_rest_routes` is left owed. The engine serves most of wp/v2
 itself, so comparing its route registration means comparing route tables,
 which is its own probe.
+
+## Core block helpers (2026-10-10)
+
+Probe `core-block-helpers` proves nine core block helpers. It covers:
+- the calendar's published-posts flag: read, recomputed, and kept current on
+  delete and on status changes;
+- the sidebar a widget group renders in;
+- footnotes added to the revisioned fields;
+- whether a post template uses featured images, given `WP_Block` inner blocks
+  as the post template hands them over;
+- the RSS block, with its fetch answered locally.
+
+- **Fix, a reference quirk kept: `discard_sidebar_being_rendered`** leaves
+  the sidebar being rendered in place. On the reference, the global survives
+  the discard, and the widget group block reads it. The engine used to unset
+  it.
+
+Still owed: the render callbacks the engine does not render yet. These are
+the site logo, footnotes, tabs, tab list and tab panel, icon, playlist and
+playlist track, query pagination (next, previous and numbers), the legacy
+widget, and the term template. Called by name in the probe runner, they come
+back empty on the engine where the reference prints markup. Each needs a real
+renderer: a batch of its own, compared through the core-blocks probe's
+render helper.

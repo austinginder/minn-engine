@@ -38132,7 +38132,7 @@
         },
         "discard_sidebar_being_rendered": {
             "file": "core-blocks.php",
-            "lines": 1,
+            "lines": 0,
             "kind": "noop",
             "minn": [],
             "composes": []

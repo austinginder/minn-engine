@@ -1206,9 +1206,9 @@ function note_sidebar_being_rendered($index)
 }
 
 /** Forgets the sidebar once it is rendered (dynamic_sidebar_after). */
+/** The reference leaves the sidebar being rendered in place: discarding it changes nothing a caller can see (probe core-block-helpers). */
 function discard_sidebar_being_rendered()
 {
-    unset($GLOBALS['_sidebar_being_rendered']);
 }
 
 /** @internal the calendar of the month being viewed (the block's month where the permalinks can link one) */

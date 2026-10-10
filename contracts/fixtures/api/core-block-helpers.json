@@ -1,0 +1,63 @@
+[
+    [
+        "the calendar flag",
+        [
+            [
+                true,
+                true
+            ],
+            [
+                false,
+                true,
+                true
+            ],
+            "0",
+            true,
+            "0",
+            "0",
+            true
+        ]
+    ],
+    [
+        "the sidebar a widget group renders in",
+        [
+            "zz-sidebar",
+            "zz-other",
+            "zz-other"
+        ]
+    ],
+    [
+        "footnotes in the revisioned fields",
+        [
+            {
+                "post_title": "Title",
+                "post_content": "Content",
+                "footnotes": "Footnotes"
+            },
+            {
+                "footnotes": "Footnotes"
+            },
+            {
+                "footnotes": "Footnotes"
+            }
+        ]
+    ],
+    [
+        "a post template using featured images",
+        [
+            true,
+            false,
+            true,
+            false,
+            true,
+            false
+        ]
+    ],
+    [
+        "rss",
+        [
+            "<div class=\"components-placeholder\"><div class=\"notice notice-error\"><strong>RSS Error:</strong> WP HTTP Error: No request leaves the probe.</div></div>",
+            "<div class=\"components-placeholder\"><div class=\"notice notice-error\">An error has occurred, which probably means the feed is down. Try again later.</div></div>"
+        ]
+    ]
+]
