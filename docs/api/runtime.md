@@ -80,7 +80,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 552 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 465 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 374 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
@@ -103,6 +103,7 @@ the WordPress runtime plugins load against
 | [`ThemeSupports`](#themesupports) | final class | 166 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`TreeWalk`](#treewalk) | final class | 179 | The Walker contract's traversal: elements keyed by the walker's |
+| [`TypeProps`](#typeprops) | final class | 150 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 31 | The updates waiting, as wp_get_update_data counts them for the user |
 | [`Upgrade`](#upgrade) | final class | 347 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
@@ -3599,7 +3600,7 @@ them. The built-in set is data/registry.json, captured from the
 reference; registrations derive their defaults the way the content
 probe observed (contracts/fixtures/api/content.json).
 
-Used by: `Minn\Front\Permalinks`, `Minn\Rest\StatusesController`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`
+Used by: `Minn\Front\Permalinks`, `Minn\Rest\StatusesController`, `Minn\Runtime\QueriedObject`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Runtime`, `Minn\Runtime\TypeProps`
 
 ```php
 __construct(string $engineDir)
@@ -3666,11 +3667,14 @@ Every post status.
 
 One post status, or null.
 
-### `registerPostType(string $name, array $args): array`
+### `adoptPostType(WP_Post_Type $object): array`
 
-Registers a post type with the reference's defaults filled in.
+Takes a built post type as the registered one: the object
+register_post_type made is the one every reader shares, and its
+properties are the type's row. Registering again puts a new object in
+the old one's place, as on the reference.
 
-- `@param array<string, mixed> $args`
+- `@return array<string, mixed>`
 
 ### `labels(array $labels, ?string $label, string $base, string $name): array`
 
@@ -3711,25 +3715,40 @@ Forgets a non-builtin post type.
 
 ### `addSupport(string $type, string $feature, array $args): void`
 
-Support declared before the type registers waits aside (the reference
-keeps features apart from the type objects, so declaring one does not
-make the type exist) and merges in when register_post_type arrives.
+Adds a feature to a type, registered or not: the reference keeps
+features apart from the type objects, so declaring one does not make
+the type exist. A feature with arguments keeps all of them.
+
+- `@param list<mixed> $args`
 
 ### `removeSupport(string $type, string $feature): void`
 
 Removes a feature from a post type.
 
+### `removeSupports(string $type): void`
+
+Removes every feature of a post type.
+
 ### `supports(string $type): array`
 
 The features a post type supports.
 
-- `@return array<string, mixed> the features a type supports, registered or declared ahead`
+- `@return array<string, mixed> feature => true or the arguments given`
 
-### `registerTaxonomy(string $name, array $objectTypes, array $args): array`
+### `defaultLabels(string $plain, string $hierarchical): array`
 
-Registers a taxonomy with the reference's defaults filled in.
+The default labels of a family as label => [the plain one's, the
+hierarchical one's]: post and page for types, tag and category for
+taxonomies, from the built-in data (WP_Post_Type::get_default_labels).
 
-- `@param list<string> $objectTypes @param array<string, mixed> $args`
+- `@return array<string, array{0: mixed, 1: mixed}>`
+
+### `adoptTaxonomy(WP_Taxonomy $object): array`
+
+Takes a built taxonomy as the registered one, the object every reader
+shares, its properties the taxonomy's row.
+
+- `@return array<string, mixed>`
 
 ### static `settlesRewrites(): bool`
 
@@ -3753,7 +3772,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsAtRegistration()` (private, line 255), `supportsFrom()` (private, line 266), `derivedLabels()` (private, line 331)
+Internals: `rowOf()` (private, line 190), `objectFrom()` (private, line 212), `derivedLabels()` (private, line 276)
 
 
 ## RewriteRules
@@ -5079,6 +5098,41 @@ in the list for the walker (or the orphans) to place.
 - `@param array<int|string, mixed> $children`
 
 Internals: `buckets()` (private, line 162), `alone()` (private, line 179), `orphans()` (private, line 186)
+
+
+## TypeProps
+
+`final class Minn\Runtime\TypeProps` · `public/minn/src/Minn/Runtime/TypeProps.php`
+
+A post type's or taxonomy's properties from the arguments it was built
+with, as WP_Post_Type::set_props and WP_Taxonomy::set_props fill them
+(probe type-object-methods): the reference's defaults where an argument
+is missing, a given value kept as given.
+
+### static `postType(string $name, array $args): array`
+
+A post type's properties from its arguments (probe type-object-methods):
+the reference's defaults where an argument is missing, a given value
+kept as given. The labels are the type's own; get_post_type_labels
+makes them whole on the object.
+
+- `@param array<string, mixed> $args`
+- `@return array<string, mixed>`
+
+### static `taxonomy(string $name, array $objectTypes, array $args): array`
+
+A taxonomy's properties from the types it belongs to and its
+arguments (probe type-object-methods): the reference's defaults where
+an argument is missing, a given value kept as given. The meta box is
+the category checklist for a hierarchical taxonomy and the tag box for
+any other; its input is read as checkboxes for the checklist and as
+text otherwise. A default term gets a name, slug and description.
+
+- `@param list<mixed> $objectTypes`
+- `@param array<string, mixed> $args`
+- `@return array<string, mixed>`
+
+Internals: `typeRewrite()` (private, line 81), `taxonomyRewrite()` (private, line 153)
 
 
 ## UpdateCounts

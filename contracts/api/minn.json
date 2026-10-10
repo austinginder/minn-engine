@@ -128008,7 +128008,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 552,
+            "lines": 465,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -128022,7 +128022,8 @@
                 "Minn\\Rest\\StatusesController",
                 "Minn\\Runtime\\QueriedObject",
                 "Minn\\Runtime\\QueryFlags",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TypeProps"
             ],
             "constructor": {
                 "signature": "__construct(string $engineDir)",
@@ -128039,7 +128040,7 @@
                 ],
                 "visibility": "public",
                 "line": 37,
-                "end": 51
+                "end": 52
             },
             "cases": [],
             "constants": [],
@@ -128090,7 +128091,7 @@
                     "promoted": false
                 },
                 {
-                    "name": "pendingSupports",
+                    "name": "features",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -128129,8 +128130,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 58,
-                    "end": 61
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -128149,8 +128150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 65,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -128163,8 +128164,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 74,
-                    "end": 77
+                    "line": 75,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -128183,8 +128184,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 83
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -128195,8 +128196,8 @@
                     "doc": "Makes the one object for each registered type and taxonomy and binds\n$wp_post_types and $wp_taxonomies to them, as the reference shares\nthem: a plugin changing one (relabelling Posts) is heard by every\nreader (probe type-object-sharing). Called once the facade classes\nexist; later registrations make their own.",
                     "shapes": [],
                     "params": [],
-                    "line": 92,
-                    "end": 102
+                    "line": 93,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -128215,8 +128216,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 111
+                    "line": 107,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -128229,8 +128230,8 @@
                         "@return array<string, \\WP_Post_Type>"
                     ],
                     "params": [],
-                    "line": 118,
-                    "end": 125
+                    "line": 120,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -128249,8 +128250,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 134
+                    "line": 130,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -128263,8 +128264,8 @@
                         "@return array<string, \\WP_Taxonomy>"
                     ],
                     "params": [],
-                    "line": 141,
-                    "end": 148
+                    "line": 143,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -128277,8 +128278,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 155,
-                    "end": 158
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -128297,37 +128298,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
-                    "name": "registerPostType",
+                    "name": "adoptPostType",
                     "static": false,
                     "visibility": "public",
-                    "signature": "registerPostType(string $name, array $args): array",
-                    "doc": "Registers a post type with the reference's defaults filled in.",
+                    "signature": "adoptPostType(WP_Post_Type $object): array",
+                    "doc": "Takes a built post type as the registered one: the object\nregister_post_type made is the one every reader shares, and its\nproperties are the type's row. Registering again puts a new object in\nthe old one's place, as on the reference.",
                     "shapes": [
-                        "@param array<string, mixed> $args"
+                        "@return array<string, mixed>"
                     ],
                     "params": [
                         {
-                            "name": "name",
-                            "type": "string",
+                            "name": "object",
+                            "type": "WP_Post_Type",
                             "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 244
+                    "line": 176,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -128370,8 +128364,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 302
+                    "line": 238,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -128414,8 +128408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 320
+                    "line": 258,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -128451,8 +128445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 385
+                    "line": 301,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -128471,8 +128465,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 398
+                    "line": 333,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -128480,8 +128474,10 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "addSupport(string $type, string $feature, array $args): void",
-                    "doc": "Support declared before the type registers waits aside (the reference\nkeeps features apart from the type objects, so declaring one does not\nmake the type exist) and merges in when register_post_type arrives.",
-                    "shapes": [],
+                    "doc": "Adds a feature to a type, registered or not: the reference keeps\nfeatures apart from the type objects, so declaring one does not make\nthe type exist. A feature with arguments keeps all of them.",
+                    "shapes": [
+                        "@param list<mixed> $args"
+                    ],
                     "params": [
                         {
                             "name": "type",
@@ -128500,13 +128496,13 @@
                         {
                             "name": "args",
                             "type": "array",
-                            "shape": "",
+                            "shape": "list<mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 405,
-                    "end": 413
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -128532,8 +128528,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 419
+                    "line": 355,
+                    "end": 358
+                },
+                {
+                    "routes": [],
+                    "name": "removeSupports",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "removeSupports(string $type): void",
+                    "doc": "Removes every feature of a post type.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -128543,7 +128559,7 @@
                     "signature": "supports(string $type): array",
                     "doc": "The features a post type supports.",
                     "shapes": [
-                        "@return array<string, mixed> the features a type supports, registered or declared ahead"
+                        "@return array<string, mixed> feature => true or the arguments given"
                     ],
                     "params": [
                         {
@@ -128554,44 +128570,59 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 429
+                    "line": 371,
+                    "end": 374
                 },
                 {
                     "routes": [],
-                    "name": "registerTaxonomy",
+                    "name": "defaultLabels",
                     "static": false,
                     "visibility": "public",
-                    "signature": "registerTaxonomy(string $name, array $objectTypes, array $args): array",
-                    "doc": "Registers a taxonomy with the reference's defaults filled in.",
+                    "signature": "defaultLabels(string $plain, string $hierarchical): array",
+                    "doc": "The default labels of a family as label => [the plain one's, the\nhierarchical one's]: post and page for types, tag and category for\ntaxonomies, from the built-in data (WP_Post_Type::get_default_labels).",
                     "shapes": [
-                        "@param list<string> $objectTypes @param array<string, mixed> $args"
+                        "@return array<string, array{0: mixed, 1: mixed}>"
                     ],
                     "params": [
                         {
-                            "name": "name",
+                            "name": "plain",
                             "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "objectTypes",
-                            "type": "array",
-                            "shape": "list<string>",
-                            "default": null,
-                            "doc": "@param array<string, mixed> $args"
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
+                            "name": "hierarchical",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 492
+                    "line": 383,
+                    "end": 391
+                },
+                {
+                    "routes": [],
+                    "name": "adoptTaxonomy",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "adoptTaxonomy(WP_Taxonomy $object): array",
+                    "doc": "Takes a built taxonomy as the registered one, the object every reader\nshares, its properties the taxonomy's row.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Taxonomy",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 399,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -128602,8 +128633,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 495,
-                    "end": 498
+                    "line": 408,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -128622,8 +128653,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 501,
-                    "end": 508
+                    "line": 414,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -128649,8 +128680,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 511,
-                    "end": 524
+                    "line": 424,
+                    "end": 437
                 },
                 {
                     "routes": [],
@@ -128676,8 +128707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 527,
-                    "end": 537
+                    "line": 440,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -128705,60 +128736,67 @@
                             "doc": ""
                         }
                     ],
-                    "line": 544,
-                    "end": 566
+                    "line": 457,
+                    "end": 479
                 },
                 {
                     "routes": [],
-                    "name": "supportsAtRegistration",
+                    "name": "rowOf",
                     "static": true,
                     "visibility": "private",
-                    "signature": "supportsAtRegistration(array $args, array $pending): array",
-                    "doc": "The features a type has once registered: those declared ahead first,\nthen its own (title and editor when it names none, nothing for\nfalse), and autosave wherever there is an editor (probe\nrest-registry-controllers).",
+                    "signature": "rowOf(object $object, array $without): array",
+                    "doc": "An object's properties as a row, its labels and capabilities as arrays.",
                     "shapes": [
-                        "@param array<string, mixed> $pending",
+                        "@param list<string> $without",
                         "@return array<string, mixed>"
                     ],
                     "params": [
                         {
-                            "name": "args",
-                            "type": "array",
+                            "name": "object",
+                            "type": "object",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         },
                         {
-                            "name": "pending",
+                            "name": "without",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 190,
+                    "end": 199
+                },
+                {
+                    "routes": [],
+                    "name": "objectFrom",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "objectFrom(string $class, array $row): object",
+                    "doc": "An object of the class holding a row as registration left it, without\nbuilding it again (no filters, no defaults): the built-in types and\ntaxonomies. A built-in type's supports were taken in, so its object\nhas none of its own.",
+                    "shapes": [
+                        "@param array<string, mixed> $row"
+                    ],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "class-string<T>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "row",
                             "type": "array",
                             "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 263
-                },
-                {
-                    "routes": [],
-                    "name": "supportsFrom",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "supportsFrom(array $supports): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array<string, mixed> feature => true or the arguments given"
-                    ],
-                    "params": [
-                        {
-                            "name": "supports",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 266,
-                    "end": 277
+                    "line": 212,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -128794,8 +128832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 346
+                    "line": 276,
+                    "end": 291
                 }
             ]
         },
@@ -136095,6 +136133,156 @@
                     ],
                     "line": 186,
                     "end": 193
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TypeProps",
+            "short": "TypeProps",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TypeProps.php",
+            "lines": 150,
+            "doc": "A post type's or taxonomy's properties from the arguments it was built\nwith, as WP_Post_Type::set_props and WP_Taxonomy::set_props fill them\n(probe type-object-methods): the reference's defaults where an argument\nis missing, a given value kept as given.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Registry"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "postType",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postType(string $name, array $args): array",
+                    "doc": "A post type's properties from its arguments (probe type-object-methods):\nthe reference's defaults where an argument is missing, a given value\nkept as given. The labels are the type's own; get_post_type_labels\nmakes them whole on the object.",
+                    "shapes": [
+                        "@param array<string, mixed> $args",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "taxonomy(string $name, array $objectTypes, array $args): array",
+                    "doc": "A taxonomy's properties from the types it belongs to and its\narguments (probe type-object-methods): the reference's defaults where\nan argument is missing, a given value kept as given. The meta box is\nthe category checklist for a hierarchical taxonomy and the tag box for\nany other; its input is read as checkboxes for the checklist and as\ntext otherwise. A default term gets a name, slug and description.",
+                    "shapes": [
+                        "@param list<mixed> $objectTypes",
+                        "@param array<string, mixed> $args",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectTypes",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 146
+                },
+                {
+                    "routes": [],
+                    "name": "typeRewrite",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "typeRewrite(string $name, mixed $rewrite, mixed $hasArchive): mixed",
+                    "doc": "A type's rewrite settles into its full form, public or not; feeds only where there is an archive (probe registry-rewrites).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rewrite",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "hasArchive",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "taxonomyRewrite",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "taxonomyRewrite(string $name, mixed $rewrite): mixed",
+                    "doc": "A taxonomy's rewrite settles, whether queryable or not, the given keys\nmerged over the defaults; a rewrite of true leaves an empty \"0\" entry\nbehind, as the reference's merge does (probe registry-rewrites).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rewrite",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 153,
+                    "end": 161
                 }
             ]
         },

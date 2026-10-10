@@ -1928,23 +1928,14 @@ function register_post_type($post_type, $args = [])
         _doing_it_wrong(__FUNCTION__, 'Post type names must be between 1 and 20 characters in length.', '4.2.0');
         return new WP_Error('post_type_length_invalid', 'Post type names must be between 1 and 20 characters in length.');
     }
-    $args = apply_filters('register_post_type_args', (array) $args, $post_type);
-    $row = Runtime::registry()->registerPostType($post_type, $args);
-    // A viewable type's own var is one the request parse reads (probe cpt-rules).
-    $var = $row['query_var'] ?? false;
-    if (is_string($var) && $var !== '' && !empty($row['publicly_queryable'])) {
-        _minn_rewrite();
-        $GLOBALS['wp']->add_query_var($var);
-    }
-    if (is_array($row['rewrite']) && Registry::settlesRewrites()) {
-        // Its archive, tag and address pattern, under the front of the structure at the time unless it opts out (probes registry-rewrites, rewrite-generate, cpt-rules).
-        foreach (Minn\Runtime\RewriteRules::typeArchive(_minn_rewrite(), $post_type, $row) as $regex => $query) {
-            add_rewrite_rule($regex, $query, 'top');
-        }
-        add_rewrite_tag("%{$post_type}%", empty($row['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "post_type={$post_type}&" . (empty($row['hierarchical']) ? 'name=' : 'pagename='));
-        add_permastruct($post_type, "{$row['rewrite']['slug']}/%{$post_type}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask'], 'feed' => $row['rewrite']['feeds']]);
-    }
-    $object = Runtime::registry()->postTypeObject($post_type);
+    // The object does each step itself, in the reference's order (probe type-object-methods).
+    $object = new WP_Post_Type($post_type, $args);
+    $object->add_supports();
+    $object->add_rewrite_rules();
+    $object->register_meta_boxes();
+    Runtime::registry()->adoptPostType($object);
+    $object->add_hooks();
+    $object->register_taxonomies();
     do_action('registered_post_type', $post_type, $object);
     do_action("registered_post_type_{$post_type}", $post_type, $object);
     return $object;
@@ -1959,15 +1950,12 @@ function unregister_post_type($post_type)
     if ($object->_builtin) {
         return new WP_Error('invalid_post_type', 'Unregistering a built-in post type is not allowed');
     }
-    $row = Runtime::registry()->postType((string) $post_type) ?? [];
+    $object->remove_supports();
+    $object->remove_rewrite_rules();
+    $object->unregister_meta_boxes();
+    $object->remove_hooks();
+    $object->unregister_taxonomies();
     Runtime::registry()->unregisterPostType((string) $post_type);
-    remove_permastruct((string) $post_type);
-    foreach (Minn\Runtime\RewriteRules::typeArchive(_minn_rewrite(), (string) $post_type, $row) as $regex => $query) {
-        unset(_minn_rewrite()->extra_rules_top[$regex]);
-    }
-    if (is_string($row['query_var'] ?? false)) {
-        $GLOBALS['wp']->remove_query_var($row['query_var']);
-    }
     do_action('unregistered_post_type', $post_type);
     return true;
 }
@@ -2017,7 +2005,7 @@ function get_post_types_by_support($feature, $operator = 'and')
     $features = (array) $feature;
     $out = [];
     foreach (Runtime::registry()->postTypes() as $name => $row) {
-        $supports = array_keys($row['supports'] ?? []);
+        $supports = array_keys(Runtime::registry()->supports((string) $name));
         $matches = count(array_intersect($features, $supports));
         if (($operator === 'and' && $matches === count($features)) || ($operator === 'or' && $matches > 0) || ($operator === 'not' && $matches === 0)) {
             $out[] = $name;

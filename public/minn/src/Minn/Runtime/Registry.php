@@ -26,8 +26,8 @@ final class Registry
     /** @var list<string> */
     public readonly array $publicQueryVars;
 
-    /** @var array<string, array<string, mixed>> features declared for types not yet registered */
-    private array $pendingSupports = [];
+    /** @var array<string, array<string, mixed>> each type's features, registered or not, as $_wp_post_type_features holds them */
+    private array $features = [];
 
     /** @var array<string, \WP_Post_Type> the one object per registered type, as $wp_post_types holds it */
     private array $postTypeObjects = [];
@@ -38,10 +38,11 @@ final class Registry
     {
         $data = Json::file($engineDir . '/data/registry.json') ?: [];
         $this->postTypes = $data['post_types'] ?? [];
-        foreach ($this->postTypes as &$type) {
-            if (isset($type['supports']) && array_is_list($type['supports'])) {
-                $type['supports'] = array_fill_keys($type['supports'], true);
+        foreach ($this->postTypes as $name => &$type) {
+            if (isset($type['supports'])) {
+                $this->features[$name] = array_is_list($type['supports']) ? array_fill_keys($type['supports'], true) : $type['supports'];
             }
+            unset($type['supports']);
         }
         unset($type);
         $this->taxonomies = $data['taxonomies'] ?? [];
@@ -99,6 +100,7 @@ final class Registry
         }
         $GLOBALS['wp_post_types'] = &$this->postTypeObjects;
         $GLOBALS['wp_taxonomies'] = &$this->taxonomyObjects;
+        $GLOBALS['_wp_post_type_features'] = &$this->features;
     }
 
     /** The one object for a registered post type, or null. */
@@ -107,7 +109,7 @@ final class Registry
         if (!isset($this->postTypes[$name])) {
             return null;
         }
-        return $this->postTypeObjects[$name] ??= new \WP_Post_Type($name, $this->postTypes[$name]);
+        return $this->postTypeObjects[$name] ??= self::objectFrom(\WP_Post_Type::class, $this->postTypes[$name]);
     }
 
     /**
@@ -130,7 +132,7 @@ final class Registry
         if (!isset($this->taxonomies[$name])) {
             return null;
         }
-        return $this->taxonomyObjects[$name] ??= new \WP_Taxonomy($name, [], $this->taxonomies[$name]);
+        return $this->taxonomyObjects[$name] ??= self::objectFrom(\WP_Taxonomy::class, $this->taxonomies[$name]);
     }
 
     /**
@@ -164,116 +166,59 @@ final class Registry
     }
 
     /**
-     * Registers a post type with the reference's defaults filled in.
+     * Takes a built post type as the registered one: the object
+     * register_post_type made is the one every reader shares, and its
+     * properties are the type's row. Registering again puts a new object in
+     * the old one's place, as on the reference.
      *
-     * @param array<string, mixed> $args
+     * @return array<string, mixed>
      */
-    public function registerPostType(string $name, array $args): array
+    public function adoptPostType(\WP_Post_Type $object): array
     {
-        $label = (string) ($args['label'] ?? ($args['labels']['name'] ?? $name));
-        $labels = $this->labels((array) ($args['labels'] ?? []), $label, empty($args['hierarchical']) ? 'post' : 'page', $name);
-        $public = (bool) ($args['public'] ?? false);
-        $capabilityType = $args['capability_type'] ?? 'post';
-        // Meta capabilities are mapped by default only for the post and page families (probe rest-plugin-caps).
-        $mapMetaCap = (bool) ($args['map_meta_cap'] ?? in_array($capabilityType, ['post', 'page'], true));
-        $hasArchive = $args['has_archive'] ?? false;
-        $publiclyQueryable = (bool) ($args['publicly_queryable'] ?? $public);
-        $showUi = (bool) ($args['show_ui'] ?? $public);
-        $showInMenu = $args['show_in_menu'] ?? $showUi;
-        // A rewrite settles into its full form, public or not; feeds only where there is an archive (probe registry-rewrites).
-        $rewrite = $args['rewrite'] ?? true;
-        if ($rewrite !== false && self::settlesRewrites()) {
-            $rewrite = is_array($rewrite) ? $rewrite : [];
-            $rewrite += ['slug' => $name, 'with_front' => true, 'pages' => true, 'feeds' => (bool) $hasArchive, 'ep_mask' => 1];
-            if (!$hasArchive) {
-                $rewrite['feeds'] = false;
-            }
-        }
-        $type = [
-            'name' => $name,
-            'label' => $label,
-            'labels' => $labels,
-            'description' => (string) ($args['description'] ?? ''),
-            'public' => $public,
-            'hierarchical' => (bool) ($args['hierarchical'] ?? false),
-            'exclude_from_search' => (bool) ($args['exclude_from_search'] ?? !$public),
-            'publicly_queryable' => $publiclyQueryable,
-            'embeddable' => (bool) ($args['embeddable'] ?? $publiclyQueryable),
-            'show_ui' => $showUi,
-            'show_in_menu' => $showInMenu,
-            'show_in_nav_menus' => (bool) ($args['show_in_nav_menus'] ?? $public),
-            'show_in_admin_bar' => (bool) ($args['show_in_admin_bar'] ?? (bool) $showInMenu),
-            'menu_position' => $args['menu_position'] ?? null,
-            'menu_icon' => $args['menu_icon'] ?? null,
-            'capability_type' => $capabilityType,
-            'map_meta_cap' => $mapMetaCap,
-            'taxonomies' => array_values(array_map('strval', (array) ($args['taxonomies'] ?? []))),
-            'has_archive' => $hasArchive,
-            'query_var' => $args['query_var'] ?? true,
-            'can_export' => (bool) ($args['can_export'] ?? true),
-            'delete_with_user' => $args['delete_with_user'] ?? null,
-            'template' => (array) ($args['template'] ?? []),
-            'template_lock' => $args['template_lock'] ?? false,
-            '_builtin' => false,
-            '_edit_link' => (string) ($args['_edit_link'] ?? 'post.php?post=%d'),
-            'cap' => self::capabilities($capabilityType, (array) ($args['capabilities'] ?? []), $mapMetaCap),
-            'rewrite' => $rewrite,
-            'show_in_rest' => (bool) ($args['show_in_rest'] ?? false),
-            'rest_base' => $args['rest_base'] ?? false,
-            // A type hidden from REST has no namespace unless it names one (probe rest-registry-controllers).
-            'rest_namespace' => $args['rest_namespace'] ?? ((bool) ($args['show_in_rest'] ?? false) ? 'wp/v2' : false),
-            'rest_controller_class' => $args['rest_controller_class'] ?? false,
-            'revisions_rest_controller_class' => $args['revisions_rest_controller_class'] ?? false,
-            'autosave_rest_controller_class' => $args['autosave_rest_controller_class'] ?? false,
-            'late_route_registration' => (bool) ($args['late_route_registration'] ?? false),
-            'supports' => self::supportsAtRegistration($args, $this->pendingSupports[$name] ?? []),
-        ];
-        if ($type['query_var'] === true) {
-            $type['query_var'] = $name;
-        }
-        unset($this->pendingSupports[$name]);
-        $this->postTypes[$name] = $type;
-        // Registering again makes a new object in the old one's place, as on the reference.
-        if (class_exists(\WP_Post_Type::class, false)) {
-            $this->postTypeObjects[$name] = new \WP_Post_Type($name, $type);
-        }
-        foreach ($type['taxonomies'] as $taxonomy) {
-            $this->addObjectType($taxonomy, $name);
-        }
-        return $type;
+        $name = (string) $object->name;
+        $this->postTypes[$name] = self::rowOf($object, ['supports', 'rest_controller', 'revisions_rest_controller', 'autosave_rest_controller']);
+        $this->postTypeObjects[$name] = $object;
+        return $this->postTypes[$name];
     }
 
     /**
-     * The features a type has once registered: those declared ahead first,
-     * then its own (title and editor when it names none, nothing for
-     * false), and autosave wherever there is an editor (probe
-     * rest-registry-controllers).
+     * An object's properties as a row, its labels and capabilities as arrays.
      *
-     * @param array<string, mixed> $pending
+     * @param list<string> $without
      * @return array<string, mixed>
      */
-    private static function supportsAtRegistration(array $args, array $pending): array
+    private static function rowOf(object $object, array $without): array
     {
-        $own = !array_key_exists('supports', $args) ? ['title' => true, 'editor' => true] : ($args['supports'] === false ? [] : self::supportsFrom((array) $args['supports']));
-        $supports = $pending + $own;
-        if (isset($supports['editor']) && !isset($supports['autosave'])) {
-            $supports['autosave'] = true;
-        }
-        return $supports;
-    }
-
-    /** @return array<string, mixed> feature => true or the arguments given */
-    private static function supportsFrom(array $supports): array
-    {
-        $out = [];
-        foreach ($supports as $key => $value) {
-            if (is_array($value)) {
-                $out[(string) $key] = [$value];
-            } else {
-                $out[(string) $value] = true;
+        $row = array_diff_key(get_object_vars($object), array_flip($without));
+        foreach (['labels', 'cap'] as $key) {
+            if (is_object($row[$key] ?? null)) {
+                $row[$key] = get_object_vars($row[$key]);
             }
         }
-        return $out;
+        return $row;
+    }
+
+    /**
+     * An object of the class holding a row as registration left it, without
+     * building it again (no filters, no defaults): the built-in types and
+     * taxonomies. A built-in type's supports were taken in, so its object
+     * has none of its own.
+     *
+     * @template T of object
+     * @param class-string<T> $class
+     * @param array<string, mixed> $row
+     * @return T
+     */
+    private static function objectFrom(string $class, array $row): object
+    {
+        $object = (new \ReflectionClass($class))->newInstanceWithoutConstructor();
+        foreach ($row as $key => $value) {
+            $object->{$key} = in_array($key, ['labels', 'cap'], true) ? (object) $value : $value;
+        }
+        if ($object instanceof \WP_Post_Type) {
+            unset($object->supports);
+        }
+        return $object;
     }
 
     /** @param array<string, string> $overrides */
@@ -391,104 +336,72 @@ final class Registry
             return false;
         }
         unset($this->postTypes[$name], $this->postTypeObjects[$name]);
-        foreach ($this->taxonomies as &$taxonomy) {
-            $taxonomy['object_type'] = array_values(array_diff($taxonomy['object_type'], [$name]));
-        }
         return true;
     }
 
     /**
-     * Support declared before the type registers waits aside (the reference
-     * keeps features apart from the type objects, so declaring one does not
-     * make the type exist) and merges in when register_post_type arrives.
+     * Adds a feature to a type, registered or not: the reference keeps
+     * features apart from the type objects, so declaring one does not make
+     * the type exist. A feature with arguments keeps all of them.
+     *
+     * @param list<mixed> $args
      */
     public function addSupport(string $type, string $feature, array $args): void
     {
-        $value = $args === [] ? true : [$args[0] ?? $args];
-        if (!isset($this->postTypes[$type])) {
-            $this->pendingSupports[$type][$feature] = $value;
-            return;
-        }
-        $this->postTypes[$type]['supports'][$feature] = $value;
+        $this->features[$type][$feature] = $args === [] ? true : $args;
     }
 
     /** Removes a feature from a post type. */
     public function removeSupport(string $type, string $feature): void
     {
-        unset($this->postTypes[$type]['supports'][$feature], $this->pendingSupports[$type][$feature]);
+        unset($this->features[$type][$feature]);
+    }
+
+    /** Removes every feature of a post type. */
+    public function removeSupports(string $type): void
+    {
+        unset($this->features[$type]);
     }
 
     /**
      * The features a post type supports.
      *
-     * @return array<string, mixed> the features a type supports, registered or declared ahead
+     * @return array<string, mixed> feature => true or the arguments given
      */
     public function supports(string $type): array
     {
-        return ($this->postTypes[$type]['supports'] ?? []) + ($this->pendingSupports[$type] ?? []);
+        return $this->features[$type] ?? [];
     }
 
     /**
-     * Registers a taxonomy with the reference's defaults filled in.
+     * The default labels of a family as label => [the plain one's, the
+     * hierarchical one's]: post and page for types, tag and category for
+     * taxonomies, from the built-in data (WP_Post_Type::get_default_labels).
      *
-     * @param list<string> $objectTypes @param array<string, mixed> $args
+     * @return array<string, array{0: mixed, 1: mixed}>
      */
-    public function registerTaxonomy(string $name, array $objectTypes, array $args): array
+    public function defaultLabels(string $plain, string $hierarchical): array
     {
-        $hierarchical = (bool) ($args['hierarchical'] ?? false);
-        // A taxonomy registered with no label takes the category or tag labels (probe taxonomy-remaining).
-        $labels = $this->taxonomyLabels((array) ($args['labels'] ?? []), isset($args['label']) ? (string) $args['label'] : null, $hierarchical ? 'category' : 'post_tag', $name);
-        $label = (string) $labels['name'];
-        $public = (bool) ($args['public'] ?? true);
-        $publiclyQueryable = (bool) ($args['publicly_queryable'] ?? $public);
-        $showUi = (bool) ($args['show_ui'] ?? $public);
-        // Settled whether queryable or not, the given keys merged over the defaults; a rewrite of true leaves an
-        // empty "0" entry behind, as the reference's merge does (probe registry-rewrites).
-        $rewrite = $args['rewrite'] ?? true;
-        if ($rewrite !== false && self::settlesRewrites()) {
-            $rewrite = array_merge(['with_front' => true, 'hierarchical' => false, 'ep_mask' => 0], is_array($rewrite) ? $rewrite : ['']);
-            $rewrite['slug'] ??= $name;
+        $rows = isset($this->postTypes[$plain]) ? $this->postTypes : $this->taxonomies;
+        $labels = [];
+        foreach (array_diff_key((array) ($rows[$plain]['labels'] ?? []), ['menu_name' => true, 'name_admin_bar' => true, 'template_name' => true]) as $key => $value) {
+            $labels[$key] = [$value, $rows[$hierarchical]['labels'][$key] ?? null];
         }
-        $caps = ['manage_terms' => 'manage_categories', 'edit_terms' => 'manage_categories', 'delete_terms' => 'manage_categories', 'assign_terms' => 'edit_posts'];
-        foreach ((array) ($args['capabilities'] ?? []) as $key => $value) {
-            $caps[$key] = $value;
-        }
-        $taxonomy = [
-            'name' => $name,
-            'label' => $label,
-            'labels' => $labels,
-            'description' => (string) ($args['description'] ?? ''),
-            'public' => $public,
-            'publicly_queryable' => $publiclyQueryable,
-            'hierarchical' => $hierarchical,
-            'show_ui' => $showUi,
-            'show_in_menu' => (bool) ($args['show_in_menu'] ?? $showUi),
-            'show_in_nav_menus' => (bool) ($args['show_in_nav_menus'] ?? $public),
-            'show_tagcloud' => (bool) ($args['show_tagcloud'] ?? $showUi),
-            'show_in_quick_edit' => (bool) ($args['show_in_quick_edit'] ?? $showUi),
-            'show_admin_column' => (bool) ($args['show_admin_column'] ?? false),
-            'object_type' => array_values(array_map('strval', $objectTypes)),
-            'cap' => $caps,
-            'rewrite' => $rewrite,
-            'query_var' => $publiclyQueryable ? ($args['query_var'] ?? true) : false,
-            'show_in_rest' => (bool) ($args['show_in_rest'] ?? false),
-            'rest_base' => $args['rest_base'] ?? false,
-            // A taxonomy hidden from REST has no namespace unless it names one (probe rest-registry-controllers).
-            'rest_namespace' => $args['rest_namespace'] ?? ((bool) ($args['show_in_rest'] ?? false) ? 'wp/v2' : false),
-            'rest_controller_class' => $args['rest_controller_class'] ?? false,
-            'default_term' => $args['default_term'] ?? null,
-            'sort' => $args['sort'] ?? null,
-            'args' => $args['args'] ?? null,
-            '_builtin' => false,
-        ];
-        if ($taxonomy['query_var'] === true) {
-            $taxonomy['query_var'] = $name;
-        }
-        $this->taxonomies[$name] = $taxonomy;
-        if (class_exists(\WP_Taxonomy::class, false)) {
-            $this->taxonomyObjects[$name] = new \WP_Taxonomy($name, [], $taxonomy);
-        }
-        return $taxonomy;
+        return $labels;
+    }
+
+    /**
+     * Takes a built taxonomy as the registered one, the object every reader
+     * shares, its properties the taxonomy's row.
+     *
+     * @return array<string, mixed>
+     */
+    public function adoptTaxonomy(\WP_Taxonomy $object): array
+    {
+        $name = (string) $object->name;
+        $this->taxonomies[$name] = self::rowOf($object, ['rest_controller']);
+        $this->taxonomyObjects[$name] = $object;
+        return $this->taxonomies[$name];
     }
 
     /** Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given. */

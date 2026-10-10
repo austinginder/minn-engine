@@ -11270,3 +11270,74 @@ The probe removes its files, its user and every cached answer it made.
 Left: `/wp-block-editor/v1/export` and `/navigation-fallback` are still
 not served, so that namespace's index lists only url-details. The root
 index still differs from the reference in its namespaces (as before).
+
+## Post type and taxonomy objects doing their own setup (2026-10-10)
+
+Probe `type-object-methods` proves the rest of `WP_Post_Type` and
+`WP_Taxonomy`: 17 methods were missing, and three more answered null.
+Both classes are built directly, as a plugin would, with a range of
+arguments (none, public, hierarchical with its own rewrite and query var,
+its own capability type, shown in the admin only, built in, filtered, a
+query string). Then each step of a registration is called on its own and
+undone again: supports, rewrite rules, meta box callbacks, hooks,
+taxonomies for a type, REST controllers and default labels. Nothing is
+flushed or saved.
+
+- **One path.** `register_post_type` builds the object and has it do each
+  step in the reference's order: supports, rewrite rules, meta boxes, then
+  it becomes the registered type (`Registry::adoptPostType`), then hooks
+  and taxonomies. `unregister_post_type` has it undo them, and
+  `register_taxonomy` and `unregister_taxonomy` do the same.
+  - Before this, a type's object was made from the registry's row and its
+    REST controller getters answered null. Building one with arguments
+    ignored them.
+  - Built-in types and taxonomies are made from their rows without being
+    built again.
+- **Properties** (`Runtime\TypeProps`). The reference's defaults fill in
+  missing arguments. Given values are kept as given: `public=1` stays
+  `"1"`, where the engine used to cast every flag.
+  - `register_post_type_args` and `register_{$name}_post_type_args` run
+    on every build (the taxonomy pair too), not only on registration.
+  - Labels go through `get_post_type_labels` (and so its filter), and
+    `label` is their name. A type with no label of its own takes the post
+    or page labels, not its name.
+  - An array capability type keeps its singular name.
+  - A type kept out of the admin has an empty `_edit_link`.
+  - A taxonomy's meta box is the category checklist when hierarchical and
+    the tag box otherwise. Its input is read as checkboxes for the
+    checklist and as text otherwise.
+  - A taxonomy's default term gets a name, slug and description.
+  - Only `false` keeps a taxonomy's query var out: a given "0" still has
+    one.
+- **Supports** now live apart from the types, for registered types and
+  others alike, and are shared as `$_wp_post_type_features`.
+  - `add_supports` adds the type's own (title and editor when it names
+    none, nothing for false), then autosave wherever there is an editor,
+    including one declared before registration. It then drops the
+    object's own list.
+  - A feature with arguments keeps all of them (`['a', 'b']`). The engine
+    used to keep only the first.
+  - Unregistering removes them.
+- **Rewrite rules.** A type adds its query var when publicly queryable,
+  and its tag, permastruct and archive rules when its rewrite is settled,
+  public or not. Removing them takes the tag too, which unregistering
+  used to leave behind. A taxonomy does the same without archive rules.
+- **Hooks.**
+  - A type's meta box callback goes on `add_meta_boxes_{$name}`, callable
+    or not.
+  - A type hooks `_future_post_hook` at 5 on `future_{$name}`, so its
+    scheduled posts are published.
+  - A taxonomy, any taxonomy, adds `_wp_ajax_add_hierarchical_term` on
+    `wp_ajax_add-{$name}`.
+- **Taxonomies for a type** link only to a registered type. Unlinking
+  takes every taxonomy linked to the type, not only those it named.
+- **REST controllers** are made once, and only for a type shown in REST
+  whose class exists and is a REST controller.
+  - Revisions need revision support, and autosaves need autosave support.
+  - A taxonomy's controller defaults to the terms controller.
+- **Default labels** are label => [plain, hierarchical] pairs from the
+  built-in post/page and tag/category data, kept until
+  `reset_default_labels`.
+
+Left: a taxonomy's default term is not yet created when it registers (the
+reference adds the term and its `default_term_{$taxonomy}` option).
