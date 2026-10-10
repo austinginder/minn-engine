@@ -85,14 +85,43 @@ final class WidgetAreas
         return (string) ob_get_clean();
     }
 
-    /** retrieve_widgets: the sidebars, every registered one present (empty when it holds none). @return array<string, list<string>> */
-    public static function retrieve(): array
+    /**
+     * retrieve_widgets (probe widgets-remaining): the inactive list, then every
+     * registered sidebar, holding only widgets that are registered. The
+     * inactive list takes, in order, the registered widgets no list mentions
+     * (the -1 placeholders aside, in the order they were registered), the
+     * widgets already inactive, and the widgets of sidebars no longer
+     * registered, which go.
+     *
+     * @param array<string, mixed> $stored the stored lists, sidebar => widget ids
+     * @param list<string> $areas the registered sidebars
+     * @param list<string> $registered the registered widgets
+     * @return array<string, list<string>>
+     */
+    public static function retrieve(array $stored, array $areas, array $registered): array
     {
-        $sidebars = \wp_get_sidebars_widgets();
-        $sidebars += [self::INACTIVE => []];
-        foreach (array_keys($GLOBALS['wp_registered_sidebars'] ?? []) as $id) {
-            $sidebars[$id] ??= [];
+        $known = array_flip($registered);
+        $keep = static fn ($ids): array => array_values(array_filter((array) $ids, static fn ($id) => is_string($id) && isset($known[$id])));
+        $sidebars = [self::INACTIVE => []];
+        foreach ($areas as $id) {
+            $sidebars[$id] = $keep($stored[$id] ?? []);
         }
+        $gone = array_diff_key(array_filter($stored, 'is_array'), $sidebars);
+        $inactive = array_merge(self::unmentioned($stored, $registered), $keep($stored[self::INACTIVE] ?? []), ...array_map($keep, array_values($gone)));
+        $sidebars[self::INACTIVE] = array_values(array_unique($inactive));
         return $sidebars;
+    }
+
+    /**
+     * Registered widgets no stored list mentions, the -1 placeholders aside.
+     *
+     * @param array<string, mixed> $stored
+     * @param list<string> $registered
+     * @return list<string>
+     */
+    private static function unmentioned(array $stored, array $registered): array
+    {
+        $mentioned = array_flip(array_merge(...array_values(array_map(static fn ($ids) => array_filter((array) $ids, 'is_string'), $stored))));
+        return array_values(array_filter($registered, static fn ($id) => !isset($mentioned[$id]) && !str_ends_with($id, '-1')));
     }
 }

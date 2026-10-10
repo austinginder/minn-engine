@@ -137538,7 +137538,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/WidgetAreas.php",
-            "lines": 84,
+            "lines": 113,
             "doc": "The widgets helper functions as the reference answers them (probe\nwidget-helpers): a widget id split into its base and number, a sidebar\nby id (the inactive widgets are a sidebar too, with a name and nothing\nelse), finding and moving a widget between sidebars, one widget rendered\nin its sidebar as dynamic_sidebar renders each (an unregistered widget\nrenders nothing), and the sidebars with every registered one present.",
             "implements": [],
             "extends": null,
@@ -137703,14 +137703,70 @@
                     "name": "retrieve",
                     "static": true,
                     "visibility": "public",
-                    "signature": "retrieve(): array",
-                    "doc": "retrieve_widgets: the sidebars, every registered one present (empty when it holds none). @return array<string, list<string>>",
+                    "signature": "retrieve(array $stored, array $areas, array $registered): array",
+                    "doc": "retrieve_widgets (probe widgets-remaining): the inactive list, then every\nregistered sidebar, holding only widgets that are registered. The\ninactive list takes, in order, the registered widgets no list mentions\n(the -1 placeholders aside, in the order they were registered), the\nwidgets already inactive, and the widgets of sidebars no longer\nregistered, which go.",
                     "shapes": [
+                        "@param array<string, mixed> $stored the stored lists, sidebar => widget ids",
+                        "@param list<string> $areas the registered sidebars",
+                        "@param list<string> $registered the registered widgets",
                         "@return array<string, list<string>>"
                     ],
-                    "params": [],
-                    "line": 89,
-                    "end": 97
+                    "params": [
+                        {
+                            "name": "stored",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the stored lists, sidebar => widget ids"
+                        },
+                        {
+                            "name": "areas",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the registered sidebars"
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the registered widgets"
+                        }
+                    ],
+                    "line": 101,
+                    "end": 113
+                },
+                {
+                    "routes": [],
+                    "name": "unmentioned",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "unmentioned(array $stored, array $registered): array",
+                    "doc": "Registered widgets no stored list mentions, the -1 placeholders aside.",
+                    "shapes": [
+                        "@param array<string, mixed> $stored",
+                        "@param list<string> $registered",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "stored",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 126
                 }
             ]
         },
@@ -150240,7 +150296,7 @@
             "namespace": "Minn\\Widgets",
             "kind": "final class",
             "file": "public/minn/src/Minn/Widgets/WidgetForms.php",
-            "lines": 171,
+            "lines": 172,
             "doc": "The core widgets' settings forms, the markup a widget's form() prints and\nwp/v2/widgets returns as rendered_form, character for character as the\nreference prints it (probe rest-widgets): field ids and names from the\nwidget's number, values escaped, defaults filled in. The whitespace is\nthe reference's own and is part of the answer.",
             "implements": [],
             "extends": null,
@@ -150605,7 +150661,7 @@
                         }
                     ],
                     "line": 139,
-                    "end": 170
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -150638,8 +150694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 173,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -150665,8 +150721,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 180
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -150692,8 +150748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 185
+                    "line": 183,
+                    "end": 186
                 }
             ]
         }

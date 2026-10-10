@@ -1,0 +1,335 @@
+[
+    [
+        "sidebars registered in numbers",
+        [
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li id=\"%1$s\" class=\"widget %2$s\">",
+                "class": "",
+                "description": "",
+                "id": "zz-bar",
+                "name": "ZZ Bar 1",
+                "show_in_rest": false
+            },
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li id=\"%1$s\" class=\"widget %2$s\">",
+                "class": "",
+                "description": "",
+                "id": "zz-bar-2",
+                "name": "ZZ Bar 2",
+                "show_in_rest": false
+            },
+            null,
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li id=\"%1$s\" class=\"widget %2$s\">",
+                "class": "zz-class",
+                "description": "",
+                "id": "zz-many",
+                "name": "ZZ Many",
+                "show_in_rest": false
+            },
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li id=\"%1$s\" class=\"widget %2$s\">",
+                "class": "zz-class",
+                "description": "",
+                "id": "zz-many-2",
+                "name": "ZZ Many",
+                "show_in_rest": false
+            },
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li id=\"%1$s\" class=\"widget %2$s\">",
+                "class": "zz-class",
+                "description": "",
+                "id": "zz-many-3",
+                "name": "ZZ Many",
+                "show_in_rest": false
+            },
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li id=\"%1$s\" class=\"widget %2$s\">",
+                "class": "",
+                "description": "",
+                "id": "zz-solo",
+                "name": "ZZ Solo %d",
+                "show_in_rest": false
+            },
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li>",
+                "class": "",
+                "description": "",
+                "id": "zz-string",
+                "name": "ZZ String",
+                "show_in_rest": false
+            },
+            {
+                "after_sidebar": "",
+                "after_title": "</h2>\n",
+                "after_widget": "</li>\n",
+                "before_sidebar": "",
+                "before_title": "<h2 class=\"widgettitle\">",
+                "before_widget": "<li>",
+                "class": "",
+                "description": "",
+                "id": "zz-string-2",
+                "name": "ZZ String",
+                "show_in_rest": false
+            }
+        ]
+    ],
+    [
+        "sidebar checks",
+        [
+            true,
+            true,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "an old-style widget",
+        [
+            {
+                "callback": "zz_wr_widget_output",
+                "classname": "zz-classname",
+                "description": "ZZ description",
+                "id": "zz-wdg-4",
+                "name": "ZZ Widget",
+                "params": [
+                    "extra one",
+                    "extra two"
+                ]
+            },
+            {
+                "callback": "zz_wr_widget_output",
+                "classname": "zz_wr_widget_output",
+                "id": "zz-plain",
+                "name": "ZZ Plain",
+                "params": []
+            },
+            null
+        ]
+    ],
+    [
+        "widget id bases",
+        [
+            "text",
+            "zz-wdg",
+            "nodash",
+            "a-b",
+            "block",
+            "trailing-",
+            "",
+            "x-y-z"
+        ]
+    ],
+    [
+        "widget lists set and read back",
+        [
+            false,
+            true,
+            {
+                "wp_inactive_widgets": [
+                    "zz-plain"
+                ],
+                "zz-bar": [
+                    "zz-wdg-4"
+                ],
+                "zz-many": []
+            },
+            {
+                "wp_inactive_widgets": [
+                    "zz-plain"
+                ],
+                "zz-bar": [
+                    "zz-wdg-4"
+                ],
+                "zz-many": [],
+                "array_version": 3
+            },
+            "zz-bar",
+            false,
+            "zz-bar",
+            false,
+            false,
+            false,
+            false,
+            "wp_inactive_widgets"
+        ]
+    ],
+    [
+        "settings converted",
+        [
+            {
+                "2": {
+                    "title": "Old single"
+                },
+                "_multiwidget": 1
+            },
+            false,
+            {
+                "2": {
+                    "3": {
+                        "title": "Three"
+                    },
+                    "_multiwidget": 1
+                },
+                "_multiwidget": 1
+            },
+            "unset",
+            {
+                "2": {
+                    "title": "Two"
+                },
+                "5": {
+                    "title": "Five"
+                },
+                "_multiwidget": 1
+            },
+            "unset",
+            {
+                "2": [],
+                "_multiwidget": 1
+            },
+            "unset"
+        ]
+    ],
+    [
+        "widget defaults",
+        [
+            [
+                "zz-bar",
+                "zz-bar-2",
+                "zz-many",
+                "zz-many-2",
+                "zz-many-3",
+                "zz-solo",
+                "zz-string",
+                "zz-string-2"
+            ],
+            [],
+            "absent",
+            "absent"
+        ]
+    ],
+    [
+        "the RSS form",
+        [
+            "\t<p><label for=\"rss-url-2\">Enter the RSS feed URL here:</label>\n\t<input class=\"widefat\" id=\"rss-url-2\" name=\"widget-rss[2][url]\" type=\"text\" value=\"https://zz.example/feed?a=1&#038;b=2\" /></p>\n\t<p><label for=\"rss-title-2\">Give the feed a title (optional):</label>\n\t<input class=\"widefat\" id=\"rss-title-2\" name=\"widget-rss[2][title]\" type=\"text\" value=\"ZZ &quot;feed&quot; &amp; co\" /></p>\n\t<p><label for=\"rss-items-2\">How many items would you like to display?</label>\n\t<select id=\"rss-items-2\" name=\"widget-rss[2][items]\">\n\t<option value='1' >1</option><option value='2' >2</option><option value='3' >3</option><option value='4' >4</option><option value='5'  selected='selected'>5</option><option value='6' >6</option><option value='7' >7</option><option value='8' >8</option><option value='9' >9</option><option value='10' >10</option><option value='11' >11</option><option value='12' >12</option><option value='13' >13</option><option value='14' >14</option><option value='15' >15</option><option value='16' >16</option><option value='17' >17</option><option value='18' >18</option><option value='19' >19</option><option value='20' >20</option>\t</select></p>\n\t<p>\n\t\t\t<input id=\"rss-show-summary-2\" name=\"widget-rss[2][show_summary]\" type=\"checkbox\" value=\"1\"  checked='checked' />\n\t\t<label for=\"rss-show-summary-2\">Display item content?</label><br />\n\t\t\t<input id=\"rss-show-author-2\" name=\"widget-rss[2][show_author]\" type=\"checkbox\" value=\"1\"  />\n\t\t<label for=\"rss-show-author-2\">Display item author if available?</label><br />\n\t\t\t<input id=\"rss-show-date-2\" name=\"widget-rss[2][show_date]\" type=\"checkbox\" value=\"1\"  checked='checked' />\n\t\t<label for=\"rss-show-date-2\">Display item date?</label><br />\n\t\t</p>\n\t",
+            "<p class=\"widget-error\"><strong>RSS Error:</strong> zz failed</p>\t<p><label for=\"rss-url-7\">Enter the RSS feed URL here:</label>\n\t<input class=\"widefat\" id=\"rss-url-7\" name=\"widget-rss[7][url]\" type=\"text\" value=\"\" /></p>\n\t<p><label for=\"rss-items-7\">How many items would you like to display?</label>\n\t<select id=\"rss-items-7\" name=\"widget-rss[7][items]\">\n\t<option value='1' >1</option><option value='2' >2</option><option value='3' >3</option><option value='4' >4</option><option value='5' >5</option><option value='6' >6</option><option value='7' >7</option><option value='8' >8</option><option value='9' >9</option><option value='10'  selected='selected'>10</option><option value='11' >11</option><option value='12' >12</option><option value='13' >13</option><option value='14' >14</option><option value='15' >15</option><option value='16' >16</option><option value='17' >17</option><option value='18' >18</option><option value='19' >19</option><option value='20' >20</option>\t</select></p>\n\t<p>\n\t\t\t<input id=\"rss-show-author-7\" name=\"widget-rss[7][show_author]\" type=\"checkbox\" value=\"1\"  checked='checked' />\n\t\t<label for=\"rss-show-author-7\">Display item author if available?</label><br />\n\t\t</p>\n\t"
+        ]
+    ],
+    [
+        "widgets retrieved, the theme the same",
+        [
+            {
+                "wp_inactive_widgets": [
+                    "zz-lost-8",
+                    "zz-plain",
+                    "zz-lost-7"
+                ],
+                "zz-bar": [
+                    "zz-wdg-4"
+                ],
+                "zz-bar-2": [],
+                "zz-many": [],
+                "zz-many-2": [],
+                "zz-many-3": [],
+                "zz-solo": [],
+                "zz-string": [],
+                "zz-string-2": []
+            },
+            {
+                "wp_inactive_widgets": [
+                    "zz-lost-8",
+                    "zz-plain",
+                    "zz-lost-7"
+                ],
+                "zz-bar": [
+                    "zz-wdg-4"
+                ],
+                "zz-bar-2": [],
+                "zz-many": [],
+                "zz-many-2": [],
+                "zz-many-3": [],
+                "zz-solo": [],
+                "zz-string": [],
+                "zz-string-2": [],
+                "array_version": 3
+            }
+        ]
+    ],
+    [
+        "the sidebars changed",
+        [
+            {
+                "wp_inactive_widgets": [
+                    "zz-lost-8",
+                    "zz-lost-7",
+                    "zz-wdg-4"
+                ],
+                "zz-bar": [],
+                "zz-bar-2": [],
+                "zz-many": [
+                    "zz-plain"
+                ],
+                "zz-many-2": [],
+                "zz-many-3": [],
+                "zz-solo": [],
+                "zz-string": [],
+                "zz-string-2": []
+            },
+            {
+                "wp_inactive_widgets": [
+                    "zz-lost-8",
+                    "zz-lost-7",
+                    "zz-wdg-4"
+                ],
+                "zz-bar": [],
+                "zz-bar-2": [],
+                "zz-many": [
+                    "zz-plain"
+                ],
+                "zz-many-2": [],
+                "zz-many-3": [],
+                "zz-solo": [],
+                "zz-string": [],
+                "zz-string-2": [],
+                "array_version": 3
+            }
+        ]
+    ]
+]

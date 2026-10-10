@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`WidgetForms`](#widgetforms) | final class | 171 | The core widgets' settings forms, the markup a widget's form() prints and |
+| [`WidgetForms`](#widgetforms) | final class | 172 | The core widgets' settings forms, the markup a widget's form() prints and |
 
 ## WidgetForms
 
@@ -74,5 +74,5 @@ nothing, when it is shown).
 - `@param array<string, mixed> $args`
 - `@param array<string, bool> $inputs`
 
-Internals: `number()` (private, line 172), `id()` (private, line 177), `name()` (private, line 182)
+Internals: `number()` (private, line 173), `id()` (private, line 178), `name()` (private, line 183)
 

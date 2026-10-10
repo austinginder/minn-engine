@@ -10195,3 +10195,55 @@ Everything else already matched:
 - the secondary groups;
 - the menus a single site leaves empty: my sites, updates, recovery mode,
   the command palette and the sidebar toggle.
+
+## The rest of widgets.php (2026-10-10)
+
+Probe `widgets-remaining` proves the 11 widgets.php functions that were left.
+It covers:
+- sidebars registered in numbers;
+- sidebar checks;
+- an old-style widget registered by callback;
+- widget id bases;
+- the stored widget lists set and read back, with active widgets found by
+  callback, id and base, and dynamic sidebars;
+- settings converted to the multi-widget shape;
+- the widget defaults;
+- the RSS widget's form;
+- widgets retrieved, with the theme the same and after a theme change.
+
+The stored lists, the theme's mods and the probe's widget options are put back
+afterwards, and checked byte for byte.
+
+Fixes:
+
+- **`register_sidebars`**: several sidebars take the number into a `%d` in the
+  name, and onto the given id from the second one on (`zz-bar`, `zz-bar-2`).
+  A single sidebar keeps its name as given. It used to give every sidebar the
+  same id.
+- **`wp_register_sidebar_widget`**: an empty callback takes the widget away. No
+  `description` is added when the options have none.
+- **`wp_convert_widget_settings`**: settings already numbered get
+  `_multiwidget` too.
+- **`wp_get_widget_defaults`**: one empty list per registered sidebar.
+- **The RSS form**: a failed fetch is reported first, in
+  `<p class="widget-error">`.
+- **Shared fix: `retrieve_widgets`** now makes the stored lists fit:
+  - The result is the inactive list, then every registered sidebar, holding
+    only registered widgets.
+  - Sidebars that are no longer registered go.
+  - The inactive list takes, in order: registered widgets no list mentions
+    (in registration order, skipping the `-1` placeholders); the widgets
+    already inactive; then the widgets of the sidebars that went.
+  - The result is stored.
+  - Before `widgets_init`, every stored widget would look unknown, so the
+    lists only gain the missing sidebars and nothing is stored. Theme
+    switches in the probe runner happen at that stage.
+  - The REST sidebar and widget routes now store through it, as on the
+    reference.
+
+Kept on purpose: the reference retrieves from the lists as last read through
+`wp_get_sidebars_widgets()`, not from writes made since. A write followed by
+`retrieve_widgets()` with no read in between works on stale lists there. The
+engine always reads the stored option. The probe reads back after each write,
+so both stacks retrieve the same lists. The engine's probe runner never fires
+`widgets_init`, so the probe calls `wp_widgets_init()` when it hasn't run.

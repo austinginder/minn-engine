@@ -2,10 +2,10 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 767,
+        "minn": 768,
         "composes": 1878,
         "leaf": 877,
-        "noop": 2630,
+        "noop": 2629,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7978,
@@ -51111,10 +51111,11 @@
         },
         "register_sidebars": {
             "file": "widgets.php",
-            "lines": 10,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "register_sidebar"
             ]
         },
@@ -53064,12 +53065,16 @@
         },
         "retrieve_widgets": {
             "file": "widgets.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\WidgetAreas::retrieve"
             ],
-            "composes": []
+            "composes": [
+                "did_action",
+                "wp_get_sidebars_widgets",
+                "wp_set_sidebars_widgets"
+            ]
         },
         "revoke_super_admin": {
             "file": "admin.php",
@@ -59270,7 +59275,7 @@
         },
         "wp_convert_widget_settings": {
             "file": "widgets.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -63079,7 +63084,7 @@
         },
         "wp_get_widget_defaults": {
             "file": "widgets.php",
-            "lines": 5,
+            "lines": 2,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -66971,7 +66976,7 @@
         },
         "wp_register_sidebar_widget": {
             "file": "widgets.php",
-            "lines": 8,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [

@@ -29,10 +29,14 @@ function register_sidebars($number = 1, $args = [])
     if (is_string($args)) {
         parse_str($args, $args);
     }
+    // Several take the number into a %d in the name and onto the given id from the second on;
+    // one keeps its name as given (probe widgets-remaining).
     for ($i = 1; $i <= $number; $i++) {
         $one = $args;
-        $one['name'] = $number > 1 ? sprintf('%s %d', $args['name'] ?? 'Sidebar', $i) : ($args['name'] ?? 'Sidebar');
-        $one['id'] = $args['id'] ?? 'sidebar-' . $i;
+        $one['name'] = $number > 1 ? sprintf($args['name'] ?? __('Sidebar %d'), $i) : ($args['name'] ?? __('Sidebar'));
+        if (isset($args['id'])) {
+            $one['id'] = $i > 1 ? $args['id'] . '-' . $i : $args['id'];
+        }
         register_sidebar($one);
     }
 }
@@ -68,8 +72,13 @@ function wp_register_sidebar_widget($id, $name, $output_callback, $options = [],
 {
     $id = (string) $id;
     $id_base = is_numeric(substr($id, (int) strrpos($id, '-') + 1)) ? substr($id, 0, (int) strrpos($id, '-')) : $id;
+    if (empty($output_callback)) {
+        // An empty callback takes the widget away (probe widgets-remaining).
+        unset($GLOBALS['wp_registered_widgets'][$id]);
+        return;
+    }
     $widget = ['name' => $name, 'id' => $id, 'callback' => $output_callback, 'params' => $params];
-    $widget = array_merge($widget, wp_parse_args($options, ['classname' => $output_callback, 'description' => '']));
+    $widget = array_merge($widget, wp_parse_args($options, ['classname' => $output_callback]));
     if (is_callable($output_callback) && (!isset($GLOBALS['wp_registered_widgets'][$id]) || did_action('widgets_init'))) {
         do_action('wp_register_sidebar_widget', $widget);
         $GLOBALS['wp_registered_widgets'][$id] = $widget;
@@ -265,8 +274,9 @@ function wp_convert_widget_settings($base_name, $option_name, $settings)
     }
     if ($single) {
         $settings = [2 => $settings];
-        $settings['_multiwidget'] = 1;
     }
+    // Settings already numbered get the marker too (probe widgets-remaining).
+    $settings['_multiwidget'] = 1;
     return $settings;
 }
 
@@ -291,11 +301,8 @@ function wp_use_widgets_block_editor()
 
 function wp_get_widget_defaults()
 {
-    $defaults = [];
-    foreach ((array) ($GLOBALS['wp_registered_widget_controls'] ?? []) as $id => $control) {
-        $defaults[$id] = [];
-    }
-    return $defaults;
+    // One empty list per registered sidebar (probe widgets-remaining).
+    return array_fill_keys(array_keys($GLOBALS['wp_registered_sidebars'] ?? []), []);
 }
 
 function wp_widget_rss_output($rss, $args = [])
@@ -465,10 +472,22 @@ function wp_check_widget_editor_deps()
     }
 }
 
-/** The sidebars, every registered one present. */
+/**
+ * The stored widget lists made to fit the registered sidebars and widgets,
+ * and stored (probe widgets-remaining). Before widgets_init every stored
+ * widget would look unknown, so the lists are only given the missing
+ * sidebars then, and nothing is stored.
+ */
 function retrieve_widgets($theme_changed = false)
 {
-    return WidgetAreas::retrieve();
+    $stored = wp_get_sidebars_widgets();
+    $areas = array_keys($GLOBALS['wp_registered_sidebars'] ?? []);
+    if (!did_action('widgets_init')) {
+        return $stored + ['wp_inactive_widgets' => []] + array_fill_keys($areas, []);
+    }
+    $sidebars = WidgetAreas::retrieve($stored, $areas, array_keys($GLOBALS['wp_registered_widgets'] ?? []));
+    wp_set_sidebars_widgets($sidebars);
+    return $sidebars;
 }
 
 /** The number after the highest of a widget base's registered instances (1 when there are none), plus one. */

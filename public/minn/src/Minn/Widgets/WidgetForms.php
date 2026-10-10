@@ -146,7 +146,8 @@ final class WidgetForms
         }
         $number = Escape::attr((string) ($args['number'] ?? ''));
         $items = (int) $args['items'] < 1 || (int) $args['items'] > 20 ? 10 : (int) $args['items'];
-        $out = '';
+        // A failed fetch is said first (probe widgets-remaining).
+        $out = !empty($args['error']) ? '<p class="widget-error"><strong>RSS Error:</strong> ' . Escape::html(is_object($args['error']) && method_exists($args['error'], 'get_error_message') ? (string) $args['error']->get_error_message() : (string) $args['error']) . '</p>' : '';
         if ($inputs['url']) {
             $out .= "\t<p><label for=\"rss-url-{$number}\">Enter the RSS feed URL here:</label>\n\t<input class=\"widefat\" id=\"rss-url-{$number}\" name=\"widget-rss[{$number}][url]\" type=\"text\" value=\"" . \esc_url((string) $args['url']) . "\" /></p>\n";
         }

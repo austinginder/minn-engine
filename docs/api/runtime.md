@@ -111,7 +111,7 @@ the WordPress runtime plugins load against
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
 | [`UserQueryRunner`](#userqueryrunner) | final class | 218 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
-| [`WidgetAreas`](#widgetareas) | final class | 84 | The widgets helper functions as the reference answers them (probe |
+| [`WidgetAreas`](#widgetareas) | final class | 113 | The widgets helper functions as the reference answers them (probe |
 
 ## Abilities
 
@@ -5419,9 +5419,19 @@ wp_render_widget: a registered widget as its sidebar wraps it, through dynamic_s
 
 wp_render_widget_control: a registered widget's settings form, or null.
 
-### static `retrieve(): array`
+### static `retrieve(array $stored, array $areas, array $registered): array`
 
-retrieve_widgets: the sidebars, every registered one present (empty when it holds none). @return array<string, list<string>>
+retrieve_widgets (probe widgets-remaining): the inactive list, then every
+registered sidebar, holding only widgets that are registered. The
+inactive list takes, in order, the registered widgets no list mentions
+(the -1 placeholders aside, in the order they were registered), the
+widgets already inactive, and the widgets of sidebars no longer
+registered, which go.
 
+- `@param array<string, mixed> $stored the stored lists, sidebar => widget ids`
+- `@param list<string> $areas the registered sidebars`
+- `@param list<string> $registered the registered widgets`
 - `@return array<string, list<string>>`
+
+Internals: `unmentioned()` (private, line 122)
 
