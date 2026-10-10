@@ -824,113 +824,6 @@ class WP_REST_Menus_Controller extends WP_REST_Terms_Controller
     }
 }
 
-#[AllowDynamicProperties]
-abstract class WP_REST_Meta_Fields
-{
-
-    protected function get_meta_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_meta_type');
-        return null;
-    }
-
-    protected function get_meta_subtype()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_meta_subtype');
-        return null;
-    }
-
-    protected function get_rest_field_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_rest_field_type');
-        return null;
-    }
-
-    public function register_field()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::register_field');
-        return null;
-    }
-
-    public function get_value($object_id, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_value');
-        return null;
-    }
-
-    protected function prepare_value_for_response($value, $request, $args)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::prepare_value_for_response');
-        return null;
-    }
-
-    public function update_value($meta, $object_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::update_value');
-        return null;
-    }
-
-    protected function delete_meta_value($object_id, $meta_key, $name)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::delete_meta_value');
-        return null;
-    }
-
-    protected function update_multi_meta_value($object_id, $meta_key, $name, $values)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::update_multi_meta_value');
-        return null;
-    }
-
-    protected function update_meta_value($object_id, $meta_key, $name, $value)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::update_meta_value');
-        return null;
-    }
-
-    protected function is_meta_value_same_as_stored_value($meta_key, $subtype, $stored_value, $user_value)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::is_meta_value_same_as_stored_value');
-        return null;
-    }
-
-    protected function get_registered_fields()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_registered_fields');
-        return null;
-    }
-
-    public function get_field_schema()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_field_schema');
-        return null;
-    }
-
-    public static function prepare_value($value, $request, $args)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::prepare_value');
-        return null;
-    }
-
-    public function check_meta_is_array($value, $request, $param)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::check_meta_is_array');
-        return null;
-    }
-
-    protected function default_additional_properties_to_false($schema)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::default_additional_properties_to_false');
-        return null;
-    }
-
-    protected static function get_empty_value_for_type($type)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Meta_Fields::get_empty_value_for_type');
-        return null;
-    }
-}
-
 class WP_REST_Plugins_Controller extends WP_REST_Controller
 {
     const PATTERN = '[^.\\/]+(?:\\/[^.\\/]+)?';
@@ -1004,35 +897,6 @@ class WP_REST_Plugins_Controller extends WP_REST_Controller
     protected function is_filesystem_available()
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Plugins_Controller::is_filesystem_available');
-        return null;
-    }
-}
-
-class WP_REST_Post_Meta_Fields extends WP_REST_Meta_Fields
-{
-    protected $post_type = NULL;
-
-    public function __construct($post_type)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Post_Meta_Fields::__construct');
-        return null;
-    }
-
-    protected function get_meta_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Post_Meta_Fields::get_meta_type');
-        return null;
-    }
-
-    protected function get_meta_subtype()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Post_Meta_Fields::get_meta_subtype');
-        return null;
-    }
-
-    public function get_rest_field_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Post_Meta_Fields::get_rest_field_type');
         return null;
     }
 }
@@ -1124,35 +988,6 @@ class WP_REST_Templates_Controller extends WP_REST_Controller
     }
 }
 
-class WP_REST_Term_Meta_Fields extends WP_REST_Meta_Fields
-{
-    protected $taxonomy = NULL;
-
-    public function __construct($taxonomy)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Term_Meta_Fields::__construct');
-        return null;
-    }
-
-    protected function get_meta_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Term_Meta_Fields::get_meta_type');
-        return null;
-    }
-
-    protected function get_meta_subtype()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Term_Meta_Fields::get_meta_subtype');
-        return null;
-    }
-
-    public function get_rest_field_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Term_Meta_Fields::get_rest_field_type');
-        return null;
-    }
-}
-
 class WP_REST_Themes_Controller extends WP_REST_Controller
 {
     const PATTERN = '[^\\/:<>\\*\\?"\\|]+(?:\\/[^\\/:<>\\*\\?"\\|]+)?';
@@ -1196,28 +1031,6 @@ class WP_REST_Themes_Controller extends WP_REST_Controller
     public function sanitize_theme_status($statuses, $request, $parameter)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::sanitize_theme_status');
-        return null;
-    }
-}
-
-class WP_REST_User_Meta_Fields extends WP_REST_Meta_Fields
-{
-
-    protected function get_meta_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_User_Meta_Fields::get_meta_type');
-        return null;
-    }
-
-    protected function get_meta_subtype()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_User_Meta_Fields::get_meta_subtype');
-        return null;
-    }
-
-    public function get_rest_field_type()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_User_Meta_Fields::get_rest_field_type');
         return null;
     }
 }

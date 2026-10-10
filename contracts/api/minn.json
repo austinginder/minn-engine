@@ -100526,7 +100526,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RestMeta.php",
-            "lines": 238,
+            "lines": 265,
             "doc": "An object's meta field over REST, from the keys registered to show\nthere (probe rest-meta). Each key answers under its REST name (its own,\nor show_in_rest's name): those for every subtype, then the object's\nsubtype's, left out of a context their schema does not name. A single\nkey reads its first stored value (its default, or its type's empty value,\nwhen none), a multiple key each one; each value is checked against the\nkey's schema (null when it does not fit, the empty value of a scalar\ntype for '') and cast, or handed to the key's prepare callback. A write\ngoes key by key in registration order: null (or an empty list) deletes,\na value its schema refuses is a 400, and a key the user may not edit is\na 403 (an unchanged single value is left alone first). The errors are\ngathered; the first is the answer, with the others beside it.",
             "implements": [],
             "extends": null,
@@ -100603,7 +100603,57 @@
                         }
                     ],
                     "line": 32,
-                    "end": 51
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "value",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "value(string $objectType, int $objectId, string $key, array $field, WP_REST_Request $request): mixed",
+                    "doc": "One field's value for an object: a single key's first stored value (its\ndefault when none), a multiple key's each one, prepared for the response.",
+                    "shapes": [
+                        "@param array<string, mixed> $field"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 53,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -100643,8 +100693,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 60
+                    "line": 64,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -100684,8 +100734,51 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 83
+                    "line": 73,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "errors",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "errors(string $objectType, int $objectId, string $subtype, array $meta): array",
+                    "doc": "Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<\\WP_Error>",
+                    "shapes": [
+                        "@return list<\\WP_Error>"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subtype",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -100713,16 +100806,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 114
+                    "line": 110,
+                    "end": 131
                 },
                 {
                     "routes": [],
                     "name": "prepare",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "prepare(mixed $value, array $field, WP_REST_Request $request): mixed",
-                    "doc": "",
+                    "doc": "A value for the response: through the field's prepare callback, or checked against its schema (null when it does not fit) and cast. @param array<string, mixed> $field",
                     "shapes": [
                         "@param array<string, mixed> $field"
                     ],
@@ -100749,8 +100842,242 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 127
+                    "line": 134,
+                    "end": 144
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?WP_Error",
+                    "doc": "A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field",
+                    "shapes": [
+                        "@param array<string, mixed> $field"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subtype",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 159,
+                    "end": 169
+                },
+                {
+                    "routes": [],
+                    "name": "storeAll",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?WP_Error",
+                    "doc": "A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values",
+                    "shapes": [
+                        "@param array<string, mixed> $field @param array<mixed> $values"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subtype",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param array<mixed> $values"
+                        },
+                        {
+                            "name": "values",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 172,
+                    "end": 178
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(string $objectType, int $objectId, string $key, array $field): ?WP_Error",
+                    "doc": "A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field",
+                    "shapes": [
+                        "@param array<string, mixed> $field"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 212,
+                    "end": 224
+                },
+                {
+                    "routes": [],
+                    "name": "same",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool",
+                    "doc": "Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field",
+                    "shapes": [
+                        "@param array<string, mixed> $field"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectType",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "subtype",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "field",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "stored",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 227,
+                    "end": 235
+                },
+                {
+                    "routes": [],
+                    "name": "emptyValue",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "emptyValue(string $type): mixed",
+                    "doc": "A type's empty value: '' for a string, false, 0, or an empty list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 275,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -100806,8 +101133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 152
+                    "line": 147,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -100864,107 +101191,7 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 183
-                },
-                {
-                    "routes": [],
-                    "name": "delete",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "delete(string $objectType, int $objectId, string $key, array $field): ?WP_Error",
-                    "doc": "",
-                    "shapes": [
-                        "@param array<string, mixed> $field"
-                    ],
-                    "params": [
-                        {
-                            "name": "objectType",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "objectId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "key",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "field",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 186,
-                    "end": 198
-                },
-                {
-                    "routes": [],
-                    "name": "same",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool",
-                    "doc": "Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field",
-                    "shapes": [
-                        "@param array<string, mixed> $field"
-                    ],
-                    "params": [
-                        {
-                            "name": "objectType",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "subtype",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "key",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "field",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "stored",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 201,
+                    "line": 187,
                     "end": 209
                 },
                 {
@@ -100991,8 +101218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 215
+                    "line": 237,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -101018,8 +101245,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 221
+                    "line": 243,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -101038,8 +101265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 227
+                    "line": 249,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -101060,28 +101287,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 246
-                },
-                {
-                    "routes": [],
-                    "name": "emptyValue",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "emptyValue(string $type): mixed",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 248,
-                    "end": 257
+                    "line": 256,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -101092,8 +101299,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 259,
-                    "end": 263
+                    "line": 286,
+                    "end": 290
                 }
             ]
         },

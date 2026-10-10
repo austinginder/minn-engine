@@ -2,14 +2,14 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 769,
-        "composes": 1889,
+        "minn": 771,
+        "composes": 1892,
         "leaf": 878,
-        "noop": 2622,
-        "placeholder": 242,
+        "noop": 2647,
+        "placeholder": 214,
         "deadend": 1662,
-        "functions": 7984,
-        "minnMethods": 938,
+        "functions": 7986,
+        "minnMethods": 947,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -18005,6 +18005,27 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_Comment_Meta_Fields::get_meta_subtype": {
+            "file": "classes/WP_REST_Comment_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Comment_Meta_Fields::get_meta_type": {
+            "file": "classes/WP_REST_Comment_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Comment_Meta_Fields::get_rest_field_type": {
+            "file": "classes/WP_REST_Comment_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_REST_Comments_Controller::__construct": {
             "file": "classes/placeholders/Placeholders.php",
             "lines": 2,
@@ -18800,122 +18821,143 @@
             "composes": []
         },
         "WP_REST_Meta_Fields::check_meta_is_array": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Meta_Fields::default_additional_properties_to_false": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Meta_Fields.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function",
+                "rest_default_additional_properties_to_false"
+            ]
         },
         "WP_REST_Meta_Fields::delete_meta_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::delete"
+            ],
+            "composes": []
+        },
+        "WP_REST_Meta_Fields::field_for": {
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Meta_Fields::get_empty_value_for_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::emptyValue"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::get_field_schema": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Meta_Fields::get_meta_subtype": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
-        "WP_REST_Meta_Fields::get_meta_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Meta_Fields::get_registered_fields": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
-        "WP_REST_Meta_Fields::get_rest_field_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::fields"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::get_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RestMeta::value"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::is_meta_value_same_as_stored_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::same"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::prepare_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::prepare"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::prepare_value_for_response": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::prepare"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::register_field": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Meta_Fields.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function",
+                "register_rest_field"
+            ]
         },
         "WP_REST_Meta_Fields::update_meta_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::store"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::update_multi_meta_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\RestMeta::storeAll"
+            ],
             "composes": []
         },
         "WP_REST_Meta_Fields::update_value": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Meta_Fields.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RestMeta::errors"
+            ],
             "composes": []
         },
         "WP_REST_Navigation_Fallback_Controller::__construct": {
@@ -19035,30 +19077,30 @@
             "composes": []
         },
         "WP_REST_Post_Meta_Fields::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Post_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Post_Meta_Fields::get_meta_subtype": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Post_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Post_Meta_Fields::get_meta_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Post_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Post_Meta_Fields::get_rest_field_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Post_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -20189,30 +20231,30 @@
             "composes": []
         },
         "WP_REST_Term_Meta_Fields::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Term_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Term_Meta_Fields::get_meta_subtype": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Term_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Term_Meta_Fields::get_meta_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Term_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_Term_Meta_Fields::get_rest_field_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Term_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
@@ -20301,23 +20343,23 @@
             "composes": []
         },
         "WP_REST_User_Meta_Fields::get_meta_subtype": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_User_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_User_Meta_Fields::get_meta_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_User_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_REST_User_Meta_Fields::get_rest_field_type": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_User_Meta_Fields.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },

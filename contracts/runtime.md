@@ -10639,3 +10639,56 @@ callbacks.
   before the class.
 - **The legacy widget** has no block wrapper; the widget's own markup is the
   block.
+
+## The REST meta field classes (2026-10-10)
+
+Probe `rest-meta-fields` proves `WP_REST_Meta_Fields` and its post, term,
+user and comment kinds: five classes and their 31 methods. Meta of every
+shape is registered first:
+- single and multiple;
+- string, integer, boolean, object and array;
+- a default, a REST name, an edit-only context;
+- hidden, and protected.
+
+The probe then covers:
+- each class's meta type, subtype and REST field type;
+- its registered fields and field schema;
+- the value read for an object;
+- values written: changed, unchanged, deleted, refused by the schema, not
+  allowed, signed out;
+- the static preparer and the array check;
+- the protected helpers, reached through a subclass;
+- the deprecated field registration.
+
+The classes are adapters over `Minn\Rest\RestMeta`, the rules the engine's
+own controllers already used. They were placeholders, and the comment kind
+was missing.
+
+- **The kinds:**
+  - post: type `post`, subtype the post type;
+  - term: type `term`, subtype the taxonomy, and REST field type `tag` for
+    `post_tag`;
+  - user and comment: their own name for all three.
+- **`get_value`** gives every registered key, whatever the request's context
+  (an edit-only key too). Filtering by context is the controller's job.
+  `RestMeta::value()` is the per-field read both share.
+- **`update_value`** gives null, or every refusal merged into one `WP_Error`
+  (each code with its message and data, in order). `RestMeta::errors()` is
+  the loop; the controllers still throw the gathered refusal.
+- **The schema** puts each key's schema under its REST name. The validate
+  callback is the instance's `check_meta_is_array`, which returns an array as
+  given and anything else as false.
+- **`prepare_value`** prepares from the schema alone. A field whose prepare
+  callback is `prepare_value` itself no longer recurses.
+- **The helpers:**
+  - `update_meta_value`: an unchanged value is left alone, then the user must
+    be allowed to edit it;
+  - `update_multi_meta_value`: needs edit permission, then replaces the list;
+  - `delete_meta_value`: needs delete permission.
+
+  Each gives true or a 403 `WP_Error`.
+  `default_additional_properties_to_false` announces its 5.6.0 deprecation.
+  `register_field` announces its own, then registers the meta field with
+  `get_value`, `update_value` and the schema.
+- The subclass files require their parent, since the facade loads classes
+  alphabetically.

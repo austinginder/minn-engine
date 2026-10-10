@@ -51,7 +51,7 @@ the wp/v2 surface: shapes and controllers
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
 | [`RenderedFields`](#renderedfields) | final class | 62 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
-| [`RestMeta`](#restmeta) | final class | 238 | An object's meta field over REST, from the keys registered to show |
+| [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
@@ -2078,6 +2078,13 @@ The meta field of an object in a context (the one the request answers in, when n
 
 - `@return array<string, mixed>`
 
+### static `value(string $objectType, int $objectId, string $key, array $field, WP_REST_Request $request): mixed`
+
+One field's value for an object: a single key's first stored value (its
+default when none), a multiple key's each one, prepared for the response.
+
+- `@param array<string, mixed> $field`
+
 ### static `writeFrom(WP_REST_Request $request, string $objectType, int $objectId, string $subtype): void`
 
 Applies the meta a write request names, when it names any.
@@ -2085,6 +2092,12 @@ Applies the meta a write request names, when it names any.
 ### static `write(string $objectType, int $objectId, string $subtype, array $meta): void`
 
 Applies a request's meta to an object; the gathered refusals are thrown.
+
+### static `errors(string $objectType, int $objectId, string $subtype, array $meta): array`
+
+Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<\WP_Error>
+
+- `@return list<\WP_Error>`
 
 ### static `fields(string $objectType, string $subtype): array`
 
@@ -2095,7 +2108,41 @@ REST does not know are left out.
 
 - `@return array<string, array{name: string, single: bool, schema: array<string, mixed>, prepare_callback: mixed}>`
 
-Internals: `prepare()` (private, line 117), `update()` (private, line 130), `replaceAll()` (private, line 161), `delete()` (private, line 186), `same()` (private, line 201), `refused()` (private, line 211), `failed()` (private, line 217), `nullStored()` (private, line 223), `gathered()` (private, line 230), `emptyValue()` (private, line 248), `request()` (private, line 259)
+### static `prepare(mixed $value, array $field, WP_REST_Request $request): mixed`
+
+A value for the response: through the field's prepare callback, or checked against its schema (null when it does not fit) and cast. @param array<string, mixed> $field
+
+- `@param array<string, mixed> $field`
+
+### static `store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?WP_Error`
+
+A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field
+
+- `@param array<string, mixed> $field`
+
+### static `storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?WP_Error`
+
+A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values
+
+- `@param array<string, mixed> $field @param array<mixed> $values`
+
+### static `delete(string $objectType, int $objectId, string $key, array $field): ?WP_Error`
+
+A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field
+
+- `@param array<string, mixed> $field`
+
+### static `same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool`
+
+Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field
+
+- `@param array<string, mixed> $field`
+
+### static `emptyValue(string $type): mixed`
+
+A type's empty value: '' for a string, false, 0, or an empty list.
+
+Internals: `update()` (private, line 147), `replaceAll()` (private, line 187), `refused()` (private, line 237), `failed()` (private, line 243), `nullStored()` (private, line 249), `gathered()` (private, line 256), `request()` (private, line 286)
 
 
 ## RestUrl

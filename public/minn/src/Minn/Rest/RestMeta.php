@@ -39,15 +39,25 @@ final class RestMeta
             if (is_array($contexts) && $contexts !== [] && !in_array($context, $contexts, true)) {
                 continue;
             }
-            $stored = \get_metadata($objectType, $objectId, $key, false);
-            $stored = is_array($stored) ? array_values($stored) : [];
-            if ($field['single']) {
-                $out[$field['name']] = self::prepare($stored === [] ? $field['schema']['default'] : $stored[0], $field, $request);
-                continue;
-            }
-            $out[$field['name']] = array_map(static fn ($value) => self::prepare($value, $field, $request), $stored);
+            $out[$field['name']] = self::value($objectType, $objectId, (string) $key, $field, $request);
         }
         return $out;
+    }
+
+    /**
+     * One field's value for an object: a single key's first stored value (its
+     * default when none), a multiple key's each one, prepared for the response.
+     *
+     * @param array<string, mixed> $field
+     */
+    public static function value(string $objectType, int $objectId, string $key, array $field, \WP_REST_Request $request): mixed
+    {
+        $stored = \get_metadata($objectType, $objectId, $key, false);
+        $stored = is_array($stored) ? array_values($stored) : [];
+        if ($field['single']) {
+            return self::prepare($stored === [] ? $field['schema']['default'] : $stored[0], $field, $request);
+        }
+        return array_map(static fn ($value) => self::prepare($value, $field, $request), $stored);
     }
 
     /** Applies the meta a write request names, when it names any. */
@@ -61,6 +71,15 @@ final class RestMeta
 
     /** Applies a request's meta to an object; the gathered refusals are thrown. */
     public static function write(string $objectType, int $objectId, string $subtype, array $meta): void
+    {
+        $errors = self::errors($objectType, $objectId, $subtype, $meta);
+        if ($errors !== []) {
+            throw self::gathered($errors);
+        }
+    }
+
+    /** Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<\WP_Error> */
+    public static function errors(string $objectType, int $objectId, string $subtype, array $meta): array
     {
         $errors = [];
         foreach (self::fields($objectType, $subtype) as $key => $field) {
@@ -77,9 +96,7 @@ final class RestMeta
                 $errors[] = $error;
             }
         }
-        if ($errors !== []) {
-            throw self::gathered($errors);
-        }
+        return $errors;
     }
 
     /**
@@ -113,10 +130,10 @@ final class RestMeta
         return $fields;
     }
 
-    /** @param array<string, mixed> $field */
-    private static function prepare(mixed $value, array $field, \WP_REST_Request $request): mixed
+    /** A value for the response: through the field's prepare callback, or checked against its schema (null when it does not fit) and cast. @param array<string, mixed> $field */
+    public static function prepare(mixed $value, array $field, \WP_REST_Request $request): mixed
     {
-        if (is_callable($field['prepare_callback'])) {
+        if (is_callable($field['prepare_callback'] ?? null)) {
             return call_user_func($field['prepare_callback'], $value, $request, $field);
         }
         $schema = $field['single'] ? $field['schema'] : $field['schema']['items'];
@@ -135,20 +152,29 @@ final class RestMeta
             return $valid;
         }
         $value = \rest_sanitize_value_from_schema($value, $field['schema']);
-        if ($field['single']) {
-            $old = \get_metadata($objectType, $objectId, $key);
-            if (is_array($old) && count($old) === 1 && self::same($objectType, $subtype, $key, $field, $old[0], $value)) {
-                return null;
-            }
-            if (!\current_user_can("edit_{$objectType}_meta", $objectId, $key)) {
-                return self::refused('rest_cannot_update', $field['name']);
-            }
-            return \update_metadata($objectType, $objectId, Slashes::add($key), Slashes::add($value)) ? null : self::failed($key, $field['name']);
+        return $field['single'] ? self::store($objectType, $objectId, $subtype, $key, $field, $value) : self::storeAll($objectType, $objectId, $subtype, $key, $field, (array) $value);
+    }
+
+    /** A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field */
+    public static function store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?\WP_Error
+    {
+        $old = \get_metadata($objectType, $objectId, $key);
+        if (is_array($old) && count($old) === 1 && self::same($objectType, $subtype, $key, $field, $old[0], $value)) {
+            return null;
         }
         if (!\current_user_can("edit_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_update', $field['name']);
         }
-        return self::replaceAll($objectType, $objectId, $subtype, $key, $field, (array) $value);
+        return \update_metadata($objectType, $objectId, Slashes::add($key), Slashes::add($value)) ? null : self::failed($key, $field['name']);
+    }
+
+    /** A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values */
+    public static function storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?\WP_Error
+    {
+        if (!\current_user_can("edit_{$objectType}_meta", $objectId, $key)) {
+            return self::refused('rest_cannot_update', $field['name']);
+        }
+        return self::replaceAll($objectType, $objectId, $subtype, $key, $field, $values);
     }
 
     /**
@@ -182,8 +208,8 @@ final class RestMeta
         return null;
     }
 
-    /** @param array<string, mixed> $field */
-    private static function delete(string $objectType, int $objectId, string $key, array $field): ?\WP_Error
+    /** A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field */
+    public static function delete(string $objectType, int $objectId, string $key, array $field): ?\WP_Error
     {
         if ($field['single'] && \is_wp_error(\rest_validate_value_from_schema(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
             return self::nullStored($field['name']);
@@ -198,7 +224,7 @@ final class RestMeta
     }
 
     /** Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field */
-    private static function same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool
+    public static function same(string $objectType, string $subtype, string $key, array $field, mixed $stored, mixed $value): bool
     {
         $sanitized = \sanitize_meta($key, $value, $objectType, $subtype);
         $type = $field['single'] ? ($field['schema']['type'] ?? null) : ($field['schema']['items']['type'] ?? null);
@@ -245,7 +271,8 @@ final class RestMeta
         return new RestError($first['code'], $first['message'], (int) ($data['status'] ?? 500), $data, $topLevel);
     }
 
-    private static function emptyValue(string $type): mixed
+    /** A type's empty value: '' for a string, false, 0, or an empty list. */
+    public static function emptyValue(string $type): mixed
     {
         return match ($type) {
             'string' => '',

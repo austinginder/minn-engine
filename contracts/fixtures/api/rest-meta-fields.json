@@ -1,0 +1,590 @@
+[
+    [
+        "meta type, subtype and REST field type",
+        {
+            "post": [
+                "post",
+                "post",
+                "post"
+            ],
+            "page": [
+                "post",
+                "page",
+                "page"
+            ],
+            "term": [
+                "term",
+                "category",
+                "category"
+            ],
+            "user": [
+                "user",
+                "user",
+                "user"
+            ],
+            "comment": [
+                "comment",
+                "comment",
+                "comment"
+            ],
+            "tag": [
+                "term",
+                "post_tag",
+                "tag"
+            ],
+            "genre": [
+                "term",
+                "zz_rmf_genre",
+                "zz_rmf_genre"
+            ]
+        }
+    ],
+    [
+        "registered fields and the schema",
+        [
+            [
+                "footnotes",
+                "zz_rmf_string",
+                "zz_rmf_ints",
+                "zz_rmf_flag",
+                "zz_rmf_object",
+                "zz_rmf_list",
+                "zz_rmf_edit_only",
+                "_zz_rmf_protected"
+            ],
+            {
+                "zz_rmf_string": {
+                    "single": true,
+                    "type": "string"
+                },
+                "zz_rmf_flag": {
+                    "single": true,
+                    "type": "boolean"
+                }
+            },
+            {
+                "description": "Meta fields.",
+                "type": "object",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "properties": {
+                    "footnotes": {
+                        "type": "string",
+                        "title": "",
+                        "description": "",
+                        "default": ""
+                    },
+                    "zz_rmf_string": {
+                        "type": "string",
+                        "title": "",
+                        "description": "A string.",
+                        "default": "the default"
+                    },
+                    "zz_rmf_ints": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "title": "",
+                            "description": "",
+                            "default": 0
+                        }
+                    },
+                    "zz_rmf_renamed": {
+                        "type": "boolean",
+                        "title": "",
+                        "description": "",
+                        "default": false
+                    },
+                    "zz_rmf_object": {
+                        "type": "object",
+                        "title": "",
+                        "description": "",
+                        "default": [],
+                        "properties": {
+                            "a": {
+                                "type": "string"
+                            },
+                            "b": {
+                                "type": "integer"
+                            }
+                        },
+                        "additionalProperties": false
+                    },
+                    "zz_rmf_list": {
+                        "type": "array",
+                        "title": "",
+                        "description": "",
+                        "default": [],
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "zz_rmf_edit_only": {
+                        "type": "string",
+                        "title": "",
+                        "description": "",
+                        "default": "",
+                        "context": [
+                            "edit"
+                        ]
+                    },
+                    "_zz_rmf_protected": {
+                        "type": "string",
+                        "title": "",
+                        "description": "",
+                        "default": ""
+                    }
+                },
+                "arg_options": {
+                    "sanitize_callback": null,
+                    "validate_callback": [
+                        {},
+                        "check_meta_is_array"
+                    ]
+                }
+            },
+            [
+                "footnotes",
+                "zz_rmf_page_only"
+            ]
+        ]
+    ],
+    [
+        "values read",
+        [
+            {
+                "footnotes": "",
+                "zz_rmf_string": "the default",
+                "zz_rmf_ints": [
+                    4,
+                    5
+                ],
+                "zz_rmf_renamed": true,
+                "zz_rmf_object": {
+                    "a": "x",
+                    "b": 2
+                },
+                "zz_rmf_list": [],
+                "zz_rmf_edit_only": "secret-ish",
+                "_zz_rmf_protected": "locked"
+            },
+            {
+                "footnotes": "",
+                "zz_rmf_string": "the default",
+                "zz_rmf_ints": [
+                    4,
+                    5
+                ],
+                "zz_rmf_renamed": true,
+                "zz_rmf_object": {
+                    "a": "x",
+                    "b": 2
+                },
+                "zz_rmf_list": [],
+                "zz_rmf_edit_only": "secret-ish",
+                "_zz_rmf_protected": "locked"
+            },
+            {
+                "footnotes": "",
+                "zz_rmf_page_only": ""
+            },
+            {
+                "zz_rmf_term": "term value"
+            },
+            {
+                "persisted_preferences": [],
+                "show_admin_bar_front": "true",
+                "zz_rmf_user": 3
+            },
+            {
+                "_wp_note_status": null,
+                "zz_rmf_comment": "comment value"
+            },
+            {
+                "footnotes": "",
+                "zz_rmf_string": "the default",
+                "zz_rmf_ints": [],
+                "zz_rmf_renamed": false,
+                "zz_rmf_object": [],
+                "zz_rmf_list": [],
+                "zz_rmf_edit_only": "",
+                "_zz_rmf_protected": ""
+            }
+        ]
+    ],
+    [
+        "values written",
+        {
+            "a changed string and ints": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "written",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": true,
+                    "zz_rmf_object": {
+                        "a": "x",
+                        "b": 2
+                    },
+                    "zz_rmf_list": [],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "the same again": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "written",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": true,
+                    "zz_rmf_object": {
+                        "a": "x",
+                        "b": 2
+                    },
+                    "zz_rmf_list": [],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "a renamed flag": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "written",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "x",
+                        "b": 2
+                    },
+                    "zz_rmf_list": [],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "a deletion": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "x",
+                        "b": 2
+                    },
+                    "zz_rmf_list": [],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "an object and a list": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "a refused type": [
+                {
+                    "error": "rest_invalid_type",
+                    "status": 400,
+                    "more": []
+                },
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "a refused list item": [
+                {
+                    "error": "rest_invalid_type",
+                    "status": 400,
+                    "more": []
+                },
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "a protected key": [
+                {
+                    "error": "rest_cannot_update",
+                    "status": 403,
+                    "more": []
+                },
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "a hidden key": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "an unknown key": [
+                null,
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "two failures": [
+                {
+                    "error": "rest_invalid_type",
+                    "status": 400,
+                    "more": [
+                        "rest_cannot_update"
+                    ]
+                },
+                {
+                    "footnotes": "",
+                    "zz_rmf_string": "the default",
+                    "zz_rmf_ints": [
+                        7,
+                        8,
+                        8
+                    ],
+                    "zz_rmf_renamed": false,
+                    "zz_rmf_object": {
+                        "a": "y",
+                        "b": 3
+                    },
+                    "zz_rmf_list": [
+                        "p",
+                        "q"
+                    ],
+                    "zz_rmf_edit_only": "secret-ish",
+                    "_zz_rmf_protected": "locked"
+                }
+            ],
+            "signed out": {
+                "error": "rest_cannot_update",
+                "status": 401,
+                "more": []
+            }
+        }
+    ],
+    [
+        "the static preparer and the array check",
+        [
+            5,
+            null,
+            [
+                "a"
+            ],
+            {
+                "a": 1
+            },
+            false,
+            false
+        ]
+    ],
+    [
+        "the protected helpers",
+        [
+            5,
+            true,
+            false,
+            true,
+            {
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "object",
+                        "properties": [],
+                        "additionalProperties": false
+                    }
+                },
+                "additionalProperties": false
+            },
+            {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "additionalProperties": false
+                }
+            },
+            "",
+            0,
+            false,
+            [],
+            [],
+            0,
+            true,
+            "via helper",
+            true,
+            [
+                "1",
+                "2"
+            ],
+            true,
+            [
+                "the default"
+            ],
+            {
+                "error": "rest_cannot_update",
+                "status": 403,
+                "more": []
+            },
+            {
+                "error": "rest_cannot_delete",
+                "status": 403,
+                "more": []
+            },
+            [
+                [
+                    "WP_REST_Meta_Fields::default_additional_properties_to_false",
+                    "rest_default_additional_properties_to_false()",
+                    "5.6.0"
+                ],
+                [
+                    "WP_REST_Meta_Fields::default_additional_properties_to_false",
+                    "rest_default_additional_properties_to_false()",
+                    "5.6.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "the deprecated field registration",
+        [
+            [],
+            [
+                [
+                    "WP_REST_Meta_Fields::register_field",
+                    "",
+                    "5.6.0"
+                ]
+            ],
+            [
+                "get_callback",
+                "update_callback",
+                "schema"
+            ],
+            [
+                "get_value",
+                "update_value",
+                "Meta fields."
+            ]
+        ]
+    ]
+]
