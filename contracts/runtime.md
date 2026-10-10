@@ -9731,3 +9731,43 @@ Fixed to match:
   moderate the comment.
 - **`wp_set_password`** gives its action the user as they were before the
   change, as a third argument.
+
+## The rest of user.php (2026-10-09)
+
+Probe `user-remaining` proves the 16 user.php functions that were left:
+- user counts by role, with both strategies and the `pre_count_users`
+  filter;
+- the stored user count;
+- email and user lookups, and blog membership;
+- signing in by username or email, with the reference's refusals;
+- the spam check, and application password validation without a request;
+- the session token from the sign-in cookie, and ending the current
+  session;
+- the users cache's last change;
+- the persisted preferences meta;
+- new user notifications.
+
+Fixed to match:
+
+- **`count_users`** counts users by role. It used to give only the total.
+  - The `time` strategy lists the roles that have users, in registered
+    order, then `none`: users with no known role, which may be 0.
+  - Any other strategy lists `none` first, then the roles as they are met,
+    user by user in id order, each user's roles in their stored order.
+  - `pre_count_users` may answer first.
+- **`get_user_by('email')` and `get_user_by('slug')`** look the value up
+  without its surrounding spaces, as a login already was (shared fix,
+  `WP_User::get_data_by`).
+- **The incorrect-password refusals** for a username and for an email end
+  with the "Lost your password?" link to `wp_lostpassword_url()`.
+- **`wp_authenticate_email_password`** refuses empty fields before it
+  judges the address. An empty email is `empty_username` ("The email field
+  is empty."), and an empty password is `empty_password`; both can come
+  together. A login that is not an email still passes through.
+- **`wp_get_session_token`** reads the token in the signed-in cookie (shared
+  fix: nonces are made with it). It used to read the engine's sign-in state,
+  which agrees on a real request.
+- **`wp_destroy_current_session`** ends the session through the user's
+  `WP_Session_Tokens`.
+- **`wp_send_new_user_notifications`** passes `$notify` on as given. An
+  empty one tells the admin only.

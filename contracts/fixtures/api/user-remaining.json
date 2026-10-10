@@ -1,0 +1,457 @@
+[
+    [
+        "user counts by role",
+        [
+            [
+                "total_users",
+                "avail_roles"
+            ],
+            4,
+            [
+                0,
+                1,
+                1,
+                1,
+                1,
+                1
+            ],
+            [
+                "administrator",
+                "editor",
+                "author",
+                "contributor",
+                "subscriber",
+                "none"
+            ],
+            false,
+            false,
+            true,
+            {
+                "administrator": "integer",
+                "editor": "integer",
+                "author": "integer",
+                "contributor": "integer",
+                "subscriber": "integer",
+                "none": "integer"
+            }
+        ]
+    ],
+    [
+        "user counts filtered",
+        [
+            {
+                "total_users": 42,
+                "avail_roles": {
+                    "zz": 1
+                }
+            },
+            true
+        ]
+    ],
+    [
+        "the stored user count",
+        [
+            false,
+            true,
+            true,
+            true,
+            false
+        ]
+    ],
+    [
+        "lookups and membership",
+        [
+            "{zz_ur_editor}",
+            "{zz_ur_editor}",
+            false,
+            false,
+            "{zz_ur_editor}",
+            {
+                "user": "{zz_ur_editor}",
+                "login": "zz_ur_editor"
+            },
+            {
+                "user": "{zz_ur_author}",
+                "login": "zz_ur_author"
+            },
+            false,
+            false,
+            true,
+            true,
+            false,
+            false,
+            true,
+            true,
+            [
+                {
+                    "user": "{zz_ur_editor}",
+                    "login": "zz_ur_editor"
+                },
+                true,
+                {
+                    "user": 0,
+                    "login": false
+                }
+            ]
+        ]
+    ],
+    [
+        "signing in by username or email",
+        [
+            [
+                "wp_authenticate_username_password",
+                null,
+                "zz_ur_editor",
+                {
+                    "user": "{zz_ur_editor}",
+                    "login": "zz_ur_editor"
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "zz_ur_editor",
+                {
+                    "error": [
+                        "incorrect_password"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The password you entered for the username <strong>zz_ur_editor</strong> is incorrect. <a href=\"{site}/wp-login.php?action=lostpassword\">Lost your password?</a>"
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "zz_ur_missing",
+                {
+                    "error": [
+                        "invalid_username"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The username <strong>zz_ur_missing</strong> is not registered on this site. If you are unsure of your username, try your email address instead."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "",
+                {
+                    "error": [
+                        "empty_username"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The username field is empty."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "zz_ur_editor",
+                {
+                    "error": [
+                        "empty_password"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The password field is empty."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "",
+                {
+                    "error": [
+                        "empty_username",
+                        "empty_password"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The username field is empty.",
+                        "<strong>Error:</strong> The password field is empty."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "ZZ_UR_EDITOR",
+                {
+                    "user": "{zz_ur_editor}",
+                    "login": "zz_ur_editor"
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                "given",
+                "zz_ur_editor",
+                {
+                    "user": "{zz_ur_author}",
+                    "login": "zz_ur_author"
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                "error",
+                "zz_ur_editor",
+                {
+                    "user": "{zz_ur_editor}",
+                    "login": "zz_ur_editor"
+                }
+            ],
+            [
+                "wp_authenticate_username_password",
+                null,
+                "zz-ur-editor@zz.example",
+                {
+                    "error": [
+                        "invalid_username"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The username <strong>zz-ur-editor@zz.example</strong> is not registered on this site. If you are unsure of your username, try your email address instead."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_email_password",
+                null,
+                "zz-ur-author@zz.example",
+                {
+                    "user": "{zz_ur_author}",
+                    "login": "zz_ur_author"
+                }
+            ],
+            [
+                "wp_authenticate_email_password",
+                null,
+                "zz-ur-author@zz.example",
+                {
+                    "error": [
+                        "incorrect_password"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The password you entered for the email address <strong>zz-ur-author@zz.example</strong> is incorrect. <a href=\"{site}/wp-login.php?action=lostpassword\">Lost your password?</a>"
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_email_password",
+                null,
+                "nobody@zz.example",
+                {
+                    "error": [
+                        "invalid_email"
+                    ],
+                    "messages": [
+                        "Unknown email address. Check again or try your username."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_email_password",
+                null,
+                "zz_ur_author",
+                null
+            ],
+            [
+                "wp_authenticate_email_password",
+                null,
+                "",
+                {
+                    "error": [
+                        "empty_username",
+                        "empty_password"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The email field is empty.",
+                        "<strong>Error:</strong> The password field is empty."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_email_password",
+                null,
+                "zz-ur-author@zz.example",
+                {
+                    "error": [
+                        "empty_password"
+                    ],
+                    "messages": [
+                        "<strong>Error:</strong> The password field is empty."
+                    ],
+                    "data": null
+                }
+            ],
+            [
+                "wp_authenticate_email_password",
+                "given",
+                "nobody@zz.example",
+                {
+                    "user": "{zz_ur_author}",
+                    "login": "zz_ur_author"
+                }
+            ],
+            [
+                "filters heard",
+                [
+                    [
+                        "wp_authenticate_user",
+                        "zz_ur_editor",
+                        "zz-pass-zz_ur_editor"
+                    ],
+                    [
+                        "wp_authenticate_user",
+                        "zz_ur_author",
+                        "wrong"
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "spam check and application passwords",
+        [
+            {
+                "user": "{zz_ur_editor}",
+                "login": "zz_ur_editor"
+            },
+            null,
+            {
+                "error": [
+                    "zz"
+                ],
+                "messages": [
+                    "z"
+                ],
+                "data": null
+            },
+            false,
+            "{zz_ur_editor}",
+            null,
+            {
+                "user": "{zz_ur_editor}",
+                "login": "zz_ur_editor"
+            }
+        ]
+    ],
+    [
+        "session tokens",
+        [
+            "",
+            "zz-session-token",
+            "",
+            [
+                true,
+                true
+            ],
+            false
+        ]
+    ],
+    [
+        "the users cache last change",
+        [
+            true,
+            true,
+            [
+                [
+                    "users",
+                    true,
+                    true
+                ]
+            ]
+        ]
+    ],
+    [
+        "the persisted preferences meta",
+        [
+            true,
+            false,
+            {
+                "type": "object",
+                "label": "",
+                "description": "",
+                "single": true,
+                "show_in_rest": {
+                    "name": "persisted_preferences",
+                    "type": "object",
+                    "schema": {
+                        "type": "object",
+                        "context": [
+                            "edit"
+                        ],
+                        "properties": {
+                            "_modified": {
+                                "description": "The date and time the preferences were updated.",
+                                "type": "string",
+                                "format": "date-time",
+                                "readonly": false
+                            }
+                        },
+                        "additionalProperties": true
+                    }
+                }
+            }
+        ]
+    ],
+    [
+        "new user notifications",
+        [
+            [
+                "both",
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] New User Registration",
+                        "(a message)"
+                    ],
+                    [
+                        "zz-ur-author@zz.example",
+                        "[Minn] Login Details",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "admin",
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] New User Registration",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "user",
+                [
+                    [
+                        "zz-ur-author@zz.example",
+                        "[Minn] Login Details",
+                        "(a message)"
+                    ]
+                ]
+            ],
+            [
+                "",
+                [
+                    [
+                        "admin@minn-engine.localhost",
+                        "[Minn] New User Registration",
+                        "(a message)"
+                    ]
+                ]
+            ]
+        ]
+    ]
+]

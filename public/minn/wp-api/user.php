@@ -4,7 +4,6 @@
 use Minn\Auth\PasswordReset;
 use Minn\Runtime\Runtime;
 use Minn\Content\Users;
-use Minn\Auth\Sessions;
 
 function _wp_get_current_user()
 {
@@ -40,9 +39,10 @@ function register_new_user($user_login, $user_email)
 }
 
 /** A new account announced to the site, the user, or both (register_new_user and edit_user_created_user call it). */
+/** The new user notifications, the setting passed on as given ('' tells the admin only; probe user-remaining). */
 function wp_send_new_user_notifications($user_id, $notify = 'both')
 {
-    wp_new_user_notification($user_id, null, in_array($notify, ['admin', 'user', 'both'], true) ? $notify : 'both');
+    wp_new_user_notification($user_id, null, $notify);
 }
 
 /** Application passwords are supported over HTTPS, or anywhere on a local site. */
@@ -429,9 +429,37 @@ function get_user_count($network_id = null)
     return (int) get_network_option($network_id, 'user_count', -1);
 }
 
+/**
+ * How many users there are, and how many hold each role (probe
+ * user-remaining). The time strategy lists the roles that have users in
+ * their registered order, then none (users with no known role); any other
+ * strategy lists none first, then the roles as they are met, user by user.
+ * pre_count_users may answer first.
+ */
 function count_users($strategy = 'time', $site_id = null)
 {
-    return ['total_users' => (new Users(Runtime::current()->db))->count(), 'avail_roles' => []];
+    global $wpdb;
+    $answer = apply_filters('pre_count_users', null, $strategy, $site_id);
+    if ($answer !== null) {
+        return $answer;
+    }
+    $roles = array_keys(wp_roles()->get_names());
+    $total = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->users}");
+    $key = $wpdb->get_blog_prefix($site_id === null ? null : (int) $site_id) . 'capabilities';
+    $counts = [];
+    $holders = 0;
+    foreach ($wpdb->get_col($wpdb->prepare("SELECT meta_value FROM {$wpdb->usermeta} WHERE meta_key = %s ORDER BY user_id", $key)) as $value) {
+        $held = array_values(array_intersect(array_keys((array) maybe_unserialize($value)), $roles));
+        foreach ($held as $role) {
+            $counts[$role] = ($counts[$role] ?? 0) + 1;
+        }
+        $holders += $held === [] ? 0 : 1;
+    }
+    $none = $total - $holders;
+    $avail = $strategy === 'time'
+        ? array_filter(array_merge(array_fill_keys($roles, 0), $counts)) + ['none' => $none]
+        : ['none' => $none] + $counts;
+    return ['total_users' => $total, 'avail_roles' => $avail];
 }
 
 function get_users($args = [])
@@ -558,7 +586,7 @@ function wp_authenticate_username_password($user, $username, $password)
         return $found;
     }
     if (!wp_check_password($password, $found->user_pass, $found->ID)) {
-        return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the username <strong>' . esc_html($username) . '</strong> is incorrect.');
+        return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the username <strong>' . esc_html($username) . '</strong> is incorrect. <a href="' . wp_lostpassword_url() . '">' . __('Lost your password?') . '</a>');
     }
     _minn_rehash_password($found, $password);
     return $found;
@@ -567,11 +595,25 @@ function wp_authenticate_username_password($user, $username, $password)
 /** The email-address step of the chain; only an address-shaped username reaches it. */
 function wp_authenticate_email_password($user, $email, $password)
 {
-    if ($user instanceof WP_User || !is_email($email)) {
+    if ($user instanceof WP_User) {
         return $user;
     }
-    if ($password === '') {
-        return new WP_Error('empty_password', '<strong>Error:</strong> The password field is empty.');
+    // Empty fields are refused before the address is judged (probe user-remaining).
+    if ((string) $email === '' || (string) $password === '') {
+        if (is_wp_error($user)) {
+            return $user;
+        }
+        $error = new WP_Error();
+        if ((string) $email === '') {
+            $error->add('empty_username', '<strong>Error:</strong> The email field is empty.');
+        }
+        if ((string) $password === '') {
+            $error->add('empty_password', '<strong>Error:</strong> The password field is empty.');
+        }
+        return $error;
+    }
+    if (!is_email($email)) {
+        return $user;
     }
     $found = get_user_by('email', $email);
     if (!$found) {
@@ -582,7 +624,7 @@ function wp_authenticate_email_password($user, $email, $password)
         return $found;
     }
     if (!wp_check_password($password, $found->user_pass, $found->ID)) {
-        return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the email address <strong>' . esc_html($email) . '</strong> is incorrect.');
+        return new WP_Error('incorrect_password', '<strong>Error:</strong> The password you entered for the email address <strong>' . esc_html($email) . '</strong> is incorrect. <a href="' . wp_lostpassword_url() . '">' . __('Lost your password?') . '</a>');
     }
     _minn_rehash_password($found, $password);
     return $found;
@@ -644,19 +686,22 @@ function sanitize_user_field($field, $value, $user_id, $context)
     return $value;
 }
 
+/** The session token in the signed-in cookie, '' without one (probe user-remaining). */
 function wp_get_session_token()
 {
-    return Runtime::current()->reader->sessionToken;
+    $cookie = wp_parse_auth_cookie('', 'logged_in');
+    return is_array($cookie) && !empty($cookie['token']) ? (string) $cookie['token'] : '';
 }
 
+/** The signed-in cookie's session ends, through the user's session manager (probe user-remaining). */
 function wp_destroy_current_session()
 {
     $token = wp_get_session_token();
-    $user = wp_get_current_user();
-    if ($token === '' || (int) $user->ID === 0) {
+    $user_id = get_current_user_id();
+    if ($token === '' || $user_id === 0) {
         return;
     }
-    (new Sessions(new Users(Runtime::current()->db)))->destroy((int) $user->ID, $token);
+    WP_Session_Tokens::get_instance($user_id)->destroy($token);
 }
 
 function is_user_member_of_blog($user_id = 0, $blog_id = 0)

@@ -54,8 +54,9 @@ class WP_User
             'id', 'ID' => is_numeric($value) && (int) $value > 0 ? $users->find((int) $value) : null,
             // A login is looked up as sanitize_user leaves it, as the reference looks one up.
             'login' => $users->findByLogin((string) sanitize_user((string) $value)),
-            'email' => $users->findByEmail((string) $value),
-            'slug' => $users->findBySlug((string) $value),
+            // An email or a slug is looked up without its surrounding spaces (probe user-remaining).
+            'email' => $users->findByEmail(trim((string) $value)),
+            'slug' => $users->findBySlug(trim((string) $value)),
             default => null,
         };
         if ($row === null) {

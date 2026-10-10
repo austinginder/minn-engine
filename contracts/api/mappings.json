@@ -2,14 +2,14 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 772,
-        "composes": 1859,
+        "minn": 771,
+        "composes": 1862,
         "leaf": 874,
-        "noop": 2639,
+        "noop": 2637,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7970,
-        "minnMethods": 939,
+        "minnMethods": 938,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -25587,7 +25587,7 @@
         },
         "WP_User::get_data_by": {
             "file": "classes/WP_User.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\Users::__construct",
@@ -37332,14 +37332,14 @@
         },
         "count_users": {
             "file": "user.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
-            ],
-            "composes": []
+            "lines": 22,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "maybe_unserialize",
+                "wp_roles"
+            ]
         },
         "counted": {
             "file": "classes/WP_Object_Cache.php",
@@ -58209,17 +58209,19 @@
         },
         "wp_authenticate_email_password": {
             "file": "user.php",
-            "lines": 19,
+            "lines": 33,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "_minn_rehash_password",
                 "apply_filters",
                 "esc_html",
                 "get_user_by",
                 "is_email",
                 "is_wp_error",
-                "wp_check_password"
+                "wp_check_password",
+                "wp_lostpassword_url"
             ]
         },
         "wp_authenticate_spam_check": {
@@ -58235,12 +58237,14 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "_minn_rehash_password",
                 "apply_filters",
                 "esc_html",
                 "get_user_by",
                 "is_wp_error",
-                "wp_check_password"
+                "wp_check_password",
+                "wp_lostpassword_url"
             ]
         },
         "wp_autoload_values_to_autoload": {
@@ -60066,15 +60070,10 @@
         "wp_destroy_current_session": {
             "file": "user.php",
             "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Auth\\Sessions::__construct",
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
-            ],
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "wp_get_current_user",
+                "get_current_user_id",
                 "wp_get_session_token"
             ]
         },
@@ -62501,13 +62500,12 @@
         },
         "wp_get_session_token": {
             "file": "user.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::reader->sessionToken"
-            ],
-            "composes": []
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_parse_auth_cookie"
+            ]
         },
         "wp_get_shortlink": {
             "file": "post.php",
