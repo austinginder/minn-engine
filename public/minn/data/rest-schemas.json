@@ -1808,5 +1808,95 @@
                 ]
             }
         }
+    },
+    "widget": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "widget",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "Unique identifier for the widget.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "id_base": {
+                "description": "The type of the widget. Corresponds to ID in widget-types endpoint.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "sidebar": {
+                "description": "The sidebar the widget belongs to.",
+                "type": "string",
+                "default": "wp_inactive_widgets",
+                "required": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "rendered": {
+                "description": "HTML representation of the widget.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "rendered_form": {
+                "description": "HTML representation of the widget admin form.",
+                "type": "string",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "instance": {
+                "description": "Instance settings of the widget, if supported.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "default": null,
+                "properties": {
+                    "encoded": {
+                        "description": "Base64 encoded representation of the instance settings.",
+                        "type": "string",
+                        "context": [
+                            "edit"
+                        ]
+                    },
+                    "hash": {
+                        "description": "Cryptographic hash of the instance settings.",
+                        "type": "string",
+                        "context": [
+                            "edit"
+                        ]
+                    },
+                    "raw": {
+                        "description": "Unencoded instance settings, if supported.",
+                        "type": "object",
+                        "context": [
+                            "edit"
+                        ]
+                    }
+                }
+            },
+            "form_data": {
+                "description": "URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only.",
+                "type": "string",
+                "context": []
+            }
+        }
     }
 }

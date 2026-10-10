@@ -10964,3 +10964,58 @@ or the matching slug. The probe starts from a state both stacks leave
 alone. A theme switch elsewhere in the suites leaves a stash of the old
 theme's widgets in the theme's mods, and the probe sets it aside for its
 run.
+
+## The REST widgets controller (2026-10-10)
+
+Probe `rest-widgets-class` proves `WP_REST_Widgets_Controller`: the class
+was missing, 20 methods. It is called directly by nobody, an administrator
+and a contributor, with a sidebar shown in REST among the sidebars. It
+covers:
+- the schema and parameters;
+- each permission check;
+- the widgets listed (all, one sidebar's, embedded) and one up close;
+- widgets created: raw settings, encoded settings, a bad hash, form data,
+  raw settings for a type that keeps them, an unknown type, no type, and
+  settings neither raw nor encoded;
+- a widget created with no sidebar;
+- updates, moves, and updates for unknown widgets;
+- deletes with and without force;
+- the helpers.
+
+One controller is used throughout, so the widgets are retrieved once, from
+a state both stacks leave alone.
+
+- **Reading:** anyone may read the widgets of a sidebar shown in REST, and
+  someone who can edit theme options may read every sidebar's. Nobody's
+  list keeps only the public sidebars. An item carries its id, base and
+  sidebar, and its markup as that sidebar wraps it (none among the
+  inactive widgets, and none unless `rendered` is wanted). Its form and
+  settings come only in the edit context. Links (itself, its type,
+  embeddable, and its sidebar with a trailing slash) come only when
+  `_links` is wanted. A widget that isn't registered is a 500
+  `rest_invalid_widget`.
+- **Saving** (`save_widget`): the type must have registered its update
+  callback. A widget registered after `widgets_init` hasn't until it
+  registers itself. A new widget takes the next free number for its type.
+  Settings are raw when the type shows them in REST, or encoded with a
+  matching hash, or the form data for that number. Each refusal has its
+  own message. The settings go through the widget's update and
+  `widget_update_callback`, and the instance is registered at once.
+- **Create:** the widget goes to the sidebar named. With none named it is
+  in no sidebar, and the answer says `sidebar: null` and has no markup. The
+  answer is in the edit context, with 201.
+- **Update:** a WP_Widget that no sidebar holds is a 404. A widget of an
+  unknown type is refused when settings are given.
+- **Delete:** with force, the settings are removed and the answer is the
+  widget's previous form. Without force, the widget goes to the inactive
+  widgets.
+
+Kept differently on purpose: forced deletion removes the settings
+directly, where the reference runs the type's update callback with a
+delete request.
+
+Owed, and a `retrieve_widgets` matter: on the reference, the target hints
+for a widget's self link run the route's own permission check, and its
+`retrieve_widgets` files a widget in no sidebar among the inactive
+widgets. The engine judges target hints by its policies, so that widget
+stays where it is. The probe leaves it out of its final count.
