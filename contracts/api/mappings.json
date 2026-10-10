@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 786,
-        "composes": 1997,
+        "composes": 1998,
         "leaf": 901,
-        "noop": 2692,
+        "noop": 2691,
         "placeholder": 214,
         "deadend": 1662,
         "functions": 8174,
@@ -54810,10 +54810,15 @@
         },
         "rest_send_cors_headers": {
             "file": "rest-api.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_http_origin",
+                "header",
+                "is_user_logged_in",
+                "sanitize_url"
+            ]
         },
         "rest_stabilize_value": {
             "file": "rest-api.php",

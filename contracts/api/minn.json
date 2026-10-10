@@ -88107,7 +88107,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 278,
+            "lines": 310,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88417,6 +88417,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "withServerHeaders",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "withServerHeaders(Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "doc": "The headers the reference's server adds to every REST answer over\nHTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,\nwhile rest_send_cors_headers stays hooked, for a request from an\nOrigin the CORS headers echoing it with Vary: Origin, otherwise Vary:\nOrigin for a GET from someone not signed in. A signed-in caller's\nanswer also carries the no-cache headers (rest_send_nocache_headers,\nnocache_headers).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 216,
+                    "end": 237
+                },
+                {
+                    "routes": [],
                     "name": "withDiscovery",
                     "static": false,
                     "visibility": "public",
@@ -88432,8 +88452,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 212
+                    "line": 240,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -88459,8 +88479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 221,
-                    "end": 233
+                    "line": 253,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -88488,8 +88508,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 248
+                    "line": 273,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -88537,8 +88557,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 257
+                    "line": 282,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -88564,8 +88584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 286
+                    "line": 296,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -88584,8 +88604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 302
+                    "line": 327,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -88611,8 +88631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 312
+                    "line": 340,
+                    "end": 344
                 }
             ]
         },

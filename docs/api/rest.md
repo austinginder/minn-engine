@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 278 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 310 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 84 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -145,6 +145,16 @@ exists leaves the caller as the request itself resolves it.
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
+### `withServerHeaders(Minn\Http\Response $response): Minn\Http\Response`
+
+The headers the reference's server adds to every REST answer over
+HTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,
+while rest_send_cors_headers stays hooked, for a request from an
+Origin the CORS headers echoing it with Vary: Origin, otherwise Vary:
+Origin for a GET from someone not signed in. A signed-in caller's
+answer also carries the no-cache headers (rest_send_nocache_headers,
+nocache_headers).
+
 ### `withDiscovery(Minn\Http\Response $response): Minn\Http\Response`
 
 A REST answer as it leaves over HTTP: pointing at the API's root, unless it carries a Link header of its own (a batch's parts do not).
@@ -164,7 +174,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 250), `withPageLinks()` (private, line 264), `options()` (private, line 295), `withAllow()` (private, line 308)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 282), `withPageLinks()` (private, line 296), `options()` (private, line 327), `withAllow()` (private, line 340)
 
 
 ## ApplicationPasswordsController

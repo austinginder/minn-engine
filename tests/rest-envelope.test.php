@@ -233,6 +233,39 @@ foreach (array_diff(array_keys(DIVERGENT), array_keys($requests)) as $missing) {
 }
 $sweep();
 
+// The server's own headers on any answer: X-Robots-Tag; Vary and the CORS headers for a request from an
+// Origin (or a signed-out GET); the no-cache headers for a signed-in caller.
+$serverHeaders = static function (string $base, string $method, string $route, array $extra) use ($cookie, $mint): array {
+    $headers = $extra;
+    if (in_array('signed-in', $extra, true)) {
+        $headers = array_merge(array_diff($extra, ['signed-in']), [$cookie, 'X-WP-Nonce: ' . $mint['nonce']]);
+    }
+    $ch = curl_init($base . '/?rest_route=' . rawurlencode($route));
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_NOBODY => false, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_HTTPHEADER => $headers, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
+    $raw = (string) curl_exec($ch);
+    $kept = [];
+    foreach (explode("\r\n", substr($raw, 0, (int) curl_getinfo($ch, CURLINFO_HEADER_SIZE))) as $line) {
+        if (preg_match('/^(x-robots-tag|vary|access-control-allow-(?:origin|methods|credentials)|cache-control|expires):\s*(.*)$/i', $line, $m)) {
+            $kept[strtolower($m[1])][] = trim($m[2]);
+        }
+    }
+    ksort($kept);
+    return [curl_getinfo($ch, CURLINFO_RESPONSE_CODE), $kept];
+};
+foreach ([
+    'server headers: a signed-out GET' => ['GET', '/wp/v2/statuses', []],
+    'server headers: a request from an Origin' => ['GET', '/wp/v2/statuses', ['Origin: https://example.com']],
+    'server headers: an Origin of null' => ['GET', '/wp/v2/zz-no-route', ['Origin: null']],
+    'server headers: a preflight' => ['OPTIONS', '/wp/v2/posts', ['Origin: https://example.com', 'Access-Control-Request-Method: POST']],
+    'server headers: a signed-out POST' => ['POST', '/wp/v2/posts', []],
+    'server headers: a signed-in GET' => ['GET', '/wp/v2/users/me', ['signed-in']],
+    'server headers: a signed-in GET from an Origin' => ['GET', '/', ['signed-in', 'Origin: https://example.com']],
+] as $label => [$method, $route, $extra]) {
+    $r = $serverHeaders($REF, $method, $route, $extra);
+    $e = $serverHeaders($ENGINE, $method, $route, $extra);
+    $check($label, $r === $e, 'reference ' . json_encode($r, JSON_UNESCAPED_SLASHES) . "\n       engine    " . json_encode($e, JSON_UNESCAPED_SLASHES));
+}
+
 $alive = trim((string) shell_exec("{$WP} post get {$guarded} --field=post_status 2>/dev/null"));
 $check('the guarded post is still there', $alive === 'publish', "status {$alive}");
 

@@ -11122,3 +11122,30 @@ Owed: the engine's REST answers lack `X-Robots-Tag: noindex` and
 `Vary: Origin`, and the CORS allow headers when a request sends an
 Origin. That holds for every route, the engine's own and the runtime's.
 The bodies are unaffected.
+
+## The REST server's own headers (2026-10-10)
+
+Every REST answer the reference serves over HTTP carries `X-Robots-Tag:
+noindex`, and `rest_send_cors_headers` adds two more things:
+- For a request from an Origin, even `null`, that origin is echoed in
+  `Access-Control-Allow-Origin`, with `Access-Control-Allow-Methods:
+  OPTIONS, GET, POST, PUT, PATCH, DELETE`,
+  `Access-Control-Allow-Credentials: true` and `Vary: Origin`.
+- Without an Origin, `Vary: Origin` goes out only for a GET from someone
+  not signed in.
+
+A signed-in caller's answer also carries the no-cache headers
+(`rest_send_nocache_headers`, then `nocache_headers`). The engine had sent
+none of these, on its own routes or the runtime's. A browser on another
+origin could not use the API with credentials, and nothing told caches
+that the answer varies by origin.
+
+`Api::withServerHeaders` adds them as the answer leaves over HTTP. The
+CORS headers depend on `rest_send_cors_headers` staying hooked on
+`rest_pre_serve_request`, so a plugin that unhooks it turns CORS off, as
+on the reference. The facade's `rest_send_cors_headers` now sends the
+same headers when called. Across 40 requests (five routes; signed out and
+signed in; with an Origin, with a null one, as a preflight, as a POST) the
+headers match the reference exactly. `rest-envelope` pins seven of them.
+The http-transports fixture was recaptured, because the REST answers it
+requests from the test site now carry these headers on both stacks.

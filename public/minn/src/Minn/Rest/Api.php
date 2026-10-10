@@ -204,6 +204,38 @@ final readonly class Api
         }
     }
 
+    /**
+     * The headers the reference's server adds to every REST answer over
+     * HTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,
+     * while rest_send_cors_headers stays hooked, for a request from an
+     * Origin the CORS headers echoing it with Vary: Origin, otherwise Vary:
+     * Origin for a GET from someone not signed in. A signed-in caller's
+     * answer also carries the no-cache headers (rest_send_nocache_headers,
+     * nocache_headers).
+     */
+    public function withServerHeaders(Response $response): Response
+    {
+        $response = $response->withHeader('X-Robots-Tag', 'noindex');
+        // The runtime is up on this path (Engine boots it before a REST answer).
+        $signedIn = $this->services->caller()->id() > 0;
+        if (Runtime::hooks()->filter('rest_send_nocache_headers', [$signedIn])) {
+            $noCache = ['Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0, no-store, private'];
+            foreach ((array) Runtime::hooks()->filter('nocache_headers', [$noCache]) as $name => $value) {
+                if (is_string($value) && $value !== '') {
+                    $response = $response->withHeader((string) $name, $value);
+                }
+            }
+        }
+        if (Runtime::hooks()->has('rest_pre_serve_request', 'rest_send_cors_headers') === false) {
+            return $response;
+        }
+        $origin = str_replace(["\r", "\n"], '', (string) $this->request->header('Origin'));
+        if ($origin !== '') {
+            return $response->withHeader('Access-Control-Allow-Origin', $origin)->withHeader('Access-Control-Allow-Methods', 'OPTIONS, GET, POST, PUT, PATCH, DELETE')->withHeader('Access-Control-Allow-Credentials', 'true')->withHeader('Vary', 'Origin');
+        }
+        return $this->request->method === Method::Get && !$signedIn ? $response->withHeader('Vary', 'Origin') : $response;
+    }
+
     /** A REST answer as it leaves over HTTP: pointing at the API's root, unless it carries a Link header of its own (a batch's parts do not). */
     public function withDiscovery(Response $response): Response
     {

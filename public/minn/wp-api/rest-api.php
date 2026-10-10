@@ -171,8 +171,24 @@ function rest_handle_options_request($response, $handler, $request)
     return $answer;
 }
 
+/**
+ * The CORS headers for a REST answer (probe rest-server-headers): for a
+ * request from an Origin, that origin allowed with credentials and every
+ * method, and Vary: Origin; otherwise Vary: Origin for a GET from someone
+ * not signed in. The value passes through. Over HTTP the engine adds the
+ * same headers to its answer while this stays hooked (Api::withServerHeaders).
+ */
 function rest_send_cors_headers($value)
 {
+    $origin = get_http_origin();
+    if ($origin) {
+        header('Access-Control-Allow-Origin: ' . ($origin === 'null' ? $origin : sanitize_url($origin)));
+        header('Access-Control-Allow-Methods: OPTIONS, GET, POST, PUT, PATCH, DELETE');
+        header('Access-Control-Allow-Credentials: true');
+        header('Vary: Origin', false);
+    } elseif (!headers_sent() && ($_SERVER['REQUEST_METHOD'] ?? '') === 'GET' && !is_user_logged_in()) {
+        header('Vary: Origin', false);
+    }
     return $value;
 }
 
