@@ -20,14 +20,26 @@ function rest_get_server()
     return $server;
 }
 
+/**
+ * The REST API's rewrites and its rest_route query var (probe
+ * rewrite-family). The rest_api_init action is the server's to fire when it
+ * is built, not this function's.
+ */
 function rest_api_init()
 {
     rest_api_register_rewrites();
-    do_action('rest_api_init', rest_get_server());
+    _minn_rewrite();
+    $GLOBALS['wp']->add_query_var('rest_route');
 }
 
 function rest_api_register_rewrites()
 {
+    // The site root's and index.php's wp-json, with and without a route (probe rewrite-family).
+    $index = _minn_rewrite()->index;
+    add_rewrite_rule('^' . rest_get_url_prefix() . '/?$', 'index.php?rest_route=/', 'top');
+    add_rewrite_rule('^' . rest_get_url_prefix() . '/(.*)?', 'index.php?rest_route=/$matches[1]', 'top');
+    add_rewrite_rule('^' . $index . '/' . rest_get_url_prefix() . '/?$', 'index.php?rest_route=/', 'top');
+    add_rewrite_rule('^' . $index . '/' . rest_get_url_prefix() . '/(.*)?', 'index.php?rest_route=/$matches[1]', 'top');
 }
 
 /**

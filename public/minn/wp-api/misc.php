@@ -70,13 +70,16 @@ function add_feed($feedname, $callback)
     if (!in_array($feedname, $rewrite->feeds, true)) {
         $rewrite->feeds[] = $feedname;
     }
-    add_action("do_feed_{$feedname}", $callback, 10, 2);
-    return $feedname;
+    $hook = "do_feed_{$feedname}";
+    add_action($hook, $callback, 10, 2);
+    // What comes back is the action the feed answers on (probe rewrite-family).
+    return $hook;
 }
 
+/** A taxonomy's base with a leading /index.php/ and the outer slashes taken off (probe rewrite-family). */
 function _wp_filter_taxonomy_base($base)
 {
-    return trim((string) $base, '/');
+    return trim((string) preg_replace('|^/index\.php/|', '', (string) $base), '/');
 }
 
 function wp_filesize($path)

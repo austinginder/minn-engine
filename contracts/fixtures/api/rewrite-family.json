@@ -1,0 +1,114 @@
+[
+    [
+        "a feed added",
+        [
+            "do_feed_zzfeed",
+            true,
+            10,
+            "do_feed_zzfeed",
+            1
+        ]
+    ],
+    [
+        "permastructs added and removed",
+        [
+            {
+                "endpoints": true,
+                "ep_mask": 0,
+                "feed": true,
+                "forcomments": false,
+                "paged": true,
+                "struct": "/zz/%zz_perma_tag%",
+                "walk_dirs": true,
+                "with_front": true
+            },
+            {
+                "endpoints": true,
+                "ep_mask": 1,
+                "feed": false,
+                "forcomments": false,
+                "paged": false,
+                "struct": "/zz-args/%zz_perma_tag%/",
+                "walk_dirs": true,
+                "with_front": false
+            },
+            {
+                "endpoints": true,
+                "ep_mask": 0,
+                "feed": true,
+                "forcomments": false,
+                "paged": true,
+                "struct": "zz-legacy/%zz_perma_tag%",
+                "walk_dirs": true,
+                "with_front": false
+            },
+            [
+                null,
+                true
+            ]
+        ]
+    ],
+    [
+        "rewrite tags removed",
+        [
+            [
+                true,
+                true,
+                false,
+                true
+            ],
+            [
+                false,
+                true,
+                false,
+                true
+            ],
+            [
+                false,
+                false,
+                false,
+                true
+            ]
+        ]
+    ],
+    [
+        "taxonomy bases cleaned",
+        [
+            "category",
+            "category",
+            "topics/sub",
+            "topics",
+            "index.php/topics",
+            "",
+            "",
+            "zz base"
+        ]
+    ],
+    [
+        "the REST rewrites",
+        [
+            "index.php?rest_route=/",
+            "index.php?rest_route=/$matches[1]",
+            "index.php?rest_route=/",
+            "index.php?rest_route=/$matches[1]"
+        ]
+    ],
+    [
+        "rest_api_init",
+        [
+            true,
+            "index.php?rest_route=/",
+            0
+        ]
+    ],
+    [
+        "the REST default filters",
+        [
+            "rest_index rest_add_application_passwords_to_index 10 1",
+            "rest_post_dispatch rest_filter_response_fields 10 3",
+            "rest_post_dispatch rest_send_allow_header 10 3",
+            "rest_pre_dispatch rest_handle_options_request 10 3",
+            "rest_pre_serve_request rest_send_cors_headers 10 1"
+        ]
+    ]
+]

@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 768,
-        "composes": 1877,
+        "composes": 1878,
         "leaf": 878,
-        "noop": 2629,
+        "noop": 2628,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7978,
@@ -34694,7 +34694,7 @@
         },
         "add_feed": {
             "file": "misc.php",
-            "lines": 6,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -52327,13 +52327,12 @@
         },
         "rest_api_init": {
             "file": "rest-api.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "do_action",
-                "rest_api_register_rewrites",
-                "rest_get_server"
+                "_minn_rewrite",
+                "rest_api_register_rewrites"
             ]
         },
         "rest_api_loaded": {
@@ -52345,10 +52344,14 @@
         },
         "rest_api_register_rewrites": {
             "file": "rest-api.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_rewrite",
+                "add_rewrite_rule",
+                "rest_get_url_prefix"
+            ]
         },
         "rest_application_password_check_errors": {
             "file": "rest-api.php",

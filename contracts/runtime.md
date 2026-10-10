@@ -10488,3 +10488,34 @@ covers:
 Left owed: `send_frame_options_header`, `send_nosniff_header` and
 `cache_javascript_headers` only send headers. Under the CLI, PHP keeps no
 header list, so neither stack's headers can be compared.
+
+## The rewrite family (2026-10-10)
+
+Probe `rewrite-family` proves eight functions from rewrite.php and
+rest-api.php. It covers:
+- a feed added;
+- permastructs added and removed;
+- rewrite tags removed;
+- taxonomy bases cleaned;
+- the REST API's own rewrites, query var and default filters, each taken
+  away first so that what the call adds is what comes back.
+
+Everything happens in memory: no rules are flushed or stored.
+
+Fixes:
+
+- **`add_feed`** returns the action the feed answers on (`do_feed_{name}`),
+  not the feed's name.
+- **`_wp_filter_taxonomy_base`** takes off a leading `/index.php/` before the
+  outer slashes. A base starting `index.php/` with no leading slash keeps it,
+  as on the reference.
+- **`rest_api_register_rewrites`** adds the four wp-json rules, at the site
+  root and after index.php, with and without a route. It used to be empty,
+  relying on the rules `WP_Rewrite` starts with.
+- **`rest_api_init()`** registers those rewrites and the `rest_route` query
+  var. It no longer fires the `rest_api_init` action: on the reference, the
+  REST server fires that when it is built.
+
+`create_initial_rest_routes` is left owed. The engine serves most of wp/v2
+itself, so comparing its route registration means comparing route tables,
+which is its own probe.
