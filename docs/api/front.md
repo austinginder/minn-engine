@@ -26,7 +26,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 248 | Builds public URLs from the site's permalink structure. With an empty |
-| [`PostEmbed`](#postembed) | final class | 105 | A post as other sites embed it, the oEmbed provider side, as the |
+| [`PostEmbed`](#postembed) | final class | 106 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |

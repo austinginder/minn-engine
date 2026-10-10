@@ -2,14 +2,14 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 787,
-        "composes": 2013,
-        "leaf": 902,
-        "noop": 2699,
+        "minn": 788,
+        "composes": 2019,
+        "leaf": 904,
+        "noop": 2701,
         "placeholder": 214,
         "deadend": 1662,
-        "functions": 8199,
-        "minnMethods": 952,
+        "functions": 8210,
+        "minnMethods": 953,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -21702,6 +21702,75 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_URL_Details_Controller::__construct": {
+            "file": "classes/WP_REST_URL_Details_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_URL_Details_Controller::get_item_schema": {
+            "file": "classes/WP_REST_URL_Details_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_URL_Details_Controller::minn_fetch": {
+            "file": "classes/WP_REST_URL_Details_Controller.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "get_bloginfo",
+                "is_wp_error",
+                "wp_remote_retrieve_body",
+                "wp_remote_retrieve_response_code",
+                "wp_safe_remote_get"
+            ]
+        },
+        "WP_REST_URL_Details_Controller::parse_url_details": {
+            "file": "classes/WP_REST_URL_Details_Controller.php",
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\UrlDetails::of"
+            ],
+            "composes": [
+                "__",
+                "apply_filters",
+                "get_site_transient",
+                "is_wp_error",
+                "rest_ensure_response",
+                "set_site_transient",
+                "untrailingslashit"
+            ]
+        },
+        "WP_REST_URL_Details_Controller::permissions_check": {
+            "file": "classes/WP_REST_URL_Details_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_URL_Details_Controller::register_routes": {
+            "file": "classes/WP_REST_URL_Details_Controller.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
+        },
         "WP_REST_User_Meta_Fields::get_meta_subtype": {
             "file": "classes/WP_REST_User_Meta_Fields.php",
             "lines": 1,
@@ -29382,6 +29451,65 @@
             ],
             "composes": [
                 "wp_parse_args"
+            ]
+        },
+        "WP_oEmbed_Controller::get_item": {
+            "file": "classes/WP_oEmbed_Controller.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_oembed_response_data",
+                "get_status_header_desc",
+                "url_to_postid"
+            ]
+        },
+        "WP_oEmbed_Controller::get_proxy_item": {
+            "file": "classes/WP_oEmbed_Controller.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_oembed_get_object",
+                "apply_filters",
+                "get_oembed_response_data_for_url",
+                "get_status_header_desc",
+                "get_transient",
+                "rest_sanitize_boolean",
+                "set_transient"
+            ]
+        },
+        "WP_oEmbed_Controller::get_proxy_item_permissions_check": {
+            "file": "classes/WP_oEmbed_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_oEmbed_Controller::minn_handled": {
+            "file": "classes/WP_oEmbed_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_scripts"
+            ]
+        },
+        "WP_oEmbed_Controller::register_routes": {
+            "file": "classes/WP_oEmbed_Controller.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "register_rest_route"
             ]
         },
         "Walker::display_element": {
@@ -67781,8 +67909,8 @@
         },
         "wp_oembed_register_route": {
             "file": "embed.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

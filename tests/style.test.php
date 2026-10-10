@@ -194,8 +194,8 @@ $check('dead ends: public/minn/data/deadend-symbols.json is current', $deadEndsS
 $status = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check 2>/dev/null'), true);
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check', $ignored, $statusStale);
 $check('compat status: contracts/api/compat-status.json is current', is_array($status) && $statusStale === 0, 'run php tests/tools/compat-status.php');
-$missingCeiling = ['functions' => 61, 'classes' => 25, 'methods' => 196];
-$verifiedFloor = ['functions' => 2849, 'classes' => 187, 'methods' => 1878];
+$missingCeiling = ['functions' => 61, 'classes' => 23, 'methods' => 187];
+$verifiedFloor = ['functions' => 2849, 'classes' => 189, 'methods' => 1887];
 foreach ($missingCeiling as $group => $ceiling) {
     $check("compat status: missing {$group} stay at or under {$ceiling}", is_array($status) && ($status[$group]['missing'] ?? PHP_INT_MAX) <= $ceiling, (string) ($status[$group]['missing'] ?? '?'));
     $check("compat status: verified {$group} stay at or over {$verifiedFloor[$group]}", is_array($status) && ($status[$group]['verified'] ?? 0) >= $verifiedFloor[$group], (string) ($status[$group]['verified'] ?? '?'));
@@ -287,7 +287,7 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
 $bootedCeiling = 79;
-$wordpressCallCeiling = 1034;
+$wordpressCallCeiling = 1026;
 $apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
 $wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);
 $hookApi = ['apply_filters' => true, 'apply_filters_ref_array' => true, 'apply_filters_deprecated' => true, 'do_action' => true, 'do_action_ref_array' => true, 'do_action_deprecated' => true];

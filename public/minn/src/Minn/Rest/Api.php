@@ -88,7 +88,6 @@ final readonly class Api
             new InstalledThemesController($s->url(), $caller),
             new BlockTypesController($s->url(), $caller),
             new BlockRendererController($s->schema(), $caller),
-            new OEmbedController($caller),
             new SidebarsController($s->url(), $caller),
             new WidgetsController(new WidgetObject($s->url()), $caller),
             new BatchController($router, static function (Request $sub) use ($s): Response {
@@ -213,7 +212,7 @@ final readonly class Api
      * answer also carries the no-cache headers (rest_send_nocache_headers,
      * nocache_headers).
      */
-    public function withServerHeaders(Response $response): Response
+    public function withServerHeaders(Response $response, string $route): Response
     {
         $response = $response->withHeader('X-Robots-Tag', 'noindex');
         // The runtime is up on this path (Engine boots it before a REST answer).
@@ -226,7 +225,7 @@ final readonly class Api
                 }
             }
         }
-        if (Runtime::hooks()->has('rest_pre_serve_request', 'rest_send_cors_headers') === false) {
+        if (Runtime::hooks()->has('rest_pre_serve_request', 'rest_send_cors_headers') === false || RuntimeRoutes::servedAsXml($this->request->withPath('/' . trim($route, '/')), $response)) {
             return $response;
         }
         $origin = str_replace(["\r", "\n"], '', (string) $this->request->header('Origin'));

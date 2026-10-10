@@ -355,13 +355,30 @@ final class RuntimeRoutes
     }
 
     /**
-     * An oEmbed answer asked for as XML (format=xml), as the reference's
-     * _oembed_rest_pre_serve_request serves it over HTTP: the data as an
-     * oembed document, text/xml. Null for anything else.
+     * Whether the answer went out as oEmbed's XML. The reference prints it
+     * in rest_pre_serve_request ahead of rest_send_cors_headers, so none of
+     * the CORS headers follow it, Vary: Origin among them.
+     */
+    public static function servedAsXml(Request $request, Response $response): bool
+    {
+        return self::asksForXml($request) && str_starts_with((string) ($response->headers['Content-Type'] ?? ''), 'text/xml');
+    }
+
+    /** The embed route only: the proxy answers JSON whatever its format. */
+    private static function asksForXml(Request $request): bool
+    {
+        return ($request->query['format'] ?? '') === 'xml' && $request->path === '/oembed/1.0/embed';
+    }
+
+    /**
+     * An embed asked for as XML (format=xml), as the reference's
+     * _oembed_rest_pre_serve_request serves it over HTTP: the data, or the
+     * error (its code, message and data), as an oembed document, text/xml,
+     * with the status it had. Null for anything else.
      */
     private static function oembedXml(Request $request, Response $response): ?Response
     {
-        if (($request->query['format'] ?? '') !== 'xml' || $response->status !== 200 || !in_array($request->path, ['/oembed/1.0/embed', '/oembed/1.0/proxy'], true)) {
+        if (!self::asksForXml($request)) {
             return null;
         }
         $data = Json::decode($response->body, or: null);
@@ -369,7 +386,7 @@ final class RuntimeRoutes
             return null;
         }
         $headers = ['Content-Type' => 'text/xml; charset=' . Runtime::options()->filtered('blog_charset')] + $response->headers;
-        return new Response(200, $headers, (string) \_oembed_create_xml($data), $response->cookies, $response->afterSend);
+        return new Response($response->status, $headers, (string) \_oembed_create_xml($data), $response->cookies, $response->afterSend);
     }
 
     /** What a response looks like to the code that may change it. @return array<int, mixed> */

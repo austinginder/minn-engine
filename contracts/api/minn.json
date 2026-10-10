@@ -46959,7 +46959,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/PostEmbed.php",
-            "lines": 105,
+            "lines": 106,
             "doc": "A post as other sites embed it, the oEmbed provider side, as the\nreference answers (probe oembed): the data (version, the site as\nprovider, the author or else the site, the title) through\noembed_response_data, whose default makes it \"rich\" with the embed\nmarkup: a blockquote linking the post, a sandboxed iframe of its /embed/\npage carrying a fresh secret, and the inline script that sizes it. Only\na publicly viewable post is embeddable; the width is held between 200\nand 600 (oembed_min_max_width) and the height is a 16:9 share of it, at\nleast 200.",
             "implements": [],
             "extends": null,
@@ -47156,7 +47156,7 @@
                         }
                     ],
                     "line": 115,
-                    "end": 125
+                    "end": 126
                 }
             ]
         },
@@ -53539,7 +53539,8 @@
             "usedBy": [
                 "Minn\\Html\\Edits",
                 "Minn\\Html\\Scanner",
-                "Minn\\Html\\Tree\\Builder"
+                "Minn\\Html\\Tree\\Builder",
+                "Minn\\Rest\\UrlDetails"
             ],
             "constructor": {
                 "signature": "__construct(string $html)",
@@ -60979,7 +60980,6 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -63700,7 +63700,6 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -64181,7 +64180,6 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -65000,7 +64998,6 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -65596,7 +65593,6 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -66016,7 +66012,6 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -87855,7 +87850,6 @@
                 "Minn\\Rest\\LiveSettings",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostsController",
@@ -88107,7 +88101,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 310,
+            "lines": 309,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88156,7 +88150,6 @@
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\NavigationController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
@@ -88317,8 +88310,8 @@
                     "doc": "Who is making this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 131,
-                    "end": 134
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -88329,8 +88322,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 137,
-                    "end": 140
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -88341,8 +88334,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 146
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -88353,8 +88346,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 149,
-                    "end": 152
+                    "line": 148,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -88365,8 +88358,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 158
+                    "line": 154,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -88392,8 +88385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 175
+                    "line": 165,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -88412,15 +88405,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 205
+                    "line": 177,
+                    "end": 204
                 },
                 {
                     "routes": [],
                     "name": "withServerHeaders",
                     "static": false,
                     "visibility": "public",
-                    "signature": "withServerHeaders(Minn\\Http\\Response $response): Minn\\Http\\Response",
+                    "signature": "withServerHeaders(Minn\\Http\\Response $response, string $route): Minn\\Http\\Response",
                     "doc": "The headers the reference's server adds to every REST answer over\nHTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,\nwhile rest_send_cors_headers stays hooked, for a request from an\nOrigin the CORS headers echoing it with Vary: Origin, otherwise Vary:\nOrigin for a GET from someone not signed in. A signed-in caller's\nanswer also carries the no-cache headers (rest_send_nocache_headers,\nnocache_headers).",
                     "shapes": [],
                     "params": [
@@ -88430,10 +88423,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 237
+                    "line": 215,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -88452,8 +88452,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 244
+                    "line": 239,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -88479,8 +88479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 265
+                    "line": 252,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -88508,8 +88508,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 280
+                    "line": 272,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -88538,7 +88538,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 128
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -88557,8 +88557,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 289
+                    "line": 281,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -88584,8 +88584,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 318
+                    "line": 295,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -88604,8 +88604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 334
+                    "line": 326,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -88631,8 +88631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 344
+                    "line": 339,
+                    "end": 343
                 }
             ]
         },
@@ -90500,7 +90500,6 @@
                 "Minn\\Rest\\MenuItemObject",
                 "Minn\\Rest\\MenuObject",
                 "Minn\\Rest\\MenusController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\PostObject",
@@ -96131,134 +96130,6 @@
             ]
         },
         {
-            "name": "Minn\\Rest\\OEmbedController",
-            "short": "OEmbedController",
-            "namespace": "Minn\\Rest",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Rest/OEmbedController.php",
-            "lines": 72,
-            "doc": "oembed/1.0 as the reference answers it (probe oembed). embed is the\nprovider side: one of the site's own addresses as embed data (the post\nthrough url_to_postid and oembed_request_post_id), \"Not Found\" for\nanything else; format=xml is served as XML on the way out\n(RuntimeRoutes::serve). proxy is the editor's consumer side, for anyone\nwho can edit posts: the site's own addresses answered locally, anything\nelse fetched through WP_oEmbed with the editor's size, its markup\nthrough oembed_result, and kept in a transient for a day\n(rest_oembed_ttl) under the request's arguments.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Http\\Access",
-                "Minn\\Http\\Method",
-                "Minn\\Http\\Policy",
-                "Minn\\Http\\Request",
-                "Minn\\Http\\Response",
-                "Minn\\Http\\Route",
-                "Minn\\RestError",
-                "Minn\\Rest\\Caller",
-                "Minn\\Rest\\Reply",
-                "Minn\\Rest\\RuntimeRoutes",
-                "Minn\\Runtime\\Runtime"
-            ],
-            "usedBy": [
-                "Minn\\Rest\\Api"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Rest\\Caller $caller)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "caller",
-                        "type": "Minn\\Rest\\Caller",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 43,
-                "end": 45
-            },
-            "cases": [],
-            "constants": [
-                {
-                    "name": "EMBED",
-                    "value": "array (   'url' =>    array (     'description' => 'The URL of the resource for which to fetch oEmbed data.',     'type' => 'string',     'format' => 'uri',     'required' => true,   ),   'format' =>    array (     'default' => 'json',     'required' => false,   ),   'maxwidth' =>    array (     'default' => 600,     'required' => false,   ), )",
-                    "doc": "",
-                    "visibility": "private"
-                },
-                {
-                    "name": "PROXY",
-                    "value": "array (   'url' =>    array (     'description' => 'The URL of the resource for which to fetch oEmbed data.',     'type' => 'string',     'format' => 'uri',     'required' => true,   ),   'format' =>    array (     'description' => 'The oEmbed format to use.',     'type' => 'string',     'default' => 'json',     'enum' =>      array (       0 => 'json',       1 => 'xml',     ),     'required' => false,   ),   'maxwidth' =>    array (     'description' => 'The maximum width of the embed frame in pixels.',     'type' => 'integer',     'default' => 600,     'required' => false,   ),   'maxheight' =>    array (     'description' => 'The maximum height of the embed frame in pixels.',     'type' => 'integer',     'required' => false,   ),   'discover' =>    array (     'description' => 'Whether to perform an oEmbed discovery request for unsanctioned providers.',     'type' => 'boolean',     'default' => true,     'required' => false,   ), )",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [
-                {
-                    "name": "caller",
-                    "type": "Minn\\Rest\\Caller",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [
-                        "GET /oembed/1.0/embed (public)"
-                    ],
-                    "name": "embed",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "embed(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "One of the site's own posts as embed data.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 49,
-                    "end": 59
-                },
-                {
-                    "routes": [
-                        "GET /oembed/1.0/proxy (public)"
-                    ],
-                    "name": "proxy",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "proxy(Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "Another site's embed, fetched for the editor.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "request",
-                            "type": "Minn\\Http\\Request",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 63,
-                    "end": 89
-                },
-                {
-                    "routes": [],
-                    "name": "requireRuntime",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "requireRuntime(): void",
-                    "doc": "Embed data comes from the runtime's own functions.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 92,
-                    "end": 97
-                }
-            ]
-        },
-        {
             "name": "Minn\\Rest\\ParamCheck",
             "short": "ParamCheck",
             "namespace": "Minn\\Rest",
@@ -100351,7 +100222,6 @@
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\MenusController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\PostsWriteController",
@@ -102693,7 +102563,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 451,
+            "lines": 468,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -102713,7 +102583,6 @@
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\MediaController",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
@@ -103142,6 +103011,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "servedAsXml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "servedAsXml(Minn\\Http\\Request $request, Minn\\Http\\Response $response): bool",
+                    "doc": "Whether the answer went out as oEmbed's XML. The reference prints it\nin rest_pre_serve_request ahead of rest_send_cors_headers, so none of\nthe CORS headers follow it, Vary: Origin among them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 362,
+                    "end": 365
+                },
+                {
+                    "routes": [],
                     "name": "ensure",
                     "static": true,
                     "visibility": "public",
@@ -103157,8 +103053,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 453
+                    "line": 466,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -103169,8 +103065,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 457,
-                    "end": 460
+                    "line": 474,
+                    "end": 477
                 },
                 {
                     "routes": [],
@@ -103230,11 +103126,31 @@
                 },
                 {
                     "routes": [],
+                    "name": "asksForXml",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "asksForXml(Minn\\Http\\Request $request): bool",
+                    "doc": "The embed route only: the proxy answers JSON whatever its format.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 368,
+                    "end": 371
+                },
+                {
+                    "routes": [],
                     "name": "oembedXml",
                     "static": true,
                     "visibility": "private",
                     "signature": "oembedXml(Minn\\Http\\Request $request, Minn\\Http\\Response $response): ?Minn\\Http\\Response",
-                    "doc": "An oEmbed answer asked for as XML (format=xml), as the reference's\n_oembed_rest_pre_serve_request serves it over HTTP: the data as an\noembed document, text/xml. Null for anything else.",
+                    "doc": "An embed asked for as XML (format=xml), as the reference's\n_oembed_rest_pre_serve_request serves it over HTTP: the data, or the\nerror (its code, message and data), as an oembed document, text/xml,\nwith the status it had. Null for anything else.",
                     "shapes": [],
                     "params": [
                         {
@@ -103252,8 +103168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 373
+                    "line": 379,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -103274,8 +103190,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 379
+                    "line": 393,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -103308,8 +103224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 385
+                    "line": 398,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -103328,8 +103244,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 388,
-                    "end": 398
+                    "line": 405,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -103351,8 +103267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 431
+                    "line": 425,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -103371,8 +103287,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 433,
-                    "end": 446
+                    "line": 450,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -103391,8 +103307,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 462,
-                    "end": 470
+                    "line": 479,
+                    "end": 487
                 }
             ]
         },
@@ -108910,6 +108826,125 @@
                     "params": [],
                     "line": 173,
                     "end": 179
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\UrlDetails",
+            "short": "UrlDetails",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/UrlDetails.php",
+            "lines": 64,
+            "doc": "A page's details as the editor's link previews read them (probe\nrest-embed-details), from the document's head: everything up to its\ncloser, the whole page when it has none. The first title, as text with\nits tags gone; the first link whose rel names \"icon\" (not an\napple-touch-icon); the first meta named description; the first meta\nwhose property is og:image or og:image:url. Twitter tags, og:title and\nog:description count for nothing. Each is trimmed. An address with no\nhost hangs off the page's root whatever its own path, and one with no\nscheme takes the page's.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Html\\Tags"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "of",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "of(string $html, string $url): array",
+                    "doc": "The page's four details, read from its markup; addresses made whole against the page's own. @return array{title: string, icon: string, description: string, image: string}",
+                    "shapes": [
+                        "@return array{title: string, icon: string, description: string, image: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "read(Minn\\Html\\Tags $tags): array",
+                    "doc": "Which detail the tag holds, and its value. @return array{0: ?string, 1: string}",
+                    "shapes": [
+                        "@return array{0: ?string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "tags",
+                            "type": "Minn\\Html\\Tags",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "text(?string $value): string",
+                    "doc": "Text as a preview shows it: tags gone, trimmed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "absolute",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "absolute(string $value, string $url): string",
+                    "doc": "An address made whole against the page's root.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 82
                 }
             ]
         },
@@ -129371,7 +129406,6 @@
                 "Minn\\Rest\\Embed",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Rest\\LiveSettings",
-                "Minn\\Rest\\OEmbedController",
                 "Minn\\Rest\\PostCollectionParams",
                 "Minn\\Rest\\PostListArgs",
                 "Minn\\Rest\\PostsController",

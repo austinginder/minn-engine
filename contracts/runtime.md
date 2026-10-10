@@ -11190,3 +11190,83 @@ administrator's own list exactly.
   through `rest_pre_insert_application_password`.
 
 The engine's own route still answers over HTTP. The class is for plugins.
+
+## The oEmbed and URL-details controllers (2026-10-10)
+
+Probe `rest-embed-details` proves `WP_oEmbed_Controller` and
+`WP_REST_URL_Details_Controller`. Both classes were missing, 2 classes and
+9 methods with a public face. They are called directly, as a plugin
+would. It covers:
+- the site's own embed for a post (sizes, a narrow one, its short link, a
+  missing post);
+- both permission checks for nobody, an administrator and a contributor;
+- the proxy for one of the site's posts, an address no provider takes,
+  media files, and a plugin's own embed handler that queues a script;
+- a page's details from pages written into uploads (everything, nothing,
+  another encoding, og tags only, twitter tags only, every kind in an
+  order), a missing page, not an address, and the second ask read from
+  the cache;
+- each rule on its own, on pages answered by `pre_http_request`, with the
+  address and arguments fetched and the hooks heard;
+- the text of the XML an embed is served as.
+
+The probe removes its files, its user and every cached answer it made.
+
+- **Routes.** Both are served by their classes now. oembed/1.0 is
+  registered on rest_api_init by `wp_oembed_register_route` (maxwidth
+  defaults to `oembed_default_width`). url-details is registered by
+  `create_initial_rest_routes`. The engine's own `Rest\OEmbedController`
+  is gone: one path. Over HTTP, embed, proxy, url-details and both
+  namespace indexes match the reference, signed out.
+- **Embed.** The post is found through url_to_postid and
+  `oembed_request_post_id`. The data comes back as a plain array, "Not
+  Found" 404 otherwise.
+- **Proxy.** It needs edit_posts. The site's own addresses are answered
+  locally, as an object. Anything else goes through WP_oEmbed, kept a day
+  in a transient. What no provider takes goes to the embed handlers,
+  uncached, as `{provider_name: "Embed Handler", html, scripts}`:
+  - html is the handler's output. Core's media handlers give an
+    unrendered shortcode.
+  - scripts lists the source of each script the handler queued.
+- **URL details.** It needs edit_posts (`rest_cannot_view_url_details`).
+  - The address loses its trailing slashes. An empty one is
+    `rest_invalid_url` 404.
+  - The page is fetched with `wp_safe_remote_get`: 150 KB at most and a
+    `WP-URLDetails/{version} (+{home})` user agent, both through
+    `rest_url_details_http_request_args`.
+  - The raw page is kept in the site transient
+    `g_url_details_response_{md5}` for `rest_url_details_cache_expiration`
+    (an hour). Errors are not kept.
+  - A failed fetch, or any status but 200 (a redirect too), is
+    `no_response` 404. An empty body is `no_content` 404.
+  - The answer passes through `rest_prepare_url_details` with the
+    address, the request and the page.
+- **Reading a page** (`Minn\Rest\UrlDetails`). Only the head counts:
+  everything before its closer, or the whole page when it has none.
+  - The title is the first title element, entities decoded, tags gone,
+    trimmed. Its bytes stay as they are, whatever the page's charset.
+  - The icon is the first link whose rel has an `icon` token, in any case.
+    apple-touch-icon does not count.
+  - The description is the first meta named description, decoded, tags
+    gone, trimmed.
+  - The image is the first meta with property og:image or og:image:url.
+  - Twitter tags, og:title, og:description, og:image by name and
+    description by property count for nothing.
+  - An address with no host hangs off the page's root, whatever its own
+    path (`images/x.png` on `/a/b.html` is `/images/x.png`). A
+    protocol-relative one takes the page's scheme.
+- **Fixed on the way: oEmbed XML.**
+  - Only the embed route answers XML. The proxy answers JSON whatever its
+    format.
+  - Errors are XML too, with their status.
+  - No CORS header follows an XML answer (`Vary: Origin` included). The
+    reference prints it before `rest_send_cors_headers` has its turn.
+  - `_oembed_create_xml` keeps entity references as written (a numeric one
+    becomes its character, `&nbsp;` stays) and escapes only a bare
+    ampersand. It no longer escapes the text twice, which turned the
+    embed's typographic quotes into `&amp;#8220;`.
+  - rest-envelope pins the XML headers.
+
+Left: `/wp-block-editor/v1/export` and `/navigation-fallback` are still
+not served, so that namespace's index lists only url-details. The root
+index still differs from the reference in its namespaces (as before).

@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 255,
-    "withPolicy": 249,
+    "routes": 253,
+    "withPolicy": 247,
     "entries": [
         {
             "method": "GET",
@@ -4255,83 +4255,6 @@
                 }
             },
             "args": [],
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/oembed/1.0/embed",
-            "name": "Minn\\Rest\\OEmbedController::embed",
-            "handler": "Minn\\Rest\\OEmbedController::embed",
-            "summary": "One of the site's own posts as embed data.",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": {
-                "url": {
-                    "description": "The URL of the resource for which to fetch oEmbed data.",
-                    "type": "string",
-                    "format": "uri",
-                    "required": true
-                },
-                "format": {
-                    "default": "json",
-                    "required": false
-                },
-                "maxwidth": {
-                    "default": 600,
-                    "required": false
-                }
-            },
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/oembed/1.0/proxy",
-            "name": "Minn\\Rest\\OEmbedController::proxy",
-            "handler": "Minn\\Rest\\OEmbedController::proxy",
-            "summary": "Another site's embed, fetched for the editor.",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": {
-                "url": {
-                    "description": "The URL of the resource for which to fetch oEmbed data.",
-                    "type": "string",
-                    "format": "uri",
-                    "required": true
-                },
-                "format": {
-                    "description": "The oEmbed format to use.",
-                    "type": "string",
-                    "default": "json",
-                    "enum": [
-                        "json",
-                        "xml"
-                    ],
-                    "required": false
-                },
-                "maxwidth": {
-                    "description": "The maximum width of the embed frame in pixels.",
-                    "type": "integer",
-                    "default": 600,
-                    "required": false
-                },
-                "maxheight": {
-                    "description": "The maximum height of the embed frame in pixels.",
-                    "type": "integer",
-                    "required": false
-                },
-                "discover": {
-                    "description": "Whether to perform an oEmbed discovery request for unsanctioned providers.",
-                    "type": "boolean",
-                    "default": true,
-                    "required": false
-                }
-            },
             "body": [],
             "index": true
         },

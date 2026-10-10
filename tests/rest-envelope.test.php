@@ -240,12 +240,13 @@ $serverHeaders = static function (string $base, string $method, string $route, a
     if (in_array('signed-in', $extra, true)) {
         $headers = array_merge(array_diff($extra, ['signed-in']), [$cookie, 'X-WP-Nonce: ' . $mint['nonce']]);
     }
-    $ch = curl_init($base . '/?rest_route=' . rawurlencode($route));
+    [$path, $query] = array_pad(explode('?', $route, 2), 2, '');
+    $ch = curl_init($base . '/?rest_route=' . rawurlencode($path) . ($query === '' ? '' : '&' . $query));
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_NOBODY => false, CURLOPT_CUSTOMREQUEST => $method, CURLOPT_HTTPHEADER => $headers, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60]);
     $raw = (string) curl_exec($ch);
     $kept = [];
     foreach (explode("\r\n", substr($raw, 0, (int) curl_getinfo($ch, CURLINFO_HEADER_SIZE))) as $line) {
-        if (preg_match('/^(x-robots-tag|vary|access-control-allow-(?:origin|methods|credentials)|cache-control|expires):\s*(.*)$/i', $line, $m)) {
+        if (preg_match('/^(x-robots-tag|vary|access-control-allow-(?:origin|methods|credentials)|cache-control|expires|content-type):\s*(.*)$/i', $line, $m)) {
             $kept[strtolower($m[1])][] = trim($m[2]);
         }
     }
@@ -260,6 +261,10 @@ foreach ([
     'server headers: a signed-out POST' => ['POST', '/wp/v2/posts', []],
     'server headers: a signed-in GET' => ['GET', '/wp/v2/users/me', ['signed-in']],
     'server headers: a signed-in GET from an Origin' => ['GET', '/', ['signed-in', 'Origin: https://example.com']],
+    // An embed served as XML goes out before the CORS headers would be added; its errors are XML too, the proxy's are not.
+    'server headers: an embed as XML from an Origin' => ['GET', '/oembed/1.0/embed?format=xml&url=' . rawurlencode($ENGINE . '/?p=1'), ['Origin: https://example.com']],
+    'server headers: an embed as XML that is not found' => ['GET', '/oembed/1.0/embed?format=xml&url=' . rawurlencode($ENGINE . '/?p=999999999'), []],
+    'server headers: the proxy refusing, asked for XML' => ['GET', '/oembed/1.0/proxy?format=xml&url=' . rawurlencode($ENGINE . '/?p=1'), []],
 ] as $label => [$method, $route, $extra]) {
     $r = $serverHeaders($REF, $method, $route, $extra);
     $e = $serverHeaders($ENGINE, $method, $route, $extra);

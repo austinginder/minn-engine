@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 310 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 309 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 84 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -37,7 +37,6 @@ the wp/v2 surface: shapes and controllers
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 298 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
-| [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 231 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
@@ -61,7 +60,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 451 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 468 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 523 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
@@ -81,6 +80,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 168 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 179 | The engine's registry of built-in post types, seeded from the observed |
+| [`UrlDetails`](#urldetails) | final class | 64 | A page's details as the editor's link previews read them (probe |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
@@ -145,7 +145,7 @@ exists leaves the caller as the request itself resolves it.
 
 Resolves a REST route (from the path or from ?rest_route=) to a response.
 
-### `withServerHeaders(Minn\Http\Response $response): Minn\Http\Response`
+### `withServerHeaders(Minn\Http\Response $response, string $route): Minn\Http\Response`
 
 The headers the reference's server adds to every REST answer over
 HTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,
@@ -174,7 +174,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 282), `withPageLinks()` (private, line 296), `options()` (private, line 327), `withAllow()` (private, line 340)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 281), `withPageLinks()` (private, line 295), `options()` (private, line 326), `withAllow()` (private, line 339)
 
 
 ## ApplicationPasswordsController
@@ -483,7 +483,7 @@ Trashes or deletes a block.
 Who is making this REST call. Resolved once from the cookie and nonce;
 an anonymous or failed caller has id 0 and every capability check fails.
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenuObject`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ```php
 __construct(Minn\Http\Request $request, Minn\Auth\Authenticator $authenticator, Minn\Auth\Capabilities $capabilities)
@@ -1477,45 +1477,6 @@ Route: `DELETE /wp/v2/navigation/{id:[\d]+} (cap delete_post on {id}; navigation
 Trashes or deletes a navigation post.
 
 
-## OEmbedController
-
-`final readonly class Minn\Rest\OEmbedController` · `public/minn/src/Minn/Rest/OEmbedController.php`
-
-oembed/1.0 as the reference answers it (probe oembed). embed is the
-provider side: one of the site's own addresses as embed data (the post
-through url_to_postid and oembed_request_post_id), "Not Found" for
-anything else; format=xml is served as XML on the way out
-(RuntimeRoutes::serve). proxy is the editor's consumer side, for anyone
-who can edit posts: the site's own addresses answered locally, anything
-else fetched through WP_oEmbed with the editor's size, its markup
-through oembed_result, and kept in a transient for a day
-(rest_oembed_ttl) under the request's arguments.
-
-- const `EMBED` = `array (   'url' =>    array (     'description' => 'The URL of the resource for which to fetch oEmbed data.',     'type' => 'string',     'format' => 'uri',     'required' => true,   ),   'format' =>    array (     'default' => 'json',     'required' => false,   ),   'maxwidth' =>    array (     'default' => 600,     'required' => false,   ), )`
-- const `PROXY` = `array (   'url' =>    array (     'description' => 'The URL of the resource for which to fetch oEmbed data.',     'type' => 'string',     'format' => 'uri',     'required' => true,   ),   'format' =>    array (     'description' => 'The oEmbed format to use.',     'type' => 'string',     'default' => 'json',     'enum' =>      array (       0 => 'json',       1 => 'xml',     ),     'required' => false,   ),   'maxwidth' =>    array (     'description' => 'The maximum width of the embed frame in pixels.',     'type' => 'integer',     'default' => 600,     'required' => false,   ),   'maxheight' =>    array (     'description' => 'The maximum height of the embed frame in pixels.',     'type' => 'integer',     'required' => false,   ),   'discover' =>    array (     'description' => 'Whether to perform an oEmbed discovery request for unsanctioned providers.',     'type' => 'boolean',     'default' => true,     'required' => false,   ), )`
-
-Used by: `Minn\Rest\Api`
-
-```php
-__construct(Minn\Rest\Caller $caller)
-```
-
-
-### `embed(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /oembed/1.0/embed (public)`
-
-One of the site's own posts as embed data.
-
-### `proxy(Minn\Http\Request $request): Minn\Http\Response`
-
-Route: `GET /oembed/1.0/proxy (public)`
-
-Another site's embed, fetched for the editor.
-
-Internals: `requireRuntime()` (private, line 92)
-
-
 ## ParamCheck
 
 `final class Minn\Rest\ParamCheck` · `public/minn/src/Minn/Rest/ParamCheck.php`
@@ -2045,7 +2006,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 
@@ -2430,7 +2391,7 @@ and the runtime's namespaces folded into the index.
 - const `ROUTE_SCOPED` = `array (   '_wp_connectors_rest_settings_dispatch' =>    array (     0 => 10,     1 => '/wp/v2/settings',   ), )` — rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10,   'rest_send_cors_headers' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\OEmbedController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -2524,6 +2485,12 @@ rest_pre_serve_request may serve it itself (what it prints is the
 body), and rest_pre_echo_response may rewrite the data echoed. With
 nothing hooked, the answer goes out as it is.
 
+### static `servedAsXml(Minn\Http\Request $request, Minn\Http\Response $response): bool`
+
+Whether the answer went out as oEmbed's XML. The reference prints it
+in rest_pre_serve_request ahead of rest_send_cors_headers, so none of
+the CORS headers follow it, Vary: Origin among them.
+
 ### static `ensure(mixed $result): WP_REST_Response`
 
 A callback's return as a response object, an error converted.
@@ -2532,7 +2499,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 87), `dispatchDone()` (private, line 293), `oembedXml()` (private, line 362), `look()` (private, line 376), `remember()` (private, line 381), `decode()` (private, line 388), `expand()` (private, line 408), `newWpRequest()` (private, line 433), `toResponse()` (private, line 462)
+Internals: `allow()` (private, line 87), `dispatchDone()` (private, line 293), `asksForXml()` (private, line 368), `oembedXml()` (private, line 379), `look()` (private, line 393), `remember()` (private, line 398), `decode()` (private, line 405), `expand()` (private, line 425), `newWpRequest()` (private, line 450), `toResponse()` (private, line 479)
 
 
 ## Schema
@@ -3557,6 +3524,29 @@ Whether plugin code registered the type (not a built-in, not an extension's).
 The rest_base of a type slug.
 
 Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 173)
+
+
+## UrlDetails
+
+`final class Minn\Rest\UrlDetails` · `public/minn/src/Minn/Rest/UrlDetails.php`
+
+A page's details as the editor's link previews read them (probe
+rest-embed-details), from the document's head: everything up to its
+closer, the whole page when it has none. The first title, as text with
+its tags gone; the first link whose rel names "icon" (not an
+apple-touch-icon); the first meta named description; the first meta
+whose property is og:image or og:image:url. Twitter tags, og:title and
+og:description count for nothing. Each is trimmed. An address with no
+host hangs off the page's root whatever its own path, and one with no
+scheme takes the page's.
+
+### static `of(string $html, string $url): array`
+
+The page's four details, read from its markup; addresses made whole against the page's own. @return array{title: string, icon: string, description: string, image: string}
+
+- `@return array{title: string, icon: string, description: string, image: string}`
+
+Internals: `read()` (private, line 48), `text()` (private, line 64), `absolute()` (private, line 70)
 
 
 ## UserCollectionParams

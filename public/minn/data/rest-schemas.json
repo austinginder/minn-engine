@@ -4699,5 +4699,54 @@
                 "readonly": true
             }
         }
+    },
+    "url-details": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "url-details",
+        "type": "object",
+        "properties": {
+            "title": {
+                "description": "The contents of the <title> element from the URL.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "icon": {
+                "description": "The favicon image link of the <link rel=\"icon\"> element from the URL.",
+                "type": "string",
+                "format": "uri",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "The content of the <meta name=\"description\"> element from the URL.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "image": {
+                "description": "The Open Graph image link of the <meta property=\"og:image\"> or <meta property=\"og:image:url\"> element from the URL.",
+                "type": "string",
+                "format": "uri",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            }
+        }
     }
 }

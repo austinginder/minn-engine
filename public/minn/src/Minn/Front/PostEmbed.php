@@ -120,7 +120,8 @@ final class PostEmbed
                 self::append($node->addChild($key), (array) $value);
                 continue;
             }
-            $node->addChild($key, htmlspecialchars((string) $value, ENT_XML1));
+            // As written: an entity reference stays one (a numeric one becomes its character), a bare ampersand is escaped.
+            $node->addChild($key, (string) preg_replace('/&(?!(?:[A-Za-z][A-Za-z0-9]*|#[0-9]+|#[xX][0-9A-Fa-f]+);)/', '&amp;', (string) $value));
         }
     }
 }

@@ -145,9 +145,11 @@ function wp_oembed_ensure_format($format)
     return in_array($format, ['json', 'xml'], true) ? $format : 'json';
 }
 
-/** The engine serves oembed/1.0 itself (Rest\OEmbedController), so there is nothing to register on rest_api_init. */
+/** oembed/1.0's embed and proxy routes (rest_api_init), served by WP_oEmbed_Controller. */
 function wp_oembed_register_route()
 {
+    $controller = new WP_oEmbed_Controller();
+    $controller->register_routes();
 }
 
 /**

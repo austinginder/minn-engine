@@ -307,7 +307,7 @@ Behaviour pinned by the html-tag-processor probe fixture.
 - const `RAW_DECODED` = `array (   0 => 'textarea',   1 => 'title', )`
 - const `MAX_BOOKMARKS` = `10`
 
-Used by: `Minn\Html\Edits`, `Minn\Html\Scanner`, `Minn\Html\Tree\Builder`
+Used by: `Minn\Html\Edits`, `Minn\Html\Scanner`, `Minn\Html\Tree\Builder`, `Minn\Rest\UrlDetails`
 
 ```php
 __construct(string $html)
