@@ -10298,3 +10298,25 @@ so the cast gave 1 and post 1 (Hello world!) was force-deleted from the shared
 database. It was restored from the marketing site's database, which still holds
 the install's rows, with the guid set back to the test site's host. The probe
 now deletes only positive integer ids of actual revisions.
+
+## The rest of nav-menu.php (2026-10-10)
+
+Probe `nav-menu-remaining` proves the seven nav-menu.php functions that were
+left. It covers:
+- a menu location registered alone;
+- locations assigned and checked;
+- menus recognised by id, slug, name and object;
+- pages added to menus that take new pages;
+- menu items taken away with the post they point at;
+- locations carried across a theme switch: by the same name, by a common
+  name, and with nothing kept.
+
+The theme's mods, the menu options and the counts of menus and items are put
+back afterwards, and checked on both stacks.
+
+- **Fix: `has_nav_menu`** is true only for a registered location with a menu
+  assigned. A location assigned but never registered is false. The result goes
+  through the `has_nav_menu` filter, with the location.
+- Everything else already matched. Removing a page's items renumbers the
+  menu's other items. Only a top-level page published from another status is
+  added. The theme-switch option is gone afterwards.

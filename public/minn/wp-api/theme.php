@@ -237,9 +237,11 @@ function get_nav_menu_locations()
     return is_array($locations) ? $locations : [];
 }
 
+/** Whether a registered location has a menu assigned, through has_nav_menu (probe nav-menu-remaining). */
 function has_nav_menu($location)
 {
-    return !empty(get_nav_menu_locations()[$location]);
+    $has = isset(get_registered_nav_menus()[$location]) && !empty(get_nav_menu_locations()[$location]);
+    return (bool) apply_filters('has_nav_menu', $has, $location);
 }
 
 /** Stylesheets the editor shows the theme's content with; the theme then supports editor styles. */

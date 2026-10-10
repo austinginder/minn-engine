@@ -1,0 +1,194 @@
+[
+    [
+        "a location registered alone",
+        [
+            "ZZ Main Menu",
+            "ZZ Footer"
+        ]
+    ],
+    [
+        "locations assigned and checked",
+        [
+            {
+                "zz-main": "{zz-nm-main}",
+                "zz-footer": 0,
+                "zz-unregistered": "{zz-nm-other}",
+                "zz-missing-menu": 999999
+            },
+            true,
+            false,
+            false,
+            false,
+            false,
+            [
+                "heard",
+                true,
+                "zz-main"
+            ],
+            true,
+            [
+                "heard",
+                false,
+                "zz-footer"
+            ],
+            true,
+            [],
+            [
+                [],
+                false
+            ]
+        ]
+    ],
+    [
+        "menus recognised",
+        [
+            true,
+            true,
+            true,
+            true,
+            true,
+            false,
+            false,
+            false,
+            false
+        ]
+    ],
+    [
+        "pages added to menus that take them",
+        [
+            [
+                [
+                    "{zz-nm-top}",
+                    "page",
+                    "post_type",
+                    "zz nm top",
+                    1,
+                    0
+                ]
+            ],
+            [
+                [
+                    "{zz-nm-top}",
+                    "page",
+                    "post_type",
+                    "zz nm top",
+                    1,
+                    0
+                ],
+                [
+                    "{zz-nm-drafted}",
+                    "page",
+                    "post_type",
+                    "zz nm drafted",
+                    2,
+                    0
+                ]
+            ],
+            []
+        ]
+    ],
+    [
+        "menu items taken away with their post",
+        [
+            [
+                [
+                    [
+                        "{zz-nm-top}",
+                        "page",
+                        "post_type",
+                        "zz nm top",
+                        1,
+                        0
+                    ],
+                    [
+                        "{zz-nm-drafted}",
+                        "page",
+                        "post_type",
+                        "zz nm drafted",
+                        2,
+                        0
+                    ]
+                ],
+                [
+                    [
+                        "{zz-nm-top}",
+                        "page",
+                        "post_type",
+                        "zz nm top",
+                        1,
+                        0
+                    ],
+                    [
+                        "self",
+                        "custom",
+                        "custom",
+                        "ZZ Custom",
+                        2,
+                        0
+                    ],
+                    [
+                        1,
+                        "category",
+                        "taxonomy",
+                        "Uncategorized",
+                        3,
+                        0
+                    ]
+                ]
+            ],
+            [
+                [
+                    "{zz-nm-drafted}",
+                    "page",
+                    "post_type",
+                    "zz nm drafted",
+                    1,
+                    0
+                ]
+            ],
+            [
+                [
+                    "self",
+                    "custom",
+                    "custom",
+                    "ZZ Custom",
+                    1,
+                    0
+                ],
+                [
+                    1,
+                    "category",
+                    "taxonomy",
+                    "Uncategorized",
+                    2,
+                    0
+                ]
+            ]
+        ]
+    ],
+    [
+        "locations across a theme switch",
+        {
+            "same names": [
+                {
+                    "zz-main": "{zz-nm-main}",
+                    "zz-footer": "{zz-nm-other}"
+                },
+                "gone"
+            ],
+            "common names": [
+                {
+                    "primary": "{zz-nm-main}",
+                    "zz-footer": "{zz-nm-other}"
+                },
+                "gone"
+            ],
+            "nothing kept": [
+                {
+                    "zz-main": "{zz-nm-other}"
+                },
+                "gone"
+            ]
+        }
+    ]
+]

@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 768,
-        "composes": 1876,
+        "composes": 1877,
         "leaf": 877,
-        "noop": 2631,
+        "noop": 2630,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7978,
@@ -45942,11 +45942,13 @@
         },
         "has_nav_menu": {
             "file": "theme.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "get_nav_menu_locations"
+                "apply_filters",
+                "get_nav_menu_locations",
+                "get_registered_nav_menus"
             ]
         },
         "has_post_format": {
