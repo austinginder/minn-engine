@@ -363,19 +363,104 @@ function render_block_core_query_pagination($attributes, $content)
     return _minn_render_core_callback('core/query-pagination', ...func_get_args());
 }
 
+/**
+ * The next page's link (probe query-pagination): shown before the last page.
+ * Following the main query, it reads the global page and gives null when not
+ * shown; a block's own query reads query-{id}-page and gives ''.
+ */
 function render_block_core_query_pagination_next($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/query-pagination-next', $attributes, $content, $block);
+    if (!$block instanceof WP_Block) {
+        return '';
+    }
+    $state = _minn_query_pagination_state($block);
+    if ($state['page'] >= $state['pages']) {
+        return $state['inherit'] ? null : '';
+    }
+    $url = $state['inherit'] ? get_next_posts_page_link($state['pages']) : add_query_arg($state['param'], $state['page'] + 1);
+    return _minn_query_pagination_link($block, (string) $url, __('Next Page'), 'next');
 }
 
+/**
+ * The page numbers (probe query-pagination): nothing for a single page or a
+ * page past the end. A block's own query numbers its links ?query-{id}-page=N,
+ * with the reference's cst argument once past the first page.
+ */
 function render_block_core_query_pagination_numbers($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/query-pagination-numbers', $attributes, $content, $block);
+    if (!$block instanceof WP_Block) {
+        return '';
+    }
+    $state = _minn_query_pagination_state($block);
+    if ($state['pages'] < 2 || $state['page'] > $state['pages']) {
+        return '';
+    }
+    $args = ['current' => $state['page'], 'total' => $state['pages'], 'prev_next' => false];
+    if (isset($attributes['midSize'])) {
+        $args['mid_size'] = (int) $attributes['midSize'];
+    }
+    if (!$state['inherit']) {
+        $args += ['base' => '%_%', 'format' => '?' . $state['param'] . '=%#%'];
+        if ($state['page'] > 1) {
+            $args['add_args'] = ['cst' => ''];
+        }
+    }
+    $links = paginate_links($args);
+    return $links ? '<div ' . get_block_wrapper_attributes() . '>' . $links . '</div>' : '';
 }
 
+/**
+ * The previous page's link (probe query-pagination): following the main
+ * query, shown past the first page (even past the last); a block's own query
+ * shows it only between the second page and the last.
+ */
 function render_block_core_query_pagination_previous($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/query-pagination-previous', $attributes, $content, $block);
+    if (!$block instanceof WP_Block) {
+        return '';
+    }
+    $state = _minn_query_pagination_state($block);
+    $shown = $state['page'] > 1 && ($state['inherit'] || $state['page'] <= $state['pages']);
+    if (!$shown) {
+        return $state['inherit'] ? null : '';
+    }
+    $url = $state['inherit'] ? get_previous_posts_page_link() : add_query_arg($state['param'], $state['page'] - 1);
+    return _minn_query_pagination_link($block, (string) $url, __('Previous Page'), 'previous');
+}
+
+/**
+ * @internal Where a pagination block's query stands: the page it is on, the
+ * pages it has, whether it follows the main query, and the request parameter
+ * a block's own query pages by (capped by its pages setting).
+ */
+function _minn_query_pagination_state(WP_Block $block): array
+{
+    $context = (array) $block->context;
+    if (!empty($context['query']['inherit'])) {
+        return ['inherit' => true, 'page' => max(1, (int) ($GLOBALS['paged'] ?? 0)), 'pages' => (int) ($GLOBALS['wp_query']->max_num_pages ?? 0), 'param' => ''];
+    }
+    $param = isset($context['queryId']) ? 'query-' . $context['queryId'] . '-page' : 'query-page';
+    $page = empty($_GET[$param]) ? 1 : (int) $_GET[$param];
+    $pages = (int) (new WP_Query(build_query_vars_from_query_block($block, $page)))->max_num_pages;
+    $cap = (int) ($context['query']['pages'] ?? 0);
+    return ['inherit' => false, 'page' => $page, 'pages' => $cap > 0 ? min($cap, $pages) : $pages, 'param' => $param];
+}
+
+/**
+ * @internal A previous or next link: its label (escaped, or hidden behind an
+ * aria-label when showLabel is off) and the arrow the pagination block chose,
+ * before the label going back and after it going on.
+ */
+function _minn_query_pagination_link(WP_Block $block, string $url, string $default, string $direction): string
+{
+    $context = (array) $block->context;
+    $label = esc_html((string) ($block->attributes['label'] ?? '') !== '' ? (string) $block->attributes['label'] : $default);
+    $arrow = (string) ($context['paginationArrow'] ?? '');
+    $glyphs = ['arrow' => ['next' => '→', 'previous' => '←'], 'chevron' => ['next' => '»', 'previous' => '«']];
+    $span = isset($glyphs[$arrow]) ? "<span class='wp-block-query-pagination-{$direction}-arrow is-arrow-{$arrow}' aria-hidden='true'>{$glyphs[$arrow][$direction]}</span>" : '';
+    $shown = ($context['showLabel'] ?? true) !== false;
+    $text = $shown ? $label : '';
+    return '<a href="' . esc_url($url) . '" ' . get_block_wrapper_attributes() . ($shown ? '' : ' aria-label="' . $label . '"') . '>' . ($direction === 'next' ? $text . $span : $span . $text) . '</a>';
 }
 
 function render_block_core_query_title($attributes, $content, $block)

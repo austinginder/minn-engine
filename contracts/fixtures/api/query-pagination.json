@@ -1,0 +1,117 @@
+[
+    [
+        "pagination callbacks",
+        {
+            "the main query, page 1": {
+                "previous": null,
+                "next": "<a href=\"{site}/page/2/\" >Next Page</a>",
+                "numbers": "<div ><span aria-current=\"page\" class=\"page-numbers current\">1</span>\n<a class=\"page-numbers\" href=\"{site}/page/2/\">2</a>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the main query, page 2": {
+                "previous": "<a href=\"{site}/\" >Previous Page</a>",
+                "next": "<a href=\"{site}/page/3/\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the main query, page 3": {
+                "previous": "<a href=\"{site}/page/2/\" >Previous Page</a>",
+                "next": null,
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<a class=\"page-numbers\" href=\"{site}/page/2/\">2</a>\n<span aria-current=\"page\" class=\"page-numbers current\">3</span></div>"
+            },
+            "the main query, page 4": {
+                "previous": "<a href=\"{site}/page/3/\" >Previous Page</a>",
+                "next": null,
+                "numbers": ""
+            },
+            "labels given": {
+                "previous": "<a href=\"{site}/\" >Older &lt;b&gt;posts&lt;/b&gt;</a>",
+                "next": "<a href=\"{site}/page/3/\" >Older &lt;b&gt;posts&lt;/b&gt;</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the arrow arrow": {
+                "previous": "<a href=\"{site}/\" ><span class='wp-block-query-pagination-previous-arrow is-arrow-arrow' aria-hidden='true'>←</span>Previous Page</a>",
+                "next": "<a href=\"{site}/page/3/\" >Next Page<span class='wp-block-query-pagination-next-arrow is-arrow-arrow' aria-hidden='true'>→</span></a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the chevron arrow": {
+                "previous": "<a href=\"{site}/\" ><span class='wp-block-query-pagination-previous-arrow is-arrow-chevron' aria-hidden='true'>«</span>Previous Page</a>",
+                "next": "<a href=\"{site}/page/3/\" >Next Page<span class='wp-block-query-pagination-next-arrow is-arrow-chevron' aria-hidden='true'>»</span></a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the none arrow": {
+                "previous": "<a href=\"{site}/\" >Previous Page</a>",
+                "next": "<a href=\"{site}/page/3/\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the zz arrow": {
+                "previous": "<a href=\"{site}/\" >Previous Page</a>",
+                "next": "<a href=\"{site}/page/3/\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the label hidden": {
+                "previous": "<a href=\"{site}/\"  aria-label=\"Previous Page\"><span class='wp-block-query-pagination-previous-arrow is-arrow-arrow' aria-hidden='true'>←</span></a>",
+                "next": "<a href=\"{site}/page/3/\"  aria-label=\"Next Page\"><span class='wp-block-query-pagination-next-arrow is-arrow-arrow' aria-hidden='true'>→</span></a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "the label hidden, no arrow": {
+                "previous": "<a href=\"{site}/\"  aria-label=\"Previous Page\"></a>",
+                "next": "<a href=\"{site}/page/3/\"  aria-label=\"Next Page\"></a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"{site}/page/3/\">3</a></div>"
+            },
+            "a middle size": {
+                "previous": "<a href=\"{site}/page/2/\" >Previous Page</a>",
+                "next": "<a href=\"{site}/page/4/\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<a class=\"page-numbers\" href=\"{site}/page/2/\">2</a>\n<span aria-current=\"page\" class=\"page-numbers current\">3</span>\n<a class=\"page-numbers\" href=\"{site}/page/4/\">4</a>\n<a class=\"page-numbers\" href=\"{site}/page/5/\">5</a></div>"
+            },
+            "no middle size": {
+                "previous": "<a href=\"{site}/page/2/\" >Previous Page</a>",
+                "next": "<a href=\"{site}/page/4/\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<span class=\"page-numbers dots\">&hellip;</span>\n<span aria-current=\"page\" class=\"page-numbers current\">3</span>\n<span class=\"page-numbers dots\">&hellip;</span>\n<a class=\"page-numbers\" href=\"{site}/page/5/\">5</a></div>"
+            },
+            "the default middle size": {
+                "previous": "<a href=\"{site}/page/2/\" >Previous Page</a>",
+                "next": "<a href=\"{site}/page/4/\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"{site}/\">1</a>\n<a class=\"page-numbers\" href=\"{site}/page/2/\">2</a>\n<span aria-current=\"page\" class=\"page-numbers current\">3</span>\n<a class=\"page-numbers\" href=\"{site}/page/4/\">4</a>\n<a class=\"page-numbers\" href=\"{site}/page/5/\">5</a></div>"
+            },
+            "a single page": {
+                "previous": null,
+                "next": null,
+                "numbers": ""
+            },
+            "a custom query, page none": {
+                "previous": "",
+                "next": "<a href=\"/?query-7-page=2\" >Next Page</a>",
+                "numbers": "<div ><span aria-current=\"page\" class=\"page-numbers current\">1</span>\n<a class=\"page-numbers\" href=\"?query-7-page=2\">2</a>\n<a class=\"page-numbers\" href=\"?query-7-page=3\">3</a></div>"
+            },
+            "a custom query, page 1": {
+                "previous": "",
+                "next": "<a href=\"/?query-7-page=2\" >Next Page</a>",
+                "numbers": "<div ><span aria-current=\"page\" class=\"page-numbers current\">1</span>\n<a class=\"page-numbers\" href=\"?query-7-page=2\">2</a>\n<a class=\"page-numbers\" href=\"?query-7-page=3\">3</a></div>"
+            },
+            "a custom query, page 2": {
+                "previous": "<a href=\"/?query-7-page=1\" >Previous Page</a>",
+                "next": "<a href=\"/?query-7-page=3\" >Next Page</a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"?cst\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"?query-7-page=3&#038;cst\">3</a></div>"
+            },
+            "a custom query, page 3": {
+                "previous": "<a href=\"/?query-7-page=2\" >Previous Page</a>",
+                "next": "",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"?cst\">1</a>\n<a class=\"page-numbers\" href=\"?query-7-page=2&#038;cst\">2</a>\n<span aria-current=\"page\" class=\"page-numbers current\">3</span></div>"
+            },
+            "a custom query, page 9": {
+                "previous": "",
+                "next": "",
+                "numbers": ""
+            },
+            "a custom query capped by pages": {
+                "previous": "<a href=\"/?query-7-page=1\" >Previous Page</a>",
+                "next": "",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"?cst\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span></div>"
+            },
+            "a custom query, an arrow and a label": {
+                "previous": "<a href=\"/?query-7-page=1\" ><span class='wp-block-query-pagination-previous-arrow is-arrow-chevron' aria-hidden='true'>«</span>Onward</a>",
+                "next": "<a href=\"/?query-7-page=3\" >Onward<span class='wp-block-query-pagination-next-arrow is-arrow-chevron' aria-hidden='true'>»</span></a>",
+                "numbers": "<div ><a class=\"page-numbers\" href=\"?cst\">1</a>\n<span aria-current=\"page\" class=\"page-numbers current\">2</span>\n<a class=\"page-numbers\" href=\"?query-7-page=3&#038;cst\">3</a></div>"
+            }
+        }
+    ]
+]

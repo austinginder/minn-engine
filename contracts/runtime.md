@@ -10543,3 +10543,42 @@ widget, and the term template. Called by name in the probe runner, they come
 back empty on the engine where the reference prints markup. Each needs a real
 renderer: a batch of its own, compared through the core-blocks probe's
 render helper.
+
+## Query pagination's own callbacks (2026-10-10)
+
+Probe `query-pagination` proves the previous, next and numbers render
+callbacks. Each is called by name with a block in a query's context, outside
+a render, so no block-supports classes apply. The cases:
+- the main query on the first, a middle and the last page, and past the end;
+- labels given;
+- each arrow;
+- the label hidden;
+- middle sizes for the numbers;
+- a single page;
+- a custom query paged by `query-{id}-page`, capped by its pages setting.
+
+The callbacks used to hand off to the engine's renderer, which draws the
+children only inside the pagination block, so called by name they printed
+nothing. They are now real.
+
+- **The main query** reads the global page (set by the main request) and
+  `max_num_pages`. Previous shows past the first page, even past the last.
+  Next shows before the last page. A link not shown is null.
+- **A block's own query** reads `query-{id}-page` from the request, and its
+  page count from the block's query, capped by `pages`. Previous shows only
+  between the second page and the last; next shows before the last. Their
+  links add the parameter to the current address. A link not shown is `''`.
+- **The numbers** print nothing for a single page or a page past the end. A
+  block's own query numbers its links `?query-{id}-page=N`, adding the
+  reference's `cst` argument once past the first page.
+- **Labels** are escaped, with "Previous Page" and "Next Page" as defaults.
+  The pagination block's arrow or chevron goes before the label going back
+  and after it going on. With `showLabel` off, the label moves to an
+  `aria-label`.
+- **Shared fix: `add_query_arg` with no URL** builds on the raw
+  `$_SERVER['REQUEST_URI']`, as the reference does. A runtime built without
+  one uses its request's path and query.
+
+Still two paths: front-end pages render pagination inside the engine's
+`QueryBlocks`, which already matches the reference pages. Rendering the
+children through these callbacks there is owed.

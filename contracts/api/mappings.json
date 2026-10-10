@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 768,
-        "composes": 1878,
+        "composes": 1883,
         "leaf": 878,
-        "noop": 2628,
+        "noop": 2625,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7978,
+        "functions": 7980,
         "minnMethods": 938,
         "leafLinesOver15": 12
     },
@@ -31344,6 +31344,26 @@
                 "get_query_var"
             ]
         },
+        "_minn_query_pagination_link": {
+            "file": "core-blocks.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_html",
+                "esc_url",
+                "get_block_wrapper_attributes"
+            ]
+        },
+        "_minn_query_pagination_state": {
+            "file": "core-blocks.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "build_query_vars_from_query_block"
+            ]
+        },
         "_minn_query_title_parts": {
             "file": "query.php",
             "lines": 20,
@@ -31528,7 +31548,7 @@
         },
         "_minn_request_uri": {
             "file": "functions.php",
-            "lines": 6,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -52004,29 +52024,39 @@
         },
         "render_block_core_query_pagination_next": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "__",
+                "_minn_query_pagination_link",
+                "_minn_query_pagination_state",
+                "add_query_arg",
+                "get_next_posts_page_link"
             ]
         },
         "render_block_core_query_pagination_numbers": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 19,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_query_pagination_state",
+                "get_block_wrapper_attributes",
+                "paginate_links"
             ]
         },
         "render_block_core_query_pagination_previous": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "__",
+                "_minn_query_pagination_link",
+                "_minn_query_pagination_state",
+                "add_query_arg",
+                "get_previous_posts_page_link"
             ]
         },
         "render_block_core_query_title": {
