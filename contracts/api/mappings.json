@@ -2,13 +2,13 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 786,
-        "composes": 1998,
-        "leaf": 901,
-        "noop": 2691,
+        "minn": 787,
+        "composes": 2013,
+        "leaf": 902,
+        "noop": 2699,
         "placeholder": 214,
         "deadend": 1662,
-        "functions": 8174,
+        "functions": 8199,
         "minnMethods": 952,
         "leafLinesOver15": 12
     },
@@ -17811,6 +17811,251 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Application_Passwords_Controller::__construct": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Application_Passwords_Controller::create_item": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "is_wp_error",
+                "wp_slash"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::create_item_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::delete_item": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::delete_item_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::delete_items": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::delete_items_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::do_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_deprecated_function",
+                "current_user_can",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_application_password": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Application_Passwords_Controller::get_current_item": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_wp_error",
+                "rest_get_authenticated_app_password"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_current_item_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_current_user_id",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_item": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Application_Passwords_Controller::get_items": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::get_user": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_userdata",
+                "is_user_logged_in",
+                "wp_get_current_user",
+                "wp_is_application_passwords_available",
+                "wp_is_application_passwords_available_for_user"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::minn_may": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_user_can",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::prepare_item_for_database": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_date_from_gmt",
+                "is_wp_error",
+                "rest_is_field_included"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::prepare_links": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "rest_url"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::register_routes": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::update_item": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action",
+                "is_wp_error",
+                "wp_slash"
+            ]
+        },
+        "WP_REST_Application_Passwords_Controller::update_item_permissions_check": {
+            "file": "classes/WP_REST_Application_Passwords_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Attachments_Controller::check_upload_size": {
             "file": "classes/placeholders/Placeholders.php",

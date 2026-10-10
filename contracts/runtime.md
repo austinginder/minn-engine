@@ -11149,3 +11149,44 @@ signed in; with an Origin, with a null one, as a preflight, as a POST) the
 headers match the reference exactly. `rest-envelope` pins seven of them.
 The http-transports fixture was recaptured, because the REST answers it
 requests from the test site now carry these headers on both stacks.
+
+## The application passwords REST controller (2026-10-10)
+
+Probe `rest-app-passwords-class` proves
+`WP_REST_Application_Passwords_Controller`: the class was missing, 24
+methods. It is called directly, as a plugin would, by nobody, an
+administrator and a subscriber, on themselves and on each other, by id and
+as "me". It covers:
+- the schema and parameters;
+- every permission check;
+- passwords listed, read (in each context, and with none), created (an
+  app id, a taken name, no name), renamed (to a taken name too) and
+  deleted one at a time and all at once;
+- the current password, outside an application-password sign-in;
+- the helpers.
+
+The probe removes its passwords and its user, and puts back the
+administrator's own list exactly.
+
+- **Permissions.** The user named is looked up first ("me" means the
+  caller, and refuses nobody with `rest_not_logged_in`), so a missing user
+  is a 404 for anyone. Each action then asks its own meta capability:
+  `list_app_passwords`, `read_app_password`, `create_app_password`,
+  `edit_app_password`, `delete_app_passwords` or `delete_app_password`,
+  the per-password ones given the uuid. Each refusal uses the
+  authorization code: 401 for nobody, 403 for someone signed in.
+  Introspection is for the caller alone. The deprecated
+  `do_permissions_check` (5.7.0) asks `edit_user`.
+- **Answers.** A password shows its uuid, app id ('' when it has none),
+  name, created and last-used times (site-local, no offset), and last IP.
+  A new password is shown once, chunked, in an edit-context answer with
+  201 and a Location header. Fields follow the request's context, and a
+  request with no context shows none. Links come only when `_links` is
+  wanted. A taken name is allowed, both for a new password and for a
+  rename. An empty name is refused by `WP_Application_Passwords`. A delete
+  answers the password as it was, and deleting all of them answers the
+  count.
+- **The database form** is the name, plus the app id for a new password,
+  through `rest_pre_insert_application_password`.
+
+The engine's own route still answers over HTTP. The class is for plugins.
