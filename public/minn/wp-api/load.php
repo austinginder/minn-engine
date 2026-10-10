@@ -13,18 +13,27 @@ function is_admin()
 
 function is_network_admin()
 {
-    return false;
+    return _minn_in_admin('network', 'WP_NETWORK_ADMIN');
 }
 
 function is_user_admin()
 {
-    return false;
+    return _minn_in_admin('user', 'WP_USER_ADMIN');
 }
 
+/** Whether the screen being drawn is in the site admin, or WP_BLOG_ADMIN says so (probe load-remaining); Minn draws no admin screen of its own. */
 function is_blog_admin()
 {
-    // The reference answers from the admin screen being drawn; Minn draws none, and admin-ajax.php has none either.
-    return false;
+    return _minn_in_admin('site', 'WP_BLOG_ADMIN');
+}
+
+/** @internal The current screen's answer for an admin, else the constant's, else no. */
+function _minn_in_admin(string $admin, string $constant): bool
+{
+    if (isset($GLOBALS['current_screen']) && is_object($GLOBALS['current_screen']) && method_exists($GLOBALS['current_screen'], 'in_admin')) {
+        return (bool) $GLOBALS['current_screen']->in_admin($admin);
+    }
+    return defined($constant) && (bool) constant($constant);
 }
 
 function is_multisite()
@@ -72,19 +81,24 @@ function wp_doing_cron()
     return apply_filters('wp_doing_cron', defined('DOING_CRON') && DOING_CRON);
 }
 
+/** Whether the request asks for or sends JSON, by its Accept and Content-Type headers in $_SERVER (probe load-remaining). */
 function wp_is_json_request()
 {
-    $accept = (string) (Runtime::current()->request?->header('accept') ?? '');
-    $type = (string) (Runtime::current()->request?->header('content-type') ?? '');
-    return str_contains($accept, 'application/json') || str_contains($type, 'application/json');
+    if (isset($_SERVER['HTTP_ACCEPT']) && wp_is_json_media_type((string) $_SERVER['HTTP_ACCEPT'])) {
+        return true;
+    }
+    return isset($_SERVER['CONTENT_TYPE']) && wp_is_json_media_type((string) $_SERVER['CONTENT_TYPE']);
 }
 
+/** Whether the request asks for or sends one of the feed and oEmbed XML types, as written, in $_SERVER (probe load-remaining). */
 function wp_is_xml_request()
 {
-    $accept = (string) (Runtime::current()->request?->header('accept') ?? '');
-    foreach (['text/xml', 'application/rss+xml', 'application/atom+xml', 'application/rdf+xml', 'application/rss+xml', 'application/xml'] as $type) {
-        if (str_contains($accept, $type)) {
-            return true;
+    $types = ['text/xml', 'application/rss+xml', 'application/atom+xml', 'application/rdf+xml', 'text/xml+oembed', 'application/xml+oembed'];
+    foreach (['HTTP_ACCEPT', 'CONTENT_TYPE'] as $header) {
+        foreach ($types as $type) {
+            if (isset($_SERVER[$header]) && str_contains((string) $_SERVER[$header], $type)) {
+                return true;
+            }
         }
     }
     return false;
@@ -203,9 +217,16 @@ function wp_convert_hr_to_bytes($value)
     return min($bytes, PHP_INT_MAX);
 }
 
+/** Whether ini_set may change a setting here: it allows changes at run time; an unknown setting may not (probe load-remaining). */
 function wp_is_ini_value_changeable($setting)
 {
-    return true;
+    static $all = null;
+    $all ??= function_exists('ini_get_all') ? (ini_get_all() ?: []) : false;
+    if ($all === false) {
+        return true;
+    }
+    $access = $all[(string) $setting]['access'] ?? null;
+    return $access !== null && (($access & INI_ALL) === INI_ALL || ($access & INI_ALL) === INI_USER);
 }
 
 /**

@@ -646,9 +646,14 @@ function wp_is_mobile()
     return apply_filters('wp_is_mobile', $ua !== '' && preg_match('/Mobile|Android|Silk\/|Kindle|BlackBerry|Opera Mini|Opera Mobi/', $ua) === 1);
 }
 
+/** Whether the request came with basic auth credentials (probe load-remaining); the filter may say otherwise. */
 function wp_is_site_protected_by_basic_auth($context = '')
 {
-    return false;
+    if ($context === '') {
+        $context = wp_doing_ajax() || is_admin() ? 'admin' : (isset($GLOBALS['pagenow']) && $GLOBALS['pagenow'] === 'wp-login.php' ? 'login' : 'front');
+    }
+    $is_protected = !empty($_SERVER['PHP_AUTH_USER']) || !empty($_SERVER['PHP_AUTH_PW']);
+    return (bool) apply_filters('wp_is_site_protected_by_basic_auth', $is_protected, $context);
 }
 
 /**

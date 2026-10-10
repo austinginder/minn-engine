@@ -39180,7 +39180,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 270,
+            "lines": 285,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -39422,11 +39422,31 @@
                 },
                 {
                     "routes": [],
+                    "name": "markThemedRequest",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "markThemedRequest(Minn\\Http\\Request $request): void",
+                    "doc": "WordPress's index.php says its requests use themes before any plugin\nloads; its own scripts (sign-in, the admin, cron, XML-RPC) do not, and\nneither does Minn Admin (probe load-remaining).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 190,
+                    "end": 196
+                },
+                {
+                    "routes": [],
                     "name": "handle",
                     "static": false,
                     "visibility": "private",
                     "signature": "handle(Minn\\Db $db, Minn\\Http\\Request $request): Minn\\Http\\Response",
-                    "doc": "The response the request's own surface produces: REST, then the admin, the login endpoint, and the public site.",
+                    "doc": "",
                     "shapes": [],
                     "params": [
                         {
@@ -39444,8 +39464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 261
+                    "line": 198,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -39541,8 +39561,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 330
+                    "line": 279,
+                    "end": 345
                 }
             ]
         },

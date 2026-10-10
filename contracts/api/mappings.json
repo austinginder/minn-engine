@@ -2,13 +2,13 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 771,
-        "composes": 1862,
-        "leaf": 874,
-        "noop": 2637,
+        "minn": 769,
+        "composes": 1865,
+        "leaf": 876,
+        "noop": 2635,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7970,
+        "functions": 7971,
         "minnMethods": 938,
         "leafLinesOver15": 12
     },
@@ -30607,6 +30607,13 @@
                 "wp_get_image_editor_output_format"
             ]
         },
+        "_minn_in_admin": {
+            "file": "load.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "_minn_inline_extras": {
             "file": "admin.php",
             "lines": 18,
@@ -46528,10 +46535,12 @@
         },
         "is_blog_admin": {
             "file": "load.php",
-            "lines": 2,
-            "kind": "leaf",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_in_admin"
+            ]
         },
         "is_blog_installed": {
             "file": "functions.php",
@@ -46842,7 +46851,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_in_admin"
+            ]
         },
         "is_network_only_plugin": {
             "file": "plugin.php",
@@ -47348,7 +47359,9 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_in_admin"
+            ]
         },
         "is_user_logged_in": {
             "file": "pluggable.php",
@@ -63761,8 +63774,8 @@
         },
         "wp_is_ini_value_changeable": {
             "file": "load.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -63786,13 +63799,12 @@
         },
         "wp_is_json_request": {
             "file": "load.php",
-            "lines": 3,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
-            "composes": []
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_is_json_media_type"
+            ]
         },
         "wp_is_jsonp_request": {
             "file": "load.php",
@@ -63906,10 +63918,14 @@
         },
         "wp_is_site_protected_by_basic_auth": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "is_admin",
+                "wp_doing_ajax"
+            ]
         },
         "wp_is_site_url_using_https": {
             "file": "https.php",
@@ -63974,12 +63990,9 @@
         },
         "wp_is_xml_request": {
             "file": "load.php",
-            "lines": 7,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "wp_iso_descrambler": {
@@ -69817,10 +69830,12 @@
         },
         "wp_using_themes": {
             "file": "misc.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "wp_validate_application_password": {
             "file": "user.php",

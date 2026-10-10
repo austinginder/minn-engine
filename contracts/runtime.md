@@ -9771,3 +9771,45 @@ Fixed to match:
   `WP_Session_Tokens`.
 - **`wp_send_new_user_notifications`** passes `$notify` on as given. An
   empty one tells the admin only.
+
+## The rest of load.php (2026-10-09)
+
+Probe `load-remaining` proves 14 of the 15 load.php functions that were left:
+- which admin the request is in, from the screen or the constants;
+- protected ajax actions;
+- the active and valid plugins;
+- the server protocol and development modes;
+- file modifications and changeable ini values;
+- JSON and XML requests;
+- basic auth, both detected and read from an Authorization header;
+- whether the request uses themes.
+
+`wp_debug_mode` stays unproven: under WP-CLI the reference's error settings
+are WP-CLI's own (its filter returning false did not stop it), so the stacks
+cannot be compared there.
+
+Fixed to match:
+
+- **`is_blog_admin`, `is_network_admin`, `is_user_admin`** answer from the
+  current screen's `in_admin()` when one is set, else from
+  `WP_BLOG_ADMIN`, `WP_NETWORK_ADMIN` and `WP_USER_ADMIN`. They always
+  answered false. Minn draws no admin screen of its own.
+- **`wp_is_ini_value_changeable`** is true only for a setting that may
+  change at run time. A per-directory or system setting may not, and
+  neither may an unknown one. It always answered true.
+- **`wp_is_json_request`** reads Accept and Content-Type from `$_SERVER`,
+  through `wp_is_json_media_type` (any case, `+json`, lists).
+  **`wp_is_xml_request`** checks both headers, case-sensitively, for
+  `text/xml`, the RSS, Atom and RDF types and the two oEmbed XML types; plain
+  `application/xml` is not one. Both used to read the engine's request.
+- **`wp_is_site_protected_by_basic_auth`** is true when `PHP_AUTH_USER` or
+  `PHP_AUTH_PW` is set, in any context, then runs its filter. It always
+  answered false.
+- **`wp_using_themes`** is `WP_USE_THEMES`, then the filter, and false
+  without the constant. It used to default to true. The engine now defines
+  `WP_USE_THEMES` as WordPress's index.php does, before plugins load. That
+  covers every request except its own scripts: wp-admin, wp-login.php,
+  wp-cron.php, xmlrpc.php, wp-signup.php, wp-activate.php,
+  wp-trackback.php, wp-comments-post.php, wp-mail.php and wp-links-opml.php,
+  and also Minn Admin (`Engine::markThemedRequest`). A live check gave true
+  for the front page, REST and feeds, and false for wp-login.php.

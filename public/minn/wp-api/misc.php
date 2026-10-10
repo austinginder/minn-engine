@@ -805,7 +805,8 @@ function wp_recursive_ksort(&$input_array)
 
 function wp_using_themes()
 {
-    return defined('WP_USE_THEMES') ? (bool) WP_USE_THEMES : true;
+    // True only where WP_USE_THEMES is (the engine sets it as index.php would), then the filter (probe load-remaining).
+    return (bool) apply_filters('wp_using_themes', defined('WP_USE_THEMES') && WP_USE_THEMES);
 }
 
 function get_main_network_id()

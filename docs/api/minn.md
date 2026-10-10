@@ -7,7 +7,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 287 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 270 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Engine`](#engine) | final readonly class | 285 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 107 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 115 | JSON in and out, for the engine and for code written for Minn: |
@@ -224,7 +224,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 112), `bootRuntimeForRest()` (private, line 126), `adoptSettledUser()` (private, line 166), `handle()` (private, line 185), `frontPipeline()` (private, line 264)
+Internals: `restRoute()` (private, line 112), `bootRuntimeForRest()` (private, line 126), `adoptSettledUser()` (private, line 166), `markThemedRequest()` (private, line 190), `handle()` (private, line 198), `frontPipeline()` (private, line 279)
 
 
 ## Html
