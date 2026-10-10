@@ -432,19 +432,59 @@ function _minn_query_title_parts(): array
 }
 
 /**
- * A slug the post no longer has sends its 404 to the post's current link, through old_slug_redirect_url. The engine
- * found the post as it resolved the request (by the type the address names and its date); this makes the move.
+ * A slug the post no longer has sends its 404 to the post's current link, through old_slug_redirect_url: the move the
+ * engine found as it resolved the request, or, called on any other 404, the one the query names (probe query-remaining).
  */
 function wp_old_slug_redirect()
 {
-    $found = Runtime::current()->get('old_slug_location');
-    if (!is_404() || !is_array($found)) {
+    if (!is_404()) {
         return;
     }
-    $link = apply_filters('old_slug_redirect_url', $found[0]);
+    // The front's own resolution when it found the move, else the move worked out from the query (probe query-remaining).
+    $found = Runtime::current()->get('old_slug_location');
+    $link = is_array($found) ? $found[0] : (Runtime::current()->get('old_slug_settled') ? false : _minn_old_slug_link());
+    if (!$link) {
+        return;
+    }
+    $link = apply_filters('old_slug_redirect_url', $link);
     if ($link && wp_redirect($link, 301)) {
         throw new Minn\Theme\Printed();
     }
+}
+
+/**
+ * @internal Where a 404 for a former name should go (probe query-remaining):
+ * for one non-hierarchical queried type, the post found by its old date or old
+ * name (through old_slug_redirect_post_id), with the page or embed the request
+ * asked for.
+ */
+function _minn_old_slug_link()
+{
+    if ((string) get_query_var('name') === '') {
+        return false;
+    }
+    $post_type = get_query_var('post_type');
+    if (is_array($post_type)) {
+        if (count($post_type) > 1) {
+            return false;
+        }
+        $post_type = reset($post_type);
+    }
+    $post_type = (string) ($post_type ?: 'post');
+    // A hierarchical type's addresses keep no former names.
+    if (is_post_type_hierarchical($post_type)) {
+        return false;
+    }
+    $id = (int) apply_filters('old_slug_redirect_post_id', _find_post_by_old_date($post_type) ?: _find_post_by_old_slug($post_type));
+    if ($id === 0) {
+        return false;
+    }
+    $link = (string) get_permalink($id);
+    $paged = (int) get_query_var('paged');
+    if ($paged > 1) {
+        return user_trailingslashit(trailingslashit($link) . 'page/' . $paged);
+    }
+    return is_embed() ? user_trailingslashit(trailingslashit($link) . 'embed') : $link;
 }
 
 /** The post of a type that used to have the requested name, on the date the request names; 0 when none. Cached until posts change. */

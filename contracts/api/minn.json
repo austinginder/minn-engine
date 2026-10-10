@@ -45576,7 +45576,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/FrontController.php",
-            "lines": 103,
+            "lines": 105,
             "doc": "The public site. One catch-all route: resolve the URL, then either\nredirect or render, through the active block theme when there is one,\nthe classic PHP template runner when the theme is classic, and the\ninterim template otherwise.",
             "implements": [],
             "extends": null,
@@ -45836,7 +45836,7 @@
                         }
                     ],
                     "line": 80,
-                    "end": 107
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -45862,8 +45862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 128
+                    "line": 112,
+                    "end": 130
                 }
             ]
         },

@@ -9952,3 +9952,37 @@ The engine already matched the reference on every row, so nothing changed.
 On 7.1 `load_child_theme_textdomain` and `load_muplugin_textdomain` answer
 true without any file, and run no `.mo` filters: the domain is registered
 for loading just in time.
+
+## The rest of query.php (2026-10-09)
+
+Probe `query-remaining` proves the 11 query.php functions that were left:
+- the date, time, favicon, robots, trackback and privacy policy conditionals,
+  for the queries that set them;
+- post data generated without moving the loop;
+- the loop rewound;
+- the old slug redirect.
+
+The probe hears the old slug redirect's address through
+`old_slug_redirect_url` and refuses it there, so nothing redirects. It marks
+an empty query as a 404 itself, as the main request would; a `WP_Query` alone
+does not.
+
+Fixed to match:
+
+- **`wp_old_slug_redirect`** works out the move from the query on a 404 the
+  front has not settled. On a front request it makes the move the engine's
+  resolver found, as before (`old_slug_settled`, `old_slug_location`).
+  Otherwise, for example when a plugin calls it on its own 404, it does
+  this:
+  - It needs a `name`, and a single post type that is not hierarchical (a
+    page or a hierarchical type has no former names).
+  - It finds the post by its old date, else by its old name, through
+    `old_slug_redirect_post_id` (0 when none).
+  - The address is the post's permalink, plus `page/N` when the query is
+    paged or `embed` when it is an embed. A feed gets the plain address.
+
+Open: on the front, `/2024/old-hello/` is a 404 on both stacks. Worked out
+from the query outside the front, the engine's old-slug lookup would have
+found the post there. The front's resolver stays the judge on front
+requests, so nothing shows; the difference is in what that request's query
+holds.

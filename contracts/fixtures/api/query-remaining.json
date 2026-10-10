@@ -1,0 +1,335 @@
+[
+    [
+        "conditionals",
+        {
+            "a year": {
+                "year": true,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "a month": {
+                "year": false,
+                "month": true,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "a day": {
+                "year": false,
+                "month": false,
+                "day": true,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "an hour": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": true,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "a minute": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": true,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "a second": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": true,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "a week": {
+                "year": true,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "m as a year": {
+                "year": true,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "m as a day": {
+                "year": false,
+                "month": false,
+                "day": true,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "m as a time": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": true,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "the favicon": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": true,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "robots": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": true,
+                "trackback": false,
+                "privacy": false
+            },
+            "a trackback": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": true,
+                "privacy": false
+            },
+            "the privacy page": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": true
+            },
+            "another page": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "the post": {
+                "year": false,
+                "month": false,
+                "day": false,
+                "time": false,
+                "favicon": false,
+                "robots": false,
+                "trackback": false,
+                "privacy": false
+            },
+            "no query": [
+                false,
+                false,
+                false,
+                false
+            ]
+        }
+    ],
+    [
+        "post data generated",
+        [
+            [
+                {
+                    "id": "{zz-qr-other}",
+                    "authordata": false,
+                    "currentday": "06.04.85",
+                    "currentmonth": "04",
+                    "page": 1,
+                    "pages": 2,
+                    "multipage": 1,
+                    "more": 0,
+                    "numpages": 2
+                },
+                {
+                    "id": "{zz-qr-single}",
+                    "authordata": false,
+                    "currentday": "05.04.85",
+                    "currentmonth": "04",
+                    "page": 1,
+                    "pages": 1,
+                    "multipage": 0,
+                    "more": 0,
+                    "numpages": 1
+                },
+                false,
+                false
+            ],
+            [
+                -1,
+                false,
+                null
+            ]
+        ]
+    ],
+    [
+        "the loop rewound",
+        [
+            [
+                1,
+                "{zz-qr-single}"
+            ],
+            [
+                -1,
+                true,
+                "{zz-qr-single}"
+            ],
+            [
+                0,
+                5
+            ]
+        ]
+    ],
+    [
+        "the old slug redirect",
+        {
+            "the old name": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        "{zz-qr-renamed}"
+                    ],
+                    "{site}/zz-qr-new-name/"
+                ]
+            ],
+            "the old name, paged": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        "{zz-qr-renamed}"
+                    ],
+                    "{site}/zz-qr-new-name/page/2/"
+                ]
+            ],
+            "the old name, as a feed": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        "{zz-qr-renamed}"
+                    ],
+                    "{site}/zz-qr-new-name/"
+                ]
+            ],
+            "the old name, embedded": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        "{zz-qr-renamed}"
+                    ],
+                    "{site}/zz-qr-new-name/embed/"
+                ]
+            ],
+            "the old name on its old day": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        "{zz-qr-renamed}"
+                    ],
+                    "{site}/zz-qr-new-name/"
+                ]
+            ],
+            "the new name on the old day": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        "{zz-qr-renamed}"
+                    ],
+                    "{site}/zz-qr-new-name/"
+                ]
+            ],
+            "a name never used": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        0
+                    ]
+                ]
+            ],
+            "the new name": [
+                false,
+                []
+            ],
+            "the old name as a page": [
+                true,
+                []
+            ],
+            "the old name as a tree": [
+                true,
+                []
+            ],
+            "the old name as a flat type": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        0
+                    ]
+                ]
+            ],
+            "the old name as two types": [
+                true,
+                []
+            ],
+            "the old name as an attachment": [
+                true,
+                [
+                    [
+                        "old_slug_redirect_post_id",
+                        0
+                    ]
+                ]
+            ]
+        }
+    ]
+]

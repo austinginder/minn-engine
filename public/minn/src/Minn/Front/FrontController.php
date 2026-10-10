@@ -79,6 +79,8 @@ final readonly class FrontController
 
     private function page(Request $request): Response
     {
+        // The front settles former slugs itself; wp_old_slug_redirect only makes the move it found.
+        Runtime::current()->set('old_slug_settled', true);
         $resolution = $this->resolver->resolve($request);
         if ($resolution->kind === Kind::Redirect) {
             // The move is made at template_redirect on the page as typed, where plugins see it: a former slug's by

@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 769,
-        "composes": 1868,
+        "composes": 1869,
         "leaf": 876,
         "noop": 2632,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7971,
+        "functions": 7972,
         "minnMethods": 938,
         "leafLinesOver15": 12
     },
@@ -30954,6 +30954,24 @@
                 "apply_filters",
                 "get_adjacent_post",
                 "get_permalink"
+            ]
+        },
+        "_minn_old_slug_link": {
+            "file": "query.php",
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_find_post_by_old_date",
+                "_find_post_by_old_slug",
+                "apply_filters",
+                "get_permalink",
+                "get_query_var",
+                "is_embed",
+                "is_post_type_hierarchical",
+                "reset",
+                "trailingslashit",
+                "user_trailingslashit"
             ]
         },
         "_minn_package_requirements": {
@@ -65462,7 +65480,7 @@
         },
         "wp_old_slug_redirect": {
             "file": "query.php",
-            "lines": 8,
+            "lines": 13,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
@@ -65470,6 +65488,7 @@
                 "Minn\\Theme\\Printed::__construct"
             ],
             "composes": [
+                "_minn_old_slug_link",
                 "apply_filters",
                 "is_404",
                 "wp_redirect"
