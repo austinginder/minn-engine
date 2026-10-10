@@ -11341,3 +11341,44 @@ flushed or saved.
 
 Left: a taxonomy's default term is not yet created when it registers (the
 reference adds the term and its `default_term_{$taxonomy}` option).
+
+## Identity internals: roles, users, application passwords, phpass (2026-10-10)
+
+Probe `identity-internals` proves the 15 methods the identity classes
+still lacked:
+- `WP_Roles`: the roles data, plus `reinit` and `_init`, directly and
+  through `__call`;
+- `WP_User`: `_init_caps` (default key and a key of its own) and
+  `for_blog`, directly and through `__call`;
+- `WP_Application_Passwords`: hashing and checking a password, and storing
+  a user's list;
+- phpass's `PasswordHash`: its properties, old-style constructor, base64,
+  both salts, `crypt_private`, and hashing portable or not.
+
+The probe's user is removed at the end.
+
+- **Back-compat entry points.** `__call` answers only for the one
+  protected method each class used to expose (`_init`, `_init_caps`) and
+  returns false for anything else.
+  - `reinit` is deprecated at 4.7.0. `_init`, `_init_caps` and `for_blog`
+    are deprecated at 4.9.0. All of them reread through `for_site`.
+  - `_init_caps` with its own key reads the capabilities under that key
+    (an unknown key leaves no caps and no roles).
+- **Application passwords.** A hash is the site's fast hash (`$generic$`),
+  the same for the same password. A check uses the fast hash for those
+  and `wp_check_password` for older ones (phpass, bcrypt). An empty hash
+  never matches. Storing a list is `update_user_meta`'s answer: a new meta
+  id, false for the same list, true when it changes.
+- **phpass** runs over `Minn\Auth\PortableHash`, now public in its pieces.
+  - A count outside 4 to 31 becomes 8. It used to be clamped.
+  - A portable salt is `$P$`, then the character for count + 5 (at most
+    30), then six bytes in phpass's base64.
+  - A bcrypt salt is `$2a$`, the two-digit count, and sixteen bytes in
+    bcrypt's base64.
+  - `crypt_private` returns `*0` for a setting it cannot use, or `*1` when
+    the setting is `*0` itself.
+  - A hasher that is not portable now makes bcrypt hashes. It used to
+    always make portable ones.
+  - Checking falls back to `crypt()`, so a portable hasher checks bcrypt
+    hashes too.
+  - A password over 4096 bytes hashes to `*` and never checks.

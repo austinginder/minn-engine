@@ -16,7 +16,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 59 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
-| [`PortableHash`](#portablehash) | final class | 61 | The portable phpass hash ("$P$"), from the published algorithm: an |
+| [`PortableHash`](#portablehash) | final class | 90 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |
@@ -548,9 +548,12 @@ over salt and password, encoded in phpass's own base64 alphabet. The
 reference stores it in the post-password cookie (2^13 iterations, and it
 accepts nothing weaker there), and still verifies it for application
 passwords and reset keys made before its fast hash, which is why both
-directions of each are accepted.
+directions of each are accepted. Its pieces are public for phpass's own
+class, PasswordHash (probe identity-internals): the base64 encoding,
+both kinds of salt, and the hash with phpass's failure markers.
 
 - const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
+- const `BLOWFISH_ALPHABET` = `'./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'` — bcrypt's own base64 alphabet.
 
 Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Password`, `Minn\Auth\PasswordReset`, `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
 
@@ -558,11 +561,27 @@ Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Password`, `Minn\Auth\Pass
 
 A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13).
 
+### static `salt(string $input, int $countLog2): string`
+
+A portable setting: "$P$", the count's character, and six bytes of salt encoded.
+
+### static `blowfishSalt(string $input, int $countLog2): string`
+
+A bcrypt setting: "$2a$", the two-digit cost, and the first sixteen bytes in bcrypt's base64.
+
 ### static `verify(string $password, string $hash): bool`
 
 Whether a password matches a portable hash from the published algorithm.
 
-Internals: `crypt()` (private, line 36), `encode()` (private, line 51)
+### static `crypt(string $password, string $setting): string`
+
+The hash for a setting; for a setting it cannot use ("$P$" or "$H$",
+a count from 7 to 30, eight characters of salt) phpass's marker "*0",
+or "*1" when the setting is itself "*0".
+
+### static `encode(string $input, int $count): string`
+
+phpass's base64: little-endian groups of three bytes, $count bytes of the input.
 
 
 ## RegisteredCaps

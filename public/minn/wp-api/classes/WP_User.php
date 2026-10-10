@@ -135,9 +135,34 @@ class WP_User
 
     public function for_site($site_id = '')
     {
-        $prefix = Runtime::current()->db->prefix();
-        $this->cap_key = $prefix . 'capabilities';
-        $this->caps = $this->ID > 0 ? (array) (get_user_meta($this->ID, $this->cap_key, true) ?: []) : [];
+        $this->minn_read_caps(Runtime::current()->db->prefix() . 'capabilities');
+    }
+
+    /** Only _init_caps answers here, for code written before it was protected; anything else is false. */
+    public function __call($name, $arguments)
+    {
+        return $name === '_init_caps' ? $this->_init_caps(...$arguments) : false;
+    }
+
+    /** @deprecated 4.9.0 the capabilities under a key of the caller's, or the site's own */
+    protected function _init_caps($cap_key = '')
+    {
+        _deprecated_function(__METHOD__, '4.9.0', 'WP_User::for_site()');
+        $this->minn_read_caps($cap_key === '' ? Runtime::current()->db->prefix() . 'capabilities' : (string) $cap_key);
+    }
+
+    /** @deprecated 4.9.0 */
+    public function for_blog($blog_id = 0)
+    {
+        _deprecated_function(__METHOD__, '4.9.0', 'WP_User::for_site()');
+        $this->for_site($blog_id);
+    }
+
+    /** @internal the user's capabilities read from a meta key, and their roles and full set worked out */
+    private function minn_read_caps(string $key): void
+    {
+        $this->cap_key = $key;
+        $this->caps = $this->ID > 0 ? (array) (get_user_meta($this->ID, $key, true) ?: []) : [];
         $this->get_role_caps();
     }
 

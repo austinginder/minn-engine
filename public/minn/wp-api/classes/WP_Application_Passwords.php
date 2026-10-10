@@ -97,6 +97,27 @@ class WP_Application_Passwords
         return count($items);
     }
 
+    /** The site's fast hash of a password ($generic$, the same each time). */
+    public static function hash_password($password)
+    {
+        return wp_fast_hash($password);
+    }
+
+    /** Whether a password matches a stored hash: the fast hash, or an older kind through wp_check_password. */
+    public static function check_password($password, $hash)
+    {
+        if (!str_starts_with((string) $hash, '$generic$')) {
+            return wp_check_password($password, $hash);
+        }
+        return wp_verify_fast_hash($password, $hash);
+    }
+
+    /** A user's list stored as given; update_user_meta's answer. */
+    protected static function set_user_application_passwords($user_id, $passwords)
+    {
+        return update_user_meta($user_id, static::USERMETA_KEY_APPLICATION_PASSWORDS, $passwords);
+    }
+
     public static function chunk_password($raw_password)
     {
         return ApplicationPasswords::chunked(preg_replace('/[^a-z\d]/i', '', (string) $raw_password));

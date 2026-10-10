@@ -60,9 +60,35 @@ class WP_Roles
         do_action('wp_roles_init', $this);
     }
 
+    /** Only _init answers here, for code written before it was protected; anything else is false. */
+    public function __call($name, $arguments)
+    {
+        return $name === '_init' ? $this->_init(...$arguments) : false;
+    }
+
+    /** @deprecated 4.9.0 */
+    protected function _init()
+    {
+        _deprecated_function(__METHOD__, '4.9.0', 'WP_Roles::for_site()');
+        $this->for_site();
+    }
+
+    /** @deprecated 4.7.0 */
+    public function reinit()
+    {
+        _deprecated_function(__METHOD__, '4.7.0', 'WP_Roles::for_site()');
+        $this->for_site();
+    }
+
     public function for_site($site_id = null)
     {
         $this->init_roles();
+    }
+
+    /** The roles as stored (the user_roles option). */
+    protected function get_roles_data()
+    {
+        return Runtime::current()->capabilities->roles()->all();
     }
 
     public function get_site_id()

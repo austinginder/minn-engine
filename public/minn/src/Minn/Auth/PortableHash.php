@@ -11,17 +11,41 @@ namespace Minn\Auth;
  * reference stores it in the post-password cookie (2^13 iterations, and it
  * accepts nothing weaker there), and still verifies it for application
  * passwords and reset keys made before its fast hash, which is why both
- * directions of each are accepted.
+ * directions of each are accepted. Its pieces are public for phpass's own
+ * class, PasswordHash (probe identity-internals): the base64 encoding,
+ * both kinds of salt, and the hash with phpass's failure markers.
  */
 final class PortableHash
 {
-    private const ALPHABET = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    public const ALPHABET = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+    /** bcrypt's own base64 alphabet. */
+    private const BLOWFISH_ALPHABET = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     /** A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13). */
     public static function hash(string $password, int $countLog2 = 13): string
     {
-        $salt = self::encode(random_bytes(6), 6);
-        return self::crypt($password, '$P$' . self::ALPHABET[$countLog2] . $salt);
+        return self::crypt($password, self::salt(random_bytes(6), $countLog2));
+    }
+
+    /** A portable setting: "$P$", the count's character, and six bytes of salt encoded. */
+    public static function salt(string $input, int $countLog2): string
+    {
+        return '$P$' . self::ALPHABET[$countLog2] . self::encode($input, 6);
+    }
+
+    /** A bcrypt setting: "$2a$", the two-digit cost, and the first sixteen bytes in bcrypt's base64. */
+    public static function blowfishSalt(string $input, int $countLog2): string
+    {
+        $bits = '';
+        foreach (str_split(substr($input, 0, 16)) as $byte) {
+            $bits .= str_pad(decbin(ord($byte)), 8, '0', STR_PAD_LEFT);
+        }
+        $salt = '';
+        foreach (str_split($bits, 6) as $chunk) {
+            $salt .= self::BLOWFISH_ALPHABET[(int) bindec(str_pad($chunk, 6, '0'))];
+        }
+        return sprintf('$2a$%02d$', $countLog2) . $salt;
     }
 
     /** Whether a password matches a portable hash from the published algorithm. */
@@ -33,14 +57,20 @@ final class PortableHash
         return hash_equals(self::crypt($password, substr($hash, 0, 12)), $hash);
     }
 
-    private static function crypt(string $password, string $setting): string
+    /**
+     * The hash for a setting; for a setting it cannot use ("$P$" or "$H$",
+     * a count from 7 to 30, eight characters of salt) phpass's marker "*0",
+     * or "*1" when the setting is itself "*0".
+     */
+    public static function crypt(string $password, string $setting): string
     {
-        $countLog2 = strpos(self::ALPHABET, $setting[3]);
-        if ($countLog2 === false || $countLog2 < 7 || $countLog2 > 30) {
-            return '*';
+        $failed = str_starts_with($setting, '*0') ? '*1' : '*0';
+        $countLog2 = strlen($setting) > 3 ? strpos(self::ALPHABET, $setting[3]) : false;
+        $salt = substr($setting, 4, 8);
+        if (!in_array(substr($setting, 0, 3), ['$P$', '$H$'], true) || $countLog2 === false || $countLog2 < 7 || $countLog2 > 30 || strlen($salt) !== 8) {
+            return $failed;
         }
         $count = 1 << $countLog2;
-        $salt = substr($setting, 4, 8);
         $hash = md5($salt . $password, true);
         do {
             $hash = md5($hash . $password, true);
@@ -48,7 +78,8 @@ final class PortableHash
         return substr($setting, 0, 12) . self::encode($hash, 16);
     }
 
-    private static function encode(string $input, int $count): string
+    /** phpass's base64: little-endian groups of three bytes, $count bytes of the input. */
+    public static function encode(string $input, int $count): string
     {
         $output = '';
         $i = 0;

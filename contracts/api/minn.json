@@ -10007,8 +10007,8 @@
             "namespace": "Minn\\Auth",
             "kind": "final class",
             "file": "public/minn/src/Minn/Auth/PortableHash.php",
-            "lines": 61,
-            "doc": "The portable phpass hash (\"$P$\"), from the published algorithm: an\niteration count character, an eight character salt, and MD5 iterated\nover salt and password, encoded in phpass's own base64 alphabet. The\nreference stores it in the post-password cookie (2^13 iterations, and it\naccepts nothing weaker there), and still verifies it for application\npasswords and reset keys made before its fast hash, which is why both\ndirections of each are accepted.",
+            "lines": 90,
+            "doc": "The portable phpass hash (\"$P$\"), from the published algorithm: an\niteration count character, an eight character salt, and MD5 iterated\nover salt and password, encoded in phpass's own base64 alphabet. The\nreference stores it in the post-password cookie (2^13 iterations, and it\naccepts nothing weaker there), and still verifies it for application\npasswords and reset keys made before its fast hash, which is why both\ndirections of each are accepted. Its pieces are public for phpass's own\nclass, PasswordHash (probe identity-internals): the base64 encoding,\nboth kinds of salt, and the hash with phpass's failure markers.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -10026,6 +10026,12 @@
                     "name": "ALPHABET",
                     "value": "'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'",
                     "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "BLOWFISH_ALPHABET",
+                    "value": "'./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'",
+                    "doc": "bcrypt's own base64 alphabet.",
                     "visibility": "private"
                 }
             ],
@@ -10055,8 +10061,62 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 25
+                    "line": 26,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "salt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "salt(string $input, int $countLog2): string",
+                    "doc": "A portable setting: \"$P$\", the count's character, and six bytes of salt encoded.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "input",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "countLog2",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "blowfishSalt",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blowfishSalt(string $input, int $countLog2): string",
+                    "doc": "A bcrypt setting: \"$2a$\", the two-digit cost, and the first sixteen bytes in bcrypt's base64.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "input",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "countLog2",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -10082,16 +10142,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 34
+                    "line": 52,
+                    "end": 58
                 },
                 {
                     "routes": [],
                     "name": "crypt",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "crypt(string $password, string $setting): string",
-                    "doc": "",
+                    "doc": "The hash for a setting; for a setting it cannot use (\"$P$\" or \"$H$\",\na count from 7 to 30, eight characters of salt) phpass's marker \"*0\",\nor \"*1\" when the setting is itself \"*0\".",
                     "shapes": [],
                     "params": [
                         {
@@ -10109,16 +10169,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 49
+                    "line": 65,
+                    "end": 79
                 },
                 {
                     "routes": [],
                     "name": "encode",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "encode(string $input, int $count): string",
-                    "doc": "",
+                    "doc": "phpass's base64: little-endian groups of three bytes, $count bytes of the input.",
                     "shapes": [],
                     "params": [
                         {
@@ -10136,8 +10196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 75
+                    "line": 82,
+                    "end": 106
                 }
             ]
         },
