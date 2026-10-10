@@ -10247,3 +10247,24 @@ Kept on purpose: the reference retrieves from the lists as last read through
 engine always reads the stored option. The probe reads back after each write,
 so both stacks retrieve the same lists. The engine's probe runner never fires
 `widgets_init`, so the probe calls `wp_widgets_init()` when it hasn't run.
+
+## robots-template.php (2026-10-10)
+
+Probe `robots-template` proves the seven robots-template.php functions. It
+runs the robots meta tag and each of its filters on a public and a private
+site, for a post, a search and an embed, with five starting directive lists.
+It then prints the tag from directives given as true, false, strings, numbers
+and lists, and from pairs that contradict each other.
+
+Fixes:
+
+- **The noindex filters keep a private site out entirely.** This covers
+  `wp_robots_noindex` on a private site, `wp_robots_noindex_embeds` on an
+  embed, and `wp_robots_noindex_search` on a search. Each now gives what
+  `wp_robots_no_robots` gives: `noindex`, plus `nofollow` on a private site or
+  `follow` on a public one. They used to give `follow` everywhere, so a
+  private site's search page said `noindex, follow`.
+- **`wp_robots()`** prints any string as `directive:value`, even an empty one
+  (`max-video-preview:`). Any other truthy value prints bare: a number or a
+  list counts. Falsy values are left out. Contradictory pairs (`index` with
+  `noindex`, `follow` with `nofollow`) both print, in the order given.

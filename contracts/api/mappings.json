@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 768,
-        "composes": 1878,
+        "composes": 1876,
         "leaf": 877,
-        "noop": 2629,
+        "noop": 2631,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7978,
@@ -67700,7 +67700,7 @@
         },
         "wp_robots": {
             "file": "robots-template.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -67728,29 +67728,32 @@
         },
         "wp_robots_noindex": {
             "file": "robots-template.php",
-            "lines": 5,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "get_option"
+                "get_option",
+                "wp_robots_no_robots"
             ]
         },
         "wp_robots_noindex_embeds": {
             "file": "robots-template.php",
-            "lines": 5,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
-                "is_embed"
+                "is_embed",
+                "wp_robots_no_robots"
             ]
         },
         "wp_robots_noindex_search": {
             "file": "robots-template.php",
-            "lines": 5,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
-                "is_search"
+                "is_search",
+                "wp_robots_no_robots"
             ]
         },
         "wp_robots_sensitive_page": {

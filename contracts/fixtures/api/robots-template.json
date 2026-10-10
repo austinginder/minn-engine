@@ -1,0 +1,830 @@
+[
+    [
+        "each filter by site and view",
+        {
+            "public, a post": [
+                [
+                    {
+                        "max image preview large": {
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": [],
+                        "noindex embeds": [],
+                        "noindex search": [],
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": true,
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": {
+                            "noindex": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true
+                        },
+                        "noindex search": {
+                            "noindex": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "follow": true,
+                            "zz": "x",
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true
+                        },
+                        "noindex": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex embeds": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex search": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "sensitive page": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": false,
+                            "max-snippet": "-1",
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "follow": true
+                        },
+                        "noindex": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex embeds": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex search": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "nofollow": true,
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": {
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    }
+                ],
+                "<meta name='robots' content='max-image-preview:large' />\n"
+            ],
+            "public, search": [
+                [
+                    {
+                        "max image preview large": {
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": [],
+                        "noindex embeds": [],
+                        "noindex search": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": true,
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": {
+                            "noindex": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true
+                        },
+                        "noindex search": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "follow": true,
+                            "zz": "x",
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true
+                        },
+                        "noindex": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex embeds": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex search": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true
+                        },
+                        "sensitive page": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": false,
+                            "max-snippet": "-1",
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "follow": true
+                        },
+                        "noindex": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex embeds": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex search": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "follow": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "nofollow": true,
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": {
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "sensitive page": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    }
+                ],
+                "<meta name='robots' content='noindex, follow, max-image-preview:large' />\n"
+            ],
+            "public, an embed": [
+                [
+                    {
+                        "max image preview large": {
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": [],
+                        "noindex embeds": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex search": [],
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": true,
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": {
+                            "noindex": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex search": {
+                            "noindex": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "follow": true,
+                            "zz": "x",
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true
+                        },
+                        "noindex": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex embeds": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true
+                        },
+                        "noindex search": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "sensitive page": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": false,
+                            "max-snippet": "-1",
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "follow": true
+                        },
+                        "noindex": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex embeds": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "follow": true
+                        },
+                        "noindex search": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "nofollow": true,
+                            "max-image-preview": "large"
+                        },
+                        "no robots": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex": {
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "follow": true
+                        },
+                        "noindex search": {
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    }
+                ],
+                "<meta name='robots' content='noindex, follow, max-image-preview:large' />\n"
+            ],
+            "private, a post": [
+                [
+                    {
+                        "max image preview large": [],
+                        "no robots": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": [],
+                        "noindex search": [],
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": true
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true
+                        },
+                        "noindex search": {
+                            "noindex": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "no robots": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex search": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "sensitive page": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex search": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "nofollow": true
+                        },
+                        "no robots": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex embeds": {
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    }
+                ],
+                "<meta name='robots' content='noindex, nofollow' />\n"
+            ],
+            "private, search": [
+                [
+                    {
+                        "max image preview large": [],
+                        "no robots": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": [],
+                        "noindex search": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": true
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true
+                        },
+                        "noindex search": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "no robots": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "noindex search": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "noindex search": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "nofollow": true
+                        },
+                        "no robots": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex embeds": {
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "sensitive page": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    }
+                ],
+                "<meta name='robots' content='noindex, nofollow' />\n"
+            ],
+            "private, an embed": [
+                [
+                    {
+                        "max image preview large": [],
+                        "no robots": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex search": [],
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": true
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "noindex": true
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "no robots": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "follow": true,
+                            "zz": "x"
+                        },
+                        "sensitive page": {
+                            "follow": true,
+                            "zz": "x",
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "no robots": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex embeds": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "nofollow": true
+                        },
+                        "noindex search": {
+                            "noindex": false,
+                            "max-snippet": "-1"
+                        },
+                        "sensitive page": {
+                            "noindex": true,
+                            "max-snippet": "-1",
+                            "noarchive": true
+                        }
+                    },
+                    {
+                        "max image preview large": {
+                            "nofollow": true
+                        },
+                        "no robots": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex embeds": {
+                            "nofollow": true,
+                            "noindex": true
+                        },
+                        "noindex search": {
+                            "nofollow": true
+                        },
+                        "sensitive page": {
+                            "nofollow": true,
+                            "noindex": true,
+                            "noarchive": true
+                        }
+                    }
+                ],
+                "<meta name='robots' content='noindex, nofollow' />\n"
+            ]
+        }
+    ],
+    [
+        "the tag from given directives",
+        {
+            "true and false": "<meta name='robots' content='max-image-preview:large, zz-true' />\n",
+            "strings": "<meta name='robots' content='max-image-preview:large, max-snippet:-1, max-video-preview:, unavailable_after:2030-01-01' />\n",
+            "numbers": "<meta name='robots' content='max-image-preview:large, zz-int, zz-float' />\n",
+            "a list": "<meta name='robots' content='max-image-preview:large, zz-list' />\n",
+            "index with noindex": "<meta name='robots' content='max-image-preview:large, index, noindex' />\n",
+            "follow with nofollow": "<meta name='robots' content='max-image-preview:large, follow, nofollow' />\n",
+            "quotes": "<meta name='robots' content='max-image-preview:large, zz&quot;q, zz-v:a&#039;b&quot;c&lt;d&gt;' />\n",
+            "upper case": "<meta name='robots' content='max-image-preview:large, NoIndex' />\n",
+            "nothing": "",
+            "heard": {
+                "max-image-preview": "large"
+            }
+        }
+    ]
+]

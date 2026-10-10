@@ -5,11 +5,12 @@ function wp_robots()
 {
     $robots = apply_filters('wp_robots', []);
     $directives = [];
+    // A string is directive:value, even when empty; anything else counts when truthy (probe robots-template).
     foreach ((array) $robots as $directive => $value) {
-        if ($value === true) {
-            $directives[] = $directive;
-        } elseif (is_string($value) && $value !== '') {
+        if (is_string($value)) {
             $directives[] = $directive . ':' . $value;
+        } elseif ($value) {
+            $directives[] = $directive;
         }
     }
     if ($directives === []) {
@@ -28,29 +29,18 @@ function wp_robots_max_image_preview_large($robots)
 
 function wp_robots_noindex($robots)
 {
-    if ((int) get_option('blog_public') === 0) {
-        $robots['noindex'] = true;
-        $robots['follow'] = true;
-    }
-    return $robots;
+    // A private site is kept out entirely: noindex, nofollow (probe robots-template).
+    return (int) get_option('blog_public') === 0 ? wp_robots_no_robots($robots) : $robots;
 }
 
 function wp_robots_noindex_embeds($robots)
 {
-    if (is_embed()) {
-        $robots['noindex'] = true;
-        $robots['follow'] = true;
-    }
-    return $robots;
+    return is_embed() ? wp_robots_no_robots($robots) : $robots;
 }
 
 function wp_robots_noindex_search($robots)
 {
-    if (is_search()) {
-        $robots['noindex'] = true;
-        $robots['follow'] = true;
-    }
-    return $robots;
+    return is_search() ? wp_robots_no_robots($robots) : $robots;
 }
 
 function wp_robots_no_robots($robots)
