@@ -9935,3 +9935,20 @@ Fixed to match:
 
 The probe encodes its JSON with invalid UTF-8 substituted, since decoding
 `&#99999999;` yields a byte sequence `json_encode` refuses.
+
+## The rest of l10n.php (2026-10-09)
+
+Probe `l10n-remaining` proves the 13 l10n.php functions that were left:
+- `translate` and its context form, with their filters heard, and filters
+  that translate;
+- `_ex` and `esc_attr_x`;
+- the no-op plurals and their translation;
+- the list separator and the word count type;
+- text domains loaded just in time and from a child theme or a must-use
+  plugin, which have no files here;
+- script translations read from a JSON file, with their three filters.
+
+The engine already matched the reference on every row, so nothing changed.
+On 7.1 `load_child_theme_textdomain` and `load_muplugin_textdomain` answer
+true without any file, and run no `.mo` filters: the domain is registered
+for loading just in time.

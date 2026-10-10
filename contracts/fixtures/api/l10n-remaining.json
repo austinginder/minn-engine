@@ -1,0 +1,198 @@
+[
+    [
+        "translate and its filters",
+        [
+            [
+                "Hello",
+                "Hello",
+                "Post",
+                "Post"
+            ],
+            [
+                [
+                    "gettext",
+                    "Hello",
+                    "Hello",
+                    "zz-domain"
+                ],
+                [
+                    "gettext_zz-domain",
+                    "Hello",
+                    "Hello",
+                    "zz-domain"
+                ],
+                [
+                    "gettext",
+                    "Hello",
+                    "Hello",
+                    "default"
+                ],
+                [
+                    "gettext_with_context",
+                    "Post",
+                    "Post",
+                    "noun",
+                    "zz-domain"
+                ],
+                [
+                    "gettext_with_context_zz-domain",
+                    "Post",
+                    "Post",
+                    "noun",
+                    "zz-domain"
+                ],
+                [
+                    "gettext_with_context",
+                    "Post",
+                    "Post",
+                    "verb",
+                    "default"
+                ]
+            ]
+        ]
+    ],
+    [
+        "translations through filters",
+        [
+            "Bonjour",
+            "Article",
+            "Post",
+            "Article",
+            "<b>Post</b>",
+            "Article",
+            "Post &quot;quoted&quot; &lt;b&gt;",
+            "it&#039;s &amp; co",
+            [
+                {
+                    "0": "%s file",
+                    "1": "%s files",
+                    "singular": "%s file",
+                    "plural": "%s files",
+                    "context": null,
+                    "domain": null
+                },
+                {
+                    "0": "%s item",
+                    "1": "%s items",
+                    "singular": "%s item",
+                    "plural": "%s items",
+                    "context": null,
+                    "domain": "zz-domain"
+                },
+                {
+                    "0": "%s post",
+                    "1": "%s posts",
+                    "2": "noun",
+                    "singular": "%s post",
+                    "plural": "%s posts",
+                    "context": "noun",
+                    "domain": null
+                },
+                {
+                    "0": "%s post",
+                    "1": "%s posts",
+                    "2": "noun",
+                    "singular": "%s post",
+                    "plural": "%s posts",
+                    "context": "noun",
+                    "domain": "zz-domain"
+                }
+            ],
+            [
+                "%s file",
+                "%s files",
+                "%s files",
+                "un fichier",
+                "5 fichiers",
+                "5 fichiers",
+                "%s post",
+                "%s posts",
+                "%s posts",
+                "a"
+            ]
+        ]
+    ],
+    [
+        "separator and word count",
+        [
+            ", ",
+            "words"
+        ]
+    ],
+    [
+        "text domains",
+        [
+            false,
+            false,
+            false,
+            true,
+            true,
+            false,
+            true,
+            true,
+            false,
+            []
+        ]
+    ],
+    [
+        "script translations",
+        [
+            "{\"translation-revision-date\":\"2026-01-01\",\"domain\":\"messages\",\"locale_data\":{\"messages\":{\"\":{\"domain\":\"messages\",\"lang\":\"fr\"},\"Hello\":[\"Bonjour\"]}}}",
+            false,
+            false,
+            false,
+            "{\"translation-revision-date\":\"2026-01-01\",\"domain\":\"messages\",\"locale_data\":{\"messages\":{\"\":{\"domain\":\"messages\",\"lang\":\"fr\"},\"Hello\":[\"Bonjour\"]}}}",
+            "{\"short\":true}",
+            "{\"translation-revision-date\":\"2026-01-01\",\"domain\":\"messages\",\"locale_data\":{\"messages\":{\"\":{\"domain\":\"messages\",\"lang\":\"fr\"},\"Hello\":[\"Bonjour\"]}}}",
+            [
+                [
+                    "pre_load_script_translations",
+                    null,
+                    "{dir}/zz-l10n-fr.json",
+                    "zz-handle",
+                    "zz-domain"
+                ],
+                [
+                    "load_script_translation_file",
+                    "{dir}/zz-l10n-fr.json",
+                    "zz-handle",
+                    "zz-domain"
+                ],
+                [
+                    "load_script_translations",
+                    148,
+                    "{dir}/zz-l10n-fr.json",
+                    "zz-handle",
+                    "zz-domain"
+                ],
+                [
+                    "pre_load_script_translations",
+                    null,
+                    "{dir}/zz-l10n-fr.json",
+                    "zz-short",
+                    "zz-domain"
+                ],
+                [
+                    "pre_load_script_translations",
+                    null,
+                    "{dir}/zz-l10n-nowhere.json",
+                    "zz-moved",
+                    "zz-domain"
+                ],
+                [
+                    "load_script_translation_file",
+                    "{dir}/zz-l10n-nowhere.json",
+                    "zz-moved",
+                    "zz-domain"
+                ],
+                [
+                    "load_script_translations",
+                    148,
+                    "{dir}/zz-l10n-fr.json",
+                    "zz-moved",
+                    "zz-domain"
+                ]
+            ]
+        ]
+    ]
+]
