@@ -74,6 +74,8 @@ final readonly class QueryFlags
         $on['is_feed'] = !empty($vars['feed']);
         $on['is_robots'] = !empty($vars['robots']);
         $on['is_favicon'] = !empty($vars['favicon']);
+        // Naming preview asks for one (probe post-template-remaining).
+        $on['is_preview'] = !empty($vars['preview']);
         if (!empty($vars['attachment']) || !empty($vars['attachment_id'])) {
             $on['is_single'] = true;
             $on['is_attachment'] = true;

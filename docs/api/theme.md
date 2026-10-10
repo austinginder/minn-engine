@@ -5,7 +5,7 @@ the block-theme reader, templates, global styles and the page renderer
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ArchiveTitle`](#archivetitle) | final class | 54 | The label and name an archive titles itself with: `Category:` around the |
-| [`BodyClasses`](#bodyclasses) | final class | 59 | The body-class list a classic theme's body_class() starts from, in the |
+| [`BodyClasses`](#bodyclasses) | final class | 86 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
 | [`ClassicRenderer`](#classicrenderer) | final readonly class | 131 | A whole page from the active classic theme: the reference's PHP template |
@@ -25,7 +25,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`PatternHeaders`](#patternheaders) | final class | 51 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
-| [`QueryClasses`](#queryclasses) | final readonly class | 120 | The body-class tokens the main query stands for, in the reference's |
+| [`QueryClasses`](#queryclasses) | final readonly class | 131 | The body-class tokens the main query stands for, in the reference's |
 | [`StylePresets`](#stylepresets) | final class | 161 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
@@ -86,7 +86,16 @@ The body classes a classic theme's page carries.
 - `@param list<string> $coreClasses`
 - `@return list<string>`
 
-Internals: `withSingularTokens()` (private, line 61)
+### static `forView(?string $singular, array $coreClasses, ?string $customTemplate, string $themeSlug, ?string $parentSlug, Minn\Theme\BodyFacts $facts): array`
+
+The same list for a view named by the post type it shows alone (null
+when it shows no single post), as get_body_class needs off the front
+(probe post-template-remaining).
+
+- `@param list<string> $coreClasses`
+- `@return list<string>`
+
+Internals: `withSingularTokens()` (private, line 85)
 
 
 ## BodyFacts
@@ -767,7 +776,7 @@ The tokens for a main query.
 
 - `@return list<string>`
 
-Internals: `singular()` (private, line 61), `archive()` (private, line 89), `paging()` (private, line 116), `named()` (private, line 137)
+Internals: `format()` (private, line 61), `singular()` (private, line 71), `archive()` (private, line 100), `paging()` (private, line 127), `named()` (private, line 148)
 
 
 ## StylePresets

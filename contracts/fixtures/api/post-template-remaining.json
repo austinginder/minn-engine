@@ -1,0 +1,375 @@
+[
+    [
+        "body classes",
+        {
+            "a post": [
+                [
+                    "wp-singular",
+                    "post-template-default",
+                    "single",
+                    "single-post",
+                    "postid-{zz-pt-single-\"q\"-&-co}",
+                    "single-format-aside",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"wp-singular post-template-default single single-post postid-{zz-pt-single-\"q\"-&-co} single-format-aside wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "a page with a template": [
+                {
+                    "0": "wp-singular",
+                    "1": "page-template",
+                    "2": "page-template-page-no-title",
+                    "4": "page",
+                    "5": "page-id-{zz-pt-page}",
+                    "6": "wp-embed-responsive",
+                    "7": "wp-theme-twentytwentyfive",
+                    "8": "zz-given",
+                    "9": "zz given two"
+                },
+                "class=\"wp-singular page-template page-template-page-no-title page page-id-{zz-pt-page} wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "an image": [
+                [
+                    "wp-singular",
+                    "attachment-template-default",
+                    "single",
+                    "single-attachment",
+                    "postid-{image}",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"wp-singular attachment-template-default single single-attachment postid-{image} wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "a category": [
+                [
+                    "archive",
+                    "category",
+                    "category-zz-pt-cat",
+                    "category-{zz-pt-cat}",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"archive category category-zz-pt-cat category-{zz-pt-cat} wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "a tag": [
+                [
+                    "archive",
+                    "tag",
+                    "tag-zz-pt-tag",
+                    "tag-{zz-pt-tag}",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"archive tag tag-zz-pt-tag tag-{zz-pt-tag} wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "an author": [
+                [
+                    "archive",
+                    "author",
+                    "author-admin",
+                    "author-{admin}",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"archive author author-admin author-{admin} wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "a date": [
+                [
+                    "archive",
+                    "date",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"archive date wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "search": [
+                [
+                    "search",
+                    "search-results",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"search search-results wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "nothing found": [
+                [
+                    "error404",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"error404 wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "a paged archive": [
+                [
+                    "error404",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"error404 wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "a locked post": [
+                [
+                    "wp-singular",
+                    "post-template-default",
+                    "single",
+                    "single-post",
+                    "postid-{zz-pt-locked}",
+                    "single-format-standard",
+                    "wp-embed-responsive",
+                    "wp-theme-twentytwentyfive",
+                    "zz-given",
+                    "zz given two"
+                ],
+                "class=\"wp-singular post-template-default single single-post postid-{zz-pt-locked} single-format-standard wp-embed-responsive wp-theme-twentytwentyfive zz-echo\""
+            ],
+            "filtered": [
+                "wp-singular",
+                "post-template-default",
+                "single",
+                "single-post",
+                "postid-{zz-pt-single-\"q\"-&-co}",
+                "single-format-aside",
+                "wp-embed-responsive",
+                "wp-theme-twentytwentyfive",
+                "zz-one",
+                "zz-two",
+                "zz-filtered-2"
+            ]
+        }
+    ],
+    [
+        "post classes",
+        [
+            [
+                "{zz-pt-single-\"q\"-&-co}",
+                [
+                    "post-{zz-pt-single-\"q\"-&-co}",
+                    "post",
+                    "type-post",
+                    "status-publish",
+                    "format-aside",
+                    "hentry",
+                    "category-zz-pt-cat",
+                    "tag-zz-pt-tag",
+                    "post_format-post-format-aside"
+                ],
+                "class=\"post-{zz-pt-single-\"q\"-&-co} post type-post status-publish format-aside hentry category-zz-pt-cat tag-zz-pt-tag post_format-post-format-aside\""
+            ],
+            [
+                "{zz-pt-single-\"q\"-&-co}",
+                [
+                    "zz-given",
+                    "extra",
+                    "post-{zz-pt-single-\"q\"-&-co}",
+                    "post",
+                    "type-post",
+                    "status-publish",
+                    "format-aside",
+                    "hentry",
+                    "category-zz-pt-cat",
+                    "tag-zz-pt-tag",
+                    "post_format-post-format-aside"
+                ],
+                "class=\"zz-given extra post-{zz-pt-single-\"q\"-&-co} post type-post status-publish format-aside hentry category-zz-pt-cat tag-zz-pt-tag post_format-post-format-aside\""
+            ],
+            [
+                "{zz-pt-excerpted}",
+                [
+                    "zz-array",
+                    "post-{zz-pt-excerpted}",
+                    "post",
+                    "type-post",
+                    "status-publish",
+                    "format-standard",
+                    "has-post-thumbnail",
+                    "hentry",
+                    "category-uncategorized"
+                ],
+                "class=\"zz-array post-{zz-pt-excerpted} post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized\""
+            ],
+            [
+                "{zz-pt-locked}",
+                [
+                    "post-{zz-pt-locked}",
+                    "post",
+                    "type-post",
+                    "status-publish",
+                    "format-standard",
+                    "post-password-required",
+                    "hentry",
+                    "category-uncategorized"
+                ],
+                "class=\"post-{zz-pt-locked} post type-post status-publish format-standard post-password-required hentry category-uncategorized\""
+            ],
+            [
+                "{zz-pt-page}",
+                [
+                    "post-{zz-pt-page}",
+                    "page",
+                    "type-page",
+                    "status-publish",
+                    "hentry"
+                ],
+                "class=\"post-{zz-pt-page} page type-page status-publish hentry\""
+            ],
+            [
+                "{image}",
+                [
+                    "post-{image}",
+                    "attachment",
+                    "type-attachment",
+                    "status-inherit",
+                    "hentry"
+                ],
+                "class=\"post-{image} attachment type-attachment status-inherit hentry\""
+            ],
+            [
+                999999,
+                [],
+                "class=\"\""
+            ]
+        ]
+    ],
+    [
+        "titles",
+        [
+            [
+                "zz pt single &#8220;q&#8221; &#038; co",
+                "<h2>zz pt single &#8220;q&#8221; &#038; co</h2>",
+                "[zz pt single &#8220;q&#8221; &#038; co]",
+                "zz pt single &#8220;q&#8221; &#038; co",
+                "zz pt single &#8220;q&#8221; &#038; co",
+                "zz pt single &#8220;q&#8221; &#038; co",
+                "zz pt single &#8220;q&#8221; &#038; co",
+                "zz pt excerpted",
+                "xzz pt single &#8220;q&#8221; &#038; co"
+            ],
+            [
+                "Protected: zz pt locked",
+                "<h2>Protected: zz pt locked</h2>",
+                "[Protected: zz pt locked]",
+                "Protected: zz pt locked",
+                "Protected: zz pt locked",
+                "Protected: zz pt locked",
+                "Protected: zz pt locked",
+                "zz pt excerpted",
+                "xProtected: zz pt locked"
+            ],
+            [
+                "zz pt excerpted",
+                "<h2>zz pt excerpted</h2>",
+                "[zz pt excerpted]",
+                "zz pt excerpted",
+                "zz pt excerpted",
+                "zz pt excerpted",
+                "zz pt excerpted",
+                "zz pt excerpted",
+                "xzz pt excerpted"
+            ]
+        ]
+    ],
+    [
+        "content and excerpt",
+        [
+            [
+                "<p>Teaser text.<span id=\"more-{zz-pt-single-\"q\"-&-co}\"></span>After the more.</p>\n",
+                "<p>Teaser text.<span id=\"more-{zz-pt-single-\"q\"-&-co}\"></span>After the more.</p>\n",
+                "<p><span id=\"more-{zz-pt-single-\"q\"-&-co}\"></span>After the more.</p>\n",
+                "<p>Teaser text.After the more.</p>\n",
+                false,
+                true,
+                false
+            ],
+            [
+                "<p>Body words.</p>\n",
+                "<p>Body words.</p>\n",
+                "<p>Body words.</p>\n",
+                "<p>Hand <b>written</b> excerpt.</p>\n",
+                true,
+                true,
+                false
+            ],
+            [
+                "<form action=\"{site}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{site}/zz-pt-locked/\" /></p>\n<p>This content is password-protected. To view it, please enter the password below.</p>\n<p><label for=\"pwbox-{zz-pt-locked}\">Password: <input name=\"post_password\" id=\"pwbox-{zz-pt-locked}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p>\n</form>\n",
+                "<form action=\"{site}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{site}/zz-pt-locked/\" /></p>\n<p>This content is password-protected. To view it, please enter the password below.</p>\n<p><label for=\"pwbox-{zz-pt-locked}\">Password: <input name=\"post_password\" id=\"pwbox-{zz-pt-locked}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p>\n</form>\n",
+                "<form action=\"{site}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{site}/zz-pt-locked/\" /></p>\n<p>This content is password-protected. To view it, please enter the password below.</p>\n<p><label for=\"pwbox-{zz-pt-locked}\">Password: <input name=\"post_password\" id=\"pwbox-{zz-pt-locked}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p>\n</form>\n",
+                "<p>There is no excerpt because this is a protected post.</p>\n",
+                false,
+                true,
+                false
+            ],
+            [
+                "<p>Page body.</p>\n",
+                "<p>Page body.</p>\n",
+                "<p>Page body.</p>\n",
+                "<p>Page body.</p>\n",
+                false,
+                true,
+                false
+            ],
+            [
+                "second page",
+                "<p>Second page.</p>\n"
+            ],
+            [
+                "in a listing",
+                "<p>Second page.</p>\n",
+                "<p>Second page.</p>\n"
+            ]
+        ]
+    ],
+    [
+        "page links",
+        [
+            "<a href=\"{site}/zz-pt-single-q-co/\" class=\"post-page-numbers\">",
+            "<a href=\"{site}/zz-pt-single-q-co/2/\" class=\"post-page-numbers\">",
+            "<a href=\"{site}/zz-pt-single-q-co/3/\" class=\"post-page-numbers\">",
+            "<a href=\"{site}/zz-pt-single-q-co/2/?preview=true\" class=\"post-page-numbers\">"
+        ]
+    ],
+    [
+        "the password form",
+        [
+            "<form action=\"{site}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{site}/zz-pt-locked/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{zz-pt-locked}\">Password: <input name=\"post_password\" id=\"pwbox-{zz-pt-locked}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+            "<form action=\"{site}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{site}/zz-pt-single-q-co/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{zz-pt-single-\"q\"-&-co}\">Password: <input name=\"post_password\" id=\"pwbox-{zz-pt-single-\"q\"-&-co}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+            "<form action=\"{site}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{site}/zz-pt-locked/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{zz-pt-locked}\">Password: <input name=\"post_password\" id=\"pwbox-{zz-pt-locked}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t"
+        ]
+    ],
+    [
+        "attachments prepended",
+        [
+            [
+                "<p class=\"attachment\"><a href='{site}/wp-content/uploads/2026/10/zz-pt-image.jpg'><img width=\"300\" height=\"200\" src=\"{site}/wp-content/uploads/2026/10/zz-pt-image-300x200.jpg\" class=\"attachment-medium size-medium\" alt=\"\" decoding=\"async\" loading=\"lazy\" srcset=\"{site}/wp-content/uploads/2026/10/zz-pt-image-300x200.jpg 300w, {site}/wp-content/uploads/2026/10/zz-pt-image.jpg 1200w\" sizes=\"auto, (max-width: 300px) 100vw, 300px\" /></a></p>\n<p>Given content.</p>",
+                "<p class=\"attachment\"><a href='{site}/wp-content/uploads/2026/10/zz-pt-image.jpg'><img width=\"300\" height=\"200\" src=\"{site}/wp-content/uploads/2026/10/zz-pt-image-300x200.jpg\" class=\"attachment-medium size-medium\" alt=\"\" decoding=\"async\" loading=\"lazy\" srcset=\"{site}/wp-content/uploads/2026/10/zz-pt-image-300x200.jpg 300w, {site}/wp-content/uploads/2026/10/zz-pt-image.jpg 1200w\" sizes=\"auto, (max-width: 300px) 100vw, 300px\" /></a></p>\n"
+            ],
+            [
+                "<audio class=\"wp-audio-shortcode\" id=\"audio-{audio}-{admin}\" preload=\"none\" style=\"width: 100%;\" controls=\"controls\"><source type=\"audio/mpeg\" src=\"{site}/wp-content/uploads/2026/10/zz-pt-audio.mp3?_={admin}\" /><a href=\"{site}/wp-content/uploads/2026/10/zz-pt-audio.mp3\">{site}/wp-content/uploads/2026/10/zz-pt-audio.mp3</a></audio>\n<p>Given content.</p>",
+                "<audio class=\"wp-audio-shortcode\" id=\"audio-{audio}-2\" preload=\"none\" style=\"width: 100%;\" controls=\"controls\"><source type=\"audio/mpeg\" src=\"{site}/wp-content/uploads/2026/10/zz-pt-audio.mp3?_=2\" /><a href=\"{site}/wp-content/uploads/2026/10/zz-pt-audio.mp3\">{site}/wp-content/uploads/2026/10/zz-pt-audio.mp3</a></audio>\n"
+            ],
+            [
+                "<div style=\"width: 640px;\" class=\"wp-video\"><video class=\"wp-video-shortcode\" id=\"video-{video}-{admin}\" width=\"640\" height=\"360\" preload=\"metadata\" controls=\"controls\"><source type=\"video/mp4\" src=\"{site}/wp-content/uploads/2026/10/zz-pt-video.mp4?_={admin}\" /><a href=\"{site}/wp-content/uploads/2026/10/zz-pt-video.mp4\">{site}/wp-content/uploads/2026/10/zz-pt-video.mp4</a></video></div>\n<p>Given content.</p>",
+                "<div style=\"width: 640px;\" class=\"wp-video\"><video class=\"wp-video-shortcode\" id=\"video-{video}-2\" width=\"640\" height=\"360\" preload=\"metadata\" controls=\"controls\"><source type=\"video/mp4\" src=\"{site}/wp-content/uploads/2026/10/zz-pt-video.mp4?_=2\" /><a href=\"{site}/wp-content/uploads/2026/10/zz-pt-video.mp4\">{site}/wp-content/uploads/2026/10/zz-pt-video.mp4</a></video></div>\n"
+            ],
+            "not an attachment"
+        ]
+    ]
+]

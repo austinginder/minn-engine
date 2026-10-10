@@ -30,10 +30,34 @@ final class BodyClasses
         ?string $parentSlug,
         BodyFacts $facts,
     ): array {
+        $singular = match ($resolution->kind) {
+            Kind::Single => (string) ($resolution->record['post_type'] ?? 'post'),
+            Kind::Page => 'page',
+            default => null,
+        };
+        return self::forView($singular, $coreClasses, $customTemplate, $themeSlug, $parentSlug, $facts);
+    }
+
+    /**
+     * The same list for a view named by the post type it shows alone (null
+     * when it shows no single post), as get_body_class needs off the front
+     * (probe post-template-remaining).
+     *
+     * @param list<string> $coreClasses
+     * @return list<string>
+     */
+    public static function forView(
+        ?string $singular,
+        array $coreClasses,
+        ?string $customTemplate,
+        string $themeSlug,
+        ?string $parentSlug,
+        BodyFacts $facts,
+    ): array {
         $paging = array_values(array_filter($coreClasses, static fn (string $c) => preg_match('/^(?:[a-z-]+-)?paged-\d+$/', $c) === 1));
         $classes = array_values(array_diff($coreClasses, $paging));
         // The numbered paging tokens seat after the embed token.
-        $classes = self::withSingularTokens($resolution, $classes, $customTemplate);
+        $classes = self::withSingularTokens($singular, $classes, $customTemplate);
         if ($facts->loggedIn) {
             $classes[] = 'logged-in';
         }
@@ -58,15 +82,18 @@ final class BodyClasses
      * @param list<string> $classes
      * @return list<string>
      */
-    private static function withSingularTokens(Resolution $resolution, array $classes, ?string $customTemplate): array
+    private static function withSingularTokens(?string $singular, array $classes, ?string $customTemplate): array
     {
-        if ($resolution->kind === Kind::Single) {
+        if ($singular !== null && $singular !== 'page') {
             $at = (int) array_search('single', $classes, true);
-            array_splice($classes, $at, 0, ['wp-singular', (string) ($resolution->record['post_type'] ?? 'post') . '-template-default']);
-        } elseif ($resolution->kind === Kind::Page) {
+            array_splice($classes, $at, 0, ['wp-singular', $singular . '-template-default']);
+        } elseif ($singular === 'page') {
+            // A template's token comes twice, as the reference names it once for the type and once for the page;
+            // get_body_class's unique pass keeps the gap (probe post-template-remaining).
+            $token = 'page-template-' . preg_replace('/[^a-z0-9_-]+/', '-', strtolower(str_replace('.', '-', (string) $customTemplate)));
             $tokens = $customTemplate === null || $customTemplate === ''
                 ? ['wp-singular', 'page-template-default']
-                : ['wp-singular', 'page-template', 'page-template-' . preg_replace('/[^a-z0-9_-]+/', '-', strtolower(str_replace('.', '-', $customTemplate)))];
+                : ['wp-singular', 'page-template', $token, $token];
             $at = (int) array_search('page', $classes, true);
             array_splice($classes, $at, 0, $tokens);
         }

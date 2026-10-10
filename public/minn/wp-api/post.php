@@ -187,7 +187,8 @@ function the_title_attribute($args = '')
     if ($title === '') {
         return null;
     }
-    $title = $args['before'] . esc_attr(strip_tags($title)) . $args['after'];
+    // Before and after lose their tags with the title (probe post-template-remaining).
+    $title = esc_attr(strip_tags($args['before'] . $title . $args['after']));
     if ($args['echo']) {
         echo $title;
         return null;
@@ -1024,6 +1025,10 @@ function _wp_link_page($i)
     if ((int) $i > 1) {
         $plain = (string) get_option('permalink_structure') === '' || in_array($post?->post_status, ['draft', 'pending'], true);
         $url = $plain ? add_query_arg('page', (int) $i, $url) : trailingslashit($url) . user_trailingslashit((string) (int) $i, 'single_paged');
+    }
+    // A preview's page links stay in the preview (probe post-template-remaining).
+    if (is_preview()) {
+        $url = add_query_arg('preview', 'true', $url);
     }
     return '<a href="' . esc_url($url) . '" class="post-page-numbers">';
 }
@@ -2387,12 +2392,17 @@ function get_post_class($css_class = '', $post = null)
 }
 
 /** The body's class list: the tokens the classic renderer stood for this page, the caller's extras, then the body_class filter. */
+/**
+ * The body classes: the themed page's, or off the front the main query's
+ * (Theme\BodyClasses::forView), then the classes given, a list as it is and
+ * a string split on spaces, through body_class (probe post-template-remaining).
+ */
 function get_body_class($css_class = '')
 {
-    $classes = array_map('strval', (array) Runtime::current()->get('classic_body_classes', []));
-    $extra = is_array($css_class) ? $css_class : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
-    $extra = array_map(static fn ($c) => PostClasses::htmlClass((string) $c), (array) $extra);
-    array_push($classes, ...array_filter($extra));
+    $stored = Runtime::current()->get('classic_body_classes');
+    $classes = is_array($stored) ? array_map('strval', $stored) : _minn_query_body_classes();
+    $extra = is_array($css_class) ? array_map('strval', $css_class) : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
+    array_push($classes, ...array_filter((array) $extra, static fn ($c) => $c !== ''));
     return array_unique(array_map('esc_attr', (array) apply_filters('body_class', $classes, $extra)));
 }
 
@@ -2452,15 +2462,42 @@ function update_post_thumbnail_cache($wp_query = null)
 }
 
 /** An attachment page shows the file's own link ahead of its content; any other post passes through. */
+/** An attachment's content after its player (audio, video) or its medium-sized link, through prepend_attachment (probe post-template-remaining). */
 function prepend_attachment($content)
 {
     $post = get_post();
     if (!$post || $post->post_type !== 'attachment') {
         return $content;
     }
-    $link = wp_get_attachment_link(0, 'medium', false);
-    $link = apply_filters('prepend_attachment', $link);
-    return '<p class="attachment">' . $link . "</p>\n" . $content;
+    if (wp_attachment_is('video', $post)) {
+        $meta = wp_get_attachment_metadata(get_the_ID());
+        $atts = ['src' => wp_get_attachment_url()];
+        if (!empty($meta['width']) && !empty($meta['height'])) {
+            $atts['width'] = (int) $meta['width'];
+            $atts['height'] = (int) $meta['height'];
+        }
+        $shown = wp_video_shortcode($atts);
+    } elseif (wp_attachment_is('audio', $post)) {
+        $shown = wp_audio_shortcode(['src' => wp_get_attachment_url()]);
+    } else {
+        $shown = '<p class="attachment">' . wp_get_attachment_link(0, 'medium', false) . '</p>';
+    }
+    return apply_filters('prepend_attachment', $shown) . "\n" . $content;
+}
+
+/** @internal The body classes the main query stands for, off the front (probe post-template-remaining). */
+function _minn_query_body_classes(): array
+{
+    $query = $GLOBALS['wp_query'] ?? null;
+    if (!$query instanceof WP_Query) {
+        return [];
+    }
+    $object = $query->get_queried_object();
+    $singular = $query->is_singular() && $object instanceof WP_Post ? ($query->is_page() ? 'page' : (string) $object->post_type) : null;
+    $template = $singular === null ? '' : (string) get_page_template_slug($object);
+    $parent = get_template() !== get_stylesheet() ? get_template() : null;
+    $facts = new Minn\Theme\BodyFacts(loggedIn: is_user_logged_in(), customLogo: has_custom_logo(), embedResponsive: current_theme_supports('responsive-embeds') !== false);
+    return Minn\Theme\BodyClasses::forView($singular, (new Minn\Theme\QueryClasses(Runtime::current()->db))->of($query), $template === '' ? null : $template, get_stylesheet(), $parent, $facts);
 }
 
 /** The newest published post's date (probe plugin-queue): local for 'blog', GMT for 'gmt', GMT with microseconds for 'server'; false for another timezone or an unknown type. */

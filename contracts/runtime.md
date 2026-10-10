@@ -9986,3 +9986,44 @@ from the query outside the front, the engine's old-slug lookup would have
 found the post there. The front's resolver stays the judge on front
 requests, so nothing shows; the difference is in what that request's query
 holds.
+
+## The rest of post-template.php (2026-10-09)
+
+Probe `post-template-remaining` proves the 11 post-template.php functions
+that were left:
+- body classes for the views a theme renders: a post, a page with a
+  template, an image, archives, search, a 404, a locked post;
+- post classes;
+- the title tags;
+- the content and excerpt as printed: teasers, more links, pages,
+  passwords;
+- the password form;
+- page links, in a preview too;
+- attachments put before their content: image, audio and video.
+
+Fixed to match:
+
+- **`get_body_class`** off the front (no themed page has set the classes)
+  works the list out from the main query, through
+  `Theme\BodyClasses::forView`, the classic renderer's own rule now taking
+  a view rather than a resolution. Classes given as a list are kept as given
+  (`zz given two` keeps its spaces); a string is split on spaces.
+- **A page with a template** names `page-template-{template}` twice, as the
+  reference does. `array_unique` then leaves the gap at that index.
+- **Shared fix: `Theme\QueryClasses`** reads a post's format from its
+  `post_format` term. It always wrote `single-format-standard`, so an aside
+  post's page carried the wrong body class. The attachment tokens
+  (`attachmentid-`, `attachment-{mime}`) follow the query's attachment view,
+  not the post type. An attached image asked for by `p` is a single, as on
+  the reference.
+- **Post classes** include the format term's class
+  (`post_format-post-format-aside`).
+- **`the_title_attribute`** strips tags from before and after, along with
+  the title.
+- **Shared fix: a query naming `preview` is a preview** (`is_preview`), as
+  the reference's query parse makes it. Page links in a preview then keep
+  `?preview=true`.
+- **`prepend_attachment`** puts the audio or video player before an audio or
+  video attachment's content (video takes the stored width and height). Any
+  other attachment gets the medium-sized link in `<p class="attachment">`.
+  `prepend_attachment` filters the whole piece.

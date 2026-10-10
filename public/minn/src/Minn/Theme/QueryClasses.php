@@ -50,22 +50,33 @@ final readonly class QueryClasses
         ];
         $classes = array_keys(array_filter($views));
         if ($query->is_singular() && $object instanceof \WP_Post) {
-            array_push($classes, ...$this->singular($object));
+            array_push($classes, ...$this->singular($object, $query));
         } elseif ($query->is_archive()) {
             array_push($classes, ...self::archive($query, $object, $id));
         }
         return [...$classes, ...self::paging($query)];
     }
 
+    /** A post's format by its post_format term, standard without one (probe post-template-remaining). */
+    private function format(int $id): string
+    {
+        $slug = $this->db->value(
+            "SELECT t.slug FROM {$this->db->table('terms')} t JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id JOIN {$this->db->table('term_relationships')} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tr.object_id = ? AND tt.taxonomy = 'post_format' LIMIT 1",
+            [$id],
+        );
+        return is_string($slug) && str_starts_with($slug, 'post-format-') && strlen($slug) > 12 ? substr($slug, 12) : 'standard';
+    }
+
     /** @return list<string> */
-    private function singular(\WP_Post $post): array
+    private function singular(\WP_Post $post, \WP_Query $query): array
     {
         if ($post->post_type !== 'page') {
             $classes = ['single', 'single-' . PostClasses::htmlClass($post->post_type), 'postid-' . $post->ID];
             if ($post->post_type === 'post') {
-                $classes[] = 'single-format-standard';
+                $classes[] = 'single-format-' . $this->format((int) $post->ID);
             }
-            if ($post->post_type === 'attachment') {
+            // The attachment tokens follow the query's attachment view, not the post's type (probe post-template-remaining).
+            if ($query->is_attachment() && $post->post_type === 'attachment') {
                 $mime = str_replace(['application/', 'image/', 'text/', 'audio/', 'video/', 'music/'], '', (string) $post->post_mime_type);
                 array_push($classes, 'attachmentid-' . $post->ID, 'attachment-' . PostClasses::htmlClass($mime));
             }

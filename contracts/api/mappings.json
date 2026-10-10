@@ -2,14 +2,14 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 769,
+        "minn": 770,
         "composes": 1869,
         "leaf": 876,
         "noop": 2632,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7972,
-        "minnMethods": 938,
+        "functions": 7973,
+        "minnMethods": 941,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -31262,6 +31262,26 @@
             ],
             "composes": []
         },
+        "_minn_query_body_classes": {
+            "file": "post.php",
+            "lines": 10,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db",
+                "Minn\\Theme\\BodyClasses::forView",
+                "Minn\\Theme\\BodyFacts::__construct",
+                "Minn\\Theme\\QueryClasses::__construct"
+            ],
+            "composes": [
+                "current_theme_supports",
+                "get_page_template_slug",
+                "get_stylesheet",
+                "get_template",
+                "has_custom_logo",
+                "is_user_logged_in"
+            ]
+        },
         "_minn_query_date_sql": {
             "file": "canonical.php",
             "lines": 7,
@@ -33746,7 +33766,7 @@
         },
         "_wp_link_page": {
             "file": "post.php",
-            "lines": 7,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -33755,6 +33775,7 @@
                 "get_option",
                 "get_permalink",
                 "get_post",
+                "is_preview",
                 "trailingslashit",
                 "user_trailingslashit"
             ]
@@ -40605,11 +40626,11 @@
             "lines": 5,
             "kind": "minn",
             "minn": [
-                "Minn\\Content\\PostClasses::htmlClass",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::get"
             ],
             "composes": [
+                "_minn_query_body_classes",
                 "apply_filters"
             ]
         },
@@ -49511,13 +49532,18 @@
         },
         "prepend_attachment": {
             "file": "post.php",
-            "lines": 7,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
                 "get_post",
-                "wp_get_attachment_link"
+                "wp_attachment_is",
+                "wp_audio_shortcode",
+                "wp_get_attachment_link",
+                "wp_get_attachment_metadata",
+                "wp_get_attachment_url",
+                "wp_video_shortcode"
             ]
         },
         "prev_post_rel_link": {
@@ -54925,7 +54951,7 @@
         },
         "the_title_attribute": {
             "file": "post.php",
-            "lines": 11,
+            "lines": 12,
             "kind": "composes",
             "minn": [],
             "composes": [

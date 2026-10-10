@@ -8,7 +8,8 @@ namespace Minn\Content;
  * The class list a post carries on its article element, in the reference's
  * order: caller extras, identity, type, status, format, password state,
  * thumbnail, sticky, hentry, then one class per term of every public
- * taxonomy (post_tag reads as "tag-", post_format is the format above).
+ * taxonomy (post_tag reads as "tag-"; the format's term counts too, as
+ * post_format-post-format-aside; probe post-template-remaining).
  */
 final class PostClasses
 {
@@ -49,9 +50,6 @@ final class PostClasses
         }
         $classes[] = 'hentry';
         foreach ($terms as $term) {
-            if ($term['taxonomy'] === 'post_format') {
-                continue;
-            }
             $prefix = $term['taxonomy'] === 'post_tag' ? 'tag' : $term['taxonomy'];
             $slug = self::htmlClass($term['slug']);
             $classes[] = $prefix . '-' . ($slug === '' || is_numeric($slug) ? (string) $term['term_id'] : $slug);

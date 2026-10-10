@@ -28,7 +28,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
 | [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
 | [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
-| [`PostClasses`](#postclasses) | final class | 55 | The class list a post carries on its article element, in the reference's |
+| [`PostClasses`](#postclasses) | final class | 52 | The class list a post carries on its article element, in the reference's |
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
@@ -1059,7 +1059,8 @@ Internals: `ownWithout()` (private, line 90)
 The class list a post carries on its article element, in the reference's
 order: caller extras, identity, type, status, format, password state,
 thumbnail, sticky, hentry, then one class per term of every public
-taxonomy (post_tag reads as "tag-", post_format is the format above).
+taxonomy (post_tag reads as "tag-"; the format's term counts too, as
+post_format-post-format-aside; probe post-template-remaining).
 
 Used by: `Minn\Theme\QueryClasses`
 

@@ -30870,8 +30870,8 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/PostClasses.php",
-            "lines": 55,
-            "doc": "The class list a post carries on its article element, in the reference's\norder: caller extras, identity, type, status, format, password state,\nthumbnail, sticky, hentry, then one class per term of every public\ntaxonomy (post_tag reads as \"tag-\", post_format is the format above).",
+            "lines": 52,
+            "doc": "The class list a post carries on its article element, in the reference's\norder: caller extras, identity, type, status, format, password state,\nthumbnail, sticky, hentry, then one class per term of every public\ntaxonomy (post_tag reads as \"tag-\"; the format's term counts too, as\npost_format-post-format-aside; probe post-template-remaining).",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -30953,8 +30953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 60
+                    "line": 23,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -30973,8 +30973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 61,
+                    "end": 64
                 }
             ]
         },
@@ -126859,7 +126859,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/QueryFlags.php",
-            "lines": 186,
+            "lines": 188,
             "doc": "The conditional flags a set of query variables implies (is_single, is_archive,\nis_home, ...), derived the way the reference's parse step derives them, plus\nthe variables after the integer casts that step applies.",
             "implements": [],
             "extends": null,
@@ -126999,7 +126999,7 @@
                         }
                     ],
                     "line": 52,
-                    "end": 103
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -127027,8 +127027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 196
+                    "line": 189,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -127050,8 +127050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 140
+                    "line": 115,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -127079,8 +127079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 179
+                    "line": 145,
+                    "end": 181
                 }
             ]
         },
@@ -142521,7 +142521,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/BodyClasses.php",
-            "lines": 59,
+            "lines": 86,
             "doc": "The body-class list a classic theme's body_class() starts from, in the\nreference's order: the query tokens (with the singular and template\ntokens spliced in front of the type token), logged-in, the embed and\ntheme tokens, with the numbered paging tokens re-seated after the embed\ntoken. The body_class filter runs over this list in the facade.",
             "implements": [],
             "extends": null,
@@ -142594,14 +142594,72 @@
                         }
                     ],
                     "line": 25,
-                    "end": 55
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "forView",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "forView(?string $singular, array $coreClasses, ?string $customTemplate, string $themeSlug, ?string $parentSlug, Minn\\Theme\\BodyFacts $facts): array",
+                    "doc": "The same list for a view named by the post type it shows alone (null\nwhen it shows no single post), as get_body_class needs off the front\n(probe post-template-remaining).",
+                    "shapes": [
+                        "@param list<string> $coreClasses",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "singular",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coreClasses",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "customTemplate",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "themeSlug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parentSlug",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "facts",
+                            "type": "Minn\\Theme\\BodyFacts",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 79
                 },
                 {
                     "routes": [],
                     "name": "withSingularTokens",
                     "static": true,
                     "visibility": "private",
-                    "signature": "withSingularTokens(Minn\\Front\\Resolution $resolution, array $classes, ?string $customTemplate): array",
+                    "signature": "withSingularTokens(?string $singular, array $classes, ?string $customTemplate): array",
                     "doc": "",
                     "shapes": [
                         "@param list<string> $classes",
@@ -142609,8 +142667,8 @@
                     ],
                     "params": [
                         {
-                            "name": "resolution",
-                            "type": "Minn\\Front\\Resolution",
+                            "name": "singular",
+                            "type": "?string",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -142630,8 +142688,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 74
+                    "line": 85,
+                    "end": 101
                 }
             ]
         },
@@ -146127,7 +146185,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/QueryClasses.php",
-            "lines": 120,
+            "lines": 131,
             "doc": "The body-class tokens the main query stands for, in the reference's\norder (captured from the oracles): the view tokens (home, blog,\nprivacy-policy, archive, date, search with its results token, paged,\nattachment, error404), then the singular's or the archive's own, then\nthe numbered paging tokens. Flags combine as the query's do: a search\ninside a category carries both sets. The bare paged token follows the\nlisting's page; the numbered ones follow a single's page too, and take\nthe view's prefix in one precedence (single, page, category, tag, date,\nauthor, search, post type; the front and a plain taxonomy have none).\nA 404 carries no paging tokens. The theme renderers seat the numbered\ntokens after the embed token and add the template and theme tokens.",
             "implements": [],
             "extends": null,
@@ -146193,10 +146251,30 @@
                 },
                 {
                     "routes": [],
+                    "name": "format",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "format(int $id): string",
+                    "doc": "A post's format by its post_format term, standard without one (probe post-template-remaining).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 68
+                },
+                {
+                    "routes": [],
                     "name": "singular",
                     "static": false,
                     "visibility": "private",
-                    "signature": "singular(WP_Post $post): array",
+                    "signature": "singular(WP_Post $post, WP_Query $query): array",
                     "doc": "",
                     "shapes": [
                         "@return list<string>"
@@ -146208,10 +146286,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "WP_Query",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 86
+                    "line": 71,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -146246,8 +146331,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 109
+                    "line": 100,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -146268,8 +146353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 134
+                    "line": 127,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -146295,8 +146380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 141
+                    "line": 148,
+                    "end": 152
                 }
             ]
         },
