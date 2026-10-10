@@ -10346,3 +10346,27 @@ What the reference does here:
 - `resume_plugins` comes from `activate_plugins`, and `resume_themes` from
   `switch_themes`.
 - `view_site_health_checks` comes from `install_plugins`.
+
+## The rest of cache.php (2026-10-10)
+
+Probe `cache-remaining` proves the nine cache.php functions that were left.
+Everything happens in the probe's own groups, in the run's memory. It covers:
+- counters raised and lowered: missing keys, numeric strings, words, values
+  pushed below zero, an offset given as a string;
+- values replaced only when present;
+- several keys deleted at once;
+- one group flushed while another keeps its values;
+- groups kept out of a persistent cache;
+- switching blogs on a single site;
+- closing the cache, and starting it fresh.
+
+Fixes:
+
+- **`wp_cache_incr` and `wp_cache_decr`** go through the cache object, which
+  already counts anything that isn't numeric as 0. Raising `'apples'` by 2
+  stores 2. The facade used to refuse and keep the word, a second path that
+  disagreed with the class.
+- **`wp_cache_init`** started again starts empty, so nothing cached before
+  survives. The engine's cache keeps its data in the runtime's store, so a
+  restart empties that store. The first start, at boot, leaves it alone, so
+  boot behaves as before.

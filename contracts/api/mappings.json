@@ -3,8 +3,8 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 768,
-        "composes": 1877,
-        "leaf": 877,
+        "composes": 1876,
+        "leaf": 878,
         "noop": 2630,
         "placeholder": 242,
         "deadend": 1662,
@@ -58528,9 +58528,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": [
-                "wp_cache_incr"
-            ]
+            "composes": []
         },
         "wp_cache_delete": {
             "file": "option.php",
@@ -58631,18 +58629,15 @@
         },
         "wp_cache_incr": {
             "file": "option.php",
-            "lines": 7,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
-            "composes": [
-                "wp_cache_get",
-                "wp_cache_set"
-            ]
+            "composes": []
         },
         "wp_cache_init": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

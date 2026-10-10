@@ -344,22 +344,17 @@ function wp_cache_set_multiple_salted($data, $group, $salt, $expire = 0)
 endif;
 
 if (!function_exists('wp_cache_incr')) :
+/** A stored counter moved up; anything not numeric counts as 0 (probe cache-remaining). */
 function wp_cache_incr($key, $offset = 1, $group = '')
 {
-    $value = wp_cache_get($key, $group);
-    if (!is_numeric($value)) {
-        return false;
-    }
-    $value = max(0, (int) $value + (int) $offset);
-    wp_cache_set($key, $value, $group);
-    return $value;
+    return $GLOBALS['wp_object_cache']->incr($key, $offset, $group);
 }
 endif;
 
 if (!function_exists('wp_cache_decr')) :
 function wp_cache_decr($key, $offset = 1, $group = '')
 {
-    return wp_cache_incr($key, -(int) $offset, $group);
+    return $GLOBALS['wp_object_cache']->decr($key, $offset, $group);
 }
 endif;
 
@@ -395,9 +390,18 @@ function wp_cache_switch_to_blog($blog_id)
 endif;
 
 if (!function_exists('wp_cache_init')) :
+/**
+ * The object cache, started. Started again, it starts empty: nothing cached
+ * before survives (probe cache-remaining). The store is the runtime's, so a
+ * restart empties it; the first start, at boot, leaves it as it is.
+ */
 function wp_cache_init()
 {
+    $restarted = isset($GLOBALS['wp_object_cache']);
     $GLOBALS['wp_object_cache'] = new WP_Object_Cache();
+    if ($restarted) {
+        $GLOBALS['wp_object_cache']->flush();
+    }
 }
 endif;
 

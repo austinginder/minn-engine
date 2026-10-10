@@ -1,0 +1,99 @@
+[
+    [
+        "counters",
+        [
+            6,
+            16,
+            13,
+            13,
+            8,
+            8,
+            2,
+            2,
+            1,
+            0,
+            0,
+            4,
+            false,
+            false,
+            15,
+            false,
+            false
+        ]
+    ],
+    [
+        "replaced only when present",
+        [
+            true,
+            "new",
+            false,
+            false,
+            false,
+            true,
+            {
+                "a": 1
+            },
+            true,
+            null,
+            true
+        ]
+    ],
+    [
+        "several keys deleted at once",
+        [
+            {
+                "one": true,
+                "three": true,
+                "nine": false
+            },
+            {
+                "one": false,
+                "two": 2,
+                "three": false
+            },
+            [],
+            {
+                "two": false
+            }
+        ]
+    ],
+    [
+        "one group flushed",
+        [
+            true,
+            true,
+            false,
+            false,
+            "stays",
+            true
+        ]
+    ],
+    [
+        "groups kept out of a persistent cache",
+        [
+            "local value",
+            "single value"
+        ]
+    ],
+    [
+        "switching blogs on a single site",
+        [
+            null,
+            "before",
+            null,
+            "before",
+            "before"
+        ]
+    ],
+    [
+        "closing and a fresh cache",
+        [
+            true,
+            "before init",
+            null,
+            false,
+            false,
+            true
+        ]
+    ]
+]
