@@ -9813,3 +9813,44 @@ Fixed to match:
   wp-trackback.php, wp-comments-post.php, wp-mail.php and wp-links-opml.php,
   and also Minn Admin (`Engine::markThemedRequest`). A live check gave true
   for the front page, REST and feeds, and false for wp-login.php.
+
+## The rest of embed.php (2026-10-09)
+
+Probe `embed-remaining` proves the 17 embed.php functions that were left:
+- oEmbed XML, and the REST response served as XML;
+- oEmbed data for a site URL, and the rich data for posts and images;
+- the post embed HTML;
+- the embed template's pieces: site title, excerpt and its more link,
+  attachment excerpts, the comments and sharing buttons, the sharing
+  dialog;
+- discovery links;
+- the embed scripts and styles, by shape;
+- the host script.
+
+The probe masks the embed secret and the dialog's random ids.
+`_oembed_rest_pre_serve_request` with a `WP_Error` result is a fatal error
+on the reference, so it is left out.
+
+Fixed to match:
+
+- **`_oembed_rest_pre_serve_request`** serves an oEmbed response asked for
+  as XML (`format=xml` on `/oembed/1.0/embed` or `/oembed/1.0/proxy`). It
+  sends a `text/xml` content type, prints the document, and counts the
+  request as served. It never did.
+- **`_oembed_create_xml`** answers false for empty data, and writes under a
+  root element given to it.
+- **The oEmbed thumbnail of an image** is the size chosen by the width
+  alone (`[$width, 0]`). The large size for 500 wide, scaled to fit, rather
+  than the full image.
+- **Shared fix: `wp_image_matches_ratio`.** The wider of the two sizes,
+  fitted into the other's box, must come within a pixel of the other on both
+  sides. The old check compared the fitted size with itself, so two sizes of
+  the same width always matched. 300×200 counted as matching 300×169, and
+  `image_get_intermediate_size(…, [300, 169])` picked the 300×200 size where
+  the reference picks none. Every image probe (sizes, downsizing, the
+  pipeline, content images, media tags) gave the same answers after the
+  fix.
+
+Seen once and not since: the api suite's `wp-user-query-sql` "by url" case
+returned users with equal (empty) addresses in a different order. That is
+the database's choice for ties, and three reruns matched.

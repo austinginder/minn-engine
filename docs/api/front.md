@@ -26,7 +26,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
 | [`Permalinks`](#permalinks) | final readonly class | 248 | Builds public URLs from the site's permalink structure. With an empty |
-| [`PostEmbed`](#postembed) | final class | 104 | A post as other sites embed it, the oEmbed provider side, as the |
+| [`PostEmbed`](#postembed) | final class | 105 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
 | [`ProbeController`](#probecontroller) | final readonly class | 66 | The surface monitors, crawlers, and hosting checks hit that is not a |
@@ -824,13 +824,13 @@ get_post_embed_html: the blockquote, the iframe and its script, through embed_ht
 
 get_post_embed_url: the post's /embed/ address (?embed=true without pretty links), through post_embed_url.
 
-### static `xml(array $data): string`
+### static `xml(array $data, ?SimpleXMLElement $root = NULL): string`
 
-_oembed_create_xml: the data as an oembed document, nested arrays as nested elements. @param array<string, mixed> $data
+_oembed_create_xml: the data as an oembed document (or under the root given), nested arrays as nested elements. @param array<string, mixed> $data
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 114)
+Internals: `append()` (private, line 115)
 
 
 ## PostNavigation

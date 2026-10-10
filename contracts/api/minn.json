@@ -46952,7 +46952,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/PostEmbed.php",
-            "lines": 104,
+            "lines": 105,
             "doc": "A post as other sites embed it, the oEmbed provider side, as the\nreference answers (probe oembed): the data (version, the site as\nprovider, the author or else the site, the title) through\noembed_response_data, whose default makes it \"rich\" with the embed\nmarkup: a blockquote linking the post, a sandboxed iframe of its /embed/\npage carrying a fresh secret, and the inline script that sizes it. Only\na publicly viewable post is embeddable; the width is held between 200\nand 600 (oembed_min_max_width) and the height is a 16:9 share of it, at\nleast 200.",
             "implements": [],
             "extends": null,
@@ -47037,7 +47037,7 @@
                         }
                     ],
                     "line": 52,
-                    "end": 66
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -47070,8 +47070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 89
+                    "line": 70,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -47090,16 +47090,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 103
+                    "line": 93,
+                    "end": 104
                 },
                 {
                     "routes": [],
                     "name": "xml",
                     "static": true,
                     "visibility": "public",
-                    "signature": "xml(array $data): string",
-                    "doc": "_oembed_create_xml: the data as an oembed document, nested arrays as nested elements. @param array<string, mixed> $data",
+                    "signature": "xml(array $data, ?SimpleXMLElement $root = NULL): string",
+                    "doc": "_oembed_create_xml: the data as an oembed document (or under the root given), nested arrays as nested elements. @param array<string, mixed> $data",
                     "shapes": [
                         "@param array<string, mixed> $data"
                     ],
@@ -47110,10 +47110,17 @@
                             "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "root",
+                            "type": "?SimpleXMLElement",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 111
+                    "line": 107,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -47141,8 +47148,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 124
+                    "line": 115,
+                    "end": 125
                 }
             ]
         },

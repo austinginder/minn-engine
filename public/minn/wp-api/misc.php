@@ -957,9 +957,10 @@ function get_oembed_response_data_for_url($url, $args)
 }
 
 /** The data as an oEmbed XML document. */
+/** The data as an oEmbed XML document; false for no data (probe embed-remaining). */
 function _oembed_create_xml($data, $node = null)
 {
-    return is_array($data) || is_object($data) ? PostEmbed::xml((array) $data) : false;
+    return (is_array($data) || is_object($data)) && (array) $data !== [] ? PostEmbed::xml((array) $data, $node instanceof SimpleXMLElement ? $node : null) : false;
 }
 
 /**
@@ -986,9 +987,18 @@ function wp_filter_oembed_iframe_title_attribute($result, $data, $url)
 }
 
 /** The engine serves format=xml itself on the way out (Rest\RuntimeRoutes::serve); the hook is the reference's name for it. */
+/** An oEmbed response asked for as XML is printed as XML, and the request counts as served (probe embed-remaining). */
 function _oembed_rest_pre_serve_request($served, $result, $request, $server)
 {
-    return $served;
+    if (!in_array($request->get_route(), ['/oembed/1.0/embed', '/oembed/1.0/proxy'], true) || $request->get_param('format') !== 'xml') {
+        return $served;
+    }
+    $data = $server->response_to_data($result, false);
+    if (!headers_sent()) {
+        $server->send_header('Content-Type', 'text/xml; charset=' . get_option('blog_charset'));
+    }
+    echo _oembed_create_xml($data);
+    return true;
 }
 
 /**

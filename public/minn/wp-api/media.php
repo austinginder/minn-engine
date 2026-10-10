@@ -720,18 +720,19 @@ function wp_calculate_image_srcset($size_array, $image_src, $image_meta, $attach
     return Sizing::srcset(is_array($sources) ? $sources : []) ?? false;
 }
 
+/**
+ * Whether two sizes share a ratio (probe embed-remaining): the wider one,
+ * fitted into the other's box, comes within a pixel of the other on both
+ * sides.
+ */
 function wp_image_matches_ratio($source_width, $source_height, $target_width, $target_height)
 {
     if (!$source_width || !$source_height || !$target_width || !$target_height) {
         return false;
     }
-    if (max($source_width, $source_height) > max($target_width, $target_height)) {
-        $constrained = wp_constrain_dimensions($source_width, $source_height, $target_width, $target_height);
-    } else {
-        $constrained = wp_constrain_dimensions($target_width, $target_height, $source_width, $source_height);
-    }
-    $height_error = 1;
-    return abs($constrained[0] - ($constrained[0] > $target_width ? $constrained[0] : $target_width)) <= 1 && abs($constrained[1] - $target_height) <= $height_error || (abs($constrained[0] - $source_width) <= 1 && abs($constrained[1] - $source_height) <= $height_error);
+    [$wide, $other] = $source_width > $target_width ? [[$source_width, $source_height], [$target_width, $target_height]] : [[$target_width, $target_height], [$source_width, $source_height]];
+    $constrained = wp_constrain_dimensions($wide[0], $wide[1], $other[0], $other[1]);
+    return abs($constrained[0] - $other[0]) <= 1 && abs($constrained[1] - $other[1]) <= 1;
 }
 
 function wp_calculate_image_sizes($size, $image_src = null, $image_meta = null, $attachment_id = 0)

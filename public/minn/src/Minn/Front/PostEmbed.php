@@ -57,7 +57,8 @@ final class PostEmbed
         $data['html'] = self::html($width, $height, $post);
         $thumbnail = \wp_attachment_is_image($post) ? $post->ID : (int) \get_post_thumbnail_id($post);
         if ($thumbnail > 0) {
-            $image = \wp_get_attachment_image_src($thumbnail, [$width, 99999]);
+            // The size chosen by the width alone (probe embed-remaining).
+            $image = \wp_get_attachment_image_src($thumbnail, [$width, 0]);
             if (is_array($image)) {
                 [$data['thumbnail_url'], $data['thumbnail_width'], $data['thumbnail_height']] = $image;
             }
@@ -102,10 +103,10 @@ final class PostEmbed
         return (string) \apply_filters('post_embed_url', $url, $post);
     }
 
-    /** _oembed_create_xml: the data as an oembed document, nested arrays as nested elements. @param array<string, mixed> $data */
-    public static function xml(array $data): string
+    /** _oembed_create_xml: the data as an oembed document (or under the root given), nested arrays as nested elements. @param array<string, mixed> $data */
+    public static function xml(array $data, ?\SimpleXMLElement $root = null): string
     {
-        $root = new \SimpleXMLElement('<oembed></oembed>');
+        $root ??= new \SimpleXMLElement('<oembed></oembed>');
         self::append($root, $data);
         return (string) $root->asXML();
     }
