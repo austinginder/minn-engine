@@ -175,15 +175,23 @@ function _minn_resolve_pattern_blocks(array $blocks, array $open): array
         }
         if (($block['blockName'] ?? '') === 'core/pattern') {
             $slug = (string) ($block['attrs']['slug'] ?? '');
-            $markup = isset($open[$slug]) ? null : _minn_pattern_markup($slug);
+            // A pattern inside itself is dropped; one that does not exist stays as it is (probe block-helpers-remaining).
+            if (isset($open[$slug])) {
+                continue;
+            }
+            $markup = _minn_pattern_markup($slug);
             if ($markup === null) {
                 $out[] = $block;
                 continue;
             }
             $open[$slug] = true;
-            foreach (_minn_resolve_pattern_blocks(parse_blocks($markup), $open) as $resolved) {
-                $out[] = $resolved;
+            $resolved = _minn_resolve_pattern_blocks(parse_blocks($markup), $open);
+            // A pattern of one block names itself on that block (probe block-helpers-remaining).
+            if (count($resolved) === 1 && is_array($resolved[0])) {
+                $title = WP_Block_Patterns_Registry::get_instance()->get_registered($slug)['title'] ?? null;
+                $resolved[0]['attrs']['metadata'] = array_merge((array) ($resolved[0]['attrs']['metadata'] ?? []), ['patternName' => $slug], $title === null ? [] : ['name' => $title]);
             }
+            array_push($out, ...$resolved);
             unset($open[$slug]);
             continue;
         }
@@ -820,15 +828,18 @@ function register_block_script_handle($metadata, $field_name, $index = 0)
     if ($script_handle_or_path === $script_path) {
         return $script_handle_or_path;
     }
-    $path = dirname($metadata['file']);
-    $script_asset_raw_path = $path . '/' . substr_replace($script_path, '.asset.php', -strlen('.js'));
     $script_handle = generate_block_asset_handle($metadata['name'], $field_name, $index);
-    $script_asset_path = wp_normalize_path(realpath($script_asset_raw_path) ?: $script_asset_raw_path);
-    $script_path_norm = wp_normalize_path(realpath($path . '/' . $script_path) ?: $path . '/' . $script_path);
-    $script_uri = plugins_url(str_replace(wp_normalize_path(WP_PLUGIN_DIR), '', $script_path_norm));
-    $script_asset = file_exists($script_asset_path) ? require $script_asset_path : ['dependencies' => [], 'version' => false];
+    // A handle already registered stands; a missing file is registered without a source; a view
+    // script is deferred and takes the block's version when it has no asset file (probe block-helpers-remaining).
+    if (wp_script_is($script_handle, 'registered')) {
+        return $script_handle;
+    }
+    $path = dirname($metadata['file']);
+    $script_asset_path = $path . '/' . substr_replace($script_path, '.asset.php', -strlen('.js'));
+    $script_asset = file_exists($script_asset_path) ? require $script_asset_path : [];
     $script_dependencies = $script_asset['dependencies'] ?? [];
-    $result = wp_register_script($script_handle, $script_uri, $script_dependencies, $script_asset['version'] ?? false, ['in_footer' => $field_name === 'viewScript']);
+    $version = $script_asset['version'] ?? (!empty($metadata['version']) ? $metadata['version'] : false);
+    $result = wp_register_script($script_handle, _minn_block_asset_url($path . '/' . $script_path), $script_dependencies, $version, $field_name === 'viewScript' ? ['strategy' => 'defer'] : []);
     if (!$result) {
         return false;
     }
@@ -856,11 +867,36 @@ function register_block_style_handle($metadata, $field_name, $index = 0)
     }
     $path = dirname($metadata['file']);
     $style_handle_name = generate_block_asset_handle($metadata['name'], $field_name, $index);
-    $style_path_norm = wp_normalize_path(realpath($path . '/' . $style_path) ?: $path . '/' . $style_path);
-    $style_uri = plugins_url(str_replace(wp_normalize_path(WP_PLUGIN_DIR), '', $style_path_norm));
+    if (wp_style_is($style_handle_name, 'registered')) {
+        return $style_handle_name;
+    }
     $version = !empty($metadata['version']) ? $metadata['version'] : false;
-    $result = wp_register_style($style_handle_name, $style_uri, [], $version);
+    $result = wp_register_style($style_handle_name, _minn_block_asset_url($path . '/' . $style_path), [], $version);
     return $result ? $style_handle_name : false;
+}
+
+/**
+ * @internal A block asset's address (probe block-helpers-remaining): under the
+ * theme (or its parent) from the theme's address, under wp-includes from the
+ * includes address, otherwise its path under the plugins folder from the
+ * plugins address, whole when it lies elsewhere (probe blocks); false for a
+ * file that is not there.
+ */
+function _minn_block_asset_url(string $file)
+{
+    $real = realpath($file);
+    if ($real === false) {
+        return false;
+    }
+    $real = wp_normalize_path($real);
+    $roots = [[get_stylesheet_directory(), get_stylesheet_directory_uri()], [get_template_directory(), get_template_directory_uri()], [ABSPATH . WPINC, includes_url()]];
+    foreach ($roots as [$dir, $url]) {
+        $dir = wp_normalize_path((string) (realpath($dir) ?: $dir));
+        if (str_starts_with($real, trailingslashit($dir))) {
+            return untrailingslashit($url) . '/' . substr($real, strlen(trailingslashit($dir)));
+        }
+    }
+    return plugins_url(str_replace(wp_normalize_path(WP_PLUGIN_DIR), '', $real));
 }
 
 function remove_block_asset_path_prefix($asset_handle_or_path)
@@ -961,8 +997,28 @@ function wp_register_block_types_from_metadata_collection($path, $manifest = '')
     }
 }
 
+/**
+ * A block's old typography supports moved under supports.typography (probe
+ * block-helpers-remaining): each one found is taken out of supports, set in
+ * the typography supports (over a value already there), and named in a
+ * notice.
+ */
 function wp_migrate_old_typography_shape($metadata)
 {
+    if (!isset($metadata['supports']) || !is_array($metadata['supports'])) {
+        return $metadata;
+    }
+    $keys = ['__experimentalFontFamily', '__experimentalFontStyle', '__experimentalFontWeight', '__experimentalLetterSpacing', '__experimentalTextDecoration', '__experimentalTextTransform', 'fontSize', 'lineHeight'];
+    foreach ($keys as $key) {
+        if (!array_key_exists($key, $metadata['supports'])) {
+            continue;
+        }
+        _doing_it_wrong('register_block_type_from_metadata()', sprintf(__('Block "%1$s" is declaring %2$s support in %3$s file under %4$s. %2$s support is now declared under %5$s.'), $metadata['name'] ?? '', "<code>{$key}</code>", '<code>block.json</code>', "<code>supports.{$key}</code>", "<code>supports.typography.{$key}</code>"), '5.8.0');
+        $metadata['supports']['typography'] ??= [];
+        $value = $metadata['supports'][$key];
+        unset($metadata['supports'][$key]);
+        $metadata['supports']['typography'][$key] = $value;
+    }
     return $metadata;
 }
 

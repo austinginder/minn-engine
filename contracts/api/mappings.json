@@ -1,14 +1,14 @@
 {
-    "generated": "2026-10-09",
+    "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 773,
-        "composes": 1852,
+        "composes": 1854,
         "leaf": 874,
-        "noop": 2644,
+        "noop": 2643,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7969,
+        "functions": 7970,
         "minnMethods": 939,
         "leafLinesOver15": 12
     },
@@ -29613,6 +29613,23 @@
                 "wp_roles"
             ]
         },
+        "_minn_block_asset_url": {
+            "file": "blocks.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_stylesheet_directory",
+                "get_stylesheet_directory_uri",
+                "get_template_directory",
+                "get_template_directory_uri",
+                "includes_url",
+                "plugins_url",
+                "trailingslashit",
+                "untrailingslashit",
+                "wp_normalize_path"
+            ]
+        },
         "_minn_block_bindings_post_readable": {
             "file": "blocks.php",
             "lines": 1,
@@ -31440,7 +31457,7 @@
         },
         "_minn_resolve_pattern_blocks": {
             "file": "blocks.php",
-            "lines": 25,
+            "lines": 33,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -50657,15 +50674,15 @@
         },
         "register_block_script_handle": {
             "file": "blocks.php",
-            "lines": 30,
+            "lines": 33,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_block_asset_url",
                 "generate_block_asset_handle",
-                "plugins_url",
                 "remove_block_asset_path_prefix",
-                "wp_normalize_path",
                 "wp_register_script",
+                "wp_script_is",
                 "wp_set_script_translations"
             ]
         },
@@ -50692,15 +50709,15 @@
         },
         "register_block_style_handle": {
             "file": "blocks.php",
-            "lines": 21,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_block_asset_url",
                 "generate_block_asset_handle",
-                "plugins_url",
                 "remove_block_asset_path_prefix",
-                "wp_normalize_path",
-                "wp_register_style"
+                "wp_register_style",
+                "wp_style_is"
             ]
         },
         "register_block_template": {
@@ -64983,10 +65000,14 @@
         },
         "wp_migrate_old_typography_shape": {
             "file": "blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 15,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "_doing_it_wrong",
+                "register_block_type_from_metadata"
+            ]
         },
         "wp_mime_type_icon": {
             "file": "media.php",

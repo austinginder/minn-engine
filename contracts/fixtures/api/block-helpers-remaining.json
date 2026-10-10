@@ -1,0 +1,532 @@
+[
+    [
+        "asset handles and paths",
+        [
+            [
+                "wp-block-paragraph-editor",
+                "wp-block-paragraph",
+                "wp-block-paragraph-view-script-module",
+                "zz-thing-editor-script",
+                "zz-thing-script-2",
+                "zz-thing-view-style-3",
+                "zz-thing-editor-style",
+                "plain-style"
+            ],
+            [
+                "index.js",
+                "index.js",
+                "./index.js",
+                "wp-block-handle",
+                "../x.css",
+                "",
+                "FILE:./a.js"
+            ]
+        ]
+    ],
+    [
+        "script and style handles",
+        [
+            [
+                "zz-bh-block-editor-script",
+                "zz-bh-block-script",
+                "zz-existing-handle",
+                "zz-bh-block-view-script",
+                false,
+                "zz-bh-block-editor-script",
+                "zz-bh-fresh-editor-script",
+                "zz-bh-fresh-style",
+                "zz-bh-block-style",
+                "zz-bh-block-style-2",
+                "zz-other-handle",
+                false
+            ],
+            [
+                "{site}/wp-content/themes/twentytwentyfive/zz-bh-block/index.js",
+                [
+                    "wp-blocks",
+                    "wp-element"
+                ],
+                "zz123",
+                false,
+                false
+            ],
+            [
+                "{site}/wp-content/themes/twentytwentyfive/zz-bh-block/index.js",
+                [
+                    "wp-blocks",
+                    "wp-element"
+                ],
+                "zz123",
+                false,
+                false
+            ],
+            [
+                "{site}/wp-content/themes/twentytwentyfive/zz-bh-block/view.js",
+                [],
+                "1.2.3",
+                false,
+                "defer"
+            ],
+            [
+                "{site}/wp-content/themes/twentytwentyfive/zz-bh-block/style.css",
+                [],
+                "1.2.3",
+                false,
+                true
+            ],
+            [
+                false,
+                [],
+                false,
+                false,
+                false
+            ],
+            [
+                false,
+                [],
+                false,
+                false,
+                true
+            ],
+            [],
+            "wp-block-paragraph"
+        ]
+    ],
+    [
+        "metadata i18n schema and old typography",
+        [
+            {
+                "title": "block title",
+                "description": "block description",
+                "keywords": [
+                    "block keyword"
+                ],
+                "styles": [
+                    {
+                        "label": "block style label"
+                    }
+                ],
+                "variations": [
+                    {
+                        "title": "block variation title",
+                        "description": "block variation description",
+                        "keywords": [
+                            "block variation keyword"
+                        ]
+                    }
+                ]
+            },
+            {
+                "name": "zz/old",
+                "supports": {
+                    "color": true,
+                    "typography": {
+                        "__experimentalFontFamily": true,
+                        "fontSize": true,
+                        "lineHeight": true
+                    }
+                }
+            },
+            {
+                "name": "zz/mixed",
+                "supports": {
+                    "typography": {
+                        "fontSize": true,
+                        "__experimentalTextTransform": true
+                    }
+                }
+            },
+            {
+                "name": "zz/all",
+                "supports": {
+                    "__experimentalWritingMode": true,
+                    "textAlign": true,
+                    "typography": {
+                        "__experimentalFontStyle": true,
+                        "__experimentalFontWeight": true,
+                        "__experimentalLetterSpacing": true,
+                        "__experimentalTextDecoration": true
+                    }
+                }
+            },
+            {
+                "name": "zz/none",
+                "supports": {
+                    "color": true
+                }
+            },
+            {
+                "name": "zz/none"
+            },
+            [
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/old\" is declaring <code>__experimentalFontFamily</code> support in <code>block.json</code> file under <code>supports.__experimentalFontFamily</code>. <code>__experimentalFontFamily</code> support is now declared under <code>supports.typography.__experimentalFontFamily</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/old\" is declaring <code>fontSize</code> support in <code>block.json</code> file under <code>supports.fontSize</code>. <code>fontSize</code> support is now declared under <code>supports.typography.fontSize</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/old\" is declaring <code>lineHeight</code> support in <code>block.json</code> file under <code>supports.lineHeight</code>. <code>lineHeight</code> support is now declared under <code>supports.typography.lineHeight</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/mixed\" is declaring <code>__experimentalTextTransform</code> support in <code>block.json</code> file under <code>supports.__experimentalTextTransform</code>. <code>__experimentalTextTransform</code> support is now declared under <code>supports.typography.__experimentalTextTransform</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/mixed\" is declaring <code>fontSize</code> support in <code>block.json</code> file under <code>supports.fontSize</code>. <code>fontSize</code> support is now declared under <code>supports.typography.fontSize</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/all\" is declaring <code>__experimentalFontStyle</code> support in <code>block.json</code> file under <code>supports.__experimentalFontStyle</code>. <code>__experimentalFontStyle</code> support is now declared under <code>supports.typography.__experimentalFontStyle</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/all\" is declaring <code>__experimentalFontWeight</code> support in <code>block.json</code> file under <code>supports.__experimentalFontWeight</code>. <code>__experimentalFontWeight</code> support is now declared under <code>supports.typography.__experimentalFontWeight</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/all\" is declaring <code>__experimentalLetterSpacing</code> support in <code>block.json</code> file under <code>supports.__experimentalLetterSpacing</code>. <code>__experimentalLetterSpacing</code> support is now declared under <code>supports.typography.__experimentalLetterSpacing</code>.",
+                    "5.8.0"
+                ],
+                [
+                    "register_block_type_from_metadata()",
+                    "Block \"zz/all\" is declaring <code>__experimentalTextDecoration</code> support in <code>block.json</code> file under <code>supports.__experimentalTextDecoration</code>. <code>__experimentalTextDecoration</code> support is now declared under <code>supports.typography.__experimentalTextDecoration</code>.",
+                    "5.8.0"
+                ]
+            ]
+        ]
+    ],
+    [
+        "serialized parent blocks",
+        [
+            "<!-- wp:group {\"layout\":{\"type\":\"flex\"}} --><div class=\"wp-block-group\"><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:separator --><hr/><!-- /wp:separator --></div><!-- /wp:group -->",
+            "<!-- wp:group {\"layout\":{\"type\":\"flex\"}} --><!-- /wp:group -->",
+            "<div class=\"wp-block-group\"><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:separator --><hr/><!-- /wp:separator --></div>",
+            "<!-- wp:paragraph --><!-- /wp:paragraph -->",
+            "<p>x</p>",
+            "no no blocks",
+            "blo",
+            "<!-- wp:spacer /--><!-- wp:spacer /-->",
+            ""
+        ]
+    ],
+    [
+        "traversal and serialization",
+        [
+            "<!-- wp:group {\"layout\":{\"type\":\"flex\"}} --><div class=\"wp-block-group\"><!-- wp:paragraph {\"zzSeen\":true} --><p>a</p><!-- /wp:paragraph --><!-- zz after --><!-- zz before --><!-- wp:separator {\"zzSeen\":true} --><hr/><!-- /wp:separator --></div><!-- /wp:group -->",
+            [
+                [
+                    "pre",
+                    "core/paragraph",
+                    "core/group",
+                    null
+                ],
+                [
+                    "post",
+                    "core/paragraph",
+                    "core/group",
+                    "core/separator"
+                ],
+                [
+                    "pre",
+                    "core/separator",
+                    "core/group",
+                    "core/paragraph"
+                ],
+                [
+                    "post",
+                    "core/separator",
+                    "core/group",
+                    null
+                ]
+            ],
+            "<!-- wp:group {\"layout\":{\"type\":\"flex\"}} --><div class=\"wp-block-group\"><!-- wp:paragraph --><p>a</p><!-- /wp:paragraph --><!-- wp:separator --><hr/><!-- /wp:separator --></div><!-- /wp:group -->",
+            "<!-- wp:spacer /-->"
+        ]
+    ],
+    [
+        "hooked blocks",
+        [
+            [
+                "before",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "before",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "before",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "after",
+                "<!-- wp:zz/filtered {\"zz\":\"set\"} /-->",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "after",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old",
+                        "zz/filtered"
+                    ]
+                }
+            ],
+            [
+                "after",
+                "<!-- wp:zz/filtered {\"zz\":\"set\"} /-->",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old",
+                        "zz/filtered"
+                    ]
+                }
+            ],
+            [
+                "first_child",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "first_child",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "first_child",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "last_child",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "last_child",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ],
+            [
+                "last_child",
+                "",
+                {
+                    "ignoredHookedBlocks": [
+                        "zz/old"
+                    ]
+                }
+            ]
+        ]
+    ],
+    [
+        "pattern blocks resolved",
+        [
+            [
+                [
+                    "core/paragraph",
+                    [],
+                    "<p>from the pattern</p>",
+                    []
+                ],
+                [
+                    "core/heading",
+                    {
+                        "metadata": {
+                            "patternName": "zz/bh-inner",
+                            "name": "Zz inner"
+                        }
+                    },
+                    "<h2>inner</h2>",
+                    []
+                ],
+                [
+                    "core/separator",
+                    [],
+                    "<hr/>",
+                    []
+                ]
+            ],
+            [
+                [
+                    "core/group",
+                    [],
+                    "<div></div>",
+                    [
+                        [
+                            "core/heading",
+                            {
+                                "metadata": {
+                                    "patternName": "zz/bh-inner",
+                                    "name": "Zz inner"
+                                }
+                            },
+                            "<h2>inner</h2>",
+                            []
+                        ]
+                    ]
+                ]
+            ],
+            [
+                [
+                    "core/pattern",
+                    {
+                        "slug": "zz/missing"
+                    },
+                    "",
+                    []
+                ]
+            ],
+            [],
+            [
+                [
+                    "core/pattern",
+                    [],
+                    "",
+                    []
+                ]
+            ],
+            [
+                [
+                    "core/quote",
+                    {
+                        "metadata": {
+                            "patternName": "zz/bh-single",
+                            "name": "Zz single"
+                        }
+                    },
+                    "<blockquote></blockquote>",
+                    [
+                        [
+                            "core/heading",
+                            {
+                                "metadata": {
+                                    "patternName": "zz/bh-inner",
+                                    "name": "Zz inner"
+                                }
+                            },
+                            "<h2>inner</h2>",
+                            []
+                        ]
+                    ]
+                ]
+            ],
+            [
+                [
+                    "core/heading",
+                    {
+                        "metadata": {
+                            "patternName": "zz/bh-inner",
+                            "name": "Zz inner"
+                        }
+                    },
+                    "<h2>inner</h2>",
+                    []
+                ]
+            ]
+        ]
+    ],
+    [
+        "block content filtered",
+        [
+            "<!-- wp:paragraph {\"zz\":\"x\",\"safe\":\"\\u003cb\\u003eok\\u003c/b\\u003e\",\"nested\":{\"a\":\"\\u003cimg src=\\u0022x\\u0022\\u003e\"},\"list\":[\"\\u003ci\\u003ei\\u003c/i\\u003e\",3,true]} --><p onclick=\"x\">text <script>bad</script></p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph {\"zz\":\"x\",\"safe\":\"\\u003cb\\u003eok\\u003c/b\\u003e\",\"nested\":{\"a\":\"\"},\"list\":[\"\\u003ci\\u003ei\\u003c/i\\u003e\",3,true]} --><p onclick=\"x\">text <script>bad</script></p><!-- /wp:paragraph -->",
+            "<!-- wp:paragraph {\"zz\":\"x\",\"safe\":\"ok\",\"nested\":{\"a\":\"\"},\"list\":[\"i\",3,true]} --><p onclick=\"x\">text <script>bad</script></p><!-- /wp:paragraph -->",
+            "<!-- wp:html --><a href=\"javascript:x\">j</a><!-- /wp:html -->",
+            "plain <b>text</b> <script>s</script>",
+            "<!-- wp:zz/void {\"u\":\"https://x.example\"} /-->",
+            "<b>a</b>s",
+            {
+                "k": "<i>i</i>",
+                "n": 5,
+                "deep": [
+                    "<u>u</u>"
+                ],
+                "": "v"
+            },
+            true,
+            null,
+            "<a href=\"//x\">f</a>",
+            "<b>a</b>",
+            "<!--<!-- wp:paragraph {\"x\":\"<b>y</b>\"} -->-->"
+        ]
+    ],
+    [
+        "footnotes out of excerpts",
+        [
+            "<!-- wp:footnotes /--><!-- wp:paragraph --><p>keep</p><!-- /wp:paragraph --><!-- wp:footnotes {\"x\":1} /-->",
+            "no blocks here",
+            "<!-- wp:footnotes --><ol></ol><!-- /wp:footnotes -->text",
+            "see  here"
+        ]
+    ],
+    [
+        "the wpautop hook put back",
+        [
+            [
+                false,
+                11
+            ],
+            "<p>same</p>",
+            [
+                10,
+                false
+            ],
+            [
+                10,
+                false
+            ]
+        ]
+    ]
+]

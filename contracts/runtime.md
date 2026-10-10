@@ -9647,3 +9647,44 @@ Fixed to match:
   server's offset in the database, which answers with microseconds
   (`2040-05-05 16:00:00.000000`).
 - **`get_comment_count`** lists `all` before `total_comments`.
+
+## The rest of blocks.php (2026-10-09)
+
+Probe `block-helpers-remaining` proves the 18 blocks.php functions that were
+left:
+- block asset handles and their paths;
+- registering a block's script and style handles, from a block folder put in
+  the theme (the stacks share the themes folder);
+- the metadata i18n schema and the old typography shape;
+- serialized parent blocks, and traversal and serialization with callbacks;
+- hooked blocks and the ignored-hooked-blocks metadata;
+- pattern blocks resolved;
+- block content through kses;
+- the footnotes taken out of excerpts, and the wpautop hook put back.
+
+The engine's probe runner has not run `init`, so its "too early" notices
+for scripts and styles are left out of the notices the probe records.
+
+Fixed to match:
+
+- **Block script and style handles:**
+  - A handle already registered is returned as it is.
+  - A file that is not there is registered without a source.
+  - A `viewScript` is deferred, not moved to the footer, and takes the
+    block's version when it has no asset file.
+  - Addresses come from the theme (or parent theme) for a file under it,
+    from the includes address under wp-includes, and otherwise from the
+    plugins address with the file's path under the plugins folder (the
+    whole path when it lies elsewhere, as before; probe blocks).
+    `_minn_block_asset_url` holds the rule.
+- **`wp_migrate_old_typography_shape`** moves the old typography supports
+  under `supports.typography`. That is `fontSize`, `lineHeight` and the
+  `__experimental` font family, style, weight, letter spacing, decoration
+  and transform. It takes them in that sorted order, sets each over a value
+  already there, and names each in a 5.8.0 notice from
+  `register_block_type_from_metadata()`.
+- **`resolve_pattern_blocks`**:
+  - A pattern that resolves to one block names itself on it
+    (`metadata.patternName`, and `metadata.name` from the pattern's title).
+  - A pattern inside itself is dropped.
+  - One that does not exist stays as a pattern block.
