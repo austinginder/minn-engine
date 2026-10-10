@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 259,
-    "withPolicy": 253,
+    "routes": 255,
+    "withPolicy": 249,
     "entries": [
         {
             "method": "GET",
@@ -6418,58 +6418,6 @@
         },
         {
             "method": "GET",
-            "pattern": "/wp/v2/taxonomies",
-            "name": "Minn\\Rest\\TaxonomiesController::list",
-            "handler": "Minn\\Rest\\TaxonomiesController::list",
-            "summary": "A whole-payload reply like types: _fields filters the map, not its members.",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": {
-                "context": {
-                    "description": "Scope under which the request is made; determines fields present in response.",
-                    "type": "string",
-                    "enum": [
-                        "view",
-                        "embed",
-                        "edit"
-                    ],
-                    "default": "view",
-                    "required": false
-                }
-            },
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/wp/v2/taxonomies/{taxonomy:[\\w-]+}",
-            "name": "Minn\\Rest\\TaxonomiesController::single",
-            "handler": "Minn\\Rest\\TaxonomiesController::single",
-            "summary": "One taxonomy.",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": {
-                "context": {
-                    "description": "Scope under which the request is made; determines fields present in response.",
-                    "type": "string",
-                    "enum": [
-                        "view",
-                        "embed",
-                        "edit"
-                    ],
-                    "default": "view",
-                    "required": false
-                }
-            },
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
             "pattern": "/wp/v2/templates",
             "name": "Minn\\Rest\\TemplatesController::templates",
             "handler": "Minn\\Rest\\TemplatesController::templates",
@@ -7112,58 +7060,6 @@
                 }
             },
             "args": [],
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/wp/v2/types",
-            "name": "Minn\\Rest\\TypesController::list",
-            "handler": "Minn\\Rest\\TypesController::list",
-            "summary": "Deliberately a whole-payload reply: _fields strips every type key, yielding [].",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": {
-                "context": {
-                    "description": "Scope under which the request is made; determines fields present in response.",
-                    "type": "string",
-                    "enum": [
-                        "view",
-                        "embed",
-                        "edit"
-                    ],
-                    "default": "view",
-                    "required": false
-                }
-            },
-            "body": [],
-            "index": true
-        },
-        {
-            "method": "GET",
-            "pattern": "/wp/v2/types/{type:[\\w-]+}",
-            "name": "Minn\\Rest\\TypesController::single",
-            "handler": "Minn\\Rest\\TypesController::single",
-            "summary": "One post type.",
-            "policy": {
-                "access": "Public",
-                "describe": "public"
-            },
-            "args": {
-                "context": {
-                    "description": "Scope under which the request is made; determines fields present in response.",
-                    "type": "string",
-                    "enum": [
-                        "view",
-                        "embed",
-                        "edit"
-                    ],
-                    "default": "view",
-                    "required": false
-                }
-            },
             "body": [],
             "index": true
         },

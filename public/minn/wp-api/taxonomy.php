@@ -40,8 +40,7 @@ function _minn_terms(): Terms
 
 function get_taxonomy($taxonomy)
 {
-    $row = is_scalar($taxonomy) ? Runtime::registry()->taxonomy((string) $taxonomy) : null;
-    return $row === null ? false : new WP_Taxonomy((string) $taxonomy, [], $row);
+    return (is_scalar($taxonomy) ? Runtime::registry()->taxonomyObject((string) $taxonomy) : null) ?? false;
 }
 
 function taxonomy_exists($taxonomy)
@@ -65,11 +64,7 @@ function is_taxonomy_viewable($taxonomy)
 
 function get_taxonomies($args = [], $output = 'names', $operator = 'and')
 {
-    $objects = [];
-    foreach (Runtime::registry()->taxonomies() as $name => $row) {
-        $objects[$name] = new WP_Taxonomy($name, [], $row);
-    }
-    return wp_filter_object_list($objects, $args, $operator, $output === 'names' ? 'name' : false);
+    return wp_filter_object_list(Runtime::registry()->taxonomyObjects(), $args, $operator, $output === 'names' ? 'name' : false);
 }
 
 function get_object_taxonomies($object_type, $output = 'names')
@@ -81,7 +76,7 @@ function get_object_taxonomies($object_type, $output = 'names')
     $out = [];
     foreach (Runtime::registry()->taxonomies() as $name => $row) {
         if (array_intersect($types, (array) $row['object_type']) !== []) {
-            $out[$name] = $output === 'names' ? $name : new WP_Taxonomy($name, [], $row);
+            $out[$name] = $output === 'names' ? $name : Runtime::registry()->taxonomyObject((string) $name);
         }
     }
     return $output === 'names' ? array_values($out) : $out;
@@ -136,7 +131,7 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
         add_rewrite_tag("%{$taxonomy}%", empty($row['rewrite']['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "taxonomy={$taxonomy}&term=");
         add_permastruct($taxonomy, "{$row['rewrite']['slug']}/%{$taxonomy}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask']]);
     }
-    $object = new WP_Taxonomy($taxonomy, [], $row);
+    $object = Runtime::registry()->taxonomyObject($taxonomy);
     do_action('registered_taxonomy', $taxonomy, $object_type, get_object_vars($object));
     do_action("registered_taxonomy_{$taxonomy}", $taxonomy, $object_type, get_object_vars($object));
     return $object;

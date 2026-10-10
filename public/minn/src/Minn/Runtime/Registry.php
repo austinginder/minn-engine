@@ -29,6 +29,11 @@ final class Registry
     /** @var array<string, array<string, mixed>> features declared for types not yet registered */
     private array $pendingSupports = [];
 
+    /** @var array<string, \WP_Post_Type> the one object per registered type, as $wp_post_types holds it */
+    private array $postTypeObjects = [];
+    /** @var array<string, \WP_Taxonomy> the one object per registered taxonomy, as $wp_taxonomies holds it */
+    private array $taxonomyObjects = [];
+
     public function __construct(string $engineDir)
     {
         $data = Json::file($engineDir . '/data/registry.json') ?: [];
@@ -75,6 +80,71 @@ final class Registry
     public function taxonomy(string $name): ?array
     {
         return $this->taxonomies[$name] ?? null;
+    }
+
+    /**
+     * Makes the one object for each registered type and taxonomy and binds
+     * $wp_post_types and $wp_taxonomies to them, as the reference shares
+     * them: a plugin changing one (relabelling Posts) is heard by every
+     * reader (probe type-object-sharing). Called once the facade classes
+     * exist; later registrations make their own.
+     */
+    public function shareObjects(): void
+    {
+        foreach (array_keys($this->postTypes) as $name) {
+            $this->postTypeObject((string) $name);
+        }
+        foreach (array_keys($this->taxonomies) as $name) {
+            $this->taxonomyObject((string) $name);
+        }
+        $GLOBALS['wp_post_types'] = &$this->postTypeObjects;
+        $GLOBALS['wp_taxonomies'] = &$this->taxonomyObjects;
+    }
+
+    /** The one object for a registered post type, or null. */
+    public function postTypeObject(string $name): ?\WP_Post_Type
+    {
+        if (!isset($this->postTypes[$name])) {
+            return null;
+        }
+        return $this->postTypeObjects[$name] ??= new \WP_Post_Type($name, $this->postTypes[$name]);
+    }
+
+    /**
+     * The objects of every registered post type, in registration order.
+     *
+     * @return array<string, \WP_Post_Type>
+     */
+    public function postTypeObjects(): array
+    {
+        $objects = [];
+        foreach (array_keys($this->postTypes) as $name) {
+            $objects[$name] = $this->postTypeObject((string) $name);
+        }
+        return $objects;
+    }
+
+    /** The one object for a registered taxonomy, or null. */
+    public function taxonomyObject(string $name): ?\WP_Taxonomy
+    {
+        if (!isset($this->taxonomies[$name])) {
+            return null;
+        }
+        return $this->taxonomyObjects[$name] ??= new \WP_Taxonomy($name, [], $this->taxonomies[$name]);
+    }
+
+    /**
+     * The objects of every registered taxonomy, in registration order.
+     *
+     * @return array<string, \WP_Taxonomy>
+     */
+    public function taxonomyObjects(): array
+    {
+        $objects = [];
+        foreach (array_keys($this->taxonomies) as $name) {
+            $objects[$name] = $this->taxonomyObject((string) $name);
+        }
+        return $objects;
     }
 
     /**
@@ -163,6 +233,10 @@ final class Registry
         }
         unset($this->pendingSupports[$name]);
         $this->postTypes[$name] = $type;
+        // Registering again makes a new object in the old one's place, as on the reference.
+        if (class_exists(\WP_Post_Type::class, false)) {
+            $this->postTypeObjects[$name] = new \WP_Post_Type($name, $type);
+        }
         foreach ($type['taxonomies'] as $taxonomy) {
             $this->addObjectType($taxonomy, $name);
         }
@@ -316,7 +390,7 @@ final class Registry
         if (!isset($this->postTypes[$name]) || !empty($this->postTypes[$name]['_builtin'])) {
             return false;
         }
-        unset($this->postTypes[$name]);
+        unset($this->postTypes[$name], $this->postTypeObjects[$name]);
         foreach ($this->taxonomies as &$taxonomy) {
             $taxonomy['object_type'] = array_values(array_diff($taxonomy['object_type'], [$name]));
         }
@@ -411,6 +485,9 @@ final class Registry
             $taxonomy['query_var'] = $name;
         }
         $this->taxonomies[$name] = $taxonomy;
+        if (class_exists(\WP_Taxonomy::class, false)) {
+            $this->taxonomyObjects[$name] = new \WP_Taxonomy($name, [], $taxonomy);
+        }
         return $taxonomy;
     }
 
@@ -426,7 +503,7 @@ final class Registry
         if (!isset($this->taxonomies[$name]) || !empty($this->taxonomies[$name]['_builtin'])) {
             return false;
         }
-        unset($this->taxonomies[$name]);
+        unset($this->taxonomies[$name], $this->taxonomyObjects[$name]);
         return true;
     }
 
@@ -438,6 +515,10 @@ final class Registry
         }
         if (!in_array($type, $this->taxonomies[$taxonomy]['object_type'], true)) {
             $this->taxonomies[$taxonomy]['object_type'][] = $type;
+            // The shared object hears it too, whatever else a plugin changed on it.
+            if (isset($this->taxonomyObjects[$taxonomy])) {
+                $this->taxonomyObjects[$taxonomy]->object_type = $this->taxonomies[$taxonomy]['object_type'];
+            }
         }
         return true;
     }
@@ -449,6 +530,9 @@ final class Registry
             return false;
         }
         $this->taxonomies[$taxonomy]['object_type'] = array_values(array_diff($this->taxonomies[$taxonomy]['object_type'], [$type]));
+        if (isset($this->taxonomyObjects[$taxonomy])) {
+            $this->taxonomyObjects[$taxonomy]->object_type = $this->taxonomies[$taxonomy]['object_type'];
+        }
         return true;
     }
 

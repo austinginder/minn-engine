@@ -80,9 +80,9 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 468 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 552 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 373 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 374 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -3628,6 +3628,34 @@ Every taxonomy.
 
 One taxonomy, or null.
 
+### `shareObjects(): void`
+
+Makes the one object for each registered type and taxonomy and binds
+$wp_post_types and $wp_taxonomies to them, as the reference shares
+them: a plugin changing one (relabelling Posts) is heard by every
+reader (probe type-object-sharing). Called once the facade classes
+exist; later registrations make their own.
+
+### `postTypeObject(string $name): ?WP_Post_Type`
+
+The one object for a registered post type, or null.
+
+### `postTypeObjects(): array`
+
+The objects of every registered post type, in registration order.
+
+- `@return array<string, \WP_Post_Type>`
+
+### `taxonomyObject(string $name): ?WP_Taxonomy`
+
+The one object for a registered taxonomy, or null.
+
+### `taxonomyObjects(): array`
+
+The objects of every registered taxonomy, in registration order.
+
+- `@return array<string, \WP_Taxonomy>`
+
 ### `statuses(): array`
 
 Every post status.
@@ -3725,7 +3753,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `supportsAtRegistration()` (private, line 181), `supportsFrom()` (private, line 192), `derivedLabels()` (private, line 257)
+Internals: `supportsAtRegistration()` (private, line 255), `supportsFrom()` (private, line 266), `derivedLabels()` (private, line 331)
 
 
 ## RewriteRules
@@ -3969,7 +3997,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 354)
+Internals: `loadObjectCacheDropin()` (private, line 355)
 
 
 ## ScriptLoading

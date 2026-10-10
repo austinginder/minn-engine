@@ -84,7 +84,6 @@ final readonly class Api
             $terms,
             new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles()),
             new ApplicationPasswordsController($s->users(), $s->site(), $s->applicationPasswords(), $s->url(), $caller, $s->schema()),
-            new TypesController($s->types()),
             new StatusesController($s->url(), $caller),
             new InstalledThemesController($s->url(), $caller),
             new BlockTypesController($s->url(), $caller),
@@ -101,7 +100,6 @@ final readonly class Api
                 }
                 return $api->handle($sub->path);
             }, new ArgCheck($s->schema()), $s->types()),
-            new TaxonomiesController($s->taxonomies(), $caller),
             new SearchController($s->db(), $s->types(), $s->permalinks(), $s->url(), $caller),
             new PluginsController($s->site(), $s->inventory(), $s->loader(), $s->url(), $caller, $s->packages()),
             new SessionsController($s->users(), $s->sessions(), $caller),

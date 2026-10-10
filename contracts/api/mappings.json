@@ -2,10 +2,10 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 788,
+        "minn": 786,
         "composes": 1997,
         "leaf": 901,
-        "noop": 2690,
+        "noop": 2692,
         "placeholder": 214,
         "deadend": 1662,
         "functions": 8174,
@@ -45498,7 +45498,7 @@
         },
         "get_post_type_object": {
             "file": "post.php",
-            "lines": 5,
+            "lines": 4,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
@@ -45507,7 +45507,7 @@
         },
         "get_post_types": {
             "file": "post.php",
-            "lines": 6,
+            "lines": 2,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
@@ -46319,8 +46319,8 @@
         },
         "get_taxonomies": {
             "file": "taxonomy.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
             ],
@@ -46339,8 +46339,8 @@
         },
         "get_taxonomy": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
                 "Minn\\Runtime\\Runtime::registry"
             ],

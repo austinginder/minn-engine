@@ -11084,3 +11084,41 @@ Owed:
   registered object, so a plugin that relabels a type through either
   (the "rename Posts" snippet) is heard everywhere. On the engine it is
   lost. This shared machinery wants its own batch and a full run.
+
+## Post type and taxonomy objects, shared (2026-10-10)
+
+Probe `type-object-sharing` proves what the reference does: one object
+per registered post type and taxonomy.
+- `get_post_type_object`, `get_post_types` (objects), `$wp_post_types`,
+  `register_post_type` and the `registered_post_type` action all hand out
+  the same object.
+- So do `get_taxonomy`, `get_taxonomies`, `get_object_taxonomies`,
+  `$wp_taxonomies` and `register_taxonomy` for taxonomies.
+- Registering again puts a new object in the old one's place, and
+  unregistering takes it away.
+- A change a plugin makes to an object (its labels, a flag) is seen by the
+  lists that filter on it and by REST.
+
+The engine had built a new object on every call and never set either
+global. So the snippet that renames Posts through
+`$wp_post_types['post']->labels` was lost, and a flag set on an object
+filtered nothing.
+
+- **The registry holds the objects** (`Registry::shareObjects`,
+  `postTypeObject`, `taxonomyObject`). Every registered type and taxonomy
+  gets its object at boot, once the facade classes exist. A later
+  registration makes its own, and `$wp_post_types` and `$wp_taxonomies`
+  are bound to them by reference. Adding or removing a taxonomy's object
+  type updates its object in place, so a plugin's other changes stay.
+- **REST reads them.** `/wp/v2/types` and `/wp/v2/taxonomies` are now
+  served by `WP_REST_Post_Types_Controller` and
+  `WP_REST_Taxonomies_Controller` (proven in "The REST registry
+  controllers"). The engine's `TypesController` and `TaxonomiesController`
+  are gone: one path. This also serves a plugin's REST taxonomy, which
+  the old route, reading the captured core taxonomies, answered with a
+  404. The bodies match the reference.
+
+Owed: the engine's REST answers lack `X-Robots-Tag: noindex` and
+`Vary: Origin`, and the CORS allow headers when a request sends an
+Origin. That holds for every route, the engine's own and the runtime's.
+The bodies are unaffected.

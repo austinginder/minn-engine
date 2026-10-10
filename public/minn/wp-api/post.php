@@ -1872,8 +1872,7 @@ function get_post_type_object($post_type)
     if (!is_scalar($post_type)) {
         return null;
     }
-    $row = Runtime::registry()->postType((string) $post_type);
-    return $row === null ? null : new WP_Post_Type((string) $post_type, $row);
+    return Runtime::registry()->postTypeObject((string) $post_type);
 }
 
 function post_type_exists($post_type)
@@ -1918,12 +1917,8 @@ function is_post_publicly_viewable($post = null)
 
 function get_post_types($args = [], $output = 'names', $operator = 'and')
 {
-    $objects = [];
-    foreach (Runtime::registry()->postTypes() as $name => $row) {
-        $objects[$name] = new WP_Post_Type($name, $row);
-    }
-    $filtered = wp_filter_object_list($objects, $args, $operator, $output === 'names' ? 'name' : false);
-    return $filtered;
+    // The shared objects, so a flag a plugin changed on one is what the list filters on (probe type-object-sharing).
+    return wp_filter_object_list(Runtime::registry()->postTypeObjects(), $args, $operator, $output === 'names' ? 'name' : false);
 }
 
 function register_post_type($post_type, $args = [])
@@ -1949,7 +1944,7 @@ function register_post_type($post_type, $args = [])
         add_rewrite_tag("%{$post_type}%", empty($row['hierarchical']) ? '([^/]+)' : '(.+?)', is_string($var) && $var !== '' ? "{$var}=" : "post_type={$post_type}&" . (empty($row['hierarchical']) ? 'name=' : 'pagename='));
         add_permastruct($post_type, "{$row['rewrite']['slug']}/%{$post_type}%", ['with_front' => $row['rewrite']['with_front'], 'ep_mask' => $row['rewrite']['ep_mask'], 'feed' => $row['rewrite']['feeds']]);
     }
-    $object = new WP_Post_Type($post_type, $row);
+    $object = Runtime::registry()->postTypeObject($post_type);
     do_action('registered_post_type', $post_type, $object);
     do_action("registered_post_type_{$post_type}", $post_type, $object);
     return $object;

@@ -136,6 +136,7 @@ final class Runtime
         self::loadObjectCacheDropin($runtime);
         self::loadFacade($runtime->engineDir);
         _minn_bind_hook_globals();
+        self::registry()->shareObjects();
         Constants::define($runtime);
         if ($runtime->request !== null) {
             \_minn_script_globals($runtime->request->path);
