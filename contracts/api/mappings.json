@@ -2,14 +2,14 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 785,
-        "composes": 1990,
-        "leaf": 898,
-        "noop": 2675,
+        "minn": 788,
+        "composes": 1997,
+        "leaf": 901,
+        "noop": 2690,
         "placeholder": 214,
         "deadend": 1662,
-        "functions": 8146,
-        "minnMethods": 949,
+        "functions": 8174,
+        "minnMethods": 952,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -21562,6 +21562,191 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_View_Config_Controller::__construct": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::cast_empty_objects": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\Schema::castEmptyObjects"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_column_style_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_combined_layout_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_form_field_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_form_layout_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_form_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_grid_layout_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_item_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_items": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_View_Config_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_View_Config_Controller::get_list_layout_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_required_capability": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_type_object",
+                "get_taxonomy"
+            ]
+        },
+        "WP_REST_View_Config_Controller::get_table_layout_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::get_view_base_schema": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_View_Config_Controller::minn_area_views": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_allowed_block_template_part_areas"
+            ]
+        },
+        "WP_REST_View_Config_Controller::minn_defaults": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Json::file"
+            ],
+            "composes": [
+                "__",
+                "get_post_type_object"
+            ]
+        },
+        "WP_REST_View_Config_Controller::minn_pattern_views": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_View_Config_Controller::minn_template_views": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_theme"
+            ]
+        },
+        "WP_REST_View_Config_Controller::register_routes": {
+            "file": "classes/WP_REST_View_Config_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
+        },
         "WP_REST_Widget_Types_Controller::__construct": {
             "file": "classes/WP_REST_Widget_Types_Controller.php",
             "lines": 2,
@@ -27661,6 +27846,67 @@
             "minn": [],
             "composes": [],
             "deadend": "admin"
+        },
+        "WP_View_Config_Data::__construct": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_View_Config_Data::apply_filters": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 4,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_View_Config_Data::get_data": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_View_Config_Data::merge": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_View_Config_Data::minn_apply": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\ViewConfigPatch::apply"
+            ],
+            "composes": [
+                "_doing_it_wrong",
+                "esc_html"
+            ]
+        },
+        "WP_View_Config_Data::remove": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_View_Config_Data::replace": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_View_Config_Data::set": {
+            "file": "classes/WP_View_Config_Data.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "WP_Widget::WP_Widget": {
             "file": "classes/WP_Widget.php",

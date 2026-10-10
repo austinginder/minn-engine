@@ -62,7 +62,7 @@ the wp/v2 surface: shapes and controllers
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 451 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 496 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 523 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
@@ -87,6 +87,7 @@ the wp/v2 surface: shapes and controllers
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
 | [`UsersController`](#userscontroller) | final readonly class | 342 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`ViewConfigPatch`](#viewconfigpatch) | final class | 151 | A patch to a view configuration (WP_View_Config_Data; probe |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
 
@@ -2586,6 +2587,14 @@ The argument map a route derives from an item schema: every writable
 property with the default validators, its keywords, defaults and
 required flags on the create route only, and any arg_options overrides.
 
+### static `castEmptyObjects(mixed $value, array $schema): mixed`
+
+A value with each empty array the schema calls an object made one
+(it encodes as {}), through properties, additional properties, list
+items and the value as a whole (probe rest-view-config).
+
+- `@param array<string, mixed> $schema`
+
 ### static `closeObjects(array $schema): array`
 
 The schema with additionalProperties closed on every object.
@@ -3750,6 +3759,44 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
 Internals: `listAllowed()` (private, line 104), `totals()` (private, line 128), `hasPublishedContent()` (private, line 163), `validRole()` (private, line 172), `validEmail()` (private, line 180), `loginRefusal()` (private, line 358)
+
+
+## ViewConfigPatch
+
+`final class Minn\Rest\ViewConfigPatch` · `public/minn/src/Minn/Rest/ViewConfigPatch.php`
+
+A patch to a view configuration (WP_View_Config_Data; probe
+rest-view-config), applied as the reference applies it. Only schema
+version 1 is taken, and only the documented keys: each is set (its value
+replaced), merged (maps merged key by key, lists joined with their
+members matched by identity), replaced (merged, but lists replaced
+whole) or removed (keys from a map, members from a list by identity).
+A null in a patch removes what it names. What a caller got wrong comes
+back as problems: the function to name and the words.
+
+- const `KEYS` = `array (   0 => 'default_view',   1 => 'default_layouts',   2 => 'view_list',   3 => 'form', )`
+- const `SHAPE` = `'A view configuration patch value must match the shape of the value it patches: a list merges into a list, and an associative array into an associative array.'`
+
+
+### static `apply(array $config, array $patch, mixed $version, string $mode): array`
+
+A configuration with a patch applied in a mode (set, merge, replace,
+remove), and the problems met: [function or null for the mode's own
+method, words].
+
+- `@param array<string, mixed> $config`
+- `@param array<mixed> $patch`
+- `@return array{0: array<string, mixed>, 1: list<array{0: ?string, 1: string}>}`
+
+### static `stripNulls(mixed $value): mixed`
+
+A value with every null in it removed, lists closed up.
+
+### static `identity(mixed $item): ?string`
+
+The identity a list member is matched by: a word itself, a map's id or slug; null for none.
+
+Internals: `merge()` (private, line 104), `mergeList()` (private, line 134), `remove()` (private, line 149)
 
 
 ## WidgetObject

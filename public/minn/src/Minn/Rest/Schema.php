@@ -494,6 +494,33 @@ final readonly class Schema
         return $args;
     }
 
+    /**
+     * A value with each empty array the schema calls an object made one
+     * (it encodes as {}), through properties, additional properties, list
+     * items and the value as a whole (probe rest-view-config).
+     *
+     * @param array<string, mixed> $schema
+     */
+    public static function castEmptyObjects(mixed $value, array $schema): mixed
+    {
+        if ($value === [] && in_array('object', (array) ($schema['type'] ?? []), true)) {
+            return new \stdClass();
+        }
+        if (!is_array($value)) {
+            return $value;
+        }
+        if (array_is_list($value) && isset($schema['items']) && is_array($schema['items'])) {
+            return array_map(static fn ($item) => self::castEmptyObjects($item, $schema['items']), $value);
+        }
+        foreach ($value as $key => $item) {
+            $inner = $schema['properties'][$key] ?? (is_array($schema['additionalProperties'] ?? null) ? $schema['additionalProperties'] : null);
+            if (is_array($inner)) {
+                $value[$key] = self::castEmptyObjects($item, $inner);
+            }
+        }
+        return $value;
+    }
+
     /** The schema with additionalProperties closed on every object. */
     public static function closeObjects(array $schema): array
     {

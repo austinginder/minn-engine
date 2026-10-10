@@ -1898,5 +1898,2711 @@
                 "context": []
             }
         }
+    },
+    "view-config": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "view-config",
+        "type": "object",
+        "properties": {
+            "kind": {
+                "description": "Entity kind.",
+                "type": "string",
+                "readonly": true
+            },
+            "name": {
+                "description": "Entity name.",
+                "type": "string",
+                "readonly": true
+            },
+            "version": {
+                "description": "The schema version of the configuration.",
+                "type": "integer",
+                "readonly": true
+            },
+            "default_view": {
+                "description": "Default view configuration.",
+                "type": "object",
+                "readonly": true,
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "layout": {
+                        "type": "object",
+                        "properties": {
+                            "styles": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "object",
+                                    "properties": {
+                                        "width": {
+                                            "type": [
+                                                "string",
+                                                "number"
+                                            ]
+                                        },
+                                        "maxWidth": {
+                                            "type": [
+                                                "string",
+                                                "number"
+                                            ]
+                                        },
+                                        "minWidth": {
+                                            "type": [
+                                                "string",
+                                                "number"
+                                            ]
+                                        },
+                                        "align": {
+                                            "type": "string",
+                                            "enum": [
+                                                "start",
+                                                "center",
+                                                "end"
+                                            ]
+                                        }
+                                    }
+                                }
+                            },
+                            "density": {
+                                "type": "string",
+                                "enum": [
+                                    "compact",
+                                    "balanced",
+                                    "comfortable"
+                                ]
+                            },
+                            "enableMoving": {
+                                "type": "boolean"
+                            },
+                            "badgeFields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "previewSize": {
+                                "type": "number"
+                            }
+                        }
+                    },
+                    "filters": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "field": {
+                                    "type": "string"
+                                },
+                                "operator": {
+                                    "type": "string",
+                                    "enum": [
+                                        "is",
+                                        "isNot",
+                                        "isAny",
+                                        "isNone",
+                                        "isAll",
+                                        "isNotAll",
+                                        "lessThan",
+                                        "greaterThan",
+                                        "lessThanOrEqual",
+                                        "greaterThanOrEqual",
+                                        "before",
+                                        "after"
+                                    ]
+                                },
+                                "value": [],
+                                "isLocked": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    },
+                    "sort": {
+                        "type": "object",
+                        "properties": {
+                            "field": {
+                                "type": "string"
+                            },
+                            "direction": {
+                                "type": "string",
+                                "enum": [
+                                    "asc",
+                                    "desc"
+                                ]
+                            }
+                        }
+                    },
+                    "perPage": {
+                        "type": "integer"
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "titleField": {
+                        "type": "string"
+                    },
+                    "mediaField": {
+                        "type": "string"
+                    },
+                    "descriptionField": {
+                        "type": "string"
+                    },
+                    "showTitle": {
+                        "type": "boolean"
+                    },
+                    "showMedia": {
+                        "type": "boolean"
+                    },
+                    "showDescription": {
+                        "type": "boolean"
+                    },
+                    "showLevels": {
+                        "type": "boolean"
+                    },
+                    "groupBy": {
+                        "type": "object",
+                        "properties": {
+                            "field": {
+                                "type": "string"
+                            },
+                            "direction": {
+                                "type": "string",
+                                "enum": [
+                                    "asc",
+                                    "desc"
+                                ]
+                            },
+                            "showLabel": {
+                                "type": "boolean",
+                                "default": true
+                            }
+                        }
+                    },
+                    "infiniteScrollEnabled": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "default_layouts": {
+                "description": "Default layout configurations.",
+                "type": "object",
+                "readonly": true,
+                "properties": {
+                    "table": {
+                        "type": "object",
+                        "properties": {
+                            "filters": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": [
+                                                "is",
+                                                "isNot",
+                                                "isAny",
+                                                "isNone",
+                                                "isAll",
+                                                "isNotAll",
+                                                "lessThan",
+                                                "greaterThan",
+                                                "lessThanOrEqual",
+                                                "greaterThanOrEqual",
+                                                "before",
+                                                "after"
+                                            ]
+                                        },
+                                        "value": [],
+                                        "isLocked": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            },
+                            "sort": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                }
+                            },
+                            "perPage": {
+                                "type": "integer"
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "titleField": {
+                                "type": "string"
+                            },
+                            "mediaField": {
+                                "type": "string"
+                            },
+                            "descriptionField": {
+                                "type": "string"
+                            },
+                            "showTitle": {
+                                "type": "boolean"
+                            },
+                            "showMedia": {
+                                "type": "boolean"
+                            },
+                            "showDescription": {
+                                "type": "boolean"
+                            },
+                            "showLevels": {
+                                "type": "boolean"
+                            },
+                            "groupBy": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    },
+                                    "showLabel": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                }
+                            },
+                            "infiniteScrollEnabled": {
+                                "type": "boolean"
+                            },
+                            "layout": {
+                                "type": "object",
+                                "properties": {
+                                    "styles": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {
+                                                "width": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                },
+                                                "maxWidth": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                },
+                                                "minWidth": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                },
+                                                "align": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "start",
+                                                        "center",
+                                                        "end"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "density": {
+                                        "type": "string",
+                                        "enum": [
+                                            "compact",
+                                            "balanced",
+                                            "comfortable"
+                                        ]
+                                    },
+                                    "enableMoving": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "list": {
+                        "type": "object",
+                        "properties": {
+                            "filters": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": [
+                                                "is",
+                                                "isNot",
+                                                "isAny",
+                                                "isNone",
+                                                "isAll",
+                                                "isNotAll",
+                                                "lessThan",
+                                                "greaterThan",
+                                                "lessThanOrEqual",
+                                                "greaterThanOrEqual",
+                                                "before",
+                                                "after"
+                                            ]
+                                        },
+                                        "value": [],
+                                        "isLocked": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            },
+                            "sort": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                }
+                            },
+                            "perPage": {
+                                "type": "integer"
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "titleField": {
+                                "type": "string"
+                            },
+                            "mediaField": {
+                                "type": "string"
+                            },
+                            "descriptionField": {
+                                "type": "string"
+                            },
+                            "showTitle": {
+                                "type": "boolean"
+                            },
+                            "showMedia": {
+                                "type": "boolean"
+                            },
+                            "showDescription": {
+                                "type": "boolean"
+                            },
+                            "showLevels": {
+                                "type": "boolean"
+                            },
+                            "groupBy": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    },
+                                    "showLabel": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                }
+                            },
+                            "infiniteScrollEnabled": {
+                                "type": "boolean"
+                            },
+                            "layout": {
+                                "type": "object",
+                                "properties": {
+                                    "density": {
+                                        "type": "string",
+                                        "enum": [
+                                            "compact",
+                                            "balanced",
+                                            "comfortable"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "grid": {
+                        "type": "object",
+                        "properties": {
+                            "filters": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": [
+                                                "is",
+                                                "isNot",
+                                                "isAny",
+                                                "isNone",
+                                                "isAll",
+                                                "isNotAll",
+                                                "lessThan",
+                                                "greaterThan",
+                                                "lessThanOrEqual",
+                                                "greaterThanOrEqual",
+                                                "before",
+                                                "after"
+                                            ]
+                                        },
+                                        "value": [],
+                                        "isLocked": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            },
+                            "sort": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                }
+                            },
+                            "perPage": {
+                                "type": "integer"
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "titleField": {
+                                "type": "string"
+                            },
+                            "mediaField": {
+                                "type": "string"
+                            },
+                            "descriptionField": {
+                                "type": "string"
+                            },
+                            "showTitle": {
+                                "type": "boolean"
+                            },
+                            "showMedia": {
+                                "type": "boolean"
+                            },
+                            "showDescription": {
+                                "type": "boolean"
+                            },
+                            "showLevels": {
+                                "type": "boolean"
+                            },
+                            "groupBy": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    },
+                                    "showLabel": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                }
+                            },
+                            "infiniteScrollEnabled": {
+                                "type": "boolean"
+                            },
+                            "layout": {
+                                "type": "object",
+                                "properties": {
+                                    "badgeFields": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "previewSize": {
+                                        "type": "number"
+                                    },
+                                    "density": {
+                                        "type": "string",
+                                        "enum": [
+                                            "compact",
+                                            "balanced",
+                                            "comfortable"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "activity": {
+                        "type": "object",
+                        "properties": {
+                            "filters": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": [
+                                                "is",
+                                                "isNot",
+                                                "isAny",
+                                                "isNone",
+                                                "isAll",
+                                                "isNotAll",
+                                                "lessThan",
+                                                "greaterThan",
+                                                "lessThanOrEqual",
+                                                "greaterThanOrEqual",
+                                                "before",
+                                                "after"
+                                            ]
+                                        },
+                                        "value": [],
+                                        "isLocked": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            },
+                            "sort": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                }
+                            },
+                            "perPage": {
+                                "type": "integer"
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "titleField": {
+                                "type": "string"
+                            },
+                            "mediaField": {
+                                "type": "string"
+                            },
+                            "descriptionField": {
+                                "type": "string"
+                            },
+                            "showTitle": {
+                                "type": "boolean"
+                            },
+                            "showMedia": {
+                                "type": "boolean"
+                            },
+                            "showDescription": {
+                                "type": "boolean"
+                            },
+                            "showLevels": {
+                                "type": "boolean"
+                            },
+                            "groupBy": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    },
+                                    "showLabel": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                }
+                            },
+                            "infiniteScrollEnabled": {
+                                "type": "boolean"
+                            },
+                            "layout": {
+                                "type": "object",
+                                "properties": {
+                                    "density": {
+                                        "type": "string",
+                                        "enum": [
+                                            "compact",
+                                            "balanced",
+                                            "comfortable"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pickerGrid": {
+                        "type": "object",
+                        "properties": {
+                            "filters": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": [
+                                                "is",
+                                                "isNot",
+                                                "isAny",
+                                                "isNone",
+                                                "isAll",
+                                                "isNotAll",
+                                                "lessThan",
+                                                "greaterThan",
+                                                "lessThanOrEqual",
+                                                "greaterThanOrEqual",
+                                                "before",
+                                                "after"
+                                            ]
+                                        },
+                                        "value": [],
+                                        "isLocked": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            },
+                            "sort": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                }
+                            },
+                            "perPage": {
+                                "type": "integer"
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "titleField": {
+                                "type": "string"
+                            },
+                            "mediaField": {
+                                "type": "string"
+                            },
+                            "descriptionField": {
+                                "type": "string"
+                            },
+                            "showTitle": {
+                                "type": "boolean"
+                            },
+                            "showMedia": {
+                                "type": "boolean"
+                            },
+                            "showDescription": {
+                                "type": "boolean"
+                            },
+                            "showLevels": {
+                                "type": "boolean"
+                            },
+                            "groupBy": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    },
+                                    "showLabel": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                }
+                            },
+                            "infiniteScrollEnabled": {
+                                "type": "boolean"
+                            },
+                            "layout": {
+                                "type": "object",
+                                "properties": {
+                                    "badgeFields": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "previewSize": {
+                                        "type": "number"
+                                    },
+                                    "density": {
+                                        "type": "string",
+                                        "enum": [
+                                            "compact",
+                                            "balanced",
+                                            "comfortable"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "pickerTable": {
+                        "type": "object",
+                        "properties": {
+                            "filters": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "operator": {
+                                            "type": "string",
+                                            "enum": [
+                                                "is",
+                                                "isNot",
+                                                "isAny",
+                                                "isNone",
+                                                "isAll",
+                                                "isNotAll",
+                                                "lessThan",
+                                                "greaterThan",
+                                                "lessThanOrEqual",
+                                                "greaterThanOrEqual",
+                                                "before",
+                                                "after"
+                                            ]
+                                        },
+                                        "value": [],
+                                        "isLocked": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                }
+                            },
+                            "sort": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    }
+                                }
+                            },
+                            "perPage": {
+                                "type": "integer"
+                            },
+                            "fields": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "titleField": {
+                                "type": "string"
+                            },
+                            "mediaField": {
+                                "type": "string"
+                            },
+                            "descriptionField": {
+                                "type": "string"
+                            },
+                            "showTitle": {
+                                "type": "boolean"
+                            },
+                            "showMedia": {
+                                "type": "boolean"
+                            },
+                            "showDescription": {
+                                "type": "boolean"
+                            },
+                            "showLevels": {
+                                "type": "boolean"
+                            },
+                            "groupBy": {
+                                "type": "object",
+                                "properties": {
+                                    "field": {
+                                        "type": "string"
+                                    },
+                                    "direction": {
+                                        "type": "string",
+                                        "enum": [
+                                            "asc",
+                                            "desc"
+                                        ]
+                                    },
+                                    "showLabel": {
+                                        "type": "boolean",
+                                        "default": true
+                                    }
+                                }
+                            },
+                            "infiniteScrollEnabled": {
+                                "type": "boolean"
+                            },
+                            "layout": {
+                                "type": "object",
+                                "properties": {
+                                    "styles": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {
+                                                "width": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                },
+                                                "maxWidth": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                },
+                                                "minWidth": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                },
+                                                "align": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "start",
+                                                        "center",
+                                                        "end"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "density": {
+                                        "type": "string",
+                                        "enum": [
+                                            "compact",
+                                            "balanced",
+                                            "comfortable"
+                                        ]
+                                    },
+                                    "enableMoving": {
+                                        "type": "boolean"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "view_list": {
+                "description": "List of default views.",
+                "type": "array",
+                "readonly": true,
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "title": {
+                            "type": "string"
+                        },
+                        "slug": {
+                            "type": "string"
+                        },
+                        "view": {
+                            "type": "object",
+                            "properties": {
+                                "type": {
+                                    "type": "string"
+                                },
+                                "layout": {
+                                    "type": "object",
+                                    "properties": {
+                                        "styles": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "width": {
+                                                        "type": [
+                                                            "string",
+                                                            "number"
+                                                        ]
+                                                    },
+                                                    "maxWidth": {
+                                                        "type": [
+                                                            "string",
+                                                            "number"
+                                                        ]
+                                                    },
+                                                    "minWidth": {
+                                                        "type": [
+                                                            "string",
+                                                            "number"
+                                                        ]
+                                                    },
+                                                    "align": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "start",
+                                                            "center",
+                                                            "end"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "density": {
+                                            "type": "string",
+                                            "enum": [
+                                                "compact",
+                                                "balanced",
+                                                "comfortable"
+                                            ]
+                                        },
+                                        "enableMoving": {
+                                            "type": "boolean"
+                                        },
+                                        "badgeFields": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "previewSize": {
+                                            "type": "number"
+                                        }
+                                    }
+                                },
+                                "filters": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "field": {
+                                                "type": "string"
+                                            },
+                                            "operator": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "is",
+                                                    "isNot",
+                                                    "isAny",
+                                                    "isNone",
+                                                    "isAll",
+                                                    "isNotAll",
+                                                    "lessThan",
+                                                    "greaterThan",
+                                                    "lessThanOrEqual",
+                                                    "greaterThanOrEqual",
+                                                    "before",
+                                                    "after"
+                                                ]
+                                            },
+                                            "value": [],
+                                            "isLocked": {
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                },
+                                "sort": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "direction": {
+                                            "type": "string",
+                                            "enum": [
+                                                "asc",
+                                                "desc"
+                                            ]
+                                        }
+                                    }
+                                },
+                                "perPage": {
+                                    "type": "integer"
+                                },
+                                "fields": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "titleField": {
+                                    "type": "string"
+                                },
+                                "mediaField": {
+                                    "type": "string"
+                                },
+                                "descriptionField": {
+                                    "type": "string"
+                                },
+                                "showTitle": {
+                                    "type": "boolean"
+                                },
+                                "showMedia": {
+                                    "type": "boolean"
+                                },
+                                "showDescription": {
+                                    "type": "boolean"
+                                },
+                                "showLevels": {
+                                    "type": "boolean"
+                                },
+                                "groupBy": {
+                                    "type": "object",
+                                    "properties": {
+                                        "field": {
+                                            "type": "string"
+                                        },
+                                        "direction": {
+                                            "type": "string",
+                                            "enum": [
+                                                "asc",
+                                                "desc"
+                                            ]
+                                        },
+                                        "showLabel": {
+                                            "type": "boolean",
+                                            "default": true
+                                        }
+                                    }
+                                },
+                                "infiniteScrollEnabled": {
+                                    "type": "boolean"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "form": {
+                "description": "Default form configuration.",
+                "type": "object",
+                "readonly": true,
+                "properties": {
+                    "layout": {
+                        "oneOf": [
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "regular"
+                                        ]
+                                    },
+                                    "labelPosition": {
+                                        "type": "string",
+                                        "enum": [
+                                            "top",
+                                            "side",
+                                            "none"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "panel"
+                                        ]
+                                    },
+                                    "labelPosition": {
+                                        "type": "string",
+                                        "enum": [
+                                            "top",
+                                            "side",
+                                            "none"
+                                        ]
+                                    },
+                                    "openAs": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string",
+                                                "enum": [
+                                                    "dropdown",
+                                                    "modal"
+                                                ]
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "dropdown",
+                                                            "modal"
+                                                        ]
+                                                    },
+                                                    "applyLabel": {
+                                                        "type": "string"
+                                                    },
+                                                    "cancelLabel": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "summary": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "editVisibility": {
+                                        "type": "string",
+                                        "enum": [
+                                            "always",
+                                            "on-hover"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "card"
+                                        ]
+                                    },
+                                    "withHeader": {
+                                        "type": "boolean"
+                                    },
+                                    "isOpened": {
+                                        "type": "boolean"
+                                    },
+                                    "isCollapsible": {
+                                        "type": "boolean"
+                                    },
+                                    "summary": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string"
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "visibility": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "always",
+                                                                        "when-collapsed"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "row"
+                                        ]
+                                    },
+                                    "alignment": {
+                                        "type": "string",
+                                        "enum": [
+                                            "start",
+                                            "center",
+                                            "end"
+                                        ]
+                                    },
+                                    "styles": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {
+                                                "flex": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "details"
+                                        ]
+                                    },
+                                    "summary": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "fields": {
+                        "type": "array",
+                        "items": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "label": {
+                                            "type": "string"
+                                        },
+                                        "description": {
+                                            "type": "string"
+                                        },
+                                        "layout": {
+                                            "oneOf": [
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "regular"
+                                                            ]
+                                                        },
+                                                        "labelPosition": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "top",
+                                                                "side",
+                                                                "none"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "panel"
+                                                            ]
+                                                        },
+                                                        "labelPosition": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "top",
+                                                                "side",
+                                                                "none"
+                                                            ]
+                                                        },
+                                                        "openAs": {
+                                                            "oneOf": [
+                                                                {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "dropdown",
+                                                                        "modal"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "type": {
+                                                                            "type": "string",
+                                                                            "enum": [
+                                                                                "dropdown",
+                                                                                "modal"
+                                                                            ]
+                                                                        },
+                                                                        "applyLabel": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "cancelLabel": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        },
+                                                        "summary": {
+                                                            "oneOf": [
+                                                                {
+                                                                    "type": "string"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        },
+                                                        "editVisibility": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "always",
+                                                                "on-hover"
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "card"
+                                                            ]
+                                                        },
+                                                        "withHeader": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "isOpened": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "isCollapsible": {
+                                                            "type": "boolean"
+                                                        },
+                                                        "summary": {
+                                                            "oneOf": [
+                                                                {
+                                                                    "type": "string"
+                                                                },
+                                                                {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "oneOf": [
+                                                                            {
+                                                                                "type": "string"
+                                                                            },
+                                                                            {
+                                                                                "type": "object",
+                                                                                "properties": {
+                                                                                    "id": {
+                                                                                        "type": "string"
+                                                                                    },
+                                                                                    "visibility": {
+                                                                                        "type": "string",
+                                                                                        "enum": [
+                                                                                            "always",
+                                                                                            "when-collapsed"
+                                                                                        ]
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "row"
+                                                            ]
+                                                        },
+                                                        "alignment": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "start",
+                                                                "center",
+                                                                "end"
+                                                            ]
+                                                        },
+                                                        "styles": {
+                                                            "type": "object",
+                                                            "additionalProperties": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "flex": {
+                                                                        "type": [
+                                                                            "string",
+                                                                            "number"
+                                                                        ]
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "type": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "details"
+                                                            ]
+                                                        },
+                                                        "summary": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "children": {
+                                            "type": "array",
+                                            "items": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "object"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "view-config-view-base": {
+        "filters": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "field": {
+                        "type": "string"
+                    },
+                    "operator": {
+                        "type": "string",
+                        "enum": [
+                            "is",
+                            "isNot",
+                            "isAny",
+                            "isNone",
+                            "isAll",
+                            "isNotAll",
+                            "lessThan",
+                            "greaterThan",
+                            "lessThanOrEqual",
+                            "greaterThanOrEqual",
+                            "before",
+                            "after"
+                        ]
+                    },
+                    "value": [],
+                    "isLocked": {
+                        "type": "boolean"
+                    }
+                }
+            }
+        },
+        "sort": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "direction": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                }
+            }
+        },
+        "perPage": {
+            "type": "integer"
+        },
+        "fields": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "titleField": {
+            "type": "string"
+        },
+        "mediaField": {
+            "type": "string"
+        },
+        "descriptionField": {
+            "type": "string"
+        },
+        "showTitle": {
+            "type": "boolean"
+        },
+        "showMedia": {
+            "type": "boolean"
+        },
+        "showDescription": {
+            "type": "boolean"
+        },
+        "showLevels": {
+            "type": "boolean"
+        },
+        "groupBy": {
+            "type": "object",
+            "properties": {
+                "field": {
+                    "type": "string"
+                },
+                "direction": {
+                    "type": "string",
+                    "enum": [
+                        "asc",
+                        "desc"
+                    ]
+                },
+                "showLabel": {
+                    "type": "boolean",
+                    "default": true
+                }
+            }
+        },
+        "infiniteScrollEnabled": {
+            "type": "boolean"
+        }
+    },
+    "view-config-column-style": {
+        "type": "object",
+        "properties": {
+            "width": {
+                "type": [
+                    "string",
+                    "number"
+                ]
+            },
+            "maxWidth": {
+                "type": [
+                    "string",
+                    "number"
+                ]
+            },
+            "minWidth": {
+                "type": [
+                    "string",
+                    "number"
+                ]
+            },
+            "align": {
+                "type": "string",
+                "enum": [
+                    "start",
+                    "center",
+                    "end"
+                ]
+            }
+        }
+    },
+    "view-config-table-layout": {
+        "type": "object",
+        "properties": {
+            "styles": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "width": {
+                            "type": [
+                                "string",
+                                "number"
+                            ]
+                        },
+                        "maxWidth": {
+                            "type": [
+                                "string",
+                                "number"
+                            ]
+                        },
+                        "minWidth": {
+                            "type": [
+                                "string",
+                                "number"
+                            ]
+                        },
+                        "align": {
+                            "type": "string",
+                            "enum": [
+                                "start",
+                                "center",
+                                "end"
+                            ]
+                        }
+                    }
+                }
+            },
+            "density": {
+                "type": "string",
+                "enum": [
+                    "compact",
+                    "balanced",
+                    "comfortable"
+                ]
+            },
+            "enableMoving": {
+                "type": "boolean"
+            }
+        }
+    },
+    "view-config-list-layout": {
+        "type": "object",
+        "properties": {
+            "density": {
+                "type": "string",
+                "enum": [
+                    "compact",
+                    "balanced",
+                    "comfortable"
+                ]
+            }
+        }
+    },
+    "view-config-combined-layout": {
+        "type": "object",
+        "properties": {
+            "styles": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                        "width": {
+                            "type": [
+                                "string",
+                                "number"
+                            ]
+                        },
+                        "maxWidth": {
+                            "type": [
+                                "string",
+                                "number"
+                            ]
+                        },
+                        "minWidth": {
+                            "type": [
+                                "string",
+                                "number"
+                            ]
+                        },
+                        "align": {
+                            "type": "string",
+                            "enum": [
+                                "start",
+                                "center",
+                                "end"
+                            ]
+                        }
+                    }
+                }
+            },
+            "density": {
+                "type": "string",
+                "enum": [
+                    "compact",
+                    "balanced",
+                    "comfortable"
+                ]
+            },
+            "enableMoving": {
+                "type": "boolean"
+            },
+            "badgeFields": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "previewSize": {
+                "type": "number"
+            }
+        }
+    },
+    "view-config-grid-layout": {
+        "type": "object",
+        "properties": {
+            "badgeFields": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "previewSize": {
+                "type": "number"
+            },
+            "density": {
+                "type": "string",
+                "enum": [
+                    "compact",
+                    "balanced",
+                    "comfortable"
+                ]
+            }
+        }
+    },
+    "view-config-form-layout": {
+        "oneOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "regular"
+                        ]
+                    },
+                    "labelPosition": {
+                        "type": "string",
+                        "enum": [
+                            "top",
+                            "side",
+                            "none"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "panel"
+                        ]
+                    },
+                    "labelPosition": {
+                        "type": "string",
+                        "enum": [
+                            "top",
+                            "side",
+                            "none"
+                        ]
+                    },
+                    "openAs": {
+                        "oneOf": [
+                            {
+                                "type": "string",
+                                "enum": [
+                                    "dropdown",
+                                    "modal"
+                                ]
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "dropdown",
+                                            "modal"
+                                        ]
+                                    },
+                                    "applyLabel": {
+                                        "type": "string"
+                                    },
+                                    "cancelLabel": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "summary": {
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    },
+                    "editVisibility": {
+                        "type": "string",
+                        "enum": [
+                            "always",
+                            "on-hover"
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "card"
+                        ]
+                    },
+                    "withHeader": {
+                        "type": "boolean"
+                    },
+                    "isOpened": {
+                        "type": "boolean"
+                    },
+                    "isCollapsible": {
+                        "type": "boolean"
+                    },
+                    "summary": {
+                        "oneOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "array",
+                                "items": {
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "string"
+                                                },
+                                                "visibility": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "always",
+                                                        "when-collapsed"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "row"
+                        ]
+                    },
+                    "alignment": {
+                        "type": "string",
+                        "enum": [
+                            "start",
+                            "center",
+                            "end"
+                        ]
+                    },
+                    "styles": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                                "flex": {
+                                    "type": [
+                                        "string",
+                                        "number"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "details"
+                        ]
+                    },
+                    "summary": {
+                        "type": "string"
+                    }
+                }
+            }
+        ]
+    },
+    "view-config-form-field": {
+        "oneOf": [
+            {
+                "type": "string"
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "label": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "layout": {
+                        "oneOf": [
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "regular"
+                                        ]
+                                    },
+                                    "labelPosition": {
+                                        "type": "string",
+                                        "enum": [
+                                            "top",
+                                            "side",
+                                            "none"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "panel"
+                                        ]
+                                    },
+                                    "labelPosition": {
+                                        "type": "string",
+                                        "enum": [
+                                            "top",
+                                            "side",
+                                            "none"
+                                        ]
+                                    },
+                                    "openAs": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string",
+                                                "enum": [
+                                                    "dropdown",
+                                                    "modal"
+                                                ]
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "dropdown",
+                                                            "modal"
+                                                        ]
+                                                    },
+                                                    "applyLabel": {
+                                                        "type": "string"
+                                                    },
+                                                    "cancelLabel": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "summary": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    "editVisibility": {
+                                        "type": "string",
+                                        "enum": [
+                                            "always",
+                                            "on-hover"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "card"
+                                        ]
+                                    },
+                                    "withHeader": {
+                                        "type": "boolean"
+                                    },
+                                    "isOpened": {
+                                        "type": "boolean"
+                                    },
+                                    "isCollapsible": {
+                                        "type": "boolean"
+                                    },
+                                    "summary": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "array",
+                                                "items": {
+                                                    "oneOf": [
+                                                        {
+                                                            "type": "string"
+                                                        },
+                                                        {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "string"
+                                                                },
+                                                                "visibility": {
+                                                                    "type": "string",
+                                                                    "enum": [
+                                                                        "always",
+                                                                        "when-collapsed"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "row"
+                                        ]
+                                    },
+                                    "alignment": {
+                                        "type": "string",
+                                        "enum": [
+                                            "start",
+                                            "center",
+                                            "end"
+                                        ]
+                                    },
+                                    "styles": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {
+                                                "flex": {
+                                                    "type": [
+                                                        "string",
+                                                        "number"
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "details"
+                                        ]
+                                    },
+                                    "summary": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "children": {
+                        "type": "array",
+                        "items": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "view-config-form": {
+        "layout": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "regular"
+                            ]
+                        },
+                        "labelPosition": {
+                            "type": "string",
+                            "enum": [
+                                "top",
+                                "side",
+                                "none"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "panel"
+                            ]
+                        },
+                        "labelPosition": {
+                            "type": "string",
+                            "enum": [
+                                "top",
+                                "side",
+                                "none"
+                            ]
+                        },
+                        "openAs": {
+                            "oneOf": [
+                                {
+                                    "type": "string",
+                                    "enum": [
+                                        "dropdown",
+                                        "modal"
+                                    ]
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "enum": [
+                                                "dropdown",
+                                                "modal"
+                                            ]
+                                        },
+                                        "applyLabel": {
+                                            "type": "string"
+                                        },
+                                        "cancelLabel": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "summary": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            ]
+                        },
+                        "editVisibility": {
+                            "type": "string",
+                            "enum": [
+                                "always",
+                                "on-hover"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "card"
+                            ]
+                        },
+                        "withHeader": {
+                            "type": "boolean"
+                        },
+                        "isOpened": {
+                            "type": "boolean"
+                        },
+                        "isCollapsible": {
+                            "type": "boolean"
+                        },
+                        "summary": {
+                            "oneOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "array",
+                                    "items": {
+                                        "oneOf": [
+                                            {
+                                                "type": "string"
+                                            },
+                                            {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "visibility": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "always",
+                                                            "when-collapsed"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "row"
+                            ]
+                        },
+                        "alignment": {
+                            "type": "string",
+                            "enum": [
+                                "start",
+                                "center",
+                                "end"
+                            ]
+                        },
+                        "styles": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                    "flex": {
+                                        "type": [
+                                            "string",
+                                            "number"
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "enum": [
+                                "details"
+                            ]
+                        },
+                        "summary": {
+                            "type": "string"
+                        }
+                    }
+                }
+            ]
+        },
+        "fields": {
+            "type": "array",
+            "items": {
+                "oneOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "label": {
+                                "type": "string"
+                            },
+                            "description": {
+                                "type": "string"
+                            },
+                            "layout": {
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "regular"
+                                                ]
+                                            },
+                                            "labelPosition": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "top",
+                                                    "side",
+                                                    "none"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "panel"
+                                                ]
+                                            },
+                                            "labelPosition": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "top",
+                                                    "side",
+                                                    "none"
+                                                ]
+                                            },
+                                            "openAs": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "dropdown",
+                                                            "modal"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "type": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                    "dropdown",
+                                                                    "modal"
+                                                                ]
+                                                            },
+                                                            "applyLabel": {
+                                                                "type": "string"
+                                                            },
+                                                            "cancelLabel": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "summary": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "editVisibility": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "always",
+                                                    "on-hover"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "card"
+                                                ]
+                                            },
+                                            "withHeader": {
+                                                "type": "boolean"
+                                            },
+                                            "isOpened": {
+                                                "type": "boolean"
+                                            },
+                                            "isCollapsible": {
+                                                "type": "boolean"
+                                            },
+                                            "summary": {
+                                                "oneOf": [
+                                                    {
+                                                        "type": "string"
+                                                    },
+                                                    {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "oneOf": [
+                                                                {
+                                                                    "type": "string"
+                                                                },
+                                                                {
+                                                                    "type": "object",
+                                                                    "properties": {
+                                                                        "id": {
+                                                                            "type": "string"
+                                                                        },
+                                                                        "visibility": {
+                                                                            "type": "string",
+                                                                            "enum": [
+                                                                                "always",
+                                                                                "when-collapsed"
+                                                                            ]
+                                                                        }
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "row"
+                                                ]
+                                            },
+                                            "alignment": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "start",
+                                                    "center",
+                                                    "end"
+                                                ]
+                                            },
+                                            "styles": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "flex": {
+                                                            "type": [
+                                                                "string",
+                                                                "number"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "details"
+                                                ]
+                                            },
+                                            "summary": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            "children": {
+                                "type": "array",
+                                "items": {
+                                    "oneOf": [
+                                        {
+                                            "type": "string"
+                                        },
+                                        {
+                                            "type": "object"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        }
     }
 }

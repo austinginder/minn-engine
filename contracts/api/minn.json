@@ -103406,7 +103406,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 496,
+            "lines": 523,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
@@ -103791,6 +103791,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "castEmptyObjects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "castEmptyObjects(mixed $value, array $schema): mixed",
+                    "doc": "A value with each empty array the schema calls an object made one\n(it encodes as {}), through properties, additional properties, list\nitems and the value as a whole (probe rest-view-config).",
+                    "shapes": [
+                        "@param array<string, mixed> $schema"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 504,
+                    "end": 522
+                },
+                {
+                    "routes": [],
                     "name": "closeObjects",
                     "static": true,
                     "visibility": "public",
@@ -103806,8 +103835,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 498,
-                    "end": 511
+                    "line": 525,
+                    "end": 538
                 },
                 {
                     "routes": [],
@@ -110101,6 +110130,243 @@
                     ],
                     "line": 358,
                     "end": 366
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\ViewConfigPatch",
+            "short": "ViewConfigPatch",
+            "namespace": "Minn\\Rest",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Rest/ViewConfigPatch.php",
+            "lines": 151,
+            "doc": "A patch to a view configuration (WP_View_Config_Data; probe\nrest-view-config), applied as the reference applies it. Only schema\nversion 1 is taken, and only the documented keys: each is set (its value\nreplaced), merged (maps merged key by key, lists joined with their\nmembers matched by identity), replaced (merged, but lists replaced\nwhole) or removed (keys from a map, members from a list by identity).\nA null in a patch removes what it names. What a caller got wrong comes\nback as problems: the function to name and the words.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(bool $replaceLists)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "replaceLists",
+                        "type": "bool",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "private",
+                "line": 26,
+                "end": 28
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "KEYS",
+                    "value": "array (   0 => 'default_view',   1 => 'default_layouts',   2 => 'view_list',   3 => 'form', )",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "SHAPE",
+                    "value": "'A view configuration patch value must match the shape of the value it patches: a list merges into a list, and an associative array into an associative array.'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "problems",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "replaceLists",
+                    "type": "bool",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "apply",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "apply(array $config, array $patch, mixed $version, string $mode): array",
+                    "doc": "A configuration with a patch applied in a mode (set, merge, replace,\nremove), and the problems met: [function or null for the mode's own\nmethod, words].",
+                    "shapes": [
+                        "@param array<string, mixed> $config",
+                        "@param array<mixed> $patch",
+                        "@return array{0: array<string, mixed>, 1: list<array{0: ?string, 1: string}>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "config",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "patch",
+                            "type": "array",
+                            "shape": "array<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mode",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "stripNulls",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stripNulls(mixed $value): mixed",
+                    "doc": "A value with every null in it removed, lists closed up.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "identity",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "identity(mixed $item): ?string",
+                    "doc": "The identity a list member is matched by: a word itself, a map's id or slug; null for none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "item",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 88,
+                    "end": 101
+                },
+                {
+                    "routes": [],
+                    "name": "merge",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "merge(mixed $current, mixed $incoming): mixed",
+                    "doc": "Incoming merged over current: maps key by key, lists by identity (or replaced), anything else replaced; a mismatched shape is a problem and leaves current.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "current",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "incoming",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 127
+                },
+                {
+                    "routes": [],
+                    "name": "mergeList",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "mergeList(array $current, array $incoming): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<mixed> $current",
+                        "@param list<mixed> $incoming",
+                        "@return list<mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "current",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "incoming",
+                            "type": "array",
+                            "shape": "list<mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 146
+                },
+                {
+                    "routes": [],
+                    "name": "remove",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "remove(mixed $current, mixed $spec): mixed",
+                    "doc": "Keys removed from a map (a list of keys, or a key mapped to what to remove inside it); members removed from a list by identity.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "current",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "spec",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 149,
+                    "end": 166
                 }
             ]
         },

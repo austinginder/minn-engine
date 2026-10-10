@@ -1,0 +1,508 @@
+{
+    "postType": {
+        "version": 1,
+        "default_view": {
+            "type": "table",
+            "filters": [],
+            "sort": {
+                "field": "title",
+                "direction": "asc"
+            },
+            "perPage": 20,
+            "fields": [
+                "author",
+                "status"
+            ],
+            "titleField": "title"
+        },
+        "default_layouts": {
+            "table": {},
+            "grid": {},
+            "list": {}
+        },
+        "view_list": [
+            {
+                "title": "{all_items}",
+                "slug": "all"
+            }
+        ],
+        "form": {
+            "layout": {
+                "type": "panel"
+            },
+            "fields": [
+                {
+                    "id": "featured_media",
+                    "layout": {
+                        "type": "regular",
+                        "labelPosition": "none"
+                    }
+                },
+                {
+                    "id": "post-content-info",
+                    "layout": {
+                        "type": "regular",
+                        "labelPosition": "none"
+                    }
+                },
+                {
+                    "id": "excerpt",
+                    "layout": {
+                        "type": "panel",
+                        "labelPosition": "top"
+                    }
+                },
+                {
+                    "id": "status",
+                    "label": "Status",
+                    "children": [
+                        {
+                            "id": "status",
+                            "layout": {
+                                "type": "regular",
+                                "labelPosition": "none"
+                            }
+                        },
+                        "scheduled_date",
+                        "password",
+                        "sticky"
+                    ]
+                },
+                "date",
+                "slug",
+                "author",
+                "template",
+                {
+                    "id": "discussion",
+                    "label": "Discussion",
+                    "children": [
+                        {
+                            "id": "comment_status",
+                            "layout": {
+                                "type": "regular",
+                                "labelPosition": "none"
+                            }
+                        },
+                        "ping_status"
+                    ]
+                },
+                "parent",
+                "format",
+                "revisions"
+            ]
+        }
+    },
+    "page": {
+        "version": 1,
+        "default_view": {
+            "type": "list",
+            "filters": [],
+            "perPage": 20,
+            "sort": {
+                "field": "title",
+                "direction": "asc"
+            },
+            "showLevels": true,
+            "titleField": "title",
+            "mediaField": "featured_media",
+            "fields": [
+                "author",
+                "status"
+            ]
+        },
+        "default_layouts": {
+            "table": {
+                "layout": {
+                    "styles": {
+                        "author": {
+                            "align": "start"
+                        }
+                    }
+                }
+            },
+            "grid": {},
+            "list": {}
+        },
+        "view_list": [
+            {
+                "title": "{all_items}",
+                "slug": "all"
+            },
+            {
+                "title": "Published",
+                "slug": "published",
+                "view": {
+                    "filters": [
+                        {
+                            "field": "status",
+                            "operator": "isAny",
+                            "value": "publish",
+                            "isLocked": true
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Scheduled",
+                "slug": "future",
+                "view": {
+                    "filters": [
+                        {
+                            "field": "status",
+                            "operator": "isAny",
+                            "value": "future",
+                            "isLocked": true
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Drafts",
+                "slug": "drafts",
+                "view": {
+                    "filters": [
+                        {
+                            "field": "status",
+                            "operator": "isAny",
+                            "value": "draft",
+                            "isLocked": true
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Pending",
+                "slug": "pending",
+                "view": {
+                    "filters": [
+                        {
+                            "field": "status",
+                            "operator": "isAny",
+                            "value": "pending",
+                            "isLocked": true
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Private",
+                "slug": "private",
+                "view": {
+                    "filters": [
+                        {
+                            "field": "status",
+                            "operator": "isAny",
+                            "value": "private",
+                            "isLocked": true
+                        }
+                    ]
+                }
+            },
+            {
+                "title": "Trash",
+                "slug": "trash",
+                "view": {
+                    "type": "table",
+                    "layout": {
+                        "styles": {
+                            "author": {
+                                "align": "start"
+                            }
+                        }
+                    },
+                    "filters": [
+                        {
+                            "field": "status",
+                            "operator": "isAny",
+                            "value": "trash",
+                            "isLocked": true
+                        }
+                    ]
+                }
+            }
+        ],
+        "form": {
+            "layout": {
+                "type": "panel"
+            },
+            "fields": [
+                {
+                    "id": "featured_media",
+                    "layout": {
+                        "type": "regular",
+                        "labelPosition": "none"
+                    }
+                },
+                {
+                    "id": "post-content-info",
+                    "layout": {
+                        "type": "regular",
+                        "labelPosition": "none"
+                    }
+                },
+                {
+                    "id": "excerpt",
+                    "layout": {
+                        "type": "panel",
+                        "labelPosition": "top"
+                    }
+                },
+                {
+                    "id": "status",
+                    "label": "Status",
+                    "children": [
+                        {
+                            "id": "status",
+                            "layout": {
+                                "type": "regular",
+                                "labelPosition": "none"
+                            }
+                        },
+                        "scheduled_date",
+                        "password",
+                        "sticky"
+                    ]
+                },
+                "date",
+                "slug",
+                "author",
+                "template",
+                {
+                    "id": "discussion",
+                    "label": "Discussion",
+                    "children": [
+                        {
+                            "id": "comment_status",
+                            "layout": {
+                                "type": "regular",
+                                "labelPosition": "none"
+                            }
+                        },
+                        "ping_status"
+                    ]
+                },
+                "parent",
+                "format",
+                "revisions"
+            ]
+        }
+    },
+    "wp_block": {
+        "version": 1,
+        "default_view": {
+            "type": "grid",
+            "perPage": 20,
+            "titleField": "title",
+            "mediaField": "preview",
+            "fields": [
+                "sync-status"
+            ],
+            "filters": [],
+            "layout": {
+                "badgeFields": [
+                    "sync-status"
+                ]
+            }
+        },
+        "default_layouts": {
+            "table": {
+                "layout": {
+                    "styles": {
+                        "author": {
+                            "width": "1%"
+                        }
+                    }
+                }
+            },
+            "grid": {
+                "layout": {
+                    "badgeFields": [
+                        "sync-status"
+                    ]
+                }
+            }
+        },
+        "view_list": [
+            {
+                "title": "All patterns",
+                "slug": "all-patterns"
+            },
+            {
+                "title": "My patterns",
+                "slug": "my-patterns"
+            }
+        ],
+        "form": {
+            "layout": {
+                "type": "panel"
+            },
+            "fields": [
+                {
+                    "id": "excerpt",
+                    "layout": {
+                        "type": "panel",
+                        "labelPosition": "top"
+                    }
+                },
+                {
+                    "id": "post-content-info",
+                    "layout": {
+                        "type": "regular",
+                        "labelPosition": "none"
+                    }
+                },
+                "sync-status",
+                "revisions"
+            ]
+        }
+    },
+    "wp_template": {
+        "version": 1,
+        "default_view": {
+            "type": "grid",
+            "perPage": 20,
+            "sort": {
+                "field": "title",
+                "direction": "asc"
+            },
+            "titleField": "title",
+            "descriptionField": "description",
+            "mediaField": "preview",
+            "fields": [
+                "author",
+                "active",
+                "slug",
+                "theme"
+            ],
+            "filters": [],
+            "showMedia": true
+        },
+        "default_layouts": {
+            "table": {
+                "showMedia": false
+            },
+            "grid": {
+                "showMedia": true
+            },
+            "list": {
+                "showMedia": false
+            }
+        },
+        "view_list": [
+            {
+                "title": "All templates",
+                "slug": "all"
+            }
+        ],
+        "form": {
+            "layout": {
+                "type": "panel"
+            },
+            "fields": [
+                {
+                    "id": "description",
+                    "layout": {
+                        "type": "panel",
+                        "labelPosition": "top"
+                    }
+                },
+                {
+                    "id": "description_readonly",
+                    "layout": {
+                        "type": "regular",
+                        "labelPosition": "none"
+                    }
+                },
+                {
+                    "id": "last_edited_date",
+                    "layout": {
+                        "type": "panel",
+                        "labelPosition": "none"
+                    }
+                },
+                "revisions",
+                "posts_page_title",
+                "posts_per_page",
+                "default_comment_status"
+            ]
+        }
+    },
+    "wp_template_part": {
+        "version": 1,
+        "default_view": {
+            "type": "grid",
+            "perPage": 20,
+            "titleField": "title",
+            "mediaField": "preview",
+            "fields": [
+                "author"
+            ],
+            "filters": [],
+            "layout": {}
+        },
+        "default_layouts": {
+            "table": {
+                "layout": {
+                    "styles": {
+                        "author": {
+                            "width": "1%"
+                        }
+                    }
+                }
+            },
+            "grid": {
+                "layout": {}
+            }
+        },
+        "view_list": [
+            {
+                "title": "All template parts",
+                "slug": "all-parts"
+            }
+        ],
+        "form": {
+            "layout": {
+                "type": "panel"
+            },
+            "fields": [
+                {
+                    "id": "last_edited_date",
+                    "layout": {
+                        "type": "panel",
+                        "labelPosition": "none"
+                    }
+                },
+                "revisions"
+            ]
+        }
+    },
+    "default": {
+        "version": 1,
+        "default_view": {
+            "type": "table",
+            "filters": [],
+            "sort": {
+                "field": "title",
+                "direction": "asc"
+            },
+            "perPage": 20,
+            "fields": [
+                "author",
+                "status"
+            ],
+            "titleField": "title"
+        },
+        "default_layouts": {
+            "table": {},
+            "grid": {},
+            "list": {}
+        },
+        "view_list": [
+            {
+                "title": "All items",
+                "slug": "all"
+            }
+        ],
+        "form": {}
+    }
+}

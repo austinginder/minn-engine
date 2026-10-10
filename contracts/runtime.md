@@ -11019,3 +11019,68 @@ for a widget's self link run the route's own permission check, and its
 `retrieve_widgets` files a widget in no sidebar among the inactive
 widgets. The engine judges target hints by its policies, so that widget
 stays where it is. The probe leaves it out of its final count.
+
+## The view configurations (2026-10-10)
+
+Probe `rest-view-config` proves `WP_REST_View_Config_Controller` and
+`WP_View_Config_Data`: two classes that were missing, 22 methods. The
+engine now serves `/wp/v2/view-config` through the controller, registered
+in `create_initial_rest_routes`. Unauthenticated, its answers match the
+reference byte for byte: the missing arguments, the refusal, an unknown
+entity, and OPTIONS. The probe covers:
+- the schema and its nine parts;
+- the capability each entity needs, and the permission check for nobody,
+  an administrator and a contributor;
+- every core post type's configuration, custom types, taxonomies, other
+  kinds, and entities that are not shown;
+- empty objects cast by the schema;
+- the data class's patches;
+- the `get_entity_view_config_{kind}_{name}` filter.
+
+- **Entities.** A post type or taxonomy must be shown in REST. Anything
+  else is a 404 `rest_view_config_invalid_entity`, decided in the
+  permission check (`get_items` itself answers whatever it is asked). The
+  capability is the type's `edit_posts`, the taxonomy's `manage_terms`,
+  `manage_options` for `root`, and `edit_posts` for any other kind. A
+  caller without it is refused with `rest_cannot_read`.
+- **Configurations.** These are captured in `data/view-configs.json`:
+  - page, wp_block, wp_template and wp_template_part each have their own;
+  - every other post type has a generic one, and every other kind
+    another.
+
+  The first view of the generic and page configurations takes the type's
+  `all_items` label ("All items" for a type that does not exist). The
+  patterns list a view per pattern category plus "Uncategorized", sorted
+  by title without regard to case. Templates list the active theme's name
+  as an author filter. Template parts list their areas, General last. The
+  answer is kind, name and version 1, then the configuration as the filter
+  left it, with empty objects cast by the schema (`Schema::castEmptyObjects`).
+- **Patches** (`Minn\Rest\ViewConfigPatch`). Only version 1 is accepted;
+  any other version refuses the whole patch. Only the documented keys are
+  patched (`default_view`, `default_layouts`, `view_list`, `form`); an
+  undocumented one is refused on its own while the rest applies.
+  - `set` replaces each key's value.
+  - `merge` merges maps key by key. Lists are joined, and their members
+    are matched by identity: a word itself, or a map's id or slug. A
+    member without one is appended, and a repeated word is not added
+    twice.
+  - `replace` merges, but replaces lists whole.
+  - `remove` takes keys out of a map, or members out of a list by
+    identity, level by level. At the top it ignores a plain list of keys.
+  - A null removes what it names.
+  - A map over a list (or the reverse) is refused from `merge_properties`
+    and leaves that key alone; a list over a word replaces it.
+  - Each mistake is a `_doing_it_wrong`.
+- **Filter.** `get_entity_view_config_{kind lowercased}_{name}` receives
+  the data and `['kind', 'name']`. Its patches show in the answer, which
+  carries no version of its own.
+
+Owed:
+- `_register_core_block_patterns_and_categories` is still a placeholder,
+  so core's pattern categories are missing from the engine. The probe
+  compares the patterns' views without them.
+- `get_post_type_object` builds a new object on every call, and
+  `$wp_post_types` is never set. On the reference both hand out the one
+  registered object, so a plugin that relabels a type through either
+  (the "rename Posts" snippet) is heard everywhere. On the engine it is
+  lost. This shared machinery wants its own batch and a full run.
