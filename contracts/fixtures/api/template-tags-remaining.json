@@ -1,0 +1,170 @@
+[
+    [
+        "comment form fields",
+        [
+            "<input type='hidden' name='comment_post_ID' value='{zz-tt-open}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+            "<input type='hidden' name='comment_post_ID' value='{zz-tt-closed}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='0' />\n",
+            "<input type='hidden' name='comment_post_ID' value='{zz-tt-open}' id='comment_post_ID' />\n<input type='hidden' name='comment_parent' id='comment_parent' value='{zz-tt-fir}' />\n",
+            "<input type=\"hidden\" id=\"_wp_unfiltered_html_comment_disabled\" name=\"_wp_unfiltered_html_comment_disabled\" value=\"{nonce}\" /><script>\n(function(){if(window===window.parent){document.getElementById('_wp_unfiltered_html_comment_disabled').name='_wp_unfiltered_html_comment';}})();\n//# sourceURL=wp_comment_form_unfiltered_html_nonce\n</script>\n",
+            ""
+        ]
+    ],
+    [
+        "reply links",
+        [
+            "<a rel=\"nofollow\" class=\"comment-reply-link\" href=\"{site}/zz-tt-open/?replytocom={zz-tt-fir}#respond\" data-commentid=\"{zz-tt-fir}\" data-postid=\"{zz-tt-open}\" data-belowelement=\"comment-{zz-tt-fir}\" data-respondelement=\"respond\" data-replyto=\"Reply to Zz\" aria-label=\"Reply to Zz\">Reply</a>",
+            "",
+            "<span><a rel=\"nofollow\" class=\"comment-reply-link\" href=\"{site}/zz-tt-open/?replytocom={zz-tt-sec}#zz-respond\" data-commentid=\"{zz-tt-sec}\" data-postid=\"{zz-tt-open}\" data-belowelement=\"comment-{zz-tt-sec}\" data-respondelement=\"zz-respond\" data-replyto=\"Reply to Zz\" aria-label=\"Reply to Zz\">Answer <i>it</i></a></span>",
+            ""
+        ]
+    ],
+    [
+        "comment counts as text",
+        [
+            "2 Comments",
+            "2 comments",
+            "No Comments",
+            "None",
+            "2 Comments",
+            "No"
+        ]
+    ],
+    [
+        "comment dates, times and text",
+        [
+            "February 4, 1983",
+            "1983/02/03",
+            413118733,
+            "9:22 pm",
+            "11:12:13",
+            413118733,
+            "9:22 pm",
+            "zz tt second <b>bold</b> & co",
+            "zz tt first",
+            "zz tt second <b>bold</b> & co"
+        ]
+    ],
+    [
+        "pings open",
+        [
+            true,
+            false,
+            false,
+            true
+        ]
+    ],
+    [
+        "term descriptions",
+        [
+            "<p>Root <b>description</b> &amp; more</p>\n",
+            "",
+            "<p>Line one</p>\n<p>Line two</p>\n",
+            "",
+            "<p>Alpha tag</p>\n",
+            "",
+            "<p>Root <b>description</b> &amp; more</p>\n",
+            [
+                "<p>Root <b>description</b> &amp; more</p>\n",
+                "<p>Root <b>description</b> &amp; more</p>\n"
+            ]
+        ]
+    ],
+    [
+        "term parents lists",
+        [
+            "<a href=\"{site}/category/zz-tt-root/\">zz tt root</a>/<a href=\"{site}/category/zz-tt-root/zz-tt-child/\">zz tt child</a>/<a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\">zz tt grand</a>/",
+            "zz tt root &gt; zz tt child &gt; ",
+            "<a href=\"{site}/category/zz-tt-root/\">zz-tt-root</a>/<a href=\"{site}/category/zz-tt-root/zz-tt-child/\">zz-tt-child</a>/<a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\">zz-tt-grand</a>/",
+            "<a href=\"{site}/category/zz-tt-root/\">zz tt root</a>/",
+            "",
+            {
+                "error": "invalid_taxonomy"
+            }
+        ]
+    ],
+    [
+        "term lists",
+        [
+            "<a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"tag\">zz tt grand</a><a href=\"{site}/category/zz-tt-root/\" rel=\"tag\">zz tt root</a>",
+            "Tags: <a href=\"{site}/tag/zz-tt-alpha/\" rel=\"tag\">zz tt alpha</a>, <a href=\"{site}/tag/zz-tt-beta/\" rel=\"tag\">zz tt beta</a>.",
+            false,
+            {
+                "error": "invalid_taxonomy"
+            }
+        ]
+    ],
+    [
+        "category checks",
+        [
+            true,
+            false,
+            true,
+            true,
+            true,
+            false,
+            false
+        ]
+    ],
+    [
+        "the category and tag lists",
+        [
+            "<ul class=\"post-categories\">\n\t<li><a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"category tag\">zz tt grand</a></li>\n\t<li><a href=\"{site}/category/zz-tt-root/\" rel=\"category tag\">zz tt root</a></li></ul>",
+            "<a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"category tag\">zz tt grand</a>, <a href=\"{site}/category/zz-tt-root/\" rel=\"category tag\">zz tt root</a>",
+            "<a href=\"{site}/category/zz-tt-root/\">zz tt root</a> / <a href=\"{site}/category/zz-tt-root/zz-tt-child/\">zz tt child</a> / <a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"category tag\">zz tt grand</a> / <a href=\"{site}/category/zz-tt-root/\" rel=\"category tag\">zz tt root</a>",
+            "<a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"category tag\">zz tt root, zz tt child, zz tt grand</a>, <a href=\"{site}/category/zz-tt-root/\" rel=\"category tag\">zz tt root</a>",
+            "<a href=\"{site}/category/uncategorized/\" rel=\"category tag\">Uncategorized</a>",
+            "<ul class=\"post-categories\">\n\t<li><a href=\"{site}/category/zz-tt-root/\">zz tt root</a><a href=\"{site}/category/zz-tt-root/zz-tt-child/\">zz tt child</a><a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"category tag\">zz tt grand</a></li>\n\t<li><a href=\"{site}/category/zz-tt-root/\" rel=\"category tag\">zz tt root</a></li></ul>",
+            "<ul class=\"post-categories\">\n\t<li><a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\"  rel=\"category tag\">zz tt rootzz tt childzz tt grand</a></li>\n\t<li><a href=\"{site}/category/zz-tt-root/\"  rel=\"category tag\">zz tt root</a></li></ul>",
+            "<a href=\"{site}/category/zz-tt-root/\">zz tt root</a> > <a href=\"{site}/category/zz-tt-root/zz-tt-child/\">zz tt child</a> > <a href=\"{site}/category/zz-tt-root/zz-tt-child/zz-tt-grand/\" rel=\"category tag\">zz tt grand</a> > <a href=\"{site}/category/zz-tt-root/\" rel=\"category tag\">zz tt root</a>",
+            "Tags: <a href=\"{site}/tag/zz-tt-alpha/\" rel=\"tag\">zz tt alpha</a>, <a href=\"{site}/tag/zz-tt-beta/\" rel=\"tag\">zz tt beta</a>",
+            "<p><a href=\"{site}/tag/zz-tt-alpha/\" rel=\"tag\">zz tt alpha</a> | <a href=\"{site}/tag/zz-tt-beta/\" rel=\"tag\">zz tt beta</a></p>"
+        ]
+    ],
+    [
+        "a tag cloud",
+        [
+            "<a href=\"https://zz.example/zz-gamma\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 22pt;\" aria-label=\"zz gamma (12 items)\">zz gamma</a>\n<a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 16.296296296296pt;\" aria-label=\"zz tt alpha (5 items)\">zz tt alpha</a>\n<a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-1 tag-link-position-3\" style=\"font-size: 8pt;\" aria-label=\"zz tt beta (1 item)\">zz tt beta</a>",
+            [
+                "<a href=\"https://zz.example/zz-gamma\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 22pt;\" aria-label=\"zz gamma (12 items)\">zz gamma</a>",
+                "<a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 16.296296296296pt;\" aria-label=\"zz tt alpha (5 items)\">zz tt alpha</a>",
+                "<a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-1 tag-link-position-3\" style=\"font-size: 8pt;\" aria-label=\"zz tt beta (1 item)\">zz tt beta</a>"
+            ],
+            "<ul class='wp-tag-cloud' role='list'>\n\t<li><a href=\"https://zz.example/zz-gamma\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 20px;\" aria-label=\"zz gamma (12 items)\">zz gamma<span class=\"tag-link-count\"> (12)</span></a></li>\n\t<li><a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 15.925925925926px;\" aria-label=\"zz tt alpha (5 items)\">zz tt alpha<span class=\"tag-link-count\"> (5)</span></a></li>\n\t<li><a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-1 tag-link-position-3\" style=\"font-size: 10px;\" aria-label=\"zz tt beta (1 item)\">zz tt beta<span class=\"tag-link-count\"> (1)</span></a></li>\n</ul>\n",
+            "<a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-0 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz tt beta (1 item)\">zz tt beta</a> * <a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-1 tag-link-position-2\" style=\"font-size: 22pt;\" aria-label=\"zz tt alpha (5 items)\">zz tt alpha</a>",
+            "",
+            [],
+            "<a href=\"https://zz.example/zz-gamma\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 12pt;\">zz gamma</a>\n<a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 12pt;\">zz tt alpha</a>\n<a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-1 tag-link-position-3\" style=\"font-size: 12pt;\">zz tt beta</a>",
+            "<a href=\"https://zz.example/zz-gamma\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 12pt;\" aria-label=\"zz gamma (12 items)\">zz gamma<span class=\"tag-link-count\"> (12)</span></a>\n<a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 12pt;\" aria-label=\"zz tt alpha (5 items)\">zz tt alpha<span class=\"tag-link-count\"> (5)</span></a>\n<a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-1 tag-link-position-3\" style=\"font-size: 12pt;\" aria-label=\"zz tt beta (1 item)\">zz tt beta<span class=\"tag-link-count\"> (1)</span></a>",
+            "<a href=\"https://zz.example/zz-gamma\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 14em;\" aria-label=\"zz gamma (12 items)\">zz gamma</a>\n<a href=\"https://zz.example/zz-tt-alpha\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 13.592592592593em;\" aria-label=\"zz tt alpha (5 items)\">zz tt alpha</a>\n<a href=\"https://zz.example/zz-tt-beta\" class=\"tag-cloud-link tag-link-1 tag-link-position-3\" style=\"font-size: 13em;\" aria-label=\"zz tt beta (1 item)\">zz tt beta</a>",
+            "<a href=\"https://zz.example/?tag=zz-a&#038;zz=1\" class=\"tag-cloud-link tag-link-77 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz a (1 item)\">zz a</a>\n<a href=\"https://zz.example/?tag=zz-b&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 22pt;\" aria-label=\"zz b (3 items)\">zz b</a>\n<a href=\"https://zz.example/?tag=zz-c&#038;zz=1\" class=\"tag-cloud-link tag-link-zz tag-link-position-3\" style=\"font-size: 16.4pt;\" aria-label=\"zz c (2 items)\">zz c</a>",
+            "<a href=\"https://zz.example/?tag=zz-b&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-1\" style=\"font-size: 22pt;\" aria-label=\"zz b (3 items)\">zz b</a>\n<a href=\"https://zz.example/?tag=zz-c&#038;zz=1\" class=\"tag-cloud-link tag-link-zz tag-link-position-2\" style=\"font-size: 16.4pt;\" aria-label=\"zz c (2 items)\">zz c</a>\n<a href=\"https://zz.example/?tag=zz-a&#038;zz=1\" class=\"tag-cloud-link tag-link-77 tag-link-position-3\" style=\"font-size: 8pt;\" aria-label=\"zz a (1 item)\">zz a</a>",
+            "<a href=\"https://zz.example/?tag=zz-a&#038;zz=1\" class=\"tag-cloud-link tag-link-77 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz a (1 item)\">zz a</a>\n<a href=\"https://zz.example/?tag=zz-c&#038;zz=1\" class=\"tag-cloud-link tag-link-zz tag-link-position-2\" style=\"font-size: 16.4pt;\" aria-label=\"zz c (2 items)\">zz c</a>\n<a href=\"https://zz.example/?tag=zz-b&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-3\" style=\"font-size: 22pt;\" aria-label=\"zz b (3 items)\">zz b</a>",
+            "<a href=\"https://zz.example/?tag=zz-c&#038;zz=1\" class=\"tag-cloud-link tag-link-zz tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz c (2 items)\">zz c</a>\n<a href=\"https://zz.example/?tag=zz-b&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 22pt;\" aria-label=\"zz b (3 items)\">zz b</a>",
+            "<a href=\"https://zz.example/?tag=zz-a&#038;zz=1\" class=\"tag-cloud-link tag-link-77 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz a (C1-zz a)\">zz a</a>\n<a href=\"https://zz.example/?tag=zz-b&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 22pt;\" aria-label=\"zz b (C3-zz b)\">zz b</a>\n<a href=\"https://zz.example/?tag=zz-c&#038;zz=1\" class=\"tag-cloud-link tag-link-zz tag-link-position-3\" style=\"font-size: 13.25pt;\" aria-label=\"zz c (C2-zz c)\">zz c</a>",
+            "<a href=\"https://zz.example/?tag=zz-a&#038;zz=1\" class=\"tag-cloud-link tag-link-77 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz a (1 thing)\">zz a</a>\n<a href=\"https://zz.example/?tag=zz-b&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-2\" style=\"font-size: 22pt;\" aria-label=\"zz b (3 things)\">zz b</a>\n<a href=\"https://zz.example/?tag=zz-c&#038;zz=1\" class=\"tag-cloud-link tag-link-zz tag-link-position-3\" style=\"font-size: 16.4pt;\" aria-label=\"zz c (2 things)\">zz c</a>",
+            "<a href=\"https://zz.example/?tag=q-x&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"Q &quot;x&quot; &amp; &lt;b&gt; (1,234 items)\">Q &quot;x&quot; &amp; &lt;b&gt;<span class=\"tag-link-count\"> (1234)</span></a>",
+            "<a href=\"https://zz.example/?tag=zz-one&#038;zz=1\" class=\"tag-cloud-link tag-link-0 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz one (2 items)\">zz one</a>"
+        ]
+    ],
+    [
+        "author meta",
+        [
+            "admin",
+            "admin",
+            "meta <b>value</b>",
+            "1",
+            "admin@minn-engine.localhost",
+            "admin",
+            "",
+            ""
+        ]
+    ],
+    [
+        "the multi-author cache",
+        [
+            true,
+            null,
+            true
+        ]
+    ]
+]

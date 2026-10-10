@@ -1176,15 +1176,32 @@ function wp_tag_cloud($args = '')
 function wp_generate_tag_cloud($tags, $args = '')
 {
     $args = wp_parse_args($args, ['smallest' => 8, 'largest' => 22, 'unit' => 'pt', 'number' => 0, 'format' => 'flat', 'separator' => "\n", 'orderby' => 'name', 'order' => 'ASC', 'topic_count_text' => null, 'topic_count_text_callback' => null, 'topic_count_scale_callback' => 'default_topic_count_scale', 'filter' => 1, 'show_count' => 0]);
-    $rows = array_map(static fn ($t) => (array) $t, (array) $tags);
+    $rows = [];
+    foreach ((array) $tags as $key => $tag) {
+        $rows[$key] = _minn_tag_cloud_row($tag, $args);
+    }
     $out = TermLists::tagCloud($rows, $args);
-    if ($out === null) {
-        return '';
-    }
     if ($args['format'] === 'array') {
-        $out = explode("\n", $out);
+        $out = $out === null ? [] : explode("\n", $out);
     }
+    $out ??= '';
     return $args['filter'] ? apply_filters('wp_generate_tag_cloud', $out, $tags, $args) : $out;
+}
+
+/**
+ * @internal One tag as the cloud reads it (probe template-tags-remaining):
+ * its own id if it has one (else the cloud uses its key), its count
+ * through the scale callback, the count as words for the label (the text
+ * callback, else the nooped plural, "%s item" by default), and its link
+ * escaped as a URL.
+ */
+function _minn_tag_cloud_row($tag, array $args): array
+{
+    $count = (int) ($tag->count ?? 0);
+    $text = is_callable($args['topic_count_text_callback'])
+        ? call_user_func($args['topic_count_text_callback'], $count, $tag, $args)
+        : sprintf(translate_nooped_plural(is_array($args['topic_count_text']) ? $args['topic_count_text'] : _n_noop('%s item', '%s items'), $count), number_format_i18n($count));
+    return ['id' => $tag->id ?? null, 'scaled' => call_user_func($args['topic_count_scale_callback'], $count), 'text' => (string) $text, 'link' => esc_url((string) ($tag->link ?? ''))] + (array) $tag;
 }
 
 /** @internal the term_taxonomy ids a tax clause names, children of hierarchical terms included when asked */
@@ -1334,19 +1351,10 @@ function get_term_parents_list($term_id, $taxonomy, $args = [])
     return $out;
 }
 
-/** The post's category links, rel="category tag", joined by the separator (a ul.post-categories without one). */
+/** The post's category list as get_the_category_list builds it, printed. */
 function the_category($separator = '', $parents = '', $post_id = false)
 {
-    $categories = get_the_category($post_id);
-    if (!is_array($categories) || $categories === []) {
-        return;
-    }
-    $links = array_map(static fn ($c) => '<a href="' . esc_url((string) get_term_link($c)) . '" rel="category tag">' . esc_html($c->name) . '</a>', $categories);
-    if ((string) $separator === '') {
-        echo '<ul class="post-categories"><li>' . implode('</li><li>', $links) . '</li></ul>';
-        return;
-    }
-    echo implode((string) $separator, $links);
+    echo get_the_category_list($separator, $parents, $post_id);
 }
 
 /** The post's tag links, rel="tag"; nothing prints for a post without tags (probed). */
@@ -1405,9 +1413,28 @@ function get_the_category_list($separator = '', $parents = '', $post_id = false)
     }
     $rows = [];
     foreach ($categories as $category) {
-        $rows[] = ['name' => $category->name, 'url' => (string) get_category_link($category->term_id)];
+        $rows[] = _minn_category_list_row($category, (string) $separator, (string) $parents);
     }
-    return apply_filters('the_category', TermLinks::categories($rows, $separator), $separator, $parents);
+    return apply_filters('the_category', TermLinks::categories($rows, (string) $separator), $separator, $parents);
+}
+
+/**
+ * @internal One category in the list (probe template-tags-remaining): its
+ * parents linked ahead of it ("multiple") or named inside its own link
+ * ("single", where the reference's list item has two spaces before rel).
+ */
+function _minn_category_list_row(WP_Term $category, string $separator, string $parents): array
+{
+    $row = ['name' => $category->name, 'url' => (string) get_category_link($category->term_id)];
+    $chain = static function (bool $link) use ($category, $separator): string {
+        $line = $category->parent ? get_category_parents($category->parent, $link, $separator) : '';
+        return is_string($line) ? $line : '';
+    };
+    return match ($parents) {
+        'multiple' => $row + ['before' => $chain(true)],
+        'single' => ['name' => $chain(false) . $category->name, 'space' => $separator === '' ? '  ' : ' '] + $row,
+        default => $row,
+    };
 }
 
 /** @internal */

@@ -2104,7 +2104,8 @@ function get_the_author_meta($field = '', $user_id = false)
     if (!$user instanceof WP_User) {
         return '';
     }
-    $value = $field === 'ID' ? $user->ID : $user->get($field);
+    // An empty field names nothing: '' rather than every meta value (probe template-tags-remaining).
+    $value = $field === '' ? '' : ($field === 'ID' ? $user->ID : $user->get($field));
     if ($field === 'ID') {
         $value = (int) $user->ID;
     }

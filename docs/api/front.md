@@ -44,7 +44,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SitemapRequest`](#sitemaprequest) | final class | 71 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
-| [`TermLists`](#termlists) | final class | 71 | A term's parent chain and the tag cloud, built from term rows the caller |
+| [`TermLists`](#termlists) | final class | 97 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 338 | The nodes WordPress puts on the toolbar itself, as the reference adds |
 | [`ToolbarTree`](#toolbartree) | final class | 90 | WP_Admin_Bar's nodes bound into the tree they print as, as the reference |
@@ -1459,12 +1459,16 @@ trails the last name too, so a breadcrumb reads "Root/Mid/Leaf/".
 
 ### static `tagCloud(array $tags, array $args): ?string`
 
-The tag cloud the reference prints, or null for none.
+The tag cloud the reference prints, or null for none. Each row brings
+its "id" (for the tag-link class; its key when it has none), "scaled"
+(its count through the scale callback), "text" (the count in words, for
+the label), and its link already escaped. Keys survive the sort; taking
+the first N renumbers the numeric ones before they name the tags.
 
-- `@param list<array<string, mixed>> $tags rows with term_id, name, count, plus "link"`
+- `@param array<array-key, array<string, mixed>> $tags`
 - `@param array<string, mixed> $args wp_generate_tag_cloud arguments`
 
-Internals: `sorted()` (private, line 73)
+Internals: `cloudLinks()` (private, line 68), `cloudLink()` (private, line 86), `sorted()` (private, line 99)
 
 
 ## ToolbarMarkup

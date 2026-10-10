@@ -10027,3 +10027,45 @@ Fixed to match:
   video attachment's content (video takes the stored width and height). Any
   other attachment gets the medium-sized link in `<p class="attachment">`.
   `prepend_attachment` filters the whole piece.
+
+## The remaining template tags for comments, terms and authors (2026-10-10)
+
+Probe `template-tags-remaining` covers the last 19 tags from comment-template.php,
+category-template.php and author-template.php. It looks at comment form id fields,
+the unfiltered HTML nonce, reply links, comment counts as text, comment dates,
+times and text, `pings_open`, term descriptions, parents lists, term lists,
+`in_category`, the category and tag lists, the tag cloud from given tags,
+`the_author_meta` and the multi-author cache. The comment tags already matched.
+The probe found three differences:
+
+- **`the_category`** now prints `get_the_category_list`. It used to build its own
+  list, which ignored `$parents` and had no line breaks in the
+  `post-categories` list. The category list now handles parents:
+  - **"multiple":** the parents' linked chain goes before each category's link.
+  - **"single":** the parents' names go inside the category's own link.
+    In the list form, the reference's anchor has two spaces before `rel` there,
+    and the engine keeps that.
+- **`wp_generate_tag_cloud`** follows the reference's rules:
+  - **Scale:** sizes come from counts passed through
+    `topic_count_scale_callback`, not from raw counts, so they grow with the
+    log of the count.
+  - **Reversed range:** if largest is below smallest, sizes step by one unit.
+  - **Equal range:** if smallest equals largest, the `aria-label` is dropped
+    unless counts are shown.
+  - **Label:** the text comes from `topic_count_text_callback` or the nooped
+    `topic_count_text` ("%s item" by default), with the count formatted for the
+    locale, and it is escaped as one attribute.
+  - **Link:** escaped as a URL.
+  - **Sort:** by name only for `orderby` "name"; any other value sorts by
+    count. Only "DESC" in capitals reverses.
+  - **`tag-link-` class:** uses the tag's own `id`, or else its key in the
+    caller's list. Keys survive the sort, and taking the first N renumbers the
+    numeric ones. `term_id` is never used, which is why `wp_tag_cloud` sets `id`.
+- **`get_the_author_meta('')`** returns `''`. It used to return every meta value,
+  which printed "Array".
+
+Left out:
+- A missing comment, because the reference warns when it reads one.
+- What `__clear_multi_author_cache` clears, because the reference's object
+  cache shows no key for it. The probe only checks that it returns nothing and
+  that `is_multi_author` gives the same answer afterwards.

@@ -35290,7 +35290,7 @@
             "namespace": "Minn\\Content",
             "kind": "final class",
             "file": "public/minn/src/Minn/Content/TermLinks.php",
-            "lines": 39,
+            "lines": 37,
             "doc": "A post's terms rendered as links, in the two shapes the reference\nemits: a plain joined run for a taxonomy, and the category list, which\nbecomes a `post-categories` unordered list when the caller names no\nseparator and a joined run when it does.\n\nNames arrive already filtered; the caller applies the reference's own\nfilters around the result.",
             "implements": [],
             "extends": null,
@@ -35345,15 +35345,15 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "categories(array $categories, string $separator): string",
-                    "doc": "The category list: an unordered list when the separator is empty,\na joined run otherwise. Both carry rel=\"category tag\".",
+                    "doc": "The category list: an unordered list when the separator is empty,\na joined run otherwise. Both carry rel=\"category tag\". A row may bring\nmarkup to go before its link (its parents) and the space before rel.",
                     "shapes": [
-                        "@param list<array{name: string, url: string}> $categories"
+                        "@param list<array{name: string, url: string, before?: string, space?: string}> $categories"
                     ],
                     "params": [
                         {
                             "name": "categories",
                             "type": "array",
-                            "shape": "list<array{name: string, url: string}>",
+                            "shape": "list<array{name: string, url: string, before?: string, space?: string}>",
                             "default": null,
                             "doc": ""
                         },
@@ -35365,15 +35365,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 50
+                    "line": 41,
+                    "end": 48
                 },
                 {
                     "routes": [],
                     "name": "anchor",
                     "static": true,
                     "visibility": "private",
-                    "signature": "anchor(string $url, string $name, string $rel): string",
+                    "signature": "anchor(string $url, string $name, string $rel, string $space = ' '): string",
                     "doc": "",
                     "shapes": [],
                     "params": [
@@ -35397,10 +35397,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "space",
+                            "type": "string",
+                            "shape": "",
+                            "default": "' '",
+                            "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 50,
+                    "end": 53
                 }
             ]
         },
@@ -50934,7 +50941,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/TermLists.php",
-            "lines": 71,
+            "lines": 97,
             "doc": "A term's parent chain and the tag cloud, built from term rows the caller\nalready fetched and links the caller resolves. The category list and\nselect are the walkers' (Walker_Category, Walker_CategoryDropdown).",
             "implements": [],
             "extends": null,
@@ -50996,18 +51003,18 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "tagCloud(array $tags, array $args): ?string",
-                    "doc": "The tag cloud the reference prints, or null for none.",
+                    "doc": "The tag cloud the reference prints, or null for none. Each row brings\nits \"id\" (for the tag-link class; its key when it has none), \"scaled\"\n(its count through the scale callback), \"text\" (the count in words, for\nthe label), and its link already escaped. Keys survive the sort; taking\nthe first N renumbers the numeric ones before they name the tags.",
                     "shapes": [
-                        "@param list<array<string, mixed>> $tags rows with term_id, name, count, plus \"link\"",
+                        "@param array<array-key, array<string, mixed>> $tags",
                         "@param array<string, mixed> $args wp_generate_tag_cloud arguments"
                     ],
                     "params": [
                         {
                             "name": "tags",
                             "type": "array",
-                            "shape": "list<array<string, mixed>>",
+                            "shape": "array<array-key, array<string, mixed>>",
                             "default": null,
-                            "doc": "rows with term_id, name, count, plus \"link\""
+                            "doc": ""
                         },
                         {
                             "name": "args",
@@ -51017,8 +51024,88 @@
                             "doc": "wp_generate_tag_cloud arguments"
                         }
                     ],
-                    "line": 39,
-                    "end": 70
+                    "line": 43,
+                    "end": 58
+                },
+                {
+                    "routes": [],
+                    "name": "cloudLinks",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cloudLinks(array $tags, array $args): array",
+                    "doc": "Sizes step from smallest to largest across the scaled counts. A\nreversed range steps by one unit; an empty one leaves every tag the\nsame size and drops the label, unless the counts are shown.",
+                    "shapes": [
+                        "@param array<array-key, array<string, mixed>> $tags",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "tags",
+                            "type": "array",
+                            "shape": "array<array-key, array<string, mixed>>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 83
+                },
+                {
+                    "routes": [],
+                    "name": "cloudLink",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cloudLink(array $tag, string $size, ?string $label, ?int $count, int $position): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $tag"
+                    ],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "size",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "count",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "position",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 86,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -51026,15 +51113,15 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "sorted(array $terms, string $orderby, string $order): array",
-                    "doc": "",
+                    "doc": "By name (natural, case-insensitive) only for \"name\"; every other value\nsorts by count. Only \"DESC\", in capitals, reverses.",
                     "shapes": [
-                        "@param list<array<string, mixed>> $terms"
+                        "@param array<array-key, array<string, mixed>> $terms"
                     ],
                     "params": [
                         {
                             "name": "terms",
                             "type": "array",
-                            "shape": "list<array<string, mixed>>",
+                            "shape": "array<array-key, array<string, mixed>>",
                             "default": null,
                             "doc": ""
                         },
@@ -51053,8 +51140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 83
+                    "line": 99,
+                    "end": 109
                 }
             ]
         },

@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 770,
-        "composes": 1869,
+        "composes": 1870,
         "leaf": 876,
-        "noop": 2632,
+        "noop": 2633,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7973,
+        "functions": 7975,
         "minnMethods": 941,
         "leafLinesOver15": 12
     },
@@ -30063,6 +30063,16 @@
                 "walk_category_tree"
             ]
         },
+        "_minn_category_list_row": {
+            "file": "taxonomy.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_category_link",
+                "get_category_parents"
+            ]
+        },
         "_minn_classic_bar_footer": {
             "file": "template.php",
             "lines": 5,
@@ -31797,6 +31807,18 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "_minn_tag_cloud_row": {
+            "file": "taxonomy.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_n_noop",
+                "esc_url",
+                "number_format_i18n",
+                "translate_nooped_plural"
+            ]
         },
         "_minn_template_index": {
             "file": "blocks.php",
@@ -44713,7 +44735,7 @@
         },
         "get_the_author_meta": {
             "file": "post.php",
-            "lines": 12,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -44817,8 +44839,8 @@
                 "Minn\\Content\\TermLinks::categories"
             ],
             "composes": [
+                "_minn_category_list_row",
                 "apply_filters",
-                "get_category_link",
                 "get_the_category"
             ]
         },
@@ -54469,14 +54491,11 @@
         },
         "the_category": {
             "file": "taxonomy.php",
-            "lines": 10,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
-                "esc_html",
-                "esc_url",
-                "get_term_link",
-                "get_the_category"
+                "get_the_category_list"
             ]
         },
         "the_category_ID": {
@@ -61063,12 +61082,13 @@
         },
         "wp_generate_tag_cloud": {
             "file": "taxonomy.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Front\\TermLists::tagCloud"
             ],
             "composes": [
+                "_minn_tag_cloud_row",
                 "apply_filters",
                 "wp_parse_args"
             ]

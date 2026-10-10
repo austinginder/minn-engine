@@ -40,7 +40,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
-| [`TermLinks`](#termlinks) | final class | 39 | A post's terms rendered as links, in the two shapes the reference |
+| [`TermLinks`](#termlinks) | final class | 37 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 221 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
@@ -1853,11 +1853,12 @@ Anchor tags for these terms joined by a separator, the way the reference prints 
 ### static `categories(array $categories, string $separator): string`
 
 The category list: an unordered list when the separator is empty,
-a joined run otherwise. Both carry rel="category tag".
+a joined run otherwise. Both carry rel="category tag". A row may bring
+markup to go before its link (its parents) and the space before rel.
 
-- `@param list<array{name: string, url: string}> $categories`
+- `@param list<array{name: string, url: string, before?: string, space?: string}> $categories`
 
-Internals: `anchor()` (private, line 52)
+Internals: `anchor()` (private, line 50)
 
 
 ## TermRecord
