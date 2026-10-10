@@ -849,5 +849,784 @@
                 "readonly": true
             }
         }
+    },
+    "block-type": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "block-type",
+        "type": "object",
+        "properties": {
+            "api_version": {
+                "description": "Version of block API.",
+                "type": "integer",
+                "default": 1,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "title": {
+                "description": "Title of block type.",
+                "type": "string",
+                "default": "",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "name": {
+                "description": "Unique name identifying the block type.",
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$",
+                "required": true,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "Description of block type.",
+                "type": "string",
+                "default": "",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "icon": {
+                "description": "Icon of block type.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "attributes": {
+                "description": "Block attributes.",
+                "type": [
+                    "object",
+                    "null"
+                ],
+                "properties": [],
+                "default": null,
+                "additionalProperties": {
+                    "type": "object"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "provides_context": {
+                "description": "Context provided by blocks of this type.",
+                "type": "object",
+                "properties": [],
+                "additionalProperties": {
+                    "type": "string"
+                },
+                "default": [],
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "uses_context": {
+                "description": "Context values inherited by blocks of this type.",
+                "type": "array",
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "selectors": {
+                "description": "Custom CSS selectors.",
+                "type": "object",
+                "default": [],
+                "properties": [],
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "supports": {
+                "description": "Block supports.",
+                "type": "object",
+                "default": [],
+                "properties": [],
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "category": {
+                "description": "Block category.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "is_dynamic": {
+                "description": "Is the block dynamically rendered.",
+                "type": "boolean",
+                "default": false,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "editor_script_handles": {
+                "description": "Editor script handles.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "script_handles": {
+                "description": "Public facing and editor script handles.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "view_script_handles": {
+                "description": "Public facing script handles.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "view_script_module_ids": {
+                "description": "Public facing script module IDs.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "editor_style_handles": {
+                "description": "Editor style handles.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "style_handles": {
+                "description": "Public facing and editor style handles.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "view_style_handles": {
+                "description": "Public facing style handles.",
+                "type": [
+                    "array"
+                ],
+                "default": [],
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "styles": {
+                "description": "Block style variations.",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "description": "Unique name identifying the style.",
+                            "type": "string",
+                            "required": true
+                        },
+                        "label": {
+                            "description": "The human-readable label for the style.",
+                            "type": "string"
+                        },
+                        "inline_style": {
+                            "description": "Inline CSS code that registers the CSS class required for the style.",
+                            "type": "string"
+                        },
+                        "style_handle": {
+                            "description": "Contains the handle that defines the block style.",
+                            "type": "string"
+                        }
+                    }
+                },
+                "default": [],
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "variations": {
+                "description": "Block variations.",
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "name": {
+                            "description": "The unique and machine-readable name.",
+                            "type": "string",
+                            "required": true
+                        },
+                        "title": {
+                            "description": "A human-readable variation title.",
+                            "type": "string",
+                            "required": true
+                        },
+                        "description": {
+                            "description": "A detailed variation description.",
+                            "type": "string",
+                            "required": false
+                        },
+                        "category": {
+                            "description": "Block category.",
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "default": null,
+                            "context": [
+                                "embed",
+                                "view",
+                                "edit"
+                            ],
+                            "readonly": true
+                        },
+                        "icon": {
+                            "description": "Icon of block type.",
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "default": null,
+                            "context": [
+                                "embed",
+                                "view",
+                                "edit"
+                            ],
+                            "readonly": true
+                        },
+                        "isDefault": {
+                            "description": "Indicates whether the current variation is the default one.",
+                            "type": "boolean",
+                            "required": false,
+                            "default": false
+                        },
+                        "attributes": {
+                            "description": "The initial values for attributes.",
+                            "type": "object"
+                        },
+                        "innerBlocks": {
+                            "description": "The list of inner blocks used in the example.",
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "description": "The name of the inner block.",
+                                        "type": "string",
+                                        "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$",
+                                        "required": true
+                                    },
+                                    "attributes": {
+                                        "description": "The attributes of the inner block.",
+                                        "type": "object"
+                                    },
+                                    "innerBlocks": {
+                                        "description": "A list of the inner block's own inner blocks. This is a recursive definition following the parent innerBlocks schema.",
+                                        "type": "array"
+                                    }
+                                }
+                            }
+                        },
+                        "example": {
+                            "description": "Block example.",
+                            "type": [
+                                "object",
+                                "null"
+                            ],
+                            "default": null,
+                            "properties": {
+                                "attributes": {
+                                    "description": "The attributes used in the example.",
+                                    "type": "object"
+                                },
+                                "innerBlocks": {
+                                    "description": "The list of inner blocks used in the example.",
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "description": "The name of the inner block.",
+                                                "type": "string",
+                                                "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$",
+                                                "required": true
+                                            },
+                                            "attributes": {
+                                                "description": "The attributes of the inner block.",
+                                                "type": "object"
+                                            },
+                                            "innerBlocks": {
+                                                "description": "A list of the inner block's own inner blocks. This is a recursive definition following the parent innerBlocks schema.",
+                                                "type": "array"
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "context": [
+                                "embed",
+                                "view",
+                                "edit"
+                            ],
+                            "readonly": true
+                        },
+                        "scope": {
+                            "description": "The list of scopes where the variation is applicable. When not provided, it assumes all available scopes.",
+                            "type": [
+                                "array",
+                                "null"
+                            ],
+                            "default": null,
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "block",
+                                    "inserter",
+                                    "transform"
+                                ]
+                            },
+                            "readonly": true
+                        },
+                        "keywords": {
+                            "description": "Block keywords.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "default": [],
+                            "context": [
+                                "embed",
+                                "view",
+                                "edit"
+                            ],
+                            "readonly": true
+                        }
+                    }
+                },
+                "readonly": true,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "default": null
+            },
+            "textdomain": {
+                "description": "Public text domain.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "parent": {
+                "description": "Parent blocks.",
+                "type": [
+                    "array",
+                    "null"
+                ],
+                "items": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+                },
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "ancestor": {
+                "description": "Ancestor blocks.",
+                "type": [
+                    "array",
+                    "null"
+                ],
+                "items": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+                },
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "allowed_blocks": {
+                "description": "Allowed child block types.",
+                "type": [
+                    "array",
+                    "null"
+                ],
+                "items": {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$"
+                },
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "keywords": {
+                "description": "Block keywords.",
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "default": [],
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "example": {
+                "description": "Block example.",
+                "type": [
+                    "object",
+                    "null"
+                ],
+                "default": null,
+                "properties": {
+                    "attributes": {
+                        "description": "The attributes used in the example.",
+                        "type": "object"
+                    },
+                    "innerBlocks": {
+                        "description": "The list of inner blocks used in the example.",
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "The name of the inner block.",
+                                    "type": "string",
+                                    "pattern": "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$",
+                                    "required": true
+                                },
+                                "attributes": {
+                                    "description": "The attributes of the inner block.",
+                                    "type": "object"
+                                },
+                                "innerBlocks": {
+                                    "description": "A list of the inner block's own inner blocks. This is a recursive definition following the parent innerBlocks schema.",
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                },
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "block_hooks": {
+                "description": "This block is automatically inserted near any occurrence of the block types used as keys of this map, into a relative position given by the corresponding value.",
+                "type": "object",
+                "patternProperties": {
+                    "^[a-z][a-z0-9-]*/[a-z][a-z0-9-]*$": {
+                        "type": "string",
+                        "enum": [
+                            "before",
+                            "after",
+                            "first_child",
+                            "last_child"
+                        ]
+                    }
+                },
+                "default": [],
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "editor_script": {
+                "description": "Editor script handle. DEPRECATED: Use `editor_script_handles` instead.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "script": {
+                "description": "Public facing and editor script handle. DEPRECATED: Use `script_handles` instead.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "view_script": {
+                "description": "Public facing script handle. DEPRECATED: Use `view_script_handles` instead.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "editor_style": {
+                "description": "Editor style handle. DEPRECATED: Use `editor_style_handles` instead.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "style": {
+                "description": "Public facing and editor style handle. DEPRECATED: Use `style_handles` instead.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "default": null,
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "block-pattern-category": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "block-pattern-category",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "The category name.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "label": {
+                "description": "The category label, in human readable format.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "description": {
+                "description": "The category description, in human readable format.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            }
+        }
+    },
+    "menu-location": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "menu-location",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "The name of the menu location.",
+                "type": "string",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "The description of the menu location.",
+                "type": "string",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "menu": {
+                "description": "The ID of the assigned menu.",
+                "type": "integer",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "rendered-block": {
+        "$schema": "http://json-schema.org/schema#",
+        "title": "rendered-block",
+        "type": "object",
+        "properties": {
+            "rendered": {
+                "description": "The rendered block.",
+                "type": "string",
+                "required": true,
+                "context": [
+                    "edit"
+                ]
+            }
+        }
     }
 }

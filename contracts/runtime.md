@@ -10864,3 +10864,52 @@ Fixed along the way, each proven by this probe:
 Owed: the engine's `/wp/v2/taxonomies` reads the captured core taxonomies
 only, so a plugin's REST taxonomy is not listed there, though the class
 lists it.
+
+## The REST block and menu-location controllers (2026-10-10)
+
+Probe `rest-block-controllers` proves four classes that were missing,
+34 methods: `WP_REST_Block_Types_Controller`,
+`WP_REST_Block_Pattern_Categories_Controller`,
+`WP_REST_Menu_Locations_Controller` and `WP_REST_Block_Renderer_Controller`.
+They are called directly by nobody, an administrator and a contributor.
+It covers:
+- their schemas and parameters;
+- each permission check;
+- lists (narrowed by namespace) and single items, among them a block
+  type, pattern categories and menu locations the probe registers;
+- items prepared with chosen fields, and their links;
+- menu locations assigned a real menu and a missing one;
+- `rest_menu_read_access`;
+- blocks rendered with attributes, inside a post, unknown, and with no
+  renderer of their own.
+
+The engine still answers these routes itself; the classes are for
+plugins. Their schemas are captured in `data/rest-schemas.json`.
+
+- **Block types:** reading needs `edit_posts` on some REST type, and
+  `get_item_permissions_check` also answers 404 for an unknown block. The
+  fields come from `Minn\Rest\BlockTypesController::fields`, which the
+  engine's route now shares. A dynamic type links to its renderer
+  (`?context=edit`).
+- **Pattern categories:** readers as for block types. Each item is its
+  name, label and description, the description only when it has one. No
+  links.
+- **Menu locations:** reading needs `edit_theme_options`, unless
+  `rest_menu_read_access` (false, the request, the controller) returns
+  true. The menu comes from the theme's locations, not from the item
+  passed. A location links to its menu (`https://api.w.org/menu`, as a
+  list, embeddable) only when that menu exists.
+- **Block renderer:** someone who can edit posts may render. With a post
+  named, they need to be able to edit that post: a missing post, or one
+  they can't edit, is `block_cannot_read` "of this post". The post becomes
+  the global post, so the block's `postId` context is that post. An
+  unknown block, or one with no renderer, is `block_invalid`.
+
+Fixed along the way, each proven by this probe:
+- A block type registered without `supports` shows `{}` (the schema's
+  default) on the engine's route too. It had shown null.
+- The engine's menu-locations route no longer links to a menu that
+  doesn't exist.
+
+Owed: the engine's `/wp/v2/menus`, menu-items and menu-locations routes
+don't yet honour `rest_menu_read_access`.

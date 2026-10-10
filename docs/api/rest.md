@@ -10,7 +10,7 @@ the wp/v2 surface: shapes and controllers
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
 | [`BatchRequest`](#batchrequest) | final class | 32 | The requests a batch payload names, normalised into descriptors the |
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
-| [`BlockTypesController`](#blocktypescontroller) | final readonly class | 117 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
+| [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
 | [`Caller`](#caller) | final class | 143 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
@@ -35,7 +35,7 @@ the wp/v2 surface: shapes and controllers
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 297 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenusController`](#menuscontroller) | final readonly class | 298 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`OEmbedController`](#oembedcontroller) | final readonly class | 72 | oembed/1.0 as the reference answers it (probe oembed). embed is the |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
@@ -397,7 +397,17 @@ Route: `GET /wp/v2/block-types/{namespace:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+} 
 
 One block type.
 
-Internals: `items()` (private, line 61), `item()` (private, line 75), `links()` (private, line 119), `requireViewer()` (private, line 134)
+### static `fields(WP_Block_Type $type): array`
+
+A block type's fields in the reference's order, as the route and
+WP_REST_Block_Types_Controller show them: its registration (supports
+{} when it has none), its styles (its own, then those registered for
+it), its variations as built when asked, and the first handle of each
+asset kind as the old single field (probe rest-block-controllers).
+
+- `@return array<string, mixed>`
+
+Internals: `items()` (private, line 61), `item()` (private, line 75), `links()` (private, line 135), `requireViewer()` (private, line 150)
 
 
 ## BlocksController
@@ -1401,7 +1411,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options)`
 
 One menu location.
 
-Internals: `locationItem()` (private, line 240), `argsFrom()` (private, line 263), `titleFrom()` (private, line 286), `urlFrom()` (private, line 296), `refuse()` (private, line 306), `plain()` (private, line 316)
+Internals: `locationItem()` (private, line 240), `argsFrom()` (private, line 264), `titleFrom()` (private, line 287), `urlFrom()` (private, line 297), `refuse()` (private, line 307), `plain()` (private, line 317)
 
 
 ## NavigationController

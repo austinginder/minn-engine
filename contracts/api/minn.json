@@ -89920,7 +89920,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/BlockTypesController.php",
-            "lines": 117,
+            "lines": 133,
             "doc": "wp/v2/block-types as the reference answers it (probe rest-block-types):\nevery registered block type, core's and a plugin's, in registration\norder, or a namespace's share, for anyone who can edit a type shown in\nREST. Each carries its registration (attributes, supports, selectors,\ncontexts, asset handles and the first of each as the old single field)\nwith its styles (its own, then those registered for it) and its\nvariations as built when asked; a dynamic block links to its renderer.\nServed with plugins loaded, since a plugin's blocks come from its code.",
             "implements": [],
             "extends": null,
@@ -90086,6 +90086,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "fields",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fields(WP_Block_Type $type): array",
+                    "doc": "A block type's fields in the reference's order, as the route and\nWP_REST_Block_Types_Controller show them: its registration (supports\n{} when it has none), its styles (its own, then those registered for\nit), its variations as built when asked, and the first handle of each\nasset kind as the old single field (probe rest-block-controllers).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "WP_Block_Type",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 91,
+                    "end": 132
+                },
+                {
+                    "routes": [],
                     "name": "items",
                     "static": false,
                     "visibility": "private",
@@ -90131,7 +90153,7 @@
                         }
                     ],
                     "line": 75,
-                    "end": 116
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -90152,8 +90174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 131
+                    "line": 135,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -90164,8 +90186,8 @@
                     "doc": "Only someone who edits a type shown in REST may read block types; the runtime holds them.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 142
+                    "line": 150,
+                    "end": 158
                 }
             ]
         },
@@ -95296,7 +95318,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MenusController.php",
-            "lines": 297,
+            "lines": 298,
             "doc": "wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;\nwrites need edit_theme_options. Anonymous callers get 401.",
             "implements": [],
             "extends": null,
@@ -95750,7 +95772,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "locationItem(string $name, string $description): array",
-                    "doc": "A location, the menu assigned to it (0 for none), and links to it and its menu. @return array<string, mixed>",
+                    "doc": "A location, the menu assigned to it (0 for none), and links to it and its menu when that exists. @return array<string, mixed>",
                     "shapes": [
                         "@return array<string, mixed>"
                     ],
@@ -95771,7 +95793,7 @@
                         }
                     ],
                     "line": 240,
-                    "end": 253
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -95801,8 +95823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 283
+                    "line": 264,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -95823,8 +95845,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 293
+                    "line": 287,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -95845,8 +95867,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 303
+                    "line": 297,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -95865,8 +95887,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 314
+                    "line": 307,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -95885,8 +95907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 319
+                    "line": 317,
+                    "end": 320
                 }
             ]
         },

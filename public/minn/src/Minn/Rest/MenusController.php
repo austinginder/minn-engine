@@ -236,7 +236,7 @@ final readonly class MenusController
         return Reply::item($this->locationItem($location, (string) $registered[$location]), Fields::fromQuery($request->query));
     }
 
-    /** A location, the menu assigned to it (0 for none), and links to it and its menu. @return array<string, mixed> */
+    /** A location, the menu assigned to it (0 for none), and links to it and its menu when that exists. @return array<string, mixed> */
     private function locationItem(string $name, string $description): array
     {
         $menu = (int) (\get_nav_menu_locations()[$name] ?? 0);
@@ -244,7 +244,8 @@ final readonly class MenusController
             'self' => [['href' => $this->url->to('/wp/v2/menu-locations/' . $name), 'targetHints' => ['allow' => ['GET']]]],
             'collection' => [['href' => $this->url->to('/wp/v2/menu-locations')]],
         ];
-        if ($menu > 0) {
+        // Only a menu that exists is linked; a location left pointing at a deleted one is not (probe rest-block-controllers).
+        if ($menu > 0 && $this->menus->find($menu) !== null) {
             $links['wp:menu'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/menus/' . $menu)]];
             $links['curies'] = RestUrl::curies();
         }

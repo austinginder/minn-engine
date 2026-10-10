@@ -74,6 +74,22 @@ final readonly class BlockTypesController
     /** @return array<string, mixed> */
     private function item(\WP_Block_Type $type): array
     {
+        $item = self::fields($type);
+        $item['_links'] = $this->links($type);
+        return RuntimePrepare::item('rest_prepare_block_type', $item, static fn () => $type);
+    }
+
+    /**
+     * A block type's fields in the reference's order, as the route and
+     * WP_REST_Block_Types_Controller show them: its registration (supports
+     * {} when it has none), its styles (its own, then those registered for
+     * it), its variations as built when asked, and the first handle of each
+     * asset kind as the old single field (probe rest-block-controllers).
+     *
+     * @return array<string, mixed>
+     */
+    public static function fields(\WP_Block_Type $type): array
+    {
         $first = static fn (array $handles) => $handles[0] ?? null;
         $item = [
             'attributes' => $type->get_attributes(),
@@ -91,7 +107,8 @@ final readonly class BlockTypesController
             'provides_context' => (array) $type->provides_context,
             'uses_context' => $type->get_uses_context(),
             'selectors' => $type->selectors,
-            'supports' => $type->supports,
+            // A type registered without supports shows the schema's default, {} (probe rest-block-controllers).
+            'supports' => $type->supports ?? [],
             'styles' => array_merge((array) $type->styles, array_values(\WP_Block_Styles_Registry::get_instance()->get_registered_styles_for_block($type->name))),
             'textdomain' => $type->textdomain,
             'example' => $type->example,
@@ -111,8 +128,7 @@ final readonly class BlockTypesController
         foreach (['editor_script', 'script', 'view_script', 'editor_style', 'style'] as $kind) {
             $item[$kind] = $first((array) $type->{$kind . '_handles'});
         }
-        $item['_links'] = $this->links($type);
-        return RuntimePrepare::item('rest_prepare_block_type', $item, static fn () => $type);
+        return $item;
     }
 
     /** @return array<string, list<array<string, mixed>>> */
