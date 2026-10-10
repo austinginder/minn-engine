@@ -195,20 +195,23 @@ function render_block_core_file($attributes, $content)
  */
 function render_block_core_footnotes($attributes, $content, $block)
 {
-    $post_id = $block instanceof WP_Block ? (int) ($block->context['postId'] ?? 0) : 0;
+    $items = _minn_footnote_items($block instanceof WP_Block ? (int) ($block->context['postId'] ?? 0) : 0);
+    return $items === '' ? '' : '<ol ' . get_block_wrapper_attributes() . '>' . $items . '</ol>';
+}
+
+/** @internal a post's footnotes as list items, each linking back to its citation; '' for no post, a password, or no notes */
+function _minn_footnote_items(int $post_id): string
+{
     if ($post_id < 1 || get_post($post_id) === null || post_password_required($post_id)) {
         return '';
     }
     $notes = json_decode((string) get_post_meta($post_id, 'footnotes', true), true);
-    if (!is_array($notes) || $notes === []) {
-        return '';
-    }
     $items = '';
-    foreach (array_values($notes) as $i => $note) {
+    foreach (is_array($notes) ? array_values($notes) : [] as $i => $note) {
         $id = esc_attr((string) ($note['id'] ?? ''));
         $items .= '<li id="' . $id . '">' . ($note['content'] ?? '') . ' <a href="#' . $id . '-link" aria-label="' . esc_attr(sprintf(__('Jump to footnote reference %1$d'), $i + 1)) . '">↩︎</a></li>';
     }
-    return '<ol ' . get_block_wrapper_attributes() . '>' . $items . '</ol>';
+    return $items;
 }
 
 function render_block_core_home_link($attributes, $content, $block)
@@ -545,6 +548,13 @@ function render_block_core_shortcode($attributes, $content)
  */
 function render_block_core_site_logo($attributes)
 {
+    $logo = _minn_site_logo_markup((array) $attributes);
+    return $logo === '' ? '' : '<div ' . get_block_wrapper_attributes(empty($attributes['width']) ? ['class' => 'is-default-size'] : []) . '>' . $logo . '</div>';
+}
+
+/** @internal the site logo's image (linked or not) at the block's width, without the block's wrapper; '' without a logo */
+function _minn_site_logo_markup(array $attributes): string
+{
     $width = (int) ($attributes['width'] ?? 0);
     $resize = static function ($image) use ($width) {
         if (is_array($image) && $width > 0 && !empty($image[1]) && !empty($image[2])) {
@@ -564,7 +574,7 @@ function render_block_core_site_logo($attributes)
     } elseif (($attributes['linkTarget'] ?? '') === '_blank') {
         $logo = str_replace('<a href=', '<a aria-label="' . esc_attr__('(Home link, opens in a new tab)') . '" target="_blank" href=', $logo);
     }
-    return '<div ' . get_block_wrapper_attributes($width > 0 ? [] : ['class' => 'is-default-size']) . '>' . $logo . '</div>';
+    return $logo;
 }
 
 function render_block_core_site_tagline($attributes)
@@ -1148,10 +1158,35 @@ function _minn_register_block_renderers(MinnRenderer $renderer): void
         'core/calendar' => '_minn_block_calendar',
         'core/home-link' => '_minn_block_home_link',
         'core/breadcrumbs' => '_minn_block_breadcrumbs',
+        'core/site-logo' => '_minn_block_site_logo',
+        'core/footnotes' => '_minn_block_footnotes',
+        'core/legacy-widget' => static fn (MinnBlock $block): string => (string) render_block_core_legacy_widget($block->attrs),
     ];
     foreach ($renderers as $name => $render) {
         $renderer->registerDynamic($name, $render);
     }
+}
+
+/**
+ * @internal The site logo in a page (probe block-renderers-rendered): linked
+ * unless the block says not; its wrapper carries is-default-size without a
+ * width, the alignment and the custom class, then the block's class, and no
+ * style.
+ */
+function _minn_block_site_logo(MinnBlock $block, MinnRenderer $renderer): string
+{
+    // A page renders the block with its type's defaults: linked, in the same tab.
+    $logo = _minn_site_logo_markup($block->attrs + ['isLink' => true, 'linkTarget' => '_self']);
+    $classes = array_filter([empty($block->attrs['width']) ? 'is-default-size' : '', empty($block->attrs['align']) ? '' : 'align' . $block->attrs['align'], $block->className(), 'wp-block-site-logo']);
+    return $logo === '' ? '' : '<div class="' . esc_attr(implode(' ', $classes)) . '">' . $logo . '</div>';
+}
+
+/** @internal the footnotes of the post a page is showing, its style before its class (probe block-renderers-rendered) */
+function _minn_block_footnotes(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $post = $renderer->context()->post();
+    $items = $post === null ? '' : _minn_footnote_items((int) $post->id);
+    return $items === '' ? '' : Wrapper::open('ol', 'wp-block-footnotes', $block, styleFirst: true) . $items . '</ol>';
 }
 
 /** @internal the categories as wp_list_categories lists them, or as a dropdown that goes to the one chosen; each block numbered */

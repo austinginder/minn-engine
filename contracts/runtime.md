@@ -10613,3 +10613,29 @@ front-end pages. It has its own entries for them, with its own block-supports
 wrapper, so `do_blocks` doesn't reach these callbacks. Wiring them in needs a
 probe of rendered pages (a site logo that is set, footnotes in a post, legacy
 widgets in a widget area), as its own batch.
+
+## The site logo, footnotes and legacy widget in pages (2026-10-10)
+
+Probe `block-renderers-rendered` runs the three blocks through `do_blocks`,
+the way pages render them, so the block supports' wrapper applies on the
+reference. The cases:
+- the site logo with a logo set: a width, no width, unlinked, aligned with a
+  class, a new tab, a border style;
+- footnotes in a post's loop, with and without a class and a font size;
+- a legacy widget by base, with empty and with signed encoded settings.
+
+The engine's renderer drew all three as empty. They now render through the
+facade on `minn_block_renderers`, sharing the markup with the direct
+callbacks.
+
+- **The site logo:** the wrapper carries `is-default-size` without a width,
+  then the alignment and the custom class, then `wp-block-site-logo`, with no
+  style (the reference prints none, even for a border). A page renders the
+  block with its type's defaults, so it is linked and opens in the same tab
+  unless the block says otherwise. `Theme\Structure` no longer registers an
+  empty site logo: it ran after the facade's renderers on some paths and
+  undid them.
+- **Footnotes** read the post the page is showing. The wrapper puts the style
+  before the class.
+- **The legacy widget** has no block wrapper; the widget's own markup is the
+  block.

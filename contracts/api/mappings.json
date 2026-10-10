@@ -2,13 +2,13 @@
     "generated": "2026-10-10",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 768,
-        "composes": 1886,
+        "minn": 769,
+        "composes": 1889,
         "leaf": 878,
         "noop": 2622,
         "placeholder": 242,
         "deadend": 1662,
-        "functions": 7980,
+        "functions": 7984,
         "minnMethods": 938,
         "leafLinesOver15": 12
     },
@@ -29703,6 +29703,17 @@
                 "wp_list_categories"
             ]
         },
+        "_minn_block_footnotes": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "_minn_footnote_items"
+            ]
+        },
         "_minn_block_galleries": {
             "file": "media.php",
             "lines": 20,
@@ -29835,6 +29846,16 @@
                 "esc_url",
                 "get_permalink",
                 "get_the_title"
+            ]
+        },
+        "_minn_block_site_logo": {
+            "file": "core-blocks.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_site_logo_markup",
+                "esc_attr"
             ]
         },
         "_minn_block_style_variation": {
@@ -30507,6 +30528,19 @@
             ],
             "composes": [
                 "header"
+            ]
+        },
+        "_minn_footnote_items": {
+            "file": "core-blocks.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "esc_attr",
+                "get_post",
+                "get_post_meta",
+                "post_password_required"
             ]
         },
         "_minn_front_toolbar": {
@@ -31396,10 +31430,11 @@
         },
         "_minn_register_block_renderers": {
             "file": "core-blocks.php",
-            "lines": 18,
+            "lines": 21,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "render_block_core_legacy_widget",
                 "wpautop"
             ]
         },
@@ -31779,6 +31814,18 @@
                 "do_shortcode_tag",
                 "get_shortcode_regex",
                 "shortcode_parse_atts"
+            ]
+        },
+        "_minn_site_logo_markup": {
+            "file": "core-blocks.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "esc_attr__",
+                "get_custom_logo",
+                "remove_filter"
             ]
         },
         "_minn_sitemap_canonical": {
@@ -51709,16 +51756,12 @@
         },
         "render_block_core_footnotes": {
             "file": "core-blocks.php",
-            "lines": 14,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "__",
-                "esc_attr",
-                "get_block_wrapper_attributes",
-                "get_post",
-                "get_post_meta",
-                "post_password_required"
+                "_minn_footnote_items",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_home_link": {
@@ -52130,15 +52173,12 @@
         },
         "render_block_core_site_logo": {
             "file": "core-blocks.php",
-            "lines": 20,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "add_filter",
-                "esc_attr__",
-                "get_block_wrapper_attributes",
-                "get_custom_logo",
-                "remove_filter"
+                "_minn_site_logo_markup",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_site_tagline": {

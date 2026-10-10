@@ -1,0 +1,28 @@
+[
+    [
+        "the site logo",
+        [
+            "<div class=\"wp-block-site-logo\"><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-brr-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" /></a></div>",
+            "<div class=\"is-default-size wp-block-site-logo\"><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"400\" height=\"200\" src=\"{site}/wp-content/uploads/2026/10/zz-brr-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" fetchpriority=\"high\" /></a></div>",
+            "<div class=\"wp-block-site-logo\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-brr-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" /></div>",
+            "<div class=\"aligncenter zz-logo wp-block-site-logo\"><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-brr-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" /></a></div>",
+            "<div class=\"wp-block-site-logo\"><a aria-label=\"(Home link, opens in a new tab)\" target=\"_blank\" href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-brr-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" /></a></div>",
+            "<div class=\"wp-block-site-logo\"><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-brr-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" /></a></div>"
+        ]
+    ],
+    [
+        "footnotes in a post",
+        [
+            "<ol class=\"wp-block-footnotes\"><li id=\"zz-r-one\">First note. <a href=\"#zz-r-one-link\" aria-label=\"Jump to footnote reference 1\">↩︎</a></li><li id=\"zz-r-two\">Second <em>note</em>. <a href=\"#zz-r-two-link\" aria-label=\"Jump to footnote reference 2\">↩︎</a></li></ol>",
+            "<ol style=\"font-size:12px\" class=\"zz-notes wp-block-footnotes\"><li id=\"zz-r-one\">First note. <a href=\"#zz-r-one-link\" aria-label=\"Jump to footnote reference 1\">↩︎</a></li><li id=\"zz-r-two\">Second <em>note</em>. <a href=\"#zz-r-two-link\" aria-label=\"Jump to footnote reference 2\">↩︎</a></li></ol>"
+        ]
+    ],
+    [
+        "the legacy widget",
+        [
+            "<div class=\"widget widget_search\"><form role=\"search\" method=\"get\" class=\"search-form\" action=\"{site}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></div>",
+            "<div class=\"widget widget_search\"><h2 class=\"widgettitle\">ZZ Rendered title</h2><form role=\"search\" method=\"get\" class=\"search-form\" action=\"{site}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></div>",
+            ""
+        ]
+    ]
+]

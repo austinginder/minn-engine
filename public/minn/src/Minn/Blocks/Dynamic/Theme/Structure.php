@@ -36,7 +36,7 @@ final readonly class Structure
         $renderer->registerDynamic('core/pattern', $this->pattern(...));
         $renderer->registerDynamic('core/site-title', $this->siteTitle(...));
         $renderer->registerDynamic('core/site-tagline', $this->siteTagline(...));
-        $renderer->registerDynamic('core/site-logo', static fn () => '');
+        // The site logo is the facade's (minn_block_renderers): it is made of get_custom_logo.
     }
 
     /** The wrapper element follows the part's area: header, footer, or a div. */
