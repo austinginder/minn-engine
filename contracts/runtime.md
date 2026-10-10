@@ -10433,3 +10433,33 @@ string for that check. All four still match their fixtures on both stacks.
 
 The other quoted names the sweep found are hook names, or callbacks checked
 with `has_action`/`has_filter`, which are not calls. They stay owed.
+
+## Template tags left across small files (2026-10-10)
+
+Probe `template-family` proves 22 functions left in category.php, meta.php,
+post-formats.php, post-thumbnail-template.php, nav-menu-template.php,
+shortcodes.php and theme-templates.php. Some of these are common (`get_cat_ID`,
+`get_post_thumbnail_id`, `has_post_thumbnail`, `the_post_thumbnail`,
+`wp_nav_menu`): earlier suites and probes exercised them, but no probe called
+them by name. It covers:
+- category lookups by name and slug, a tag fetched, and old category fields
+  added;
+- registered meta keys and their defaults;
+- post formats: the label, the check, the query var;
+- post thumbnails: id, check, and the URL and tag printed;
+- a classic menu printed five ways, and its tree walked;
+- shortcodes inside HTML attributes, escaped shortcodes unescaped, one
+  stripped, all removed;
+- block templates enabled, and template slugs kept unique in a theme.
+
+The theme's mods and the menu, item and term counts are checked unchanged on
+both stacks.
+
+- **Fix: `wp_filter_wp_template_unique_post_slug`** keeps a template's slug
+  unique within its theme. If another template or part of the same type and
+  theme holds the slug, it moves to -2, -3 and on; its own slug is no clash.
+  Other post types, and a slug something has already settled, come back as
+  given. It used to hand back the override always. It sits on
+  `pre_wp_unique_post_slug`, so templates saved through the engine now get
+  the reference's slugs.
+- Everything else already matched.

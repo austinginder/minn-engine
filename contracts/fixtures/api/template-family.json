@@ -1,0 +1,199 @@
+[
+    [
+        "categories and tags",
+        [
+            1,
+            "{zz-tf-cat}",
+            "{zz-tf-cat}",
+            0,
+            0,
+            {
+                "term_id": "{zz-tf-cat}",
+                "name": "zz tf cat",
+                "slug": "zz-tf-cat",
+                "taxonomy": "category"
+            },
+            {
+                "term_id": "{zz-tf-cat}",
+                "name": "zz tf cat",
+                "slug": "zz-tf-cat",
+                "taxonomy": "category"
+            },
+            false,
+            false,
+            {
+                "term_id": "{zz-tf-tag}",
+                "name": "zz tf tag",
+                "slug": "zz-tf-tag",
+                "taxonomy": "post_tag"
+            },
+            {
+                "term_id": "{zz-tf-tag}",
+                "name": "zz tf tag",
+                "slug": "zz-tf-tag",
+                "taxonomy": "post_tag"
+            },
+            null,
+            {
+                "term_id": "{zz-tf-tag}",
+                "name": "zz tf tag",
+                "slug": "zz-tf-tag",
+                "taxonomy": "post_tag"
+            },
+            [
+                {
+                    "cat_ID": "{zz-tf-cat}",
+                    "category_count": 0,
+                    "category_description": "",
+                    "cat_name": "zz tf cat",
+                    "category_nicename": "zz-tf-cat",
+                    "category_parent": 0
+                },
+                {
+                    "cat_ID": "{zz-tf-cat}",
+                    "category_count": 0,
+                    "category_description": "",
+                    "cat_name": "zz tf cat",
+                    "category_nicename": "zz-tf-cat",
+                    "category_parent": 0
+                }
+            ]
+        ]
+    ],
+    [
+        "registered meta",
+        [
+            false,
+            true,
+            false,
+            true,
+            false,
+            false,
+            "meta default",
+            [
+                "meta default"
+            ],
+            "meta default",
+            null,
+            null,
+            "meta default"
+        ]
+    ],
+    [
+        "post formats",
+        [
+            "Aside",
+            "Standard",
+            "",
+            "Standard",
+            true,
+            true,
+            false,
+            true,
+            true,
+            false,
+            false,
+            {
+                "post_format": "post-format-aside",
+                "post_type": [
+                    "post"
+                ]
+            },
+            {
+                "post_format": "post-format-aside",
+                "post_type": [
+                    "post"
+                ]
+            },
+            {
+                "post_format": "zz",
+                "post_type": [
+                    "post"
+                ]
+            },
+            {
+                "post_format": "post-format-standard",
+                "post_type": [
+                    "post"
+                ]
+            },
+            {
+                "p": 5
+            }
+        ]
+    ],
+    [
+        "post thumbnails",
+        [
+            "{image}",
+            "{image}",
+            "{image}",
+            0,
+            false,
+            true,
+            true,
+            false,
+            false,
+            "{site}/wp-content/uploads/2026/10/zz-tf-image-640x427.jpg",
+            "{site}/wp-content/uploads/2026/10/zz-tf-image-300x200.jpg",
+            "{site}/wp-content/uploads/2026/10/zz-tf-image.jpg",
+            "<img width=\"640\" height=\"427\" src=\"{site}/wp-content/uploads/2026/10/zz-tf-image-640x427.jpg\" class=\"attachment-post-thumbnail size-post-thumbnail wp-post-image\" alt=\"\" decoding=\"async\" fetchpriority=\"high\" srcset=\"{site}/wp-content/uploads/2026/10/zz-tf-image-640x427.jpg 640w, {site}/wp-content/uploads/2026/10/zz-tf-image-300x200.jpg 300w, {site}/wp-content/uploads/2026/10/zz-tf-image.jpg 1200w\" sizes=\"(max-width: 640px) 100vw, 640px\" />",
+            "<img width=\"300\" height=\"200\" src=\"{site}/wp-content/uploads/2026/10/zz-tf-image-300x200.jpg\" class=\"zz-thumb wp-post-image\" alt=\"ZZ alt\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-tf-image-300x200.jpg 300w, {site}/wp-content/uploads/2026/10/zz-tf-image-640x427.jpg 640w, {site}/wp-content/uploads/2026/10/zz-tf-image.jpg 1200w\" sizes=\"(max-width: 300px) 100vw, 300px\" />",
+            "<img width=\"1200\" height=\"800\" src=\"{site}/wp-content/uploads/2026/10/zz-tf-image.jpg\" class=\"attachment-full size-full wp-post-image\" alt=\"\" loading=\"eager\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-tf-image.jpg 1200w, {site}/wp-content/uploads/2026/10/zz-tf-image-300x200.jpg 300w, {site}/wp-content/uploads/2026/10/zz-tf-image-640x427.jpg 640w\" sizes=\"(max-width: 1200px) 100vw, 1200px\" />"
+        ]
+    ],
+    [
+        "a classic menu",
+        [
+            "<div class=\"menu-zz-tf-menu-container\"><ul id=\"menu-zz-tf-menu\" class=\"menu\"><li id=\"menu-item-{item-a}\" class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-has-children menu-item-{item-a}\"><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">zz tf plain</a>\n<ul class=\"sub-menu\">\n\t<li id=\"menu-item-{item-b}\" class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{item-b}\"><a href=\"https://zz.example/child\">ZZ Child</a></li>\n</ul>\n</li>\n<li id=\"menu-item-{item-c}\" class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><a href=\"{site}/category/zz-tf-cat/\">zz tf cat</a></li>\n</ul></div>",
+            "<nav class=\"zz-nav\"><ul id=\"menu-zz-tf-menu-1\" class=\"zz-list\"><li class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-{item-a}\"><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">zz tf plain</a></li>\n<li class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><a href=\"{site}/category/zz-tf-cat/\">zz tf cat</a></li>\n</ul></nav>",
+            "<ol id=\"menu-zz-tf-menu-2\" class=\"menu\"><li class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-has-children menu-item-{item-a}\"><b><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">[zz tf plain]</a></b>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{item-b}\"><b><a href=\"https://zz.example/child\">[ZZ Child]</a></b></li>\n</ul>\n</li>\n<li class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><b><a href=\"{site}/category/zz-tf-cat/\">[zz tf cat]</a></b></li>\n</ol>",
+            "<div class=\"menu-zz-tf-menu-container\"><ul id=\"menu-zz-tf-menu-3\" class=\"menu\"><li class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-has-children menu-item-{item-a}\"><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">zz tf plain</a>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{item-b}\"><a href=\"https://zz.example/child\">ZZ Child</a></li>\n</ul>\n</li>\n<li class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><a href=\"{site}/category/zz-tf-cat/\">zz tf cat</a></li>\n</ul></div>",
+            "<div class=\"menu-zz-tf-menu-container\"><ul id=\"zz-given-id\" class=\"menu\"><li class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-has-children menu-item-{item-a}\"><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">zz tf plain</a>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{item-b}\"><a href=\"https://zz.example/child\">ZZ Child</a></li>\n</ul>\n</li>\n<li class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><a href=\"{site}/category/zz-tf-cat/\">zz tf cat</a></li>\n</ul></div>",
+            "<li class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-{item-a}\"><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">zz tf plain</a>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{item-b}\"><a href=\"https://zz.example/child\">ZZ Child</a></li>\n</ul>\n</li>\n<li class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><a href=\"{site}/category/zz-tf-cat/\">zz tf cat</a></li>\n",
+            "<li class=\"menu-item menu-item-type-post_type menu-item-object-post current-menu-item menu-item-{item-a}\"><a href=\"{site}/zz-tf-plain/\" aria-current=\"page\">zz tf plain</a></li><li class=\"menu-item menu-item-type-taxonomy menu-item-object-category menu-item-{item-c}\"><a href=\"{site}/category/zz-tf-cat/\">zz tf cat</a></li>"
+        ]
+    ],
+    [
+        "shortcodes",
+        [
+            "<a title=\"ZZ&#91;1|&#93;\" href=\"x\">[zz_tf]</a>",
+            "<a title=\"&#91;zz_tf a=1&#93;\">x</a>",
+            "<!-- &#91;zz_tf&#93; --><p data-x=\"&#91;zz_tf&#93;\">y</p>",
+            "<p>[zz_tf]</p>",
+            "[zz_tf] and [nope]",
+            "plain",
+            "",
+            "[",
+            "do_shortcode",
+            [
+                false,
+                false,
+                "[zz_tf]"
+            ]
+        ]
+    ],
+    [
+        "template slugs kept unique in a theme",
+        [
+            "zz-tf-one-2",
+            "zz-tf-one",
+            "zz-tf-one-2",
+            "zz-tf-one",
+            "given",
+            "zz-tf-one-2"
+        ]
+    ],
+    [
+        "block templates",
+        [
+            true,
+            null,
+            true,
+            "given-slug",
+            "given-slug",
+            "index",
+            "override"
+        ]
+    ]
+]

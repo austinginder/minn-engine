@@ -2715,9 +2715,26 @@ function wp_check_post_hierarchy_for_loops($post_parent, $post_id)
  * concern (Minn\Rest\TemplatesController keeps it unique per theme), so
  * this hands every slug back as it came.
  */
+/**
+ * A template's slug kept unique within its theme (probe template-family):
+ * another template or part of the same type and theme already holding it
+ * pushes it to -2, -3 and on. Its own slug is no clash. Other post types, and
+ * a slug something has already settled, are left as given.
+ */
 function wp_filter_wp_template_unique_post_slug($override_slug, $slug, $post_id, $post_status, $post_type)
 {
-    return $override_slug;
+    if ($override_slug !== null || !in_array($post_type, ['wp_template', 'wp_template_part'], true)) {
+        return $override_slug;
+    }
+    $terms = $post_id ? get_the_terms((int) $post_id, 'wp_theme') : false;
+    $theme = is_array($terms) && $terms !== [] ? $terms[0]->name : get_stylesheet();
+    $taken = static fn (string $candidate): bool => get_posts(['post_type' => $post_type, 'name' => $candidate, 'post_status' => 'any', 'post__not_in' => [(int) $post_id], 'fields' => 'ids', 'numberposts' => 1, 'no_found_rows' => true,
+        'tax_query' => [['taxonomy' => 'wp_theme', 'field' => 'name', 'terms' => $theme]]]) !== [];
+    $candidate = (string) $slug;
+    for ($n = 2; $taken($candidate); $n++) {
+        $candidate = "{$slug}-{$n}";
+    }
+    return $candidate;
 }
 
 /** wp_insert_post_data's default, for the customizer's changesets, which Minn does not keep: the data as it came. */
