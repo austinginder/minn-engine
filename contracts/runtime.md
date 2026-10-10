@@ -10171,3 +10171,27 @@ Fixes:
 
 Left out: `user_can_create_post` and `user_can_edit_post` for a user that does
 not exist, because the reference warns when it reads one.
+
+## The rest of admin-bar.php (2026-10-10)
+
+Probe `admin-bar-remaining` proves the 16 toolbar menu builders that were
+left. It runs each builder alone on a fresh `WP_Admin_Bar` and reads back the
+nodes it adds, in order. It does this for the front views an administrator
+sees (a post, a page, a category, an author, search, the home page), for a
+subscriber, and for a visitor who is signed out. WP-CLI never loads the
+toolbar class on the reference, so the probe loads it there; the engine
+autoloads it.
+
+- **The comments menu** shows the site's moderation count. The probe masks it
+  as `{held}`, but only when it equals the stack's own `wp_count_comments`.
+- **Fix: a signed-out visitor's WordPress logo** has only `tabindex`, with no
+  `menu_title`, because there is no about page to link to.
+
+Everything else already matched:
+- the account item and menu;
+- the site, edit site, comments, appearance and new content menus;
+- the edit link for each view;
+- the search form;
+- the secondary groups;
+- the menus a single site leaves empty: my sites, updates, recovery mode,
+  the command palette and the sidebar toggle.

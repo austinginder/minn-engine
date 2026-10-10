@@ -1,0 +1,844 @@
+[
+    [
+        "an administrator",
+        {
+            "a post": {
+                "my account item": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/profile.php",
+                        "id": "my-account",
+                        "meta": {
+                            "class": "with-avatar",
+                            "menu_title": "Howdy, admin",
+                            "tabindex": ""
+                        },
+                        "parent": "top-secondary",
+                        "title": "Howdy, <span class=\"display-name\">admin</span><img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=28&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=56&#038;d=mm&#038;r=g 2x' class='avatar avatar-28 photo' height='28' width='28' loading='lazy' decoding='async'/>"
+                    }
+                ],
+                "my account menu": [
+                    {
+                        "group": true,
+                        "href": false,
+                        "id": "user-actions",
+                        "meta": [],
+                        "parent": "my-account",
+                        "title": false
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/profile.php",
+                        "id": "user-info",
+                        "meta": [],
+                        "parent": "user-actions",
+                        "title": "<img alt='' src='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=64&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/91363ac538a6a04a7c9e2d4a024e1d9c66f8b7ccea20f6aeabcf7e968194cd31?s=128&#038;d=mm&#038;r=g 2x' class='avatar avatar-64 photo' height='64' width='64' loading='lazy' decoding='async'/><span class='display-name'>admin</span><span class='display-name edit-profile'>Edit Profile</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-login.php?action=logout&amp;_wpnonce={nonce}",
+                        "id": "logout",
+                        "meta": [],
+                        "parent": "user-actions",
+                        "title": "Log Out"
+                    }
+                ],
+                "sidebar toggle": [],
+                "wp menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/about.php",
+                        "id": "wp-logo",
+                        "meta": {
+                            "menu_title": "About WordPress"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"screen-reader-text\">About WordPress</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/about.php",
+                        "id": "about",
+                        "meta": [],
+                        "parent": "wp-logo",
+                        "title": "About WordPress"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/contribute.php",
+                        "id": "contribute",
+                        "meta": [],
+                        "parent": "wp-logo",
+                        "title": "Get Involved"
+                    },
+                    {
+                        "group": false,
+                        "href": "https://wordpress.org/",
+                        "id": "wporg",
+                        "meta": [],
+                        "parent": "wp-logo-external",
+                        "title": "WordPress.org"
+                    },
+                    {
+                        "group": false,
+                        "href": "https://wordpress.org/documentation/",
+                        "id": "documentation",
+                        "meta": [],
+                        "parent": "wp-logo-external",
+                        "title": "Documentation"
+                    },
+                    {
+                        "group": false,
+                        "href": "https://learn.wordpress.org/",
+                        "id": "learn",
+                        "meta": [],
+                        "parent": "wp-logo-external",
+                        "title": "Learn WordPress"
+                    },
+                    {
+                        "group": false,
+                        "href": "https://wordpress.org/support/forums/",
+                        "id": "support-forums",
+                        "meta": [],
+                        "parent": "wp-logo-external",
+                        "title": "Support"
+                    },
+                    {
+                        "group": false,
+                        "href": "https://wordpress.org/support/forum/requests-and-feedback",
+                        "id": "feedback",
+                        "meta": [],
+                        "parent": "wp-logo-external",
+                        "title": "Feedback"
+                    }
+                ],
+                "site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/",
+                        "id": "site-name",
+                        "meta": {
+                            "menu_title": "Minn"
+                        },
+                        "parent": false,
+                        "title": "Minn"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/",
+                        "id": "dashboard",
+                        "meta": [],
+                        "parent": "site-name",
+                        "title": "Dashboard"
+                    },
+                    {
+                        "group": true,
+                        "href": false,
+                        "id": "appearance",
+                        "meta": [],
+                        "parent": "site-name",
+                        "title": false
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/themes.php",
+                        "id": "themes",
+                        "meta": [],
+                        "parent": "appearance",
+                        "title": "Themes"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/plugins.php",
+                        "id": "plugins",
+                        "meta": [],
+                        "parent": "site-name",
+                        "title": "Plugins"
+                    }
+                ],
+                "edit site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/site-editor.php?postType=wp_template&canvas=edit",
+                        "id": "site-editor",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Site"
+                    }
+                ],
+                "my sites menu": [],
+                "updates menu": [],
+                "comments menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/edit-comments.php",
+                        "id": "comments",
+                        "meta": [],
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label awaiting-mod pending-count count-{held}\" aria-hidden=\"true\">{held}</span><span class=\"screen-reader-text comments-in-moderation-text\">{held} Comments in moderation</span>"
+                    }
+                ],
+                "appearance menu": [
+                    {
+                        "group": true,
+                        "href": false,
+                        "id": "appearance",
+                        "meta": [],
+                        "parent": "site-name",
+                        "title": false
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/themes.php",
+                        "id": "themes",
+                        "meta": [],
+                        "parent": "appearance",
+                        "title": "Themes"
+                    }
+                ],
+                "new content menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-content",
+                        "meta": {
+                            "menu_title": "New"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label\">New</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-post",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Post"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/media-new.php",
+                        "id": "new-media",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Media"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php?post_type=page",
+                        "id": "new-page",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Page"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/user-new.php",
+                        "id": "new-user",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "User"
+                    }
+                ],
+                "edit menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post.php?post={zz-ab-single}&amp;action=edit",
+                        "id": "edit",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Post"
+                    }
+                ],
+                "secondary groups": [
+                    {
+                        "group": true,
+                        "href": false,
+                        "id": "top-secondary",
+                        "meta": {
+                            "class": "ab-top-secondary"
+                        },
+                        "parent": false,
+                        "title": false
+                    },
+                    {
+                        "group": true,
+                        "href": false,
+                        "id": "wp-logo-external",
+                        "meta": {
+                            "class": "ab-sub-secondary"
+                        },
+                        "parent": "wp-logo",
+                        "title": false
+                    }
+                ],
+                "recovery mode menu": [],
+                "search menu": [
+                    {
+                        "group": false,
+                        "href": false,
+                        "id": "search",
+                        "meta": {
+                            "class": "admin-bar-search",
+                            "tabindex": -1
+                        },
+                        "parent": "top-secondary",
+                        "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                    }
+                ],
+                "command palette menu": []
+            },
+            "a page": {
+                "edit site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/site-editor.php?postType=wp_template&canvas=edit",
+                        "id": "site-editor",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Site"
+                    }
+                ],
+                "new content menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-content",
+                        "meta": {
+                            "menu_title": "New"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label\">New</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-post",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Post"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/media-new.php",
+                        "id": "new-media",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Media"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php?post_type=page",
+                        "id": "new-page",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Page"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/user-new.php",
+                        "id": "new-user",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "User"
+                    }
+                ],
+                "edit menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post.php?post={zz-ab-page}&amp;action=edit",
+                        "id": "edit",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Page"
+                    }
+                ],
+                "search menu": [
+                    {
+                        "group": false,
+                        "href": false,
+                        "id": "search",
+                        "meta": {
+                            "class": "admin-bar-search",
+                            "tabindex": -1
+                        },
+                        "parent": "top-secondary",
+                        "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                    }
+                ]
+            },
+            "a category": {
+                "edit site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/site-editor.php?postType=wp_template&canvas=edit",
+                        "id": "site-editor",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Site"
+                    }
+                ],
+                "new content menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-content",
+                        "meta": {
+                            "menu_title": "New"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label\">New</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-post",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Post"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/media-new.php",
+                        "id": "new-media",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Media"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php?post_type=page",
+                        "id": "new-page",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Page"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/user-new.php",
+                        "id": "new-user",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "User"
+                    }
+                ],
+                "edit menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/term.php?taxonomy=category&tag_ID={zz-ab-cat}&post_type=post",
+                        "id": "edit",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Category"
+                    }
+                ],
+                "search menu": [
+                    {
+                        "group": false,
+                        "href": false,
+                        "id": "search",
+                        "meta": {
+                            "class": "admin-bar-search",
+                            "tabindex": -1
+                        },
+                        "parent": "top-secondary",
+                        "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                    }
+                ]
+            },
+            "an author": {
+                "edit site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/site-editor.php?postType=wp_template&canvas=edit",
+                        "id": "site-editor",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Site"
+                    }
+                ],
+                "new content menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-content",
+                        "meta": {
+                            "menu_title": "New"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label\">New</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-post",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Post"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/media-new.php",
+                        "id": "new-media",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Media"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php?post_type=page",
+                        "id": "new-page",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Page"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/user-new.php",
+                        "id": "new-user",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "User"
+                    }
+                ],
+                "edit menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/profile.php",
+                        "id": "edit",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit User"
+                    }
+                ],
+                "search menu": [
+                    {
+                        "group": false,
+                        "href": false,
+                        "id": "search",
+                        "meta": {
+                            "class": "admin-bar-search",
+                            "tabindex": -1
+                        },
+                        "parent": "top-secondary",
+                        "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                    }
+                ]
+            },
+            "search": {
+                "edit site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/site-editor.php?postType=wp_template&canvas=edit",
+                        "id": "site-editor",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Site"
+                    }
+                ],
+                "new content menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-content",
+                        "meta": {
+                            "menu_title": "New"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label\">New</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-post",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Post"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/media-new.php",
+                        "id": "new-media",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Media"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php?post_type=page",
+                        "id": "new-page",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Page"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/user-new.php",
+                        "id": "new-user",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "User"
+                    }
+                ],
+                "edit menu": [],
+                "search menu": [
+                    {
+                        "group": false,
+                        "href": false,
+                        "id": "search",
+                        "meta": {
+                            "class": "admin-bar-search",
+                            "tabindex": -1
+                        },
+                        "parent": "top-secondary",
+                        "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                    }
+                ]
+            },
+            "the home page": {
+                "edit site menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/site-editor.php?postType=wp_template&canvas=edit",
+                        "id": "site-editor",
+                        "meta": [],
+                        "parent": false,
+                        "title": "Edit Site"
+                    }
+                ],
+                "new content menu": [
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-content",
+                        "meta": {
+                            "menu_title": "New"
+                        },
+                        "parent": false,
+                        "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"ab-label\">New</span>"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php",
+                        "id": "new-post",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Post"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/media-new.php",
+                        "id": "new-media",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Media"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/post-new.php?post_type=page",
+                        "id": "new-page",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "Page"
+                    },
+                    {
+                        "group": false,
+                        "href": "{site}/wp-admin/user-new.php",
+                        "id": "new-user",
+                        "meta": [],
+                        "parent": "new-content",
+                        "title": "User"
+                    }
+                ],
+                "edit menu": [],
+                "search menu": [
+                    {
+                        "group": false,
+                        "href": false,
+                        "id": "search",
+                        "meta": {
+                            "class": "admin-bar-search",
+                            "tabindex": -1
+                        },
+                        "parent": "top-secondary",
+                        "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                    }
+                ]
+            }
+        }
+    ],
+    [
+        "a subscriber",
+        {
+            "my account item": [
+                {
+                    "group": false,
+                    "href": "{site}/wp-admin/profile.php",
+                    "id": "my-account",
+                    "meta": {
+                        "class": "with-avatar",
+                        "menu_title": "Howdy, Zz Reader",
+                        "tabindex": ""
+                    },
+                    "parent": "top-secondary",
+                    "title": "Howdy, <span class=\"display-name\">Zz Reader</span><img alt='' src='https://secure.gravatar.com/avatar/28cde6e1c2b647ff319858369010ca85c58135f3d0fdd8c2ffed1b33d4a8ab97?s=28&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/28cde6e1c2b647ff319858369010ca85c58135f3d0fdd8c2ffed1b33d4a8ab97?s=56&#038;d=mm&#038;r=g 2x' class='avatar avatar-28 photo' height='28' width='28' loading='lazy' decoding='async'/>"
+                }
+            ],
+            "my account menu": [
+                {
+                    "group": true,
+                    "href": false,
+                    "id": "user-actions",
+                    "meta": [],
+                    "parent": "my-account",
+                    "title": false
+                },
+                {
+                    "group": false,
+                    "href": "{site}/wp-admin/profile.php",
+                    "id": "user-info",
+                    "meta": [],
+                    "parent": "user-actions",
+                    "title": "<img alt='' src='https://secure.gravatar.com/avatar/28cde6e1c2b647ff319858369010ca85c58135f3d0fdd8c2ffed1b33d4a8ab97?s=64&#038;d=mm&#038;r=g' srcset='https://secure.gravatar.com/avatar/28cde6e1c2b647ff319858369010ca85c58135f3d0fdd8c2ffed1b33d4a8ab97?s=128&#038;d=mm&#038;r=g 2x' class='avatar avatar-64 photo' height='64' width='64' loading='lazy' decoding='async'/><span class='display-name'>Zz Reader</span><span class='username'>zz_ab_reader</span><span class='display-name edit-profile'>Edit Profile</span>"
+                },
+                {
+                    "group": false,
+                    "href": "{site}/wp-login.php?action=logout&amp;_wpnonce={nonce}",
+                    "id": "logout",
+                    "meta": [],
+                    "parent": "user-actions",
+                    "title": "Log Out"
+                }
+            ],
+            "site menu": [
+                {
+                    "group": false,
+                    "href": "{site}/wp-admin/",
+                    "id": "site-name",
+                    "meta": {
+                        "menu_title": "Minn"
+                    },
+                    "parent": false,
+                    "title": "Minn"
+                },
+                {
+                    "group": false,
+                    "href": "{site}/wp-admin/",
+                    "id": "dashboard",
+                    "meta": [],
+                    "parent": "site-name",
+                    "title": "Dashboard"
+                },
+                {
+                    "group": true,
+                    "href": false,
+                    "id": "appearance",
+                    "meta": [],
+                    "parent": "site-name",
+                    "title": false
+                }
+            ],
+            "edit site menu": [],
+            "comments menu": [],
+            "appearance menu": [
+                {
+                    "group": true,
+                    "href": false,
+                    "id": "appearance",
+                    "meta": [],
+                    "parent": "site-name",
+                    "title": false
+                }
+            ],
+            "new content menu": [],
+            "edit menu": [],
+            "search menu": [
+                {
+                    "group": false,
+                    "href": false,
+                    "id": "search",
+                    "meta": {
+                        "class": "admin-bar-search",
+                        "tabindex": -1
+                    },
+                    "parent": "top-secondary",
+                    "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                }
+            ]
+        }
+    ],
+    [
+        "signed out",
+        {
+            "my account item": [],
+            "wp menu": [
+                {
+                    "group": false,
+                    "href": false,
+                    "id": "wp-logo",
+                    "meta": {
+                        "tabindex": 0
+                    },
+                    "parent": false,
+                    "title": "<span class=\"ab-icon\" aria-hidden=\"true\"></span><span class=\"screen-reader-text\">About WordPress</span>"
+                },
+                {
+                    "group": false,
+                    "href": "https://wordpress.org/",
+                    "id": "wporg",
+                    "meta": [],
+                    "parent": "wp-logo-external",
+                    "title": "WordPress.org"
+                },
+                {
+                    "group": false,
+                    "href": "https://wordpress.org/documentation/",
+                    "id": "documentation",
+                    "meta": [],
+                    "parent": "wp-logo-external",
+                    "title": "Documentation"
+                },
+                {
+                    "group": false,
+                    "href": "https://learn.wordpress.org/",
+                    "id": "learn",
+                    "meta": [],
+                    "parent": "wp-logo-external",
+                    "title": "Learn WordPress"
+                },
+                {
+                    "group": false,
+                    "href": "https://wordpress.org/support/forums/",
+                    "id": "support-forums",
+                    "meta": [],
+                    "parent": "wp-logo-external",
+                    "title": "Support"
+                },
+                {
+                    "group": false,
+                    "href": "https://wordpress.org/support/forum/requests-and-feedback",
+                    "id": "feedback",
+                    "meta": [],
+                    "parent": "wp-logo-external",
+                    "title": "Feedback"
+                }
+            ],
+            "site menu": [],
+            "new content menu": [],
+            "edit menu": [],
+            "search menu": [
+                {
+                    "group": false,
+                    "href": false,
+                    "id": "search",
+                    "meta": {
+                        "class": "admin-bar-search",
+                        "tabindex": -1
+                    },
+                    "parent": "top-secondary",
+                    "title": "<form action=\"{site}/\" method=\"get\" id=\"adminbarsearch\"><input class=\"adminbar-input\" name=\"s\" id=\"adminbar-search\" type=\"text\" value=\"\" maxlength=\"150\" /><label for=\"adminbar-search\" class=\"screen-reader-text\">Search</label><input type=\"submit\" class=\"adminbar-button\" value=\"Search\" /></form>"
+                }
+            ]
+        }
+    ]
+]

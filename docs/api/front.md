@@ -46,7 +46,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
 | [`TermLists`](#termlists) | final class | 97 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
-| [`ToolbarMenus`](#toolbarmenus) | final class | 338 | The nodes WordPress puts on the toolbar itself, as the reference adds |
+| [`ToolbarMenus`](#toolbarmenus) | final class | 339 | The nodes WordPress puts on the toolbar itself, as the reference adds |
 | [`ToolbarTree`](#toolbartree) | final class | 90 | WP_Admin_Bar's nodes bound into the tree they print as, as the reference |
 
 ## AdminBar
@@ -1584,7 +1584,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 45), `creatable()` (private, line 246), `editPost()` (private, line 293), `editTerm()` (private, line 303)
+Internals: `profileUrl()` (private, line 45), `creatable()` (private, line 247), `editPost()` (private, line 294), `editTerm()` (private, line 304)
 
 
 ## ToolbarTree

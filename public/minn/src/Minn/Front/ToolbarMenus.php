@@ -100,7 +100,8 @@ final class ToolbarMenus
             'id' => 'wp-logo',
             'title' => self::ICON . '<span class="screen-reader-text">' . Gettext::text('About WordPress') . '</span>',
             'href' => $about,
-            'meta' => ['menu_title' => Gettext::text('About WordPress')] + ($about === false ? ['tabindex' => 0] : []),
+            // Without the about page to link to, the logo is only focusable: no menu title (probe admin-bar-remaining).
+            'meta' => $about === false ? ['tabindex' => 0] : ['menu_title' => Gettext::text('About WordPress')],
         ]);
         if ($reads) {
             $bar->add_node(['parent' => 'wp-logo', 'id' => 'about', 'title' => Gettext::text('About WordPress'), 'href' => $about]);

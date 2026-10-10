@@ -51272,7 +51272,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/ToolbarMenus.php",
-            "lines": 338,
+            "lines": 339,
             "doc": "The nodes WordPress puts on the toolbar itself, as the reference adds\nthem on the front end for whoever is signed in (probe admin-bar): the\naccount menu, the WordPress menu, the site menu with its appearance\ngroup, the site editor and customizer links, updates, comments, new\ncontent, the edit link for what the page shows, the shortlink, the\nsecondary groups, and the search box. Each is one admin_bar_menu\ncallback, so plugins can unhook any of them by name.",
             "implements": [],
             "extends": null,
@@ -51378,7 +51378,7 @@
                         }
                     ],
                     "line": 95,
-                    "end": 119
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -51397,8 +51397,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 149
+                    "line": 123,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -51417,8 +51417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 152,
-                    "end": 173
+                    "line": 153,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -51437,8 +51437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 187
+                    "line": 177,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -51457,8 +51457,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 199
+                    "line": 191,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -51477,8 +51477,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 212
+                    "line": 203,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -51497,8 +51497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 225
+                    "line": 216,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -51517,8 +51517,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 243
+                    "line": 229,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -51537,8 +51537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 290
+                    "line": 276,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -51557,8 +51557,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 321
+                    "line": 314,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -51577,8 +51577,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 328
+                    "line": 325,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -51597,8 +51597,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 342
+                    "line": 332,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -51617,8 +51617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 345,
-                    "end": 356
+                    "line": 346,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -51651,8 +51651,8 @@
                         "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
                     ],
                     "params": [],
-                    "line": 246,
-                    "end": 272
+                    "line": 247,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -51673,8 +51673,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 300
+                    "line": 294,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -51695,8 +51695,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 310
+                    "line": 304,
+                    "end": 311
                 }
             ]
         },
