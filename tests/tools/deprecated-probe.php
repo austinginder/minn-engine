@@ -249,7 +249,7 @@ $say('gzip_compression', 'gzip_compression');
 $say('debug_fopen', static fn () => [debug_fopen(sys_get_temp_dir() . '/zz-debug.log', 'a'), debug_fwrite(false, 'x'), debug_fclose(false)]);
 $say('gd_edit_image_support', static fn () => [gd_edit_image_support('image/jpeg'), gd_edit_image_support('image/nope')]);
 $say('wp_explain_nonce', static fn () => wp_explain_nonce('zz-action'));
-$say('wp_get_cookie_login', 'wp_get_cookie_login');
+$say('wp_get_cookie_login', static fn () => wp_get_cookie_login());
 $say('wp_login', static fn () => [wp_login('zz_old_author', 'wrong'), wp_login('zz_nobody', 'x')]);
 $say('force_ssl_login', static fn () => force_ssl_login());
 $say('clean_page_cache, update_page_cache, update_category_cache', static function () {

@@ -44,7 +44,13 @@ $listen = static function (Closure $call) use (&$heard) {
     return [$result, $heard];
 };
 
-$sources = ['core/pattern-overrides' => '_register_block_bindings_pattern_overrides_source', 'core/post-data' => '_register_block_bindings_post_data_source', 'core/post-meta' => '_register_block_bindings_post_meta_source', 'core/term-data' => '_register_block_bindings_term_data_source'];
+// Each source's registering function by name (for its init hook) and called by name (so the proof count sees it).
+$sources = [
+    'core/pattern-overrides' => ['_register_block_bindings_pattern_overrides_source', static fn () => _register_block_bindings_pattern_overrides_source()],
+    'core/post-data' => ['_register_block_bindings_post_data_source', static fn () => _register_block_bindings_post_data_source()],
+    'core/post-meta' => ['_register_block_bindings_post_meta_source', static fn () => _register_block_bindings_post_meta_source()],
+    'core/term-data' => ['_register_block_bindings_term_data_source', static fn () => _register_block_bindings_term_data_source()],
+];
 $source = static function (string $name) {
     $found = get_block_bindings_source($name);
     if ($found === null) {
@@ -53,7 +59,7 @@ $source = static function (string $name) {
     return [$found->name, $found->label, $found->uses_context];
 };
 $say('the core bindings sources', array_map(static function (string $name) use ($sources, $source) {
-    $function = $sources[$name];
+    [$hooked, $function] = $sources[$name];
     // The engine's probe runner fires no init, where the sources register; the function does it here.
     if ($source($name) === null) {
         $function();
@@ -62,7 +68,7 @@ $say('the core bindings sources', array_map(static function (string $name) use (
     unregister_block_bindings_source($name);
     $gone = $source($name);
     $result = $function();
-    return [$name, has_action('init', $function), $before, $gone, $result, $source($name) === $before];
+    return [$name, has_action('init', $hooked), $before, $gone, $result, $source($name) === $before];
 }, array_keys($sources)));
 
 $say('the old cache reset', $listen(static function () {

@@ -145,7 +145,7 @@ $say('the route a queried object answers to', (static function () {
 })());
 
 $say('preloading', $mask((static function () {
-    $memo = array_reduce(['/wp/v2/types/post', '/wp/v2/posts?per_page=1&_fields=id', ['/zz-probe/v1/args', 'OPTIONS'], '/wp/v2/zz-none', '', 'zz'], 'rest_preload_api_request', []);
+    $memo = array_reduce(['/wp/v2/types/post', '/wp/v2/posts?per_page=1&_fields=id', ['/zz-probe/v1/args', 'OPTIONS'], '/wp/v2/zz-none', '', 'zz'], static fn ($memo, $path) => rest_preload_api_request($memo, $path), []);
     return array_map(static fn ($entry) => is_array($entry) && isset($entry['body']) ? ['body keys' => is_array($entry['body']) ? array_keys($entry['body']) : gettype($entry['body']), 'headers' => isset($entry['headers']) ? array_keys($entry['headers']) : null] : (is_array($entry) ? array_map(static fn ($method) => array_keys((array) ($method['body'] ?? [])), $entry) : $entry), $memo);
 })()));
 

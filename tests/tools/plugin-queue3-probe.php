@@ -141,9 +141,9 @@ $_SERVER = $saved;
 $say('wp_privacy_exports', [str_replace(wp_upload_dir()['basedir'], '{uploads}', wp_privacy_exports_dir()), str_replace(wp_upload_dir()['baseurl'], '{uploads}', wp_privacy_exports_url())]);
 
 // A block theme's header and footer.
-foreach (['block_header_area', 'block_footer_area'] as $area) {
+foreach (['block_header_area' => static fn () => block_header_area(), 'block_footer_area' => static fn () => block_footer_area()] as $area => $render) {
     ob_start();
-    $area();
+    $render();
     $html = (string) ob_get_clean();
     $say($area, [$html !== '', substr_count($html, '<header') + substr_count($html, '<footer'), str_contains($html, 'wp-block-site-title') || str_contains($html, 'wp-block-group')]);
 }

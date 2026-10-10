@@ -10415,3 +10415,21 @@ support's styles for a parsed block. Fixes:
 - **`wp_render_elements_support_styles`** leaves a block nobody registered
   alone. A registered block gets its elements class even when its type
   declares no color support, as on the reference.
+
+## Calls the proof count could not see (2026-10-10)
+
+This batch swept every probe for still-unproven functions whose names appear
+only as strings. Four probes compared their behaviour with the reference but
+called them through a string or a variable, which the proof count does not
+see:
+- `runtime-internals`: the four core block bindings sources;
+- `plugin-queue3`: `block_header_area` and `block_footer_area`;
+- `rest-api-helpers`: `rest_preload_api_request`, as `array_reduce`'s callable;
+- `deprecated`: `wp_get_cookie_login`.
+
+Each now calls the function by name through a closure. Where the name is also
+needed as a hook callback (`has_action('init', …)`), the probe keeps the
+string for that check. All four still match their fixtures on both stacks.
+
+The other quoted names the sweep found are hook names, or callbacks checked
+with `has_action`/`has_filter`, which are not calls. They stay owed.
