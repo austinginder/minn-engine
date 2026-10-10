@@ -807,3 +807,10 @@ function create_initial_rest_routes()
         $controller->register_routes();
     }
 }
+
+/** @internal the subtypes a search request names among a handler's: every one of them for "any" (probe rest-search-handlers) */
+function _minn_rest_search_subtypes(WP_REST_Request $request, array $subtypes): array
+{
+    $wanted = (array) $request['subtype'];
+    return $wanted === [] || in_array('any', $wanted, true) ? $subtypes : array_values(array_intersect($wanted, $subtypes));
+}

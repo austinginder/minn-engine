@@ -1,0 +1,196 @@
+[
+    [
+        "types and subtypes",
+        {
+            "post": [
+                "post",
+                [
+                    "post",
+                    "page"
+                ]
+            ],
+            "term": [
+                "term",
+                [
+                    "category",
+                    "post_tag"
+                ]
+            ],
+            "post-format": [
+                "post-format",
+                []
+            ]
+        }
+    ],
+    [
+        "the result keys",
+        [
+            "ids",
+            "total"
+        ]
+    ],
+    [
+        "ids and totals found",
+        {
+            "posts by a word": {
+                "ids": [
+                    "{zzsrchprobe-page}",
+                    "{zzsrchprobe-newer}",
+                    "{zzsrchprobe-older}"
+                ],
+                "total": 3
+            },
+            "posts, pages only": {
+                "ids": [
+                    "{zzsrchprobe-page}"
+                ],
+                "total": 1
+            },
+            "posts, paged": {
+                "ids": [
+                    "{zzsrchprobe-older}"
+                ],
+                "total": 3
+            },
+            "posts, one excluded": {
+                "ids": [
+                    "{zzsrchprobe-page}",
+                    "{zzsrchprobe-older}"
+                ],
+                "total": 2
+            },
+            "posts, one included": {
+                "ids": [
+                    "{zzsrchprobe-older}"
+                ],
+                "total": 1
+            },
+            "terms by a word": {
+                "ids": [
+                    "{zzsrchprobe-cat}",
+                    "{zzsrchprobe-tag}"
+                ],
+                "total": "2"
+            },
+            "terms, tags only": {
+                "ids": [
+                    "{zzsrchprobe-tag}"
+                ],
+                "total": "1"
+            },
+            "terms, one excluded": {
+                "ids": [
+                    "{zzsrchprobe-tag}"
+                ],
+                "total": "1"
+            },
+            "post formats by a word": {
+                "ids": [],
+                "total": 0
+            },
+            "post formats, all": {
+                "ids": [
+                    "aside"
+                ],
+                "total": 1
+            },
+            "post formats, paged": {
+                "ids": [],
+                "total": 1
+            }
+        }
+    ],
+    [
+        "items prepared",
+        [
+            {
+                "id": "{zzsrchprobe-newer}",
+                "title": "zzsrchprobe newer",
+                "url": "{site}/zzsrchprobe-newer/",
+                "type": "post",
+                "subtype": "post"
+            },
+            {
+                "id": "{zzsrchprobe-page}",
+                "title": "zzsrchprobe page"
+            },
+            {
+                "id": "{zzsrchprobe-locked}",
+                "title": "zzsrchprobe locked",
+                "url": "{site}/zzsrchprobe-locked/",
+                "type": "post",
+                "subtype": "post"
+            },
+            [],
+            {
+                "id": "{zzsrchprobe-cat}",
+                "title": "zzsrchprobe cat",
+                "url": "{site}/category/zzsrchprobe-cat/",
+                "type": "category"
+            },
+            {
+                "title": "zzsrchprobe tag",
+                "url": "{site}/tag/zzsrchprobe-tag/"
+            },
+            {
+                "id": "gallery",
+                "title": "Gallery",
+                "url": false,
+                "type": "post-format"
+            },
+            {
+                "title": "Aside"
+            }
+        ]
+    ],
+    [
+        "item links",
+        [
+            {
+                "self": {
+                    "href": "{site}/wp-json/wp/v2/posts/{zzsrchprobe-newer}",
+                    "embeddable": true
+                },
+                "about": {
+                    "href": "{site}/wp-json/wp/v2/types/post"
+                }
+            },
+            {
+                "self": {
+                    "href": "{site}/wp-json/wp/v2/pages/{zzsrchprobe-page}",
+                    "embeddable": true
+                },
+                "about": {
+                    "href": "{site}/wp-json/wp/v2/types/page"
+                }
+            },
+            {
+                "self": {
+                    "href": "{site}/wp-json/wp/v2/categories/{zzsrchprobe-cat}",
+                    "embeddable": true
+                },
+                "about": {
+                    "href": "{site}/wp-json/wp/v2/taxonomies/category"
+                }
+            },
+            {
+                "self": {
+                    "href": "{site}/wp-json/wp/v2/tags/{zzsrchprobe-tag}",
+                    "embeddable": true
+                },
+                "about": {
+                    "href": "{site}/wp-json/wp/v2/taxonomies/post_tag"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "the post handler helpers",
+        [
+            "%s",
+            "/wp/v2/posts/{zzsrchprobe-newer}",
+            "/wp/v2/pages/{zzsrchprobe-page}"
+        ]
+    ]
+]

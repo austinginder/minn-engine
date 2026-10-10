@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 771,
-        "composes": 1892,
-        "leaf": 878,
-        "noop": 2647,
+        "composes": 1903,
+        "leaf": 879,
+        "noop": 2652,
         "placeholder": 214,
         "deadend": 1662,
-        "functions": 7986,
+        "functions": 8003,
         "minnMethods": 947,
         "leafLinesOver15": 12
     },
@@ -19076,6 +19076,41 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_Post_Format_Search_Handler::__construct": {
+            "file": "classes/WP_REST_Post_Format_Search_Handler.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Post_Format_Search_Handler::prepare_item": {
+            "file": "classes/WP_REST_Post_Format_Search_Handler.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_format_link",
+                "get_post_format_string"
+            ]
+        },
+        "WP_REST_Post_Format_Search_Handler::prepare_item_links": {
+            "file": "classes/WP_REST_Post_Format_Search_Handler.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Post_Format_Search_Handler::search_items": {
+            "file": "classes/WP_REST_Post_Format_Search_Handler.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post_format_strings",
+                "get_terms"
+            ]
+        },
         "WP_REST_Post_Meta_Fields::__construct": {
             "file": "classes/WP_REST_Post_Meta_Fields.php",
             "lines": 1,
@@ -19103,6 +19138,66 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Post_Search_Handler::__construct": {
+            "file": "classes/WP_REST_Post_Search_Handler.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_types"
+            ]
+        },
+        "WP_REST_Post_Search_Handler::detect_rest_item_route": {
+            "file": "classes/WP_REST_Post_Search_Handler.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function",
+                "rest_get_route_for_post"
+            ]
+        },
+        "WP_REST_Post_Search_Handler::prepare_item": {
+            "file": "classes/WP_REST_Post_Search_Handler.php",
+            "lines": 20,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "get_permalink",
+                "get_post",
+                "get_the_title",
+                "remove_filter"
+            ]
+        },
+        "WP_REST_Post_Search_Handler::prepare_item_links": {
+            "file": "classes/WP_REST_Post_Search_Handler.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post",
+                "rest_get_route_for_post",
+                "rest_url"
+            ]
+        },
+        "WP_REST_Post_Search_Handler::protected_title_format": {
+            "file": "classes/WP_REST_Post_Search_Handler.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Post_Search_Handler::search_items": {
+            "file": "classes/WP_REST_Post_Search_Handler.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_rest_search_subtypes",
+                "apply_filters"
+            ]
         },
         "WP_REST_Posts_Controller::__construct": {
             "file": "classes/placeholders/Placeholders.php",
@@ -19757,6 +19852,20 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_Search_Handler::get_subtypes": {
+            "file": "classes/WP_REST_Search_Handler.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Search_Handler::get_type": {
+            "file": "classes/WP_REST_Search_Handler.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_REST_Server::__construct": {
             "file": "classes/WP_REST_Server.php",
             "lines": 7,
@@ -20257,6 +20366,48 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Term_Search_Handler::__construct": {
+            "file": "classes/WP_REST_Term_Search_Handler.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_taxonomies"
+            ]
+        },
+        "WP_REST_Term_Search_Handler::prepare_item": {
+            "file": "classes/WP_REST_Term_Search_Handler.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_term",
+                "get_term_link"
+            ]
+        },
+        "WP_REST_Term_Search_Handler::prepare_item_links": {
+            "file": "classes/WP_REST_Term_Search_Handler.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_term",
+                "rest_get_route_for_term",
+                "rest_url"
+            ]
+        },
+        "WP_REST_Term_Search_Handler::search_items": {
+            "file": "classes/WP_REST_Term_Search_Handler.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_rest_search_subtypes",
+                "apply_filters",
+                "get_terms",
+                "wp_count_terms"
+            ]
         },
         "WP_REST_Terms_Controller::__construct": {
             "file": "classes/placeholders/Placeholders.php",
@@ -31662,6 +31813,13 @@
         "_minn_rest_error_entries": {
             "file": "rest-api.php",
             "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_rest_search_subtypes": {
+            "file": "rest-api.php",
+            "lines": 2,
             "kind": "leaf",
             "minn": [],
             "composes": []

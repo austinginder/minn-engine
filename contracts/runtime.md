@@ -10692,3 +10692,37 @@ was missing.
   `get_value`, `update_value` and the schema.
 - The subclass files require their parent, since the facade loads classes
   alphabetically.
+
+## The REST search handlers (2026-10-10)
+
+Probe `rest-search-handlers` proves `WP_REST_Search_Handler` and its post,
+term and post-format kinds: four classes that were missing, about 19
+methods. It covers:
+- each handler's type and subtypes;
+- the ids and total for a search: a word only the probe's content holds,
+  subtypes narrowed, paged, include and exclude;
+- each item prepared with chosen fields, and its links;
+- the post handler's protected title format and its deprecated item route.
+
+They are built in the facade from WordPress functions.
+
+- **Posts:** published posts of the public REST post types, not attachments,
+  by relevance. The query arguments go through `rest_post_search_query`, and
+  the ids are asked for after it. `WP_Query`'s own search leaves out a post
+  behind a password, so the handler adds no condition of its own. Titles show
+  without the "Protected:" prefix. An item links to its REST route and its
+  type.
+- **Terms:** terms of the public REST taxonomies, empty ones too, by name.
+  The arguments go through `rest_term_search_query`. The total is
+  `wp_count_terms`'s answer, a string. An item's `type` is its taxonomy, and
+  it has no `subtype`. It links to its REST route and its taxonomy.
+- **Post formats:** the formats whose term exists, empty or not, whose label
+  holds the search. The arguments (`search`) go through
+  `rest_post_format_search_query`. The list is sliced by page, and the total
+  counts every match. An item has its label, its archive link (false without
+  a term) and the `post-format` type, and no links.
+- `detect_rest_item_route` announces its 5.5.0 deprecation.
+
+Owed: the engine's own `/wp/v2/search` still answers only `type=post`.
+Serving `term` and `post-format` through these handlers would complete the
+route.
