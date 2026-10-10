@@ -61,6 +61,35 @@ function translate_with_gettext_context($text, $context, $domain = 'default')
     return Gettext::inContext((string) $text, (string) $context, (string) $domain);
 }
 
+/**
+ * Settings translated by a schema of contexts (probe theme-json-resolver),
+ * the schema as theme-i18n.json decodes: a string is the context a string
+ * setting is translated in; a list's one entry is the schema for each
+ * item; an object's keys are the settings to walk, "*" for every key.
+ * Anything the schema does not fit comes back as it was.
+ */
+function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdomain)
+{
+    if (is_string($i18n_schema)) {
+        return is_string($settings) ? translate_with_gettext_context($settings, $i18n_schema, $textdomain) : $settings;
+    }
+    if (!is_array($settings)) {
+        return $settings;
+    }
+    if (is_array($i18n_schema)) {
+        foreach ($settings as $key => $value) {
+            $settings[$key] = translate_settings_using_i18n_schema($i18n_schema[0] ?? null, $value, $textdomain);
+        }
+        return $settings;
+    }
+    foreach (is_object($i18n_schema) ? get_object_vars($i18n_schema) : [] as $key => $schema) {
+        foreach ($key === '*' ? array_keys($settings) : (array_key_exists($key, $settings) ? [$key] : []) as $name) {
+            $settings[$name] = translate_settings_using_i18n_schema($schema, $settings[$name], $textdomain);
+        }
+    }
+    return $settings;
+}
+
 function __($text, $domain = 'default')
 {
     return translate($text, $domain);

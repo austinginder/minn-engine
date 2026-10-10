@@ -111,16 +111,23 @@ function get_num_queries()
     return (int) ($GLOBALS['wpdb']->num_queries ?? 0);
 }
 
+/**
+ * A JSON file decoded, null when it cannot be (probe theme-json-resolver).
+ * The path is the real one; a missing file and broken JSON are reported
+ * through wp_trigger_error, the missing one by its real path (empty).
+ */
 function wp_json_file_decode($filename, $options = [])
 {
     $result = null;
-    $filename = wp_normalize_path(realpath((string) $filename) ?: (string) $filename);
-    if (!is_file($filename) || !is_readable($filename)) {
+    $filename = wp_normalize_path((string) realpath((string) $filename));
+    if ($filename === '' || !is_file($filename) || !is_readable($filename)) {
+        wp_trigger_error(__FUNCTION__, sprintf(__("File %s doesn't exist!"), $filename));
         return $result;
     }
     $options = wp_parse_args($options, ['associative' => false]);
     $decoded = json_decode((string) file_get_contents($filename), $options['associative']);
     if (json_last_error() !== JSON_ERROR_NONE) {
+        wp_trigger_error(__FUNCTION__, sprintf(__('Error when decoding a JSON file at path %1$s: %2$s'), $filename, json_last_error_msg()));
         return $result;
     }
     return $decoded;

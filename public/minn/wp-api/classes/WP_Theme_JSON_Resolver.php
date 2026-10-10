@@ -17,6 +17,15 @@ use Minn\Theme\UserStyles;
 #[AllowDynamicProperties]
 final class WP_Theme_JSON_Resolver
 {
+    /** @internal the JSON files read this request, by path */
+    private static $minn_files = [];
+
+    /** @internal the blocks each origin last saw (has_same_registered_blocks) */
+    private static $minn_blocks_seen = ['core' => [], 'blocks' => [], 'theme' => [], 'user' => []];
+
+    /** @internal the translation schema, read once */
+    private static $minn_i18n_schema = null;
+
     /** A theme's user styles post as an array, made when asked and missing; [] when there is none. */
     public static function get_user_data_from_wp_global_styles($theme, $create_post = false, $post_status_filter = ['publish'])
     {
@@ -61,10 +70,110 @@ final class WP_Theme_JSON_Resolver
         return $id;
     }
 
-    /** Forgets what was worked out (the engine works the filtered layers out per set of filters, so nothing goes stale). */
+    /** Forgets what was worked out: the blocks each origin saw; files read stay read (the engine works the filtered layers out per set of filters, so nothing else goes stale). */
     public static function clean_cached_data()
     {
         Runtime::current()->set('block_style_partials_registered', false);
+        self::$minn_blocks_seen = ['core' => [], 'blocks' => [], 'theme' => [], 'user' => []];
+    }
+
+    /** @deprecated 6.2.0 whether the theme has a theme.json */
+    public static function theme_has_support()
+    {
+        _deprecated_function(__METHOD__, '6.2.0', 'wp_theme_has_theme_json()');
+        return wp_theme_has_theme_json();
+    }
+
+    /** @deprecated 5.9.0 nothing, now */
+    public static function get_fields_to_translate()
+    {
+        _deprecated_function(__METHOD__, '5.9.0');
+        return [];
+    }
+
+    /** A file of the active theme (or with $template, of its parent), '' when it cannot be read. */
+    protected static function get_file_path_from_theme($file_name, $template = false)
+    {
+        $candidate = ($template ? get_template_directory() : get_stylesheet_directory()) . '/' . $file_name;
+        return is_readable($candidate) ? $candidate : '';
+    }
+
+    /** A JSON file as an array, kept for the request by path; [] for a missing file, broken JSON or anything but an object. */
+    protected static function read_json_file($file_path)
+    {
+        if (!$file_path) {
+            return [];
+        }
+        if (!array_key_exists($file_path, self::$minn_files)) {
+            $decoded = wp_json_file_decode($file_path, ['associative' => true]);
+            self::$minn_files[$file_path] = is_array($decoded) ? $decoded : [];
+        }
+        return self::$minn_files[$file_path];
+    }
+
+    /** A theme.json's translatable names (data/theme-i18n.json, captured) in a domain. */
+    protected static function translate($theme_json, $domain = 'default')
+    {
+        self::$minn_i18n_schema ??= wp_json_file_decode(MINN_ENGINE_DIR . '/data/theme-i18n.json') ?? [];
+        return translate_settings_using_i18n_schema(self::$minn_i18n_schema, $theme_json, $domain);
+    }
+
+    /**
+     * Whether no block is registered that an origin (core, blocks, theme,
+     * user) has not seen; when one is, the origin takes in the registry as
+     * it is and the answer is false. Any other origin is always false.
+     */
+    protected static function has_same_registered_blocks($origin)
+    {
+        if (!isset(self::$minn_blocks_seen[$origin])) {
+            return false;
+        }
+        $registered = WP_Block_Type_Registry::get_instance()->get_all_registered();
+        if (array_diff_key($registered, self::$minn_blocks_seen[$origin]) === []) {
+            return true;
+        }
+        self::$minn_blocks_seen[$origin] = $registered;
+        return false;
+    }
+
+    /**
+     * The theme files a theme.json names as background images ("file:./..."),
+     * at the top of its styles and in each block's, with the theme URI each
+     * resolves to, where it sits and its type. Remote images, elements and
+     * variations are left as they are.
+     */
+    public static function get_resolved_theme_uris($theme_json)
+    {
+        if (!$theme_json instanceof WP_Theme_JSON) {
+            return [];
+        }
+        $styles = (array) ($theme_json->get_raw_data()['styles'] ?? []);
+        $places = ['styles.background.backgroundImage.url' => $styles['background']['backgroundImage']['url'] ?? null];
+        foreach ((array) ($styles['blocks'] ?? []) as $block => $node) {
+            $places["styles.blocks.{$block}.background.backgroundImage.url"] = $node['background']['backgroundImage']['url'] ?? null;
+        }
+        $resolved = [];
+        foreach ($places as $target => $url) {
+            if (is_string($url) && str_starts_with($url, 'file:')) {
+                $type = wp_check_filetype($url)['type'];
+                $resolved[] = ['name' => $url, 'href' => sanitize_url(get_theme_file_uri(preg_replace('#^file:\./#', '', $url))), 'target' => $target] + ($type ? ['type' => $type] : []);
+            }
+        }
+        return $resolved;
+    }
+
+    /** The theme.json with each theme file it names put at its URI; the same object when it names none. */
+    public static function resolve_theme_file_uris($theme_json)
+    {
+        $resolved = self::get_resolved_theme_uris($theme_json);
+        if ($resolved === []) {
+            return $theme_json;
+        }
+        $data = $theme_json->get_raw_data();
+        foreach ($resolved as $uri) {
+            _wp_array_set($data, explode('.', $uri['target']), $uri['href']);
+        }
+        return new WP_Theme_JSON($data);
     }
 
     /** Defaults, theme, and (for origin custom) the site editor's saved styles, merged. */

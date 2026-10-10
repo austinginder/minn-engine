@@ -19,12 +19,6 @@ function get_the_block_template_html()
     return null;
 }
 
-function translate_settings_using_i18n_schema($i18n_schema, $settings, $textdomain)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('translate_settings_using_i18n_schema');
-    return null;
-}
-
 function wp($query_vars = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp');

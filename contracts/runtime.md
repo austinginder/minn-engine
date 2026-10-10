@@ -11382,3 +11382,58 @@ The probe's user is removed at the end.
   - Checking falls back to `crypt()`, so a portable hasher checks bcrypt
     hashes too.
   - A password over 4096 bytes hashes to `*` and never checks.
+
+## The theme.json resolver's helpers (2026-10-10)
+
+Probe `theme-json-resolver` proves 8 of the 9 `WP_Theme_JSON_Resolver`
+methods that were missing, and makes `translate_settings_using_i18n_schema`
+real (it was a placeholder). The probe's files and block live for the
+request only. It covers:
+- the support check and the fields it translates, both deprecated;
+- a theme file's path;
+- reading a JSON file: the theme's, a missing one, broken JSON, a scalar,
+  and one changed on disk;
+- translating by the schema, with every translation tagged by its context
+  and domain through `gettext_with_context` so what is translated shows;
+- whether the registered blocks changed since an origin last looked;
+- the theme file URIs a theme.json names, found and resolved.
+
+- **Deprecated.** `theme_has_support` (6.2.0) is
+  `wp_theme_has_theme_json()`. `get_fields_to_translate` (5.9.0) is an
+  empty array.
+- **A theme file's path** is the stylesheet's, or the template's when
+  asked, and `''` when it cannot be read. An empty name is the theme
+  folder itself.
+- **Reading JSON.** A file is kept for the request by path; clearing the
+  cache leaves it, and a file changed on disk still reads as it did. A
+  missing file, broken JSON and anything but an object read as `[]`.
+  `wp_json_file_decode` now reports through `wp_trigger_error` as the
+  reference does: "File %s doesn't exist!" with the real path (empty for
+  a missing file), and "Error when decoding a JSON file at path %1$s:
+  %2$s" with JSON's own message.
+- **Translating.** The schema is `data/theme-i18n.json`, captured from
+  the reference.
+  - A string schema translates a string setting in that context.
+  - A list schema's one entry is the schema for every item.
+  - An object schema walks the keys the settings have; `*` means every
+    key.
+  - Anything the schema does not fit (a number, a string where keys are
+    wanted, a list where keys are wanted) comes back as it was.
+- **Registered blocks.** The core, blocks, theme and user origins each
+  remember the blocks they last saw. The answer is true while no block is
+  registered that the origin has not seen; unregistering one does not
+  count. When an unseen one appears, the origin takes in the registry and
+  answers false. Any other origin is always false. Clearing the cache
+  forgets what every origin saw.
+- **Theme file URIs.** Background images named `file:./...` are found at
+  the top of the styles and in each block's. Elements, variations and
+  remote images are left alone. Each comes with the theme URI it resolves
+  to, its place (`styles.blocks.core/group.background.backgroundImage.url`)
+  and its type. Resolving puts each URI in its place in a new theme.json
+  object, or hands back the same object when there are none.
+
+Left:
+- `get_block_data` (the blocks origin, from every registered block's
+  styles) is still missing.
+- The engine's `WP_Theme_JSON` keeps a style variation its block does not
+  have, where the reference drops it.
