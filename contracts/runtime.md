@@ -10799,3 +10799,68 @@ Kept differently on purpose:
 - A HEAD over streams is also left out, because it hangs on the reference.
 - An array body is form-encoded by both transports. On streams the
   reference sends the word "Array".
+
+## The REST registry controllers (2026-10-10)
+
+Probe `rest-registry-controllers` proves four classes that were missing,
+38 methods: `WP_REST_Post_Types_Controller`,
+`WP_REST_Post_Statuses_Controller`, `WP_REST_Taxonomies_Controller` and
+`WP_REST_Search_Controller`. They are called directly, as a plugin would,
+by nobody, an administrator and a contributor. The contributor may edit
+posts and assign categories but manage no terms, so it tells the
+capabilities apart. It covers:
+- their schemas and parameters;
+- each permission check;
+- lists and single items in each context, among them a type, statuses
+  and taxonomies the probe registers, some hidden from REST;
+- items prepared with chosen fields, and their links;
+- a search through each handler, and the search controller's subtype and
+  handler helpers;
+- what registration gives a type's features and REST names.
+
+The engine still answers these routes itself; the classes are for
+plugins. They live in the facade, with their schemas captured in
+`data/rest-schemas.json` (`type`, `status`, `taxonomy`, `search-result`).
+
+- **Types:** the types shown in REST, keyed by name. Fields come in the
+  reference's order and are filtered by the fields asked for and the
+  context. Edit context needs the type's `edit_posts`: a list leaves out
+  the others and comes back empty (`[]`), while the permission check
+  refuses a caller who may edit none. A type hidden from REST refuses with
+  `rest_cannot_read_type`. Links (collection, items) come only when
+  `_links` is wanted.
+- **Statuses:** the statuses that are not internal, with trash last. A
+  public one is anyone's to read. The others (trash yes, other internal
+  ones never) need `edit_posts` on some REST type. `get_item` reads no
+  permission; `get_item_permissions_check` answers 404 for an unknown
+  status. Every item links to its posts (`?status=`, none for publish),
+  whatever the fields.
+- **Taxonomies:** all, or a post type's, keyed by name. An empty list is
+  an object. Edit context and the permission checks use `assign_terms`.
+  A hidden taxonomy's permission check is false. Its `rest_namespace`
+  shows as it is (false), while a type's falls back to `wp/v2`.
+- **Search:** one handler per type, chosen by the request's `type`. The
+  results are prepared by the handler and linked back to the search. The
+  total and page count come as integer headers, and Link prev and next
+  are rebuilt from the request's own query. Asking past the last page with
+  results is a 400. The schema's type and subtype choices come from the
+  handlers. `sanitize_subtypes` answers `any` alone when it is among them,
+  and otherwise the handler's own subtypes.
+
+Fixed along the way, each proven by this probe:
+- Registering a type with an editor now adds `autosave`. Features
+  declared ahead with `add_post_type_support` come first, and
+  `supports => false` gives none (it had given a feature named "").
+- A type or taxonomy hidden from REST has no `rest_namespace` unless it
+  names one.
+- A self link to a route the engine answers itself now hints only the
+  methods its caller may use, judged by the engine's policies as its
+  Allow header is. Before, it hinted every method, because the runtime
+  server's stand-ins for those routes let everyone through.
+- The engine's own `/wp/v2/taxonomies` route now filters edit context by
+  `assign_terms`, as the class does. It had used `manage_terms`, which
+  hid every taxonomy from a contributor.
+
+Owed: the engine's `/wp/v2/taxonomies` reads the captured core taxonomies
+only, so a plugin's REST taxonomy is not listed there, though the class
+lists it.

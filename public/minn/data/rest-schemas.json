@@ -395,5 +395,459 @@
     "icon-collection-slug": {
         "description": "Icon collection slug.",
         "type": "string"
+    },
+    "type": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "type",
+        "type": "object",
+        "properties": {
+            "capabilities": {
+                "description": "All capabilities used by the post type.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "A human-readable description of the post type.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "hierarchical": {
+                "description": "Whether or not the post type should have children.",
+                "type": "boolean",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "viewable": {
+                "description": "Whether or not the post type can be viewed.",
+                "type": "boolean",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "labels": {
+                "description": "Human-readable labels for the post type for various contexts.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "name": {
+                "description": "The title for the post type.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "slug": {
+                "description": "An alphanumeric identifier for the post type.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "supports": {
+                "description": "All features, supported by the post type.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "has_archive": {
+                "description": "If the value is a string, the value will be used as the archive slug. If the value is false the post type has no archive.",
+                "type": [
+                    "string",
+                    "boolean"
+                ],
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "taxonomies": {
+                "description": "Taxonomies associated with post type.",
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "rest_base": {
+                "description": "REST base route for the post type.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "rest_namespace": {
+                "description": "REST route's namespace for the post type.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "visibility": {
+                "description": "The visibility settings for the post type.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true,
+                "properties": {
+                    "show_ui": {
+                        "description": "Whether to generate a default UI for managing this post type.",
+                        "type": "boolean"
+                    },
+                    "show_in_nav_menus": {
+                        "description": "Whether to make the post type available for selection in navigation menus.",
+                        "type": "boolean"
+                    }
+                }
+            },
+            "icon": {
+                "description": "The icon for the post type.",
+                "type": [
+                    "string",
+                    "null"
+                ],
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "template": {
+                "type": [
+                    "array"
+                ],
+                "description": "The block template associated with the post type.",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "template_lock": {
+                "type": [
+                    "string",
+                    "boolean"
+                ],
+                "enum": [
+                    "all",
+                    "insert",
+                    "contentOnly",
+                    false
+                ],
+                "description": "The template_lock associated with the post type, or false if none.",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            }
+        }
+    },
+    "status": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "status",
+        "type": "object",
+        "properties": {
+            "name": {
+                "description": "The title for the status.",
+                "type": "string",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "private": {
+                "description": "Whether posts with this status should be private.",
+                "type": "boolean",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "protected": {
+                "description": "Whether posts with this status should be protected.",
+                "type": "boolean",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "public": {
+                "description": "Whether posts of this status should be shown in the front end of the site.",
+                "type": "boolean",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "queryable": {
+                "description": "Whether posts with this status should be publicly-queryable.",
+                "type": "boolean",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "show_in_list": {
+                "description": "Whether to include posts in the edit listing for their post type.",
+                "type": "boolean",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "slug": {
+                "description": "An alphanumeric identifier for the status.",
+                "type": "string",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "date_floating": {
+                "description": "Whether posts of this status may have floating published dates.",
+                "type": "boolean",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            }
+        }
+    },
+    "taxonomy": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "taxonomy",
+        "type": "object",
+        "properties": {
+            "capabilities": {
+                "description": "All capabilities used by the taxonomy.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "description": {
+                "description": "A human-readable description of the taxonomy.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "hierarchical": {
+                "description": "Whether or not the taxonomy should have children.",
+                "type": "boolean",
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "labels": {
+                "description": "Human-readable labels for the taxonomy for various contexts.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "name": {
+                "description": "The title for the taxonomy.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "slug": {
+                "description": "An alphanumeric identifier for the taxonomy.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "show_cloud": {
+                "description": "Whether or not the term cloud should be displayed.",
+                "type": "boolean",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "types": {
+                "description": "Types associated with the taxonomy.",
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "rest_base": {
+                "description": "REST base route for the taxonomy.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "rest_namespace": {
+                "description": "REST namespace route for the taxonomy.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "visibility": {
+                "description": "The visibility settings for the taxonomy.",
+                "type": "object",
+                "context": [
+                    "edit"
+                ],
+                "readonly": true,
+                "properties": {
+                    "public": {
+                        "description": "Whether a taxonomy is intended for use publicly either via the admin interface or by front-end users.",
+                        "type": "boolean"
+                    },
+                    "publicly_queryable": {
+                        "description": "Whether the taxonomy is publicly queryable.",
+                        "type": "boolean"
+                    },
+                    "show_ui": {
+                        "description": "Whether to generate a default UI for managing this taxonomy.",
+                        "type": "boolean"
+                    },
+                    "show_admin_column": {
+                        "description": "Whether to allow automatic creation of taxonomy columns on associated post-types table.",
+                        "type": "boolean"
+                    },
+                    "show_in_nav_menus": {
+                        "description": "Whether to make the taxonomy available for selection in navigation menus.",
+                        "type": "boolean"
+                    },
+                    "show_in_quick_edit": {
+                        "description": "Whether to show the taxonomy in the quick/bulk edit panel.",
+                        "type": "boolean"
+                    }
+                }
+            }
+        }
+    },
+    "search-result": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "search-result",
+        "type": "object",
+        "properties": {
+            "id": {
+                "description": "Unique identifier for the object.",
+                "type": [
+                    "integer",
+                    "string"
+                ],
+                "context": [
+                    "view",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "title": {
+                "description": "The title for the object.",
+                "type": "string",
+                "context": [
+                    "view",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "url": {
+                "description": "URL to the object.",
+                "type": "string",
+                "format": "uri",
+                "context": [
+                    "view",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "type": {
+                "description": "Object type.",
+                "type": "string",
+                "enum": [],
+                "context": [
+                    "view",
+                    "embed"
+                ],
+                "readonly": true
+            },
+            "subtype": {
+                "description": "Object subtype.",
+                "type": "string",
+                "enum": [],
+                "context": [
+                    "view",
+                    "embed"
+                ],
+                "readonly": true
+            }
+        }
     }
 }

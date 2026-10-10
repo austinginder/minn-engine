@@ -61,7 +61,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 445 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 451 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 496 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
@@ -2438,6 +2438,8 @@ The methods a self link's caller may use there, as the reference
 hints them on every self link it serves (targetHints.allow): the
 route the link names, each of its methods whose handler lets this
 caller through; null when no route of the runtime's takes the link.
+A route the engine answers itself is judged by its policies, as its
+Allow header is (probe rest-registry-controllers).
 
 - `@return list<string>|null`
 
@@ -2511,7 +2513,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 87), `dispatchDone()` (private, line 287), `oembedXml()` (private, line 356), `look()` (private, line 370), `remember()` (private, line 375), `decode()` (private, line 382), `expand()` (private, line 402), `newWpRequest()` (private, line 427), `toResponse()` (private, line 456)
+Internals: `allow()` (private, line 87), `dispatchDone()` (private, line 293), `oembedXml()` (private, line 362), `look()` (private, line 376), `remember()` (private, line 381), `decode()` (private, line 388), `expand()` (private, line 408), `newWpRequest()` (private, line 433), `toResponse()` (private, line 462)
 
 
 ## Schema

@@ -110,6 +110,8 @@ final class RuntimeRoutes
      * hints them on every self link it serves (targetHints.allow): the
      * route the link names, each of its methods whose handler lets this
      * caller through; null when no route of the runtime's takes the link.
+     * A route the engine answers itself is judged by its policies, as its
+     * Allow header is (probe rest-registry-controllers).
      *
      * @return list<string>|null
      */
@@ -119,8 +121,12 @@ final class RuntimeRoutes
         if (!$wpRequest instanceof \WP_REST_Request) {
             return null;
         }
-        $matched = self::server()->match_request_to_handler($wpRequest);
-        return $matched instanceof \WP_Error ? null : self::allowedMethods((string) $matched[0], $wpRequest);
+        $server = self::server();
+        $matched = $server->match_request_to_handler($wpRequest);
+        if ($matched instanceof \WP_Error) {
+            return null;
+        }
+        return $server->engine_route((string) $matched[0]) ? $server->engine_allowed($wpRequest) : self::allowedMethods((string) $matched[0], $wpRequest);
     }
 
     /** The engine's index plus the namespaces and routes the runtime holds. */

@@ -102675,7 +102675,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/RuntimeRoutes.php",
-            "lines": 445,
+            "lines": 451,
             "doc": "Routes plugin code registered with register_rest_route(), answered\nthrough the runtime's server after the engine's own routes have had\ntheir turn; the runtime's say before the engine answers at all (an\nauthentication refusal, a pre-dispatch answer, a removed endpoint);\nand the runtime's namespaces folded into the index.",
             "implements": [],
             "extends": null,
@@ -102835,7 +102835,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "targetHints(string $href): ?array",
-                    "doc": "The methods a self link's caller may use there, as the reference\nhints them on every self link it serves (targetHints.allow): the\nroute the link names, each of its methods whose handler lets this\ncaller through; null when no route of the runtime's takes the link.",
+                    "doc": "The methods a self link's caller may use there, as the reference\nhints them on every self link it serves (targetHints.allow): the\nroute the link names, each of its methods whose handler lets this\ncaller through; null when no route of the runtime's takes the link.\nA route the engine answers itself is judged by its policies, as its\nAllow header is (probe rest-registry-controllers).",
                     "shapes": [
                         "@return list<string>|null"
                     ],
@@ -102848,8 +102848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 124
+                    "line": 118,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -102868,8 +102868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 154
+                    "line": 133,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -102895,8 +102895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 170
+                    "line": 172,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -102924,8 +102924,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 186
+                    "line": 184,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -102944,8 +102944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 193
+                    "line": 195,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -102980,8 +102980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 204
+                    "line": 206,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -103000,8 +103000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 213
+                    "line": 213,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -103020,8 +103020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 236
+                    "line": 226,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -103050,8 +103050,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 245,
-                    "end": 256
+                    "line": 251,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -103072,8 +103072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 271
+                    "line": 270,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -103092,8 +103092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 284
+                    "line": 280,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -103119,8 +103119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 349
+                    "line": 311,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -103139,8 +103139,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 443,
-                    "end": 447
+                    "line": 449,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -103151,8 +103151,8 @@
                     "doc": "The runtime's REST server, the one door to it (built, with rest_api_init, on first use).",
                     "shapes": [],
                     "params": [],
-                    "line": 451,
-                    "end": 454
+                    "line": 457,
+                    "end": 460
                 },
                 {
                     "routes": [],
@@ -103207,8 +103207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 296
+                    "line": 293,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -103234,8 +103234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 367
+                    "line": 362,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -103256,8 +103256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 373
+                    "line": 376,
+                    "end": 379
                 },
                 {
                     "routes": [],
@@ -103290,8 +103290,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 375,
-                    "end": 379
+                    "line": 381,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -103310,8 +103310,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 382,
-                    "end": 392
+                    "line": 388,
+                    "end": 398
                 },
                 {
                     "routes": [],
@@ -103333,8 +103333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 425
+                    "line": 408,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -103353,8 +103353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 440
+                    "line": 433,
+                    "end": 446
                 },
                 {
                     "routes": [],
@@ -103373,8 +103373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 464
+                    "line": 462,
+                    "end": 470
                 }
             ]
         },
@@ -107036,7 +107036,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "context(Minn\\Http\\Request $request): bool",
-                    "doc": "Edit context needs a signed-in caller; the per-taxonomy capability is checked per item.",
+                    "doc": "Edit context needs a signed-in caller; the per-taxonomy capability (assign_terms, as WP_REST_Taxonomies_Controller checks it) is checked per item.",
                     "shapes": [],
                     "params": [
                         {
@@ -128021,7 +128021,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 448,
+            "lines": 468,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -128285,8 +128285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 209
+                    "line": 219,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -128329,8 +128329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 227
+                    "line": 239,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -128366,8 +128366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 292
+                    "line": 282,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -128386,8 +128386,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 305
+                    "line": 314,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -128420,8 +128420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 320
+                    "line": 331,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -128447,8 +128447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 326
+                    "line": 342,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -128469,8 +128469,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 336
+                    "line": 352,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -128505,8 +128505,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 395
+                    "line": 362,
+                    "end": 415
                 },
                 {
                     "routes": [],
@@ -128517,8 +128517,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 398,
-                    "end": 401
+                    "line": 418,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -128537,8 +128537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 404,
-                    "end": 411
+                    "line": 424,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -128564,8 +128564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 423
+                    "line": 434,
+                    "end": 443
                 },
                 {
                     "routes": [],
@@ -128591,8 +128591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 426,
-                    "end": 433
+                    "line": 446,
+                    "end": 453
                 },
                 {
                     "routes": [],
@@ -128620,8 +128620,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 440,
-                    "end": 462
+                    "line": 460,
+                    "end": 482
+                },
+                {
+                    "routes": [],
+                    "name": "supportsAtRegistration",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "supportsAtRegistration(array $args, array $pending): array",
+                    "doc": "The features a type has once registered: those declared ahead first,\nthen its own (title and editor when it names none, nothing for\nfalse), and autosave wherever there is an editor (probe\nrest-registry-controllers).",
+                    "shapes": [
+                        "@param array<string, mixed> $pending",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "pending",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 181,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -128642,8 +128672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 184
+                    "line": 192,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -128679,8 +128709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 253
+                    "line": 257,
+                    "end": 272
                 }
             ]
         },

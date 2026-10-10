@@ -28,7 +28,7 @@ final readonly class TaxonomiesController
         $type = $request->query('type');
         $out = [];
         foreach ($type === null ? $this->taxonomies->all() : $this->taxonomies->forType($type) as $slug => $taxonomy) {
-            if ($edit && !$this->caller->can($taxonomy['capabilities']['manage_terms'])) {
+            if ($edit && !$this->caller->can($taxonomy['capabilities']['assign_terms'])) {
                 continue;
             }
             $out[$slug] = $edit ? $taxonomy : Taxonomies::view($taxonomy);
@@ -46,13 +46,13 @@ final readonly class TaxonomiesController
             throw new RestError('rest_taxonomy_invalid', 'Invalid taxonomy.', 404);
         }
         $edit = $this->context($request);
-        if ($edit && !$this->caller->can($taxonomy['capabilities']['manage_terms'])) {
+        if ($edit && !$this->caller->can($taxonomy['capabilities']['assign_terms'])) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to manage terms in this taxonomy.');
         }
         return Reply::item($edit ? $taxonomy : Taxonomies::view($taxonomy), Fields::fromQuery($request->query));
     }
 
-    /** Edit context needs a signed-in caller; the per-taxonomy capability is checked per item. */
+    /** Edit context needs a signed-in caller; the per-taxonomy capability (assign_terms, as WP_REST_Taxonomies_Controller checks it) is checked per item. */
     private function context(Request $request): bool
     {
         if ($request->query('context') !== 'edit') {

@@ -150,23 +150,42 @@ final class Registry
             'rewrite' => $rewrite,
             'show_in_rest' => (bool) ($args['show_in_rest'] ?? false),
             'rest_base' => $args['rest_base'] ?? false,
-            'rest_namespace' => $args['rest_namespace'] ?? 'wp/v2',
+            // A type hidden from REST has no namespace unless it names one (probe rest-registry-controllers).
+            'rest_namespace' => $args['rest_namespace'] ?? ((bool) ($args['show_in_rest'] ?? false) ? 'wp/v2' : false),
             'rest_controller_class' => $args['rest_controller_class'] ?? false,
             'revisions_rest_controller_class' => $args['revisions_rest_controller_class'] ?? false,
             'autosave_rest_controller_class' => $args['autosave_rest_controller_class'] ?? false,
             'late_route_registration' => (bool) ($args['late_route_registration'] ?? false),
-            'supports' => array_key_exists('supports', $args) ? self::supportsFrom((array) $args['supports']) : ['title' => true, 'editor' => true],
+            'supports' => self::supportsAtRegistration($args, $this->pendingSupports[$name] ?? []),
         ];
         if ($type['query_var'] === true) {
             $type['query_var'] = $name;
         }
-        $type['supports'] += $this->pendingSupports[$name] ?? [];
         unset($this->pendingSupports[$name]);
         $this->postTypes[$name] = $type;
         foreach ($type['taxonomies'] as $taxonomy) {
             $this->addObjectType($taxonomy, $name);
         }
         return $type;
+    }
+
+    /**
+     * The features a type has once registered: those declared ahead first,
+     * then its own (title and editor when it names none, nothing for
+     * false), and autosave wherever there is an editor (probe
+     * rest-registry-controllers).
+     *
+     * @param array<string, mixed> $pending
+     * @return array<string, mixed>
+     */
+    private static function supportsAtRegistration(array $args, array $pending): array
+    {
+        $own = !array_key_exists('supports', $args) ? ['title' => true, 'editor' => true] : ($args['supports'] === false ? [] : self::supportsFrom((array) $args['supports']));
+        $supports = $pending + $own;
+        if (isset($supports['editor']) && !isset($supports['autosave'])) {
+            $supports['autosave'] = true;
+        }
+        return $supports;
     }
 
     /** @return array<string, mixed> feature => true or the arguments given */
@@ -380,7 +399,8 @@ final class Registry
             'query_var' => $publiclyQueryable ? ($args['query_var'] ?? true) : false,
             'show_in_rest' => (bool) ($args['show_in_rest'] ?? false),
             'rest_base' => $args['rest_base'] ?? false,
-            'rest_namespace' => $args['rest_namespace'] ?? 'wp/v2',
+            // A taxonomy hidden from REST has no namespace unless it names one (probe rest-registry-controllers).
+            'rest_namespace' => $args['rest_namespace'] ?? ((bool) ($args['show_in_rest'] ?? false) ? 'wp/v2' : false),
             'rest_controller_class' => $args['rest_controller_class'] ?? false,
             'default_term' => $args['default_term'] ?? null,
             'sort' => $args['sort'] ?? null,
