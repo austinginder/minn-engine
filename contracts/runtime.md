@@ -10133,3 +10133,41 @@ Left as found:
   WP-CLI the reference refuses title-tag support once `wp_loaded` has run.
   The engine's version checks theme support the same way.
 - **`wp_enqueue_editor`** is not probed: the engine has no editor scripts.
+
+## The rest of deprecated.php (2026-10-10)
+
+Probe `deprecated-remaining` proves the 67 deprecated.php functions that were
+left. For each call it records what the function returns, what it prints, and
+the deprecation it announces. The notices are heard through
+`deprecated_function_run`, with the errors switched off. The functions covered:
+- author fields;
+- the old permission checks;
+- the old link and rel helpers;
+- the robots tags, on a public and a private site;
+- page by title;
+- the disallowed list check;
+- the loading attribute default;
+- the small helpers;
+- the functions that now do nothing.
+
+Fixes:
+
+- **Missing deprecation notices:** `get_page_by_title` (6.2.0, use `WP_Query`)
+  and `like_escape` (4.0.0, use `wpdb::esc_like()`) now announce their
+  deprecation.
+- **`wp_get_loading_attr_default`** has its own rule, not the optimization
+  attributes':
+  - A header template part is never lazy.
+  - Content images and post thumbnails in the main loop add to the shared
+    content-media count, and the first three are not lazy.
+  - Anything else, including content outside the loop, is lazy.
+
+  `wp_img_tag_add_loading_attr` reads the same rule.
+- **`print_emoji_styles`** prints the emoji stylesheet once per request, as on
+  the reference. It used to print nothing.
+- **`print_embed_styles`** prints the reference's tab and newline layout around
+  the stylesheet. The embed template never calls it:
+  `wp_enqueue_embed_styles` takes it off `embed_head` first.
+
+Left out: `user_can_create_post` and `user_can_edit_post` for a user that does
+not exist, because the reference warns when it reads one.

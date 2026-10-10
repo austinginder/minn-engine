@@ -942,6 +942,7 @@ function sanitize_mime_type($mime_type)
 /** Deprecated LIKE escape: backslash ahead of % and _ only, backslashes left alone (probed). */
 function like_escape($text)
 {
+    _deprecated_function(__FUNCTION__, '4.0.0', 'wpdb::esc_like()');
     return str_replace(['%', '_'], ['\\%', '\\_'], (string) $text);
 }
 

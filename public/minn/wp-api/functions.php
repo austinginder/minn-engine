@@ -1389,10 +1389,17 @@ function wp_enqueue_emoji_styles()
     }
 }
 
-/** @deprecated 6.4.0 The emoji styles; Minn prints none. */
+/** @deprecated 6.4.0 The emoji styles, printed once per request (probe deprecated-remaining). */
 function print_emoji_styles()
 {
+    static $printed = false;
     _deprecated_function(__FUNCTION__, '6.4.0', 'wp_enqueue_emoji_styles');
+    if ($printed) {
+        return;
+    }
+    $printed = true;
+    echo "\t<style>\n\timg.wp-smiley,\n\timg.emoji {\n\t\tdisplay: inline !important;\n\t\tborder: none !important;\n\t\tbox-shadow: none !important;\n\t\theight: 1em !important;\n\t\twidth: 1em !important;\n"
+        . "\t\tmargin: 0 0.07em !important;\n\t\tvertical-align: -0.1em !important;\n\t\tbackground: none !important;\n\t\tpadding: 0 !important;\n\t}\n\t</style>\n\t";
 }
 
 /** A secret's fast hash, as keys are stored: BLAKE2b keyed for this purpose, in URL-safe base64 after "$generic$". */

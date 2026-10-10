@@ -444,6 +444,7 @@ function get_page_by_path($page_path, $output = OBJECT, $post_type = 'page')
 
 function get_page_by_title($page_title, $output = OBJECT, $post_type = 'page')
 {
+    _deprecated_function(__FUNCTION__, '6.2.0', 'WP_Query');
     $id = _minn_post_lookup()->idByTitle((string) $page_title, array_map('strval', (array) $post_type));
     return $id === null ? null : get_post($id, $output);
 }

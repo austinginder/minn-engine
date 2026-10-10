@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 767,
-        "composes": 1876,
+        "composes": 1878,
         "leaf": 877,
-        "noop": 2632,
+        "noop": 2630,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7978,
@@ -42845,12 +42845,13 @@
         },
         "get_page_by_title": {
             "file": "post.php",
-            "lines": 2,
+            "lines": 3,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\PostLookup::idByTitle"
             ],
             "composes": [
+                "_deprecated_function",
                 "_minn_post_lookup",
                 "get_post"
             ]
@@ -47658,10 +47659,12 @@
         },
         "like_escape": {
             "file": "formatting.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "link_advanced_meta_box": {
             "file": "deadends.php",
@@ -49804,8 +49807,8 @@
         },
         "print_emoji_styles": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
             "composes": [
                 "_deprecated_function"
@@ -62162,12 +62165,16 @@
         },
         "wp_get_loading_attr_default": {
             "file": "media.php",
-            "lines": 2,
+            "lines": 10,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_deprecated_function",
-                "wp_get_loading_optimization_attributes"
+                "in_the_loop",
+                "is_main_query",
+                "wp_get_loading_optimization_attributes",
+                "wp_increase_content_media_count",
+                "wp_omit_loading_attr_threshold"
             ]
         },
         "wp_get_loading_optimization_attributes": {

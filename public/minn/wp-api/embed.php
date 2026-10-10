@@ -38,7 +38,7 @@ function wp_enqueue_embed_styles()
 function print_embed_styles()
 {
     _deprecated_function(__FUNCTION__, '6.4.0', 'wp_enqueue_embed_styles');
-    echo '<style>' . file_get_contents(MINN_ENGINE_DIR . '/assets/wp-embed-template.min.css') . "</style>\n";
+    echo "\t<style>\n\t\t" . file_get_contents(MINN_ENGINE_DIR . '/assets/wp-embed-template.min.css') . "\t</style>\n\t";
 }
 
 function print_embed_scripts()

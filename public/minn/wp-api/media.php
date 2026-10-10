@@ -439,7 +439,15 @@ function get_media_embedded_in_content($content, $types = null)
 function wp_get_loading_attr_default($context)
 {
     _deprecated_function(__FUNCTION__, '6.3.0', 'wp_get_loading_optimization_attributes()');
-    return wp_get_loading_optimization_attributes('img', ['width' => 1, 'height' => 1], (string) $context)['loading'] ?? false;
+    // Its own rule (probe deprecated-remaining): a header template part is never lazy; content
+    // images and post thumbnails in the main loop count toward the eager ones; anything else is lazy.
+    if ($context === 'template_part_header') {
+        return false;
+    }
+    if (in_array($context, ['the_content', 'the_post_thumbnail'], true) && in_the_loop() && is_main_query()) {
+        return wp_increase_content_media_count() <= wp_omit_loading_attr_threshold() ? false : 'lazy';
+    }
+    return 'lazy';
 }
 
 /** Deprecated since 6.3: an img tag given its default loading attribute, when it has a source and a size and none of its own. */
