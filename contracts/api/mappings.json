@@ -3,9 +3,9 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 768,
-        "composes": 1883,
+        "composes": 1886,
         "leaf": 878,
-        "noop": 2625,
+        "noop": 2622,
         "placeholder": 242,
         "deadend": 1662,
         "functions": 7980,
@@ -51709,11 +51709,16 @@
         },
         "render_block_core_footnotes": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 14,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "__",
+                "esc_attr",
+                "get_block_wrapper_attributes",
+                "get_post",
+                "get_post_meta",
+                "post_password_required"
             ]
         },
         "render_block_core_home_link": {
@@ -51763,11 +51768,16 @@
         },
         "render_block_core_legacy_widget": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 24,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_widget_factory",
+                "the_widget",
+                "unserialize",
+                "wp_find_widgets_sidebar",
+                "wp_hash",
+                "wp_render_widget"
             ]
         },
         "render_block_core_loginout": {
@@ -52120,11 +52130,15 @@
         },
         "render_block_core_site_logo": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 20,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "add_filter",
+                "esc_attr__",
+                "get_block_wrapper_attributes",
+                "get_custom_logo",
+                "remove_filter"
             ]
         },
         "render_block_core_site_tagline": {

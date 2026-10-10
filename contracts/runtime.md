@@ -10582,3 +10582,34 @@ nothing. They are now real.
 Still two paths: front-end pages render pagination inside the engine's
 `QueryBlocks`, which already matches the reference pages. Rendering the
 children through these callbacks there is owed.
+
+## Site logo, footnotes and legacy widget callbacks (2026-10-10)
+
+Probe `block-renderers` proves three render callbacks the engine used to leave
+empty. Each is called by name outside a render, so no block-supports classes
+apply.
+
+- **The site logo** builds on `get_custom_logo`, which reads `site_logo`
+  through the theme-mod override.
+  - The image's width is the block's, with the height in proportion, set
+    through `wp_get_attachment_image_src` so the srcset and sizes follow.
+  - With no width, the image keeps its own size and the wrapper says
+    `is-default-size`.
+  - When the block isn't linked, the image stands alone. When it opens in a
+    new tab, the link carries `target="_blank"` and an aria-label saying so.
+  - With no logo, nothing.
+- **Footnotes** prints a post's `footnotes` meta as a list, each note with a
+  link back to where it is cited. Nothing for a post behind a password, a
+  post without notes, or no post.
+- **The legacy widget** renders a registered widget by id, or a widget type by
+  its base.
+  - The settings may be empty, or encoded as the widget-types route hands
+    them out: base64, signed with `wp_hash`.
+  - A raw instance is not trusted.
+  - An unknown widget, a bad signature, or neither gives nothing.
+
+Owed: the engine's own renderer still draws these blocks as empty on
+front-end pages. It has its own entries for them, with its own block-supports
+wrapper, so `do_blocks` doesn't reach these callbacks. Wiring them in needs a
+probe of rendered pages (a site logo that is set, footnotes in a post, legacy
+widgets in a widget area), as its own batch.

@@ -188,9 +188,27 @@ function render_block_core_file($attributes, $content)
     return _minn_render_core_callback('core/file', ...func_get_args());
 }
 
+/**
+ * A post's footnotes (probe block-renderers): its footnotes meta as a list,
+ * each note with a link back to where it is cited. Nothing for a post behind
+ * a password, a post without notes, or no post.
+ */
 function render_block_core_footnotes($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/footnotes', $attributes, $content, $block);
+    $post_id = $block instanceof WP_Block ? (int) ($block->context['postId'] ?? 0) : 0;
+    if ($post_id < 1 || get_post($post_id) === null || post_password_required($post_id)) {
+        return '';
+    }
+    $notes = json_decode((string) get_post_meta($post_id, 'footnotes', true), true);
+    if (!is_array($notes) || $notes === []) {
+        return '';
+    }
+    $items = '';
+    foreach (array_values($notes) as $i => $note) {
+        $id = esc_attr((string) ($note['id'] ?? ''));
+        $items .= '<li id="' . $id . '">' . ($note['content'] ?? '') . ' <a href="#' . $id . '-link" aria-label="' . esc_attr(sprintf(__('Jump to footnote reference %1$d'), $i + 1)) . '">↩︎</a></li>';
+    }
+    return '<ol ' . get_block_wrapper_attributes() . '>' . $items . '</ol>';
 }
 
 function render_block_core_home_link($attributes, $content, $block)
@@ -218,9 +236,39 @@ function render_block_core_latest_posts($attributes)
     return _minn_render_core_callback('core/latest-posts', ...func_get_args());
 }
 
+/**
+ * A classic widget shown as a block (probe block-renderers): a registered
+ * widget by id, or a widget type by its base with no settings or settings
+ * encoded as the widget-types route hands them out (base64, signed with
+ * wp_hash). A raw instance is not trusted; an unknown widget, a bad
+ * signature, or neither gives nothing.
+ */
 function render_block_core_legacy_widget($attributes)
 {
-    return _minn_render_core_callback('core/legacy-widget', ...func_get_args());
+    if (isset($attributes['id'])) {
+        return (string) wp_render_widget((string) $attributes['id'], (string) wp_find_widgets_sidebar((string) $attributes['id']));
+    }
+    $class = null;
+    foreach (_minn_widget_factory()->widgets as $key => $widget) {
+        if ($widget instanceof WP_Widget && $widget->id_base === (string) ($attributes['idBase'] ?? '')) {
+            $class = $key;
+            break;
+        }
+    }
+    if ($class === null) {
+        return '';
+    }
+    $instance = [];
+    if (isset($attributes['instance']['encoded'], $attributes['instance']['hash'])) {
+        $serialized = (string) base64_decode((string) $attributes['instance']['encoded'], true);
+        if (!hash_equals(wp_hash($serialized), (string) $attributes['instance']['hash'])) {
+            return '';
+        }
+        $instance = (array) unserialize($serialized, ['allowed_classes' => false]);
+    }
+    ob_start();
+    the_widget($class, $instance);
+    return (string) ob_get_clean();
 }
 
 function render_block_core_loginout($attributes)
@@ -488,9 +536,35 @@ function render_block_core_shortcode($attributes, $content)
     return _minn_render_core_callback('core/shortcode', ...func_get_args());
 }
 
+/**
+ * The site logo (probe block-renderers): get_custom_logo with the image set
+ * to the block's width and its height in proportion; with no width, the
+ * image keeps its size and the wrapper says is-default-size. Not linked, the
+ * image stands alone; opening in a new tab, the link says so. Nothing
+ * without a logo.
+ */
 function render_block_core_site_logo($attributes)
 {
-    return _minn_render_core_callback('core/site-logo', ...func_get_args());
+    $width = (int) ($attributes['width'] ?? 0);
+    $resize = static function ($image) use ($width) {
+        if (is_array($image) && $width > 0 && !empty($image[1]) && !empty($image[2])) {
+            $image[2] = (int) round($image[2] * $width / $image[1]);
+            $image[1] = $width;
+        }
+        return $image;
+    };
+    add_filter('wp_get_attachment_image_src', $resize);
+    $logo = (string) get_custom_logo();
+    remove_filter('wp_get_attachment_image_src', $resize);
+    if ($logo === '') {
+        return '';
+    }
+    if (empty($attributes['isLink'])) {
+        $logo = (string) preg_replace('#<a\s[^>]*>|</a>#', '', $logo);
+    } elseif (($attributes['linkTarget'] ?? '') === '_blank') {
+        $logo = str_replace('<a href=', '<a aria-label="' . esc_attr__('(Home link, opens in a new tab)') . '" target="_blank" href=', $logo);
+    }
+    return '<div ' . get_block_wrapper_attributes($width > 0 ? [] : ['class' => 'is-default-size']) . '>' . $logo . '</div>';
 }
 
 function render_block_core_site_tagline($attributes)

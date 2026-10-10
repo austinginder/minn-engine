@@ -1,0 +1,41 @@
+[
+    [
+        "the site logo",
+        {
+            "none": "",
+            "linked, a width": "<div ><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 120px) 100vw, 120px\" /></a></div>",
+            "not linked": "<div ><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 120px) 100vw, 120px\" /></div>",
+            "a new tab": "<div ><a aria-label=\"(Home link, opens in a new tab)\" target=\"_blank\" href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 120px) 100vw, 120px\" /></a></div>",
+            "no width": "<div class=\"is-default-size\"><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"400\" height=\"200\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" fetchpriority=\"high\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 400px) 100vw, 400px\" /></a></div>",
+            "a width past the image": "<div ><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"800\" height=\"400\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 800px) 100vw, 800px\" /></a></div>",
+            "a class and an alignment": "<div ><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"Minn\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 120px) 100vw, 120px\" /></a></div>",
+            "an image with its own alt": "<div ><a href=\"{site}/\" class=\"custom-logo-link\" rel=\"home\"><img width=\"120\" height=\"60\" src=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png\" class=\"custom-logo\" alt=\"ZZ alt text\" decoding=\"async\" srcset=\"{site}/wp-content/uploads/2026/10/zz-br-logo.png 400w, {site}/wp-content/uploads/2026/10/zz-br-logo-300x150.png 300w\" sizes=\"(max-width: 120px) 100vw, 120px\" /></a></div>"
+        }
+    ],
+    [
+        "footnotes",
+        [
+            "<ol ><li id=\"zz-note-one\">A <em>note</em>. <a href=\"#zz-note-one-link\" aria-label=\"Jump to footnote reference 1\">↩︎</a></li><li id=\"zz-note-two\">Another &amp; more. <a href=\"#zz-note-two-link\" aria-label=\"Jump to footnote reference 2\">↩︎</a></li></ol>",
+            "",
+            "",
+            "",
+            ""
+        ]
+    ],
+    [
+        "the legacy widget",
+        [
+            "<div class=\"widget widget_search\"><form role=\"search\" method=\"get\" class=\"search-form\" action=\"{site}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></div>",
+            "<div class=\"widget widget_search\"><form role=\"search\" method=\"get\" class=\"search-form\" action=\"{site}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></div>",
+            "<div class=\"widget widget_text\">\t\t\t<div class=\"textwidget\"></div>\n\t\t</div>",
+            [
+                "<div class=\"widget widget_search\"><h2 class=\"widgettitle\">ZZ Encoded title</h2><form role=\"search\" method=\"get\" class=\"search-form\" action=\"{site}/\">\n\t\t\t\t<label>\n\t\t\t\t\t<span class=\"screen-reader-text\">Search for:</span>\n\t\t\t\t\t<input type=\"search\" class=\"search-field\" placeholder=\"Search &hellip;\" value=\"\" name=\"s\" />\n\t\t\t\t</label>\n\t\t\t\t<input type=\"submit\" class=\"search-submit\" value=\"Search\" />\n\t\t\t</form></div>",
+                ""
+            ],
+            "",
+            "",
+            "",
+            ""
+        ]
+    ]
+]
