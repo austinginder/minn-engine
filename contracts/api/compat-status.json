@@ -12,20 +12,20 @@
         },
         "classes": {
             "total": 380,
-            "real": 216,
+            "real": 217,
             "deadend": 132,
-            "placeholder": 9,
+            "placeholder": 8,
             "missing": 23,
-            "verified": 199,
+            "verified": 200,
             "resolved": 357
         },
         "methods": {
             "total": 4075,
-            "real": 2147,
+            "real": 2173,
             "deadend": 1618,
-            "placeholder": 163,
+            "placeholder": 137,
             "missing": 147,
-            "verified": 2090,
+            "verified": 2116,
             "resolved": 3928
         }
     }

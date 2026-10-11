@@ -14,7 +14,7 @@ uploads, image sizes and attachment metadata
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
 | [`Sizing`](#sizing) | final class | 239 | The image size arithmetic the media functions share: the crop or scale a |
-| [`Upload`](#upload) | final readonly class | 76 | One file arriving for the library, on either transport: a multipart |
+| [`Upload`](#upload) | final readonly class | 120 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
 | [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
@@ -418,6 +418,26 @@ __construct(string $filename, ?string $movedFrom, ?string $raw, int $parent = 0)
 ### static `fromRequest(Minn\Http\Request $request): ?self`
 
 Null when the request carries no file.
+
+### static `filenameFrom(array $headers): ?string`
+
+The file a Content-Disposition names, as the reference reads one
+(probe rest-attachments-controller): the parameters after the
+disposition type, split on semicolons as written; the last non-empty
+filename= of all the headers, unquoted when double
+quotes wrap it. "filename" is matched as written, and filename* is
+not read. Null when none names one.
+
+- `@param list<string> $headers`
+
+### static `refusal(string $data, array $headers): ?Minn\RestError`
+
+Why a raw body cannot be taken, in the reference's order: no data, no
+Content-Type, no Content-Disposition, one naming no file, a
+Content-MD5 the data does not match. Null when it can. The headers are
+the REST request's, keyed by lower-case names with underscores.
+
+- `@param array<string, list<string>> $headers`
 
 ### `mime(): ?string`
 

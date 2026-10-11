@@ -4089,12 +4089,6 @@ function wp_update_core($current, $feedback = '')
     return null;
 }
 
-function wp_update_image_subsizes($attachment_id)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_update_image_subsizes');
-    return null;
-}
-
 function wp_update_plugin($plugin, $feedback = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_update_plugin');

@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 364 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 378 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -31,8 +31,8 @@ the wp/v2 surface: shapes and controllers
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 128 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
-| [`MediaController`](#mediacontroller) | final readonly class | 252 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
+| [`MediaController`](#mediacontroller) | final readonly class | 264 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
@@ -158,6 +158,18 @@ One menu item as wp/v2 shapes it in a context (view, edit or embed); empty when 
 
 - `@return array<string, mixed>`
 
+### `mediaView(int $id, string $context): array`
+
+One attachment as wp/v2 shapes it in a context (view, edit or embed), links included; empty when there is none. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### `mediaLinks(int $id, string $context): array`
+
+One attachment's wp/v2 links in a context, without rendering the rest of it; empty when there is none. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
 ### `userObject(): Minn\Rest\UserObject`
 
 The wp/v2 user shape.
@@ -206,7 +218,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 336), `withPageLinks()` (private, line 350), `options()` (private, line 381), `withAllow()` (private, line 394)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 350), `withPageLinks()` (private, line 364), `options()` (private, line 395), `withAllow()` (private, line 408)
 
 
 ## ApplicationPasswordsController
@@ -1289,7 +1301,7 @@ Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id}
 
 Attachments cannot be trashed; force removes the row, its meta, and its files.
 
-Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 104), `insertedWithPlugins()` (private, line 131), `preparedAttachment()` (private, line 169), `finishedWithPlugins()` (private, line 191), `params()` (private, line 207), `attachment()` (private, line 271)
+Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 114), `insertedWithPlugins()` (private, line 141), `preparedAttachment()` (private, line 181), `finishedWithPlugins()` (private, line 203), `params()` (private, line 219), `attachment()` (private, line 283)
 
 
 ## MediaObject
@@ -1301,7 +1313,7 @@ The wp/v2 media object, view and edit context.
 Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+__construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, Minn\Rest\Types $types)
 ```
 
 
@@ -1313,7 +1325,16 @@ An attachment in the context asked for, through rest_prepare_attachment when a p
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 42), `details()` (private, line 123), `descriptionHtml()` (private, line 157)
+### `links(Minn\Content\PostRecord $p, Minn\Rest\Context $context): array`
+
+The attachment's links in a context: itself (with the methods the
+caller may use), its collection and type, its author, replies, the
+post it is attached to, and in the edit context the actions the
+caller may take; curies when any rel is the API's own.
+
+- `@return array<string, list<array<string, mixed>>>`
+
+Internals: `buildFields()` (private, line 42), `details()` (private, line 153)
 
 
 ## MenuItemObject
@@ -3517,7 +3538,7 @@ Internals: `requireParent()` (private, line 147)
 The engine's registry of built-in post types, seeded from the observed
 contract (src/data/types.json) with _links attached at runtime.
 
-Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\PolicyGate`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AdminTypes`, `Minn\Admin\StructureController`, `Minn\Engine`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\DeclaredPostsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaObject`, `Minn\Rest\PolicyGate`, `Minn\Rest\RouteCatalogue`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\SearchController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Rest\RestUrl $url, array $declared = array ( ))

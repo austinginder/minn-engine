@@ -674,7 +674,7 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
         $by = [
             'permalink_template' => $object->public, 'generated_slug' => $object->public, 'class_list' => $object->public, 'parent' => $object->hierarchical,
             // A page carries an excerpt whatever its supports say (observed).
-            'title' => 'title', 'content' => 'editor', 'author' => 'author', 'excerpt' => $this->post_type === 'page' || post_type_supports($this->post_type, 'excerpt'), 'featured_media' => 'thumbnail', 'comment_status' => 'comments', 'ping_status' => 'comments',
+            'title' => 'title', 'content' => 'editor', 'author' => 'author', 'excerpt' => $this->post_type === 'page' || post_type_supports($this->post_type, 'excerpt'), 'featured_media' => $this->post_type === 'attachment' || post_type_supports($this->post_type, 'thumbnail'), 'comment_status' => 'comments', 'ping_status' => 'comments',
             'menu_order' => 'page-attributes', 'format' => 'post-formats', 'meta' => $this->post_type === 'attachment' || post_type_supports($this->post_type, 'custom-fields'), 'sticky' => $this->post_type === 'post',
         ];
         foreach ($by as $field => $when) {

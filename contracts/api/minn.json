@@ -16754,7 +16754,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/ImageTags.php",
-            "lines": 263,
+            "lines": 277,
             "doc": "The attributes the reference adds to an <img> that carries a\nwp-image-{id} class: loading, decoding, width and height (prepended, in\nthat order), and srcset plus sizes (appended). The srcset lists the\ndisplayed size first, then every same-ratio size in stored order, then\nthe original.",
             "implements": [],
             "extends": null,
@@ -16979,8 +16979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 283
+                    "line": 272,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -17040,7 +17040,27 @@
                         }
                     ],
                     "line": 99,
-                    "end": 107
+                    "end": 109
+                },
+                {
+                    "routes": [],
+                    "name": "autoSized",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "autoSized(string $tag): string",
+                    "doc": "A lazy image's sizes led by \"auto\" (wp_img_tag_add_auto_sizes), unless they already are or a plugin says not to (probe rest-attachments-controller).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 112,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -17059,8 +17079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 116
+                    "line": 124,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -17093,8 +17113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 125
+                    "line": 132,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -17120,8 +17140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 148
+                    "line": 147,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -17156,8 +17176,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 157
+                    "line": 165,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -17168,8 +17188,8 @@
                     "doc": "The area an image must cover before it is worth fetching first.",
                     "shapes": [],
                     "params": [],
-                    "line": 160,
-                    "end": 164
+                    "line": 174,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -17209,8 +17229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 216
+                    "line": 180,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -17271,8 +17291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 251
+                    "line": 238,
+                    "end": 265
                 }
             ]
         },
@@ -26056,7 +26076,6 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
                 "Minn\\Front\\FeedController",
                 "Minn\\Front\\Renderer",
-                "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Theme\\ClassicContent",
@@ -51983,7 +52002,6 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginNotices",
-                "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Theme\\ArchiveTitle",
@@ -79552,13 +79570,14 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Upload.php",
-            "lines": 76,
+            "lines": 120,
             "doc": "One file arriving for the library, on either transport: a multipart\nfield named \"file\" (a temporary upload to move) or a raw body whose\nContent-Disposition names the file. The parent is read from the same\nrequest, wherever the client put it.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
-                "Minn\\Media\\Uploads"
+                "Minn\\Media\\Uploads",
+                "Minn\\RestError"
             ],
             "usedBy": [
                 "Minn\\Media\\Writer",
@@ -79599,8 +79618,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 17,
-                "end": 23
+                "line": 18,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -79660,8 +79679,59 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 40
+                    "line": 27,
+                    "end": 39
+                },
+                {
+                    "routes": [],
+                    "name": "filenameFrom",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filenameFrom(array $headers): ?string",
+                    "doc": "The file a Content-Disposition names, as the reference reads one\n(probe rest-attachments-controller): the parameters after the\ndisposition type, split on semicolons as written; the last non-empty\nfilename= of all the headers, unquoted when double\nquotes wrap it. \"filename\" is matched as written, and filename* is\nnot read. Null when none names one.",
+                    "shapes": [
+                        "@param list<string> $headers"
+                    ],
+                    "params": [
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "refusal",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "refusal(string $data, array $headers): ?Minn\\RestError",
+                    "doc": "Why a raw body cannot be taken, in the reference's order: no data, no\nContent-Type, no Content-Disposition, one naming no file, a\nContent-MD5 the data does not match. Null when it can. The headers are\nthe REST request's, keyed by lower-case names with underscores.",
+                    "shapes": [
+                        "@param array<string, list<string>> $headers"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "array<string, list<string>>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 74,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -79672,8 +79742,8 @@
                     "doc": "The mime type the extension maps to, or null for one the library refuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 43,
-                    "end": 46
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -79684,8 +79754,8 @@
                     "doc": "The image type the bytes themselves say they are, or null when they\nare not an image the library knows. What the name claims is checked\nagainst this: the reference refuses non-image bytes under an image\nname and renames a file whose bytes are a different image type.",
                     "shapes": [],
                     "params": [],
-                    "line": 54,
-                    "end": 59
+                    "line": 99,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -79704,8 +79774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 70
+                    "line": 107,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -79716,8 +79786,8 @@
                     "doc": "Whether the file is an image the engine will make sizes for; SVG is not.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 77
+                    "line": 118,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -79736,8 +79806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 89
+                    "line": 125,
+                    "end": 134
                 }
             ]
         },
@@ -87908,6 +87978,7 @@
                 "Minn\\Http\\Envelope",
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
+                "Minn\\Media\\Upload",
                 "Minn\\Media\\Uploads",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\CoreStatus",
@@ -88183,7 +88254,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 364,
+            "lines": 378,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88597,6 +88668,64 @@
                 },
                 {
                     "routes": [],
+                    "name": "mediaView",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mediaView(int $id, string $context): array",
+                    "doc": "One attachment as wp/v2 shapes it in a context (view, edit or embed), links included; empty when there is none. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 207
+                },
+                {
+                    "routes": [],
+                    "name": "mediaLinks",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "mediaLinks(int $id, string $context): array",
+                    "doc": "One attachment's wp/v2 links in a context, without rendering the rest of it; empty when there is none. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 210,
+                    "end": 214
+                },
+                {
+                    "routes": [],
                     "name": "userObject",
                     "static": false,
                     "visibility": "public",
@@ -88604,8 +88733,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 203,
-                    "end": 206
+                    "line": 217,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -88616,8 +88745,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 209,
-                    "end": 212
+                    "line": 223,
+                    "end": 226
                 },
                 {
                     "routes": [],
@@ -88643,8 +88772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 229
+                    "line": 234,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -88663,8 +88792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 259
+                    "line": 246,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -88690,8 +88819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 291
+                    "line": 284,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -88710,8 +88839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 298
+                    "line": 308,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -88737,8 +88866,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 319
+                    "line": 321,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -88766,8 +88895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 334
+                    "line": 341,
+                    "end": 348
                 },
                 {
                     "routes": [],
@@ -88815,8 +88944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 343
+                    "line": 350,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -88842,8 +88971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 372
+                    "line": 364,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -88862,8 +88991,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 388
+                    "line": 395,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -88889,8 +89018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 394,
-                    "end": 398
+                    "line": 408,
+                    "end": 412
                 }
             ]
         },
@@ -94608,7 +94737,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaController.php",
-            "lines": 252,
+            "lines": 264,
             "doc": "wp/v2/media: list, single, upload on both transports (multipart field\n\"file\", or a raw body with Content-Disposition), field edits, and force\ndelete with the files.",
             "implements": [],
             "extends": null,
@@ -94814,7 +94943,7 @@
                         }
                     ],
                     "line": 72,
-                    "end": 91
+                    "end": 101
                 },
                 {
                     "routes": [
@@ -94844,8 +94973,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 251
+                    "line": 228,
+                    "end": 263
                 },
                 {
                     "routes": [
@@ -94873,8 +95002,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 269
+                    "line": 267,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -94937,8 +95066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 121
+                    "line": 114,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -94978,8 +95107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 160
+                    "line": 141,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -95015,8 +95144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 183
+                    "line": 181,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -95058,8 +95187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 199
+                    "line": 203,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -95080,8 +95209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 210
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -95100,8 +95229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 278
+                    "line": 283,
+                    "end": 290
                 }
             ]
         },
@@ -95111,17 +95240,15 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaObject.php",
-            "lines": 164,
+            "lines": 158,
             "doc": "The wp/v2 media object, view and edit context.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Blocks",
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Texturize",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Html",
                 "Minn\\Media\\Metadata",
                 "Minn\\Media\\Uploads",
                 "Minn\\Rest\\Caller",
@@ -95130,14 +95257,16 @@
                 "Minn\\Rest\\RenderedFields",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Rest\\RestUrl",
-                "Minn\\Rest\\RuntimePrepare"
+                "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\Types",
+                "Minn\\Support\\Serialized"
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Media\\Uploads $uploads, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Media\\Uploads $uploads, Minn\\Front\\Permalinks $permalinks, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller, Minn\\Rest\\Types $types)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -95175,10 +95304,17 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "types",
+                        "type": "Minn\\Rest\\Types",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
+                "line": 18,
                 "end": 26
             },
             "cases": [],
@@ -95228,6 +95364,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "types",
+                    "type": "Minn\\Rest\\Types",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -95272,6 +95417,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "links",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "links(Minn\\Content\\PostRecord $p, Minn\\Rest\\Context $context): array",
+                    "doc": "The attachment's links in a context: itself (with the methods the\ncaller may use), its collection and type, its author, replies, the\npost it is attached to, and in the edit context the actions the\ncaller may take; curies when any rel is the API's own.",
+                    "shapes": [
+                        "@return array<string, list<array<string, mixed>>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "p",
+                            "type": "Minn\\Content\\PostRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 144
+                },
+                {
+                    "routes": [],
                     "name": "buildFields",
                     "static": false,
                     "visibility": "private",
@@ -95295,20 +95469,22 @@
                         }
                     ],
                     "line": 42,
-                    "end": 120
+                    "end": 103
                 },
                 {
                     "routes": [],
                     "name": "details",
                     "static": false,
                     "visibility": "private",
-                    "signature": "details(array $meta, string $mime): array",
-                    "doc": "media_details: dims, file, filesize, and the sizes with URLs.",
-                    "shapes": [],
+                    "signature": "details(int $id, string $mime): stdClass|array",
+                    "doc": "media_details: the stored metadata as it is, its sizes each with its\nMIME type and URL, and the full size after them when there are any\n(an attachment without sizes, audio among them, has an empty list).",
+                    "shapes": [
+                        "@return array<string, mixed>|\\stdClass"
+                    ],
                     "params": [
                         {
-                            "name": "meta",
-                            "type": "array",
+                            "name": "id",
+                            "type": "int",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -95321,42 +95497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 154
-                },
-                {
-                    "routes": [],
-                    "name": "descriptionHtml",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "descriptionHtml(array $meta, string $fullUrl, string $alt): string",
-                    "doc": "The attachment-page image HTML that description.rendered carries.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "meta",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "fullUrl",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "alt",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 157,
-                    "end": 179
+                    "line": 153,
+                    "end": 172
                 }
             ]
         },
@@ -108892,6 +109034,7 @@
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\Embed",
+                "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PolicyGate",
                 "Minn\\Rest\\RouteCatalogue",
                 "Minn\\Rest\\RuntimeEnvelope",
@@ -128321,7 +128464,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Registry.php",
-            "lines": 465,
+            "lines": 467,
             "doc": "Post types, taxonomies, and statuses as plugin code registers and reads\nthem. The built-in set is data/registry.json, captured from the\nreference; registrations derive their defaults the way the content\nprobe observed (contracts/fixtures/api/content.json).",
             "implements": [],
             "extends": null,
@@ -128353,7 +128496,7 @@
                 ],
                 "visibility": "public",
                 "line": 37,
-                "end": 52
+                "end": 54
             },
             "cases": [],
             "constants": [],
@@ -128443,8 +128586,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 59,
-                    "end": 62
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -128463,8 +128606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 68
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -128477,8 +128620,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 75,
-                    "end": 78
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -128497,8 +128640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 84
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -128509,8 +128652,8 @@
                     "doc": "Makes the one object for each registered type and taxonomy and binds\n$wp_post_types and $wp_taxonomies to them, as the reference shares\nthem: a plugin changing one (relabelling Posts) is heard by every\nreader (probe type-object-sharing). Called once the facade classes\nexist; later registrations make their own.",
                     "shapes": [],
                     "params": [],
-                    "line": 93,
-                    "end": 104
+                    "line": 95,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -128529,8 +128672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 113
+                    "line": 109,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -128543,8 +128686,8 @@
                         "@return array<string, \\WP_Post_Type>"
                     ],
                     "params": [],
-                    "line": 120,
-                    "end": 127
+                    "line": 122,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -128563,8 +128706,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 136
+                    "line": 132,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -128577,8 +128720,8 @@
                         "@return array<string, \\WP_Taxonomy>"
                     ],
                     "params": [],
-                    "line": 143,
-                    "end": 150
+                    "line": 145,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -128591,8 +128734,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 159,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -128611,8 +128754,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 166
+                    "line": 165,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -128633,8 +128776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 182
+                    "line": 178,
+                    "end": 184
                 },
                 {
                     "routes": [],
@@ -128677,8 +128820,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 247
+                    "line": 240,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -128721,8 +128864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 265
+                    "line": 260,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -128758,8 +128901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 330
+                    "line": 303,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -128778,8 +128921,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 333,
-                    "end": 340
+                    "line": 335,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -128814,8 +128957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 352
+                    "line": 351,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -128841,8 +128984,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 358
+                    "line": 357,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -128861,8 +129004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 364
+                    "line": 363,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -128883,8 +129026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 371,
-                    "end": 374
+                    "line": 373,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -128912,8 +129055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 391
+                    "line": 385,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -128934,8 +129077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 405
+                    "line": 401,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -128946,8 +129089,8 @@
                     "doc": "Whether a registered rewrite settles into its full form: with pretty permalinks or in the admin; otherwise it stays as given.",
                     "shapes": [],
                     "params": [],
-                    "line": 408,
-                    "end": 411
+                    "line": 410,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -128966,8 +129109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 414,
-                    "end": 421
+                    "line": 416,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -128993,8 +129136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 424,
-                    "end": 437
+                    "line": 426,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -129020,8 +129163,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 440,
-                    "end": 450
+                    "line": 442,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -129049,8 +129192,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 457,
-                    "end": 479
+                    "line": 459,
+                    "end": 481
                 },
                 {
                     "routes": [],
@@ -129079,8 +129222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 199
+                    "line": 192,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -129108,8 +129251,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 222
+                    "line": 214,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -129145,8 +129288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 291
+                    "line": 278,
+                    "end": 293
                 }
             ]
         },
@@ -141998,6 +142141,7 @@
                 "Minn\\Extension\\Loader",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Ops\\Updates",
+                "Minn\\Rest\\MediaObject",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Runtime\\CronTable",

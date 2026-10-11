@@ -5,13 +5,12 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\PostRecord;
-use Minn\Content\Blocks;
 use Minn\Content\Posts;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
 use Minn\Media\Metadata;
 use Minn\Media\Uploads;
-use Minn\Html;
+use Minn\Support\Serialized;
 
 /** The wp/v2 media object, view and edit context. */
 final readonly class MediaObject
@@ -22,6 +21,7 @@ final readonly class MediaObject
         private Permalinks $permalinks,
         private RestUrl $url,
         private Caller $caller,
+        private Types $types,
     ) {
     }
 
@@ -49,7 +49,6 @@ final readonly class MediaObject
         $fullUrl = $file === '' ? '' : $this->uploads->urlFor($file);
         $isImage = str_starts_with($p->mimeType, 'image/');
         $dual = static fn (string $raw, string $rendered) => $edit ? ['raw' => $raw, 'rendered' => $rendered] : ['rendered' => $rendered];
-        $caption = $p->excerpt === '' ? '' : Blocks::paragraphs($p->excerpt);
 
         $object = [
             'id' => $id,
@@ -64,7 +63,7 @@ final readonly class MediaObject
             'link' => $this->permalinks->forAttachment($p),
             'title' => $dual($p->title, Texturize::html($p->title)),
             'author' => $p->authorId,
-            'featured_media' => 0,
+            'featured_media' => (int) ($this->posts->meta($id, '_thumbnail_id') ?? 0),
             'comment_status' => $p->commentStatus,
             'ping_status' => $p->pingStatus,
             'template' => '',
@@ -75,26 +74,46 @@ final readonly class MediaObject
         }
         $object['class_list'] = RenderedFields::classes(['post-' . $id, 'attachment', 'type-attachment', 'status-' . $p->status, 'hentry'], $id);
         $object['minn_attached_to'] = null;
-        $object['description'] = $dual($p->content, $isImage ? $this->descriptionHtml($meta, $fullUrl, $alt) : '');
-        $object['caption'] = $dual($p->excerpt, $caption);
+        // Rendered as the reference renders them, the attachment as the global post: the_content (where prepend_attachment shows the image or the player) and the excerpt.
+        $object['description'] = $dual($p->content, RenderedFields::content($p));
+        $object['caption'] = $dual($p->excerpt, RenderedFields::excerpt($p));
         $object['alt_text'] = $alt;
         $object['media_type'] = $isImage ? 'image' : 'file';
         $object['mime_type'] = $p->mimeType;
-        $object['media_details'] = $this->details($meta, $p->mimeType);
+        $object['media_details'] = $this->details($id, $p->mimeType);
         $object['post'] = $p->parentId > 0 ? $p->parentId : null;
         $object['source_url'] = $fullUrl;
+        if ($edit) {
+            // The registered sizes the image lacks, as the runtime counts them (wp_get_missing_image_subsizes).
+            $object['missing_image_sizes'] = $isImage && \function_exists('_minn_missing_image_size_names') ? \_minn_missing_image_size_names($id) : [];
+        }
         $object['filename'] = basename($file);
         $path = $this->uploads->pathFor($file);
         $object['filesize'] = $meta['filesize'] ?: ($file !== '' && is_file($path) ? (int) filesize($path) : 0);
-        if ($edit) {
-            $object['missing_image_sizes'] = [];
-            // The plugin's image-editor facts ride edit context.
-            $object['image_quality'] = ['default' => 82, 'sizes' => []];
+        if ($edit && $isImage) {
+            // The image editor's facts ride an image's edit context.
             $object['exif_orientation'] = 1;
-            $object['image_save_progressive'] = false;
             $object['image_output_format'] = null;
+            $object['image_save_progressive'] = false;
+            $object['image_quality'] = ['default' => 82, 'sizes' => []];
         }
 
+        $object['_links'] = $this->links($p, $context);
+        return $object;
+    }
+
+    /**
+     * The attachment's links in a context: itself (with the methods the
+     * caller may use), its collection and type, its author, replies, the
+     * post it is attached to, and in the edit context the actions the
+     * caller may take; curies when any rel is the API's own.
+     *
+     * @return array<string, list<array<string, mixed>>>
+     */
+    public function links(PostRecord $p, Context $context): array
+    {
+        $id = $p->id;
+        $edit = $context->isEdit();
         $canEdit = $this->caller->can('edit_post', $id);
         $links = [
             'self' => [[
@@ -108,73 +127,47 @@ final readonly class MediaObject
             $links['author'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/users/' . $p->authorId)]];
         }
         $links['replies'] = [['embeddable' => true, 'href' => $this->url->to('/wp/v2/comments', ['post' => $id])]];
+        $parent = $p->parentId > 0 ? $this->posts->find($p->parentId) : null;
+        if ($parent !== null) {
+            $links['wp:attached-to'] = [['embeddable' => true, 'post_type' => $parent->type, 'id' => $parent->id, 'href' => $this->url->to('/wp/v2/' . $this->types->restBase($parent->type) . '/' . $parent->id)]];
+        }
         if ($edit && $canEdit) {
             $links['wp:action-unfiltered-html'] = [['href' => $this->url->to('/wp/v2/media/' . $id)]];
             if ($this->caller->can('edit_others_posts')) {
                 $links['wp:action-assign-author'] = [['href' => $this->url->to('/wp/v2/media/' . $id)]];
             }
+        }
+        if (preg_grep('/^wp:/', array_keys($links)) !== []) {
             $links['curies'] = RestUrl::curies();
         }
-        $object['_links'] = $links;
-        return $object;
+        return $links;
     }
 
-    /** media_details: dims, file, filesize, and the sizes with URLs. */
-    private function details(array $meta, string $mime): array
+    /**
+     * media_details: the stored metadata as it is, its sizes each with its
+     * MIME type and URL, and the full size after them when there are any
+     * (an attachment without sizes, audio among them, has an empty list).
+     *
+     * @return array<string, mixed>|\stdClass
+     */
+    private function details(int $id, string $mime): array|\stdClass
     {
-        if ($meta['file'] === '') {
-            // Non-image attachments carry no parsed metadata yet (recorded gap).
-            return [];
+        $meta = Serialized::decode((string) ($this->posts->meta($id, '_wp_attachment_metadata') ?? ''));
+        if (!is_array($meta)) {
+            return new \stdClass();
         }
-        $baseUrl = rtrim($this->uploads->baseUrl() . '/' . dirname($meta['file']), '/.');
+        $file = (string) ($meta['file'] ?? '');
+        $baseUrl = rtrim($this->uploads->baseUrl() . '/' . dirname($file), '/.');
         $sizes = [];
-        foreach ($meta['sizes'] as $name => $size) {
-            $sizes[$name] = ['file' => $size['file'], 'width' => $size['width'], 'height' => $size['height']]
-                + (isset($size['filesize']) ? ['filesize' => $size['filesize']] : [])
-                + ['mime_type' => $size['mime-type'], 'source_url' => $baseUrl . '/' . $size['file']];
+        foreach ((array) ($meta['sizes'] ?? []) as $name => $size) {
+            $type = $size['mime-type'] ?? '';
+            unset($size['mime-type']);
+            $sizes[$name] = $size + ['mime_type' => $type, 'source_url' => $baseUrl . '/' . ($size['file'] ?? '')];
         }
-        if ($meta['width']) {
-            $sizes['full'] = [
-                'file' => basename($meta['file']),
-                'width' => $meta['width'],
-                'height' => $meta['height'],
-                'mime_type' => $mime,
-                'source_url' => $this->uploads->urlFor($meta['file']),
-            ];
+        if ($sizes !== [] && !empty($meta['width'])) {
+            $sizes['full'] = ['file' => basename($file), 'width' => $meta['width'], 'height' => $meta['height'] ?? 0, 'mime_type' => $mime, 'source_url' => $this->uploads->urlFor($file)];
         }
-        $details = ['width' => $meta['width'], 'height' => $meta['height'], 'file' => $meta['file']];
-        if ($meta['filesize']) {
-            $details['filesize'] = $meta['filesize'];
-        }
-        $details['sizes'] = $sizes;
-        if ($meta['image_meta'] !== null) {
-            $details['image_meta'] = $meta['image_meta'];
-        }
-        return $details;
-    }
-
-    /** The attachment-page image HTML that description.rendered carries. */
-    private function descriptionHtml(array $meta, string $fullUrl, string $alt): string
-    {
-        if (empty($meta['sizes']['medium'])) {
-            return '';
-        }
-        $base = dirname($fullUrl);
-        $medium = $meta['sizes']['medium'];
-        $ratio = $meta['width'] > 0 ? $meta['height'] / $meta['width'] : 0;
-        // srcset: same-ratio sizes in stored order, then the full image.
-        $srcset = [];
-        foreach ($meta['sizes'] as $size) {
-            if ($size['width'] < 1 || abs($size['height'] - $size['width'] * $ratio) > 1) {
-                continue;
-            }
-            $srcset[$size['width']] = $base . '/' . $size['file'] . ' ' . $size['width'] . 'w';
-        }
-        $srcset[$meta['width']] = $fullUrl . ' ' . $meta['width'] . 'w';
-        $img = '<img loading="lazy" decoding="async" width="' . $medium['width'] . '" height="' . $medium['height'] . '"'
-            . ' src="' . $base . '/' . $medium['file'] . '" class="attachment-medium size-medium" alt="' . Html::esc($alt) . '"'
-            . ' srcset="' . implode(', ', $srcset) . '"'
-            . ' sizes="auto, (max-width: ' . $medium['width'] . 'px) 100vw, ' . $medium['width'] . 'px" />';
-        return "<p class=\"attachment\"><a href='" . $fullUrl . "'>" . $img . '</a></p>' . "\n";
+        $meta['sizes'] = $sizes;
+        return $meta;
     }
 }

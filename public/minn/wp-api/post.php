@@ -1215,7 +1215,7 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
         return $refused;
     }
     if ($type === 'attachment') {
-        return _minn_attachment_saved($id, $given, $existing, (bool) $fire_after_hooks);
+        return _minn_attachment_saved($id, $given, $existing);
     }
     $post = _minn_post_saved($id, $update, $existing);
     if ($fire_after_hooks) {
@@ -1226,12 +1226,13 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
 }
 
 /**
- * @internal An attachment's save ends as the reference's does (probe
- * rest-media-save): its file recorded, then add_attachment, or
- * edit_attachment and attachment_updated; no save_post actions; the after
- * hooks when asked.
+ * @internal An attachment's save ends as the reference's does (probes
+ * rest-media-save, rest-attachments-controller): its file recorded, then
+ * add_attachment, or edit_attachment and attachment_updated; no save_post
+ * actions, and no wp_after_insert_post whatever the caller asks (a REST
+ * save fires that itself).
  */
-function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before, bool $fire_after_hooks): int
+function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before): int
 {
     if (!empty($postarr['file'])) {
         update_attached_file($id, (string) $postarr['file']);
@@ -1242,9 +1243,6 @@ function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before, 
         do_action('attachment_updated', $id, get_post($id), $post_before);
     } else {
         do_action('add_attachment', $id);
-    }
-    if ($fire_after_hooks) {
-        wp_after_insert_post(get_post($id), $post_before !== null, $post_before);
     }
     return $id;
 }

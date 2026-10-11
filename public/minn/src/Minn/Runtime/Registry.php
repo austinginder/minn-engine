@@ -45,6 +45,8 @@ final class Registry
             unset($type['supports']);
         }
         unset($type);
+        // Audio and video attachments take a featured image, as the reference registers it with its types (probe rest-attachments-controller).
+        $this->features += ['attachment:audio' => ['thumbnail' => true], 'attachment:video' => ['thumbnail' => true]];
         $this->taxonomies = $data['taxonomies'] ?? [];
         $this->statuses = $data['statuses'] ?? [];
         $this->queryVars = $data['query_vars'] ?? [];

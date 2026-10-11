@@ -199,6 +199,20 @@ final readonly class Api
         return $item === null ? [] : (new MenuItemObject($s->url(), $s->caller()))->view($item, Context::tryFrom($context) ?? Context::View);
     }
 
+    /** One attachment as wp/v2 shapes it in a context (view, edit or embed), links included; empty when there is none. @return array<string, mixed> */
+    public function mediaView(int $id, string $context): array
+    {
+        $post = $this->services->posts()->find($id);
+        return $post === null || !$post->isAttachment() ? [] : $this->services->mediaObject()->build($post, Context::tryFrom($context) ?? Context::View);
+    }
+
+    /** One attachment's wp/v2 links in a context, without rendering the rest of it; empty when there is none. @return array<string, mixed> */
+    public function mediaLinks(int $id, string $context): array
+    {
+        $post = $this->services->posts()->find($id);
+        return $post === null || !$post->isAttachment() ? [] : $this->services->mediaObject()->links($post, Context::tryFrom($context) ?? Context::View);
+    }
+
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {

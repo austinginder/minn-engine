@@ -101,9 +101,23 @@ final readonly class ImageTags
         $width = preg_match('/\swidth="?(\d+)/', $tag, $w) === 1 ? (int) $w[1] : 0;
         $height = preg_match('/\sheight="?(\d+)/', $tag, $h) === 1 ? (int) $h[1] : 0;
         if ($width > 0 && $height > 0 && !str_contains($tag, ' loading=')) {
-            return (string) preg_replace('/^<img\s/i', '<img ' . $this->loadingPrefix($width, $height)[0] . ' ', $tag, 1);
+            [$prefix, $lazy] = $this->loadingPrefix($width, $height);
+            $tag = (string) preg_replace('/^<img\s/i', '<img ' . $prefix . ' ', $tag, 1);
+            return $lazy ? self::autoSized($tag) : $tag;
         }
         return str_contains($tag, ' decoding=') ? $tag : (string) preg_replace('/^<img\s/i', '<img decoding="async" ', $tag, 1);
+    }
+
+    /** A lazy image's sizes led by "auto" (wp_img_tag_add_auto_sizes), unless they already are or a plugin says not to (probe rest-attachments-controller). */
+    private static function autoSized(string $tag): string
+    {
+        if (preg_match('/\ssizes="([^"]*)"/', $tag, $m) !== 1 || preg_match('/^\s*auto\s*(,|$)/i', $m[1]) === 1) {
+            return $tag;
+        }
+        if (Runtime::hooks()->has('wp_img_tag_add_auto_sizes') && !\apply_filters('wp_img_tag_add_auto_sizes', true)) {
+            return $tag;
+        }
+        return str_replace($m[0], ' sizes="auto, ' . $m[1] . '"', $tag);
     }
 
     /** An iframe with a width and a height, and no loading of its own, loads lazily. */

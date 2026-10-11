@@ -5952,5 +5952,390 @@
                 "edit"
             ]
         }
+    },
+    "media-properties": {
+        "alt_text": {
+            "description": "Alternative text to display when attachment is not displayed.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "caption": {
+            "description": "The attachment caption.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": null,
+                "validate_callback": null
+            },
+            "properties": {
+                "raw": {
+                    "description": "Caption for the attachment, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML caption for the attachment, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "description": {
+            "description": "The attachment description.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": null,
+                "validate_callback": null
+            },
+            "properties": {
+                "raw": {
+                    "description": "Description for the attachment, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML description for the attachment, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "media_type": {
+            "description": "Attachment type.",
+            "type": "string",
+            "enum": [
+                "image",
+                "file"
+            ],
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "mime_type": {
+            "description": "The attachment MIME type.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "media_details": {
+            "description": "Details about the media file, specific to its type.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "post": {
+            "description": "The ID for the associated post of the attachment.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "source_url": {
+            "description": "URL to the original attachment file.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "missing_image_sizes": {
+            "description": "List of the missing image sizes of the attachment.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "filename": {
+            "description": "Original attachment file name.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "filesize": {
+            "description": "Attachment file size in bytes.",
+            "type": [
+                "integer",
+                "null"
+            ],
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "exif_orientation": {
+            "description": "EXIF orientation value. Values 1-8 follow the EXIF specification, where 1 means no rotation needed.",
+            "type": "integer",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "image_quality": {
+            "description": "Encode quality (1-100) from the wp_editor_set_quality filter, resolved against the output MIME type. The \"default\" value applies to the full-size image; \"sizes\" lists per-registered-size overrides where the filtered value differs from \"default\".",
+            "type": "object",
+            "context": [
+                "edit"
+            ],
+            "readonly": true,
+            "properties": {
+                "default": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100
+                },
+                "sizes": {
+                    "type": "object",
+                    "properties": {}
+                }
+            }
+        },
+        "image_output_format": {
+            "description": "The output MIME type this image should be converted to, based on the image_editor_output_format filter. Null if no conversion is needed.",
+            "type": [
+                "string",
+                "null"
+            ],
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "image_save_progressive": {
+            "description": "Whether to use progressive/interlaced encoding when saving this image.",
+            "type": "boolean",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        }
+    },
+    "media-edit-args": {
+        "src": {
+            "description": "URL to the edited image file.",
+            "type": "string",
+            "format": "uri",
+            "required": true
+        },
+        "modifiers": {
+            "description": "Array of image edits.",
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "description": "Image edit.",
+                "type": "object",
+                "required": [
+                    "type",
+                    "args"
+                ],
+                "oneOf": [
+                    {
+                        "title": "Flip",
+                        "properties": {
+                            "type": {
+                                "description": "Flip type.",
+                                "type": "string",
+                                "enum": [
+                                    "flip"
+                                ]
+                            },
+                            "args": {
+                                "description": "Flip arguments.",
+                                "type": "object",
+                                "required": [
+                                    "flip"
+                                ],
+                                "properties": {
+                                    "flip": {
+                                        "description": "Flip direction.",
+                                        "type": "object",
+                                        "required": [
+                                            "horizontal",
+                                            "vertical"
+                                        ],
+                                        "properties": {
+                                            "horizontal": {
+                                                "description": "Whether to flip in the horizontal direction.",
+                                                "type": "boolean"
+                                            },
+                                            "vertical": {
+                                                "description": "Whether to flip in the vertical direction.",
+                                                "type": "boolean"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "title": "Rotation",
+                        "properties": {
+                            "type": {
+                                "description": "Rotation type.",
+                                "type": "string",
+                                "enum": [
+                                    "rotate"
+                                ]
+                            },
+                            "args": {
+                                "description": "Rotation arguments.",
+                                "type": "object",
+                                "required": [
+                                    "angle"
+                                ],
+                                "properties": {
+                                    "angle": {
+                                        "description": "Angle to rotate clockwise in degrees.",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "title": "Crop",
+                        "properties": {
+                            "type": {
+                                "description": "Crop type.",
+                                "type": "string",
+                                "enum": [
+                                    "crop"
+                                ]
+                            },
+                            "args": {
+                                "description": "Crop arguments.",
+                                "type": "object",
+                                "required": [
+                                    "left",
+                                    "top",
+                                    "width",
+                                    "height"
+                                ],
+                                "properties": {
+                                    "left": {
+                                        "description": "Horizontal position from the left to begin the crop as a percentage of the image width.",
+                                        "type": "number"
+                                    },
+                                    "top": {
+                                        "description": "Vertical position from the top to begin the crop as a percentage of the image height.",
+                                        "type": "number"
+                                    },
+                                    "width": {
+                                        "description": "Width of the crop as a percentage of the image width.",
+                                        "type": "number"
+                                    },
+                                    "height": {
+                                        "description": "Height of the crop as a percentage of the image height.",
+                                        "type": "number"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "rotation": {
+            "description": "The amount to rotate the image clockwise in degrees. DEPRECATED: Use `modifiers` instead.",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 360,
+            "exclusiveMaximum": true
+        },
+        "x": {
+            "description": "As a percentage of the image, the x position to start the crop from. DEPRECATED: Use `modifiers` instead.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+        },
+        "y": {
+            "description": "As a percentage of the image, the y position to start the crop from. DEPRECATED: Use `modifiers` instead.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+        },
+        "width": {
+            "description": "As a percentage of the image, the width to crop the image to. DEPRECATED: Use `modifiers` instead.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+        },
+        "height": {
+            "description": "As a percentage of the image, the height to crop the image to. DEPRECATED: Use `modifiers` instead.",
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+        }
+    },
+    "media-create-args": {
+        "generate_sub_sizes": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to generate image sub sizes."
+        },
+        "convert_format": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to convert image formats."
+        },
+        "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of an external image to sideload into the media library, instead of uploading a file.",
+            "sanitize_callback": "sanitize_url",
+            "validate_callback": "@closure"
+        }
     }
 }

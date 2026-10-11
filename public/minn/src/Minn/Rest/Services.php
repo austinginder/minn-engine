@@ -453,7 +453,7 @@ final class Services
     /** The wp/v2 media shape. */
     public function mediaObject(): MediaObject
     {
-        return $this->share(MediaObject::class, fn () => new MediaObject($this->posts(), $this->uploads(), $this->permalinks(), $this->url(), $this->caller()));
+        return $this->share(MediaObject::class, fn () => new MediaObject($this->posts(), $this->uploads(), $this->permalinks(), $this->url(), $this->caller(), $this->types()));
     }
 
     /** The wp/v2 comment shape. */

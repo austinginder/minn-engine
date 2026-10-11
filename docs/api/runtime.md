@@ -80,7 +80,7 @@ the WordPress runtime plugins load against
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
-| [`Registry`](#registry) | final class | 465 | Post types, taxonomies, and statuses as plugin code registers and reads |
+| [`Registry`](#registry) | final class | 467 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
 | [`Runtime`](#runtime) | final class | 376 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
@@ -3772,7 +3772,7 @@ Registers a post status.
 
 - `@param array<string, mixed> $args`
 
-Internals: `rowOf()` (private, line 190), `objectFrom()` (private, line 212), `derivedLabels()` (private, line 276)
+Internals: `rowOf()` (private, line 192), `objectFrom()` (private, line 214), `derivedLabels()` (private, line 278)
 
 
 ## RewriteRules

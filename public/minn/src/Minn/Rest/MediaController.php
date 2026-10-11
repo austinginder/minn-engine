@@ -80,6 +80,16 @@ final readonly class MediaController
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to upload media to this post.', 403);
         }
         $upload = Upload::fromRequest($request);
+        if (empty($request->files['file']['tmp_name'])) {
+            $headers = [];
+            foreach ($request->headers as $name => $value) {
+                $headers[str_replace('-', '_', strtolower((string) $name))] = [(string) $value];
+            }
+            $refused = Upload::refusal($request->body, $headers);
+            if ($refused !== null) {
+                throw $refused;
+            }
+        }
         if ($upload === null) {
             throw new RestError('rest_upload_no_data', 'No data supplied.', 400);
         }
@@ -154,7 +164,9 @@ final readonly class MediaController
         }
         (new PostEvents())->restInserted((int) $id, $request, null);
         $this->finishedWithPlugins((int) $id, $params, $request, null);
-        (new PostEvents())->attachmentGenerated((int) $id, $file, $type);
+        // A client that makes the sizes itself (generate_sub_sizes, convert_format false) has none made or converted here.
+        $asked = static fn (string $name): bool => !isset($params[$name]) || filter_var($params[$name], FILTER_VALIDATE_BOOLEAN);
+        \_minn_attachment_sizes_as_asked($asked('generate_sub_sizes'), $asked('convert_format'), static fn () => (new PostEvents())->attachmentGenerated((int) $id, $file, $type));
         return Reply::item($this->object->build($this->posts->find((int) $id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
     }

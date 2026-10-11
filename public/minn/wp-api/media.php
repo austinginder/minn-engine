@@ -651,10 +651,40 @@ function wp_get_chromium_major_version()
     return preg_match('#Chrome/(\d+)#', (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), $m) === 1 ? (int) $m[1] : null;
 }
 
-/** Whether images are processed in the browser before upload: off unless a filter turns it on. */
+/**
+ * Whether images are processed in the browser before upload (probe
+ * rest-attachments-controller): in a secure context, which is HTTPS or a
+ * host of localhost or under .localhost (its port aside; 127.0.0.1 is not
+ * one), through wp_client_side_media_processing_enabled.
+ */
 function wp_is_client_side_media_processing_enabled()
 {
-    return apply_filters('wp_client_side_media_processing_enabled', false);
+    $host = strtolower((string) preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? '')));
+    $secure = is_ssl() || $host === 'localhost' || str_ends_with($host, '.localhost');
+    return apply_filters('wp_client_side_media_processing_enabled', $secure);
+}
+
+/** @internal runs a new attachment's sizing with none made (generate_sub_sizes false) or none converted (convert_format false), as a REST upload asks */
+function _minn_attachment_sizes_as_asked(bool $sizes, bool $convert, Closure $run): void
+{
+    if (!$sizes) {
+        add_filter('intermediate_image_sizes_advanced', '__return_empty_array', 100);
+    }
+    if (!$convert) {
+        add_filter('image_editor_output_format', '__return_empty_array', 100);
+    }
+    try {
+        $run();
+    } finally {
+        remove_filter('intermediate_image_sizes_advanced', '__return_empty_array', 100);
+        remove_filter('image_editor_output_format', '__return_empty_array', 100);
+    }
+}
+
+/** @internal the names of the registered sizes an attachment is missing, for its REST edit view */
+function _minn_missing_image_size_names(int $attachment_id): array
+{
+    return array_keys(wp_get_missing_image_subsizes($attachment_id));
 }
 
 /** Whether an image location names an attachment's file, one of its sizes, or its original. */
@@ -1699,6 +1729,35 @@ function wp_playlist_scripts($type)
 function wp_underscore_playlist_templates()
 {
     echo Minn\Content\Playlist::templates(_x('&#8220;%s&#8221;', 'playlist item title'));
+}
+
+/**
+ * An attachment's sizes brought up to date (probe rest-attachments-controller):
+ * without metadata, all of them made from its file; otherwise each missing
+ * size made and stored as it lands. Then wp_generate_attachment_metadata
+ * (context update) and the metadata stored; the metadata, or an error when
+ * there is no file to work from.
+ */
+function wp_update_image_subsizes($attachment_id)
+{
+    $attachment_id = (int) $attachment_id;
+    $image_meta = wp_get_attachment_metadata($attachment_id);
+    $image_file = wp_get_original_image_path($attachment_id);
+    if (empty($image_meta) || !is_array($image_meta)) {
+        if (empty($image_file)) {
+            return new WP_Error('invalid_attachment', __('The attached file cannot be found.'));
+        }
+        $image_meta = wp_create_image_subsizes($image_file, $attachment_id);
+    } else {
+        $missing = wp_get_missing_image_subsizes($attachment_id);
+        if (empty($missing)) {
+            return $image_meta;
+        }
+        $image_meta = _wp_make_subsizes($missing, $image_file, $image_meta, $attachment_id);
+    }
+    $image_meta = apply_filters('wp_generate_attachment_metadata', $image_meta, $attachment_id, 'update');
+    wp_update_attachment_metadata($attachment_id, $image_meta);
+    return $image_meta;
 }
 
 /** Registered sizes the attachment's metadata lacks and its dimensions can fit (empty for the battery attachment, probed). */

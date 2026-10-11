@@ -12345,3 +12345,114 @@ and `nav_menu_options` and the locations theme mod are put back.
   and writes as an administrator.
 
 Fixed on the way: the menus list honours `include`.
+
+## WP_REST_Attachments_Controller (2026-10-11)
+
+Probe `rest-attachments-controller` proves the media controller class. Its
+fixtures are a contributor, an author, a post, an image attached to the
+post, and an audio file. An image is uploaded, updated, given its sizes,
+edited into new attachments and deleted through the class. All of it is
+removed again, files included. Both stacks write images with GD here:
+the reference would pick Imagick, which the engine still owes.
+
+- **Routes.** The posts routes, then `post-process` and `edit`. Over
+  HTTPS, `sideload` and `finalize` too.
+- **Client-side processing** (`wp_is_client_side_media_processing_enabled`)
+  is on in a secure context: HTTPS, or a host of `localhost` or under
+  `.localhost` (port aside). `127.0.0.1` and `[::1]` don't count. The
+  filter receives that answer. The engine used to answer false unless a
+  filter said otherwise.
+- **Creating** takes `generate_sub_sizes`, `convert_format` and `url` as
+  well. A URL must pass `wp_http_validate_url`.
+  - `create_item_from_url` refuses a URL with no file name ("Could not
+    determine a filename…") and one whose name is not an image type the
+    site takes. Then it fetches the file.
+  - The fetch and the upload after it are not probed (they need the
+    network); a refused fetch comes back as it is.
+- **The list query** puts attachments in `inherit` unless a status is
+  named. A list of media types stands for all their MIME types, else a list
+  of MIME types stands for itself. A plain string is ignored.
+- **Permissions.**
+  - Creating: the posts checks, then uploading, then editing the post
+    named ("…upload media to this post.").
+  - Post-processing: updating.
+  - Editing an image: uploading first (`rest_cannot_edit_image`), then
+    updating.
+- **Uploads.**
+  - `upload_from_data` checks, in order: no data, no Content-Type, no
+    Content-Disposition, one naming no file, then a Content-MD5 that differs
+    (412). The engine's own upload route makes the same checks
+    (`Upload::refusal`).
+  - `upload_from_file` refuses an empty form, and passes on
+    `wp_handle_upload`'s words otherwise.
+  - `insert_attachment` saves the attachment without sizes, and fires
+    `rest_insert_attachment` itself.
+- **File names from a Content-Disposition**
+  (`get_filename_from_disposition`, which the engine's upload uses too):
+  - The parameters after the disposition type are split on semicolons,
+    without regard to quotes.
+  - The last non-empty `filename=` across all the headers wins.
+  - Double quotes are taken off only when they wrap the value.
+  - `filename*` and `FILENAME` are not read.
+- **Featured images** only on audio and video, which take thumbnails as
+  the reference registers them: `attachment:audio` and `attachment:video`
+  support `thumbnail`. Anything else is `rest_no_featured_media`, naming
+  the MIME type. The attachment schema carries `featured_media` anyway.
+- **`post_process_item`** makes the missing sizes through
+  `wp_update_image_subsizes`, which is now real:
+  - an attachment without metadata gets all its sizes;
+  - otherwise each missing size is made and stored as it lands;
+  - then `wp_generate_attachment_metadata` (context update) runs and the
+    metadata is stored;
+  - with no file, it answers `invalid_attachment`.
+- **`edit_media_item`**, step by step:
+  - **Refusals.** The source must name the attachment's file or one of its
+    sizes, else `rest_unknown_attachment`; that is checked before an edit
+    with nothing to do (`rest_image_not_edited`).
+  - **Which file.** The original is edited even when the source names a
+    size.
+  - **The edits.** Modifiers, or the old `rotation` and `x`, `y`,
+    `width`, `height` fields. Rotation is clockwise. Crop percentages are
+    of the size at that point, rounded.
+  - **The new file** is saved as `-edited` beside the original (unique).
+  - **The new attachment** takes the request's fields, and the original's
+    title, caption, description and alt text where none are given. It is
+    not attached to a post unless `post` says so. It fires no
+    `wp_after_insert_post` and no REST insert actions.
+  - **Its sizes** are made, then `parent_image` names the original
+    (through `wp_edited_image_metadata`).
+  - **The answer** is its view, a 201.
+- **The media shape** (the engine's `MediaObject`, the HTTP route
+  included):
+  - `media_details` is the stored metadata as it is, `parent_image` and
+    audio's length among it. Its sizes each carry their MIME type and URL,
+    and the full size follows them only when there are sizes; audio has an
+    empty list.
+  - The description and caption render as the posts do, through
+    `the_content` (where `prepend_attachment` shows the image or the
+    player) and the excerpt. An audio caption is the excerpt made from the
+    player, its URL.
+  - `missing_image_sizes` comes from `wp_get_missing_image_subsizes`.
+  - `featured_media` is the attachment's own thumbnail.
+  - The image editor fields (`exif_orientation`, `image_output_format`,
+    `image_save_progressive`, `image_quality`) are for images only.
+  - There is a `wp:attached-to` link, and curies whenever an API rel is
+    there.
+
+Fixed on the way:
+- Saving an attachment no longer fires `wp_after_insert_post`.
+  WordPress never does; its REST controller fires it itself.
+- An image added inside `the_content` and made lazy gets
+  `sizes="auto, …"`, as `wp_filter_content_tags` gives it.
+- A REST upload with `generate_sub_sizes` or `convert_format` false makes
+  or converts nothing.
+
+Owed:
+- The client-side processing methods, as inline placeholders:
+  `sideload_item` and its permission check, `finalize_item`,
+  `validate_sub_size_provenance`, `get_sideloaded_file_names`,
+  `get_attachment_upload_subdir`.
+- The engine's own `post-process`, `edit`, `sideload` and `finalize`
+  routes.
+- A network's upload space check in `check_upload_size`.
+- `WP_Image_Editor_Imagick`.
