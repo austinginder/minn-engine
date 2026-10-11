@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 743,
-        "composes": 2077,
-        "leaf": 957,
-        "noop": 2721,
-        "placeholder": 213,
+        "minn": 773,
+        "composes": 2095,
+        "leaf": 959,
+        "noop": 2726,
+        "placeholder": 171,
         "deadend": 1662,
-        "functions": 8295,
-        "minnMethods": 958,
+        "functions": 8308,
+        "minnMethods": 960,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -15798,72 +15798,90 @@
             ]
         },
         "WP_Navigation_Fallback::create_classic_menu_fallback": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::create_default_fallback": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_default_fallback_blocks": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_fallback": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_fallback_classic_menu": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_most_recently_created_nav_menu": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_most_recently_published_navigation": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_nav_menu_at_primary_location": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::get_nav_menu_with_primary_slug": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Navigation_Fallback.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_Navigation_Fallback::update_wp_navigation_post_schema": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Navigation_Fallback.php",
+            "lines": 12,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -18349,13 +18367,6 @@
             "minn": [],
             "composes": []
         },
-        "WP_REST_Attachments_Controller::handle_featured_media": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
         "WP_REST_Attachments_Controller::insert_attachment": {
             "file": "classes/placeholders/Placeholders.php",
             "lines": 2,
@@ -18371,20 +18382,6 @@
             "composes": []
         },
         "WP_REST_Attachments_Controller::post_process_item_permissions_check": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
-        "WP_REST_Attachments_Controller::prepare_items_query": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
-        "WP_REST_Attachments_Controller::prepare_links": {
             "file": "classes/placeholders/Placeholders.php",
             "lines": 2,
             "kind": "placeholder",
@@ -18744,13 +18741,6 @@
                 "__",
                 "register_rest_route"
             ]
-        },
-        "WP_REST_Blocks_Controller::check_read_permission": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
         },
         "WP_REST_Comment_Meta_Fields::get_meta_subtype": {
             "file": "classes/WP_REST_Comment_Meta_Fields.php",
@@ -19497,27 +19487,6 @@
             "minn": [],
             "composes": []
         },
-        "WP_REST_Menu_Items_Controller::get_schema_links": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
-        "WP_REST_Menu_Items_Controller::prepare_items_query": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
-        "WP_REST_Menu_Items_Controller::prepare_links": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
-        },
         "WP_REST_Menu_Locations_Controller::__construct": {
             "file": "classes/WP_REST_Menu_Locations_Controller.php",
             "lines": 2,
@@ -20251,178 +20220,444 @@
             ]
         },
         "WP_REST_Posts_Controller::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_post_type_object"
+            ]
         },
         "WP_REST_Posts_Controller::can_access_password_content": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 11,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can"
+            ]
         },
         "WP_REST_Posts_Controller::check_assign_terms_permission": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::check_create_permission": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can",
+                "get_post_type_object"
+            ]
         },
         "WP_REST_Posts_Controller::check_delete_permission": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can",
+                "get_post_type_object"
+            ]
         },
         "WP_REST_Posts_Controller::check_is_post_type_allowed": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 4,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_post_type_object"
+            ]
         },
         "WP_REST_Posts_Controller::check_password_required": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can"
+            ]
         },
         "WP_REST_Posts_Controller::check_read_permission": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 18,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can",
+                "get_post",
+                "get_post_status_object",
+                "get_post_type_object"
+            ]
         },
         "WP_REST_Posts_Controller::check_status": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::check_template": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::check_update_permission": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
+            "composes": [
+                "current_user_can",
+                "get_post_type_object"
+            ]
+        },
+        "WP_REST_Posts_Controller::create_item": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_REST_Posts_Controller::create_item_permissions_check": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_REST_Posts_Controller::delete_item": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_REST_Posts_Controller::delete_item_permissions_check": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::get_available_actions": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 27,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "current_user_can",
+                "get_post_type_object",
+                "is_taxonomy_hierarchical",
+                "post_type_supports"
+            ]
+        },
+        "WP_REST_Posts_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\PostCollectionParams::built"
+            ],
+            "composes": [
+                "apply_filters",
+                "get_post_type_object"
+            ]
+        },
+        "WP_REST_Posts_Controller::get_item": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_permalink",
+                "get_post_type_object",
+                "is_post_type_viewable",
+                "is_wp_error",
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Posts_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 18,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "add_filter",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Posts_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": [
+                "__",
+                "apply_filters",
+                "get_post_format_slugs",
+                "get_post_stati",
+                "get_post_type_object"
+            ]
+        },
+        "WP_REST_Posts_Controller::get_items": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 26,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RuntimePrepare::during"
+            ],
+            "composes": [
+                "get_post",
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Posts_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "get_post_type_object",
+                "rest_authorization_required_code"
+            ]
         },
         "WP_REST_Posts_Controller::get_post": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Posts_Controller::get_schema_links": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 21,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "post_type_supports",
+                "rest_url"
+            ]
         },
         "WP_REST_Posts_Controller::handle_featured_media": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::handle_status_param": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::handle_template": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::handle_terms": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_REST_Posts_Controller::minn_bound": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Posts_Controller::minn_links_for_response": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RuntimeRoutes::itemResponse"
+            ],
+            "composes": []
+        },
+        "WP_REST_Posts_Controller::minn_rest_taxonomies": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_object_taxonomies",
+                "wp_list_filter"
+            ]
+        },
+        "WP_REST_Posts_Controller::minn_schema_fields": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "post_type_supports"
+            ]
         },
         "WP_REST_Posts_Controller::prepare_date_response": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 8,
+            "kind": "composes",
             "minn": [],
+            "composes": [
+                "mysql_to_rfc3339"
+            ]
+        },
+        "WP_REST_Posts_Controller::prepare_item_for_database": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
+        },
+        "WP_REST_Posts_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostRecord::fromRow"
+            ],
+            "composes": [
+                "get_current_user_id",
+                "get_post",
+                "rest_ensure_response",
+                "rest_is_field_included",
+                "setup_postdata"
+            ]
         },
         "WP_REST_Posts_Controller::prepare_items_query": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 13,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
         },
         "WP_REST_Posts_Controller::prepare_links": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\PostRecord::fromRow"
+            ],
+            "composes": [
+                "get_post"
+            ]
         },
         "WP_REST_Posts_Controller::prepare_tax_query": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::prepare_taxonomy_limit_schema": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_REST_Posts_Controller.php",
             "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Posts_Controller::protected_title_format": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
-        "WP_REST_Posts_Controller::sanitize_post_statuses": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_REST_Posts_Controller::register_routes": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 23,
+            "kind": "composes",
             "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
+        },
+        "WP_REST_Posts_Controller::sanitize_post_statuses": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "get_post_type_object",
+                "is_wp_error",
+                "rest_authorization_required_code",
+                "rest_validate_request_arg",
+                "wp_parse_slug_list"
+            ]
+        },
+        "WP_REST_Posts_Controller::update_item": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
+            "composes": []
+        },
+        "WP_REST_Posts_Controller::update_item_permissions_check": {
+            "file": "classes/WP_REST_Posts_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Request::__construct": {
@@ -21281,6 +21516,13 @@
             "minn": [
                 "Minn\\Rest\\RouteMatch::find"
             ],
+            "composes": []
+        },
+        "WP_REST_Server::minn_engine_api": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_REST_Server::query_text": {

@@ -190,6 +190,7 @@ add_filter('render_block_context', '_block_template_render_without_post_block_co
 // Block Hooks around REST template saves (probe block-hooks-rest).
 add_filter('rest_pre_insert_wp_template', 'inject_ignored_hooked_blocks_metadata_attributes');
 add_filter('rest_pre_insert_wp_template_part', 'inject_ignored_hooked_blocks_metadata_attributes');
+add_filter('rest_wp_navigation_item_schema', ['WP_Navigation_Fallback', 'update_wp_navigation_post_schema']);
 // Menus (probe category-menu-helpers): a deleted term takes its menu items; an item's id prints once; has-children stops at the depth.
 add_action('delete_term', '_wp_delete_tax_menu_item', 10, 3);
 add_filter('nav_menu_item_id', '_nav_menu_item_id_use_once', 10, 2);

@@ -103,16 +103,35 @@ final class PostCollectionParams implements RouteParams
         }
         foreach (\get_post_types(['show_in_rest' => true], 'objects') as $name => $object) {
             if (($object->rest_namespace ?: 'wp/v2') === 'wp/v2' && ($object->rest_base ?: $name) === $base) {
-                $taxonomies = [];
-                foreach (\get_object_taxonomies($name, 'objects') as $taxonomy) {
-                    if (!empty($taxonomy->show_in_rest)) {
-                        $taxonomies[(string) ($taxonomy->rest_base ?: $taxonomy->name)] = (bool) $taxonomy->hierarchical;
-                    }
-                }
-                return ['name' => (string) $name, 'object' => $object, 'author' => \post_type_supports($name, 'author'), 'attributes' => $name === 'page' || \post_type_supports($name, 'page-attributes'), 'hierarchical' => (bool) $object->hierarchical || $name === 'attachment', 'formats' => \post_type_supports($name, 'post-formats'), 'taxonomies' => $taxonomies];
+                return self::described((string) $name, $object);
             }
         }
         return null;
+    }
+
+    /**
+     * A post type's list parameters as built, for the type in any
+     * namespace: before rest_{type}_collection_params and the optional
+     * marks, for the facade's controller class, which adds its callbacks
+     * and runs the filter itself.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public static function built(\WP_Post_Type $object): array
+    {
+        return self::build(self::described((string) $object->name, $object));
+    }
+
+    /** @return array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} */
+    private static function described(string $name, \WP_Post_Type $object): array
+    {
+        $taxonomies = [];
+        foreach (\get_object_taxonomies($name, 'objects') as $taxonomy) {
+            if (!empty($taxonomy->show_in_rest)) {
+                $taxonomies[(string) ($taxonomy->rest_base ?: $taxonomy->name)] = (bool) $taxonomy->hierarchical;
+            }
+        }
+        return ['name' => $name, 'object' => $object, 'author' => \post_type_supports($name, 'author'), 'attributes' => $name === 'page' || \post_type_supports($name, 'page-attributes'), 'hierarchical' => (bool) $object->hierarchical || $name === 'attachment', 'formats' => \post_type_supports($name, 'post-formats'), 'taxonomies' => $taxonomies];
     }
 
     /** @param array{name: string, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>> */

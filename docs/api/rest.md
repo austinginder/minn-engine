@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 309 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 330 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 84 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -40,7 +40,7 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 231 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
-| [`PostCollectionParams`](#postcollectionparams) | final class | 211 | A post type's collection parameters as the reference builds them for its |
+| [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
@@ -118,6 +118,14 @@ The API for one request: the shared services and the route table.
 
 Who is making this request.
 
+### `listPosts(string $route, string $type, Closure $shape, ?WP_REST_Request $as = NULL): Minn\Http\Response`
+
+A post type's list as its route serves it (the caller, the statuses,
+the parameters, the query, the totals and page links), each post given
+the shape asked for: the facade's controller class shapes them itself.
+
+- `@param \Closure(\Minn\Content\PostRecord, Context): array<string, mixed> $shape`
+
 ### `postObject(): Minn\Rest\PostObject`
 
 The wp/v2 post shape.
@@ -174,7 +182,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 281), `withPageLinks()` (private, line 295), `options()` (private, line 326), `withAllow()` (private, line 339)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 302), `withPageLinks()` (private, line 316), `options()` (private, line 347), `withAllow()` (private, line 360)
 
 
 ## ApplicationPasswordsController
@@ -735,7 +743,7 @@ a linked resource carries when it rides inside another response.
 
 Cases: `View` = `'view'`, `Edit` = `'edit'`, `Embed` = `'embed'`
 
-Used by: `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Rest\Api`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
 
 ### static `of(Minn\Http\Request $request): self`
 
@@ -1630,6 +1638,15 @@ again.
 
 - `@return array<string, array<string, mixed>>`
 
+### static `built(WP_Post_Type $object): array`
+
+A post type's list parameters as built, for the type in any
+namespace: before rest_{type}_collection_params and the optional
+marks, for the facade's controller class, which adds its callbacks
+and runs the filter itself.
+
+- `@return array<string, array<string, mixed>>`
+
 ### static `mediaTypes(): array`
 
 The allowed MIME types by media type (the part before the slash), in
@@ -1637,7 +1654,7 @@ the order the site allows them, each once.
 
 - `@return array<string, list<string>>`
 
-Internals: `forType()` (private, line 58), `filtered()` (private, line 76), `type()` (private, line 95), `build()` (private, line 119), `statuses()` (private, line 194), `taxonomies()` (private, line 205), `termFilter()` (private, line 221)
+Internals: `forType()` (private, line 58), `filtered()` (private, line 76), `type()` (private, line 95), `described()` (private, line 126), `build()` (private, line 138), `statuses()` (private, line 213), `taxonomies()` (private, line 224), `termFilter()` (private, line 240)
 
 
 ## PostListArgs

@@ -11964,3 +11964,78 @@ Owed: the engine's REST global styles save (`Theme\UserStyles::save`)
 writes the post directly, without the save filters. So a user without
 `unfiltered_html` (with `DISALLOW_UNFILTERED_HTML`, say) may save styles
 the reference's save filters would remove. Not yet compared over HTTP.
+
+## WP_REST_Posts_Controller, read side (2026-10-10)
+
+Probe `rest-posts-controller` proves the read half of the posts
+controller class and `WP_Navigation_Fallback`'s schema filter. The
+engine still answers the core types' routes itself. The class is what
+plugins construct, extend as a `rest_controller_class`, or call.
+
+- **Construction.** The rest base and namespace come from the type, and
+  the meta fields from `WP_REST_Post_Meta_Fields`. Batching is allowed.
+- **Routes.** `register_routes` adds the collection (list and create)
+  and the item (read, edit, delete) routes. The item read takes a context,
+  plus an excerpt length and a password when the schema has those fields.
+- **The item schema** is assembled per type from definitions captured from
+  the reference (`data/rest-schemas.json`, `post-properties`), with the
+  callbacks bound to the controller:
+  - every type: the dates, guid, id, link, slug, status, type and password;
+  - a public type (viewable alone is not enough): the permalink template,
+    generated slug and class list;
+  - a hierarchical type: the parent;
+  - by supports: title, content (editor), author, featured media
+    (thumbnail), comment and ping status (comments), menu order (page
+    attributes), format (post formats);
+  - an excerpt with excerpt support, and always for pages, whatever their
+    supports say;
+  - meta with custom fields, or for attachments;
+  - sticky for posts only;
+  - the template always;
+  - each REST taxonomy's terms by its rest base.
+
+  The status enum is the non-internal statuses and the format enum the
+  format slugs. The schema links follow, then `rest_{type}_item_schema`,
+  then the fields plugins register. `WP_Navigation_Fallback` hooks that
+  filter for navigation posts, adding the embed context to status, the raw
+  title and the content.
+- **Collection parameters** are the engine's own for the type
+  (`PostCollectionParams::built`, any namespace). The base controller's
+  four replace the first four, the context defaults to view, and statuses
+  are sanitized by `sanitize_post_statuses`. Then
+  `rest_{type}_collection_params` runs.
+- **Permissions.**
+  - Anyone may list; the edit context needs editing the type.
+  - Reading one post needs reading it. The edit context needs editing it,
+    and opens every password-protected post the user may edit.
+  - A wrong password is a 403.
+- **Statuses.** The default status needs no right. Others need editing
+  the type (private: reading private posts) and must validate.
+- **Reading** goes through the engine: the post's object is the engine's
+  `PostObject` (view or edit; embed narrows the view), cut to the fields
+  asked for. The links go on the response when `_links` or `_embedded` is
+  asked for, with rels expanded and no target hints. A viewable type's
+  post adds the alternate Link header.
+- **Listing** takes only the ids from the engine's own list for the type
+  (`Api::listPosts`, the query, totals and page links as the route serves
+  them). Each post is then shaped through the controller, so a subclass's
+  `prepare_item_for_response` shapes the list and each post renders once.
+- **Helpers.**
+  - `prepare_date_response`: the local date when given; an unset GMT date
+    is null.
+  - `prepare_items_query`: stickies are ignored unless a post list says
+    otherwise, and REST orderby names map to WP_Query's.
+  - `get_post`: one of this type, else `rest_post_invalid_id`.
+  - `check_password_required` and `can_access_password_content` as
+    observed.
+
+Called directly without the defaults dispatching sets, the reference uses
+page 0 for its next page link. The probe sets the defaults first.
+
+The container class suffix in rendered content is engine-defined and
+neutralised, as the suites do.
+
+Left: the write side: create, update and delete with their permission
+checks, `prepare_item_for_database`, the status, template, featured media
+and terms handlers, and the tax query helpers. Also owed: the engine's
+`OPTIONS /wp/v2/posts` omits the schema the reference returns.

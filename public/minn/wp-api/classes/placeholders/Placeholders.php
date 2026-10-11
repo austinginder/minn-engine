@@ -110,240 +110,12 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor
     }
 }
 
-class WP_Navigation_Fallback
-{
-
-    public static function update_wp_navigation_post_schema($schema)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::update_wp_navigation_post_schema');
-        return null;
-    }
-
-    public static function get_fallback()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_fallback');
-        return null;
-    }
-
-    private static function get_most_recently_published_navigation()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_most_recently_published_navigation');
-        return null;
-    }
-
-    private static function create_classic_menu_fallback()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::create_classic_menu_fallback');
-        return null;
-    }
-
-    private static function get_fallback_classic_menu()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_fallback_classic_menu');
-        return null;
-    }
-
-    private static function get_most_recently_created_nav_menu($classic_nav_menus)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_most_recently_created_nav_menu');
-        return null;
-    }
-
-    private static function get_nav_menu_with_primary_slug($classic_nav_menus)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_nav_menu_with_primary_slug');
-        return null;
-    }
-
-    private static function get_nav_menu_at_primary_location()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_nav_menu_at_primary_location');
-        return null;
-    }
-
-    private static function create_default_fallback()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::create_default_fallback');
-        return null;
-    }
-
-    private static function get_default_fallback_blocks()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_default_fallback_blocks');
-        return null;
-    }
-}
-
-class WP_REST_Posts_Controller extends WP_REST_Controller
-{
-    protected $post_type = NULL;
-    protected $meta = NULL;
-    protected $password_check_passed = [];
-    protected $allow_batch = ['v1' => true];
-
-    public function __construct($post_type)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::__construct');
-        return null;
-    }
-
-    public function check_password_required($required, $post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_password_required');
-        return null;
-    }
-
-    protected function get_post($id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::get_post');
-        return null;
-    }
-
-    public function can_access_password_content($post, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::can_access_password_content');
-        return null;
-    }
-
-    protected function prepare_items_query($prepared_args = [], $request = NULL)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_items_query');
-        return null;
-    }
-
-    protected function prepare_date_response($date_gmt, $date = NULL)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_date_response');
-        return null;
-    }
-
-    public function check_status($status, $request, $param)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_status');
-        return null;
-    }
-
-    protected function handle_status_param($post_status, $post_type)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_status_param');
-        return null;
-    }
-
-    protected function handle_featured_media($featured_media, $post_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_featured_media');
-        return null;
-    }
-
-    public function check_template($template, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_template');
-        return null;
-    }
-
-    public function handle_template($template, $post_id, $validate = false)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_template');
-        return null;
-    }
-
-    protected function handle_terms($post_id, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_terms');
-        return null;
-    }
-
-    protected function check_assign_terms_permission($request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_assign_terms_permission');
-        return null;
-    }
-
-    protected function check_is_post_type_allowed($post_type)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_is_post_type_allowed');
-        return null;
-    }
-
-    public function check_read_permission($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_read_permission');
-        return null;
-    }
-
-    protected function check_update_permission($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_update_permission');
-        return null;
-    }
-
-    protected function check_create_permission($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_create_permission');
-        return null;
-    }
-
-    protected function check_delete_permission($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_delete_permission');
-        return null;
-    }
-
-    public function protected_title_format()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::protected_title_format');
-        return null;
-    }
-
-    protected function prepare_links($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_links');
-        return null;
-    }
-
-    protected function get_available_actions($post, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::get_available_actions');
-        return null;
-    }
-
-    protected function get_schema_links()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::get_schema_links');
-        return null;
-    }
-
-    public function sanitize_post_statuses($statuses, $request, $parameter)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::sanitize_post_statuses');
-        return null;
-    }
-
-    private function prepare_tax_query($args, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_tax_query');
-        return null;
-    }
-
-    private function prepare_taxonomy_limit_schema($query_params)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_taxonomy_limit_schema');
-        return null;
-    }
-}
-
 class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
 {
     const IMAGE_SIZE_SOURCE_ORIGINAL = 'source_original';
     const META_KEY_SOURCE_IMAGE = 'source_image';
     const META_KEY_SIDELOAD_FILE_NAME = '_wp_sideloaded_file';
     protected $allow_batch = false;
-
-    protected function prepare_items_query($prepared_args = [], $request = NULL)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::prepare_items_query');
-        return null;
-    }
 
     protected function create_item_from_url($request)
     {
@@ -359,12 +131,6 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
     protected function insert_attachment($request)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::insert_attachment');
-        return null;
-    }
-
-    protected function handle_featured_media($featured_media, $post_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::handle_featured_media');
         return null;
     }
 
@@ -389,12 +155,6 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
     public function edit_media_item($request)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::edit_media_item');
-        return null;
-    }
-
-    protected function prepare_links($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::prepare_links');
         return null;
     }
 
@@ -608,12 +368,6 @@ class WP_REST_Block_Patterns_Controller extends WP_REST_Controller
 
 class WP_REST_Blocks_Controller extends WP_REST_Posts_Controller
 {
-
-    public function check_read_permission($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Blocks_Controller::check_read_permission');
-        return null;
-    }
 }
 
 class WP_REST_Comments_Controller extends WP_REST_Controller
@@ -711,24 +465,6 @@ class WP_REST_Menu_Items_Controller extends WP_REST_Posts_Controller
     protected function check_has_read_only_access($request)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::check_has_read_only_access');
-        return null;
-    }
-
-    protected function prepare_links($post)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::prepare_links');
-        return null;
-    }
-
-    protected function get_schema_links()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::get_schema_links');
-        return null;
-    }
-
-    protected function prepare_items_query($prepared_args = [], $request = NULL)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::prepare_items_query');
         return null;
     }
 

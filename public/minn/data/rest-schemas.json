@@ -4748,5 +4748,395 @@
                 "readonly": true
             }
         }
+    },
+    "post-properties": {
+        "date": {
+            "description": "The date the post was published, in the site's timezone.",
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "date_gmt": {
+            "description": "The date the post was published, as GMT.",
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "guid": {
+            "description": "The globally unique identifier for the post.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true,
+            "properties": {
+                "raw": {
+                    "description": "GUID for the post, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ],
+                    "readonly": true
+                },
+                "rendered": {
+                    "description": "GUID for the post, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "id": {
+            "description": "Unique identifier for the post.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "link": {
+            "description": "URL to the post.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "modified": {
+            "description": "The date the post was last modified, in the site's timezone.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "modified_gmt": {
+            "description": "The date the post was last modified, as GMT.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "slug": {
+            "description": "An alphanumeric identifier for the post unique to its type.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "@this:sanitize_slug"
+            }
+        },
+        "status": {
+            "description": "A named status for the post.",
+            "type": "string",
+            "enum": [
+                "publish",
+                "future",
+                "draft",
+                "pending",
+                "private"
+            ],
+            "context": [
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "validate_callback": "@this:check_status"
+            }
+        },
+        "type": {
+            "description": "Type of post.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "password": {
+            "description": "A password to protect access to the content and excerpt.",
+            "type": "string",
+            "context": [
+                "edit"
+            ]
+        },
+        "permalink_template": {
+            "description": "Permalink template for the post.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "generated_slug": {
+            "description": "Slug automatically generated from the post title.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "class_list": {
+            "description": "An array of the class names for the post container element.",
+            "type": "array",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true,
+            "items": {
+                "type": "string"
+            }
+        },
+        "parent": {
+            "description": "The ID for the parent of the post.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "title": {
+            "description": "The title for the post.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": null,
+                "validate_callback": null
+            },
+            "properties": {
+                "raw": {
+                    "description": "Title for the post, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML title for the post, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "content": {
+            "description": "The content for the post.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": null,
+                "validate_callback": null
+            },
+            "properties": {
+                "raw": {
+                    "description": "Content for the post, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML content for the post, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit"
+                    ],
+                    "readonly": true
+                },
+                "block_version": {
+                    "description": "Version of the content block format used by the post.",
+                    "type": "integer",
+                    "context": [
+                        "edit"
+                    ],
+                    "readonly": true
+                },
+                "protected": {
+                    "description": "Whether the content is protected with a password.",
+                    "type": "boolean",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "author": {
+            "description": "The ID for the author of the post.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "excerpt": {
+            "description": "The excerpt for the post.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": null,
+                "validate_callback": null
+            },
+            "properties": {
+                "raw": {
+                    "description": "Excerpt for the post, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML excerpt for the post, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                },
+                "protected": {
+                    "description": "Whether the excerpt is protected with a password.",
+                    "type": "boolean",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "featured_media": {
+            "description": "The ID of the featured media for the post.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "comment_status": {
+            "description": "Whether or not comments are open on the post.",
+            "type": "string",
+            "enum": [
+                "open",
+                "closed"
+            ],
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "ping_status": {
+            "description": "Whether or not the post can be pinged.",
+            "type": "string",
+            "enum": [
+                "open",
+                "closed"
+            ],
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "menu_order": {
+            "description": "The order of the post in relation to other posts.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "format": {
+            "description": "The format for the post.",
+            "type": "string",
+            "enum": [
+                "standard",
+                "aside",
+                "chat",
+                "gallery",
+                "link",
+                "image",
+                "quote",
+                "status",
+                "video",
+                "audio"
+            ],
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "template": {
+            "description": "The theme file to use to display the post.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "validate_callback": "@this:check_template"
+            }
+        },
+        "sticky": {
+            "description": "Whether or not the post should be treated as sticky.",
+            "type": "boolean",
+            "context": [
+                "view",
+                "edit"
+            ]
+        }
     }
 }

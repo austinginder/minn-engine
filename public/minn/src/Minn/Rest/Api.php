@@ -132,6 +132,27 @@ final readonly class Api
         return $this->services->caller();
     }
 
+    /**
+     * A post type's list as its route serves it (the caller, the statuses,
+     * the parameters, the query, the totals and page links), each post given
+     * the shape asked for: the facade's controller class shapes them itself.
+     *
+     * @param \Closure(\Minn\Content\PostRecord, Context): array<string, mixed> $shape
+     */
+    public function listPosts(string $route, string $type, \Closure $shape, ?\WP_REST_Request $as = null): Response
+    {
+        $s = $this->services;
+        $request = $this->request->withPath('/' . trim($route, '/'));
+        if ($as !== null) {
+            RuntimeRoutes::adopt($request, $as);
+        }
+        try {
+            return $this->withPageLinks($request, (new PostsController($s->db(), $s->posts(), $s->postObject(), $s->caller()))->serveList($request, $type, $shape));
+        } catch (RestError $error) {
+            return Reply::error($error);
+        }
+    }
+
     /** The wp/v2 post shape. */
     public function postObject(): PostObject
     {

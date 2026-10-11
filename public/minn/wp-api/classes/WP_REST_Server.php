@@ -159,6 +159,12 @@ class WP_REST_Server
         return [$route, $api];
     }
 
+    /** @internal the engine's API over a request of this shape, acting as whoever is current: what the facade's controller classes read through */
+    public static function minn_engine_api(WP_REST_Request $request): Api
+    {
+        return self::in_process($request)[1];
+    }
+
     /** The engine's own routes as table entries, so plugin code that reads the table sees the whole site; each answers through the engine. */
     protected function engine_endpoints(): array
     {

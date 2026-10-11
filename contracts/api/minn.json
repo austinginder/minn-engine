@@ -31080,6 +31080,7 @@
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries",
                 "Minn\\Media\\Writer",
+                "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\GlobalStylesObject",
@@ -88161,7 +88162,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 309,
+            "lines": 330,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88182,6 +88183,7 @@
                 "Minn\\Admin\\UpdatesController",
                 "Minn\\Admin\\V1Controller",
                 "Minn\\Auth\\Authenticated",
+                "Minn\\Content\\PostRecord",
                 "Minn\\Db",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
@@ -88196,6 +88198,7 @@
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\Context",
                 "Minn\\Rest\\DeclaredPostsController",
                 "Minn\\Rest\\DeclaredTermsController",
                 "Minn\\Rest\\Embed",
@@ -88375,6 +88378,49 @@
                 },
                 {
                     "routes": [],
+                    "name": "listPosts",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "listPosts(string $route, string $type, Closure $shape, ?WP_REST_Request $as = NULL): Minn\\Http\\Response",
+                    "doc": "A post type's list as its route serves it (the caller, the statuses,\nthe parameters, the query, the totals and page links), each post given\nthe shape asked for: the facade's controller class shapes them itself.",
+                    "shapes": [
+                        "@param \\Closure(\\Minn\\Content\\PostRecord, Context): array<string, mixed> $shape"
+                    ],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "shape",
+                            "type": "Closure",
+                            "shape": "\\Closure(\\Minn\\Content\\PostRecord, Context): array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "as",
+                            "type": "?WP_REST_Request",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 142,
+                    "end": 154
+                },
+                {
+                    "routes": [],
                     "name": "postObject",
                     "static": false,
                     "visibility": "public",
@@ -88382,8 +88428,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 136,
-                    "end": 139
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -88394,8 +88440,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 142,
-                    "end": 145
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -88406,8 +88452,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 148,
-                    "end": 151
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -88418,8 +88464,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 154,
-                    "end": 157
+                    "line": 175,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -88445,8 +88491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 174
+                    "line": 186,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -88465,8 +88511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 204
+                    "line": 198,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -88492,8 +88538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 236
+                    "line": 236,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -88512,8 +88558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 243
+                    "line": 260,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -88539,8 +88585,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 264
+                    "line": 273,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -88568,8 +88614,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 279
+                    "line": 293,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -88617,8 +88663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 288
+                    "line": 302,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -88644,8 +88690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 317
+                    "line": 316,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -88664,8 +88710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 333
+                    "line": 347,
+                    "end": 354
                 },
                 {
                     "routes": [],
@@ -88691,8 +88737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 339,
-                    "end": 343
+                    "line": 360,
+                    "end": 364
                 }
             ]
         },
@@ -91881,6 +91927,7 @@
                 "Minn\\Http\\Request"
             ],
             "usedBy": [
+                "Minn\\Rest\\Api",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
@@ -97072,7 +97119,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/PostCollectionParams.php",
-            "lines": 211,
+            "lines": 230,
             "doc": "A post type's collection parameters as the reference builds them for its\nlist (probe rest-post-lists): the shared four, dates, authors when the\ntype supports them, ids, menu order and its orderby for page attributes,\nparents for a hierarchical type, search columns and semantics, slugs,\nstatuses (every registered one, and any), each REST taxonomy's term\nfilter (a list, or a query with children for a hierarchical one and an\noperator for the include side) under a relation, stickies for posts, and\nformats for a type with post formats. Plugins change them through\nrest_{type}_collection_params, asked once a request.",
             "implements": [
                 "Minn\\Http\\RouteParams"
@@ -97179,6 +97226,28 @@
                 },
                 {
                     "routes": [],
+                    "name": "built",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "built(WP_Post_Type $object): array",
+                    "doc": "A post type's list parameters as built, for the type in any\nnamespace: before rest_{type}_collection_params and the optional\nmarks, for the facade's controller class, which adds its callbacks\nand runs the filter itself.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "object",
+                            "type": "WP_Post_Type",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 123
+                },
+                {
+                    "routes": [],
                     "name": "mediaTypes",
                     "static": true,
                     "visibility": "public",
@@ -97188,8 +97257,8 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 183,
-                    "end": 191
+                    "line": 202,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -97255,7 +97324,36 @@
                         }
                     ],
                     "line": 95,
-                    "end": 116
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "described",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "described(string $name, WP_Post_Type $object): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{name: string, object: ?\\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "object",
+                            "type": "WP_Post_Type",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 126,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -97276,8 +97374,8 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 119,
-                    "end": 175
+                    "line": 138,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -97290,8 +97388,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -97313,8 +97411,8 @@
                             "doc": "REST base => hierarchical"
                         }
                     ],
-                    "line": 205,
-                    "end": 218
+                    "line": 224,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -97342,8 +97440,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 221,
-                    "end": 231
+                    "line": 240,
+                    "end": 250
                 }
             ]
         },
