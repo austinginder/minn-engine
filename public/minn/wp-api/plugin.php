@@ -5,10 +5,11 @@ use Minn\Runtime\Runtime;
 
 function plugin_basename($file)
 {
+    global $wp_plugin_paths;
     $file = wp_normalize_path((string) $file);
-    foreach ((array) Runtime::current()->get('plugin_realpaths', []) as $real => $expected) {
+    foreach ((array) $wp_plugin_paths as $expected => $real) {
         $real = wp_normalize_path((string) $real);
-        if (str_starts_with($file, $real . '/')) {
+        if ($real !== '' && str_starts_with($file, $real . '/')) {
             $file = wp_normalize_path((string) $expected) . substr($file, strlen($real));
             break;
         }
@@ -24,16 +25,23 @@ function plugin_basename($file)
     return ltrim($file, '/');
 }
 
+/**
+ * Notes where a plugin's folder really is, keyed by the folder as given; a
+ * file not on disk notes an empty location. The plugins and must-use folders
+ * themselves are refused.
+ */
 function wp_register_plugin_realpath($file)
 {
-    $dir = dirname(wp_normalize_path((string) $file));
-    $real = realpath($dir);
-    if ($real === false || wp_normalize_path($real) === $dir) {
+    global $wp_plugin_paths;
+    $dir = wp_normalize_path(dirname((string) $file));
+    if (in_array($dir, [wp_normalize_path(WP_PLUGIN_DIR), wp_normalize_path(WPMU_PLUGIN_DIR)], true)) {
         return false;
     }
-    $map = Runtime::current()->get('plugin_realpaths', []);
-    $map[wp_normalize_path($real)] = $dir;
-    Runtime::current()->set('plugin_realpaths', $map);
+    $real = realpath((string) $file);
+    $real = $real === false ? '' : wp_normalize_path(dirname($real));
+    if ($real !== $dir) {
+        $wp_plugin_paths[$dir] = $real;
+    }
     return true;
 }
 

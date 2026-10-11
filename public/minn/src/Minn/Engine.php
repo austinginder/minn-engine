@@ -203,7 +203,8 @@ final readonly class Engine
         // which this applies is opened by Plugins::load.
         Failure::onFatal(static function (array $error) use ($db): void {
             $recovery = new Recovery(new Site($db), ABSPATH . 'wp-content');
-            $realpaths = Runtime::booted() ? (array) Runtime::current()->get('plugin_realpaths', []) : [];
+            $realpaths = array_flip(array_filter((array) ($GLOBALS['wp_plugin_paths'] ?? []), 'is_string'));
+            unset($realpaths['']);
             $blamed = $recovery->blame($error['file'], $realpaths);
             if ($blamed === null) {
                 return;

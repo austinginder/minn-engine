@@ -61,7 +61,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 268 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -2715,7 +2715,7 @@ plugin is running, otherwise why the gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 154), `rememberThemeDomain()` (private, line 177), `includeFile()` (private, line 237), `registerRealpath()` (private, line 268), `isolatedInclude()` (private, line 283)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 154), `rememberThemeDomain()` (private, line 177), `includeFile()` (private, line 237), `registerRealpath()` (private, line 268), `isolatedInclude()` (private, line 281)
 
 
 ## PostData

@@ -2,8 +2,8 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 813,
-        "composes": 2318,
+        "minn": 810,
+        "composes": 2321,
         "leaf": 1016,
         "noop": 2753,
         "placeholder": 60,
@@ -49961,8 +49961,6 @@
             "kind": "composes",
             "minn": [],
             "composes": [
-                "apply_filters",
-                "esc_url",
                 "home_url",
                 "set_url_scheme",
                 "wp_parse_url",
@@ -55059,12 +55057,9 @@
         },
         "plugin_basename": {
             "file": "plugin.php",
-            "lines": 17,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get"
-            ],
+            "lines": 18,
+            "kind": "composes",
+            "minn": [],
             "composes": [
                 "wp_normalize_path"
             ]
@@ -59450,6 +59445,8 @@
             "kind": "noop",
             "minn": [],
             "composes": [
+                "apply_filters",
+                "esc_url",
                 "get_self_link"
             ]
         },
@@ -70073,11 +70070,8 @@
         "wp_is_mobile": {
             "file": "functions.php",
             "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
-            ],
+            "kind": "composes",
+            "minn": [],
             "composes": [
                 "apply_filters"
             ]
@@ -72998,13 +72992,9 @@
         },
         "wp_register_plugin_realpath": {
             "file": "plugin.php",
-            "lines": 9,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
             "composes": [
                 "wp_normalize_path"
             ]

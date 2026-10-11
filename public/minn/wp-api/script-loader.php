@@ -462,7 +462,7 @@ function wp_deregister_script_module($id)
 
 function wp_set_script_module_translations($id, $domain = 'default', $path = '')
 {
-    wp_script_modules()->set_translations((string) $id, (string) $domain, (string) $path);
+    return wp_script_modules()->set_translations((string) $id, (string) $domain, (string) $path);
 }
 
 function wp_enqueue_block_editor_script_modules()

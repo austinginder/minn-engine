@@ -261,9 +261,9 @@ final class Plugins
 
     /**
      * A symlinked plugin folder resolves __FILE__ to its real location; the
-     * map from that location back to the plugins directory keeps
-     * plugin_basename() and plugins_url() truthful (the reference keeps the
-     * same map).
+     * global map from the plugins directory's folder to that location keeps
+     * plugin_basename() and plugins_url() truthful, as the reference's
+     * $wp_plugin_paths does.
      */
     private static function registerRealpath(string $file, string $name, Runtime $runtime): void
     {
@@ -273,9 +273,7 @@ final class Plugins
         $real = realpath(dirname($file));
         $expected = $runtime->contentDir() . '/plugins/' . dirname($name);
         if ($real !== false && $real !== $expected) {
-            $map = $runtime->get('plugin_realpaths', []);
-            $map[$real] = $expected;
-            $runtime->set('plugin_realpaths', $map);
+            $GLOBALS['wp_plugin_paths'][$expected] = $real;
         }
     }
 

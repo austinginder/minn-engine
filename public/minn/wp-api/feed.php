@@ -156,12 +156,13 @@ function get_self_link()
 {
     $home = wp_parse_url(home_url());
     $domain = ($home['host'] ?? '') . (isset($home['port']) ? ':' . $home['port'] : '');
-    return esc_url(apply_filters('self_link', set_url_scheme('http://' . $domain . wp_unslash($_SERVER['REQUEST_URI'] ?? ''))));
+    return set_url_scheme('http://' . $domain . wp_unslash($_SERVER['REQUEST_URI'] ?? ''));
 }
 
+/** The self link printed: filtered and escaped here, raw from get_self_link() (probe misc-helpers). */
 function self_link()
 {
-    echo get_self_link();
+    echo esc_url(apply_filters('self_link', get_self_link()));
 }
 
 /** The post title for a feed item, through the_title_rss (handed the title alone). */

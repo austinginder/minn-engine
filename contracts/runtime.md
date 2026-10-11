@@ -13317,3 +13317,35 @@ Fixed:
   it reads `_filter_block_template_part_area(): "…" is not a supported…`.
 
 Post meta and pattern overrides matched as they were.
+
+## Small helpers (2026-10-11)
+
+Probe `misc-helpers`. Already matched:
+
+- the sitemap providers, and one registered (refused the second time);
+- HTTPS detection, and whether the old http address is replaced, for each
+  pairing of home and site addresses and the migration option;
+- the font hooks: a face's file deleted from the fonts folder before the
+  face is, and a family's faces deleted after the family is. Each does
+  nothing for any other post type.
+
+Fixed:
+
+- **`get_self_link()`** is the raw address: the home host plus the
+  unslashed request URI, on the request's scheme. It was filtered and
+  escaped. **`self_link()`** filters (`self_link`) and escapes it on the
+  way out.
+- **`wp_is_mobile()`** reads `$_SERVER['HTTP_USER_AGENT']`, as the
+  reference does. It read the engine's request header, so a probe or plugin
+  that sets the server variable got a desktop answer.
+- **`wp_set_script_module_translations()`** returns the module's answer:
+  true for a registered module, false otherwise. It returned nothing.
+- **Plugin real paths** live in the `$wp_plugin_paths` global, keyed by the
+  folder as given. Each value is the folder the file really sits in, or empty
+  when the file is not on disk. An entry is stored only when the two differ.
+  `wp_register_plugin_realpath()` refuses the plugins and must-use folders
+  themselves and returns true for anything else, even a missing file. It used
+  to keep a map of its own in the runtime, keyed the other way round, and
+  refused missing folders. The plugin loader, `plugin_basename()` and the
+  recovery blame now read and write the same global. Empty entries are
+  skipped when mapping a path back.

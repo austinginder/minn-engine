@@ -39296,7 +39296,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 285,
+            "lines": 286,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -39581,7 +39581,7 @@
                         }
                     ],
                     "line": 198,
-                    "end": 276
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -39677,8 +39677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 345
+                    "line": 280,
+                    "end": 346
                 }
             ]
         },
@@ -123706,7 +123706,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 270,
+            "lines": 268,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -123986,7 +123986,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "registerRealpath(string $file, string $name, Minn\\Runtime\\Runtime $runtime): void",
-                    "doc": "A symlinked plugin folder resolves __FILE__ to its real location; the\nmap from that location back to the plugins directory keeps\nplugin_basename() and plugins_url() truthful (the reference keeps the\nsame map).",
+                    "doc": "A symlinked plugin folder resolves __FILE__ to its real location; the\nglobal map from the plugins directory's folder to that location keeps\nplugin_basename() and plugins_url() truthful, as the reference's\n$wp_plugin_paths does.",
                     "shapes": [],
                     "params": [
                         {
@@ -124012,7 +124012,7 @@
                         }
                     ],
                     "line": 268,
-                    "end": 280
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -124031,8 +124031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 288
+                    "line": 281,
+                    "end": 286
                 }
             ]
         },

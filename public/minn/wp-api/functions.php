@@ -644,7 +644,7 @@ function wp_is_rest_endpoint()
 
 function wp_is_mobile()
 {
-    $ua = (string) (Runtime::current()->request?->header('user-agent') ?? '');
+    $ua = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
     return apply_filters('wp_is_mobile', $ua !== '' && preg_match('/Mobile|Android|Silk\/|Kindle|BlackBerry|Opera Mini|Opera Mobi/', $ua) === 1);
 }
 
