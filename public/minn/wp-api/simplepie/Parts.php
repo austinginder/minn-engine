@@ -669,13 +669,17 @@ class Source implements RegistryAware
     }
 }
 
-/** A fetched URL: the response's status, headers and body, through the WordPress HTTP API. */
+/**
+ * A fetched URL: the response's status, headers (named as the response
+ * names them, lists joined) and body, through the WordPress HTTP API. A
+ * failed request leaves the headers and body unset.
+ */
 class File implements HTTP\Response
 {
     public $url;
     public $useragent;
     public $success = true;
-    public $headers = [];
+    public $headers;
     public $body;
     public $status_code = 0;
     public $redirects = 0;
@@ -688,10 +692,7 @@ class File implements HTTP\Response
         $this->url = $url;
         $this->permanent_url = $url;
         $this->useragent = $useragent;
-        $args = ['timeout' => $timeout, 'redirection' => $redirects, 'reject_unsafe_urls' => true];
-        if ($useragent !== null) {
-            $args['user-agent'] = $useragent;
-        }
+        $args = ['timeout' => $timeout, 'redirection' => $redirects, 'user-agent' => $useragent, 'reject_unsafe_urls' => true];
         if (is_array($headers)) {
             $args['headers'] = $headers;
         }
@@ -701,8 +702,9 @@ class File implements HTTP\Response
             $this->error = 'WP HTTP Error: ' . $response->get_error_message();
             return;
         }
+        $this->headers = [];
         foreach (wp_remote_retrieve_headers($response) as $name => $value) {
-            $this->headers[strtolower((string) $name)] = is_array($value) ? implode(', ', $value) : (string) $value;
+            $this->headers[(string) $name] = is_array($value) ? implode(', ', $value) : (string) $value;
         }
         $this->status_code = (int) wp_remote_retrieve_response_code($response);
         $this->body = wp_remote_retrieve_body($response);
@@ -730,19 +732,32 @@ class File implements HTTP\Response
 
     public function has_header(string $name): bool
     {
-        return isset($this->headers[strtolower($name)]);
+        return $this->minn_header($name) !== null;
     }
 
     public function get_header(string $name): array
     {
-        return $this->has_header($name) ? [(string) $this->headers[strtolower($name)]] : [];
+        $value = $this->minn_header($name);
+        return $value === null ? [] : [$value];
     }
 
     public function with_header(string $name, $value)
     {
         $copy = clone $this;
+        $copy->headers = array_filter((array) $copy->headers, static fn ($key) => strcasecmp((string) $key, $name) !== 0, ARRAY_FILTER_USE_KEY);
         $copy->headers[strtolower($name)] = is_array($value) ? implode(', ', $value) : (string) $value;
         return $copy;
+    }
+
+    /** A header by name, whatever case the response named it in. */
+    private function minn_header(string $name): ?string
+    {
+        foreach ((array) $this->headers as $key => $value) {
+            if (strcasecmp((string) $key, $name) === 0) {
+                return (string) $value;
+            }
+        }
+        return null;
     }
 
     public function get_header_line(string $name): string

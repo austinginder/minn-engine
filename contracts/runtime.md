@@ -13349,3 +13349,39 @@ Fixed:
   refused missing folders. The plugin loader, `plugin_basename()` and the
   recovery blame now read and write the same global. Empty entries are
   skipped when mapping a path back.
+
+## Small classes left (2026-10-11)
+
+Probe `small-classes2` names the last six small classes no probe had named:
+`WP_Ajax_Response`, `WP_PHPMailer`, `WP_HTTP_Requests_Hooks`,
+`SimplePie_Autoloader`, `WP_SimplePie_File` and `WP_SimplePie_Sanitize_KSES`.
+
+- **The ajax response** is sent through `wp_die`'s ajax handler, which the
+  probe stops before it exits.
+- **The feed file** fetches through the HTTP API. A `pre_http_request`
+  filter answers, so nothing leaves the machine.
+- **The sanitizer** is handed a registry, as a feed hands it one. Without
+  one, the reference fatals on an address.
+
+Already matched: the response elements `add()` builds, the document `send()`
+prints, the mailer's wording and its exceptions switch, the hooks object's
+`requests-{$hook}` and `http_api_curl` actions, and the sanitizer's answers
+for each construct type.
+
+Fixed:
+
+- **An ajax error's data.** An array prints each entry as an element of its
+  own, named by its key. Anything else prints as text. The engine used to
+  serialize the data.
+- **`SimplePie_Autoloader::autoload()`** returns nothing.
+- **`WP_SimplePie_File`** keeps the timeout it was given (`$timeout`). The
+  file class beneath it now:
+  - names headers as the response names them (lists still joined);
+  - always passes its user agent to the HTTP API, even when that is null;
+  - leaves the headers and body unset when the request fails.
+
+  Its header lookups ignore case. Real responses name their headers in lower
+  case, so feeds read them as before.
+
+Still unproven among the classes: `WP_Sitemaps_Stylesheet`. The engine prints
+its own XSL on purpose.

@@ -164,7 +164,7 @@ namespace {
 
         public function autoload($class)
         {
-            return class_exists((string) $class);
+            class_exists((string) $class);
         }
     }
 }

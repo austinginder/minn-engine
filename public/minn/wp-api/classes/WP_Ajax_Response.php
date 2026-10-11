@@ -28,7 +28,7 @@ class WP_Ajax_Response
                 $errorData = $id->get_error_data($code);
                 $data .= "<wp_error code='" . esc_attr((string) $code) . "'><![CDATA[" . $id->get_error_message($code) . ']]></wp_error>';
                 if ($errorData) {
-                    $data .= "<wp_error_data code='" . esc_attr((string) $code) . "'><![CDATA[" . maybe_serialize($errorData) . ']]></wp_error_data>';
+                    $data .= "<wp_error_data code='" . esc_attr((string) $code) . "'>" . self::errorData($errorData) . '</wp_error_data>';
                 }
             }
             $id = 0;
@@ -48,6 +48,19 @@ class WP_Ajax_Response
             . "</{$parsed['what']}></response>";
         $this->responses[] = $response;
         return $response;
+    }
+
+    /** An error's data: a list's entries each as an element of their own, anything else as text (probe small-classes2). */
+    private static function errorData($data): string
+    {
+        if (!is_array($data) && !is_object($data)) {
+            return '<![CDATA[' . $data . ']]>';
+        }
+        $out = '';
+        foreach ($data as $key => $value) {
+            $out .= '<' . $key . '><![CDATA[' . $value . ']]></' . $key . '>';
+        }
+        return $out;
     }
 
     public function send()

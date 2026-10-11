@@ -4,11 +4,11 @@
     "summary": {
         "minn": 810,
         "composes": 2321,
-        "leaf": 1016,
-        "noop": 2753,
+        "leaf": 1020,
+        "noop": 2752,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8543,
+        "functions": 8546,
         "minnMethods": 979,
         "leafLinesOver15": 12
     },
@@ -1100,7 +1100,7 @@
         },
         "File::__construct": {
             "file": "simplepie/Parts.php",
-            "lines": 21,
+            "lines": 19,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -1127,8 +1127,8 @@
         },
         "File::get_header": {
             "file": "simplepie/Parts.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -1167,6 +1167,13 @@
             "minn": [],
             "composes": []
         },
+        "File::minn_header": {
+            "file": "simplepie/Parts.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "File::minn_named": {
             "file": "simplepie/Parts.php",
             "lines": 4,
@@ -1176,7 +1183,7 @@
         },
         "File::with_header": {
             "file": "simplepie/Parts.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -7278,9 +7285,15 @@
             "composes": [
                 "esc_attr",
                 "is_wp_error",
-                "maybe_serialize",
                 "wp_parse_args"
             ]
+        },
+        "WP_Ajax_Response::errorData": {
+            "file": "classes/WP_Ajax_Response.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "WP_Ajax_Response::send": {
             "file": "classes/WP_Ajax_Response.php",
@@ -26344,6 +26357,13 @@
             "file": "classes/WP_Session_Tokens.php",
             "lines": 1,
             "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_SimplePie_File::__construct": {
+            "file": "simplepie/Wp.php",
+            "lines": 2,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

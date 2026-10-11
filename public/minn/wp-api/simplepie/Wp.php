@@ -66,8 +66,16 @@ class WP_Feed_Cache_Transient implements SimplePie\Cache\Base
     }
 }
 
+/** The file fetch_feed() fetches feeds with: SimplePie's file, through the HTTP API, keeping the timeout it was given. */
 class WP_SimplePie_File extends SimplePie\File
 {
+    public $timeout = 10;
+
+    public function __construct($url, $timeout = 10, $redirects = 5, $headers = null, $useragent = null, $force_fsockopen = false)
+    {
+        $this->timeout = $timeout;
+        parent::__construct($url, $timeout, $redirects, $headers, $useragent, $force_fsockopen);
+    }
 }
 
 class WP_SimplePie_Sanitize_KSES extends SimplePie\Sanitize
