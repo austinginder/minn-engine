@@ -9,6 +9,7 @@ shared SQL fragments
 | [`DateSql`](#datesql) | final class | 285 | The WHERE fragment of a date query in the reference's shape: before and |
 | [`MetaSql`](#metasql) | final class | 278 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
+| [`NetworkSql`](#networksql) | final class | 255 | The SQL WP_Site_Query and WP_Network_Query build from their variables |
 | [`PostOrder`](#postorder) | final class | 118 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
@@ -263,6 +264,114 @@ The clause for some mime types, against a table's column when one is named. @par
 - `@param string|list<string> $types`
 
 Internals: `pattern()` (private, line 37)
+
+
+## NetworkSql
+
+`final class Minn\Query\NetworkSql` · `public/minn/src/Minn/Query/NetworkSql.php`
+
+The SQL WP_Site_Query and WP_Network_Query build from their variables
+(probe multisite-classes). A site query names only blog_id through its
+table (blogs); every other column stands bare. A network query names each
+column through its table (site). On one site both tables are unnamed, so
+the column is written after a bare dot, as the reference writes it.
+
+- const `SITE_ORDER` = `array (   'domain' => 'domain',   'last_updated' => 'last_updated',   'path' => 'path',   'registered' => 'registered',   'deleted' => 'deleted',   'spam' => 'spam',   'mature' => 'mature',   'archived' => 'archived',   'public' => 'public',   'network_id' => 'site_id',   'domain_length' => 'CHAR_LENGTH(domain)',   'path_length' => 'CHAR_LENGTH(path)', )` — The columns a site query orders by, as each is written; blog_id is the table's own.
+- const `SITE_FLAGS` = `array (   'archived' => '%s',   'mature' => '%d',   'spam' => '%d',   'deleted' => '%d',   'public' => '%d',   'lang_id' => '%d', )` — The site flags as they are compared: archived as text, the rest as numbers, each followed by a space.
+
+```php
+__construct(object $wpdb)
+```
+
+
+### `siteWhere(array $qv): array`
+
+A site query's conditions, in the reference's order: the ids, the
+networks, domains, paths, the flags, the languages, then the search.
+
+- `@param array<string, mixed> $qv`
+- `@return list<string>`
+
+### `networkWhere(array $qv): array`
+
+A network query's conditions: the ids, domains, paths, then the search.
+
+- `@param array<string, mixed> $qv`
+- `@return list<string>`
+
+### `siteSearch(string $search, array $columns): string`
+
+A site query's search across columns, each a LIKE on the term
+anywhere, its stars wildcards.
+
+- `@param list<string> $columns`
+
+### `networkSearch(string $search, array $columns): string`
+
+A network query's search: the same LIKEs, its stars kept.
+
+- `@param list<string> $columns`
+
+### `siteOrderby(array $qv): string`
+
+A site query's ORDER BY, or '' (an unknown column is passed over). @param array<string, mixed> $qv
+
+- `@param array<string, mixed> $qv`
+
+### `siteOrderColumn(string $by, array $qv): ?string`
+
+One column a site query orders by, as written; null for one it does not. @param array<string, mixed> $qv
+
+- `@param array<string, mixed> $qv`
+
+### `networkOrderby(array $qv): string`
+
+A network query's ORDER BY, or ''. @param array<string, mixed> $qv
+
+- `@param array<string, mixed> $qv`
+
+### `networkOrderColumn(string $by, array $qv): ?string`
+
+One column a network query orders by, as written; null for one it does not. @param array<string, mixed> $qv
+
+- `@param array<string, mixed> $qv`
+
+### static `direction(mixed $order): string`
+
+ASC when asked for, in any case; anything else is DESC.
+
+### static `limits(array $qv): string`
+
+The LIMIT for a number and an offset; none without a number. @param array<string, mixed> $qv
+
+- `@param array<string, mixed> $qv`
+
+### static `pieces(array $clauses, string $table, string $found): array`
+
+The request from its clauses, joined as the reference joins them.
+
+- `@param array<string, string> $clauses fields, join, where, orderby, limits, groupby`
+- `@return array<string, string> the pieces kept on the query`
+
+### `ids(string $request): array`
+
+The ids a request finds. @return list<int>
+
+- `@return list<int>`
+
+### `count(string $request): int`
+
+The count a counting request reads.
+
+### `rowById(string $table, string $column, int $id): ?object`
+
+A table's row by its id, or null when there is none.
+
+### `found(string $sql): int`
+
+The rows a counted request found.
+
+Internals: `likeAny()` (private, line 108), `orderby()` (private, line 211), `field()` (private, line 234), `ints()` (private, line 240), `strings()` (private, line 252), `list()` (private, line 264)
 
 
 ## PostOrder

@@ -291,6 +291,9 @@ final class Installer
      * Empty PHP files for every wp-includes/*.php and wp-admin/includes/*.php
      * the reference has, so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'`
      * resolves. The engine already provides the symbols; the file is the contract.
+     * A file whose class the reference loads only when asked (the network
+     * classes) is the engine's loader for it from layout/, which also replaces
+     * an empty placeholder written before it existed.
      */
     private function writePlaceholders(string $root): int
     {
@@ -302,14 +305,22 @@ final class Installer
                 continue;
             }
             $path = "{$root}/{$file}";
-            if (file_exists($path)) {
+            $loader = "{$this->engineDir}/layout/{$file}";
+            $stock = self::placeholder($file);
+            if (file_exists($path) && !(is_file($loader) && file_get_contents($path) === $stock)) {
                 continue;
             }
             @mkdir(dirname($path), 0755, true);
-            file_put_contents($path, "<?php\n// Minn Engine placeholder for the reference's {$file}: the engine provides these symbols itself, so a plugin that requires this file gets nothing and continues.\n");
+            is_file($loader) ? copy($loader, $path) : file_put_contents($path, $stock);
             $written++;
         }
         return $written;
+    }
+
+    /** The empty placeholder for one of the reference's files. */
+    public static function placeholder(string $file): string
+    {
+        return "<?php\n// Minn Engine placeholder for the reference's {$file}: the engine provides these symbols itself, so a plugin that requires this file gets nothing and continues.\n";
     }
 
     /** rename() first; copy+remove when the park is on another filesystem. */

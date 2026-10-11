@@ -13483,3 +13483,61 @@ Still owed in the area: `wp_text_diff()` is empty, and the Text_Diff library
 is in no inventory. `wp_scheduled_delete()` can't be probed on the shared
 database, because four of its trashed fixtures are past the 30-day window
 and the run would delete them.
+
+## The network classes (2026-10-11)
+
+Probe `multisite-classes`. `WP_Site`, `WP_Network`, `WP_Site_Query` and
+`WP_Network_Query` are real; they were missing. A single site never loads
+them on the reference, so the probe requires their files, and the engine
+loads them the same way. They live in `wp-api/classes/network/`, which the
+facade does not load up front, so `class_exists('WP_Site')` stays false on a
+single site, as probe `symbols` pins. Each site's
+`wp-includes/class-wp-site.php` and its three siblings are now the engine's
+loader for the class, copied from `layout/`. The installer and
+`site-skeleton.php` write them, and replace the empty placeholder an older
+install left there.
+
+What the probe pins, all on a single site:
+
+- **A site** made from its row:
+  - `id` and `network_id` are numbers; setting them writes `blog_id` and
+    `site_id` as text;
+  - `blogname`, `siteurl`, `post_count` and `home` read as null, and are not
+    set, until the network has loaded (`ms_loaded`);
+  - `get_instance()` reads the object cache (`sites`), and refuses a
+    non-number or zero.
+- **A network** made from its row:
+  - `id` is a number; `blog_id` (text) and `site_id` (number) are its main
+    site;
+  - `site_name` comes from the network option, or the domain capitalised;
+  - `cookie_domain` is the domain without `www.`;
+  - `get_by_path()` tries the path's segments back to the root, limited by
+    `network_by_path_segments_count`, and asks `pre_get_network_by_path`.
+- **The queries:**
+  - their defaults and parsed variables;
+  - `parse_*_query`, `pre_get_*` and `*_pre_query` (which may answer);
+  - the request built by `Minn\Query\NetworkSql`, through `*_clauses`. The
+    tables are unnamed on a single site, so columns follow a bare dot. Site
+    columns are bare except `blog_id`; network columns all go through the
+    table;
+  - the WHERE order: ids, networks, domains, paths, flags, languages, then
+    search;
+  - `archived` is compared as text, the other flags as numbers, each
+    followed by a space;
+  - a site search turns `*` into `%`; a network search keeps it;
+  - the orderby columns each query allows. A list's FIELD() takes no
+    direction, an unknown column drops out (no ORDER BY when nothing is
+    left), an empty orderby means id, and an order other than ASC is DESC;
+  - LIMIT only with a number; found rows whenever `no_found_rows` is off;
+  - ids kept in the object cache (`site-queries`, `network-queries`) by
+    last_changed, so the same query asked again reads no SQL.
+
+Kept on purpose: `date_query` on a site query is built with the date query's
+default column (`wp_posts.post_date`), as the reference builds it; the probe
+leaves that case out. Owed:
+
+- the site meta query, which a single site does not support;
+- multisite itself (`is_multisite()` is false);
+- `get_option()` here fires neither `pre_wp_load_alloptions` nor
+  `alloptions`. The reference fires both on every read. That is option-layer
+  work for its own batch.

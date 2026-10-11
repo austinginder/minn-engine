@@ -10,7 +10,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 339 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 350 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
@@ -329,7 +329,11 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 102), `writePlaceholders()` (private, line 295), `move()` (private, line 316), `copyTree()` (private, line 332), `version()` (private, line 351), `say()` (private, line 356)
+### static `placeholder(string $file): string`
+
+The empty placeholder for one of the reference's files.
+
+Internals: `help()` (private, line 102), `writePlaceholders()` (private, line 298), `move()` (private, line 327), `copyTree()` (private, line 343), `version()` (private, line 362), `say()` (private, line 367)
 
 
 ## MaintenanceCommand

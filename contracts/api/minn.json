@@ -22361,7 +22361,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 339,
+            "lines": 350,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -22647,6 +22647,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "placeholder",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "placeholder(string $file): string",
+                    "doc": "The empty placeholder for one of the reference's files.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 321,
+                    "end": 324
+                },
+                {
+                    "routes": [],
                     "name": "help",
                     "static": false,
                     "visibility": "private",
@@ -22663,7 +22683,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "writePlaceholders(string $root): int",
-                    "doc": "Empty PHP files for every wp-includes/*.php and wp-admin/includes/*.php\nthe reference has, so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'`\nresolves. The engine already provides the symbols; the file is the contract.",
+                    "doc": "Empty PHP files for every wp-includes/*.php and wp-admin/includes/*.php\nthe reference has, so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'`\nresolves. The engine already provides the symbols; the file is the contract.\nA file whose class the reference loads only when asked (the network\nclasses) is the engine's loader for it from layout/, which also replaces\nan empty placeholder written before it existed.",
                     "shapes": [],
                     "params": [
                         {
@@ -22674,8 +22694,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 313
+                    "line": 298,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -22701,8 +22721,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 330
+                    "line": 327,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -22728,8 +22748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 349
+                    "line": 343,
+                    "end": 360
                 },
                 {
                     "routes": [],
@@ -22740,8 +22760,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 351,
-                    "end": 354
+                    "line": 362,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -22760,8 +22780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 356,
-                    "end": 359
+                    "line": 367,
+                    "end": 370
                 }
             ]
         },
@@ -87098,6 +87118,631 @@
                     ],
                     "line": 37,
                     "end": 47
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Query\\NetworkSql",
+            "short": "NetworkSql",
+            "namespace": "Minn\\Query",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Query/NetworkSql.php",
+            "lines": 255,
+            "doc": "The SQL WP_Site_Query and WP_Network_Query build from their variables\n(probe multisite-classes). A site query names only blog_id through its\ntable (blogs); every other column stands bare. A network query names each\ncolumn through its table (site). On one site both tables are unnamed, so\nthe column is written after a bare dot, as the reference writes it.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(object $wpdb)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "wpdb",
+                        "type": "object",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 22,
+                "end": 24
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "SITE_ORDER",
+                    "value": "array (   'domain' => 'domain',   'last_updated' => 'last_updated',   'path' => 'path',   'registered' => 'registered',   'deleted' => 'deleted',   'spam' => 'spam',   'mature' => 'mature',   'archived' => 'archived',   'public' => 'public',   'network_id' => 'site_id',   'domain_length' => 'CHAR_LENGTH(domain)',   'path_length' => 'CHAR_LENGTH(path)', )",
+                    "doc": "The columns a site query orders by, as each is written; blog_id is the table's own.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "SITE_FLAGS",
+                    "value": "array (   'archived' => '%s',   'mature' => '%d',   'spam' => '%d',   'deleted' => '%d',   'public' => '%d',   'lang_id' => '%d', )",
+                    "doc": "The site flags as they are compared: archived as text, the rest as numbers, each followed by a space.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "wpdb",
+                    "type": "object",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "siteWhere",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "siteWhere(array $qv): array",
+                    "doc": "A site query's conditions, in the reference's order: the ids, the\nnetworks, domains, paths, the flags, the languages, then the search.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 33,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "networkWhere",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "networkWhere(array $qv): array",
+                    "doc": "A network query's conditions: the ids, domains, paths, then the search.",
+                    "shapes": [
+                        "@param array<string, mixed> $qv",
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 84
+                },
+                {
+                    "routes": [],
+                    "name": "siteSearch",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "siteSearch(string $search, array $columns): string",
+                    "doc": "A site query's search across columns, each a LIKE on the term\nanywhere, its stars wildcards.",
+                    "shapes": [
+                        "@param list<string> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 95
+                },
+                {
+                    "routes": [],
+                    "name": "networkSearch",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "networkSearch(string $search, array $columns): string",
+                    "doc": "A network query's search: the same LIKEs, its stars kept.",
+                    "shapes": [
+                        "@param list<string> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "search",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "siteOrderby",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "siteOrderby(array $qv): string",
+                    "doc": "A site query's ORDER BY, or '' (an unknown column is passed over). @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 115,
+                    "end": 118
+                },
+                {
+                    "routes": [],
+                    "name": "siteOrderColumn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "siteOrderColumn(string $by, array $qv): ?string",
+                    "doc": "One column a site query orders by, as written; null for one it does not. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "by",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 121,
+                    "end": 130
+                },
+                {
+                    "routes": [],
+                    "name": "networkOrderby",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "networkOrderby(array $qv): string",
+                    "doc": "A network query's ORDER BY, or ''. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 133,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "networkOrderColumn",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "networkOrderColumn(string $by, array $qv): ?string",
+                    "doc": "One column a network query orders by, as written; null for one it does not. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "by",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "direction",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "direction(mixed $order): string",
+                    "doc": "ASC when asked for, in any case; anything else is DESC.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "order",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 154
+                },
+                {
+                    "routes": [],
+                    "name": "limits",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "limits(array $qv): string",
+                    "doc": "The LIMIT for a number and an offset; none without a number. @param array<string, mixed> $qv",
+                    "shapes": [
+                        "@param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 157,
+                    "end": 165
+                },
+                {
+                    "routes": [],
+                    "name": "pieces",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "pieces(array $clauses, string $table, string $found): array",
+                    "doc": "The request from its clauses, joined as the reference joins them.",
+                    "shapes": [
+                        "@param array<string, string> $clauses fields, join, where, orderby, limits, groupby",
+                        "@return array<string, string> the pieces kept on the query"
+                    ],
+                    "params": [
+                        {
+                            "name": "clauses",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "fields, join, where, orderby, limits, groupby"
+                        },
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "found",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 173,
+                    "end": 183
+                },
+                {
+                    "routes": [],
+                    "name": "ids",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "ids(string $request): array",
+                    "doc": "The ids a request finds. @return list<int>",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 186,
+                    "end": 189
+                },
+                {
+                    "routes": [],
+                    "name": "count",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "count(string $request): int",
+                    "doc": "The count a counting request reads.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 195
+                },
+                {
+                    "routes": [],
+                    "name": "rowById",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rowById(string $table, string $column, int $id): ?object",
+                    "doc": "A table's row by its id, or null when there is none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "table",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 198,
+                    "end": 202
+                },
+                {
+                    "routes": [],
+                    "name": "found",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "found(string $sql): int",
+                    "doc": "The rows a counted request found.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "sql",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 205,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "likeAny",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "likeAny(string $term, array $columns): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $columns"
+                    ],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "columns",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "orderby",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "orderby(array $qv, Closure $column, string $default): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param \\Closure(string): ?string $column @param array<string, mixed> $qv"
+                    ],
+                    "params": [
+                        {
+                            "name": "qv",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "column",
+                            "type": "Closure",
+                            "shape": "\\Closure(string): ?string",
+                            "default": null,
+                            "doc": "@param array<string, mixed> $qv"
+                        },
+                        {
+                            "name": "default",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 211,
+                    "end": 231
+                },
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "field(string $column, mixed $ids): string",
+                    "doc": "FIELD() over a list of ids, in the order given. @param mixed $ids",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ids",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 234,
+                    "end": 237
+                },
+                {
+                    "routes": [],
+                    "name": "ints",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "ints(string $column, mixed $in, mixed $notIn): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "in",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "notIn",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 240,
+                    "end": 249
+                },
+                {
+                    "routes": [],
+                    "name": "strings",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "strings(string $column, mixed $in, mixed $notIn): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "column",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "in",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "notIn",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 252,
+                    "end": 261
+                },
+                {
+                    "routes": [],
+                    "name": "list",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "list(mixed $value): array",
+                    "doc": "A list given as an array or a comma-separated string. @return list<mixed>",
+                    "shapes": [
+                        "@return list<mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 264,
+                    "end": 267
                 }
             ]
         },
