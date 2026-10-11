@@ -11658,3 +11658,62 @@ placeholder now counts as a placeholder. Real methods went from 1984 to
 Nothing went missing. The proven-methods floor in the style suite moves
 down to match: this corrects the measure rather than loosening it.
 `WP_Theme_JSON` is now the largest single class owed.
+
+## WP_Theme_JSON's small helpers (2026-10-10)
+
+Probe `theme-json-helpers` proves 24 of `WP_Theme_JSON`'s 55 placeholder
+methods: its selector, slug, tree and schema helpers. The rest of the
+class (sanitizing, presets, the stylesheet and its nodes) is still owed.
+
+- **Selectors.**
+  - Appending, prepending and scoping work on each selector of a list,
+    split on commas outside parentheses and trimmed, and are joined with
+    ", ".
+  - A scope list scopes every selector, scope by scope. An empty scope or
+    selector comes back as it was.
+  - Scoping a style node scopes its selector and its feature selectors,
+    but not its duotone selector.
+  - A block's element selectors put each element under each of the
+    block's selectors as given. A selector after a comma keeps its leading
+    space, so a list gives doubled spaces, as on the reference.
+- **Block style variations.** The `.is-style-{name}` class goes after the
+  first run of characters that are neither space nor colon, in each
+  selector of the list:
+  - `.a:hover .b` gives `.a.is-style-v:hover .b`;
+  - `:where(.a .b)` gives `:where(.a.is-style-v .b)`;
+  - no selector gives the class alone.
+
+  A feature selector takes a named variation's class. An unnamed variation
+  answers its own selector.
+- **Rulesets** are `selector{name: value;...}`, or empty with no
+  declarations.
+- **Slugs.** A slug replaces `$slug` as given.
+- **Flattened trees** have kebab-case keys (slashes become dashes), nested
+  keys joined by the token, and the prefix before the first key.
+- **Reading values.**
+  - A boolean read from the data is whatever sits at the path, the default
+    when nothing does.
+  - The schema per origin is the schema at the root and again under each
+    origin; an origin named like a root key replaces it.
+- **Appearance tools.** Opting in sets every appearance tool not already
+  set, for the root and for each block that asks, and drops the switch.
+- **Templates.** A theme.json's custom templates default to the page post
+  type. Its template parts default to no area; an unknown area is kept as
+  given.
+- **Presets.**
+  - Default slugs come from each preset's default origin under the node.
+  - Filtering keeps the items whose slug is not listed (and drops any
+    without one), or hands back the node when nothing is listed.
+  - `should_override_preset` (deprecated 6.0.0) answers a boolean override
+    as is. Otherwise it answers the inverse of the node's switch, then the
+    root's, and true when neither is set.
+- **Safety.** A declaration is safe when it survives
+  `safecss_filter_attr`.
+- **Viewports.** The media queries use the breakpoints given that are
+  sizes (the defaults when none are given). Mobile is `width <= M`, and
+  tablet is `M < width <= T`, or `width <= T` without a mobile size.
+- **Editor settings.** Older editor settings map into a theme.json in the
+  reference's order. A disable flag turns its setting the other way, and
+  custom units of `true` become px, em, rem, vh, vw and %.
+
+`wp_theme_get_element_class_name` now asks `WP_Theme_JSON`.

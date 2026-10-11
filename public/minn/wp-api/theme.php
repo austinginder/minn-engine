@@ -115,7 +115,7 @@ function wp_theme_has_theme_json()
 
 function wp_theme_get_element_class_name($element)
 {
-    return in_array($element, ['button', 'caption'], true) ? 'wp-element-' . $element : '';
+    return WP_Theme_JSON::get_element_class_name($element);
 }
 
 function get_theme_roots()

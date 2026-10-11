@@ -34,14 +34,21 @@ class WP_Theme_JSON
 
     public static function get_viewport_media_queries($viewport_settings = NULL, $options = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_viewport_media_queries');
-        return null;
+        // The breakpoints given that are sizes (the defaults when none are given): mobile up to its size, tablet above mobile up to its own.
+        $sizes = !empty($viewport_settings) ? array_filter((array) $viewport_settings, static fn ($size) => self::is_valid_viewport_breakpoint_size($size)) : static::DEFAULT_VIEWPORT_BREAKPOINTS;
+        $queries = [];
+        if (isset($sizes['mobile'])) {
+            $queries['@mobile'] = "@media (width <= {$sizes['mobile']})";
+        }
+        if (isset($sizes['tablet'])) {
+            $queries['@tablet'] = isset($sizes['mobile']) ? "@media ({$sizes['mobile']} < width <= {$sizes['tablet']})" : "@media (width <= {$sizes['tablet']})";
+        }
+        return $queries;
     }
 
     private static function is_valid_viewport_breakpoint_size($value)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::is_valid_viewport_breakpoint_size');
-        return null;
+        return is_string($value) && preg_match('/^\d+(\.\d+)?(px|em|rem)$/', $value) === 1;
     }
 
     private static function get_viewport_breakpoint_value_in_pixels($value)
@@ -58,8 +65,11 @@ class WP_Theme_JSON
 
     protected static function schema_in_root_and_per_origin($schema)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::schema_in_root_and_per_origin');
-        return null;
+        $schema_in_root_and_per_origin = $schema;
+        foreach (static::VALID_ORIGINS as $origin) {
+            $schema_in_root_and_per_origin[$origin] = $schema;
+        }
+        return $schema_in_root_and_per_origin;
     }
 
     private function process_pseudo_selectors($node, $base_selector, $settings, $block_name, $block_metadata = NULL, $style_variation = NULL)
@@ -70,8 +80,7 @@ class WP_Theme_JSON
 
     public static function get_element_class_name($element)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_element_class_name');
-        return null;
+        return static::__EXPERIMENTAL_ELEMENT_CLASS_NAMES[$element] ?? '';
     }
 
     public function __construct($theme_json = ['version' => 3], $origin = 'theme')
@@ -87,13 +96,26 @@ class WP_Theme_JSON
 
     protected static function maybe_opt_in_into_settings($theme_json)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::maybe_opt_in_into_settings');
-        return null;
+        if (($theme_json['settings']['appearanceTools'] ?? null) === true) {
+            static::do_opt_in_into_settings($theme_json['settings']);
+        }
+        foreach (array_keys((array) ($theme_json['settings']['blocks'] ?? [])) as $block) {
+            if (($theme_json['settings']['blocks'][$block]['appearanceTools'] ?? null) === true) {
+                static::do_opt_in_into_settings($theme_json['settings']['blocks'][$block]);
+            }
+        }
+        return $theme_json;
     }
 
     protected static function do_opt_in_into_settings(&$context)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::do_opt_in_into_settings');
+        // Each appearance tool not already set is turned on; the switch itself goes.
+        foreach (static::APPEARANCE_TOOLS_OPT_INS as $path) {
+            if (_wp_array_get($context, $path, null) === null) {
+                _wp_array_set($context, $path, true);
+            }
+        }
+        unset($context['appearanceTools']);
     }
 
     protected static function sanitize($input, $valid_block_names, $valid_element_names, $valid_variations)
@@ -104,20 +126,31 @@ class WP_Theme_JSON
 
     protected static function append_to_selector($selector, $to_append)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::append_to_selector');
-        return null;
+        return implode(', ', array_map(static fn ($part) => $part . $to_append, static::split_selector_list((string) $selector)));
     }
 
     protected static function prepend_to_selector($selector, $to_prepend)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::prepend_to_selector');
-        return null;
+        return implode(', ', array_map(static fn ($part) => $to_prepend . $part, static::split_selector_list((string) $selector)));
     }
 
     protected static function split_selector_list($selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::split_selector_list');
-        return [];
+        // Commas inside parentheses (:is(), :where()) do not split.
+        $parts = [];
+        $current = '';
+        $depth = 0;
+        foreach (str_split((string) $selector) as $char) {
+            $depth += $char === '(' ? 1 : ($char === ')' ? -1 : 0);
+            if ($char === ',' && $depth === 0) {
+                $parts[] = trim($current);
+                $current = '';
+                continue;
+            }
+            $current .= $char;
+        }
+        $parts[] = trim($current);
+        return $parts;
     }
 
     protected static function get_blocks_metadata()
@@ -158,14 +191,24 @@ class WP_Theme_JSON
 
     public function get_custom_templates()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_custom_templates');
-        return null;
+        $templates = [];
+        foreach ((array) ($this->theme_json['customTemplates'] ?? []) as $item) {
+            if (isset($item['name'])) {
+                $templates[$item['name']] = ['title' => $item['title'] ?? '', 'postTypes' => $item['postTypes'] ?? ['page']];
+            }
+        }
+        return $templates;
     }
 
     public function get_template_parts()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_template_parts');
-        return null;
+        $parts = [];
+        foreach ((array) ($this->theme_json['templateParts'] ?? []) as $item) {
+            if (isset($item['name'])) {
+                $parts[$item['name']] = ['title' => $item['title'] ?? '', 'area' => $item['area'] ?? ''];
+            }
+        }
+        return $parts;
     }
 
     protected function get_block_classes($style_nodes)
@@ -200,8 +243,14 @@ class WP_Theme_JSON
 
     protected static function to_ruleset($selector, $declarations)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::to_ruleset');
-        return null;
+        if (empty($declarations)) {
+            return '';
+        }
+        $rules = '';
+        foreach ($declarations as $declaration) {
+            $rules .= $declaration['name'] . ': ' . $declaration['value'] . ';';
+        }
+        return $selector . '{' . $rules . '}';
     }
 
     protected static function compute_preset_classes($settings, $selector, $origins)
@@ -212,14 +261,32 @@ class WP_Theme_JSON
 
     public static function scope_selector($scope, $selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::scope_selector');
-        return null;
+        if (!$scope || !$selector) {
+            return $selector;
+        }
+        $scoped = [];
+        foreach (static::split_selector_list($scope) as $outer) {
+            foreach (static::split_selector_list($selector) as $inner) {
+                $scoped[] = $outer . ' ' . $inner;
+            }
+        }
+        return implode(', ', $scoped);
     }
 
     protected static function scope_style_node_selectors($scope, $node)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::scope_style_node_selectors');
-        return null;
+        // The node's selector and its feature selectors are scoped; its duotone selector is left alone.
+        $node['selector'] = static::scope_selector($scope, $node['selector'] ?? null);
+        foreach ((array) ($node['selectors'] ?? []) as $feature => $selector) {
+            if (is_array($selector)) {
+                foreach ($selector as $part => $subselector) {
+                    $node['selectors'][$feature][$part] = static::scope_selector($scope, $subselector);
+                }
+            } elseif (is_string($selector)) {
+                $node['selectors'][$feature] = static::scope_selector($scope, $selector);
+            }
+        }
+        return $node;
     }
 
     protected static function get_settings_values_by_slug($settings, $preset_metadata, $origins)
@@ -236,8 +303,7 @@ class WP_Theme_JSON
 
     protected static function replace_slug_in_string($input, $slug)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::replace_slug_in_string');
-        return null;
+        return str_replace('$slug', (string) $slug, (string) $input);
     }
 
     protected static function compute_preset_vars($settings, $origins)
@@ -254,8 +320,17 @@ class WP_Theme_JSON
 
     protected static function flatten_tree($tree, $prefix = '', $token = '--')
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::flatten_tree');
-        return null;
+        // Keys in kebab case, nested ones joined by the token, the prefix before the first.
+        $result = [];
+        foreach ($tree as $property => $value) {
+            $key = $prefix . str_replace('/', '-', strtolower(_wp_to_kebab_case((string) $property)));
+            if (is_array($value)) {
+                $result = array_merge($result, static::flatten_tree($value, $key . $token, $token));
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
     }
 
     protected static function compute_style_properties($styles, $settings = [], $properties = NULL, $theme_json = NULL, $selector = NULL, $use_root_padding = NULL)
@@ -326,8 +401,7 @@ class WP_Theme_JSON
 
     protected static function get_metadata_boolean($data, $path, $default_value = false)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_metadata_boolean');
-        return null;
+        return _wp_array_get($data, $path, $default_value);
     }
 
     /** Another layer over this one: maps merge key by key, lists (palettes, sizes) are replaced. */
@@ -359,14 +433,30 @@ class WP_Theme_JSON
 
     protected static function should_override_preset($theme_json, $path, $override)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::should_override_preset');
-        return null;
+        _deprecated_function(__METHOD__, '6.0.0', 'get_metadata_boolean');
+        if (is_bool($override)) {
+            return $override;
+        }
+        // A preset may be overridden while its defaults are off: the node's own switch first, then the root's.
+        foreach ([$path, ['settings']] as $base) {
+            $value = _wp_array_get($theme_json, array_merge((array) $base, (array) $override));
+            if (isset($value)) {
+                return !$value;
+            }
+        }
+        return true;
     }
 
     protected static function get_default_slugs($data, $node_path)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_default_slugs');
-        return null;
+        $slugs = [];
+        foreach (static::PRESETS_METADATA as $metadata) {
+            $preset = _wp_array_get($data, array_merge((array) $node_path, $metadata['path'], ['default']), null);
+            if (isset($preset)) {
+                _wp_array_set($slugs, $metadata['path'], array_column((array) $preset, 'slug'));
+            }
+        }
+        return $slugs;
     }
 
     protected function get_name_from_defaults($slug, $base_path)
@@ -377,8 +467,16 @@ class WP_Theme_JSON
 
     protected static function filter_slugs($node, $slugs)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::filter_slugs');
-        return null;
+        if (empty($slugs)) {
+            return $node;
+        }
+        $kept = [];
+        foreach ((array) $node as $item) {
+            if (isset($item['slug']) && !in_array($item['slug'], $slugs, true)) {
+                $kept[] = $item;
+            }
+        }
+        return $kept;
     }
 
     public static function remove_insecure_properties($theme_json, $origin = 'theme')
@@ -419,8 +517,7 @@ class WP_Theme_JSON
 
     protected static function is_safe_css_declaration($property_name, $property_value)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::is_safe_css_declaration');
-        return null;
+        return trim(esc_html(safecss_filter_attr($property_name . ': ' . $property_value))) !== '';
     }
 
     private static function remove_indirect_properties($input, &$output)
@@ -436,8 +533,21 @@ class WP_Theme_JSON
 
     public static function get_from_editor_settings($settings)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_from_editor_settings');
-        return null;
+        // The editor's older settings, in the order the reference reads them; a disable flag turns its setting the other way.
+        $map = [
+            'disableCustomColors' => [['color', 'custom'], true], 'disableCustomGradients' => [['color', 'customGradient'], true],
+            'disableCustomFontSizes' => [['typography', 'customFontSize'], true], 'enableCustomLineHeight' => [['typography', 'lineHeight'], false],
+            'enableCustomUnits' => [['spacing', 'units'], false], 'colors' => [['color', 'palette'], false], 'gradients' => [['color', 'gradients'], false],
+            'fontSizes' => [['typography', 'fontSizes'], false], 'enableCustomSpacing' => [['spacing', 'padding'], false],
+        ];
+        $theme_settings = ['version' => static::LATEST_SCHEMA, 'settings' => []];
+        foreach ($map as $key => [$path, $negate]) {
+            if (isset($settings[$key])) {
+                $value = $negate ? !$settings[$key] : $settings[$key];
+                _wp_array_set($theme_settings['settings'], $path, $key === 'enableCustomUnits' && $value === true ? ['px', 'em', 'rem', 'vh', 'vw', '%'] : $value);
+            }
+        }
+        return $theme_settings;
     }
 
     /** The pattern directory slugs the data lists (probe block-patterns); [] when it lists none. */
@@ -489,8 +599,20 @@ class WP_Theme_JSON
 
     protected static function get_block_element_selectors($root_selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_block_element_selectors');
-        return null;
+        // Each element under each of the block's selectors, as given (a selector after a comma keeps its leading space).
+        $element_selectors = [];
+        foreach (static::ELEMENTS as $element => $element_selector) {
+            $list = [];
+            foreach (explode(',', (string) $root_selector) as $block_selector) {
+                if ($block_selector === $element_selector) {
+                    $list = [$element_selector];
+                    break;
+                }
+                $list[] = static::prepend_to_selector($element_selector, $block_selector . ' ');
+            }
+            $element_selectors[$element] = implode(',', $list);
+        }
+        return $element_selectors;
     }
 
     protected function get_feature_declarations_for_node($metadata, &$node)
@@ -513,14 +635,29 @@ class WP_Theme_JSON
 
     protected static function get_block_style_variation_selector($variation_name, $block_selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_block_style_variation_selector');
-        return null;
+        // The variation's class goes after the first run of characters that are neither space nor colon, in each selector of the list.
+        $class = '.is-style-' . $variation_name;
+        if (!$block_selector) {
+            return $class;
+        }
+        $result = [];
+        foreach (explode(',', (string) $block_selector) as $part) {
+            if (preg_match('/[^\s:]+/', $part, $match, PREG_OFFSET_CAPTURE) === 1) {
+                $end = $match[0][1] + strlen($match[0][0]);
+                $part = substr($part, 0, $end) . $class . substr($part, $end);
+            }
+            $result[] = $part;
+        }
+        return implode(',', $result);
     }
 
     protected static function get_block_style_variation_feature_selector($style_variation, $feature_selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_block_style_variation_feature_selector');
-        return null;
+        // A named variation's class goes into the feature selector; an unnamed one answers its own selector.
+        if (isset($style_variation['name'])) {
+            return static::get_block_style_variation_selector($style_variation['name'], $feature_selector);
+        }
+        return $style_variation['selector'] ?? $feature_selector;
     }
 
     protected static function get_valid_block_style_variations($blocks_metadata = [])
