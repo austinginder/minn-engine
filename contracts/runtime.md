@@ -11641,3 +11641,20 @@ classes real for direct calls without wiring them into boot. Also left:
 `WP_Theme_JSON::remove_insecure_properties` (a placeholder), which
 `wp_filter_global_styles_post` needs; that is a theme.json sanitizer
 batch of its own.
+
+## Inline placeholders are counted as owed (2026-10-10)
+
+`compat-status` used to count a method as real whenever a real facade file
+defined it. A class that keeps some methods as inline placeholders (a body
+that only calls `Runtime\PlaceholderTrace::hit()` and answers a neutral
+value) was therefore counted real throughout, and proven once a probe
+touched the class. `WP_Theme_JSON` is the case: 55 of its 64 public and
+protected methods are still such stubs. (`WP_Site_Health` has more, but it
+is a dead end.)
+
+A method whose body, on the class that defines it, is an inline
+placeholder now counts as a placeholder. Real methods went from 1984 to
+1929, placeholders from 326 to 381, and proven methods from 1927 to 1872.
+Nothing went missing. The proven-methods floor in the style suite moves
+down to match: this corrects the measure rather than loosening it.
+`WP_Theme_JSON` is now the largest single class owed.

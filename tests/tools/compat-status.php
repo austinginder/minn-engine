@@ -38,6 +38,8 @@ $defined = ['functions' => [], 'classes' => []];
 $methods = [];
 $parents = [];
 $catchAll = [];
+// Methods whose body is an inline placeholder (PlaceholderTrace) in an otherwise real class: owed, not real.
+$stubs = [];
 $files = [...glob("{$facade}/*.php"), ...glob("{$facade}/*/*.php"), ...glob("{$facade}/classes/*/*.php")];
 foreach ($files as $file) {
     $src = (string) file_get_contents($file);
@@ -58,11 +60,26 @@ foreach ($files as $file) {
         }
         preg_match_all('/function\s+&?(\w+)\s*\(/', $class[4], $mm);
         $methods[$lower] = array_fill_keys(array_map('strtolower', $mm[1]), true);
+        $parts = preg_split('/function\s+&?(\w+)\s*\(/', $class[4], -1, PREG_SPLIT_DELIM_CAPTURE) ?: [];
+        for ($i = 1; $i + 1 < count($parts); $i += 2) {
+            if (str_contains($parts[$i + 1], 'PlaceholderTrace::hit')) {
+                $stubs[$lower][strtolower($parts[$i])] = true;
+            }
+        }
         if (str_contains($class[4], 'DeadEndCalls') || isset($methods[$lower]['__call'])) {
             $catchAll[$lower] = true;
         }
     }
 }
+// Whether the class a method is found on (itself or the nearest parent defining it) has it as an inline placeholder.
+$isStub = static function (string $class, string $method) use ($methods, $parents, $stubs): bool {
+    for ($c = strtolower($class), $n = 0; $c !== null && $n < 12; $c = $parents[$c] ?? null, $n++) {
+        if (isset($methods[$c][strtolower($method)])) {
+            return isset($stubs[$c][strtolower($method)]);
+        }
+    }
+    return false;
+};
 $has = static function (string $class, string $method) use ($methods, $parents, $catchAll): bool {
     for ($c = strtolower($class), $n = 0; $c !== null && $n < 12; $c = $parents[$c] ?? null, $n++) {
         if (isset($methods[$c][strtolower($method)]) || isset($catchAll[$c])) {
@@ -106,6 +123,9 @@ foreach ($classes as $name => $spec) {
             continue;
         }
         $methodKind = $kind === 'missing' ? 'missing' : ($has($name, $method) ? $status['classes'][$name] : 'missing');
+        if ($methodKind === 'real' && $isStub($name, $method)) {
+            $methodKind = 'placeholder';
+        }
         $status['methods']["{$name}::{$method}"] = $methodKind;
     }
 }
