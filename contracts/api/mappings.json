@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 810,
-        "composes": 2304,
-        "leaf": 1012,
-        "noop": 2760,
+        "minn": 811,
+        "composes": 2308,
+        "leaf": 1013,
+        "noop": 2755,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8529,
+        "functions": 8530,
         "minnMethods": 978,
         "leafLinesOver15": 12
     },
@@ -395,10 +395,14 @@
         },
         "Core_Upgrader::should_update_to_version": {
             "file": "classes/WP_Upgrader.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 14,
+            "kind": "composes",
             "minn": [],
-            "composes": [],
+            "composes": [
+                "apply_filters",
+                "get_site_option",
+                "wp_get_wp_version"
+            ],
             "deadend": "admin"
         },
         "Core_Upgrader::upgrade": {
@@ -11308,10 +11312,13 @@
         },
         "WP_Embed::__construct": {
             "file": "classes/WP_Embed.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "add_action",
+                "add_filter"
+            ]
         },
         "WP_Embed::autoembed": {
             "file": "classes/WP_Embed.php",
@@ -13363,8 +13370,8 @@
         },
         "WP_HTML_Tag_Processor::subdivide_text_appropriately": {
             "file": "classes/WP_HTML_Tag_Processor.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -17721,17 +17728,21 @@
         },
         "WP_Query::lazyload_comment_meta": {
             "file": "classes/WP_Query.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "WP_Query::lazyload_term_meta": {
             "file": "classes/WP_Query.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "WP_Query::locate_page_path": {
             "file": "classes/WP_Query.php",
@@ -26013,9 +26024,11 @@
         },
         "WP_Script_Modules::set_translations": {
             "file": "classes/WP_Script_Modules.php",
-            "lines": 0,
-            "kind": "noop",
-            "minn": [],
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::scriptModules"
+            ],
             "composes": []
         },
         "WP_Scripts::__construct": {
@@ -31514,7 +31527,7 @@
         },
         "WP_Widget::widget": {
             "file": "classes/WP_Widget.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
@@ -32296,10 +32309,12 @@
         },
         "WP_Widget_Recent_Comments::flush_widget_cache": {
             "file": "classes/WP_Widget_Recent_Comments.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "WP_Widget_Recent_Comments::form": {
             "file": "classes/WP_Widget_Recent_Comments.php",
@@ -35052,6 +35067,7 @@
             ],
             "composes": [
                 "_minn_widget_factory",
+                "_minn_wp_embed",
                 "add_filter",
                 "load",
                 "timer_start",
@@ -37780,6 +37796,13 @@
             "file": "widgets.php",
             "lines": 4,
             "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_wp_embed": {
+            "file": "embed.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },

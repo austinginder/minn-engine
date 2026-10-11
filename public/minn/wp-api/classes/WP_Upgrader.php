@@ -401,9 +401,31 @@ class Core_Upgrader extends WP_Upgrader
         return new WP_Error('minn_core_update', __('This site runs Minn Engine, which keeps WordPress\'s API but none of its core files, so a WordPress core update does not apply. Update Minn instead: wp minn update.'));
     }
 
+    /**
+     * Whether core updates itself to an offered version (probe
+     * hollow-methods): never to the version it runs or an older one. One in
+     * the running branch is minor, any other major; each follows
+     * WP_AUTO_UPDATE_CORE when that says (true, false, minor, beta, rc,
+     * development, branch-development), else its auto_update_core_* option
+     * (a missing minor option counts as on), then its allow_*_auto_core_updates
+     * filter.
+     */
     public static function should_update_to_version($offered_ver)
     {
-        return false;
+        $current = wp_get_wp_version();
+        if (version_compare((string) $offered_ver, $current, '<=')) {
+            return false;
+        }
+        $branch = static fn (string $version): string => implode('.', array_slice(preg_split('/[.-]/', $version) ?: [], 0, 2));
+        $kind = $branch((string) $offered_ver) === $branch($current) ? 'minor' : 'major';
+        $constant = defined('WP_AUTO_UPDATE_CORE') ? WP_AUTO_UPDATE_CORE : null;
+        $allowed = match (true) {
+            $constant === true, in_array($constant, ['beta', 'rc', 'development', 'branch-development'], true) => true,
+            $constant === false => false,
+            $constant === 'minor' => $kind === 'minor',
+            default => get_site_option("auto_update_core_{$kind}", $kind === 'minor' ? 'enabled' : 'unset') === 'enabled',
+        };
+        return (bool) apply_filters("allow_{$kind}_auto_core_updates", $allowed);
     }
 
     public function check_files()

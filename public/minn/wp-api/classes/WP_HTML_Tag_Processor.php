@@ -163,9 +163,23 @@ class WP_HTML_Tag_Processor
         return $this->tags->fullCommentText();
     }
 
+    /**
+     * A text node's leading null bytes, or its leading whitespace, split off
+     * as a text node of their own, the rest read next; true when it led with
+     * either (a node all whitespace stays whole). Probe hollow-methods.
+     */
     public function subdivide_text_appropriately(): bool
     {
-        return false;
+        if ($this->get_token_type() !== '#text') {
+            return false;
+        }
+        [$start, $length] = $this->tags->textSpan();
+        $text = $this->tags->source($start, $length);
+        $lead = strspn($text, "\0") ?: strspn($text, " \t\n\f\r");
+        if ($lead > 0 && $lead < $length) {
+            $this->tags->splitText($lead);
+        }
+        return $lead > 0;
     }
 
     public function get_modifiable_text(): string

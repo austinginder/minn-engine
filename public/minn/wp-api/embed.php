@@ -188,3 +188,9 @@ function wp_filter_pre_oembed_result($result, $url, $args)
     $data = get_oembed_response_data_for_url($url, $args);
     return $data ? _wp_oembed_get_object()->data2html((object) $data, $url) : $result;
 }
+
+/** @internal the global embed object, made once without the constructor: the defaults hook it themselves, in the reference's order */
+function _minn_wp_embed(): WP_Embed
+{
+    return $GLOBALS['wp_embed'] ??= (new ReflectionClass(WP_Embed::class))->newInstanceWithoutConstructor();
+}

@@ -17,8 +17,20 @@ class WP_Embed
     public $last_url = '';
     public $return_false_on_fail = false;
 
+    /**
+     * A new embed object hooks itself in (probe hollow-methods): its shortcode
+     * and autoembed passes at 8 on the content, text-widget and block-widget
+     * filters, and its cache warm-up on the post edit forms. The global one is
+     * made without this (_minn_wp_embed): the defaults hook it, in their order.
+     */
     public function __construct()
     {
+        foreach (['the_content', 'widget_text_content', 'widget_block_content'] as $hook) {
+            add_filter($hook, [$this, 'run_shortcode'], 8);
+            add_filter($hook, [$this, 'autoembed'], 8);
+        }
+        add_action('edit_form_advanced', [$this, 'maybe_run_ajax_cache']);
+        add_action('edit_page_form', [$this, 'maybe_run_ajax_cache']);
     }
 
     /** Runs only the [embed] shortcode over the content, leaving every other shortcode for later. */

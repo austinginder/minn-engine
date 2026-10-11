@@ -147,7 +147,7 @@ add_shortcode('video', 'wp_video_shortcode');
 // [embed] answers nothing outside the_content's own pass (WP_Embed::run_shortcode at 8), so excerpts and strip_shortcodes drop it.
 add_shortcode('embed', '__return_false');
 add_action('wp_playlist_scripts', 'wp_playlist_scripts');
-$GLOBALS['wp_embed'] ??= new WP_Embed();
+_minn_wp_embed();
 add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
 add_filter('widget_text_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);
 add_filter('widget_text_content', 'wptexturize');
@@ -388,7 +388,7 @@ add_filter('comment_text', 'capital_P_dangit', 31);
 // the blocks, the typography, the paragraphs, the shortcodes, the images,
 // the smilies. The engine's own rendering runs only what it has not already
 // done (Runtime::contentFilter); a plugin running the filter gets them all.
-$GLOBALS['wp_embed'] ??= new WP_Embed();
+_minn_wp_embed();
 add_filter('the_content', 'apply_block_hooks_to_content_from_post_object', 8);
 add_filter('the_content', [$GLOBALS['wp_embed'], 'run_shortcode'], 8);
 add_filter('the_content', [$GLOBALS['wp_embed'], 'autoembed'], 8);

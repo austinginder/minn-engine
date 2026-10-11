@@ -47,8 +47,17 @@ class WP_Script_Modules
         Runtime::scriptModules()->deregister($id);
     }
 
-    public function set_translations(string $id, string $domain = 'default', string $path = ''): void
+    /** @var array<string, array{domain: string, path: string}> each module's translation domain and folder */
+    private array $minn_translations = [];
+
+    /** A registered module's translations domain and folder, kept; false for a module not registered (probe hollow-methods). */
+    public function set_translations(string $id, string $domain = 'default', string $path = ''): bool
     {
+        if (Runtime::scriptModules()->registered($id) === null) {
+            return false;
+        }
+        $this->minn_translations[$id] = ['domain' => $domain, 'path' => $path];
+        return true;
     }
 
     public function print_script_module_translations(): void

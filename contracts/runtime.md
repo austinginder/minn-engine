@@ -13131,3 +13131,51 @@ blocks left open instead of closing each at the end.
 
 Still owed: the engine's renderer reads content with
 `Minn\Blocks\Parser`, which keeps the old reading of malformed documents.
+
+## Hollow methods made real (2026-10-11)
+
+Probe `hollow-methods`. A sweep found facade methods answering with an
+empty body or a fixed value. They counted as proven only because a probe
+named their class. Most match an empty base method on the reference
+(Walker, the filesystem base, the upgrader skins). These did not, and now
+do:
+
+- **The deprecated lazy-loaders** `WP_Query::lazyload_comment_meta` and
+  `lazyload_term_meta` report deprecation since 4.5.0 and return the check
+  as given. `WP_Widget_Recent_Comments::flush_widget_cache` reports since
+  4.4.0.
+- **`WP_Widget::widget`** on a class that never wrote its own ends the
+  request: "function WP_Widget::widget() must be overridden in a subclass."
+  (a plain die on the reference too, so it cannot be compared in-process).
+- **`new WP_Embed()`** hooks itself in:
+  - `run_shortcode` and `autoembed` at 8 on `the_content`,
+    `widget_text_content` and `widget_block_content`;
+  - `maybe_run_ajax_cache` on `edit_form_advanced` and `edit_page_form`.
+
+  The global embed object is made without the constructor
+  (`_minn_wp_embed`). The defaults hook it themselves, in the reference's
+  order (`apply_block_hooks_to_content_from_post_object` first at 8), and
+  without the edit-form hooks, as the reference's global has none.
+- **`WP_Script_Modules::set_translations`** keeps a registered module's
+  domain and folder and answers true. A module not registered answers
+  false. Printing translations is still empty: with no translation file
+  both stacks print nothing, which proves nothing.
+- **`WP_HTML_Tag_Processor::subdivide_text_appropriately`** splits a text
+  node's leading null bytes, or its leading whitespace, into a text node of
+  their own; the rest is read next (`Tags::splitText`). It answers true when
+  the node led with either; a node all whitespace stays whole. Fixed on the
+  way: a text node's modifiable text drops its null bytes, as the
+  reference's does.
+- **`Core_Upgrader::should_update_to_version`**:
+  - Never to the running version or an older one.
+  - An offer in the running branch is minor; any other, betas included, is
+    major.
+  - `WP_AUTO_UPDATE_CORE` decides when it says so: true, `beta`, `rc`,
+    `development` and `branch-development` allow everything; false refuses
+    everything; `minor` allows only minors. Any other value falls back to
+    the options.
+  - Otherwise each kind follows its `auto_update_core_*` option. A missing
+    minor option counts as on, a missing major one as off.
+  - Then the `allow_{kind}_auto_core_updates` filter decides.
+  - The dev branch rules apply only when the running version is a
+    development one, which the engine's never is, so they are not modelled.

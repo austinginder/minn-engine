@@ -9,7 +9,7 @@ the HTML tag processor
 | [`Escaped`](#escaped) | final readonly class | 6 | An attribute value that comes already escaped (a URL through esc_url), written as it is. |
 | [`Scanner`](#scanner) | final class | 291 | Reads one token's shape out of raw HTML at an offset: a tag with its |
 | [`TagQuery`](#tagquery) | final readonly class | 37 | A tag processor's next_tag() query: a tag name (any case), a class, the |
-| [`Tags`](#tags) | final class | 587 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Tags`](#tags) | final class | 589 | A streaming HTML tokenizer with in-place edits: every token in document order, attributes decoded, |
 | [`TokenMap`](#tokenmap) | final class | 87 | A map from words to replacements that reads the longest word at a place |
 
 ## Decoder
@@ -284,11 +284,8 @@ Whether a tag (by name, closer or not, and a class test) matches, before the off
 
 `final class Minn\Html\Tags` · `public/minn/src/Minn/Html/Tags.php`
 
-A streaming HTML tokenizer with in-place edits: tags, text, comments,
-doctypes, and processing instructions in document order, attribute reads
-with character references decoded, attribute and class edits applied to
-the source without reserialising anything else, bookmarks to seek back to.
-Behaviour pinned by the html-tag-processor probe fixture.
+A streaming HTML tokenizer with in-place edits: every token in document order, attributes decoded,
+edits applied to the source without reserialising the rest, bookmarks to seek back to (probe html-tag-processor).
 
 - const `TAG` = `'#tag'`
 - const `TEXT` = `'#text'`
@@ -424,10 +421,7 @@ Moves to a bookmark.
 
 ### `parseAs(string $namespace, string $tagBodies = 'html'): void`
 
-Reads what follows as content of a namespace: outside HTML "<![CDATA["
-opens a CDATA section. Tag bodies are read as HTML ("html": SCRIPT,
-STYLE and the other raw text elements take their text whole) unless
-the start tags here are foreign content ("foreign").
+What follows as a namespace's content: outside HTML "<![CDATA[" opens a section; tag bodies read as HTML ("html", raw text elements whole) unless foreign ("foreign").
 
 ### `allowBookmarks(int $max): void`
 
@@ -436,6 +430,10 @@ Raises how many bookmarks may be held at once.
 ### `rewind(): void`
 
 Back to the start of the document, with every update written in and the bookmarks kept.
+
+### `splitText(int $length): void`
+
+The current text token cut to its first bytes; the rest is read next.
 
 ### `tokenSpan(): array`
 
@@ -461,7 +459,7 @@ Replaces a span at or after the current token's end, updates written in first: t
 
 The document with every update written in.
 
-Internals: `setToken()` (private, line 134), `resetToken()` (private, line 144), `takeTag()` (private, line 158), `take()` (private, line 188), `baseClassList()` (private, line 360), `baseClassValue()` (private, line 365), `flush()` (private, line 543), `applyReplacements()` (private, line 564), `rescanCurrent()` (private, line 570), `rescan()` (private, line 586)
+Internals: `setToken()` (private, line 131), `resetToken()` (private, line 141), `takeTag()` (private, line 155), `take()` (private, line 185), `baseClassList()` (private, line 358), `baseClassValue()` (private, line 363), `flush()` (private, line 542), `applyReplacements()` (private, line 563), `rescanCurrent()` (private, line 569), `rescan()` (private, line 585)
 
 
 ## TokenMap

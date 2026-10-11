@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace Minn\Html;
 
 /**
- * A streaming HTML tokenizer with in-place edits: tags, text, comments,
- * doctypes, and processing instructions in document order, attribute reads
- * with character references decoded, attribute and class edits applied to
- * the source without reserialising anything else, bookmarks to seek back to.
- * Behaviour pinned by the html-tag-processor probe fixture.
+ * A streaming HTML tokenizer with in-place edits: every token in document order, attributes decoded,
+ * edits applied to the source without reserialising the rest, bookmarks to seek back to (probe html-tag-processor).
  */
 final class Tags
 {
@@ -296,7 +293,8 @@ final class Tags
             $raw = (string) preg_replace('/^(?:\r\n|\r|\n)/', '', $raw);
         }
         if ($this->type === self::TEXT || in_array($tagName, self::RAW_DECODED, true)) {
-            return Decoder::text($raw);
+            // A text node's null bytes are dropped, as the reference reads them (probe hollow-methods).
+            return $this->type === self::TEXT ? str_replace("\0", '', Decoder::text($raw)) : Decoder::text($raw);
         }
         return $raw;
     }
@@ -466,12 +464,7 @@ final class Tags
         return $this->nextToken();
     }
 
-    /**
-     * Reads what follows as content of a namespace: outside HTML "<![CDATA["
-     * opens a CDATA section. Tag bodies are read as HTML ("html": SCRIPT,
-     * STYLE and the other raw text elements take their text whole) unless
-     * the start tags here are foreign content ("foreign").
-     */
+    /** What follows as a namespace's content: outside HTML "<![CDATA[" opens a section; tag bodies read as HTML ("html", raw text elements whole) unless foreign ("foreign"). */
     public function parseAs(string $namespace, string $tagBodies = 'html'): void
     {
         $this->namespace = $namespace;
@@ -495,6 +488,12 @@ final class Tags
         $this->afterPre = false;
         $this->namespace = 'html';
         $this->tagBodies = 'html';
+    }
+
+    /** The current text token cut to its first bytes; the rest is read next. */
+    public function splitText(int $length): void
+    {
+        [$this->end, $this->textLength, $this->cursor] = [$this->start + $length, $length, $this->start + $length];
     }
 
     /** Where the current token sits in the document: [start, end]. */

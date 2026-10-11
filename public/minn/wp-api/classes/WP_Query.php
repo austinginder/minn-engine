@@ -638,13 +638,17 @@ class WP_Query
         return md5(serialize($args) . $sql);
     }
 
+    /** Deprecated since 4.5.0: the check comes back as given (probe hollow-methods). */
     public function lazyload_term_meta($check, $term_id)
     {
+        _deprecated_function(__METHOD__, '4.5.0');
         return $check;
     }
 
+    /** Deprecated since 4.5.0: the check comes back as given (probe hollow-methods). */
     public function lazyload_comment_meta($check, $comment_id)
     {
+        _deprecated_function(__METHOD__, '4.5.0');
         return $check;
     }
 }

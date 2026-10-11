@@ -14,8 +14,10 @@ class WP_Widget
     public $id = false;
     public $updated = false;
 
+    /** A widget class must write its own: the reference ends the request, naming the method. */
     public function widget($args, $instance)
     {
+        die('function WP_Widget::widget() must be overridden in a subclass.');
     }
 
     public function update($new_instance, $old_instance)

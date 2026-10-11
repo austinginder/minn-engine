@@ -50,8 +50,10 @@ class WP_Widget_Recent_Comments extends WP_Widget
         return $instance;
     }
 
+    /** Deprecated since 4.4.0; there is no cache to flush (probe hollow-methods). */
     public function flush_widget_cache()
     {
+        _deprecated_function(__METHOD__, '4.4.0');
     }
 
     /** The settings form (Widgets\WidgetForms::recentComments). */
