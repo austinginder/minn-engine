@@ -16,7 +16,7 @@ the block parser and renderer
 | [`ImageTags`](#imagetags) | final readonly class | 277 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 167 | The layout support's classes and rules (wp_render_layout_support_flag, |
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
-| [`Parser`](#parser) | final class | 91 | Parses block markup into a tree. The grammar is the delimiter comment: |
+| [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 335 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 350 | Renders a block tree the way the reference renders post_content: |
@@ -626,6 +626,15 @@ Used by: `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Navigat
 Block markup as a tree of blocks.
 
 - `@return list<Block>`
+
+### static `token(string $markup, int $offset): ?array`
+
+The first block delimiter at or after an offset: where it starts, its
+length, its name (core/ when it names no namespace), its attributes as
+written (null when it has none), and whether it closes a block or is
+a void one. Null when no delimiter follows.
+
+- `@return array{start: int, length: int, name: string, attrs: ?string, closer: bool, void: bool}|null`
 
 ### static `contains(string $content, string $name): bool`
 

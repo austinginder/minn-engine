@@ -13094,3 +13094,40 @@ profile:
 - the REST answer on the anchor copy.
 
 Loading the facade costs about 2 ms with OPcache.
+
+## The block parser's steps, and parse_blocks on malformed content (2026-10-11)
+
+Probe `block-parser-steps`. `WP_Block_Parser`'s step methods were empty.
+They counted as proven only because a probe named the class and called
+`parse()`. Now they walk a document as the reference's do, and `parse()`
+runs them from the start until they are done.
+
+- **`next_token`** gives `[type, name, attributes, start, length]` from the
+  offset:
+  - the type is `block-opener`, `block-closer`, `void-block`, or
+    `no-more-tokens`;
+  - an unnamespaced block is `core/`;
+  - attributes are decoded: an empty list when none are written, null when
+    they are not JSON, and null on a closer.
+
+  It reads the engine's delimiter grammar (`Minn\Blocks\Parser::token`).
+- **`proceed`**, one step:
+  - An opener goes on the stack, with where the text before it began.
+  - A void block goes to its parent, or out after the text before it.
+  - A closer closes whatever is on top, whatever it names.
+  - With nothing left, every open block closes at the document's end and
+    goes out at the top level, innermost first, each after its leading
+    text. With nothing open, the rest is freeform.
+  - A closer with nothing open stops the walk: the rest, the closer
+    included, is one freeform block.
+- **`add_freeform`**, **`add_inner_block`** and **`add_block_from_stack`**
+  never record an empty run of text. Output and inner blocks are kept as
+  arrays.
+
+Fixed on the way: `parse_blocks()` answers a malformed document as the
+reference does. Before, the engine's own parser split a stray closer into
+separate freeform blocks, read bad attributes as an empty list, and nested
+blocks left open instead of closing each at the end.
+
+Still owed: the engine's renderer reads content with
+`Minn\Blocks\Parser`, which keeps the old reading of malformed documents.

@@ -4,11 +4,11 @@
     "summary": {
         "minn": 810,
         "composes": 2304,
-        "leaf": 1003,
-        "noop": 2765,
+        "leaf": 1012,
+        "noop": 2760,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8525,
+        "functions": 8529,
         "minnMethods": 978,
         "leafLinesOver15": 12
     },
@@ -7998,22 +7998,22 @@
         },
         "WP_Block_Parser::add_block_from_stack": {
             "file": "classes/WP_Block_Parser.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Block_Parser::add_freeform": {
             "file": "classes/WP_Block_Parser.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Block_Parser::add_inner_block": {
             "file": "classes/WP_Block_Parser.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -8024,26 +8024,54 @@
             "minn": [],
             "composes": []
         },
+        "WP_Block_Parser::minn_append": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::minn_close": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::minn_finish": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Block_Parser::minn_void": {
+            "file": "classes/WP_Block_Parser.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_Block_Parser::next_token": {
             "file": "classes/WP_Block_Parser.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Parser::token"
+            ],
             "composes": []
         },
         "WP_Block_Parser::parse": {
             "file": "classes/WP_Block_Parser.php",
-            "lines": 5,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Blocks\\Parser::parse"
-            ],
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Block_Parser::proceed": {
             "file": "classes/WP_Block_Parser.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 14,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

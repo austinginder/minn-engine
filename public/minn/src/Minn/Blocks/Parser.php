@@ -86,6 +86,29 @@ final class Parser
         return $output;
     }
 
+    /**
+     * The first block delimiter at or after an offset: where it starts, its
+     * length, its name (core/ when it names no namespace), its attributes as
+     * written (null when it has none), and whether it closes a block or is
+     * a void one. Null when no delimiter follows.
+     *
+     * @return array{start: int, length: int, name: string, attrs: ?string, closer: bool, void: bool}|null
+     */
+    public static function token(string $markup, int $offset): ?array
+    {
+        if (preg_match(self::TOKEN, $markup, $m, PREG_OFFSET_CAPTURE, $offset) !== 1) {
+            return null;
+        }
+        return [
+            'start' => $m[0][1],
+            'length' => strlen($m[0][0]),
+            'name' => (($m['namespace'][0] ?? '') !== '' ? $m['namespace'][0] : 'core/') . $m['name'][0],
+            'attrs' => ($m['attrs'][0] ?? '') !== '' ? trim($m['attrs'][0]) : null,
+            'closer' => ($m['closer'][0] ?? '') === '/',
+            'void' => ($m['void'][0] ?? '') === '/',
+        ];
+    }
+
     /** Whether serialized content carries a block by name; a bare name means core/, and core blocks are also found by their short delimiter. */
     public static function contains(string $content, string $name): bool
     {

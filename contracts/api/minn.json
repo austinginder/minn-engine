@@ -18013,7 +18013,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Parser.php",
-            "lines": 91,
+            "lines": 114,
             "doc": "Parses block markup into a tree. The grammar is the delimiter comment:\nan opener with optional JSON attributes, a closer, or a self-closing\nvoid block; a name without a namespace is core/. Anything outside a\nblock is a freeform block that renders as-is.",
             "implements": [],
             "extends": null,
@@ -18068,6 +18068,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "token",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "token(string $markup, int $offset): ?array",
+                    "doc": "The first block delimiter at or after an offset: where it starts, its\nlength, its name (core/ when it names no namespace), its attributes as\nwritten (null when it has none), and whether it closes a block or is\na void one. Null when no delimiter follows.",
+                    "shapes": [
+                        "@return array{start: int, length: int, name: string, attrs: ?string, closer: bool, void: bool}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "markup",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "offset",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 110
+                },
+                {
+                    "routes": [],
                     "name": "contains",
                     "static": true,
                     "visibility": "public",
@@ -18090,8 +18119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 104
+                    "line": 113,
+                    "end": 127
                 }
             ]
         },
