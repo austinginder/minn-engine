@@ -5,10 +5,10 @@
         "minn": 800,
         "composes": 2374,
         "leaf": 1042,
-        "noop": 2757,
+        "noop": 2758,
         "placeholder": 2,
         "deadend": 1768,
-        "functions": 8665,
+        "functions": 8666,
         "minnMethods": 992,
         "leafLinesOver15": 12
     },
@@ -64236,6 +64236,13 @@
                 "do_action",
                 "get_post"
             ]
+        },
+        "wp_ai_client_prompt": {
+            "file": "ai-client.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "wp_ajax_activate_plugin": {
             "file": "deadends.php",

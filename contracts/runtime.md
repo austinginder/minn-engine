@@ -14142,3 +14142,74 @@ What the reference does, and the engine now does:
 - **`WP_AI_Client_Discovery_Strategy`** offers, for the PSR-18 client
   interface, one candidate: a closure that makes `WP_AI_Client_HTTP_Client`
   over a PSR-17 factory. Any other type gets none.
+
+## The AI client, part two: the prompt builder and abilities (2026-10-11)
+
+`wp_ai_client_prompt()`, `WP_AI_Client_Prompt_Builder` and
+`WP_AI_Client_Ability_Function_Resolver` are real (probe `ai-client-prompt`).
+That completes Austin's D5 for what the count measures. Every class and method
+of the reference's API is now accounted for and proven.
+
+**The builder.** `wp_ai_client_prompt($prompt)` makes a builder over the SDK's
+default registry.
+
+- **Construction.** The request timeout comes from
+  `wp_ai_client_default_request_timeout` (30). It is filtered once per
+  builder.
+- **Calls.** A call by its snake_case name reaches the SDK builder's camelCase
+  method. A setting hands back the WordPress builder. A support check answers
+  a bool. A generation answers its result or a `WP_Error`.
+- **A failing setting is kept.** This covers an exception inside the call, a
+  method the SDK builder lacks (`BadMethodCallException`, "Method zz_nope
+  does not exist on WordPress\AiClient\Builders\PromptBuilder."), or a prompt
+  the constructor refuses. Every generation after it answers that failure,
+  every support check answers false, and every other call hands back the
+  builder.
+- **Error codes.** An SDK `InvalidArgumentException` is
+  `prompt_invalid_argument` (status 400); anything else is
+  `prompt_builder_error` (500). Each carries `exception_class`.
+- **Type errors.** A PHP type error, such as a string temperature, is not
+  caught.
+- **The prompt itself:**
+  - none gives "Cannot generate from an empty prompt. Add content using
+    withText() or similar methods.";
+  - a blank string gives "Cannot create a message from an empty string.";
+  - an unregistered provider gives "Provider not registered: zz";
+  - an aspect ratio not in width:height form gives "Output media aspect ratio
+    must be in the format "width:height" (e.g. 3:2, 16:9).";
+  - other values are kept as given.
+- **No providers.** Core registers no AI provider, so every generation that
+  gets that far answers "No models found that support {capability} for this
+  prompt". The capability is text_generation, image_generation,
+  text_to_speech_conversion, speech_generation or video_generation, by
+  method. Every support check is false.
+- **`using_abilities()`** turns the abilities, by name or object, into
+  function declarations. One that is not an ability is passed over.
+
+**The resolver.**
+
+- Its function names are `wpab__` plus the ability's name, the slash as `__`.
+  The reverse drops the first six characters whatever they are, so
+  `zz_other` becomes `er`, and turns `__` into `/`.
+- A call that is not an ability's answers `invalid_ability_call`. An ability
+  outside the allowed list answers `ability_not_allowed`.
+- An allowed ability runs with the call's arguments, empty arguments counting
+  as no input. A `WP_Error` from it becomes `{error, code, data}`. A call
+  with no id is answered as `unknown`.
+- `execute_abilities()` answers every ability call in a message, in order, in
+  one user message of function-response parts.
+
+**The SDK pieces it stands on** (`wp-api/ai-client/Dto.php` and `Builder.php`,
+outside the count):
+
+- the enum base and the role, part type, channel, modality, file type,
+  orientation and capability enums;
+- messages and their parts, function calls, responses and declarations, and
+  files;
+- the provider registry, `AiClient`, and the prompt builder.
+
+Array forms leave out what is unset; a function response keeps its response.
+
+**Not carried yet:** the SDK's abstract provider classes, so an AI provider
+plugin cannot register on Minn. The registry refuses every registration. Core
+ships no provider, so a stock site answers exactly as WordPress does.
