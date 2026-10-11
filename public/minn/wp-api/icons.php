@@ -1,10 +1,13 @@
 <?php
 /**
  * The icons API (probe icons): collections and icons through their
- * registries, and an icon printed as SVG. The reference's own icon library
- * is GPL art the engine does not ship, so the default collection is
- * registered without icons.
+ * registries, and an icon printed as SVG. The default collection holds the
+ * reference's icon names and labels with Minn's own artwork, drawn by Minn
+ * Admin (D16); the reference's icon library is GPL art the engine does not
+ * ship.
  */
+
+use Minn\Json;
 
 function wp_register_icon($icon_name, $args)
 {
@@ -49,9 +52,21 @@ function wp_unregister_icon_collection($slug)
     return WP_Icon_Collections_Registry::get_instance()->unregister($slug);
 }
 
-/** The reference registers its icon library here; the engine ships none of that art. */
+/**
+ * The core icons: each name and label the reference registers (data/icons.json),
+ * drawn with Minn's own artwork from the Minn Admin copy the engine ships
+ * (admin/assets/icons/core-icons.json, D16). An icon with no artwork, or no
+ * artwork file at all, is left unregistered (probe icons-default).
+ */
 function _wp_register_default_icons()
 {
+    $art = Json::file(MINN_ENGINE_DIR . '/admin/assets/icons/core-icons.json') ?: [];
+    $registry = WP_Icons_Registry::get_instance();
+    foreach ((Json::file(MINN_ENGINE_DIR . '/data/icons.json') ?: [])['icons'] ?? [] as $name => $label) {
+        if (is_string($art[$name] ?? null)) {
+            $registry->register('core/' . $name, ['label' => __($label), 'content' => $art[$name]]);
+        }
+    }
 }
 
 function _wp_register_default_icon_collections()

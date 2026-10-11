@@ -14519,3 +14519,33 @@ endpoints differently in the index. The reference lists one endpoint per
 method group, each with its arguments; the engine merges each route into one
 endpoint, and many of its own routes list no arguments. Some Minn Admin routes
 also list only GET where the reference lists GET and POST.
+
+## The core icons, in Minn's own artwork (D16, 2026-10-11)
+
+`_wp_register_default_icons()` registers the core icon set (probe
+icons-default). The names and labels are the reference's: 88 icons, in its
+order, kept in `public/minn/data/icons.json`. The artwork is Minn's own,
+drawn by Minn Admin and read from the copy the engine ships with
+(`admin/assets/icons/core-icons.json`). An icon with no artwork, or no file
+at all, stays unregistered, which was the engine's behaviour before.
+
+- **The art is filled geometry.** WordPress's icon registry, which the engine
+  mirrors, sanitizes every icon down to `svg`, `path` and `polygon`. It keeps
+  only `d`, `fill`, `fill-rule` and `transform` on the shapes, and nothing
+  of `fill` or `stroke` on the `svg`. Minn Admin's first set was drawn with
+  strokes and circles, and the registry stripped them. The shipped set is the
+  same design outlined into filled paths. Each of the 88 icons survives the
+  reference's sanitizer unchanged.
+- **Compared:** the names, labels and collection, in order; a second
+  registration refused icon by icon ("Icon is already registered."); search;
+  `wp_get_icon()`'s outer tag, both labelled and hidden; and the REST
+  listing.
+- **Different on purpose:** the artwork itself. The reference also reads its
+  library from a file, so its icons carry a `file_path` and gain their
+  content last; Minn's are registered as content, so the probe compares each
+  icon's fields as a set. Building the registry, sanitizing the 88 icons
+  included, takes about 5 ms, and only when something asks for icons.
+
+Next, as agreed: Dashicons names mapped onto these icons, so that both the
+admin bar's markup and WordPress's planned SVG icons (wordpress-develop PR
+#12270) show Minn's artwork.
