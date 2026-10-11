@@ -57,12 +57,30 @@ final readonly class ImageTags
      */
     public function content(string $html, mixed $context = null): string
     {
-        return (string) preg_replace_callback('/<(img|iframe)\s[^>]*>/i', function (array $m) use ($context): string {
+        // A template's images get their srcset but no loading attributes, and its iframes stay as they are (probe tail-helpers).
+        $template = $context === 'template';
+        return (string) preg_replace_callback('/<(img|iframe)\s[^>]*>/i', function (array $m) use ($context, $template): string {
             if (strtolower($m[1]) === 'iframe') {
-                return self::lazyFrame($m[0]);
+                return $template ? $m[0] : self::lazyFrame($m[0]);
             }
-            return (string) \apply_filters('wp_content_img_tag', $this->fit($m[0]), $context, self::attachmentOf($m[0]));
+            return (string) \apply_filters('wp_content_img_tag', $template ? $this->sized($m[0]) : $this->fit($m[0]), $context, self::attachmentOf($m[0]));
         }, $html);
+    }
+
+    /** A template's image: an attachment's gets its srcset and sizes in place, nothing more; any other is left as it is. */
+    private function sized(string $tag): string
+    {
+        $id = self::attachmentOf($tag);
+        if ($id < 1 || str_contains($tag, ' srcset=') || preg_match('/\sclass="[^"]*\bwp-image-\d+\b/', $tag) !== 1) {
+            return $tag;
+        }
+        $found = $this->candidates($tag, $id);
+        if ($found === null) {
+            return $tag;
+        }
+        [$candidates, $width, $height, $meta, $src] = $found;
+        $srcset = self::srcsetAttributes($candidates, $width, false, $id, $meta, $src, $height);
+        return $srcset === '' ? $tag : (string) preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);
     }
 
     /**
@@ -186,9 +204,31 @@ final readonly class ImageTags
             }
             return $tag;
         }
+        $found = $this->candidates($tag, $attachmentId);
+        if ($found === null) {
+            return $tag;
+        }
+        [$candidates, $width, $height, $meta, $src] = $found;
+        [$loading, $auto] = preg_match('/\sloading="(\w+)"/', $tag, $given) === 1 ? $this->givenLoading($given[1], $width, $height) : $this->loadingPrefix($width, $height);
+        $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
+        $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
+        $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
+        return $srcset === '' ? $tag : preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);
+    }
+
+    /**
+     * The srcset candidates for an attachment's image, keyed by width: the
+     * shown size first, then same-ratio sizes in stored order, then the
+     * original; with the shown width and height, the metadata and the src.
+     * Null when the image is not one of the attachment's files.
+     *
+     * @return array{0: array<int, string>, 1: int, 2: int, 3: array<string, mixed>, 4: string}|null
+     */
+    private function candidates(string $tag, int $attachmentId): ?array
+    {
         $meta = Metadata::parse($this->posts->meta($attachmentId, '_wp_attachment_metadata'));
         if ($meta['file'] === '' || !preg_match('/\ssrc="([^"]+)"/', $tag, $srcMatch)) {
-            return $tag;
+            return null;
         }
         $src = $srcMatch[1];
         $baseUrl = rtrim($this->uploads->baseUrl() . '/' . dirname($meta['file']), '/.');
@@ -216,17 +256,12 @@ final readonly class ImageTags
             $candidates[$size['width']] = $url;
         }
         if ($shown === null) {
-            return $tag;
+            return null;
         }
         if ($src !== $fullUrl) {
             $candidates[$meta['width']] = $fullUrl;
         }
-        [$width, $height] = $shown;
-        [$loading, $auto] = preg_match('/\sloading="(\w+)"/', $tag, $given) === 1 ? $this->givenLoading($given[1], $width, $height) : $this->loadingPrefix($width, $height);
-        $prefix = $loading . ' width="' . $width . '" height="' . $height . '"' . ($withDataId ? ' data-id="' . $attachmentId . '"' : '');
-        $tag = preg_replace('/^<img\s/', '<img ' . $prefix . ' ', $tag, 1);
-        $srcset = self::srcsetAttributes($candidates, $width, $auto && $autoSizes, $attachmentId, $meta, $src, $height);
-        return $srcset === '' ? $tag : preg_replace('/\s*\/?>$/', $srcset . ' />', $tag, 1);
+        return [$candidates, $shown[0], $shown[1], $meta, $src];
     }
 
     /**

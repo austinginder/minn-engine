@@ -1268,3 +1268,23 @@ function wp_heartbeat_settings($settings)
     }
     return $settings;
 }
+
+/**
+ * The current block template's markup (probe tail-helpers): its embeds, a
+ * lone shortcode's paragraph removed, blocks, shortcodes, then texturized,
+ * smilies, image tags, and "]]>" kept from closing a CDATA, inside the site
+ * blocks wrapper. With no template, nothing, or a notice for someone signed
+ * in.
+ */
+function get_the_block_template_html()
+{
+    global $_wp_current_template_content;
+    if (!$_wp_current_template_content) {
+        return is_user_logged_in() ? '<h1>' . esc_html__('No matching template found') . '</h1>' : '';
+    }
+    $embed = _minn_wp_embed();
+    $content = shortcode_unautop($embed->autoembed($embed->run_shortcode((string) $_wp_current_template_content)));
+    $content = convert_smilies(wptexturize(do_shortcode(do_blocks($content))));
+    $content = str_replace(']]>', ']]&gt;', wp_filter_content_tags($content, 'template'));
+    return '<div class="wp-site-blocks">' . $content . '</div>';
+}

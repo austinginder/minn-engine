@@ -16754,7 +16754,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/ImageTags.php",
-            "lines": 277,
+            "lines": 312,
             "doc": "The attributes the reference adds to an <img> that carries a\nwp-image-{id} class: loading, decoding, width and height (prepended, in\nthat order), and srcset plus sizes (appended). The srcset lists the\ndisplayed size first, then every same-ratio size in stored order, then\nthe original.",
             "implements": [],
             "extends": null,
@@ -16919,7 +16919,7 @@
                         }
                     ],
                     "line": 58,
-                    "end": 66
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -16945,8 +16945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 82
+                    "line": 93,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -16979,8 +16979,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 297
+                    "line": 307,
+                    "end": 332
+                },
+                {
+                    "routes": [],
+                    "name": "sized",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "sized(string $tag): string",
+                    "doc": "A template's image: an attachment's gets its srcset and sizes in place, nothing more; any other is left as it is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -16999,8 +17019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 90
+                    "line": 103,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -17019,8 +17039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 111,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -17039,8 +17059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 109
+                    "line": 117,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -17059,8 +17079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 121
+                    "line": 130,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -17079,8 +17099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 130
+                    "line": 142,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -17113,8 +17133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 139
+                    "line": 150,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -17140,8 +17160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 162
+                    "line": 165,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -17176,8 +17196,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 171
+                    "line": 183,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -17188,8 +17208,8 @@
                     "doc": "The area an image must cover before it is worth fetching first.",
                     "shapes": [],
                     "params": [],
-                    "line": 174,
-                    "end": 178
+                    "line": 192,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -17229,8 +17249,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 230
+                    "line": 198,
+                    "end": 217
+                },
+                {
+                    "routes": [],
+                    "name": "candidates",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "candidates(string $tag, int $attachmentId): ?array",
+                    "doc": "The srcset candidates for an attachment's image, keyed by width: the\nshown size first, then same-ratio sizes in stored order, then the\noriginal; with the shown width and height, the metadata and the src.\nNull when the image is not one of the attachment's files.",
+                    "shapes": [
+                        "@return array{0: array<int, string>, 1: int, 2: int, 3: array<string, mixed>, 4: string}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "tag",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attachmentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 227,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -17291,8 +17340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 265
+                    "line": 273,
+                    "end": 300
                 }
             ]
         },

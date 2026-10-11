@@ -4,7 +4,7 @@
  * The navigation menu a theme falls back to. Its schema half is real
  * (probe rest-posts-controller): a navigation post's status, raw title and
  * content are readable in the embed context too, so a block can embed the
- * menu it renders. Choosing or creating the fallback menu is still owed.
+ * menu it renders.
  */
 class WP_Navigation_Fallback
 {
@@ -25,57 +25,33 @@ class WP_Navigation_Fallback
         return $schema;
     }
 
+    /**
+     * The navigation menu to fall back to (probe tail-helpers): the newest
+     * published one; else, unless wp_navigation_should_create_fallback says
+     * not, one made from a classic menu or, without one, a default page list,
+     * then the newest published again.
+     */
     public static function get_fallback()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_fallback');
-        return null;
+        $create = apply_filters('wp_navigation_should_create_fallback', true);
+        $fallback = static::get_most_recently_published_navigation();
+        if ($fallback || !$create) {
+            return $fallback;
+        }
+        if (!block_core_navigation_maybe_use_classic_menu_fallback()) {
+            static::create_default_fallback();
+        }
+        return static::get_most_recently_published_navigation();
     }
 
     private static function get_most_recently_published_navigation()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_most_recently_published_navigation');
-        return null;
+        return block_core_navigation_get_most_recently_published_navigation();
     }
 
-    private static function create_classic_menu_fallback()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::create_classic_menu_fallback');
-        return null;
-    }
-
-    private static function get_fallback_classic_menu()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_fallback_classic_menu');
-        return null;
-    }
-
-    private static function get_most_recently_created_nav_menu($classic_nav_menus)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_most_recently_created_nav_menu');
-        return null;
-    }
-
-    private static function get_nav_menu_with_primary_slug($classic_nav_menus)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_nav_menu_with_primary_slug');
-        return null;
-    }
-
-    private static function get_nav_menu_at_primary_location()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_nav_menu_at_primary_location');
-        return null;
-    }
-
+    /** A published navigation menu listing the site's pages, titled Navigation. */
     private static function create_default_fallback()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::create_default_fallback');
-        return null;
-    }
-
-    private static function get_default_fallback_blocks()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Navigation_Fallback::get_default_fallback_blocks');
-        return null;
+        return wp_insert_post(['post_type' => 'wp_navigation', 'post_title' => _x('Navigation', 'Title of a Navigation menu'), 'post_content' => '<!-- wp:page-list /-->', 'post_status' => 'publish'], true);
     }
 }

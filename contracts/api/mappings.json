@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 815,
-        "composes": 2341,
+        "minn": 807,
+        "composes": 2343,
         "leaf": 1022,
-        "noop": 2749,
-        "placeholder": 54,
+        "noop": 2751,
+        "placeholder": 52,
         "deadend": 1661,
-        "functions": 8564,
+        "functions": 8558,
         "minnMethods": 983,
         "leafLinesOver15": 12
     },
@@ -16017,86 +16017,34 @@
                 "render_block_core_navigation"
             ]
         },
-        "WP_Navigation_Fallback::create_classic_menu_fallback": {
-            "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
-        },
         "WP_Navigation_Fallback::create_default_fallback": {
             "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
-        },
-        "WP_Navigation_Fallback::get_default_fallback_blocks": {
-            "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_x",
+                "wp_insert_post"
+            ]
         },
         "WP_Navigation_Fallback::get_fallback": {
             "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
-        },
-        "WP_Navigation_Fallback::get_fallback_classic_menu": {
-            "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
-        },
-        "WP_Navigation_Fallback::get_most_recently_created_nav_menu": {
-            "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "block_core_navigation_maybe_use_classic_menu_fallback"
+            ]
         },
         "WP_Navigation_Fallback::get_most_recently_published_navigation": {
             "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
-        },
-        "WP_Navigation_Fallback::get_nav_menu_at_primary_location": {
-            "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
-        },
-        "WP_Navigation_Fallback::get_nav_menu_with_primary_slug": {
-            "file": "classes/WP_Navigation_Fallback.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "block_core_navigation_get_most_recently_published_navigation"
+            ]
         },
         "WP_Navigation_Fallback::update_wp_navigation_post_schema": {
             "file": "classes/WP_Navigation_Fallback.php",
@@ -43604,11 +43552,15 @@
             "composes": []
         },
         "create_initial_taxonomies": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
+            "file": "taxonomy.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::registry"
+            ],
+            "composes": [
+                "register_taxonomy"
+            ]
         },
         "create_initial_theme_features": {
             "file": "theme.php",
@@ -50966,11 +50918,21 @@
             ]
         },
         "get_the_block_template_html": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "template.php",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_minn_wp_embed",
+                "convert_smilies",
+                "do_blocks",
+                "do_shortcode",
+                "esc_html__",
+                "is_user_logged_in",
+                "shortcode_unautop",
+                "wp_filter_content_tags",
+                "wptexturize"
+            ]
         },
         "get_the_category": {
             "file": "taxonomy.php",

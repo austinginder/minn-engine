@@ -13665,3 +13665,56 @@ Probe `placeholder-helpers`. Six placeholders are now real:
 Decided (Austin, 2026-10-11): WordPress's GPL icon library is not carried.
 `_wp_register_default_icons()` stays empty of it; any icons the engine ships
 are custom-made.
+
+## The core taxonomies again, the template's markup, the fallback menu (2026-10-11)
+
+Probe `tail-helpers`. Three owed items, none of them waiting on a decision.
+
+- **`create_initial_taxonomies()`** registers the eight core taxonomies
+  again from the engine's registry, in the reference's order, and leaves
+  them as they were. The first five pass their one object type as text, the
+  last three as a list, as the reference passes them to
+  `registered_taxonomy`. Each passes its custom capabilities: re-registering
+  from the rows used to drop them, so category and tags fell back to
+  `manage_categories` and `edit_posts`.
+- **`get_the_block_template_html()`** runs the current template through:
+  1. the `[embed]` shortcode and autoembeds;
+  2. `shortcode_unautop`, on the raw template, so a lone shortcode in a
+     paragraph block loses its `<p>` before the block renders;
+  3. the blocks;
+  4. the shortcodes;
+  5. `wptexturize`;
+  6. smilies;
+  7. image tags in the template context;
+  8. `]]>` escaped as `]]&gt;`.
+
+  The result is wrapped in `<div class="wp-site-blocks">`. With no template
+  it gives nothing, or "No matching template found" for someone signed in.
+- **`WP_Navigation_Fallback::get_fallback()`** returns the newest published
+  navigation menu (a scheduled or draft one doesn't count). Otherwise,
+  unless `wp_navigation_should_create_fallback` says not, it makes one from a
+  classic menu (named and slugged after it, its items as navigation blocks).
+  Without a classic menu it makes "Navigation" with a page list. It then
+  returns the newest published again. The probe empties the navigation
+  queries to reach the creation path, and removes what it creates.
+
+Fixed (shared): **`wp_filter_content_tags()` in the template context**. An
+attachment's image gets its srcset and sizes in place, with no loading or
+decoding attributes and no "auto" in its sizes. Other images and iframes
+are left as they are. It used to fit them as content images.
+
+Still owed, needing more observation: `wp_map_sidebars_widgets()`. Its
+heuristic is partly mapped:
+
+- one old sidebar and one new map straight across;
+- old sidebars are matched to new ones within slug groups
+  (sidebar/primary/main/right, second/left, sidebar-2/footer/bottom,
+  header/top), read from the new sidebars' ids;
+- what's left goes to inactive;
+- block widget instances leak into an empty inactive list.
+
+The positional cases don't fit one rule yet.
+
+Also owed: `wp_templating_constants()` (a second call warns on the
+reference) and `wp_load_translations_early()` (nothing observable in
+English).

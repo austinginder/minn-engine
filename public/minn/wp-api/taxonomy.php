@@ -1848,3 +1848,16 @@ function wp_nav_menu_remove_menu_item_has_children_class($classes, $menu_item, $
     $limit = is_object($args) ? (int) ($args->depth ?? 0) : 0;
     return $limit > 0 && (int) $depth + 1 >= $limit ? array_diff((array) $classes, ['menu-item-has-children']) : $classes;
 }
+
+/** The core taxonomies registered again from the engine's registry, in the reference's order (probe tail-helpers). */
+function create_initial_taxonomies()
+{
+    // The first five name their one object type as text, the rest as a list, as the reference registers them.
+    $named = ['category', 'post_tag', 'nav_menu', 'link_category', 'post_format'];
+    foreach (Minn\Runtime\Runtime::registry()->taxonomies() as $name => $row) {
+        if (!empty($row['_builtin'])) {
+            $types = (array) ($row['object_type'] ?? []);
+            register_taxonomy($name, in_array($name, $named, true) ? (string) ($types[0] ?? '') : $types, ['capabilities' => (array) ($row['cap'] ?? [])] + $row);
+        }
+    }
+}

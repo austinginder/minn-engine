@@ -13,7 +13,7 @@ the block parser and renderer
 | [`CoreBlocks`](#coreblocks) | final class | 26 | The core block types' metadata as the reference registers them |
 | [`Duotone`](#duotone) | final class | 79 | Duotone filters (probe block-supports): a CSS color read into its red, |
 | [`Elements`](#elements) | final class | 121 | Per-block element styles (style.elements in a block's attributes, the |
-| [`ImageTags`](#imagetags) | final readonly class | 277 | The attributes the reference adds to an <img> that carries a |
+| [`ImageTags`](#imagetags) | final readonly class | 312 | The attributes the reference adds to an <img> that carries a |
 | [`Layout`](#layout) | final class | 167 | The layout support's classes and rules (wp_render_layout_support_flag, |
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
 | [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
@@ -469,7 +469,7 @@ A post's featured image at full size, in the reference's attribute
 order (dimensions, source, class, alt, style, then the loading
 attributes and the srcset). Empty when the attachment has no file.
 
-Internals: `fit()` (private, line 85), `attachmentOf()` (private, line 93), `plainImage()` (private, line 99), `autoSized()` (private, line 112), `lazyFrame()` (private, line 124), `rewrite()` (private, line 132), `loadingPrefix()` (private, line 147), `givenLoading()` (private, line 165), `minimumPriorityPixels()` (private, line 174), `enrichTag()` (private, line 180), `srcsetAttributes()` (private, line 238)
+Internals: `sized()` (private, line 71), `fit()` (private, line 103), `attachmentOf()` (private, line 111), `plainImage()` (private, line 117), `autoSized()` (private, line 130), `lazyFrame()` (private, line 142), `rewrite()` (private, line 150), `loadingPrefix()` (private, line 165), `givenLoading()` (private, line 183), `minimumPriorityPixels()` (private, line 192), `enrichTag()` (private, line 198), `candidates()` (private, line 227), `srcsetAttributes()` (private, line 273)
 
 
 ## Layout
