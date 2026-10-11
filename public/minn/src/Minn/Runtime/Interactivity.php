@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Html\Decoder;
 use Minn\Json;
 
 /**
@@ -188,7 +189,8 @@ final class Interactivity
                 $base = $m[3][1];
                 foreach ($am as $a) {
                     $raw = $a[2][0] ?? null;
-                    $value = $raw === null ? null : (($raw[0] === '"' || $raw[0] === "'") ? substr($raw, 1, -1) : $raw);
+                    // Read as the reference's processor reads an attribute: character references decoded (a context the tag processor wrote is &quot;-escaped).
+                    $value = $raw === null ? null : Decoder::attribute(($raw[0] === '"' || $raw[0] === "'") ? substr($raw, 1, -1) : $raw);
                     $attrs[] = ['name' => $a[1][0], 'value' => $value, 'start' => $base + $a[1][1], 'end' => $base + $a[0][1] + strlen($a[0][0])];
                 }
             }

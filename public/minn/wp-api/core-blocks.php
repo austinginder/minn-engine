@@ -16,9 +16,32 @@ use Minn\Blocks\Wrapper;
 
 // Render callbacks.
 
+/**
+ * An accordion item (probe core-block-callbacks): a fresh accordion-item-{n}
+ * id, the item wired to the accordion's state and its own context, the
+ * heading's toggle controlling the panel, the panel labelled by the toggle.
+ */
 function block_core_accordion_item_render($attributes, $content)
 {
-    return _minn_render_core_callback('core/accordion-item', ...func_get_args());
+    $id = wp_unique_id('accordion-item-');
+    $open = empty($attributes['openByDefault']) ? 'false' : 'true';
+    $tags = new WP_HTML_Tag_Processor((string) $content);
+    _minn_set_attributes($tags, [], ['data-wp-class--is-open' => 'state.isOpen', 'data-wp-context' => '{ "id": "' . $id . '", "openByDefault": ' . $open . ' }', 'data-wp-init' => 'callbacks.initAccordionItems', 'data-wp-on-window--hashchange' => 'callbacks.hashChange']);
+    _minn_set_attributes($tags, ['class_name' => 'wp-block-accordion-heading__toggle'], ['aria-controls' => $id . '-panel', 'data-wp-bind--aria-expanded' => 'state.isOpen', 'data-wp-on--click' => 'actions.toggle', 'id' => $id]);
+    _minn_set_attributes($tags, ['class_name' => 'wp-block-accordion-panel'], ['aria-labelledby' => $id, 'data-wp-bind--hidden' => 'state.isHidden', 'data-wp-on--beforematch' => 'actions.handleBeforeMatch', 'id' => $id . '-panel']);
+    return $tags->get_updated_html();
+}
+
+/** @internal the next tag matching a query given the attributes, in order; false when there is none */
+function _minn_set_attributes(WP_HTML_Tag_Processor $tags, array $query, array $attributes): bool
+{
+    if (!$tags->next_tag($query === [] ? null : $query)) {
+        return false;
+    }
+    foreach ($attributes as $name => $value) {
+        $tags->set_attribute($name, $value);
+    }
+    return true;
 }
 
 function block_core_gallery_render($attributes, $content, $block)
@@ -36,14 +59,43 @@ function block_core_list_render($attributes, $content)
     return _minn_render_core_callback('core/list', ...func_get_args());
 }
 
+/** A tab list (probe core-block-callbacks): its label, and each button wired to the panel it opens, from the tabs' list of panel ids. */
 function block_core_tab_list_render_callback($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/tab-list', $attributes, $content, $block);
+    return _minn_tab_list((array) $attributes, (string) $content, (array) ($block->context ?? []));
 }
 
+/** @internal a tab list's markup, from its tabs' list of panel ids */
+function _minn_tab_list(array $attributes, string $content, array $context): string
+{
+    $tabs = (array) ($context['core/tabs-list'] ?? []);
+    $tags = new WP_HTML_Tag_Processor($content);
+    _minn_set_attributes($tags, [], ['aria-label' => (string) ($attributes['ariaLabel'] ?? '') ?: __('Tabbed content')]);
+    for ($index = 0; $tags->next_tag('button'); $index++) {
+        $panel = (string) ($tabs[$index] ?? 'tab-' . $index);
+        foreach (['aria-controls' => $panel, 'data-wp-bind--aria-selected' => 'state.isActiveTab', 'data-wp-bind--tabindex' => 'state.tabIndexAttribute', 'data-wp-context' => wp_json_encode(['tabIndex' => $index]), 'data-wp-on--click' => 'actions.handleTabClick', 'data-wp-on--keydown' => 'actions.handleTabKeyDown', 'id' => 'tab__' . $panel] as $name => $value) {
+            $tags->set_attribute($name, $value);
+        }
+    }
+    return $tags->get_updated_html();
+}
+
+/** A tab panel (probe core-block-callbacks): {tabs id}-tab-{n} (tab-{n} outside tabs, its anchor when it has one), labelled by its tab, hidden unless active. */
 function block_core_tab_panel_render($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/tab-panel', $attributes, $content, $block);
+    return _minn_tab_panel((array) $attributes, (string) $content, (array) ($block->context ?? []));
+}
+
+/** @internal a tab panel's markup: the panels of one tabs block are counted in order */
+function _minn_tab_panel(array $attributes, string $content, array $context): string
+{
+    static $counted = [];
+    $tabs = (string) ($context['core/tabs-id'] ?? '');
+    $counted[$tabs] = isset($counted[$tabs]) ? $counted[$tabs] + 1 : 0;
+    $id = (string) ($attributes['anchor'] ?? '') ?: ($tabs !== '' ? $tabs . '-' : '') . 'tab-' . $counted[$tabs];
+    $tags = new WP_HTML_Tag_Processor($content);
+    _minn_set_attributes($tags, [], ['aria-labelledby' => 'tab__' . $id, 'data-wp-bind--hidden' => '!state.isActiveTab', 'id' => $id]);
+    return $tags->get_updated_html();
 }
 
 /**
@@ -72,14 +124,31 @@ function block_core_tabs_provide_context($context, $parsed_block)
     return $context;
 }
 
+/** A tabs block (probe core-block-callbacks): the interactive region with its id and active tab; the state holds its panels' ids. */
 function block_core_tabs_render_block_callback($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/tabs', $attributes, $content, $block);
+    return _minn_tabs((array) $attributes, (string) $content, (array) ($block->context ?? []));
 }
 
+/** @internal a tabs block's markup, from the id and panel list its context carries (block_core_tabs_provide_context) */
+function _minn_tabs(array $attributes, string $content, array $context): string
+{
+    $id = (string) ($context['core/tabs-id'] ?? '');
+    $tags = new WP_HTML_Tag_Processor($content);
+    _minn_set_attributes($tags, [], ['data-wp-context' => wp_json_encode(['tabsId' => $id, 'activeTabIndex' => (int) ($attributes['activeTabIndex'] ?? 0)]), 'data-wp-init' => 'callbacks.onTabsInit', 'data-wp-interactive' => 'core/tabs', 'data-wp-on--keydown' => 'actions.handleTabKeyDown']);
+    wp_interactivity_state('core/tabs', [$id => array_values((array) ($context['core/tabs-list'] ?? []))]);
+    wp_enqueue_script_module('@wordpress/block-library/tabs/view');
+    return $tags->get_updated_html();
+}
+
+/** An accordion (probe core-block-callbacks): the interactive region with its autoclose setting; an item is open as its context says. */
 function render_block_core_accordion($attributes, $content)
 {
-    return _minn_render_core_callback('core/accordion', ...func_get_args());
+    $tags = new WP_HTML_Tag_Processor((string) $content);
+    _minn_set_attributes($tags, [], ['data-wp-context' => '{ "autoclose": ' . (empty($attributes['autoclose']) ? 'false' : 'true') . ', "accordionItems": [] }', 'data-wp-interactive' => 'core/accordion']);
+    wp_interactivity_state('core/accordion', ['isOpen' => static fn () => !empty(wp_interactivity_get_context()['openByDefault'])]);
+    wp_enqueue_script_module('@wordpress/block-library/accordion/view');
+    return $tags->get_updated_html();
 }
 
 function render_block_core_archives($attributes)
@@ -132,9 +201,22 @@ function render_block_core_comment_date($attributes, $content, $block)
     return _minn_render_core_callback('core/comment-date', $attributes, $content, $block);
 }
 
+/** A comment's edit link, for a reader who may edit it (probe core-block-callbacks): in the tab the block names, aligned as it says. */
 function render_block_core_comment_edit_link($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/comment-edit-link', $attributes, $content, $block);
+    $comment = $block->context['commentId'] ?? null;
+    $link = $comment === null ? '' : _minn_comment_edit_anchor((array) $attributes, (int) $comment);
+    if ($link === '') {
+        return '';
+    }
+    return '<div ' . get_block_wrapper_attributes(['class' => empty($attributes['textAlign']) ? '' : 'has-text-align-' . $attributes['textAlign']]) . '>' . $link . '</div>';
+}
+
+/** @internal a comment's edit link, or nothing for a reader who may not edit it */
+function _minn_comment_edit_anchor(array $attributes, int $comment): string
+{
+    $url = current_user_can('edit_comment', $comment) ? get_edit_comment_link($comment) : null;
+    return $url ? '<a href="' . esc_url($url) . '" target="' . esc_attr((string) ($attributes['linkTarget'] ?? '_self')) . '">' . esc_html__('Edit') . '</a>' : '';
 }
 
 function render_block_core_comment_reply_link($attributes, $content, $block)
@@ -1161,10 +1243,46 @@ function _minn_register_block_renderers(MinnRenderer $renderer): void
         'core/site-logo' => '_minn_block_site_logo',
         'core/footnotes' => '_minn_block_footnotes',
         'core/legacy-widget' => static fn (MinnBlock $block): string => (string) render_block_core_legacy_widget($block->attrs),
+        'core/accordion' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, render_block_core_accordion($block->attrs, _minn_inner_html($block, $renderer))),
+        'core/accordion-item' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, block_core_accordion_item_render($block->attrs, _minn_inner_html($block, $renderer))),
+        'core/tabs' => '_minn_block_tabs',
+        'core/comment-edit-link' => static function (MinnBlock $block, MinnRenderer $renderer): string {
+            $comment = $renderer->context()->comment();
+            $link = $comment === null ? '' : _minn_comment_edit_anchor($block->attrs, (int) $comment->id);
+            $align = (string) $block->attr('textAlign', '');
+            return $link === '' ? '' : Wrapper::open('div', 'wp-block-comment-edit-link', $block, extraClasses: $align === '' ? [] : ['has-text-align-' . $align]) . $link . '</div>';
+        },
+        'core/tab-list' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, _minn_tab_list($block->attrs, _minn_inner_html($block, $renderer), $renderer->blockContext())),
+        'core/tab-panel' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, _minn_tab_panel($block->attrs, _minn_inner_html($block, $renderer), $renderer->blockContext())),
     ];
     foreach ($renderers as $name => $render) {
         $renderer->registerDynamic($name, $render);
     }
+}
+
+/** @internal a block's inner blocks rendered into its saved markup */
+function _minn_inner_html(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $html = '';
+    $index = 0;
+    foreach ($block->innerContent as $chunk) {
+        $html .= $chunk ?? $renderer->renderBlock($block->innerBlocks[$index++]);
+    }
+    return $html;
+}
+
+/** @internal a natively rendered block's layout classes on its wrapper */
+function _minn_laid_out(MinnBlock $block, string $html): string
+{
+    return Minn\Html::addClasses($html, Minn\Blocks\Layout::classes((string) $block->name, $block->attrs));
+}
+
+/** @internal a tabs block in a page: its id and panel list provided to the blocks inside, as render_block_context gives them on the reference */
+function _minn_block_tabs(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $context = block_core_tabs_provide_context([], ['blockName' => 'core/tabs', 'attrs' => $block->attrs, 'innerBlocks' => array_map('_minn_block_to_array', $block->innerBlocks)]);
+    $inner = $renderer->providing($context, static fn (): string => _minn_inner_html($block, $renderer));
+    return _minn_laid_out($block, _minn_tabs($block->attrs, $inner, $context));
 }
 
 /**

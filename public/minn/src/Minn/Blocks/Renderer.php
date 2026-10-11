@@ -370,7 +370,7 @@ final class Renderer
             // Saved without their class (older content), these get it as they render.
             'core/heading' => Html::addClasses($html, ['wp-block-heading']),
             'core/list' => Html::addClasses($html, ['wp-block-list']),
-            'core/group', 'core/columns', 'core/column', 'core/quote', 'core/details', 'core/buttons' => Html::addClasses($html, Layout::classes($block->name, $block->attrs)),
+            'core/group', 'core/columns', 'core/column', 'core/quote', 'core/details', 'core/buttons', 'core/accordion-panel' => Html::addClasses($html, Layout::classes($block->name, $block->attrs)),
             'core/gallery' => $this->images->enrichGallery(Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex'])),
             'core/cover' => Html::addClasses($this->images->enrich($html), Layout::classes($block->name, $block->attrs), 'wp-block-cover__inner-container'),
             'core/image', 'core/media-text' => $this->images->enrich($html),

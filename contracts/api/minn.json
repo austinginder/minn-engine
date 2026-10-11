@@ -13937,7 +13937,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php",
-            "lines": 257,
+            "lines": 256,
             "doc": "comments, comments-title, comment-template, the comment-* blocks, and the comment form.",
             "implements": [],
             "extends": null,
@@ -14061,7 +14061,7 @@
                         }
                     ],
                     "line": 38,
-                    "end": 51
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -14087,8 +14087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 66
+                    "line": 53,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -14114,8 +14114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 88
+                    "line": 67,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -14141,8 +14141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 105
+                    "line": 89,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -14171,8 +14171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 124
+                    "line": 113,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -14191,8 +14191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 126,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -14241,8 +14241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 161
+                    "line": 132,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -14268,8 +14268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 174
+                    "line": 163,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -14302,8 +14302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 189
+                    "line": 175,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -14329,8 +14329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 205
+                    "line": 191,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -14356,8 +14356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 212
+                    "line": 207,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -14383,8 +14383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 226
+                    "line": 213,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -14410,8 +14410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 237
+                    "line": 227,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -14437,8 +14437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 250
+                    "line": 238,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -14464,8 +14464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 259
+                    "line": 251,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -14491,8 +14491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 281
+                    "line": 266,
+                    "end": 280
                 }
             ]
         },
@@ -52318,6 +52318,7 @@
                 "Minn\\Html\\Scanner",
                 "Minn\\Html\\Tags",
                 "Minn\\Html\\Tree\\Builder",
+                "Minn\\Runtime\\Interactivity",
                 "Minn\\Support\\Kses"
             ],
             "constructor": null,
@@ -118498,11 +118499,12 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Interactivity.php",
-            "lines": 521,
+            "lines": 522,
             "doc": "Server-side directive processing for the Interactivity API: the state and\nconfig stores, and the pass that resolves data-wp-bind, data-wp-class,\ndata-wp-style, data-wp-text, and data-wp-each against state and context\nbefore the markup leaves the server. Behaviour pinned by the interactivity\nprobe fixture.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Html\\Decoder",
                 "Minn\\Json",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TagEditor"
@@ -118627,8 +118629,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -118656,8 +118658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 62
+                    "line": 50,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -118670,8 +118672,8 @@
                         "@return array<string, array<string, mixed>> every namespace's state, for the client"
                     ],
                     "params": [],
-                    "line": 69,
-                    "end": 72
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -118684,8 +118686,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 79,
-                    "end": 82
+                    "line": 80,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -118713,8 +118715,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 95
+                    "line": 90,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -118735,8 +118737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 110
+                    "line": 103,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -118749,8 +118751,8 @@
                         "@return array<string, mixed>|null"
                     ],
                     "params": [],
-                    "line": 117,
-                    "end": 124
+                    "line": 118,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -118769,8 +118771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 141
+                    "line": 128,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -118781,8 +118783,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 143,
-                    "end": 146
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -118803,8 +118805,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 210
+                    "line": 155,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -118832,8 +118834,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 269
+                    "line": 215,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -118869,8 +118871,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 335
+                    "line": 277,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -118903,8 +118905,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 361
+                    "line": 339,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -118923,8 +118925,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 374
+                    "line": 365,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -118943,8 +118945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 390
+                    "line": 378,
+                    "end": 392
                 },
                 {
                     "routes": [],
@@ -118970,8 +118972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 437
+                    "line": 395,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -119014,8 +119016,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 443,
-                    "end": 474
+                    "line": 445,
+                    "end": 476
                 },
                 {
                     "routes": [],
@@ -119041,8 +119043,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 477,
-                    "end": 503
+                    "line": 479,
+                    "end": 505
                 },
                 {
                     "routes": [],
@@ -119064,8 +119066,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 509,
-                    "end": 516
+                    "line": 511,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -119094,8 +119096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 522,
-                    "end": 525
+                    "line": 524,
+                    "end": 527
                 },
                 {
                     "routes": [],
@@ -119114,8 +119116,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 527,
-                    "end": 530
+                    "line": 529,
+                    "end": 532
                 },
                 {
                     "routes": [],
@@ -119134,8 +119136,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 532,
-                    "end": 535
+                    "line": 534,
+                    "end": 537
                 }
             ]
         },

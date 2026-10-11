@@ -4,7 +4,7 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 257 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Comments`](#comments) | final readonly class | 256 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 374 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 259 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
@@ -28,7 +28,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Con
 
 Registers this family's blocks with the renderer.
 
-Internals: `comments()` (private, line 54), `title()` (private, line 68), `template()` (private, line 90), `records()` (private, line 114), `count()` (private, line 127), `list()` (private, line 133), `avatar()` (private, line 164), `authorAvatar()` (private, line 176), `date()` (private, line 192), `commentPost()` (private, line 208), `authorName()` (private, line 214), `content()` (private, line 228), `replyLink()` (private, line 239), `form()` (private, line 252), `commentForm()` (private, line 267)
+Internals: `comments()` (private, line 53), `title()` (private, line 67), `template()` (private, line 89), `records()` (private, line 113), `count()` (private, line 126), `list()` (private, line 132), `avatar()` (private, line 163), `authorAvatar()` (private, line 175), `date()` (private, line 191), `commentPost()` (private, line 207), `authorName()` (private, line 213), `content()` (private, line 227), `replyLink()` (private, line 238), `form()` (private, line 251), `commentForm()` (private, line 266)
 
 
 ## Navigation

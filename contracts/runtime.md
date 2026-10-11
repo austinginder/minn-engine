@@ -13207,3 +13207,54 @@ named. All matched the reference except one:
   (presets under their origin, keys in the order given), not flattened and
   sorted. A plugin reading it inside a `wp_theme_json_data_*` filter sees
   the reference's shape.
+
+## Core block callbacks by name: accordion, tabs, a comment's edit link (2026-10-11)
+
+Probe `core-block-callbacks` calls each core render callback by name, as
+the block's render callback for one render, so the block supports see the
+block being rendered. Breadcrumbs and the categories dropdown's script
+already matched. The rest were missing on the front entirely:
+
+- **Accordion**:
+  - The accordion is the interactive region, with
+    `{ "autoclose": …, "accordionItems": [] }` as its context. The state's
+    `isOpen` is an item's `openByDefault`.
+  - Each item takes a fresh `accordion-item-{n}` id and the state's open
+    class. Its heading's toggle controls the panel, and the panel is
+    labelled by the toggle.
+  - The accordion's view module is enqueued.
+  - Server-side processing gives the toggle `aria-expanded` and an open
+    item `is-open`.
+- **Tabs**:
+  - The tabs block is the interactive region, with its id (from
+    `block_core_tabs_provide_context`, made before its blocks render) and
+    active tab as its context. The state holds its panels' ids.
+  - The tab list takes its aria label (`Tabbed content` by default). Each
+    button controls its panel by the tabs' list of panel ids.
+  - Each panel is `{tabs id}-tab-{n}`, or `tab-{n}` outside tabs. It is
+    labelled by its tab and hidden unless active.
+  - The tabs' view module is enqueued.
+- **A comment's edit link**, for a reader who may edit the comment. It opens
+  in the tab the block names and is aligned as the block says. The engine
+  rendered nothing.
+
+These render natively too (`minn_block_renderers`), with their layout
+classes. The static accordion panel gets its layout classes as group does.
+
+Fixed on the way: the Interactivity API processor decodes character
+references in attribute values, as the reference's does. A context the tag
+processor wrote (`data-wp-context="{&quot;…"`) was read as broken JSON, so
+its values never reached derived state.
+
+Recaptured on the way: `rest-users-controller`. Minn Admin made the toolbar
+preference (`show_admin_bar_front`) edit-context only (fcab4671), and both
+stacks agree on the new answer.
+
+Still owed:
+
+- **The comment pagination family.** The engine renders it as nothing,
+  and it reads the comment page from its own state. It needs a batch of its
+  own.
+- Playlist, icon and term template (an icon's art is the reference's own),
+  and the numbers block, which rendered nothing on either stack in the
+  probe's setting.

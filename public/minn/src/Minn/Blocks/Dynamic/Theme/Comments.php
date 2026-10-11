@@ -44,7 +44,6 @@ final readonly class Comments
         $renderer->registerDynamic('core/comment-date', $this->date(...));
         $renderer->registerDynamic('core/comment-author-name', $this->authorName(...));
         $renderer->registerDynamic('core/comment-content', $this->content(...));
-        $renderer->registerDynamic('core/comment-edit-link', static fn () => '');
         $renderer->registerDynamic('core/comment-reply-link', $this->replyLink(...));
         $renderer->registerDynamic('core/comments-pagination', static fn () => '');
         $renderer->registerDynamic('core/post-comments-form', $this->form(...));
