@@ -184,6 +184,21 @@ final readonly class Api
         return $this->services->commentObject();
     }
 
+    /** The wp/v2 menu shape. */
+    public function menuObject(): MenuObject
+    {
+        $s = $this->services;
+        return new MenuObject($s->menus(), $s->url(), $s->caller());
+    }
+
+    /** One menu item as wp/v2 shapes it in a context (view, edit or embed); empty when there is none. @return array<string, mixed> */
+    public function menuItemView(int $id, string $context): array
+    {
+        $s = $this->services;
+        $item = $s->menus()->findItem($id);
+        return $item === null ? [] : (new MenuItemObject($s->url(), $s->caller()))->view($item, Context::tryFrom($context) ?? Context::View);
+    }
+
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {

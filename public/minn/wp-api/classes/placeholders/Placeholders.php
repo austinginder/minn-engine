@@ -291,62 +291,6 @@ class WP_REST_Block_Patterns_Controller extends WP_REST_Controller
     }
 }
 
-class WP_REST_Menu_Items_Controller extends WP_REST_Posts_Controller
-{
-
-    protected function get_nav_menu_item($id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::get_nav_menu_item');
-        return null;
-    }
-
-    protected function check_has_read_only_access($request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::check_has_read_only_access');
-        return null;
-    }
-
-    protected function get_menu_id($menu_item_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menu_Items_Controller::get_menu_id');
-        return null;
-    }
-}
-
-class WP_REST_Menus_Controller extends WP_REST_Terms_Controller
-{
-
-    protected function check_has_read_only_access($request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::check_has_read_only_access');
-        return null;
-    }
-
-    protected function get_menu_auto_add($menu_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::get_menu_auto_add');
-        return null;
-    }
-
-    protected function handle_auto_add($menu_id, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::handle_auto_add');
-        return null;
-    }
-
-    protected function get_menu_locations($menu_id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::get_menu_locations');
-        return null;
-    }
-
-    protected function handle_locations($menu_id, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::handle_locations');
-        return null;
-    }
-}
-
 class WP_REST_Plugins_Controller extends WP_REST_Controller
 {
     const PATTERN = '[^.\\/]+(?:\\/[^.\\/]+)?';

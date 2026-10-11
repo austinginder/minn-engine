@@ -89,8 +89,10 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
         $listing = clone $request;
         $listing->set_route('/' . $this->namespace . '/' . $this->rest_base);
         $api = WP_REST_Server::minn_engine_api($listing);
-        // Only the ids come from the engine's list, so each post renders once, here.
-        $engine = Minn\Rest\RuntimePrepare::during($listing, fn () => $api->listPosts($listing->get_route(), $this->post_type, static fn (PostRecord $post): array => ['id' => $post->id], $listing));
+        // Only the ids come from the engine's list, so each post renders once, here; menu items have a list route of their own.
+        $engine = Minn\Rest\RuntimePrepare::during($listing, fn () => $this->post_type === 'nav_menu_item'
+            ? $api->handleEngineOnly($listing->get_route(), $listing)
+            : $api->listPosts($listing->get_route(), $this->post_type, static fn (PostRecord $post): array => ['id' => $post->id], $listing));
         $body = json_decode($engine->body, true);
         if ($engine->status >= 400) {
             return new WP_Error((string) ($body['code'] ?? 'rest_error'), (string) ($body['message'] ?? ''), (array) ($body['data'] ?? ['status' => $engine->status]));

@@ -12293,3 +12293,55 @@ removed again.
 
 Fixed on the way: every remaining delete route (comments, media, menus,
 templates) reads `force` from a DELETE body as well as the query.
+
+## WP_REST_Menus_Controller and WP_REST_Menu_Items_Controller (2026-10-11)
+
+Probe `rest-menus-controller` proves both classes. It uses a contributor,
+a menu with a custom, a post and a term item, and two registered
+locations. A menu is created, renamed, given locations and auto add, and
+deleted through the class, and so is an item. All of it is removed again,
+and `nav_menu_options` and the locations theme mod are put back.
+
+- **Menus** are terms, so the class is the terms controller with more on
+  top:
+  - Reading needs read access as well as the parent's checks:
+    `rest_menu_read_access`, `edit_theme_options` or `edit_posts`.
+  - A menu answers `auto_add` from `nav_menu_options`, and its
+    locations.
+  - Its links add the item post type and one `wp:menu-location` link
+    for each location (embeddable).
+  - `prepare_item_for_database` adds `menu-name` to the term's fields.
+- **Locations and auto add are applied after the menu is saved**, and the
+  answer is shaped after them.
+  - An unregistered location is `rest_invalid_menu_location` (400, the
+    location named), and the menu stays created.
+  - `handle_auto_add` answers `update_option`'s result. When nothing is
+    asked, it answers true.
+- **Renaming a menu** without a description clears the description and
+  takes a slug from the new name. Given a description, the slug stays.
+  This applies to `wp_update_nav_menu_object` as well as REST.
+- **Menu items** are posts, so the class is the posts controller with more
+  on top:
+  - Reading needs the same read access ("…view menu items.").
+  - The collection orders by `menu_order` ascending, 100 to a page.
+  - `prepare_items_query` asks for the menu item cache.
+  - `menus` filters the list by one id, a list or a comma-separated
+    string.
+- **`prepare_item_for_database`**:
+  - A new item takes defaults in the reference's order: custom,
+    position 1 and publish.
+  - An existing item takes its own values, with position 0 becoming 1.
+  - A menu, a post, a type or a parent that is missing is refused with
+    the reference's code (`rest_term_invalid_id`, `rest_post_invalid_id`,
+    `rest_post_invalid_type`).
+  - A custom item needs a title and a URL.
+  - Classes and xfn are joined with spaces.
+  - Any status other than publish becomes draft.
+  - Then `rest_pre_insert_nav_menu_item`.
+- **A new item at position 0** goes after the menu's items, or at 0 when
+  the menu has none.
+- **Direct calls.** Called directly, the reference's `get_items` and write
+  methods check no permission. The engine's routes do, so the probe lists
+  and writes as an administrator.
+
+Fixed on the way: the menus list honours `include`.

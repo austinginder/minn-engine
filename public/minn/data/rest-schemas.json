@@ -5697,5 +5697,260 @@
             "readonly": true,
             "default": "comment"
         }
+    },
+    "menu-properties": {
+        "locations": {
+            "description": "The locations assigned to the menu.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "context": [
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "validate_callback": "@closure"
+            }
+        },
+        "auto_add": {
+            "description": "Whether to automatically add top level pages to this menu.",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "type": "boolean"
+        }
+    },
+    "menu-item-properties": {
+        "title": {
+            "description": "The title for the object.",
+            "type": [
+                "string",
+                "object"
+            ],
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "properties": {
+                "raw": {
+                    "description": "Title for the object, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML title for the object, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "id": {
+            "description": "Unique identifier for the object.",
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "type_label": {
+            "description": "The singular label used to describe this type of menu item.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "type": {
+            "description": "The family of objects originally represented, such as \"post_type\" or \"taxonomy\".",
+            "type": "string",
+            "enum": [
+                "taxonomy",
+                "post_type",
+                "post_type_archive",
+                "custom"
+            ],
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "default": "custom"
+        },
+        "status": {
+            "description": "A named status for the object.",
+            "type": "string",
+            "enum": [
+                "publish",
+                "future",
+                "draft",
+                "pending",
+                "private"
+            ],
+            "default": "publish",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "parent": {
+            "description": "The ID for the parent of the object.",
+            "type": "integer",
+            "minimum": 0,
+            "default": 0,
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "attr_title": {
+            "description": "Text for the title attribute of the link element for this menu item.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "classes": {
+            "description": "Class names for the link element of this menu item.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "@closure"
+            }
+        },
+        "description": {
+            "description": "The description of this menu item.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "menu_order": {
+            "description": "The DB ID of the nav_menu_item that is this item's menu parent, if any, otherwise 0.",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+        },
+        "object": {
+            "description": "The type of object originally represented, such as \"category\", \"post\", or \"attachment\".",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "type": "string",
+            "arg_options": {
+                "sanitize_callback": "sanitize_key"
+            }
+        },
+        "object_id": {
+            "description": "The database ID of the original object this menu item represents, for example the ID for posts or the term_id for categories.",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+        },
+        "target": {
+            "description": "The target attribute of the link element for this menu item.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "enum": [
+                "_blank",
+                ""
+            ]
+        },
+        "url": {
+            "description": "The URL to which this menu item points.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "validate_callback": "@closure"
+            }
+        },
+        "xfn": {
+            "description": "The XFN relationship expressed in the link of this menu item.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "@closure"
+            }
+        },
+        "invalid": {
+            "description": "Whether the menu item represents an object that no longer exists.",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "type": "boolean",
+            "readonly": true
+        },
+        "menus": {
+            "description": "The terms assigned to the object in the nav_menu taxonomy.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ]
+        }
     }
 }

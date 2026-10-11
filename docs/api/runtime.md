@@ -41,7 +41,7 @@ the WordPress runtime plugins load against
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 354 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
-| [`MenuEvents`](#menuevents) | final readonly class | 220 | Menus and their items saved as the reference saves them, telling |
+| [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 230 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 184 | The meta keys code registers, kept where the reference keeps them |
@@ -1816,7 +1816,7 @@ argument it isn't handed.
 
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 175), `fields()` (private, line 222)
+Internals: `prepared()` (private, line 180), `fields()` (private, line 227)
 
 
 ## MenuItemMarks

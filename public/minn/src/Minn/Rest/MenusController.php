@@ -16,6 +16,7 @@ use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Runtime\Refusal;
 use Minn\Support\Kses;
+use Minn\Support\Lists;
 
 /**
  * wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;
@@ -43,6 +44,10 @@ final readonly class MenusController
     public function listMenus(Request $request): Response
     {
         $rows = $this->menus->all();
+        $include = Lists::ids($request->query['include'] ?? []);
+        if ($include !== []) {
+            $rows = array_values(array_filter($rows, static fn (TermRecord $row) => in_array($row->id, $include, true)));
+        }
         $post = (int) $request->query('post', '0');
         if ($post > 0) {
             $owned = [];
@@ -135,8 +140,11 @@ final readonly class MenusController
     #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
     public function listItems(Request $request): Response
     {
-        $menuId = (int) $request->query('menus', '0');
-        $items = $this->menus->items($menuId > 0 ? $menuId : null);
+        // One menu id, a list or a comma-separated string (probe rest-menus-controller).
+        $menuIds = Lists::ids($request->query['menus'] ?? []);
+        $items = count($menuIds) > 1
+            ? array_values(array_filter($this->menus->items(), static fn ($item) => in_array($item->menuId, $menuIds, true)))
+            : $this->menus->items($menuIds[0] ?? null);
         $perPage = max(1, min(100, (int) $request->query('per_page', '10')));
         $page = max(1, (int) $request->query('page', '1'));
         $total = count($items);

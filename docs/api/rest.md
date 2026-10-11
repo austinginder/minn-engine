@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 349 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 364 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -34,8 +34,8 @@ the wp/v2 surface: shapes and controllers
 | [`MediaController`](#mediacontroller) | final readonly class | 252 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 164 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
-| [`MenuObject`](#menuobject) | final readonly class | 37 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
-| [`MenusController`](#menuscontroller) | final readonly class | 298 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
+| [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
+| [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 231 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
@@ -148,6 +148,16 @@ The wp/v2 term shape.
 
 The wp/v2 comment shape.
 
+### `menuObject(): Minn\Rest\MenuObject`
+
+The wp/v2 menu shape.
+
+### `menuItemView(int $id, string $context): array`
+
+One menu item as wp/v2 shapes it in a context (view, edit or embed); empty when there is none. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
 ### `userObject(): Minn\Rest\UserObject`
 
 The wp/v2 user shape.
@@ -196,7 +206,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 321), `withPageLinks()` (private, line 335), `options()` (private, line 366), `withAllow()` (private, line 379)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 336), `withPageLinks()` (private, line 350), `options()` (private, line 381), `withAllow()` (private, line 394)
 
 
 ## ApplicationPasswordsController
@@ -1442,7 +1452,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options)`
 
 One menu location.
 
-Internals: `locationItem()` (private, line 240), `argsFrom()` (private, line 264), `titleFrom()` (private, line 287), `urlFrom()` (private, line 297), `refuse()` (private, line 307), `plain()` (private, line 317)
+Internals: `locationItem()` (private, line 248), `argsFrom()` (private, line 272), `titleFrom()` (private, line 295), `urlFrom()` (private, line 305), `refuse()` (private, line 315), `plain()` (private, line 325)
 
 
 ## NavigationController

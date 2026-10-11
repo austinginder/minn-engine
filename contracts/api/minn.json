@@ -88183,7 +88183,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 349,
+            "lines": 364,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88556,6 +88556,47 @@
                 },
                 {
                     "routes": [],
+                    "name": "menuObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "menuObject(): Minn\\Rest\\MenuObject",
+                    "doc": "The wp/v2 menu shape.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 188,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "menuItemView",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "menuItemView(int $id, string $context): array",
+                    "doc": "One menu item as wp/v2 shapes it in a context (view, edit or embed); empty when there is none. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 200
+                },
+                {
+                    "routes": [],
                     "name": "userObject",
                     "static": false,
                     "visibility": "public",
@@ -88563,8 +88604,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 203,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -88575,8 +88616,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 209,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -88602,8 +88643,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 214
+                    "line": 220,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -88622,8 +88663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 244
+                    "line": 232,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -88649,8 +88690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 255,
-                    "end": 276
+                    "line": 270,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -88669,8 +88710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 283
+                    "line": 294,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -88696,8 +88737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 304
+                    "line": 307,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -88725,8 +88766,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 319
+                    "line": 327,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -88774,8 +88815,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 328
+                    "line": 336,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -88801,8 +88842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 357
+                    "line": 350,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -88821,8 +88862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 366,
-                    "end": 373
+                    "line": 381,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -88848,8 +88889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 383
+                    "line": 394,
+                    "end": 398
                 }
             ]
         },
@@ -95428,7 +95469,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MenuObject.php",
-            "lines": 37,
+            "lines": 41,
             "doc": "The wp/v2/menus resource: a nav_menu term plus locations and auto_add.",
             "implements": [],
             "extends": null,
@@ -95525,7 +95566,7 @@
                         }
                     ],
                     "line": 25,
-                    "end": 46
+                    "end": 50
                 }
             ]
         },
@@ -95535,7 +95576,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MenusController.php",
-            "lines": 298,
+            "lines": 305,
             "doc": "wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts;\nwrites need edit_theme_options. Anonymous callers get 401.",
             "implements": [],
             "extends": null,
@@ -95559,7 +95600,8 @@
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\Refusal",
-                "Minn\\Support\\Kses"
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\Lists"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -95606,8 +95648,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 39
+                "line": 33,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -95685,8 +95727,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 66
+                    "line": 44,
+                    "end": 71
                 },
                 {
                     "routes": [
@@ -95714,8 +95756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 77
+                    "line": 75,
+                    "end": 82
                 },
                 {
                     "routes": [
@@ -95736,8 +95778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 95
+                    "line": 86,
+                    "end": 100
                 },
                 {
                     "routes": [
@@ -95767,8 +95809,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 115
+                    "line": 106,
+                    "end": 120
                 },
                 {
                     "routes": [
@@ -95796,8 +95838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 132
+                    "line": 124,
+                    "end": 137
                 },
                 {
                     "routes": [
@@ -95818,8 +95860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 152
+                    "line": 141,
+                    "end": 160
                 },
                 {
                     "routes": [
@@ -95847,8 +95889,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 165
+                    "line": 164,
+                    "end": 173
                 },
                 {
                     "routes": [
@@ -95869,8 +95911,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 181
+                    "line": 177,
+                    "end": 189
                 },
                 {
                     "routes": [
@@ -95900,8 +95942,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 197
+                    "line": 195,
+                    "end": 205
                 },
                 {
                     "routes": [
@@ -95929,8 +95971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 214
+                    "line": 209,
+                    "end": 222
                 },
                 {
                     "routes": [
@@ -95951,8 +95993,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 226
+                    "line": 226,
+                    "end": 234
                 },
                 {
                     "routes": [
@@ -95980,8 +96022,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 237
+                    "line": 238,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -96009,8 +96051,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 254
+                    "line": 248,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -96040,8 +96082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 284
+                    "line": 272,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -96062,8 +96104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 294
+                    "line": 295,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -96084,8 +96126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 304
+                    "line": 305,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -96104,8 +96146,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 307,
-                    "end": 315
+                    "line": 315,
+                    "end": 323
                 },
                 {
                     "routes": [],
@@ -96124,8 +96166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 320
+                    "line": 325,
+                    "end": 328
                 }
             ]
         },
@@ -118575,7 +118617,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/MenuEvents.php",
-            "lines": 220,
+            "lines": 225,
             "doc": "Menus and their items saved as the reference saves them, telling\nplugins what it tells them (probe rest-menu-save). A menu is a nav_menu\nterm: made or changed through wp_insert_term / wp_update_term (the term\nactions), then wp_create_nav_menu or wp_update_nav_menu; deleted, its\nitems go through wp_delete_post, the term through wp_delete_term, then\nwp_delete_nav_menu. An item is written by the engine, with the post\nsave actions around it, then wp_add_nav_menu_item (a new one) and\nwp_update_nav_menu_item, handed the reference's menu-item-* arguments.",
             "implements": [],
             "extends": null,
@@ -118671,7 +118713,7 @@
                         }
                     ],
                     "line": 45,
-                    "end": 64
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -118690,8 +118732,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 79
+                    "line": 71,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -118733,8 +118775,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 118
+                    "line": 93,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -118769,8 +118811,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 138
+                    "line": 133,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -118805,8 +118847,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 141,
-                    "end": 146
+                    "line": 146,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -118841,8 +118883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 172
+                    "line": 162,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -118877,8 +118919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 192
+                    "line": 190,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -118899,8 +118941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 214
+                    "line": 206,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -118921,8 +118963,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 182
+                    "line": 180,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -118958,8 +119000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 242
+                    "line": 227,
+                    "end": 247
                 }
             ]
         },
@@ -141099,6 +141141,7 @@
             "usedBy": [
                 "Minn\\Query\\CommentOrder",
                 "Minn\\Rest\\InstalledThemesController",
+                "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryWhere",

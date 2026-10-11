@@ -54,6 +54,10 @@ final readonly class MenuEvents
         }
         $args = array_filter(['name' => $named ? $name : null, 'description' => array_key_exists('description', $data) ? (string) $data['description'] : null], static fn ($v) => $v !== null);
         $created = $menuId === 0;
+        // Renaming a menu takes the description given (none when none is) and a slug from the new name (probe rest-menus-controller).
+        if (!$created && $named) {
+            $args += ['description' => '', 'slug' => ''];
+        }
         $saved = $created ? \wp_insert_term($name, 'nav_menu', $args) : \wp_update_term($menuId, 'nav_menu', $args);
         if ($saved instanceof \WP_Error) {
             return $saved;
@@ -96,9 +100,10 @@ final readonly class MenuEvents
             return new \WP_Error('update_nav_menu_item_failed', Gettext::text('The given object ID is not that of a menu item.'));
         }
         $args = array_merge(self::ITEM_DEFAULTS, $data, ['menu-item-db-id' => $itemId]);
-        if ($itemId === 0 && $menuId > 0 && (int) $args['menu-item-position'] === 0) {
-            // A new item with no place goes after every item the menu has, as the reference places it.
-            $args['menu-item-position'] = count($this->menus->items($menuId)) + 1;
+        if ($itemId === 0 && (int) $args['menu-item-position'] === 0) {
+            // A new item with no place goes after every item the menu has (drafts too); the first in a menu stays at 0, one in no menu takes 1 (probe rest-menus-controller).
+            $count = $menuId > 0 ? count($this->menus->items($menuId)) : null;
+            $args['menu-item-position'] = $count === null ? 1 : ($count === 0 ? 0 : $count + 1);
         }
         $fields = self::fields($args, $menuId, (int) \get_current_user_id());
         $id = $itemId === 0 ? $this->menus->createItem($fields) : $itemId;
