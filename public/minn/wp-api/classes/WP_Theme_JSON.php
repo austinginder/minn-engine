@@ -56,14 +56,28 @@ class WP_Theme_JSON
 
     private static function get_viewport_breakpoint_value_in_pixels($value)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_viewport_breakpoint_value_in_pixels');
-        return null;
+        // Pixels as given, em and rem at 16 pixels each; null for anything else.
+        if (!is_string($value) || preg_match('/^(\d+(?:\.\d+)?)(px|em|rem)$/', $value, $match) !== 1) {
+            return null;
+        }
+        $pixels = $match[2] === 'px' ? (float) $match[1] : (float) $match[1] * 16;
+        return $pixels == (int) $pixels ? (int) $pixels : $pixels;
     }
 
     private static function sanitize_viewport_settings($viewport_settings)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::sanitize_viewport_settings');
-        return null;
+        // The mobile and tablet sizes that are valid (tablet only when wider than mobile); the defaults when none is.
+        $sizes = [];
+        foreach (['mobile', 'tablet'] as $device) {
+            $size = is_array($viewport_settings) ? ($viewport_settings[$device] ?? null) : null;
+            if (self::is_valid_viewport_breakpoint_size($size)) {
+                $sizes[$device] = $size;
+            }
+        }
+        if (isset($sizes['mobile'], $sizes['tablet']) && self::get_viewport_breakpoint_value_in_pixels($sizes['tablet']) <= self::get_viewport_breakpoint_value_in_pixels($sizes['mobile'])) {
+            unset($sizes['tablet']);
+        }
+        return $sizes !== [] ? $sizes : static::DEFAULT_VIEWPORT_BREAKPOINTS;
     }
 
     protected static function schema_in_root_and_per_origin($schema)
@@ -134,23 +148,26 @@ class WP_Theme_JSON
      * @internal the schema a theme.json is sanitized against: the valid
      * styles at the root, for each element (with its pseudo selectors) and
      * each block (with its elements, pseudo selectors, custom states and
-     * variations, which may nest elements and blocks); the valid settings
-     * at the root and for each block, font families by their own schema.
+     * variations, which may nest elements and blocks); each media query of
+     * the viewport for elements, blocks and variations, never the root; the
+     * valid settings at the root and for each block (the viewport only at
+     * the root), font families by their own schema.
      */
-    private static function minn_schema(array $block_names, array $element_names, array $variations): array
+    private static function minn_schema(array $block_names, array $element_names, array $variations, array $queries = []): array
     {
         $elements = [];
         foreach ($element_names as $element) {
-            $elements[$element] = static::VALID_STYLES + array_fill_keys(static::VALID_ELEMENT_PSEUDO_SELECTORS[$element] ?? [], static::VALID_STYLES);
+            $elements[$element] = static::VALID_STYLES + array_fill_keys(array_merge(static::VALID_ELEMENT_PSEUDO_SELECTORS[$element] ?? [], $queries), static::VALID_STYLES);
         }
         $styled = static::VALID_STYLES + ['elements' => $elements];
-        $nested = array_fill_keys($block_names, $styled);
+        $responsive = $styled + array_fill_keys($queries, $styled);
+        $nested = array_fill_keys($block_names, $responsive);
         $blocks = [];
         foreach ($block_names as $block) {
             $states = array_merge(static::VALID_BLOCK_PSEUDO_SELECTORS[$block] ?? [], static::VALID_BLOCK_CUSTOM_STATES[$block] ?? []);
-            $blocks[$block] = $styled + array_fill_keys($states, static::VALID_STYLES) + ['variations' => array_fill_keys((array) ($variations[$block] ?? []), $styled + ['blocks' => $nested])];
+            $blocks[$block] = $responsive + array_fill_keys($states, static::VALID_STYLES) + ['variations' => array_fill_keys((array) ($variations[$block] ?? []), $responsive + ['blocks' => $nested])];
         }
-        $settings = ['blocks' => array_fill_keys($block_names, static::VALID_SETTINGS)] + static::VALID_SETTINGS;
+        $settings = ['blocks' => array_fill_keys($block_names, array_diff_key(static::VALID_SETTINGS, ['viewport' => true]))] + static::VALID_SETTINGS;
         $settings['typography']['fontFamilies'] = static::schema_in_root_and_per_origin(static::FONT_FAMILY_SCHEMA);
         return ['styles' => $styled + ['blocks' => $blocks], 'settings' => $settings];
     }
@@ -230,15 +247,25 @@ class WP_Theme_JSON
             return [];
         }
         // The known top-level keys stay; styles and settings keep what the schema has, and go when nothing is left.
-        $output = array_intersect_key($input, array_flip(static::VALID_TOP_LEVEL_KEYS));
-        $schema = self::minn_schema((array) $valid_block_names, (array) $valid_element_names, (array) $valid_variations);
+        $output = self::minn_viewport_sanitized(array_intersect_key($input, array_flip(static::VALID_TOP_LEVEL_KEYS)));
+        $queries = array_keys(static::get_viewport_media_queries($output['settings']['viewport'] ?? null));
+        $schema = self::minn_schema((array) $valid_block_names, (array) $valid_element_names, (array) $valid_variations, $queries);
         foreach (['styles', 'settings'] as $subtree) {
-            $output[$subtree] = is_array($input[$subtree] ?? null) ? static::remove_keys_not_in_schema($input[$subtree], $schema[$subtree]) : [];
+            $output[$subtree] = is_array($output[$subtree] ?? null) ? static::remove_keys_not_in_schema($output[$subtree], $schema[$subtree]) : [];
             if (empty($output[$subtree])) {
                 unset($output[$subtree]);
             }
         }
         return $output;
+    }
+
+    /** @internal a viewport setting, even an empty one, made valid (its media queries decide which responsive styles stay) */
+    private static function minn_viewport_sanitized(array $theme_json): array
+    {
+        if (is_array($theme_json['settings'] ?? null) && array_key_exists('viewport', $theme_json['settings'])) {
+            $theme_json['settings']['viewport'] = static::sanitize_viewport_settings($theme_json['settings']['viewport']);
+        }
+        return $theme_json;
     }
 
     protected static function append_to_selector($selector, $to_append)
@@ -646,7 +673,7 @@ class WP_Theme_JSON
         return $name === 'font-size' ? wp_get_typography_font_size_value(['size' => $value], $settings) : $value;
     }
 
-    /** @internal a background image's url() (its ref followed, to an image or a string), or the string given */
+    /** @internal a background image's url() (its ref followed, to an image or a string), or the string given; nothing else */
     private static function minn_background_image(array $styles, array $path, $theme_json)
     {
         $image = _wp_array_get($styles, $path, null);
@@ -656,7 +683,7 @@ class WP_Theme_JSON
         if (is_array($image)) {
             return ($image['url'] ?? '') !== '' ? "url('" . $image['url'] . "')" : null;
         }
-        return $image;
+        return is_string($image) ? $image : null;
     }
 
     /** @internal an element's node, then one for each of its pseudo selectors that has styles, in their own order */
@@ -825,38 +852,207 @@ class WP_Theme_JSON
 
     public static function remove_insecure_properties($theme_json, $origin = 'theme')
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_insecure_properties');
-        return null;
+        // Migrated and sanitized; each style node and settings node keeps only what is safe, and var: values become custom properties.
+        $theme_json = WP_Theme_JSON_Schema::migrate($theme_json, $origin);
+        $blocks_metadata = static::get_blocks_metadata();
+        $theme_json = static::sanitize($theme_json, array_keys($blocks_metadata), array_keys(static::ELEMENTS), static::get_valid_block_style_variations($blocks_metadata));
+        $queries = static::get_viewport_media_queries($theme_json['settings']['viewport'] ?? null);
+        $secured = ['settings' => self::minn_secure_settings($theme_json), 'styles' => self::minn_secure_styles($theme_json, $blocks_metadata, $queries)];
+        foreach ($secured as $subtree => $kept) {
+            $theme_json[$subtree] = self::minn_variables_converted($kept);
+            if (empty($kept)) {
+                unset($theme_json[$subtree]);
+            }
+        }
+        return $theme_json;
     }
 
     protected static function remove_insecure_element_styles($elements, $responsive_media_queries = NULL)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_insecure_element_styles');
-        return null;
+        // Each element in the elements' own order, even when nothing is left of it: its styles, its pseudo selectors' and its media queries'.
+        $output = [];
+        foreach (array_keys(static::ELEMENTS) as $element) {
+            if (isset($elements[$element])) {
+                $styles = (array) $elements[$element];
+                $output[$element] = static::remove_insecure_styles($styles);
+                foreach (array_merge(static::VALID_ELEMENT_PSEUDO_SELECTORS[$element] ?? [], array_keys((array) $responsive_media_queries)) as $key) {
+                    if (isset($styles[$key])) {
+                        $output[$element][$key] = static::remove_insecure_styles($styles[$key]);
+                    }
+                }
+            }
+        }
+        return $output;
     }
 
     protected static function remove_insecure_inner_block_styles($blocks, $responsive_media_queries = NULL)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_insecure_inner_block_styles');
-        return null;
+        // Each block as given, even when nothing is left of it: its styles, its elements and its media queries.
+        $output = [];
+        foreach ((array) $blocks as $name => $styles) {
+            $output[$name] = static::remove_insecure_styles((array) $styles);
+            if (isset($styles['elements'])) {
+                $output[$name]['elements'] = static::remove_insecure_element_styles($styles['elements'], $responsive_media_queries);
+            }
+            $output[$name] += self::minn_responsive_secured((array) $styles, (array) $responsive_media_queries);
+        }
+        return $output;
     }
 
     private static function preserve_valid_typed_settings($input, &$output, $schema, $path = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::preserve_valid_typed_settings');
-        return null;
+        // A setting of a known type is kept when its value has that type (a string also safe as its property's value).
+        foreach ($schema as $key => $type) {
+            $value = $input[$key] ?? null;
+            if (is_array($type) && !isset($type['type'])) {
+                static::preserve_valid_typed_settings(is_array($value) ? $value : [], $output, $type, array_merge($path, [$key]));
+            } elseif (is_array($type) && ($type['type'] === 'boolean' ? is_bool($value) : is_string($value) && static::is_safe_css_declaration($type['property'], $value))) {
+                _wp_array_set($output, array_merge($path, [$key]), $value);
+            }
+        }
     }
 
     protected static function remove_insecure_settings($input, $is_root = false)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_insecure_settings');
-        return null;
+        // Presets per origin whose slugs are class-safe and values safe for their properties, then the typed settings; the viewport at the root.
+        $output = [];
+        foreach (static::PRESETS_METADATA as $metadata) {
+            foreach (static::VALID_ORIGINS as $origin) {
+                $kept = self::minn_safe_presets(_wp_array_get((array) $input, array_merge($metadata['path'], [$origin]), null), $metadata);
+                if ($kept !== []) {
+                    _wp_array_set($output, array_merge($metadata['path'], [$origin]), $kept);
+                }
+            }
+        }
+        static::preserve_valid_typed_settings((array) $input, $output, self::minn_typed_settings());
+        if ($is_root && array_key_exists('viewport', (array) $input)) {
+            $output['viewport'] = static::sanitize_viewport_settings($input['viewport']);
+        }
+        return $output;
     }
 
     protected static function remove_insecure_styles($input)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_insecure_styles');
-        return null;
+        // Each safe declaration keeps the value as written at its path; a background image object is rebuilt after the rest.
+        $output = [];
+        foreach (static::compute_style_properties((array) $input) as $declaration) {
+            $path = static::PROPERTIES_METADATA[$declaration['name']] ?? null;
+            $value = $path === null ? null : _wp_array_get((array) $input, $path, null);
+            if ($value !== null && !is_array($value) && static::is_safe_css_declaration($declaration['name'], $declaration['value'])) {
+                _wp_array_set($output, $path, $value);
+            }
+        }
+        static::remove_indirect_properties((array) $input, $output);
+        return $output;
+    }
+
+    /** @internal the settings nodes, each keeping only what is safe */
+    private static function minn_secure_settings(array $theme_json): array
+    {
+        $output = [];
+        foreach (static::get_setting_nodes($theme_json) as $node) {
+            $kept = static::remove_insecure_settings(_wp_array_get($theme_json, $node['path'], []), $node['path'] === ['settings']);
+            if (!empty($kept)) {
+                _wp_array_set($output, $node['path'], $kept);
+            }
+        }
+        return $output['settings'] ?? [];
+    }
+
+    /** @internal the style nodes in order, each keeping what is safe (set only when something is), then each block's variations */
+    private static function minn_secure_styles(array $theme_json, array $blocks_metadata, array $queries): array
+    {
+        $output = [];
+        foreach (static::get_style_nodes($theme_json, $blocks_metadata, ['include_block_style_variations' => true]) as $node) {
+            $kept = self::minn_secure_node((array) _wp_array_get($theme_json, $node['path'], []), $node['path'], $queries);
+            if (!empty($kept)) {
+                _wp_array_set($output, $node['path'], $kept);
+            }
+            foreach ($node['variations'] ?? [] as $variation) {
+                $kept = self::minn_secure_variation((array) _wp_array_get($theme_json, $variation['path'], []), $queries);
+                if (!empty($kept)) {
+                    _wp_array_set($output, $variation['path'], $kept);
+                }
+            }
+        }
+        return $output['styles'] ?? [];
+    }
+
+    /**
+     * @internal one style node: kept as written when it has custom CSS and
+     * the user may edit CSS; otherwise its safe styles, an element's pseudo
+     * selectors, and its media queries (a block's with their elements)
+     */
+    private static function minn_secure_node(array $input, array $path, array $queries): array
+    {
+        if (isset($input['css']) && current_user_can('edit_css')) {
+            return $input;
+        }
+        $element = ($path[count($path) - 2] ?? null) === 'elements' ? (string) end($path) : null;
+        if ($element !== null) {
+            return static::remove_insecure_element_styles([$element => $input], $queries)[$element] ?? [];
+        }
+        return static::remove_insecure_styles($input) + self::minn_responsive_secured($input, $queries);
+    }
+
+    /** @internal a variation: its safe styles, its inner blocks, its elements, then its media queries */
+    private static function minn_secure_variation(array $input, array $queries): array
+    {
+        $output = static::remove_insecure_styles($input);
+        if (isset($input['blocks'])) {
+            $output['blocks'] = static::remove_insecure_inner_block_styles($input['blocks'], $queries);
+        }
+        if (isset($input['elements'])) {
+            $output['elements'] = static::remove_insecure_element_styles($input['elements'], $queries);
+        }
+        return $output + self::minn_responsive_secured($input, $queries);
+    }
+
+    /** @internal each media query's styles that are safe, with its elements' (kept even when nothing is left) */
+    private static function minn_responsive_secured(array $input, array $queries): array
+    {
+        $output = [];
+        foreach (array_keys($queries) as $query) {
+            if (isset($input[$query])) {
+                $output[$query] = static::remove_insecure_styles((array) $input[$query]);
+                if (isset($input[$query]['elements'])) {
+                    $output[$query]['elements'] = static::remove_insecure_element_styles($input[$query]['elements']);
+                }
+            }
+        }
+        return $output;
+    }
+
+    /** @internal one origin's presets: those with a class-safe slug whose value is safe for each of the preset's properties */
+    private static function minn_safe_presets($items, array $metadata): array
+    {
+        $kept = [];
+        foreach (is_array($items) ? $items : [] as $item) {
+            $value = isset($metadata['value_key']) ? ($item[$metadata['value_key']] ?? null) : (is_callable($metadata['value_func'] ?? null) ? call_user_func($metadata['value_func'], $item) : null);
+            $safe = !isset($metadata['value_key']) && !is_callable($metadata['value_func'] ?? null) ? true : array_filter((array) $metadata['properties'], static fn ($property) => !static::is_safe_css_declaration($property, (string) $value)) === [];
+            if (isset($item['slug']) && sanitize_html_class($item['slug']) === $item['slug'] && $safe) {
+                $kept[] = $item;
+            }
+        }
+        return $kept;
+    }
+
+    /** @internal the settings kept by type, in the order they are kept: strings checked as the property they set, booleans */
+    private static function minn_typed_settings(): array
+    {
+        return [
+            'spacing' => ['blockGap' => ['type' => 'string', 'property' => 'gap']],
+            'layout' => ['contentSize' => ['type' => 'string', 'property' => 'max-width'], 'wideSize' => ['type' => 'string', 'property' => 'max-width']],
+            'background' => ['gradient' => ['type' => 'string', 'property' => 'background']],
+            'lightbox' => ['enabled' => ['type' => 'boolean'], 'allowEditing' => ['type' => 'boolean']],
+            'blockVisibility' => ['allowEditing' => ['type' => 'boolean']],
+        ];
+    }
+
+    /** @internal every var: value in a tree as its custom property */
+    private static function minn_variables_converted($tree)
+    {
+        return is_array($tree) ? array_map(static fn ($value) => self::minn_variables_converted($value), $tree) : self::convert_custom_properties($tree);
     }
 
     protected static function is_safe_css_declaration($property_name, $property_value)
@@ -866,8 +1062,11 @@ class WP_Theme_JSON
 
     private static function remove_indirect_properties($input, &$output)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_indirect_properties');
-        return null;
+        // A background image given as an object keeps only its url, and only when the url is empty or safe.
+        $image = $input['background']['backgroundImage'] ?? null;
+        if (is_array($image) && is_string($image['url'] ?? null) && ($image['url'] === '' || static::is_safe_css_declaration('background-image', "url('" . $image['url'] . "')"))) {
+            $output['background']['backgroundImage'] = ['url' => $image['url']];
+        }
     }
 
     public function get_raw_data()
@@ -977,8 +1176,8 @@ class WP_Theme_JSON
 
     private static function convert_custom_properties($value)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::convert_custom_properties');
-        return null;
+        // A var:a|b value as the custom property var(--wp--a--b); anything else as given.
+        return is_string($value) && str_starts_with($value, 'var:') ? 'var(--wp--' . str_replace('|', '--', substr($value, 4)) . ')' : $value;
     }
 
     private static function resolve_custom_css_format($tree)

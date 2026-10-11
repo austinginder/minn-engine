@@ -11878,3 +11878,89 @@ Left in `WP_Theme_JSON`: the stylesheet and its other pieces
 variables, preset and block classes, feature declarations), the
 `remove_insecure_*` family, `get_name_from_defaults`, `set_spacing_sizes`
 and `resolve_variables`.
+
+## What WP_Theme_JSON keeps when it removes what is not safe (2026-10-10)
+
+Probe `theme-json-insecure` proves the `remove_insecure_*` family,
+`wp_filter_global_styles_post` and the viewport rules. It also covers the
+responsive styles a theme.json keeps.
+
+- **Viewport and responsive styles.** A `settings.viewport` given at the
+  root, even `null` or empty, is made valid. The mobile and tablet sizes
+  that are valid (px, em or rem; a tablet size only when wider than
+  mobile, em and rem at 16 pixels) are kept in that order. When none is
+  valid, the defaults (480px, 782px) are used. A block's own viewport is
+  dropped. The media queries of the result (`@mobile`, `@tablet`) are the
+  responsive keys a theme.json may carry:
+  - on elements, with the valid styles;
+  - on blocks, variations and the blocks inside variations, with the
+    valid styles and elements;
+  - never at the root or inside a pseudo selector.
+
+  This was missing from the constructor's schema, which used to drop them.
+- **Settings.**
+  - Presets are kept per valid origin, in the presets metadata's order and
+    the origins' order. An item stays when `sanitize_html_class` leaves
+    its slug unchanged and its value is a safe declaration for each of
+    the preset's properties.
+    - Font sizes are checked through their value function.
+    - Duotone has no value to check.
+    - An item with no value stays.
+    - `rgb()` and `url()` fail most properties; gradients allow `url()`.
+  - Then the typed settings, in this order and whatever the input order:
+    - strings: `spacing.blockGap` (checked as `gap`),
+      `layout.contentSize` and `layout.wideSize` (as `max-width`),
+      `background.gradient` (as `background`);
+    - booleans: `lightbox.enabled`, `lightbox.allowEditing`,
+      `blockVisibility.allowEditing`.
+  - At the root, the viewport, made valid.
+  - Nothing else stays (custom properties, switches like `color.custom`,
+    appearance tools).
+- **Styles.** Each declaration of `compute_style_properties` that is a
+  safe CSS declaration keeps the value as written at its path, in the
+  declarations' order. So presets stay `var:preset|…`, a font size stays
+  unfluid, and refs (no tree here) go. `outline-*` and `text-shadow` never
+  pass the CSS filter. Custom CSS, pseudo selectors and media queries are
+  left to the callers. A background image given as an object is rebuilt
+  after the rest as `{url}`, when the url is empty or safe. A string
+  background image is checked in place.
+- **Elements**, in the elements' own order. Each element given is kept
+  even when nothing is left of it (`[]`), with its pseudo selectors and
+  the media queries asked for (each kept even when empty). Unknown
+  elements go.
+- **Inner blocks**, as given (registered or not), each kept even when
+  empty: styles, elements, then media queries.
+- **`remove_insecure_properties`**:
+  1. The document is migrated in the origin given and sanitized (shared
+     variations are not spread here; the schema drops them).
+  2. Each settings node keeps what is safe and is set only when something
+     is.
+  3. Each style node, in the order of `get_style_nodes` with variations:
+     - the root;
+     - each element, with its pseudo selectors and media queries;
+     - each block (its styles and media queries; a media query keeps its
+       elements);
+     - the block's variations (styles, inner blocks, elements, media
+       queries; custom CSS never kept);
+     - the block's pseudo selectors and states, then its elements.
+
+     A node is set only when something is left.
+  4. Every `var:a|b` string in settings and styles becomes
+     `var(--wp--a--b)`. Strings that only contain it, and other top-level
+     keys, stay as written.
+
+  A user who may `edit_css` keeps a node that has custom CSS exactly as
+  written, children included. The nodes after it replace their paths only
+  when something of theirs is left.
+- **`wp_filter_global_styles_post`** filters JSON flagged
+  `isGlobalStylesUserThemeJSON`. The flag is set aside, the rest made safe
+  in the custom origin, the flag put back last, and the result encoded
+  with slashes unescaped and slashed. Anything else passes through.
+  `kses_init_filters` hooks it on `content_save_pre` and
+  `content_filtered_save_pre` at priority 9, and `kses_remove_filters`
+  takes it off.
+
+Owed: the engine's REST global styles save (`Theme\UserStyles::save`)
+writes the post directly, without the save filters. So a user without
+`unfiltered_html` (with `DISALLOW_UNFILTERED_HTML`, say) may save styles
+the reference's save filters would remove. Not yet compared over HTTP.

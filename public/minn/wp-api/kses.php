@@ -262,6 +262,9 @@ function kses_init_filters()
     foreach (['content_save_pre', 'excerpt_save_pre', 'content_filtered_save_pre'] as $hook) {
         add_filter($hook, 'wp_filter_post_kses');
     }
+    // A user's global styles are filtered first (probe theme-json-insecure).
+    add_filter('content_save_pre', 'wp_filter_global_styles_post', 9);
+    add_filter('content_filtered_save_pre', 'wp_filter_global_styles_post', 9);
     add_filter('pre_comment_content', current_user_can('unfiltered_html') ? 'wp_filter_post_kses' : 'wp_filter_kses');
     add_filter('title_save_pre', 'wp_filter_kses');
     add_filter('pre_comment_author_name', 'wp_filter_kses');
@@ -274,6 +277,8 @@ function kses_remove_filters()
     foreach (['content_save_pre', 'excerpt_save_pre', 'content_filtered_save_pre'] as $hook) {
         remove_filter($hook, 'wp_filter_post_kses');
     }
+    remove_filter('content_save_pre', 'wp_filter_global_styles_post', 9);
+    remove_filter('content_filtered_save_pre', 'wp_filter_global_styles_post', 9);
     remove_filter('pre_comment_content', 'wp_filter_post_kses');
     remove_filter('pre_comment_content', 'wp_filter_kses');
     remove_filter('title_save_pre', 'wp_filter_kses');
@@ -429,4 +434,21 @@ function _wp_kses_split_callback($matches)
 {
     global $pass_allowed_html, $pass_allowed_protocols;
     return wp_kses_split2($matches[0], $pass_allowed_html, $pass_allowed_protocols);
+}
+
+/**
+ * A user's global styles (JSON flagged isGlobalStylesUserThemeJSON) saved
+ * with only their safe properties, in the custom origin; any other content
+ * passes through as given.
+ */
+function wp_filter_global_styles_post($data)
+{
+    $decoded = json_decode(wp_unslash($data), true);
+    if (!is_array($decoded) || empty($decoded['isGlobalStylesUserThemeJSON'])) {
+        return $data;
+    }
+    unset($decoded['isGlobalStylesUserThemeJSON']);
+    $filtered = WP_Theme_JSON::remove_insecure_properties($decoded, 'custom');
+    $filtered['isGlobalStylesUserThemeJSON'] = true;
+    return wp_slash(wp_json_encode($filtered, JSON_UNESCAPED_SLASHES));
 }
