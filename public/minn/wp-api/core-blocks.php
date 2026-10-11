@@ -235,24 +235,63 @@ function render_block_core_comments($attributes, $content, $block)
     return _minn_render_core_callback('core/comments', $attributes, $content, $block);
 }
 
+/** The comment pagination (probe comments-pagination): its links in a labelled nav, nothing when none of them rendered. */
 function render_block_core_comments_pagination($attributes, $content)
 {
-    return _minn_render_core_callback('core/comments-pagination', ...func_get_args());
+    return trim((string) $content) === '' ? '' : '<nav ' . get_block_wrapper_attributes() . ' aria-label="' . esc_attr__('Comments pagination') . '">' . $content . '</nav>';
 }
 
+/** The link to the newer page of comments, up to the post's last (probe comments-pagination). */
 function render_block_core_comments_pagination_next($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/comments-pagination-next', $attributes, $content, $block);
+    return _minn_comments_pagination_link('next', (array) $attributes, (array) $block->context, get_block_wrapper_attributes());
 }
 
+/** The numbered links over the post's comment pages (probe comments-pagination). */
 function render_block_core_comments_pagination_numbers($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/comments-pagination-numbers', $attributes, $content, $block);
+    return _minn_comments_pagination_numbers((array) $block->context, get_block_wrapper_attributes());
 }
 
+/** The link to the older page of comments (probe comments-pagination). */
 function render_block_core_comments_pagination_previous($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/comments-pagination-previous', $attributes, $content, $block);
+    return _minn_comments_pagination_link('previous', (array) $attributes, (array) $block->context, get_block_wrapper_attributes());
+}
+
+/**
+ * @internal An older or newer comments link from the comment query's page:
+ * the block's label (Older or Newer Comments without one), the
+ * pagination's arrow beside it, the block's wrapper attributes on the link;
+ * the newer one stops at the post's last page of comments.
+ */
+function _minn_comments_pagination_link(string $which, array $attributes, array $context, string $wrapper): string
+{
+    $previous = $which === 'previous';
+    $label = (string) ($attributes['label'] ?? '') ?: ($previous ? __('Older Comments') : __('Newer Comments'));
+    $arrows = ['arrow' => ['←', '→'], 'chevron' => ['«', '»']];
+    $kind = (string) ($context['comments/paginationArrow'] ?? 'none');
+    if (isset($arrows[$kind])) {
+        $span = "<span class='wp-block-comments-pagination-{$which}-arrow is-arrow-{$kind}' aria-hidden='true'>" . $arrows[$kind][$previous ? 0 : 1] . '</span>';
+        $label = $previous ? $span . $label : $label . $span;
+    }
+    $hook = "{$which}_comments_link_attributes";
+    $attributes_filter = static fn () => $wrapper;
+    add_filter($hook, $attributes_filter);
+    // The page is the comment query's own (the newest page when none is asked for and the newest comes first).
+    $vars = build_comment_query_vars_from_block((object) ['context' => $context]);
+    $page = $vars['paged'] ?? null;
+    $link = $previous ? get_previous_comments_link($label, $page) : get_next_comments_link($label, (new WP_Comment_Query($vars))->max_num_pages, $page);
+    remove_filter($hook, $attributes_filter);
+    return (string) $link;
+}
+
+/** @internal the numbered comment page links in the block's wrapper, nothing without them */
+function _minn_comments_pagination_numbers(array $context, string $wrapper): string
+{
+    $vars = build_comment_query_vars_from_block((object) ['context' => $context]);
+    $links = paginate_comments_links(['total' => (new WP_Comment_Query($vars))->max_num_pages, 'current' => !empty($vars['paged']) ? $vars['paged'] : null, 'prev_next' => false, 'echo' => false]);
+    return empty($links) ? '' : '<div ' . $wrapper . '>' . $links . '</div>';
 }
 
 function render_block_core_comments_title($attributes)
@@ -1246,6 +1285,10 @@ function _minn_register_block_renderers(MinnRenderer $renderer): void
         'core/accordion' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, render_block_core_accordion($block->attrs, _minn_inner_html($block, $renderer))),
         'core/accordion-item' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, block_core_accordion_item_render($block->attrs, _minn_inner_html($block, $renderer))),
         'core/tabs' => '_minn_block_tabs',
+        'core/comments-pagination' => '_minn_block_comments_pagination',
+        'core/comments-pagination-previous' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_comments_pagination_link('previous', $block->attrs, _minn_comment_page_context($renderer), _minn_wrapper_attributes('a', 'wp-block-comments-pagination-previous', $block)),
+        'core/comments-pagination-next' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_comments_pagination_link('next', $block->attrs, _minn_comment_page_context($renderer), _minn_wrapper_attributes('a', 'wp-block-comments-pagination-next', $block)),
+        'core/comments-pagination-numbers' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_comments_pagination_numbers(_minn_comment_page_context($renderer), _minn_wrapper_attributes('div', 'wp-block-comments-pagination-numbers', $block)),
         'core/comment-edit-link' => static function (MinnBlock $block, MinnRenderer $renderer): string {
             $comment = $renderer->context()->comment();
             $link = $comment === null ? '' : _minn_comment_edit_anchor($block->attrs, (int) $comment->id);
@@ -1275,6 +1318,29 @@ function _minn_inner_html(MinnBlock $block, MinnRenderer $renderer): string
 function _minn_laid_out(MinnBlock $block, string $html): string
 {
     return Minn\Html::addClasses($html, Minn\Blocks\Layout::classes((string) $block->name, $block->attrs));
+}
+
+/** @internal the comment pagination in a page: its arrow provided to its links, a labelled nav around what they render */
+function _minn_block_comments_pagination(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $inner = $renderer->providing(['comments/paginationArrow' => (string) $block->attr('paginationArrow', 'none')], static fn (): string => _minn_inner_html($block, $renderer));
+    if (trim($inner) === '') {
+        return '';
+    }
+    return _minn_laid_out($block, substr(Wrapper::open('nav', 'wp-block-comments-pagination', $block), 0, -1) . ' aria-label="' . esc_attr__('Comments pagination') . '">' . $inner . '</nav>');
+}
+
+/** @internal what a comment pagination link reads in a page: the post shown, and the arrow its pagination provides */
+function _minn_comment_page_context(MinnRenderer $renderer): array
+{
+    $post = $renderer->context()->post();
+    return ($post === null ? [] : ['postId' => $post->id]) + $renderer->blockContext();
+}
+
+/** @internal a block's wrapper attributes as markup, from the engine's wrapper (Wrapper::open without its tag) */
+function _minn_wrapper_attributes(string $tag, string $blockClass, MinnBlock $block): string
+{
+    return trim(substr(Wrapper::open($tag, $blockClass, $block), strlen($tag) + 1, -1));
 }
 
 /** @internal a tabs block in a page: its id and panel list provided to the blocks inside, as render_block_context gives them on the reference */

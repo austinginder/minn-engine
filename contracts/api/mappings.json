@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 812,
-        "composes": 2315,
-        "leaf": 1015,
-        "noop": 2753,
+        "minn": 813,
+        "composes": 2317,
+        "leaf": 1016,
+        "noop": 2754,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8538,
+        "functions": 8543,
         "minnMethods": 979,
         "leafLinesOver15": 12
     },
@@ -35157,6 +35157,19 @@
                 "wp_list_categories"
             ]
         },
+        "_minn_block_comments_pagination": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "_minn_inner_html",
+                "_minn_laid_out",
+                "esc_attr__"
+            ]
+        },
         "_minn_block_footnotes": {
             "file": "core-blocks.php",
             "lines": 3,
@@ -35702,6 +35715,13 @@
                 "wp_get_current_commenter"
             ]
         },
+        "_minn_comment_page_context": {
+            "file": "core-blocks.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "_minn_comment_restore": {
             "file": "comment.php",
             "lines": 13,
@@ -35752,6 +35772,30 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_minn_comments_pagination_link": {
+            "file": "core-blocks.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "add_filter",
+                "build_comment_query_vars_from_block",
+                "get_next_comments_link",
+                "get_previous_comments_link",
+                "remove_filter"
+            ]
+        },
+        "_minn_comments_pagination_numbers": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "build_comment_query_vars_from_block",
+                "paginate_comments_links"
+            ]
         },
         "_minn_comments_template_args": {
             "file": "comment.php",
@@ -37009,17 +37053,21 @@
         },
         "_minn_register_block_renderers": {
             "file": "core-blocks.php",
-            "lines": 32,
+            "lines": 36,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Wrapper::open"
             ],
             "composes": [
                 "_minn_comment_edit_anchor",
+                "_minn_comment_page_context",
+                "_minn_comments_pagination_link",
+                "_minn_comments_pagination_numbers",
                 "_minn_inner_html",
                 "_minn_laid_out",
                 "_minn_tab_list",
                 "_minn_tab_panel",
+                "_minn_wrapper_attributes",
                 "block_core_accordion_item_render",
                 "render_block_core_accordion",
                 "render_block_core_legacy_widget",
@@ -38005,6 +38053,15 @@
                 "single_post_title",
                 "single_term_title"
             ]
+        },
+        "_minn_wrapper_attributes": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": []
         },
         "_n": {
             "file": "l10n.php",
@@ -57462,7 +57519,8 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "esc_attr__",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_comments_pagination_next": {
@@ -57471,7 +57529,8 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_comments_pagination_link",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_comments_pagination_numbers": {
@@ -57480,7 +57539,8 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_comments_pagination_numbers",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_comments_pagination_previous": {
@@ -57489,7 +57549,8 @@
             "kind": "noop",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_comments_pagination_link",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_comments_title": {

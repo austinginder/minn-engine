@@ -13937,7 +13937,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php",
-            "lines": 256,
+            "lines": 255,
             "doc": "comments, comments-title, comment-template, the comment-* blocks, and the comment form.",
             "implements": [],
             "extends": null,
@@ -14061,7 +14061,7 @@
                         }
                     ],
                     "line": 38,
-                    "end": 50
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -14087,8 +14087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 65
+                    "line": 52,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -14114,8 +14114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 87
+                    "line": 66,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -14141,8 +14141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 104
+                    "line": 88,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -14171,8 +14171,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 123
+                    "line": 112,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -14191,8 +14191,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -14241,8 +14241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 160
+                    "line": 131,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -14268,8 +14268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 173
+                    "line": 162,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -14302,8 +14302,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 188
+                    "line": 174,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -14329,8 +14329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 204
+                    "line": 190,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -14356,8 +14356,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 211
+                    "line": 206,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -14383,8 +14383,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 225
+                    "line": 212,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -14410,8 +14410,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 236
+                    "line": 226,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -14437,8 +14437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 238,
-                    "end": 249
+                    "line": 237,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -14464,8 +14464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 251,
-                    "end": 258
+                    "line": 250,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -14491,8 +14491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 280
+                    "line": 265,
+                    "end": 279
                 }
             ]
         },

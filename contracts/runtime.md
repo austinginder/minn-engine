@@ -13258,3 +13258,31 @@ Still owed:
 - Playlist, icon and term template (an icon's art is the reference's own),
   and the numbers block, which rendered nothing on either stack in the
   probe's setting.
+
+## Comment pagination (2026-10-11)
+
+Probe `comments-pagination`. The engine rendered the whole family as
+nothing, so a post with paged comments had no Older/Newer Comments links.
+Checked over HTTP on a post with three comments, one a page: the
+reference's nav and the engine's now match on every page.
+
+- **`core/comments-pagination`** is a nav labelled "Comments pagination"
+  around what its links render, with its layout classes. When none of them
+  render there is no nav at all. It provides its arrow
+  (`comments/paginationArrow`) to its links.
+- **Previous and next** are the comment link functions, given the comment
+  query's own page (`build_comment_query_vars_from_block`'s `paged`). So
+  with the newest first and no page asked for, the page is the last one.
+  - The label is the block's own, else Older or Newer Comments. The arrow
+    (← → or « ») sits in a single-quoted span before or after it.
+  - The block's wrapper attributes go on the link.
+  - Next stops at the query's last page. A link to the default page has no
+    comment-page part. With paging off the query names no page, so the
+    `cpage` query var decides.
+- **Numbers** are `paginate_comments_links` over the query's pages, the
+  current one the query's page, in the block's wrapper; nothing without
+  them.
+
+Found on the way: `build_comment_query_vars_from_block` pages only when
+`page_comments` is the string `'1'`, as the settings screen stores it (an
+option saved as the integer 1 does not page on either stack).
