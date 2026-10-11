@@ -88,9 +88,9 @@ the WordPress runtime plugins load against
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
-| [`SymbolGap`](#symbolgap) | final readonly class | 94 | The part of the reference's interface the runtime does not answer: names in |
+| [`SymbolGap`](#symbolgap) | final readonly class | 104 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 275 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`Symbols`](#symbols) | final class | 338 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
@@ -4392,8 +4392,9 @@ Used by: `Minn\Runtime\Symbols`
 ### static `ofLoadedFacade(string $engineDir): self`
 
 Reads the reference's interface and subtracts everything the loaded facade
-defines. Recomputed on every call because a plugin may define a name as it
-loads; only the file read is cached.
+defines. A plugin may define a name as it loads, so each call asks again,
+but only about the names still lacking: a name once defined stays defined,
+and asking about all four thousand for every plugin was a cost of its own.
 
 ### static `fromFile(string $path): self`
 
@@ -4417,6 +4418,8 @@ Whether the runtime lacks a class.
 ### `json(): string`
 
 The gap as JSON.
+
+Internals: `typeExists()` (private, line 67)
 
 
 ## SymbolTable
@@ -4468,15 +4471,22 @@ The table as the gate reads it.
 A static read of what a plugin's PHP calls: global functions and classes
 it uses but does not itself declare, minus the ones it guards with
 function_exists() or class_exists(). Checked against what the runtime
-provides, this decides whether a plugin loads at all. The read is cached
-in the minn_runtime_symbols option keyed by the plugin folder's newest
-modification time.
+provides, this decides whether a plugin loads at all.
+
+The read is cached in the minn_runtime_symbols option, keeping only the
+reference's own names (all a verdict reads). An entry is trusted while
+the folder's fingerprint (its own time and its top-level files' newest)
+holds, for up to FULL_CHECK_EVERY seconds; then the whole folder is
+walked again, as an update replaces it. Walking every folder on every
+request cost hundreds of milliseconds on a site with many plugins.
 
 - const `MAX_FILES` = `6000`
 - const `SKIP_DIRS` = `array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )`
 - const `READER` = `3` — Bumped whenever the token reader changes, so every cached scan is made again.
+- const `FULL_CHECK_EVERY` = `300` — How long a cached entry is trusted on its fingerprint alone before the folder is walked again.
 
 Used by: `Minn\Runtime\Plugins`
+
 
 ### static `missing(string $dir, Minn\Runtime\Options $options): array`
 
@@ -4498,7 +4508,7 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
 
-Internals: `verdict()` (private, line 80), `phpFiles()` (private, line 114), `scan()` (private, line 148), `scanTokens()` (private, line 167), `noteName()` (private, line 242), `significant()` (private, line 277)
+Internals: `keep()` (private, line 63), `fingerprint()` (private, line 74), `namesStamp()` (private, line 87), `reduced()` (private, line 99), `verdict()` (private, line 148), `phpFiles()` (private, line 182), `scan()` (private, line 216), `scanTokens()` (private, line 235), `noteName()` (private, line 310), `significant()` (private, line 345)
 
 
 ## TagEditor

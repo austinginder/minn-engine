@@ -27,16 +27,20 @@ final readonly class SymbolGap
 
     /**
      * Reads the reference's interface and subtracts everything the loaded facade
-     * defines. Recomputed on every call because a plugin may define a name as it
-     * loads; only the file read is cached.
+     * defines. A plugin may define a name as it loads, so each call asks again,
+     * but only about the names still lacking: a name once defined stays defined,
+     * and asking about all four thousand for every plugin was a cost of its own.
      */
     public static function ofLoadedFacade(string $engineDir): self
     {
-        static $data = null;
-        if ($data === null) {
-            $decoded = Json::file($engineDir . '/data/api-names.json');
-            $data = is_array($decoded) ? $decoded : [];
+        static $last = null;
+        if ($last instanceof self) {
+            $functions = array_filter($last->functions, static fn (bool $on, string $name): bool => !function_exists($name), ARRAY_FILTER_USE_BOTH);
+            $classes = array_filter($last->classes, static fn (bool $on, string $name): bool => !self::typeExists($name), ARRAY_FILTER_USE_BOTH);
+            return $last = new self($functions, $classes, $last->known, $last->pluggable);
         }
+        $decoded = Json::file($engineDir . '/data/api-names.json');
+        $data = is_array($decoded) ? $decoded : [];
         $functions = [];
         $known = [];
         // The pluggable functions load after the plugins, so at gate time they
@@ -52,11 +56,17 @@ final readonly class SymbolGap
         }
         $classes = [];
         foreach ($data['classes'] ?? [] as $name) {
-            if (!class_exists($name) && !interface_exists($name) && !trait_exists($name) && !enum_exists($name)) {
+            if (!self::typeExists($name)) {
                 $classes[strtolower($name)] = true;
             }
         }
-        return new self($functions, $classes, $known, $pluggable);
+        return $last = new self($functions, $classes, $known, $pluggable);
+    }
+
+    /** Whether a class, interface, trait or enum of this name is defined. */
+    private static function typeExists(string $name): bool
+    {
+        return class_exists($name) || interface_exists($name) || trait_exists($name) || enum_exists($name);
     }
 
     /** The gap read from its JSON file. */

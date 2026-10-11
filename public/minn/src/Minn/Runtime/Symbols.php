@@ -8,9 +8,14 @@ namespace Minn\Runtime;
  * A static read of what a plugin's PHP calls: global functions and classes
  * it uses but does not itself declare, minus the ones it guards with
  * function_exists() or class_exists(). Checked against what the runtime
- * provides, this decides whether a plugin loads at all. The read is cached
- * in the minn_runtime_symbols option keyed by the plugin folder's newest
- * modification time.
+ * provides, this decides whether a plugin loads at all.
+ *
+ * The read is cached in the minn_runtime_symbols option, keeping only the
+ * reference's own names (all a verdict reads). An entry is trusted while
+ * the folder's fingerprint (its own time and its top-level files' newest)
+ * holds, for up to FULL_CHECK_EVERY seconds; then the whole folder is
+ * walked again, as an update replaces it. Walking every folder on every
+ * request cost hundreds of milliseconds on a site with many plugins.
  */
 final class Symbols
 {
@@ -18,6 +23,11 @@ final class Symbols
     private const SKIP_DIRS = ['node_modules', 'tests', 'test', '.git'];
     /** Bumped whenever the token reader changes, so every cached scan is made again. */
     private const READER = 3;
+    /** How long a cached entry is trusted on its fingerprint alone before the folder is walked again. */
+    private const FULL_CHECK_EVERY = 300;
+
+    /** @var array<string, mixed>|null the cache with this request's changes, written once at shutdown */
+    private static ?array $pending = null;
 
     /**
      * What a plugin folder needs that the runtime lacks, cached by mtime.
@@ -26,24 +36,82 @@ final class Symbols
      */
     public static function missing(string $dir, Options $options): array
     {
-        $files = self::phpFiles($dir);
-        $newest = 0;
-        foreach ($files as $file) {
-            $newest = max($newest, (int) @filemtime($file));
-        }
-        $cache = $options->get('minn_runtime_symbols');
-        $cache = is_array($cache) ? $cache : [];
+        $cache = self::$pending ?? (is_array($stored = $options->get('minn_runtime_symbols')) ? $stored : []);
         $key = basename($dir);
         $entry = $cache[$key] ?? null;
-        // A cached scan is only as good as the reader that made it; a reader change retires every entry.
-        if (is_array($entry) && ($entry['reader'] ?? 0) === self::READER && ($entry['mtime'] ?? 0) === $newest && ($entry['count'] ?? -1) === count($files)) {
-            $scan = $entry['scan'];
-        } else {
-            $scan = self::scan($files);
-            $cache[$key] = ['reader' => self::READER, 'mtime' => $newest, 'count' => count($files), 'scan' => $scan];
-            $options->update('minn_runtime_symbols', $cache, 'off');
+        $fingerprint = self::fingerprint($dir);
+        $names = self::namesStamp();
+        $trusted = is_array($entry) && ($entry['reader'] ?? 0) === self::READER && ($entry['names'] ?? '') === $names
+            && ($entry['fingerprint'] ?? '') === $fingerprint && time() - (int) ($entry['checked'] ?? 0) < self::FULL_CHECK_EVERY;
+        if (!$trusted) {
+            $files = self::phpFiles($dir);
+            $newest = 0;
+            foreach ($files as $file) {
+                $newest = max($newest, (int) @filemtime($file));
+            }
+            // An entry still matching the folder keeps its scan (reduced, if an older engine stored it whole); a reader change retires it.
+            $same = is_array($entry) && ($entry['reader'] ?? 0) === self::READER && ($entry['mtime'] ?? 0) === $newest && ($entry['count'] ?? -1) === count($files)
+                && (($entry['names'] ?? '') === $names || !isset($entry['names']));
+            $entry = ['reader' => self::READER, 'names' => $names, 'mtime' => $newest, 'count' => count($files), 'fingerprint' => $fingerprint, 'checked' => time(), 'scan' => self::reduced($same ? $entry['scan'] : self::scan($files))];
+            $cache[$key] = $entry;
+            self::keep($cache, $options);
         }
-        return self::verdict($scan, count($files), SymbolGap::ofLoadedFacade(MINN_ENGINE_DIR));
+        return self::verdict($entry['scan'], (int) $entry['count'], SymbolGap::ofLoadedFacade(MINN_ENGINE_DIR));
+    }
+
+    /** The cache changed this request: written once, when the request ends. */
+    private static function keep(array $cache, Options $options): void
+    {
+        if (self::$pending === null) {
+            register_shutdown_function(static function () use ($options): void {
+                $options->update('minn_runtime_symbols', self::$pending, 'off');
+            });
+        }
+        self::$pending = $cache;
+    }
+
+    /** A folder's cheap fingerprint: its own time and its top-level PHP files' newest (an update replaces the folder; a version bumps the main file). */
+    private static function fingerprint(string $dir): string
+    {
+        if (is_file($dir)) {
+            return @filemtime($dir) . ':' . @filesize($dir);
+        }
+        $newest = 0;
+        foreach (glob($dir . '/*.php') ?: [] as $file) {
+            $newest = max($newest, (int) @filemtime($file));
+        }
+        return @filemtime($dir) . ':' . $newest;
+    }
+
+    /** The reference names a reduced scan was kept against: a new interface (a WordPress update) makes every scan again. */
+    private static function namesStamp(): string
+    {
+        static $stamp = null;
+        return $stamp ??= (string) @md5_file(MINN_ENGINE_DIR . '/data/api-names.json');
+    }
+
+    /**
+     * A scan cut to the reference's own names, the only ones a verdict asks about.
+     *
+     * @param array<string, mixed> $scan
+     * @return array<string, mixed>
+     */
+    private static function reduced(array $scan): array
+    {
+        static $names = null;
+        if ($names === null) {
+            $data = (array) \Minn\Json::file(MINN_ENGINE_DIR . '/data/api-names.json', or: []);
+            $names = ['functions' => array_fill_keys(array_map(strtolower(...), (array) ($data['functions'] ?? [])), true), 'classes' => array_fill_keys(array_map(strtolower(...), (array) ($data['classes'] ?? [])), true)];
+        }
+        $in = static fn (array $list, array $set): array => array_values(array_filter($list, static fn ($name): bool => isset($set[strtolower((string) $name)])));
+        return [
+            'calls' => $in((array) ($scan['calls'] ?? []), $names['functions']),
+            'classes' => $in((array) ($scan['classes'] ?? []), $names['classes']),
+            'declaredGlobal' => array_intersect_key((array) ($scan['declaredGlobal'] ?? []), $names['functions']),
+            'declaredClasses' => array_intersect_key((array) ($scan['declaredClasses'] ?? []), $names['classes']),
+            'guarded' => array_intersect_key((array) ($scan['guarded'] ?? []), $names['functions'] + $names['classes']),
+            'truncated' => (bool) ($scan['truncated'] ?? false),
+        ];
     }
 
     /**

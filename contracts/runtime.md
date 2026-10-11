@@ -13045,3 +13045,52 @@ Left owed:
   runs.
 - Repeating an identical main query in one process: the reference splits
   the second by `wp_posts.*`, the engine by ID.
+
+## The symbol gate stops walking every plugin folder on every request (2026-10-11)
+
+Before a plugin loads, the engine checks it against a cached read of what
+it calls (`Runtime\Symbols`). Profiling the boot showed the check was most
+of the speed gap to WordPress:
+
+- To validate the cache it listed and stat'ed every PHP file in every
+  active plugin's folder: 12,239 files on a 48-plugin copy of
+  anchor.localhost.
+- It read the whole cache option on every request: 2.7 MB serialized.
+- It recomputed the engine's gap (about 4,000 functions and 380 classes
+  checked for existence) once per plugin.
+
+On that copy the gate took 623 ms of a 962 ms front page. What changed:
+
+- **An entry is trusted on a cheap fingerprint**, the folder's own time and
+  its top-level PHP files' newest, for up to five minutes. Then the folder
+  is walked again. An update replaces the folder and a version bump touches
+  the main file, so both are seen at once. An edit deep inside an existing
+  subfolder waits for the next full walk.
+- **The cache keeps only the reference's own names**, which are all a
+  verdict reads: 2.7 MB became 224 KB. A changed `data/api-names.json` (a
+  new WordPress) makes every scan again. Old entries are reduced in place
+  when their folder still matches.
+- **The cache is written once**, when the request ends, instead of once per
+  changed plugin.
+- **The gap is computed once.** Later plugins re-check only the names still
+  lacking: a name once defined stays defined.
+
+Median time to first byte, engine against WordPress on the same database:
+
+| Site | Request | Before | After | WordPress |
+|---|---|---|---|---|
+| Test site | front page | 127 ms | 110 ms | 70 ms |
+| Test site | REST posts | 118 ms | 98 ms | 66 ms |
+| Dogfood copy | front page | 477 ms | 228 ms | 124 ms |
+| Dogfood copy | REST posts | 422 ms | 177 ms | 101 ms |
+| Anchor copy | front page | 795 ms | 338 ms | 191 ms |
+| Anchor copy | REST posts | 1,101 ms | 573 ms | 309 ms |
+
+The gap is now 1.5× to 1.9×, not 1.7× to 4×. What is left, from the same
+profile:
+
+- the render (69 ms of the test site's front page);
+- the init hook (14 ms on the test site, 136 ms on the anchor copy);
+- the REST answer on the anchor copy.
+
+Loading the facade costs about 2 ms with OPcache.
