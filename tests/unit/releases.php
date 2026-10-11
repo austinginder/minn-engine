@@ -51,7 +51,7 @@ $webroot = static function (string $version): string {
     file_put_contents("{$root}/minn/.install.json", '{"park":"x"}');
     return $root;
 };
-$archive = static function (string $version, bool $engine = true): string {
+$archive = static function (string $version, bool $engine = true, array $extra = []): string {
     $file = tempnam(sys_get_temp_dir(), 'minn-zip-');
     $zip = new ZipArchive();
     $zip->open($file, ZipArchive::OVERWRITE);
@@ -60,6 +60,9 @@ $archive = static function (string $version, bool $engine = true): string {
         $zip->addFromString('minn/bin/minn', "#!/usr/bin/env php\n");
     }
     $zip->addFromString('minn/src/New.php', '<?php');
+    foreach ($extra as $name => $contents) {
+        $zip->addFromString("minn/{$name}", $contents);
+    }
     $zip->close();
     $bytes = (string) file_get_contents($file);
     unlink($file);
@@ -150,6 +153,36 @@ return [
             $done = (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), '0.2.0');
             return $done === '0.2.0' && EngineUpdate::versionOf("{$root}/minn") === '0.2.0' && is_file("{$root}/minn/src/New.php")
                 && file_get_contents("{$root}/minn/.install.json") === '{"park":"x"}' && $leftovers($root) === [] ?: json_encode(scandir($root));
+        } finally {
+            $clean($root);
+        }
+    },
+    'an update lays the webroot\'s shape files again: one still as the old engine wrote it is replaced, a missing one written, a changed one kept' => static function () use ($webroot, $archive, $clean, $public, $sign) {
+        $root = $webroot('0.1.0');
+        try {
+            $boot = "<?php\nrequire_once __DIR__ . '/minn/bootstrap.php';\n";
+            $stock = Minn\Ops\ShapeFiles::placeholder('wp-includes/class-wp-site.php');
+            $old = ['wp-settings.php' => $boot, 'wp-includes/version.php' => "<?php\n\$wp_version = '7.1.3';\n", 'wp-cli.yml' => "path: .\n"];
+            foreach ($old as $file => $contents) {
+                @mkdir(dirname("{$root}/minn/layout/{$file}"), 0755, true);
+                file_put_contents("{$root}/minn/layout/{$file}", $contents);
+                @mkdir(dirname("{$root}/{$file}"), 0755, true);
+                file_put_contents("{$root}/{$file}", $contents);
+            }
+            file_put_contents("{$root}/wp-cli.yml", "path: .\nurl: https://example.test\n");
+            file_put_contents("{$root}/wp-includes/class-wp-site.php", $stock);
+            file_put_contents("{$root}/wp-includes/mine.php", "<?php // the site's own\n");
+            $zip = $archive('0.2.0', true, [
+                'layout/wp-settings.php' => $boot,
+                'layout/wp-includes/version.php' => "<?php\n\$wp_version = '7.1.4';\n",
+                'layout/wp-cli.yml' => "path: .\nquiet: true\n",
+                'layout/wp-includes/class-wp-site.php' => "<?php\n// loader\n",
+                'data/reference-files.json' => json_encode(['wp-includes/class-wp-site.php', 'wp-includes/mine.php', 'wp-includes/version.php', 'wp-includes/added.php']),
+            ]);
+            (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), '0.2.0');
+            $read = static fn (string $file): string => (string) @file_get_contents("{$root}/{$file}");
+            $after = array_map($read, ['wp-includes/version.php', 'wp-includes/class-wp-site.php', 'wp-includes/mine.php', 'wp-includes/added.php', 'wp-cli.yml']);
+            return $after === ["<?php\n\$wp_version = '7.1.4';\n", "<?php\n// loader\n", "<?php // the site's own\n", Minn\Ops\ShapeFiles::placeholder('wp-includes/added.php'), "path: .\nurl: https://example.test\n"] ?: json_encode($after);
         } finally {
             $clean($root);
         }

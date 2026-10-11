@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 807,
+        "minn": 808,
         "composes": 2345,
         "leaf": 1022,
-        "noop": 2750,
+        "noop": 2749,
         "placeholder": 26,
         "deadend": 1719,
         "functions": 8591,
-        "minnMethods": 984,
+        "minnMethods": 985,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -74567,10 +74567,20 @@
         },
         "wp_scheduled_delete": {
             "file": "functions.php",
-            "lines": 0,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 19,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Meta::objectsBelow"
+            ],
+            "composes": [
+                "_minn_meta",
+                "delete_comment_meta",
+                "delete_post_meta",
+                "get_comment",
+                "get_post",
+                "wp_delete_comment",
+                "wp_delete_post"
+            ]
         },
         "wp_script_add_data": {
             "file": "script-loader.php",

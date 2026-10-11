@@ -331,9 +331,28 @@ function wp_ob_end_flush_all()
 }
 
 
-
+/** Deletes the posts and comments trashed more than EMPTY_TRASH_DAYS ago; a live one still holding a trash time loses it, and one whose deleting is refused keeps it for the next run. */
 function wp_scheduled_delete()
 {
+    $before = time() - DAY_IN_SECONDS * EMPTY_TRASH_DAYS;
+    foreach (_minn_meta()->objectsBelow('post', '_wp_trash_meta_time', $before) as $id) {
+        $post = get_post($id);
+        if ($post && $post->post_status === 'trash') {
+            wp_delete_post($id);
+            continue;
+        }
+        delete_post_meta($id, '_wp_trash_meta_status');
+        delete_post_meta($id, '_wp_trash_meta_time');
+    }
+    foreach (_minn_meta()->objectsBelow('comment', '_wp_trash_meta_time', $before) as $id) {
+        $comment = get_comment($id);
+        if ($comment && $comment->comment_approved === 'trash') {
+            wp_delete_comment($id);
+            continue;
+        }
+        delete_comment_meta($id, '_wp_trash_meta_status');
+        delete_comment_meta($id, '_wp_trash_meta_time');
+    }
 }
 
 

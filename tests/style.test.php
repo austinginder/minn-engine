@@ -195,7 +195,7 @@ $status = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR_
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check', $ignored, $statusStale);
 $check('compat status: contracts/api/compat-status.json is current', is_array($status) && $statusStale === 0, 'run php tests/tools/compat-status.php');
 $missingCeiling = ['functions' => 14, 'classes' => 12, 'methods' => 65];
-$verifiedFloor = ['functions' => 2931, 'classes' => 231, 'methods' => 2322];
+$verifiedFloor = ['functions' => 2932, 'classes' => 231, 'methods' => 2322];
 foreach ($missingCeiling as $group => $ceiling) {
     $check("compat status: missing {$group} stay at or under {$ceiling}", is_array($status) && ($status[$group]['missing'] ?? PHP_INT_MAX) <= $ceiling, (string) ($status[$group]['missing'] ?? '?'));
     $check("compat status: verified {$group} stay at or over {$verifiedFloor[$group]}", is_array($status) && ($status[$group]['verified'] ?? 0) >= $verifiedFloor[$group], (string) ($status[$group]['verified'] ?? '?'));

@@ -10,7 +10,7 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 350 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 308 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
@@ -279,7 +279,6 @@ prints nothing, and it names the webroot it belongs to.
 - const `RECORD_HEAD` = `'<?php return; // Minn Engine\'s install record: what `wp minn eject` puts back. ?> '`
 - const `LEGACY_RECORD` = `'.install.json'` — Where installs kept it before: read from a site's own minn/ copy, never through a shared symlink.
 - const `CORE_ENTRIES` = `array (   0 => 'wp-admin',   1 => 'wp-includes',   2 => 'index.php',   3 => 'wp-activate.php',   4 => 'wp-blog-header.php',   5 => 'wp-comments-post.php',   6 => 'wp-config-sample.php',   7 => 'wp-cron.php',   8 => 'wp-links-opml.php',   9 => 'wp-load.php',   10 => 'wp-login.php',   11 => 'wp-mail.php',   12 => 'wp-settings.php',   13 => 'wp-signup.php',   14 => 'wp-trackback.php',   15 => 'xmlrpc.php',   16 => 'license.txt',   17 => 'readme.html', )` — The files WordPress keeps at the webroot, moved aside as a set.
-- const `LAYOUT` = `array (   0 => 'index.php',   1 => 'wp-login.php',   2 => 'wp-settings.php',   3 => 'wp-cli.yml',   4 => 'wp-includes/version.php',   5 => 'wp-admin/index.php', )`
 - const `WRITTEN_TREES` = `array (   0 => 'wp-includes',   1 => 'wp-admin', )` — Webroot trees install writes (shape files + require placeholders) and eject deletes before restoring the park.
 - const `LEGACY_PUBLISHED` = `array (   0 => 'minn-admin-asset',   1 => 'minn-engine',   2 => 'wp-includes/js/jquery', )` — Leftover webroot copies from an earlier installer that published
 assets outside minn/. Eject still deletes them.
@@ -329,11 +328,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-### static `placeholder(string $file): string`
-
-The empty placeholder for one of the reference's files.
-
-Internals: `help()` (private, line 102), `writePlaceholders()` (private, line 298), `move()` (private, line 327), `copyTree()` (private, line 343), `version()` (private, line 362), `say()` (private, line 367)
+Internals: `help()` (private, line 102), `move()` (private, line 286), `copyTree()` (private, line 302), `version()` (private, line 321), `say()` (private, line 326)
 
 
 ## MaintenanceCommand

@@ -120,5 +120,30 @@ $flush();
 [, $off] = minn_test_fetch($base . '/hello-world/');
 $check('deactivated: no marks', !str_contains($off, 'minn-test-plugin'));
 
+// The gate trusts a folder's cached read on its top level for five minutes; installing, updating or activating walks it again at once.
+$gateDir = WP_PLUGIN_DIR . '/minn-gate-recheck';
+$gatePlugin = 'minn-gate-recheck/minn-gate-recheck.php';
+@mkdir($gateDir . '/inc', 0755, true);
+register_shutdown_function(static function () use ($gateDir): void {
+    foreach (['inc/a.php', 'inc/b.php', 'inc/c.php', 'minn-gate-recheck.php'] as $file) {
+        @unlink("{$gateDir}/{$file}");
+    }
+    @rmdir("{$gateDir}/inc");
+    @rmdir($gateDir);
+});
+file_put_contents("{$gateDir}/minn-gate-recheck.php", "<?php\n/*\nPlugin Name: Minn gate recheck\n*/\n");
+file_put_contents("{$gateDir}/inc/a.php", "<?php\n");
+$gateFiles = static fn (): int => Minn\Runtime\Symbols::missing($gateDir, Minn\Runtime\Runtime::options())['files'];
+$seen = [$gateFiles()];
+file_put_contents("{$gateDir}/inc/b.php", "<?php\n");
+$seen[] = $gateFiles();
+Minn\Runtime\Symbols::recheck($gateDir, Minn\Runtime\Runtime::options());
+$seen[] = $gateFiles();
+file_put_contents("{$gateDir}/inc/c.php", "<?php\n");
+$activated = activate_plugin($gatePlugin);
+$seen[] = $gateFiles();
+update_option('active_plugins', $before);
+$check('the symbol gate walks a folder again on a recheck and on activation, not only after five minutes', $activated === null && $seen === [2, 2, 3, 4], json_encode([$activated, $seen]));
+
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

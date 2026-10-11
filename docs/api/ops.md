@@ -12,12 +12,13 @@
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
-| [`EngineUpdate`](#engineupdate) | final readonly class | 135 | Replaces the running engine with a published release. The release's |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 136 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 87 | Whether a newer Minn is out, asked of the Minn update service at most |
+| [`ShapeFiles`](#shapefiles) | final class | 104 | The files an install lays at the webroot for tooling to find: the shape |
 | [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
 | [`Updates`](#updates) | final class | 436 | Update offers for the site's plugins and themes from the directory, asked |
 | [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
@@ -320,7 +321,10 @@ own). It is unpacked beside the engine into a folder of its own, where it
 is checked again: its bootstrap names the version on offer and bin/minn is
 there. Then the swap, two renames in the folder the engine lives in: the
 running engine moves aside, the new one moves in, and the old copy is
-removed; when the second rename fails the first is undone. The legacy
+removed; when the second rename fails the first is undone. The webroot's
+shape files are laid again from the new engine (ShapeFiles::refresh): one
+still as the old engine wrote it, a stock empty placeholder above all, is
+replaced, and one the site changed is left alone. The legacy
 install record (.install.json, from installs that kept it inside the
 engine) comes along. One update runs at a time. A development checkout (a
 symbolic link, or a folder under git) is refused: git owns those. The
@@ -355,7 +359,7 @@ Throws unless an archive matches the checksum its release publishes and carries 
 
 The version a bootstrap.php names; "0.0.0" when it names none.
 
-Internals: `swap()` (private, line 78), `signed()` (private, line 127), `refuseCheckout()` (private, line 153)
+Internals: `swap()` (private, line 81), `signed()` (private, line 131), `refuseCheckout()` (private, line 157)
 
 
 ## InstalledSoftware
@@ -666,6 +670,43 @@ did (when it did not, `latest` is the last answer kept).
 The release on offer: the latest one, when it is newer than the running engine.
 
 Internals: `origin()` (private, line 102)
+
+
+## ShapeFiles
+
+`final class Minn\Ops\ShapeFiles` · `public/minn/src/Minn/Ops/ShapeFiles.php`
+
+The files an install lays at the webroot for tooling to find: the shape
+files from layout/ (index.php, wp-settings.php, version.php and the rest)
+and one file for each of the reference's wp-includes and wp-admin/includes
+files, an empty placeholder or, where layout/ ships one, the engine's
+loader. An engine update lays them again from the new engine: a file still
+as the replaced engine wrote it is replaced, a missing one is written, and
+one the site changed is left alone.
+
+- const `LAYOUT` = `array (   0 => 'index.php',   1 => 'wp-login.php',   2 => 'wp-settings.php',   3 => 'wp-cli.yml',   4 => 'wp-includes/version.php',   5 => 'wp-admin/index.php', )` — The shape files copied from layout/ as they are.
+
+Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineUpdate`
+
+### static `lay(string $engineDir, string $root): array`
+
+An install: every layout file copied, and each of the reference's
+files the site lacks written (an empty placeholder found there becomes
+the loader layout/ ships for it).
+
+- `@return array{layout: int, placeholders: int} how many were written`
+
+### static `refresh(string $engineDir, string $root, string $previous): int`
+
+An update, once the new engine is in place: each file the new engine
+lays that is missing, or still as the replaced engine ($previous, its
+folder) laid it, is written from the new one.
+
+### static `placeholder(string $file): string`
+
+The empty placeholder for one of the reference's files.
+
+Internals: `boots()` (private, line 77), `wanted()` (private, line 83), `referenceFiles()` (private, line 95), `stale()` (private, line 110), `write()` (private, line 116)
 
 
 ## Unzip

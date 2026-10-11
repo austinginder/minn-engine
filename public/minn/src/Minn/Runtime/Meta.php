@@ -223,6 +223,13 @@ final readonly class Meta
         return array_map(static fn (array $r) => ['meta_id' => (int) $r['meta_id'], 'object_id' => (int) $r['object_id']], $this->db->rows($sql, $params));
     }
 
+    /** The objects whose value under the key is a number below the bound, lowest id first. @return list<int> */
+    public function objectsBelow(string $type, string $key, int $bound): array
+    {
+        [$table, $column] = $this->spec($type);
+        return array_map(static fn (array $r) => (int) $r['object_id'], $this->db->rows("SELECT DISTINCT {$column} AS object_id FROM {$table} WHERE meta_key = ? AND meta_value < ? ORDER BY {$column}", [$key, $bound]));
+    }
+
     /**
      * Deletes the given meta rows.
      *

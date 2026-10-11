@@ -14,8 +14,10 @@ namespace Minn\Runtime;
  * reference's own names (all a verdict reads). An entry is trusted while
  * the folder's fingerprint (its own time and its top-level files' newest)
  * holds, for up to FULL_CHECK_EVERY seconds; then the whole folder is
- * walked again, as an update replaces it. Walking every folder on every
- * request cost hundreds of milliseconds on a site with many plugins.
+ * walked again, as an update replaces it. Installing, updating or
+ * activating a plugin walks its folder at once (recheck()). Walking every
+ * folder on every request cost hundreds of milliseconds on a site with
+ * many plugins.
  */
 final class Symbols
 {
@@ -57,6 +59,22 @@ final class Symbols
             self::keep($cache, $options);
         }
         return self::verdict($entry['scan'], (int) $entry['count'], SymbolGap::ofLoadedFacade(MINN_ENGINE_DIR));
+    }
+
+    /**
+     * The folder is walked again at its next check instead of trusted on its
+     * fingerprint: an install, an update or an activation never waits out
+     * the window. The walk still keeps the cached read when nothing changed.
+     */
+    public static function recheck(string $dir, Options $options): void
+    {
+        $cache = self::$pending ?? (is_array($stored = $options->get('minn_runtime_symbols')) ? $stored : []);
+        $key = basename(rtrim($dir, '/'));
+        if (!is_array($cache[$key] ?? null)) {
+            return;
+        }
+        $cache[$key]['checked'] = 0;
+        self::keep($cache, $options);
     }
 
     /** The cache changed this request: written once, when the request ends. */

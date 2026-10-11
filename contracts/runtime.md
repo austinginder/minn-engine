@@ -13758,3 +13758,72 @@ new behaviour.
   - `WP_Sitemaps_Stylesheet`, whose XSL is Minn's own (D11).
 
   The site's status dialog lists the area as "Answered Minn's own way".
+
+## The scheduled trash run, the gate refreshed, shape files kept up (2026-10-11)
+
+Austin's D13, D14 and D15.
+
+**`wp_scheduled_delete()` is real** (probe `scheduled-delete`). The four old
+probe and suite posts left in the test database's trash (13, 29, 1992, 2003)
+were deleted first, so the run had only the probe's own rows to act on. The
+`content` fixture was recaptured for the two rows that counted them
+(`wp_count_posts` trash, `get_objects_in_term`). What the reference does:
+
+- A post or comment whose `_wp_trash_meta_time` is more than `EMPTY_TRASH_DAYS`
+  ago, still in the trash, is deleted, with its hooks (`before_delete_post`,
+  `delete_comment`).
+- One trashed lately is kept, with its trash meta.
+- A live one still holding an old trash time loses `_wp_trash_meta_time` and
+  `_wp_trash_meta_status`, and nothing else (`_wp_trash_meta_comments_status`
+  and `_wp_desired_post_slug` stay).
+- A trashed post with no trash time is kept.
+- A trashed post whose deletion `pre_delete_post` refuses keeps its trash meta,
+  so the next run tries it again. `before_delete_post` does not fire for it.
+- It returns nothing.
+
+The engine reads the expired ids from the meta tables
+(`Runtime\Meta::objectsBelow`). The probe leaves out the ping queue a publish
+writes on the reference (`_encloseme`, `_pingme`). Minn sends no pings:
+`_publish_post_hook` is an xmlrpc dead end.
+
+**The symbol gate is refreshed on install, update and activation** (D14).
+The five-minute trust window stays. `Symbols::recheck()` marks a folder so
+its next check walks it, instead of trusting the top-level fingerprint. The
+walk still keeps the cached read when the file count and newest time match.
+Two places call it:
+
+- `Upgrade::install`, once a package is in place. That covers every plugin
+  and theme install and update through the upgraders, Minn Admin's included.
+- `Plugins::loadNow`, the activation load.
+
+A file added deep inside an existing subfolder is no longer missed for up to
+five minutes when the plugin is then activated. The runtime suite pins this.
+
+**An engine update keeps the webroot's shape files up** (D15). The files an
+install lays now live in one place, `Ops\ShapeFiles`:
+
+- the layout files (`index.php`, `wp-settings.php`, `wp-includes/version.php`
+  and the rest);
+- a placeholder or loader for each of the reference's `wp-includes` and
+  `wp-admin/includes` files.
+
+The CLI installer calls `ShapeFiles::lay`, as before. After the swap,
+`EngineUpdate` calls `ShapeFiles::refresh` with the replaced engine's folder,
+before that folder is removed:
+
+- A file still as the old engine wrote it is written from the new engine.
+  That means a stock empty placeholder, or the old layout copy.
+- A missing file is written.
+- A file the site changed is left alone. A customised `wp-cli.yml` is the
+  usual case.
+
+Three effects:
+
+- A site installed before the network loaders existed gets them on its next
+  update.
+- A patch release's `version.php` reaches the webroot, where hosting tools
+  read it.
+- A new reference file gets its placeholder.
+
+Nothing is written unless the webroot's `wp-settings.php` boots
+`minn/bootstrap.php`. The releases unit suite pins the rules.

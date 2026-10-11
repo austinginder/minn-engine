@@ -20,7 +20,10 @@ use RuntimeException;
  * is checked again: its bootstrap names the version on offer and bin/minn is
  * there. Then the swap, two renames in the folder the engine lives in: the
  * running engine moves aside, the new one moves in, and the old copy is
- * removed; when the second rename fails the first is undone. The legacy
+ * removed; when the second rename fails the first is undone. The webroot's
+ * shape files are laid again from the new engine (ShapeFiles::refresh): one
+ * still as the old engine wrote it, a stock empty placeholder above all, is
+ * replaced, and one the site changed is left alone. The legacy
  * install record (.install.json, from installs that kept it inside the
  * engine) comes along. One update runs at a time. A development checkout (a
  * symbolic link, or a folder under git) is refused: git owns those. The
@@ -105,6 +108,7 @@ final readonly class EngineUpdate
             @unlink($file);
             Files::deleteTree($stage);
         }
+        ShapeFiles::refresh($this->engineDir, $parent, $aside);
         Files::deleteTree($aside);
         if (function_exists('opcache_reset')) {
             @opcache_reset();

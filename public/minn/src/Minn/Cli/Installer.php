@@ -7,6 +7,7 @@ namespace Minn\Cli;
 use Minn\Json;
 use Minn\Ops\EngineUpdate;
 use Minn\Ops\Releases;
+use Minn\Ops\ShapeFiles;
 use Minn\Support\Files;
 use Throwable;
 
@@ -37,7 +38,6 @@ final class Installer
         'wp-config-sample.php', 'wp-cron.php', 'wp-links-opml.php', 'wp-load.php', 'wp-login.php', 'wp-mail.php',
         'wp-settings.php', 'wp-signup.php', 'wp-trackback.php', 'xmlrpc.php', 'license.txt', 'readme.html',
     ];
-    private const LAYOUT = ['index.php', 'wp-login.php', 'wp-settings.php', 'wp-cli.yml', 'wp-includes/version.php', 'wp-admin/index.php'];
     /** Webroot trees install writes (shape files + require placeholders) and eject deletes before restoring the park. */
     private const WRITTEN_TREES = ['wp-includes', 'wp-admin'];
     /**
@@ -187,21 +187,16 @@ final class Installer
         } else {
             $this->say("Engine already at {$target}");
         }
-        foreach (self::LAYOUT as $file) {
-            $dest = "{$root}/{$file}";
-            @mkdir(dirname($dest), 0755, true);
-            copy("{$this->engineDir}/layout/{$file}", $dest);
-        }
-        $this->say('Wrote ' . implode(', ', self::LAYOUT));
-        $placeholders = $this->writePlaceholders($root);
-        $this->say("Wrote {$placeholders} require placeholders");
+        $laid = ShapeFiles::lay($this->engineDir, $root);
+        $this->say('Wrote ' . implode(', ', ShapeFiles::LAYOUT));
+        $this->say("Wrote {$laid['placeholders']} require placeholders");
         file_put_contents("{$root}/" . self::RECORD, self::RECORD_HEAD . Json::encode([
             'root' => realpath($root) ?: $root,
             'installed' => gmdate('c'),
             'engine_version' => self::version(),
             'park' => $park,
             'moved' => $moved,
-            'layout' => self::LAYOUT,
+            'layout' => ShapeFiles::LAYOUT,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
         $this->say('Installed. wp-config.php and wp-content were not touched; `minn eject` reverses this.');
         $this->say('Note: a PHP opcode cache may serve the old index.php or wp-settings.php for a few seconds (opcache.revalidate_freq); clear it if the host offers a way.');
@@ -221,7 +216,7 @@ final class Installer
             $this->say("Eject refused: parked files not found at {$park}.");
             return 1;
         }
-        foreach ((array) ($manifest['layout'] ?? self::LAYOUT) as $file) {
+        foreach ((array) ($manifest['layout'] ?? ShapeFiles::LAYOUT) as $file) {
             if (str_starts_with($file, 'wp-includes/') || str_starts_with($file, 'wp-admin/')) {
                 continue;
             }
@@ -285,42 +280,6 @@ final class Installer
         }
         $legacy = "{$root}/minn/" . self::LEGACY_RECORD;
         return !is_link("{$root}/minn") && is_file($legacy) ? (array) Json::file($legacy, or: null) : [];
-    }
-
-    /**
-     * Empty PHP files for every wp-includes/*.php and wp-admin/includes/*.php
-     * the reference has, so a plugin `require ABSPATH . 'wp-admin/includes/plugin.php'`
-     * resolves. The engine already provides the symbols; the file is the contract.
-     * A file whose class the reference loads only when asked (the network
-     * classes) is the engine's loader for it from layout/, which also replaces
-     * an empty placeholder written before it existed.
-     */
-    private function writePlaceholders(string $root): int
-    {
-        $list = $this->engineDir . '/data/reference-files.json';
-        $files = is_file($list) ? Json::file($list, or: null) : [];
-        $written = 0;
-        foreach (is_array($files) ? $files : [] as $file) {
-            if (!is_string($file) || $file === '' || str_contains($file, '..')) {
-                continue;
-            }
-            $path = "{$root}/{$file}";
-            $loader = "{$this->engineDir}/layout/{$file}";
-            $stock = self::placeholder($file);
-            if (file_exists($path) && !(is_file($loader) && file_get_contents($path) === $stock)) {
-                continue;
-            }
-            @mkdir(dirname($path), 0755, true);
-            is_file($loader) ? copy($loader, $path) : file_put_contents($path, $stock);
-            $written++;
-        }
-        return $written;
-    }
-
-    /** The empty placeholder for one of the reference's files. */
-    public static function placeholder(string $file): string
-    {
-        return "<?php\n// Minn Engine placeholder for the reference's {$file}: the engine provides these symbols itself, so a plugin that requires this file gets nothing and continues.\n";
     }
 
     /** rename() first; copy+remove when the park is on another filesystem. */

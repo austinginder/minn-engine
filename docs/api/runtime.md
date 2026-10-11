@@ -43,7 +43,7 @@ the WordPress runtime plugins load against
 | [`Interactivity`](#interactivity) | final class | 522 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
-| [`Meta`](#meta) | final readonly class | 230 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
+| [`Meta`](#meta) | final readonly class | 237 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
 | [`MetaKeys`](#metakeys) | final class | 184 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
 | [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
@@ -61,7 +61,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 268 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -90,7 +90,7 @@ the WordPress runtime plugins load against
 | [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 104 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 338 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`Symbols`](#symbols) | final class | 354 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
@@ -105,7 +105,7 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 179 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 150 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 31 | The updates waiting, as wp_get_update_data counts them for the user |
-| [`Upgrade`](#upgrade) | final class | 347 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
+| [`Upgrade`](#upgrade) | final class | 349 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 115 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
@@ -1967,6 +1967,12 @@ The rows a delete would take: by key, for one object or all, optionally only a s
 
 - `@return list<array{meta_id: int, object_id: int}>`
 
+### `objectsBelow(string $type, string $key, int $bound): array`
+
+The objects whose value under the key is a number below the bound, lowest id first. @return list<int>
+
+- `@return list<int>`
+
 ### `deleteRows(string $type, array $ids): void`
 
 Deletes the given meta rows.
@@ -2714,14 +2720,15 @@ The plugins the symbol gate refused, with what they lacked.
 Loads one plugin's main file now, as activating it does: the reference
 includes the file (once) before activate_plugin fires, so the plugin's
 activation hook is in place to hear activate_<file>, and announces no
-plugin_loaded for it. The same gate as the boot decides; null once the
-plugin is running, otherwise why the gate refused it.
+plugin_loaded for it. The same gate as the boot decides, its folder
+walked again first; null once the plugin is running, otherwise why the
+gate refused it.
 
 ### static `isLoaded(string $plugin): bool`
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 154), `rememberThemeDomain()` (private, line 177), `includeFile()` (private, line 237), `registerRealpath()` (private, line 268), `isolatedInclude()` (private, line 281)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 154), `rememberThemeDomain()` (private, line 177), `includeFile()` (private, line 239), `registerRealpath()` (private, line 270), `isolatedInclude()` (private, line 283)
 
 
 ## PostData
@@ -4483,15 +4490,17 @@ The read is cached in the minn_runtime_symbols option, keeping only the
 reference's own names (all a verdict reads). An entry is trusted while
 the folder's fingerprint (its own time and its top-level files' newest)
 holds, for up to FULL_CHECK_EVERY seconds; then the whole folder is
-walked again, as an update replaces it. Walking every folder on every
-request cost hundreds of milliseconds on a site with many plugins.
+walked again, as an update replaces it. Installing, updating or
+activating a plugin walks its folder at once (recheck()). Walking every
+folder on every request cost hundreds of milliseconds on a site with
+many plugins.
 
 - const `MAX_FILES` = `6000`
 - const `SKIP_DIRS` = `array (   0 => 'node_modules',   1 => 'tests',   2 => 'test',   3 => '.git', )`
 - const `READER` = `3` — Bumped whenever the token reader changes, so every cached scan is made again.
 - const `FULL_CHECK_EVERY` = `300` — How long a cached entry is trusted on its fingerprint alone before the folder is walked again.
 
-Used by: `Minn\Runtime\Plugins`
+Used by: `Minn\Runtime\Plugins`, `Minn\Runtime\Upgrade`
 
 
 ### static `missing(string $dir, Minn\Runtime\Options $options): array`
@@ -4499,6 +4508,12 @@ Used by: `Minn\Runtime\Plugins`
 What a plugin folder needs that the runtime lacks, cached by mtime.
 
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
+
+### static `recheck(string $dir, Minn\Runtime\Options $options): void`
+
+The folder is walked again at its next check instead of trusted on its
+fingerprint: an install, an update or an activation never waits out
+the window. The walk still keeps the cached read when nothing changed.
 
 ### static `redeclaresIn(string $file): array`
 
@@ -4514,7 +4529,7 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
 
-Internals: `keep()` (private, line 63), `fingerprint()` (private, line 74), `namesStamp()` (private, line 87), `reduced()` (private, line 99), `verdict()` (private, line 148), `phpFiles()` (private, line 182), `scan()` (private, line 216), `scanTokens()` (private, line 235), `noteName()` (private, line 310), `significant()` (private, line 345)
+Internals: `keep()` (private, line 81), `fingerprint()` (private, line 92), `namesStamp()` (private, line 105), `reduced()` (private, line 117), `verdict()` (private, line 166), `phpFiles()` (private, line 200), `scan()` (private, line 234), `scanTokens()` (private, line 253), `noteName()` (private, line 328), `significant()` (private, line 363)
 
 
 ## TagEditor
@@ -5232,8 +5247,9 @@ and the skin closed. False when the filesystem cannot be reached.
 WP_Upgrader::install_package: the unpacked folder chosen (its one
 folder, or the working folder when it holds several things), offered
 to upgrader_pre_install and upgrader_source_selection, the destination
-cleared or refused when something is there, the folder moved in, and
-the result offered to upgrader_post_install.
+cleared or refused when something is there, the folder moved in (and
+walked by the symbol gate at its next check), and the result offered
+to upgrader_post_install.
 
 ### static `unpack(WP_Upgrader $upgrader, string $package): WP_Error|string`
 
@@ -5254,7 +5270,7 @@ Maintenance mode on, as a bulk update of active plugins turns it on: the .mainte
 
 Maintenance mode off; said only when it was on.
 
-Internals: `destinationFor()` (private, line 236), `clearOrRefuse()` (private, line 245), `move()` (private, line 266), `copyInto()` (private, line 277), `report()` (private, line 291), `setAside()` (private, line 309), `putBack()` (private, line 322), `forget()` (private, line 334), `backedUp()` (private, line 343), `listing()` (private, line 360)
+Internals: `destinationFor()` (private, line 238), `clearOrRefuse()` (private, line 247), `move()` (private, line 268), `copyInto()` (private, line 279), `report()` (private, line 293), `setAside()` (private, line 311), `putBack()` (private, line 324), `forget()` (private, line 336), `backedUp()` (private, line 345), `listing()` (private, line 362)
 
 
 ## UserEvents

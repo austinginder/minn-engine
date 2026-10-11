@@ -129,8 +129,9 @@ final class Upgrade
      * WP_Upgrader::install_package: the unpacked folder chosen (its one
      * folder, or the working folder when it holds several things), offered
      * to upgrader_pre_install and upgrader_source_selection, the destination
-     * cleared or refused when something is there, the folder moved in, and
-     * the result offered to upgrader_post_install.
+     * cleared or refused when something is there, the folder moved in (and
+     * walked by the symbol gate at its next check), and the result offered
+     * to upgrader_post_install.
      */
     public static function install(\WP_Upgrader $upgrader, array $args): array|\WP_Error
     {
@@ -166,6 +167,7 @@ final class Upgrade
         if ($placed instanceof \WP_Error) {
             return $placed;
         }
+        Symbols::recheck($remote, Runtime::options());
         if ($args['clear_working'] && is_dir($working)) {
             Files::deleteTree($working);
         }

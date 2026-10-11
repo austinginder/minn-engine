@@ -206,13 +206,15 @@ final class Plugins
      * Loads one plugin's main file now, as activating it does: the reference
      * includes the file (once) before activate_plugin fires, so the plugin's
      * activation hook is in place to hear activate_<file>, and announces no
-     * plugin_loaded for it. The same gate as the boot decides; null once the
-     * plugin is running, otherwise why the gate refused it.
+     * plugin_loaded for it. The same gate as the boot decides, its folder
+     * walked again first; null once the plugin is running, otherwise why the
+     * gate refused it.
      */
     public static function loadNow(string $plugin, Runtime $runtime): ?string
     {
         if (!self::isLoaded($plugin)) {
             unset(self::$skipped[$plugin]);
+            Symbols::recheck($runtime->contentDir() . '/plugins/' . (str_contains($plugin, '/') ? dirname($plugin) : $plugin), Runtime::options());
             self::includeFile($runtime->contentDir() . '/plugins/' . $plugin, $plugin, $runtime);
         }
         $why = self::$skipped[$plugin] ?? null;
