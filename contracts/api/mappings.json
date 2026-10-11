@@ -4,11 +4,11 @@
     "summary": {
         "minn": 800,
         "composes": 2374,
-        "leaf": 1041,
+        "leaf": 1042,
         "noop": 2757,
         "placeholder": 2,
         "deadend": 1768,
-        "functions": 8664,
+        "functions": 8665,
         "minnMethods": 992,
         "leafLinesOver15": 12
     },
@@ -37261,6 +37261,13 @@
                 "is_post_type_hierarchical",
                 "is_singular"
             ]
+        },
+        "_minn_load_ai_client": {
+            "file": "ai-client.php",
+            "lines": 8,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "_minn_load_from_folder": {
             "file": "l10n.php",

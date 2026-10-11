@@ -14086,3 +14086,59 @@ The engine fired the action regardless. It now checks the filter first.
 
 Not probed: block style variations in the tree writer, and a
 classic theme's `base-layout-styles`.
+
+## The AI client, part one: the adapters (2026-10-11)
+
+Austin's D5: a clean-room AI client. On the reference, core registers no AI
+providers: `wp_ai_client_prompt('Hello')->generate_text()` answers
+`prompt_invalid_argument`, "No models found that support text_generation for
+this prompt." Providers are plugins built on the bundled SDK. Its namespaced
+classes are outside the coverage count. WordPress's adapters around it are
+inside it. This batch makes the four adapters real (probe
+`ai-client-adapters`). The prompt builder, the abilities resolver and
+`wp_ai_client_prompt()` are next.
+
+Everything lives in `wp-api/ai-client/` and loads the first time anything
+names a `WordPress\AiClient…` or `WP_AI_Client_…` class (`wp-api/ai-client.php`):
+
+- **`Psr.php`:** the PHP-FIG interfaces under the reference's prefix,
+  written from the published standards (PSR-7, 14, 16, 17 and 18, and the
+  discovery strategy contract).
+- **`Psr7.php`:** immutable requests, responses, streams, URIs, server
+  requests and uploaded files, and the PSR-17 factory, under Nyholm's names.
+  A request takes its Host header from its URI, first among its headers.
+- **`Sdk.php`:** the SDK pieces the adapters touch:
+  - the exception contract, and `RuntimeException`;
+  - the data-object base;
+  - `RequestOptions` (timeout, connect timeout, redirect limit; `toArray`
+    keeps only what was set; `allowsRedirects()` is null until a limit is
+    given);
+  - `NetworkException`, and the client-with-options contract;
+  - the PSR-18 discovery and the abstract client discovery strategy.
+- **`Adapters.php`:** the four WordPress classes, described below.
+
+What the reference does, and the engine now does:
+
+- **`WP_AI_Client_Cache`** sits over the object cache's `wp_ai_client` group.
+  - A stored null or false is found as stored.
+  - A TTL passes through as seconds; an interval becomes its length from
+    now. Zero or negative is not a delete.
+  - `getMultiple` takes any iterable, and `setMultiple` takes generators.
+  - `deleteMultiple` is false if any key was missing.
+  - `clear()` flushes the group.
+- **`WP_AI_Client_Event_Dispatcher`** fires
+  `wp_ai_client_{short class name, snake case, a trailing "Event" dropped}`
+  with the event, and hands the event back. `HTTPRequestSentEvent` becomes
+  `httprequest_sent` and `stdClass` becomes `std_class`.
+- **`WP_AI_Client_HTTP_Client`** goes through `wp_safe_remote_request`.
+  - It passes the request's method, headers (joined by `, `), body (null when
+    empty) and protocol version. The options add the timeout and the redirect
+    limit; the connect timeout has no HTTP API counterpart.
+  - The answer becomes a PSR-7 response with the status, reason, headers and
+    body.
+  - A failure throws `NetworkException`: "Network error occurred while
+    sending {METHOD} request to {url}: {message}", code 0. It is not a PSR
+    client exception.
+- **`WP_AI_Client_Discovery_Strategy`** offers, for the PSR-18 client
+  interface, one candidate: a closure that makes `WP_AI_Client_HTTP_Client`
+  over a PSR-17 factory. Any other type gets none.
