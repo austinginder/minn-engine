@@ -1767,10 +1767,13 @@ function wp_get_missing_image_subsizes($attachment_id)
     if (!is_array($meta) || empty($meta['width']) || empty($meta['height'])) {
         return [];
     }
+    // An image kept beside its original is measured by the original (probe rest-attachments-sideload).
+    $original = empty($meta['original_image']) ? false : wp_getimagesize((string) wp_get_original_image_path((int) $attachment_id));
+    [$width, $height] = $original ? [(int) $original[0], (int) $original[1]] : [(int) $meta['width'], (int) $meta['height']];
     $have = array_keys((array) ($meta['sizes'] ?? []));
     $missing = [];
     foreach (_minn_image_sizes() as $name => $size) {
-        $fits = (int) $size['width'] < (int) $meta['width'] || (int) $size['height'] < (int) $meta['height'];
+        $fits = (int) $size['width'] < $width || (int) $size['height'] < $height;
         if (!in_array($name, $have, true) && $fits && (int) $size['width'] > 0) {
             $missing[$name] = $size;
         }

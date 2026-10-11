@@ -12456,3 +12456,83 @@ Owed:
   routes.
 - A network's upload space check in `check_upload_size`.
 - `WP_Image_Editor_Imagick`.
+
+## Client-side media processing: sideload and finalize (2026-10-11)
+
+Probe `rest-attachments-sideload` proves the rest of
+`WP_REST_Attachments_Controller`: the sizes, original, scaled image and
+source a browser makes, sideloaded into an attachment and then finalized.
+Its fixtures are an author, an image without sizes and one with them. All
+of it is removed again, files and records included.
+
+- **Route arguments** (registered over HTTPS).
+  - `image_size` takes one name (a registered size, or `original`,
+    `scaled`, `full` or `source_original`) or a list of registered names.
+    A special name inside a list is `rest_not_in_enum`, and so is a list
+    with a number in it. Anything else is `rest_invalid_type`.
+  - `sub_sizes` checks each entry's `image_size` the same way, naming its
+    place (`sub_sizes[1][image_size]`). It does not apply the schema's
+    pattern or limits.
+- **Permissions**: uploading, then editing the attachment (as for an
+  edit).
+- **`sideload_item`**, in order:
+  - **Refusals before upload.** A missing attachment (404), even when the
+    size is unknown, then no data.
+  - **The file** is uploaded beside the attachment's own
+    (`get_attachment_upload_subdir`).
+  - **Sizes.** An unknown size name is refused. Each registered size's
+    width and height must be within one pixel of its maximum: smaller is
+    fine, a crop size included, and a height of 0 sets no limit. A refused
+    file is deleted.
+  - **What it records.**
+    - A size records its name in `_wp_sideloaded_file` and answers its
+      size, dimensions, name, type and file size.
+    - The string `scaled` or `original` becomes the attached file. It
+      records the new path and the name before it, and answers that name
+      as `original_image` with the path.
+    - `source_original` records its name and answers only that.
+    - A list with a special name in it counts as plain sizes.
+- **Names.**
+  - `wp_unique_filename` gives a name that reads like an image's size
+    (ending in `-150x150`, `-scaled` or `-rotated`, case as written, any
+    file type) a number even when the name is free. The engine didn't.
+  - A sideload takes the number back when the name is the attachment's
+    own name plus such an ending and the plain name is free. After an
+    `original` sideload, the attachment's own name is the new file's.
+- **`get_sideloaded_file_names`** lists:
+  - the names sideloads recorded (with provenance);
+  - then the attached file and the metadata's file, each as a path and a
+    name;
+  - then the original and source images, and the sizes' files, without
+    repeats.
+- **`validate_sub_size_provenance`** refuses a file or `original_image`
+  that is not among those names (`rest_invalid_sub_size_file`). It skips
+  entries that are not objects.
+- **`get_attachment_upload_subdir`** is the folder under uploads with a
+  leading slash, `""` at the top, and null outside uploads.
+- **`finalize_item`**, in order:
+  - **Refusals.** A missing attachment, then names not sideloaded.
+  - **What each entry does.**
+    - Each size goes into the metadata under each of its names (`full`
+      among them), stored with its width, height, file, MIME type and
+      file size.
+    - `scaled` replaces the image's width, height, file and file size,
+      and names `original_image`.
+    - `source_original` sets `source_image`.
+    - `original` entries are passed over.
+  - **Then.** `wp_generate_attachment_metadata` runs (context `update`),
+    the metadata is stored, the records of the names used are dropped,
+    and the answer is the edit view.
+
+Fixed on the way:
+- `wp_get_missing_image_subsizes` measures an image that keeps an
+  original by the original's real dimensions.
+- The media shape's `filename` is the original's name when there is one.
+- Its full size is a size stored as `full` when there is one, else the
+  attached file.
+- `MediaObject` reads the stored metadata whole (the regex reader dropped
+  `original_image` and the rest).
+
+Still owed: the engine's own `post-process`, `edit`, `sideload` and
+`finalize` routes (the class answers them when a plugin registers them).
+`convert_format` on a sideload is accepted but not applied.

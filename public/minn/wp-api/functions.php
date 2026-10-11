@@ -300,7 +300,9 @@ function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
         // The callback is handed the whole file name and the extension (probe functions-remaining).
         $candidate = (string) call_user_func($unique_filename_callback, $dir, $filename, $ext);
     } else {
-        $candidate = $name . strtolower($ext);
+        // A name that reads like a size of an image (-150x150, -scaled, -rotated) takes a number even when it is free (probe rest-attachments-sideload).
+        $number = preg_match('/-(?:\d+x\d+|scaled|rotated)$/', $name) === 1 ? 1 : '';
+        $candidate = $name . ($number === '' ? '' : '-' . $number) . strtolower($ext);
         while (file_exists($dir . '/' . $candidate)) {
             $number = $number === '' ? 1 : $number + 1;
             $candidate = $name . '-' . $number . strtolower($ext);

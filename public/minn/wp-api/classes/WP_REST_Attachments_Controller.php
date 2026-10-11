@@ -11,8 +11,8 @@ require_once __DIR__ . '/WP_REST_Posts_Controller.php';
  * extend or call. Uploads and edits of an attachment's fields go through
  * the engine's media routes, so the class saves exactly as the REST API
  * does; the image edit, the sizes made afterwards and the upload helpers
- * are WordPress-shaped here. The client-side processing endpoints
- * (sideload and finalize) are still owed.
+ * are WordPress-shaped here, as are the client-side processing endpoints
+ * (sideload and finalize).
  */
 class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
 {
@@ -49,7 +49,7 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
             'permission_callback' => [$this, 'sideload_item_permissions_check'],
             'args' => [
                 'id' => $id,
-                'image_size' => ['description' => __('Image size. Can be a single size name or an array of size names to register the same file under multiple sizes.')] + $sizes + ['required' => true, 'validate_callback' => static fn ($value, $request, $param) => rest_validate_request_arg($value, $request, $param)],
+                'image_size' => ['description' => __('Image size. Can be a single size name or an array of size names to register the same file under multiple sizes.')] + $sizes + ['required' => true, 'validate_callback' => static fn ($value, $request, $param) => self::validate_image_size_names($value, $param)],
                 'convert_format' => ['type' => 'boolean', 'default' => true, 'description' => __('Whether to convert image formats.')],
             ],
         ]);
@@ -60,7 +60,7 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
             'permission_callback' => [$this, 'edit_media_item_permissions_check'],
             'args' => [
                 'id' => $id,
-                'sub_sizes' => ['description' => __('Array of sub-size metadata collected from sideload responses.'), 'type' => 'array', 'default' => [], 'maxItems' => 100, 'validate_callback' => static fn ($value, $request, $param) => rest_validate_request_arg($value, $request, $param), 'items' => ['type' => 'object', 'properties' => $sub_size]],
+                'sub_sizes' => ['description' => __('Array of sub-size metadata collected from sideload responses.'), 'type' => 'array', 'default' => [], 'maxItems' => 100, 'validate_callback' => static fn ($value, $request, $param) => self::minn_sub_sizes_checked($value, $param), 'items' => ['type' => 'object', 'properties' => $sub_size]],
             ],
         ]);
     }
@@ -511,38 +511,229 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
 
     public function sideload_item_permissions_check($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::sideload_item_permissions_check');
+        return $this->edit_media_item_permissions_check($request);
+    }
+
+    /**
+     * A size the browser made, sideloaded into the attachment (probe
+     * rest-attachments-sideload): beside the attachment's file, under the
+     * name asked for (one that reads like one of its own sizes keeps it
+     * while it is free); then the size names known and each size's
+     * dimensions within one pixel of its maximum, the file removed when
+     * not. A size is recorded by name for finalize; "scaled" or "original"
+     * becomes the attached file, the one before it recorded too;
+     * "source_original" is recorded alone.
+     */
+    public function sideload_item(WP_REST_Request $request)
+    {
+        $attachment_id = (int) $request['id'];
+        $post = get_post($attachment_id);
+        if (!$post || $post->post_type !== 'attachment') {
+            return new WP_Error('rest_post_invalid_id', __('Invalid post ID.'), ['status' => 404]);
+        }
+        $file = $this->minn_sideloaded_file($request, (string) get_attached_file($attachment_id));
+        if (is_wp_error($file)) {
+            return $file;
+        }
+        $size = $request['image_size'];
+        $refused = $this->minn_size_refusal($size, $file['file']);
+        if ($refused !== null) {
+            wp_delete_file($file['file']);
+            return $refused;
+        }
+        return rest_ensure_response($this->minn_sideload_recorded($attachment_id, $size, $file));
+    }
+
+    /** @internal the request's file uploaded beside the attachment's own, its name kept when it reads like one of the attachment's sizes and is free */
+    private function minn_sideloaded_file(WP_REST_Request $request, string $attached)
+    {
+        $base = pathinfo($attached, PATHINFO_FILENAME);
+        $keep = static function ($filename, $ext, $dir, $callback, $alternatives, $number) use ($base) {
+            $plain = $number === '' || $number === null ? null : preg_replace('/-' . preg_quote((string) $number, '/') . '(\.[^.]*)?$/', '$1', (string) $filename);
+            $stem = $plain === null ? '' : (string) preg_replace('/-(?:\d+x\d+|scaled|rotated)$/', '', pathinfo($plain, PATHINFO_FILENAME));
+            return $plain !== null && $stem === $base && !file_exists($dir . '/' . $plain) ? $plain : $filename;
+        };
+        $folder = $this->get_attachment_upload_subdir($attached);
+        $beside = static fn (array $dirs) => $folder === null ? $dirs : array_merge($dirs, ['subdir' => $folder, 'path' => $dirs['basedir'] . $folder, 'url' => $dirs['baseurl'] . $folder]);
+        add_filter('wp_unique_filename', $keep, 10, 6);
+        add_filter('upload_dir', $beside);
+        $files = $request->get_file_params();
+        $file = !empty($files) ? $this->upload_from_file($files, $request->get_headers()) : $this->upload_from_data($request->get_body(), $request->get_headers());
+        remove_filter('wp_unique_filename', $keep, 10);
+        remove_filter('upload_dir', $beside);
+        return $file;
+    }
+
+    /** @internal why a sideloaded file cannot be taken for the sizes named: an unknown name, or dimensions past a size's maximum by more than a pixel */
+    private function minn_size_refusal($size, string $path): ?WP_Error
+    {
+        $registered = wp_get_registered_image_subsizes();
+        $known = array_merge(array_keys($registered), ['original', 'scaled', 'full', 'source_original']);
+        $names = (array) $size;
+        if ($names === [] || array_diff($names, $known) !== []) {
+            return new WP_Error('rest_upload_unknown_size', __('Unknown image size.'), ['status' => 400]);
+        }
+        $dimensions = wp_getimagesize($path);
+        foreach (array_intersect($names, array_keys($registered)) as $name) {
+            foreach (['width' => 0, 'height' => 1] as $side => $at) {
+                $max = (int) $registered[$name][$side];
+                if ($max > 0 && (int) ($dimensions[$at] ?? 0) > $max + 1) {
+                    /* translators: 1: The image's width or height, 2: Image size name, 3: The size's maximum. */
+                    return new WP_Error('rest_upload_dimension_mismatch', sprintf($side === 'width' ? __('Uploaded image width (%1$d) exceeds maximum for "%2$s" size (%3$d).') : __('Uploaded image height (%1$d) exceeds maximum for "%2$s" size (%3$d).'), (int) $dimensions[$at], $name, $max), ['status' => 400]);
+                }
+            }
+        }
         return null;
     }
 
-    public function sideload_item(WP_REST_Request $request)
+    /** @internal a sideloaded file recorded for finalize, and the answer that describes it */
+    private function minn_sideload_recorded(int $attachment_id, $size, array $file): array
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::sideload_item');
-        return null;
+        $name = wp_basename($file['file']);
+        if ($size === 'source_original') {
+            add_post_meta($attachment_id, self::META_KEY_SIDELOAD_FILE_NAME, $name);
+            return ['image_size' => $size, 'file' => $name];
+        }
+        $dimensions = wp_getimagesize($file['file']);
+        if ($size === 'scaled' || $size === 'original') {
+            $before = wp_basename((string) get_attached_file($attachment_id));
+            $relative = _wp_relative_upload_path($file['file']);
+            update_attached_file($attachment_id, $file['file']);
+            add_post_meta($attachment_id, self::META_KEY_SIDELOAD_FILE_NAME, $relative);
+            add_post_meta($attachment_id, self::META_KEY_SIDELOAD_FILE_NAME, $before);
+            return ['image_size' => $size, 'original_image' => $before, 'width' => (int) $dimensions[0], 'height' => (int) $dimensions[1], 'filesize' => (int) wp_filesize($file['file']), 'file' => $relative];
+        }
+        add_post_meta($attachment_id, self::META_KEY_SIDELOAD_FILE_NAME, $name);
+        return ['image_size' => $size, 'width' => (int) $dimensions[0], 'height' => (int) $dimensions[1], 'file' => $name, 'mime_type' => $file['type'], 'filesize' => (int) wp_filesize($file['file'])];
+    }
+
+    /** The image_size argument's check: one name, a special one included, or a list of registered names. */
+    private static function validate_image_size_names($value, string $param)
+    {
+        $registered = array_keys(wp_get_registered_image_subsizes());
+        if (is_string($value)) {
+            $names = [$value];
+            $registered = array_merge($registered, ['original', 'scaled', 'full', 'source_original']);
+        } elseif (is_array($value)) {
+            $names = $value;
+        } else {
+            /* translators: %s: Parameter name. */
+            return new WP_Error('rest_invalid_type', sprintf(__('%s must be a string or an array of strings.'), $param));
+        }
+        foreach ($names as $name) {
+            if (!in_array($name, $registered, true)) {
+                /* translators: %s: Parameter name. */
+                return new WP_Error('rest_not_in_enum', sprintf(__('%s contains an invalid image size.'), $param));
+            }
+        }
+        return true;
+    }
+
+    /** @internal the sub_sizes argument's check: each entry's image_size, named by its place */
+    private static function minn_sub_sizes_checked($value, string $param)
+    {
+        foreach ((array) $value as $index => $sub_size) {
+            $checked = self::validate_image_size_names(is_array($sub_size) ? ($sub_size['image_size'] ?? null) : null, "{$param}[{$index}][image_size]");
+            if (is_wp_error($checked)) {
+                return $checked;
+            }
+        }
+        return true;
     }
 
     protected function validate_sub_size_provenance(int $attachment_id, array $sub_sizes)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::validate_sub_size_provenance');
-        return null;
+        // Every file and original image named must be one a sideload made for the attachment, or one of its own.
+        $names = $this->get_sideloaded_file_names($attachment_id);
+        foreach ($sub_sizes as $sub_size) {
+            foreach (is_array($sub_size) ? ['file', 'original_image'] : [] as $key) {
+                if (isset($sub_size[$key]) && !in_array($sub_size[$key], $names, true)) {
+                    return new WP_Error('rest_invalid_sub_size_file', __('Invalid sub-size file name. File names must have been produced by a prior sideload for this attachment.'), ['status' => 400]);
+                }
+            }
+        }
+        return true;
     }
 
     protected function get_sideloaded_file_names(int $attachment_id, bool $include_provenance = true): array
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_sideloaded_file_names');
-        return [];
+        // The names sideloads recorded, then the attached file and the metadata's file (each as a path and a name), its original and source images, and its sizes.
+        $names = $include_provenance ? array_map('strval', get_post_meta($attachment_id, self::META_KEY_SIDELOAD_FILE_NAME)) : [];
+        $meta = wp_get_attachment_metadata($attachment_id);
+        $meta = is_array($meta) ? $meta : [];
+        foreach ([(string) get_post_meta($attachment_id, '_wp_attached_file', true), (string) ($meta['file'] ?? '')] as $file) {
+            array_push($names, ...($file === '' ? [] : [$file, wp_basename($file)]));
+        }
+        $names = array_merge($names, array_filter([$meta['original_image'] ?? null, $meta['source_image'] ?? null]), array_filter(array_column((array) ($meta['sizes'] ?? []), 'file')));
+        return array_values(array_unique($names));
     }
 
     protected function get_attachment_upload_subdir(string $attached_file): ?string
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::get_attachment_upload_subdir');
-        return null;
+        // The folder under uploads a file lies in ("" at the top), or null for one outside it.
+        $basedir = wp_get_upload_dir()['basedir'];
+        if (!str_starts_with($attached_file, $basedir . '/')) {
+            return null;
+        }
+        $subdir = dirname(substr($attached_file, strlen($basedir)));
+        return $subdir === '/' ? '' : $subdir;
     }
 
+    /**
+     * The sideloaded files made the attachment's (probe
+     * rest-attachments-sideload): once they are known to be its, each size
+     * goes into the metadata under each of its names, "scaled" becomes the
+     * image itself with its original named, "source_original" is the
+     * source image ("original" is passed over); then
+     * wp_generate_attachment_metadata (context update), the metadata
+     * stored, the records of the files used dropped, and its edit view.
+     */
     public function finalize_item(WP_REST_Request $request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Attachments_Controller::finalize_item');
-        return null;
+        $attachment_id = (int) $request['id'];
+        $post = get_post($attachment_id);
+        if (!$post || $post->post_type !== 'attachment') {
+            return new WP_Error('rest_post_invalid_id', __('Invalid post ID.'), ['status' => 404]);
+        }
+        $sub_sizes = (array) $request['sub_sizes'];
+        $valid = $this->validate_sub_size_provenance($attachment_id, $sub_sizes);
+        if (is_wp_error($valid)) {
+            return $valid;
+        }
+        $meta = wp_get_attachment_metadata($attachment_id);
+        [$meta, $used] = $this->minn_finalized_meta(is_array($meta) ? $meta : [], $sub_sizes);
+        $meta = apply_filters('wp_generate_attachment_metadata', $meta, $attachment_id, 'update');
+        wp_update_attachment_metadata($attachment_id, $meta);
+        foreach ($used as $name) {
+            delete_post_meta($attachment_id, self::META_KEY_SIDELOAD_FILE_NAME, $name);
+        }
+        $request->set_param('context', 'edit');
+        return rest_ensure_response($this->prepare_item_for_response(get_post($attachment_id), $request));
+    }
+
+    /** @internal the metadata with the sub sizes in it, and the sideloaded names they used */
+    private function minn_finalized_meta(array $meta, array $sub_sizes): array
+    {
+        $used = [];
+        foreach (array_filter($sub_sizes, static fn ($sub_size) => is_array($sub_size) && ($sub_size['image_size'] ?? null) !== 'original') as $sub_size) {
+            $size = $sub_size['image_size'] ?? null;
+            $used[] = $sub_size['file'] ?? '';
+            if ($size === 'scaled') {
+                $meta = array_replace($meta, array_intersect_key($sub_size, array_flip(['width', 'height', 'file', 'filesize'])), ['original_image' => $sub_size['original_image'] ?? '']);
+                $used[] = $sub_size['original_image'] ?? '';
+            } elseif ($size === 'source_original') {
+                $meta['source_image'] = $sub_size['file'] ?? '';
+            } else {
+                $meta['sizes'] = array_replace((array) ($meta['sizes'] ?? []), array_fill_keys((array) $size, self::minn_size_entry($sub_size)));
+            }
+        }
+        return [$meta, $used];
+    }
+
+    /** @internal one sideloaded size as the metadata stores it */
+    private static function minn_size_entry(array $sub_size): array
+    {
+        return array_filter(['width' => $sub_size['width'] ?? null, 'height' => $sub_size['height'] ?? null, 'file' => $sub_size['file'] ?? null, 'mime-type' => $sub_size['mime_type'] ?? null, 'filesize' => $sub_size['filesize'] ?? null], static fn ($value) => $value !== null);
     }
 
     /** @internal one of the engine's media routes run for this request; its answer, or its error as a WP_Error */

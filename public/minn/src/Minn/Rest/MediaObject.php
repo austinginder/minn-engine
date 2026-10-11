@@ -8,7 +8,6 @@ use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\Texturize;
 use Minn\Front\Permalinks;
-use Minn\Media\Metadata;
 use Minn\Media\Uploads;
 use Minn\Support\Serialized;
 
@@ -43,7 +42,8 @@ final readonly class MediaObject
     {
         $edit = $context->isEdit();
         $id = $p->id;
-        $meta = Metadata::parse($this->posts->meta($id, '_wp_attachment_metadata'));
+        $meta = Serialized::decode((string) ($this->posts->meta($id, '_wp_attachment_metadata') ?? ''));
+        $meta = is_array($meta) ? $meta : null;
         $file = $this->posts->meta($id, '_wp_attached_file') ?? '';
         $alt = $this->posts->meta($id, '_wp_attachment_image_alt') ?? '';
         $fullUrl = $file === '' ? '' : $this->uploads->urlFor($file);
@@ -80,16 +80,17 @@ final readonly class MediaObject
         $object['alt_text'] = $alt;
         $object['media_type'] = $isImage ? 'image' : 'file';
         $object['mime_type'] = $p->mimeType;
-        $object['media_details'] = $this->details($id, $p->mimeType);
+        $object['media_details'] = $meta === null ? new \stdClass() : $this->details($meta, $p->mimeType, $file);
         $object['post'] = $p->parentId > 0 ? $p->parentId : null;
         $object['source_url'] = $fullUrl;
         if ($edit) {
             // The registered sizes the image lacks, as the runtime counts them (wp_get_missing_image_subsizes).
             $object['missing_image_sizes'] = $isImage && \function_exists('_minn_missing_image_size_names') ? \_minn_missing_image_size_names($id) : [];
         }
-        $object['filename'] = basename($file);
+        // The original image's name when the image keeps one beside it.
+        $object['filename'] = (string) ($meta['original_image'] ?? '') !== '' ? basename((string) $meta['original_image']) : basename($file);
         $path = $this->uploads->pathFor($file);
-        $object['filesize'] = $meta['filesize'] ?: ($file !== '' && is_file($path) ? (int) filesize($path) : 0);
+        $object['filesize'] = (int) ($meta['filesize'] ?? 0) ?: ($file !== '' && is_file($path) ? (int) filesize($path) : 0);
         if ($edit && $isImage) {
             // The image editor's facts ride an image's edit context.
             $object['exif_orientation'] = 1;
@@ -148,14 +149,11 @@ final readonly class MediaObject
      * MIME type and URL, and the full size after them when there are any
      * (an attachment without sizes, audio among them, has an empty list).
      *
-     * @return array<string, mixed>|\stdClass
+     * @param array<string, mixed> $meta
+     * @return array<string, mixed>
      */
-    private function details(int $id, string $mime): array|\stdClass
+    private function details(array $meta, string $mime, string $attached): array
     {
-        $meta = Serialized::decode((string) ($this->posts->meta($id, '_wp_attachment_metadata') ?? ''));
-        if (!is_array($meta)) {
-            return new \stdClass();
-        }
         $file = (string) ($meta['file'] ?? '');
         $baseUrl = rtrim($this->uploads->baseUrl() . '/' . dirname($file), '/.');
         $sizes = [];
@@ -164,8 +162,12 @@ final readonly class MediaObject
             unset($size['mime-type']);
             $sizes[$name] = $size + ['mime_type' => $type, 'source_url' => $baseUrl . '/' . ($size['file'] ?? '')];
         }
+        // The full size is what the image is shown at in full: a size stored under that name, else the attached file at the metadata's dimensions.
         if ($sizes !== [] && !empty($meta['width'])) {
-            $sizes['full'] = ['file' => basename($file), 'width' => $meta['width'], 'height' => $meta['height'] ?? 0, 'mime_type' => $mime, 'source_url' => $this->uploads->urlFor($file)];
+            $full = $meta['sizes']['full'] ?? null;
+            $sizes['full'] = is_array($full)
+                ? ['file' => $full['file'] ?? '', 'width' => $full['width'] ?? 0, 'height' => $full['height'] ?? 0, 'mime_type' => $mime, 'source_url' => $baseUrl . '/' . ($full['file'] ?? '')]
+                : ['file' => basename($attached), 'width' => $meta['width'], 'height' => $meta['height'] ?? 0, 'mime_type' => $mime, 'source_url' => $this->uploads->urlFor($attached)];
         }
         $meta['sizes'] = $sizes;
         return $meta;

@@ -32,7 +32,7 @@ the wp/v2 surface: shapes and controllers
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
 | [`MediaController`](#mediacontroller) | final readonly class | 264 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 158 | The wp/v2 media object, view and edit context. |
+| [`MediaObject`](#mediaobject) | final readonly class | 161 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
@@ -1334,7 +1334,7 @@ caller may take; curies when any rel is the API's own.
 
 - `@return array<string, list<array<string, mixed>>>`
 
-Internals: `buildFields()` (private, line 42), `details()` (private, line 153)
+Internals: `buildFields()` (private, line 41), `details()` (private, line 155)
 
 
 ## MenuItemObject

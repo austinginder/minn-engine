@@ -78784,8 +78784,7 @@
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Content\\SiteIcon",
                 "Minn\\Media\\PhotoMeta",
-                "Minn\\Media\\Writer",
-                "Minn\\Rest\\MediaObject"
+                "Minn\\Media\\Writer"
             ],
             "constructor": null,
             "cases": [],
@@ -95240,7 +95239,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/MediaObject.php",
-            "lines": 158,
+            "lines": 161,
             "doc": "The wp/v2 media object, view and edit context.",
             "implements": [],
             "extends": null,
@@ -95249,7 +95248,6 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Texturize",
                 "Minn\\Front\\Permalinks",
-                "Minn\\Media\\Metadata",
                 "Minn\\Media\\Uploads",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\Context",
@@ -95314,8 +95312,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 18,
-                "end": 26
+                "line": 17,
+                "end": 25
             },
             "cases": [],
             "constants": [],
@@ -95400,8 +95398,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 29,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -95412,8 +95410,8 @@
                     "doc": "The REST URL builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 36,
-                    "end": 39
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -95441,8 +95439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 144
+                    "line": 114,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -95468,24 +95466,25 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 103
+                    "line": 41,
+                    "end": 104
                 },
                 {
                     "routes": [],
                     "name": "details",
                     "static": false,
                     "visibility": "private",
-                    "signature": "details(int $id, string $mime): stdClass|array",
+                    "signature": "details(array $meta, string $mime, string $attached): array",
                     "doc": "media_details: the stored metadata as it is, its sizes each with its\nMIME type and URL, and the full size after them when there are any\n(an attachment without sizes, audio among them, has an empty list).",
                     "shapes": [
-                        "@return array<string, mixed>|\\stdClass"
+                        "@param array<string, mixed> $meta",
+                        "@return array<string, mixed>"
                     ],
                     "params": [
                         {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
+                            "name": "meta",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
                             "default": null,
                             "doc": ""
                         },
@@ -95495,10 +95494,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "attached",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 172
+                    "line": 155,
+                    "end": 174
                 }
             ]
         },

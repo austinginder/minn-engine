@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 800,
-        "composes": 2234,
-        "leaf": 978,
-        "noop": 2735,
+        "minn": 794,
+        "composes": 2244,
+        "leaf": 979,
+        "noop": 2737,
         "placeholder": 95,
         "deadend": 1661,
-        "functions": 8425,
+        "functions": 8432,
         "minnMethods": 965,
         "leafLinesOver15": 12
     },
@@ -18344,12 +18344,19 @@
         },
         "WP_REST_Attachments_Controller::finalize_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 19,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters",
+                "delete_post_meta",
+                "get_post",
+                "is_wp_error",
+                "rest_ensure_response",
+                "wp_get_attachment_metadata",
+                "wp_update_attachment_metadata"
+            ]
         },
         "WP_REST_Attachments_Controller::get_attachment_filename": {
             "file": "classes/WP_REST_Attachments_Controller.php",
@@ -18376,12 +18383,12 @@
         },
         "WP_REST_Attachments_Controller::get_attachment_upload_subdir": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_get_upload_dir"
+            ]
         },
         "WP_REST_Attachments_Controller::get_collection_params": {
             "file": "classes/WP_REST_Attachments_Controller.php",
@@ -18444,12 +18451,14 @@
         },
         "WP_REST_Attachments_Controller::get_sideloaded_file_names": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_meta",
+                "wp_basename",
+                "wp_get_attachment_metadata"
+            ]
         },
         "WP_REST_Attachments_Controller::handle_featured_media": {
             "file": "classes/WP_REST_Attachments_Controller.php",
@@ -18517,6 +18526,13 @@
                 "clean_post_cache"
             ]
         },
+        "WP_REST_Attachments_Controller::minn_finalized_meta": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "WP_REST_Attachments_Controller::minn_media_links": {
             "file": "classes/WP_REST_Attachments_Controller.php",
             "lines": 7,
@@ -18532,6 +18548,58 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Attachments_Controller::minn_sideload_recorded": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_relative_upload_path",
+                "add_post_meta",
+                "get_attached_file",
+                "update_attached_file",
+                "wp_basename",
+                "wp_filesize",
+                "wp_getimagesize"
+            ]
+        },
+        "WP_REST_Attachments_Controller::minn_sideloaded_file": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_filter",
+                "remove_filter"
+            ]
+        },
+        "WP_REST_Attachments_Controller::minn_size_entry": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Attachments_Controller::minn_size_refusal": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_get_registered_image_subsizes",
+                "wp_getimagesize"
+            ]
+        },
+        "WP_REST_Attachments_Controller::minn_sub_sizes_checked": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
         },
         "WP_REST_Attachments_Controller::post_process_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
@@ -18592,26 +18660,28 @@
             "composes": [
                 "__",
                 "register_rest_route",
-                "rest_validate_request_arg",
                 "wp_is_client_side_media_processing_enabled"
             ]
         },
         "WP_REST_Attachments_Controller::sideload_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "get_attached_file",
+                "get_post",
+                "is_wp_error",
+                "rest_ensure_response",
+                "wp_delete_file"
+            ]
         },
         "WP_REST_Attachments_Controller::sideload_item_permissions_check": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_REST_Attachments_Controller::upload_from_data": {
@@ -18637,14 +18707,24 @@
                 "wp_handle_upload"
             ]
         },
+        "WP_REST_Attachments_Controller::validate_image_size_names": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_get_registered_image_subsizes"
+            ]
+        },
         "WP_REST_Attachments_Controller::validate_sub_size_provenance": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Autosaves_Controller::__construct": {
             "file": "classes/WP_REST_Autosaves_Controller.php",
@@ -66951,13 +67031,15 @@
         },
         "wp_get_missing_image_subsizes": {
             "file": "media.php",
-            "lines": 13,
+            "lines": 16,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "_minn_image_sizes",
                 "apply_filters",
-                "wp_get_attachment_metadata"
+                "wp_get_attachment_metadata",
+                "wp_get_original_image_path",
+                "wp_getimagesize"
             ],
             "deadend": "admin"
         },
@@ -74167,7 +74249,7 @@
         },
         "wp_unique_filename": {
             "file": "functions.php",
-            "lines": 20,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
