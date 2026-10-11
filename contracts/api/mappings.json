@@ -2,15 +2,15 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 770,
-        "composes": 2058,
-        "leaf": 925,
+        "minn": 763,
+        "composes": 2062,
+        "leaf": 928,
         "noop": 2721,
         "placeholder": 213,
         "deadend": 1662,
         "functions": 8271,
         "minnMethods": 958,
-        "leafLinesOver15": 11
+        "leafLinesOver15": 12
     },
     "functions": {
         "Author::__construct": {
@@ -26114,20 +26114,16 @@
         },
         "WP_Theme_JSON::compute_preset_classes": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 16,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::compute_preset_vars": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::compute_spacing_sizes": {
@@ -26150,11 +26146,9 @@
         },
         "WP_Theme_JSON::compute_theme_vars": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::convert_custom_properties": {
@@ -26390,12 +26384,12 @@
         },
         "WP_Theme_JSON::get_property_value": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get"
+            ]
         },
         "WP_Theme_JSON::get_raw_data": {
             "file": "classes/WP_Theme_JSON.php",
@@ -26431,21 +26425,23 @@
         },
         "WP_Theme_JSON::get_settings_slugs": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get",
+                "_wp_to_kebab_case"
+            ]
         },
         "WP_Theme_JSON::get_settings_values_by_slug": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 14,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get",
+                "_wp_to_kebab_case"
+            ]
         },
         "WP_Theme_JSON::get_style_nodes": {
             "file": "classes/WP_Theme_JSON.php",
@@ -26654,12 +26650,12 @@
         },
         "WP_Theme_JSON::remove_keys_not_in_schema": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 25,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_is_numeric_array"
+            ]
         },
         "WP_Theme_JSON::replace_slug_in_string": {
             "file": "classes/WP_Theme_JSON.php",

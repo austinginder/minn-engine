@@ -11717,3 +11717,40 @@ class (sanitizing, presets, the stylesheet and its nodes) is still owed.
   custom units of `true` become px, em, rem, vh, vw and %.
 
 `wp_theme_get_element_class_name` now asks `WP_Theme_JSON`.
+
+## WP_Theme_JSON's presets and values (2026-10-10)
+
+Probe `theme-json-presets` proves 7 more of `WP_Theme_JSON`'s placeholder
+methods: values and slugs by origin, preset and custom properties,
+preset classes, schema pruning and property values. The probe uses a
+settings tree with presets in several origins and custom values.
+
+- **Values and slugs.** Each origin's presets are read in the order asked,
+  by slug in kebab case. A value comes from the preset metadata's value
+  key, or from its value function: font sizes go through
+  `wp_get_typography_font_size_value`, fluid sizes included. Duotone has
+  neither, so it contributes nothing. Slugs map to themselves, every
+  origin when none are named.
+- **Custom properties.**
+  - Preset properties are `--wp--preset--{kind}--{slug}` in the presets
+    metadata's order.
+  - The theme's own properties are `settings.custom` flattened under
+    `--wp--custom--`, values as given (a `var:preset|…` is not resolved
+    here).
+- **Preset classes** are a ruleset per property per slug, the value
+  `var(--wp--preset--…) !important`. They are bare at the root (`body`)
+  and inside `:where()` of a block's selector.
+- **Pruning to a schema.** Keys the schema names stay, and nested ones are
+  pruned in turn, dropped when nothing is left. A list prunes each array
+  item against the schema's first entry and keeps other items. A
+  non-array value is dropped where the schema expects keys.
+- **Property values.** The value at the path is answered as written, `''`
+  when there is none (zero stays zero). A `ref` is followed only when it
+  leads to a non-empty string: not to a number, an array or another ref.
+
+Left in `WP_Theme_JSON`: the constructor (the reference migrates,
+sanitizes, opts in and keeps presets under their origin; the engine's
+keeps what it is given) and everything built on it. That means
+`sanitize`, the `remove_insecure_*` family, the stylesheet and its nodes,
+blocks metadata, `get_name_from_defaults`, `resolve_variables` and
+`set_spacing_sizes`.

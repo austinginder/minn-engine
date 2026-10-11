@@ -161,8 +161,31 @@ class WP_Theme_JSON
 
     protected static function remove_keys_not_in_schema($tree, $schema)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::remove_keys_not_in_schema');
-        return null;
+        // Keys the schema names stay; where it expects more structure, the value is pruned in turn and dropped if nothing is left.
+        foreach ($tree as $key => $value) {
+            if (!array_key_exists($key, $schema)) {
+                unset($tree[$key]);
+                continue;
+            }
+            if (!is_array($schema[$key])) {
+                continue;
+            }
+            if (!is_array($value)) {
+                unset($tree[$key]);
+                continue;
+            }
+            if (wp_is_numeric_array($value)) {
+                foreach ($value as $index => $item) {
+                    $tree[$key][$index] = is_array($item) ? static::remove_keys_not_in_schema($item, (array) ($schema[$key][0] ?? [])) : $item;
+                }
+                continue;
+            }
+            $tree[$key] = static::remove_keys_not_in_schema($value, $schema[$key]);
+            if (empty($tree[$key])) {
+                unset($tree[$key]);
+            }
+        }
+        return $tree;
     }
 
     public function get_settings()
@@ -255,8 +278,22 @@ class WP_Theme_JSON
 
     protected static function compute_preset_classes($settings, $selector, $origins)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::compute_preset_classes');
-        return null;
+        // A utility class per preset slug for each property; at the root bare, on a block inside :where() of its selector.
+        $prefix = $selector === static::ROOT_BLOCK_SELECTOR ? '' : ':where(' . $selector . ')';
+        $stylesheet = '';
+        foreach (static::PRESETS_METADATA as $preset_metadata) {
+            if (empty($preset_metadata['classes'])) {
+                continue;
+            }
+            $slugs = static::get_settings_slugs($settings, $preset_metadata, $origins);
+            foreach ($preset_metadata['classes'] as $class => $property) {
+                foreach ($slugs as $slug) {
+                    $value = 'var(' . static::replace_slug_in_string($preset_metadata['css_vars'], $slug) . ') !important';
+                    $stylesheet .= static::to_ruleset($prefix . static::replace_slug_in_string($class, $slug), [['name' => $property, 'value' => $value]]);
+                }
+            }
+        }
+        return $stylesheet;
     }
 
     public static function scope_selector($scope, $selector)
@@ -291,14 +328,33 @@ class WP_Theme_JSON
 
     protected static function get_settings_values_by_slug($settings, $preset_metadata, $origins)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_settings_values_by_slug');
-        return null;
+        // Each origin's presets in turn, by slug in kebab case: the value key's value, or what the value function makes of the preset.
+        $per_origin = _wp_array_get($settings, $preset_metadata['path'], []);
+        $values = [];
+        foreach ((array) $origins as $origin) {
+            foreach ((array) ($per_origin[$origin] ?? []) as $preset) {
+                $slug = _wp_to_kebab_case((string) ($preset['slug'] ?? ''));
+                if (isset($preset_metadata['value_key'], $preset[$preset_metadata['value_key']])) {
+                    $values[$slug] = $preset[$preset_metadata['value_key']];
+                } elseif (isset($preset_metadata['value_func']) && is_callable($preset_metadata['value_func'])) {
+                    $values[$slug] = call_user_func($preset_metadata['value_func'], $preset, $settings);
+                }
+            }
+        }
+        return $values;
     }
 
     protected static function get_settings_slugs($settings, $preset_metadata, $origins = NULL)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_settings_slugs');
-        return null;
+        $per_origin = _wp_array_get($settings, $preset_metadata['path'], []);
+        $slugs = [];
+        foreach ((array) ($origins ?? static::VALID_ORIGINS) as $origin) {
+            foreach ((array) ($per_origin[$origin] ?? []) as $preset) {
+                $slug = _wp_to_kebab_case((string) ($preset['slug'] ?? ''));
+                $slugs[$slug] = $slug;
+            }
+        }
+        return $slugs;
     }
 
     protected static function replace_slug_in_string($input, $slug)
@@ -308,14 +364,25 @@ class WP_Theme_JSON
 
     protected static function compute_preset_vars($settings, $origins)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::compute_preset_vars');
-        return null;
+        $declarations = [];
+        foreach (static::PRESETS_METADATA as $preset_metadata) {
+            if (empty($preset_metadata['css_vars'])) {
+                continue;
+            }
+            foreach (static::get_settings_values_by_slug($settings, $preset_metadata, $origins) as $slug => $value) {
+                $declarations[] = ['name' => static::replace_slug_in_string($preset_metadata['css_vars'], $slug), 'value' => $value];
+            }
+        }
+        return $declarations;
     }
 
     protected static function compute_theme_vars($settings)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::compute_theme_vars');
-        return null;
+        $declarations = [];
+        foreach (static::flatten_tree((array) ($settings['custom'] ?? [])) as $name => $value) {
+            $declarations[] = ['name' => '--wp--custom--' . $name, 'value' => $value];
+        }
+        return $declarations;
     }
 
     protected static function flatten_tree($tree, $prefix = '', $token = '--')
@@ -341,8 +408,15 @@ class WP_Theme_JSON
 
     protected static function get_property_value($styles, $path, $theme_json = NULL)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_property_value');
-        return null;
+        // The value at the path, '' when there is none; a ref is followed only to a non-empty string.
+        $value = _wp_array_get($styles, $path, '');
+        if (is_array($value) && isset($value['ref'])) {
+            $referenced = _wp_array_get((array) $theme_json, explode('.', (string) $value['ref']));
+            if (is_string($referenced) && $referenced !== '') {
+                return $referenced;
+            }
+        }
+        return $value;
     }
 
     protected static function get_setting_nodes($theme_json, $selectors = [])
