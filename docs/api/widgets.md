@@ -4,7 +4,8 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`WidgetForms`](#widgetforms) | final class | 172 | The core widgets' settings forms, the markup a widget's form() prints and |
+| [`WidgetForms`](#widgetforms) | final class | 203 | The core widgets' settings forms, the markup a widget's form() prints and |
+| [`WidgetTemplates`](#widgettemplates) | final class | 77 | The Underscore templates the Text and Custom HTML widgets print for their |
 
 ## WidgetForms
 
@@ -74,5 +75,40 @@ nothing, when it is shown).
 - `@param array<string, mixed> $args`
 - `@param array<string, bool> $inputs`
 
-Internals: `number()` (private, line 173), `id()` (private, line 178), `name()` (private, line 183)
+### static `links(WP_Widget $widget, array $instance, array $categories, string $limit): string`
+
+The Links widget: the link category (the categories given as [id, name]),
+the sort order, what each link shows, and how many (the limit as the
+caller shows it).
+
+Internals: `marked()` (private, line 199), `number()` (private, line 204), `id()` (private, line 209), `name()` (private, line 214)
+
+
+## WidgetTemplates
+
+`final class Minn\Widgets\WidgetTemplates` · `public/minn/src/Minn/Widgets/WidgetTemplates.php`
+
+The Underscore templates the Text and Custom HTML widgets print for their
+controls (render_control_template_scripts), as the reference prints them
+(probe widget-methods): a title field and the content area, the Text
+widget's two hidden pointers, and, for a user who may not post unfiltered
+HTML, the note on the tags the code editor refuses. The whitespace is the
+reference's own and is part of the answer.
+
+- const `CLOSE` = `'		</script> 		'`
+- const `REFUSED_TAGS` = `'																<# if ( data.codeEditorDisabled ) { #> 						<p> 							Some HTML tags are not permitted, including:							<code>script</code>, <code>iframe</code>, <code>form</code>, <code>input</code>, <code>style</code> 						</p> 					<# } #> 							 '` — The note a user who may not post unfiltered HTML sees, when the code editor is off.
+
+### static `text(): string`
+
+The Text widget's template: title, the two pointers, the content area.
+
+### static `customHtml(): string`
+
+The Custom HTML widget's template for a user who may post unfiltered HTML.
+
+### static `customHtmlRestricted(): string`
+
+The Custom HTML widget's template for a user who may not, with the note on refused tags.
+
+Internals: `customHtmlWith()` (private, line 52), `open()` (private, line 65), `pointer()` (private, line 76)
 

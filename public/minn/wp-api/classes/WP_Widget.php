@@ -56,13 +56,14 @@ class WP_Widget
         } else {
             $name = 'widget-' . $this->id_base . '[' . $this->number . '][' . substr($field_name, 0, $pos) . ']' . substr($field_name, $pos);
         }
-        return apply_filters('widget_field_name', $name, $field_name, $this);
+        // Neither the name nor the id runs a filter (probe widget-methods).
+        return $name;
     }
 
     public function get_field_id($field_name)
     {
         $field = str_replace(['[]', '[', ']'], ['', '-', ''], $field_name);
-        return apply_filters('widget_field_id', 'widget-' . $this->id_base . '-' . $this->number . '-' . trim($field, '-'), $field_name, $this);
+        return 'widget-' . $this->id_base . '-' . $this->number . '-' . trim($field, '-');
     }
 
     public function _register()
@@ -226,6 +227,13 @@ final class WP_Widget_Factory
     public function __construct()
     {
         add_action('widgets_init', [$this, '_register_widgets'], 100);
+    }
+
+    /** The PHP 4 constructor, reported deprecated since 4.3.0. */
+    public function WP_Widget_Factory()
+    {
+        _deprecated_constructor('WP_Widget_Factory', '4.3.0');
+        self::__construct();
     }
 
     public function register($widget)

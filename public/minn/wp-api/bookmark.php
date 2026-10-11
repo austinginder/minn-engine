@@ -246,7 +246,9 @@ function wp_list_bookmarks($args = '')
     $cats = $r['categorize'] ? get_terms(['taxonomy' => 'link_category', 'name__like' => $r['category_name'], 'include' => $r['category'], 'exclude' => $r['exclude_category'], 'orderby' => $r['category_orderby'], 'order' => $r['category_order'], 'hierarchical' => 0]) : [];
     if (is_array($cats) && $cats !== []) {
         foreach ($cats as $cat) {
-            $groups[] = ["linkcat-{$cat->term_id}", apply_filters('link_category', $cat->name), get_bookmarks(array_merge($r, ['category' => $cat->term_id]))];
+            // A category's links are read before its name is filtered (probe widget-methods).
+            $bookmarks = get_bookmarks(array_merge($r, ['category' => $cat->term_id]));
+            $groups[] = ["linkcat-{$cat->term_id}", apply_filters('link_category', $cat->name), $bookmarks];
         }
     } else {
         $groups[] = ["linkcat-{$r['category']}", empty($r['title_li']) ? null : $r['title_li'], get_bookmarks($r)];

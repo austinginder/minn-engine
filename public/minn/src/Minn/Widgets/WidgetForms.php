@@ -170,6 +170,37 @@ final class WidgetForms
         return $out . "\t\t</p>\n\t";
     }
 
+    /**
+     * The Links widget: the link category (the categories given as [id, name]),
+     * the sort order, what each link shows, and how many (the limit as the
+     * caller shows it).
+     */
+    public static function links(\WP_Widget $widget, array $instance, array $categories, string $limit): string
+    {
+        $options = '';
+        foreach ($categories as [$id, $name]) {
+            $options .= sprintf("\t\t\t\t\t\t\t\t\t<option value=\"%d\" %s>\n\t\t\t\t\t\t%s\t\t\t\t\t</option>\n", $id, self::marked($instance['category'], $id, 'selected'), Escape::html($name));
+        }
+        $orders = '';
+        foreach (['name' => 'Link title', 'rating' => 'Link rating', 'id' => 'Link ID', 'rand' => 'Random'] as $value => $label) {
+            $orders .= "\t\t\t\t<option value=\"{$value}\"" . self::marked($instance['orderby'], $value, 'selected') . ">{$label}</option>\n";
+        }
+        $boxes = [];
+        foreach (['images' => 'Show Link Image', 'name' => 'Show Link Name', 'description' => 'Show Link Description', 'rating' => 'Show Link Rating'] as $key => $label) {
+            $boxes[] = sprintf("\t\t\t<input class=\"checkbox\" type=\"checkbox\"%3\$s id=\"%1\$s\" name=\"%2\$s\" />\n\t\t\t<label for=\"%1\$s\">%4\$s</label>\n", self::id($widget, $key), self::name($widget, $key), self::marked($instance[$key], true, 'checked'), $label);
+        }
+        return sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">Select Link Category:</label>\n\t\t\t<select class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\">\n\t\t\t\t<option value=\"\">All Links</option>\n%3\$s\t\t\t\t\t\t\t</select>\n", self::id($widget, 'category'), self::name($widget, 'category'), $options)
+            . sprintf("\t\t\t<label for=\"%1\$s\">Sort by:</label>\n\t\t\t<select name=\"%2\$s\" id=\"%1\$s\" class=\"widefat\">\n%3\$s\t\t\t</select>\n\t\t</p>\n\n\t\t<p>\n", self::id($widget, 'orderby'), self::name($widget, 'orderby'), $orders)
+            . implode("\t\t\t<br />\n\n", $boxes)
+            . sprintf("\t\t</p>\n\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">Number of links to show:</label>\n\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" type=\"text\" value=\"%3\$s\" size=\"3\" />\n\t\t</p>\n\t\t", self::id($widget, 'limit'), self::name($widget, 'limit'), Escape::attr($limit));
+    }
+
+    /** The attribute selected() or checked() prints, with its leading space, when the two values match as text. */
+    private static function marked(mixed $value, mixed $current, string $attribute): string
+    {
+        return is_scalar($value) && (string) $value === (string) $current ? " {$attribute}='{$attribute}'" : '';
+    }
+
     private static function number(\WP_Widget $widget, int $number, string $label): string
     {
         return sprintf("\n\t\t<p>\n\t\t\t<label for=\"%1\$s\">%3\$s</label>\n\t\t\t<input class=\"tiny-text\" id=\"%1\$s\" name=\"%2\$s\" type=\"number\" step=\"1\" min=\"1\" value=\"%4\$d\" size=\"3\" />\n\t\t</p>\n", self::id($widget, 'number'), self::name($widget, 'number'), $label, $number);

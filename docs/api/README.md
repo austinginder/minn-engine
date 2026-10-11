@@ -29,4 +29,4 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Runtime`](runtime.md) | 109 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 31 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 36 | the block-theme reader, templates, global styles and the page renderer |
-| [`Minn\Widgets`](widgets.md) | 1 |  |
+| [`Minn\Widgets`](widgets.md) | 2 |  |

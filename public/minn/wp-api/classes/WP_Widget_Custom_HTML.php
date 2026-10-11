@@ -1,6 +1,7 @@
 <?php
 
 use Minn\Widgets\WidgetForms;
+use Minn\Widgets\WidgetTemplates;
 
 /**
  * The custom HTML widget of the reference's classic widget set. It exists so
@@ -35,6 +36,29 @@ class WP_Widget_Custom_HTML extends WP_Widget
         $content = apply_filters('widget_text', (string) $instance['content'], $instance, $this);
         echo '<div class="textwidget custom-html-widget">' . apply_filters('widget_custom_html_content', $content, $instance, $this) . '</div>';
         echo $args['after_widget'] ?? '';
+    }
+
+    /** As the text widget's: a gallery here belongs to no post (probe widget-methods). */
+    public function _filter_gallery_shortcode_attrs($attrs)
+    {
+        $attrs['id'] ??= -1;
+        return $attrs;
+    }
+
+    public function enqueue_admin_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Widget_Custom_HTML::enqueue_admin_scripts');
+    }
+
+    /** The control template; the note on refused tags is for a user who may not post unfiltered HTML. */
+    public static function render_control_template_scripts()
+    {
+        echo current_user_can('unfiltered_html') ? WidgetTemplates::customHtml() : WidgetTemplates::customHtmlRestricted();
+    }
+
+    public static function add_help_text()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Widget_Custom_HTML::add_help_text');
     }
 
     /** The settings form (Widgets\WidgetForms::customHtml). */

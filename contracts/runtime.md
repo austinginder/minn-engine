@@ -12876,3 +12876,63 @@ gone.
 
 The probe turns application passwords on for both stacks: neither runs it
 over HTTPS, and the reference's own must-use plugin turns them on there.
+
+## The widgets' remaining methods and the Links widget (2026-10-11)
+
+Probe `widget-methods`. What landed:
+
+- **Text and Custom HTML.**
+  - `_filter_gallery_shortcode_attrs` gives a gallery in the widget the
+    id -1 unless the shortcode named one.
+  - The Text widget's `enqueue_preview_scripts` is `wp_playlist_scripts`:
+    wp-playlist, the mediaelement style, and the playlist templates in
+    both footers.
+  - `render_control_template_scripts` prints each widget's Underscore
+    template as the reference does (`Widgets\WidgetTemplates`). The Text
+    widget's carries its two hidden pointers. The Custom HTML widget's
+    adds the note on refused tags only for a user who may not post
+    unfiltered HTML.
+- **`WP_Widget_Block::set_is_wide_widget_in_customizer`** answers false
+  for any id that starts `block-`; any other widget keeps its answer.
+- **`WP_Widget_Factory::WP_Widget_Factory`** reports the PHP 4
+  constructor deprecated since 4.3.0, with no parent class.
+- **`WP_Widget_Links`** is real. `wp_widgets_init` registers it only
+  while `link_manager_enabled` is on, after the other core widgets.
+  - **`widget`** lists through `wp_list_bookmarks`. The arguments it
+    builds go through `widget_links_args` with the instance:
+    - the sidebar's title wrappers;
+    - its before-widget with the id swapped for `%id`, so each category
+      gets its own;
+    - class `linkcat widget`;
+    - images on unless the instance says otherwise; name, description
+      and rating off;
+    - the order, with rating sorted DESC;
+    - the instance's values passed as stored.
+  - **`update`** builds a new instance from the form alone (the old one
+    is ignored):
+    - a box sent at all is 1;
+    - an order outside name, rating, id and rand is name;
+    - the category goes through `intval`;
+    - an empty limit is -1.
+  - **`form`** lists the link categories that have links:
+    - checkboxes and selections match as text, the way `checked` and
+      `selected` compare, so `'on'` is not checked;
+    - a limit of 0 or -1 shows empty.
+
+Fixed on the way:
+
+- **`get_field_id` and `get_field_name`** no longer run filters. The
+  reference runs none; the engine's `widget_field_id` and
+  `widget_field_name` were inventions.
+- **`wp_list_bookmarks`** reads a category's links before it filters the
+  category's name, in the reference's order.
+
+Left owed as inline placeholders:
+
+- **both `enqueue_admin_scripts`**: the editor, code editor and media
+  scripts of the widgets screen;
+- **`WP_Widget_Custom_HTML::add_help_text`**: the reference fatals
+  without an admin screen.
+
+The probe's Links cases with an empty instance were dropped: the
+reference warns on the missing keys.

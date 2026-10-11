@@ -151658,7 +151658,7 @@
             "namespace": "Minn\\Widgets",
             "kind": "final class",
             "file": "public/minn/src/Minn/Widgets/WidgetForms.php",
-            "lines": 172,
+            "lines": 203,
             "doc": "The core widgets' settings forms, the markup a widget's form() prints and\nwp/v2/widgets returns as rendered_form, character for character as the\nreference prints it (probe rest-widgets): field ids and names from the\nwidget's number, values escaped, defaults filled in. The whitespace is\nthe reference's own and is part of the answer.",
             "implements": [],
             "extends": null,
@@ -152027,6 +152027,81 @@
                 },
                 {
                     "routes": [],
+                    "name": "links",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "links(WP_Widget $widget, array $instance, array $categories, string $limit): string",
+                    "doc": "The Links widget: the link category (the categories given as [id, name]),\nthe sort order, what each link shows, and how many (the limit as the\ncaller shows it).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "WP_Widget",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "instance",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "categories",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "limit",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 178,
+                    "end": 196
+                },
+                {
+                    "routes": [],
+                    "name": "marked",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "marked(mixed $value, mixed $current, string $attribute): string",
+                    "doc": "The attribute selected() or checked() prints, with its leading space, when the two values match as text.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "current",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "attribute",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 199,
+                    "end": 202
+                },
+                {
+                    "routes": [],
                     "name": "number",
                     "static": true,
                     "visibility": "private",
@@ -152056,8 +152131,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 176
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -152083,8 +152158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 181
+                    "line": 209,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -152110,8 +152185,150 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 186
+                    "line": 214,
+                    "end": 217
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Widgets\\WidgetTemplates",
+            "short": "WidgetTemplates",
+            "namespace": "Minn\\Widgets",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Widgets/WidgetTemplates.php",
+            "lines": 77,
+            "doc": "The Underscore templates the Text and Custom HTML widgets print for their\ncontrols (render_control_template_scripts), as the reference prints them\n(probe widget-methods): a title field and the content area, the Text\nwidget's two hidden pointers, and, for a user who may not post unfiltered\nHTML, the note on the tags the code editor refuses. The whitespace is the\nreference's own and is part of the answer.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CLOSE",
+                    "value": "'\t\t</script> \t\t'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "REFUSED_TAGS",
+                    "value": "'\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t<# if ( data.codeEditorDisabled ) { #> \t\t\t\t\t\t<p> \t\t\t\t\t\t\tSome HTML tags are not permitted, including:\t\t\t\t\t\t\t<code>script</code>, <code>iframe</code>, <code>form</code>, <code>input</code>, <code>style</code> \t\t\t\t\t\t</p> \t\t\t\t\t<# } #> \t\t\t\t\t\t\t '",
+                    "doc": "The note a user who may not post unfiltered HTML sees, when the code editor is off.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "text",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "text(): string",
+                    "doc": "The Text widget's template: title, the two pointers, the content area.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 28,
+                    "end": 38
+                },
+                {
+                    "routes": [],
+                    "name": "customHtml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "customHtml(): string",
+                    "doc": "The Custom HTML widget's template for a user who may post unfiltered HTML.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "customHtmlRestricted",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "customHtmlRestricted(): string",
+                    "doc": "The Custom HTML widget's template for a user who may not, with the note on refused tags.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 47,
+                    "end": 50
+                },
+                {
+                    "routes": [],
+                    "name": "customHtmlWith",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "customHtmlWith(string $note): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "note",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "open",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "open(string $widget): string",
+                    "doc": "The script tag, the element id prefix both templates make, and the title field.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "widget",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "pointer",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "pointer(string $class, string $heading, string $paragraph): string",
+                    "doc": "A hidden pointer: its heading, its paragraph (with the reference's indents around it), a dismiss link.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "heading",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "paragraph",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 90
                 }
             ]
         }

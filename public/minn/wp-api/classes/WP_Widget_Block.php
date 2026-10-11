@@ -51,6 +51,12 @@ class WP_Widget_Block extends WP_Widget
         return $instance;
     }
 
+    /** A block widget is never wide in the Customizer; any other widget keeps its answer (probe widget-methods). */
+    public function set_is_wide_widget_in_customizer($is_wide, $widget_id)
+    {
+        return str_starts_with((string) $widget_id, 'block-') ? false : $is_wide;
+    }
+
     private function dynamic_classname(string $content): string
     {
         return BlockWidget::classNameFor(parse_blocks($content));

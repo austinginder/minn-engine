@@ -1,6 +1,7 @@
 <?php
 
 use Minn\Widgets\WidgetForms;
+use Minn\Widgets\WidgetTemplates;
 /**
  * The text widget: arbitrary text, run through the content pipeline for a
  * visual instance and through wpautop alone for a legacy one that asked
@@ -71,6 +72,29 @@ class WP_Widget_Text extends WP_Widget
             $instance['visual'] = !empty($new_instance['visual']);
         }
         return $instance;
+    }
+
+    /** A gallery in the widget belongs to no post: its id is -1 unless the shortcode named one (probe widget-methods). */
+    public function _filter_gallery_shortcode_attrs($attrs)
+    {
+        $attrs['id'] ??= -1;
+        return $attrs;
+    }
+
+    /** What the widget's preview in the Customizer needs for a playlist, its templates included. */
+    public function enqueue_preview_scripts()
+    {
+        wp_playlist_scripts('audio');
+    }
+
+    public function enqueue_admin_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Widget_Text::enqueue_admin_scripts');
+    }
+
+    public static function render_control_template_scripts()
+    {
+        echo WidgetTemplates::text();
     }
 
     /** The settings form (Widgets\WidgetForms::text). */
