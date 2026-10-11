@@ -145606,7 +145606,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 108,
+            "lines": 110,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -145694,7 +145694,7 @@
                         }
                     ],
                     "line": 64,
-                    "end": 83
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -145713,8 +145713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 127
+                    "line": 93,
+                    "end": 129
                 }
             ]
         },

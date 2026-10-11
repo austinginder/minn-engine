@@ -69,8 +69,10 @@ final class FrontLifecycle
         $empty = empty($query->posts) && !$query->is_robots() && !$query->is_favicon();
         $bareDate = $query->is_date() && !$query->is_search() && $query->get_queried_object() === null;
         // A term or author the query names but the site does not have (?tag[]=a) is not found, whatever the address resolved to.
+        // Asked only when nothing else decides it: asking settles the queried object, which a 404 must leave unasked.
         $named = $query->is_category() || $query->is_tag() || $query->is_tax() || $query->is_author();
-        $notFound = $notFound || ($empty && $named && $query->get_queried_object() === null);
+        $decided = $notFound || ($empty && ($query->is_paged() || $bareDate));
+        $notFound = $notFound || (!$decided && $empty && $named && $query->get_queried_object() === null);
         // A sitemap request is the sitemaps server's to judge at template_redirect, since 7.1.3 (suite sitemap-hooks).
         $sitemap = (string) $query->get('sitemap') !== '';
         if (!$sitemap && !$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {
