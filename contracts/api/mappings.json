@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 808,
-        "composes": 2352,
-        "leaf": 1029,
-        "noop": 2753,
-        "placeholder": 20,
+        "composes": 2367,
+        "leaf": 1039,
+        "noop": 2754,
+        "placeholder": 3,
         "deadend": 1768,
-        "functions": 8652,
+        "functions": 8661,
         "minnMethods": 986,
         "leafLinesOver15": 12
     },
@@ -14016,18 +14016,20 @@
         },
         "WP_Image_Editor::get_extension": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 8,
-            "kind": "leaf",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_get_mime_types"
+            ]
         },
         "WP_Image_Editor::get_mime_type": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "wp_check_filetype"
+                "wp_get_mime_types"
             ]
         },
         "WP_Image_Editor::get_output_format": {
@@ -14036,6 +14038,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "apply_filters",
                 "trailingslashit",
                 "wp_get_image_editor_output_format"
             ]
@@ -14105,7 +14108,7 @@
         },
         "WP_Image_Editor::set_quality": {
             "file": "classes/WP_Image_Editor.php",
-            "lines": 13,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -14275,123 +14278,223 @@
             "composes": []
         },
         "WP_Image_Editor_Imagick::__destruct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::_save": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 22,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "is_wp_error",
+                "wp_basename",
+                "wp_filesize"
+            ]
         },
         "WP_Image_Editor_Imagick::crop": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 18,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_Image_Editor_Imagick::flip": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 11,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
-        "WP_Image_Editor_Imagick::flip": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Image_Editor_Imagick::keep": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::load": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 26,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_wp_error",
+                "wp_is_stream"
+            ]
+        },
+        "WP_Image_Editor_Imagick::make_subsize": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_wp_error"
+            ]
+        },
+        "WP_Image_Editor_Imagick::maybe_exif_rotate": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 9,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::multi_resize": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 18,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "is_wp_error"
+            ]
         },
         "WP_Image_Editor_Imagick::pdf_load_source": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error"
+            ]
+        },
+        "WP_Image_Editor_Imagick::pdf_setup": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
-        "WP_Image_Editor_Imagick::pdf_setup": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Image_Editor_Imagick::put_back": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 4,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::remove_pdf_alpha_channel": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 7,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::resize": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "image_resize_dimensions",
+                "is_wp_error"
+            ]
+        },
+        "WP_Image_Editor_Imagick::restore": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::rotate": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 7,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::save": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 11,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "is_wp_error"
+            ]
         },
         "WP_Image_Editor_Imagick::set_imagick_time_limit": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/WP_Image_Editor_Imagick.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
+        "WP_Image_Editor_Imagick::set_quality": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 9,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::stream": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header"
+            ]
+        },
+        "WP_Image_Editor_Imagick::strip_meta": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 10,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
-        "WP_Image_Editor_Imagick::strip_meta": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+        "WP_Image_Editor_Imagick::supports_mime_type": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Image_Editor_Imagick::test": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
         "WP_Image_Editor_Imagick::thumbnail_image": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 21,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_Image_Editor_Imagick::update_size": {
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
         },
         "WP_Image_Editor_Imagick::write_image": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_Image_Editor_Imagick.php",
+            "lines": 14,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "esc_html",
+                "wp_is_stream",
+                "wp_mkdir_p"
+            ]
         },
         "WP_Importer::bump_request_timeout": {
             "file": "classes/deadends/DeadEnds.php",

@@ -13937,3 +13937,74 @@ pause in.
 
 `wp_recovery_mode()` is real: it returns that dead-end object, so a plugin's
 `wp_recovery_mode()->is_active()` answers nothing instead of failing.
+
+## The Imagick image editor (2026-10-11)
+
+Austin's D10: Imagick support is built in. `WP_Image_Editor_Imagick` is real
+(probe `imagick-editor`). The engine picks it before GD wherever the extension
+is loaded, as the reference does. Both the CLI's PHP and Cove's FrankenPHP
+have it, so uploads now go through Imagick on both stacks.
+
+The behaviour comes from what the reference writes. The probe makes its own
+images: a gradient, four solid quadrants, a PNG with alpha, a palette PNG, a
+JPEG turned by EXIF and carrying profiles, and two PDFs. It then compares:
+
+- what each operation returns, and the hooks it fires;
+- what the written file looks like to a site: size, format, JPEG quality,
+  alpha, interlace, depth, profiles, orientation, comment, resolution, PNG
+  colour type, JPEG sampling, and the colour at each corner, coarsely.
+
+Byte sizes and exact pixels are the encoder's own and are left out, so the
+resampling filter is not pinned.
+
+What the reference does, and the engine now does:
+
+- **Support.** `test()` only asks whether Imagick is loaded. It answers true
+  even for an unknown method or type. `supports_mime_type()` asks whether the
+  site's MIME list has an extension for the type and Imagick knows that
+  format. HEIC, AVIF and PDF are yes; SVG is no.
+- **Loading.**
+  - A missing file is `error_loading_image`, "File does not exist?".
+  - An unreadable file is `invalid_image`, with Imagick's own message.
+  - The type is read from the format Imagick reports, through the site's MIME
+    list (the `mime_types` filter, not `upload_mimes`).
+  - A PDF's first page is read at 128 dpi and flattened onto white.
+  - Every load reads the file again.
+- **Resampling.** This covers a resize, and a crop to a size. It offers
+  `image_strip_meta`, then `image_max_bit_depth`.
+  - The profiles a site keeps survive: EXIF, ICC, IPTC, XMP and Photoshop's
+    blocks, plus the comment.
+  - A PNG source loses its other chunks (resolution, text).
+  - A palette PNG is quantized back to the colours it had, so it stays
+    indexed.
+  - A resize to the image's own size does nothing and fires nothing.
+  - A size larger than the image is `error_getting_dimensions`.
+  - The quality goes back to the default after a resize.
+- **Crop, rotate, flip.**
+  - A crop with no width or height keeps that side whole. A crop past the
+    edge stops at it.
+  - `rotate()` turns counter-clockwise.
+  - `flip(true, …)` flips top to bottom, `flip(…, true)` side to side.
+  - Only scaling fires the strip and bit-depth filters.
+- **EXIF.** `maybe_exif_rotate()` turns the image upright, and the saved file
+  reads orientation 1. A file saved without the call keeps its orientation.
+- **Saving.** The output type comes from the type asked for, else the name's
+  extension. An unknown type falls back through
+  `image_editor_default_mime_type`, and the file name takes the extension of
+  the type written. WebP defaults to quality 86. A PNG with alpha saved as
+  JPEG drops the alpha. `stream()` prints the image in the type asked for.
+- **`multi_resize()`** leaves out a size it cannot make and a size that
+  leaves the image as it was. The editor's own image and size come back
+  after each size.
+- **`set_imagick_time_limit()`** is deprecated since 6.3.0 and returns null.
+
+Shared changes to the base editor, which GD uses too:
+
+- A quality given as a numeric string is kept as given; zero still means 1.
+- The fallback type passes through `image_editor_default_mime_type`.
+- Types and extensions are looked up in the site's MIME list (the
+  `mime_types` filter), so HEIC and PDF resolve.
+
+Left open: what `image_strip_meta` would remove from a JPEG. Every profile
+ImageMagick can write into one survives, so the engine strips only names
+outside that set.

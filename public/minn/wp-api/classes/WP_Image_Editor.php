@@ -69,7 +69,8 @@ abstract class WP_Image_Editor
                 $quality = $this->default_quality;
             }
         }
-        $quality = (int) $quality === 0 ? 1 : (int) $quality;
+        // Zero means the lowest quality; any other value is kept as given ("60" stays a string).
+        $quality = (int) $quality === 0 ? 1 : $quality;
         if ($quality < 1 || $quality > 100) {
             return new WP_Error('invalid_image_quality', 'Attempted to set image quality outside of the range [1,100].');
         }
@@ -102,7 +103,7 @@ abstract class WP_Image_Editor
             $mime_type = $map[$mime_type];
         }
         if (!static::supports_mime_type($mime_type)) {
-            $mime_type = $this->default_mime_type;
+            $mime_type = apply_filters('image_editor_default_mime_type', $this->default_mime_type);
         }
         $extension = $mime_type === $this->mime_type ? strtolower((string) pathinfo((string) $this->file, PATHINFO_EXTENSION)) : (string) static::get_extension($mime_type);
         $extension = $extension !== '' ? $extension : (string) static::get_extension($mime_type);
@@ -211,21 +212,28 @@ abstract class WP_Image_Editor
         return (bool) call_user_func_array($callback, $arguments);
     }
 
+    /** The type the site's MIME list gives an extension (image/jpeg for jpg); false for one it does not list. */
     protected static function get_mime_type($extension = null)
     {
-        return $extension ? (wp_check_filetype('x.' . $extension)['type'] ?: false) : false;
+        if (empty($extension)) {
+            return false;
+        }
+        foreach (wp_get_mime_types() as $extensions => $type) {
+            if (in_array(strtolower((string) $extension), explode('|', (string) $extensions), true)) {
+                return $type;
+            }
+        }
+        return false;
     }
 
+    /** The first extension the site's MIME list gives the type (jpg for image/jpeg); false for a type it does not list. */
     protected static function get_extension($mime_type = null)
     {
-        return match ($mime_type) {
-            'image/jpeg' => 'jpg',
-            'image/png' => 'png',
-            'image/gif' => 'gif',
-            'image/webp' => 'webp',
-            'image/avif' => 'avif',
-            default => false,
-        };
+        if (empty($mime_type)) {
+            return false;
+        }
+        $extensions = array_search($mime_type, wp_get_mime_types(), true);
+        return $extensions === false ? false : explode('|', (string) $extensions)[0];
     }
 }
 
