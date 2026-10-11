@@ -338,14 +338,40 @@ function cache_users($user_ids)
 endif;
 
 if (!function_exists('auth_redirect')) :
+/**
+ * A screen that needs a signed-in user (probe loose-functions): a wp-admin
+ * request over http moves to https first when admin screens are secure; a
+ * valid sign-in cookie (its scheme filtered) passes, telling auth_redirect;
+ * anyone else signs in again, sent back to the address asked for.
+ */
 function auth_redirect()
 {
-    if (!is_user_logged_in()) {
-        wp_redirect(wp_login_url(_minn_request_uri()));
+    $uri = _minn_request_uri();
+    $https = _minn_admin_https_address($uri);
+    if ($https !== null) {
+        wp_redirect($https);
         exit;
     }
+    $user_id = wp_validate_auth_cookie('', apply_filters('auth_redirect_scheme', ''));
+    if ($user_id) {
+        do_action('auth_redirect', $user_id);
+        return;
+    }
+    nocache_headers();
+    wp_redirect(wp_login_url((is_ssl() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . $uri, true));
+    exit;
 }
 endif;
+
+/** @internal a wp-admin request's https address when it came over http and admin screens are secure (secure_auth_redirect); null otherwise */
+function _minn_admin_https_address(string $uri): ?string
+{
+    $secure = (bool) apply_filters('secure_auth_redirect', is_ssl() || force_ssl_admin());
+    if (!$secure || is_ssl() || !str_contains($uri, 'wp-admin')) {
+        return null;
+    }
+    return str_starts_with($uri, 'http') ? set_url_scheme($uri, 'https') : 'https://' . ($_SERVER['HTTP_HOST'] ?? '') . $uri;
+}
 
 if (!function_exists('wp_authenticate')) :
 function wp_authenticate($username, $password)

@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 813,
-        "composes": 2324,
+        "composes": 2325,
         "leaf": 1020,
         "noop": 2749,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8549,
+        "functions": 8550,
         "minnMethods": 982,
         "leafLinesOver15": 12
     },
@@ -34866,6 +34866,18 @@
                 "_minn_inner_wrapper_class"
             ]
         },
+        "_minn_admin_https_address": {
+            "file": "pluggable.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "force_ssl_admin",
+                "is_ssl",
+                "set_url_scheme"
+            ]
+        },
         "_minn_admin_page_hooks": {
             "file": "admin.php",
             "lines": 1,
@@ -41403,14 +41415,19 @@
         },
         "auth_redirect": {
             "file": "pluggable.php",
-            "lines": 4,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "_minn_admin_https_address",
                 "_minn_request_uri",
-                "is_user_logged_in",
+                "apply_filters",
+                "do_action",
+                "is_ssl",
+                "nocache_headers",
                 "wp_login_url",
-                "wp_redirect"
+                "wp_redirect",
+                "wp_validate_auth_cookie"
             ]
         },
         "author_can": {

@@ -13446,3 +13446,40 @@ registers a stand-in there. Owed: `wp_enqueue_global_styles()` and
 `wp_enqueue_classic_theme_styles()` are still empty. The engine prints the
 global styles from its page renderers, not through the style registry, so
 `wp_dequeue_style('global-styles')` does not remove them yet.
+
+## Feed loaders, auth_redirect, core abilities (2026-10-11)
+
+Probe `loose-functions`. Already matched:
+
+- each feed template printed by its own loader in a feed's main query:
+  `do_feed_rss2` and `do_feed_atom`, for posts and for comments, plus
+  `do_feed_rdf` and `do_feed_rss`;
+- core's ability categories and abilities seeded inside their own actions on
+  a registry cleared of them;
+- the same seeding outside those actions, refused with one notice per
+  category and per ability.
+
+Fixed: **`auth_redirect()`** only checked for a current user, and sent anyone
+else to sign in with a relative `redirect_to`. It now behaves as the
+reference does:
+
+- a request whose address holds `wp-admin`, made over http while admin
+  screens are secure (`secure_auth_redirect`, from `is_ssl()` or
+  `force_ssl_admin()`), moves to the same address over https. A full address
+  in REQUEST_URI has its scheme changed; a path gets the host put in front.
+- a valid sign-in cookie passes and fires `auth_redirect` with the user's id.
+  The cookie's scheme comes from `auth_redirect_scheme` (empty by default:
+  `secure_auth` over https, `auth` otherwise).
+- anyone else, including a current user with no cookie, gets no-cache
+  headers and is sent to `wp_login_url(<scheme>://<host><uri>, true)`, which
+  has `reauth=1`.
+
+The probe stops each redirect at `wp_redirect` and takes WP-CLI's own
+redirect warning off first. Left out: a full address in REQUEST_URI over
+https. The reference puts its host in front of the whole address, which
+leans on a bug.
+
+Still owed in the area: `wp_text_diff()` is empty, and the Text_Diff library
+is in no inventory. `wp_scheduled_delete()` can't be probed on the shared
+database, because four of its trashed fixtures are past the 30-day window
+and the run would delete them.
