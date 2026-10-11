@@ -1712,7 +1712,8 @@ function _minn_block_template_matches(WP_Block_Template $template, array $query)
     if (isset($query['wp_id']) && (int) $template->wp_id !== (int) $query['wp_id']) {
         return false;
     }
-    return true;
+    // A post type keeps only the templates that declare it (probe rest-templates-controller).
+    return empty($query['post_type']) || $template->type !== 'wp_template' || in_array($query['post_type'], (array) ($template->post_types ?? []), true);
 }
 
 /** A template by "theme//slug": the theme's file, else a plugin's registration under the active theme. */
@@ -1854,7 +1855,8 @@ function update_ignored_hooked_blocks_postmeta($post)
  */
 function inject_ignored_hooked_blocks_metadata_attributes($changes, $deprecated = null)
 {
-    if (!isset($changes->post_content)) {
+    // Nothing hooked, nothing marked: the changes go on untouched (probe rest-templates-controller).
+    if (!isset($changes->post_content) || (get_hooked_blocks() === [] && !has_filter('hooked_block_types'))) {
         return $changes;
     }
     if (isset($changes->ID)) {
@@ -1862,7 +1864,7 @@ function inject_ignored_hooked_blocks_metadata_attributes($changes, $deprecated 
     } else {
         $changes->post_modified = current_time('mysql');
         $changes->post_author = (string) get_current_user_id();
-        $post = (object) (get_object_vars($changes) + ['ID' => 0, 'post_title' => '', 'post_excerpt' => '', 'post_status' => '', 'post_date' => $changes->post_modified]);
+        $post = (object) (get_object_vars($changes) + ['ID' => 0, 'post_name' => '', 'post_title' => '', 'post_excerpt' => '', 'post_status' => '', 'post_date' => $changes->post_modified]);
         $template = _build_block_template_object_from_post_object($post, (array) ($changes->tax_input ?? []), []);
     }
     if (is_wp_error($template)) {

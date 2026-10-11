@@ -6474,5 +6474,275 @@
                 ]
             }
         }
+    },
+    "template-properties": {
+        "id": {
+            "description": "ID of template.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "slug": {
+            "description": "Unique slug identifying the template.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "required": true,
+            "minLength": 1,
+            "pattern": "[a-zA-Z0-9_\\%-]+"
+        },
+        "theme": {
+            "description": "Theme identifier for the template.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ]
+        },
+        "type": {
+            "description": "Type of template.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ]
+        },
+        "source": {
+            "description": "Source of template",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "origin": {
+            "description": "Source of a customized template",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "content": {
+            "description": "Content of template.",
+            "type": [
+                "object",
+                "string"
+            ],
+            "default": "",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "properties": {
+                "raw": {
+                    "description": "Content for the template, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit"
+                    ]
+                },
+                "block_version": {
+                    "description": "Version of the content block format used by the template.",
+                    "type": "integer",
+                    "context": [
+                        "edit"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "title": {
+            "description": "Title of template.",
+            "type": [
+                "object",
+                "string"
+            ],
+            "default": "",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "properties": {
+                "raw": {
+                    "description": "Title for the template, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML title for the template, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "description": {
+            "description": "Description of template.",
+            "type": "string",
+            "default": "",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ]
+        },
+        "status": {
+            "description": "Status of template.",
+            "type": "string",
+            "enum": [
+                "publish",
+                "future",
+                "draft",
+                "pending",
+                "private"
+            ],
+            "default": "publish",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ]
+        },
+        "wp_id": {
+            "description": "Post ID.",
+            "type": "integer",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "has_theme_file": {
+            "description": "Theme file exists.",
+            "type": "bool",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "author": {
+            "description": "The ID for the author of the template.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "modified": {
+            "description": "The date the template was last modified, in the site's timezone.",
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "author_text": {
+            "type": "string",
+            "description": "Human readable text for the author.",
+            "readonly": true,
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "original_source": {
+            "description": "Where the template originally comes from e.g. 'theme'",
+            "type": "string",
+            "readonly": true,
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "enum": [
+                "theme",
+                "plugin",
+                "site",
+                "user"
+            ]
+        },
+        "date": {
+            "description": "The date the template was published, in the site's timezone.",
+            "type": [
+                "string",
+                "null"
+            ],
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        }
+    },
+    "template-type-properties": {
+        "wp_template": {
+            "is_custom": {
+                "description": "Whether a template is a custom template.",
+                "type": "bool",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ],
+                "readonly": true
+            },
+            "plugin": {
+                "type": "string",
+                "description": "Plugin that registered the template.",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            }
+        },
+        "wp_template_part": {
+            "area": {
+                "description": "Where the template part is intended for use (header, footer, etc.)",
+                "type": "string",
+                "context": [
+                    "embed",
+                    "view",
+                    "edit"
+                ]
+            }
+        }
     }
 }

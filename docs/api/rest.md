@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 378 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 386 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -72,7 +72,7 @@ the wp/v2 surface: shapes and controllers
 | [`StatusesController`](#statusescontroller) | final readonly class | 97 | wp/v2/statuses as the reference answers it (probe rest-statuses): every |
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
-| [`TemplateObject`](#templateobject) | final readonly class | 100 | The wp/v2/templates and wp/v2/template-parts resource. |
+| [`TemplateObject`](#templateobject) | final readonly class | 101 | The wp/v2/templates and wp/v2/template-parts resource. |
 | [`TemplatesController`](#templatescontroller) | final readonly class | 275 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
@@ -170,6 +170,12 @@ One attachment's wp/v2 links in a context, without rendering the rest of it; emp
 
 - `@return array<string, mixed>`
 
+### `templateView(Minn\Theme\TemplateRecord $record, string $context, string $as): array`
+
+A template as wp/v2 shapes it in a context, for the route's own type (templates or template parts). @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
 ### `userObject(): Minn\Rest\UserObject`
 
 The wp/v2 user shape.
@@ -218,7 +224,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 350), `withPageLinks()` (private, line 364), `options()` (private, line 395), `withAllow()` (private, line 408)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 358), `withPageLinks()` (private, line 372), `options()` (private, line 403), `withAllow()` (private, line 416)
 
 
 ## ApplicationPasswordsController

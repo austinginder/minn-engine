@@ -213,6 +213,14 @@ final readonly class Api
         return $post === null || !$post->isAttachment() ? [] : $this->services->mediaObject()->links($post, Context::tryFrom($context) ?? Context::View);
     }
 
+    /** A template as wp/v2 shapes it in a context, for the route's own type (templates or template parts). @return array<string, mixed> */
+    public function templateView(\Minn\Theme\TemplateRecord $record, string $context, string $as): array
+    {
+        $s = $this->services;
+        $templates = $s->templates();
+        return $templates === null ? [] : (new TemplateObject($templates, $s->posts(), $s->url(), $s->caller()))->view($record, Context::tryFrom($context) ?? Context::View, $as);
+    }
+
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {

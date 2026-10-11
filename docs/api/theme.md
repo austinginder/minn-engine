@@ -1053,7 +1053,7 @@ One block template or template part, whatever it came from: a theme
 file, a row the site editor saved, or a template a plugin registered.
 The id every caller uses is "<theme>//<slug>" in all three cases.
 
-Used by: `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`
+Used by: `Minn\Rest\Api`, `Minn\Rest\TemplateObject`, `Minn\Rest\TemplatesController`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`
 
 ```php
 __construct(string $theme, string $slug, string $type, string $content, string $title, string $description, string $source, ?string $origin, bool $hasThemeFile, int $author, ?string $modified, ?string $date, int $wpId, string $status = 'publish', ?string $area = NULL, ?string $plugin = NULL)

@@ -162,59 +162,6 @@ class WP_REST_Settings_Controller extends WP_REST_Controller
     }
 }
 
-class WP_REST_Templates_Controller extends WP_REST_Controller
-{
-    protected $post_type = NULL;
-
-    public function __construct($post_type)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::__construct');
-        return null;
-    }
-
-    public function get_template_fallback($request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::get_template_fallback');
-        return null;
-    }
-
-    protected function permissions_check($request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::permissions_check');
-        return null;
-    }
-
-    public function _sanitize_template_id($id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::_sanitize_template_id');
-        return null;
-    }
-
-    private static function get_wp_templates_original_source_field($template_object)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::get_wp_templates_original_source_field');
-        return null;
-    }
-
-    private static function get_wp_templates_author_text_field($template_object)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::get_wp_templates_author_text_field');
-        return null;
-    }
-
-    protected function prepare_links($id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::prepare_links');
-        return null;
-    }
-
-    protected function get_available_actions()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Templates_Controller::get_available_actions');
-        return null;
-    }
-}
-
 class WP_REST_Themes_Controller extends WP_REST_Controller
 {
     const PATTERN = '[^\\/:<>\\*\\?"\\|]+(?:\\/[^\\/:<>\\*\\?"\\|]+)?';

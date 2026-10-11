@@ -88253,7 +88253,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 378,
+            "lines": 386,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88331,7 +88331,8 @@
                 "Minn\\Rest\\UsersController",
                 "Minn\\Rest\\WidgetObject",
                 "Minn\\Rest\\WidgetsController",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Theme\\TemplateRecord"
             ],
             "usedBy": [
                 "Minn\\Engine"
@@ -88725,6 +88726,42 @@
                 },
                 {
                     "routes": [],
+                    "name": "templateView",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "templateView(Minn\\Theme\\TemplateRecord $record, string $context, string $as): array",
+                    "doc": "A template as wp/v2 shapes it in a context, for the route's own type (templates or template parts). @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "record",
+                            "type": "Minn\\Theme\\TemplateRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "as",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 217,
+                    "end": 222
+                },
+                {
+                    "routes": [],
                     "name": "userObject",
                     "static": false,
                     "visibility": "public",
@@ -88732,8 +88769,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 217,
-                    "end": 220
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -88744,8 +88781,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 223,
-                    "end": 226
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -88771,8 +88808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 243
+                    "line": 242,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -88791,8 +88828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 273
+                    "line": 254,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -88818,8 +88855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 305
+                    "line": 292,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -88838,8 +88875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 312
+                    "line": 316,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -88865,8 +88902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 333
+                    "line": 329,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -88894,8 +88931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 348
+                    "line": 349,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -88943,8 +88980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 350,
-                    "end": 357
+                    "line": 358,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -88970,8 +89007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 386
+                    "line": 372,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -88990,8 +89027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 402
+                    "line": 403,
+                    "end": 410
                 },
                 {
                     "routes": [],
@@ -89017,8 +89054,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 412
+                    "line": 416,
+                    "end": 420
                 }
             ]
         },
@@ -107384,7 +107421,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TemplateObject.php",
-            "lines": 100,
+            "lines": 101,
             "doc": "The wp/v2/templates and wp/v2/template-parts resource.",
             "implements": [],
             "extends": null,
@@ -107558,7 +107595,7 @@
                         }
                     ],
                     "line": 86,
-                    "end": 110
+                    "end": 111
                 }
             ]
         },
@@ -149056,6 +149093,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Rest\\Api",
                 "Minn\\Rest\\TemplateObject",
                 "Minn\\Rest\\TemplatesController",
                 "Minn\\Theme\\TemplateIndex",

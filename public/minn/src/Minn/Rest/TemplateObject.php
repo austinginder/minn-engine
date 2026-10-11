@@ -96,7 +96,8 @@ final readonly class TemplateObject
         if (!$canWrite) {
             return $links;
         }
-        if ($record->wpId > 0) {
+        // A trashed copy shows no revisions (probe rest-templates-controller).
+        if ($record->wpId > 0 && $record->status !== 'trash') {
             $links['version-history'] = [['count' => $this->posts->revisionCount($record->wpId), 'href' => $self . '/revisions']];
             $latest = $this->posts->latestRevisionId($record->wpId);
             if ($latest > 0) {

@@ -12592,3 +12592,58 @@ hooks are told it is network-wide. Before, it went into the site's list.
 
 Not probed: the multisite paths (network-only plugins, network
 activation permissions), and a filesystem that asks for credentials.
+
+## WP_REST_Templates_Controller (2026-10-11)
+
+Probe `rest-templates-controller` proves the templates controller class,
+for templates and template parts, against twentytwentyfive. Its fixtures
+are an author and an editor. It saves over a theme template, creates a
+custom template and a part, then trashes and deletes them; all of it is
+removed again, revisions included.
+
+- **The class is WordPress-shaped** over the runtime's block template
+  functions (`get_block_templates`, `get_block_template`, `wp_insert_post`,
+  `wp_update_post`, the trash). The shape is the engine's
+  `TemplateObject`, reached through `Api::templateView` with the block
+  template made a `TemplateRecord`.
+- **Permissions.**
+  - Reading (the list, one, a fallback) needs `edit_theme_options` or
+    `edit_posts`, the edit context too: an author reads templates.
+  - Changing anything needs `edit_theme_options`
+    (`rest_cannot_manage_templates`).
+  - The available actions are publish for who may publish the type, and
+    unfiltered HTML for who has it.
+- **Ids** (`_sanitize_template_id`) are urldecoded (`+` becomes a space).
+  A single slash at the last slash becomes two.
+- **What a request saves** (`prepare_item_for_database`):
+  - A new template takes the type, publish and the theme (no slug; the
+    create adds it).
+  - A theme template saved over takes its slug, the theme and its
+    `origin`, and keeps its content, title and description unless the
+    request changes them.
+  - The site's own copy takes its id.
+  - Then come a part's area, the author, and
+    `rest_pre_insert_{type}`.
+- **Saving.**
+  - An update or a create saves with the after hooks firing as it saves
+    (the revision included). Then it fires `rest_after_insert_{type}`
+    (no `rest_insert_` action) and `wp_after_insert_post` once more.
+  - An update answers in the edit context. A create answers in the view
+    context, a 201, under a unique slug.
+- **Deleting.**
+  - A theme file can't be removed.
+  - The trash answers the template marked trash, without its revision
+    links.
+  - With force, it answers `deleted` and the previous version, and fires
+    only `delete_post`.
+- **A fallback** is the first template the slug's hierarchy names, shown
+  as the route's own type shows an item.
+
+Fixed on the way:
+- `get_block_templates` honours `post_type`: only templates that declare
+  the type are kept.
+- `inject_ignored_hooked_blocks_metadata_attributes` leaves the changes
+  untouched when nothing is hooked; before, it stamped `post_modified`
+  and `post_author` onto every template save. A new template without a
+  slug no longer warns.
+- A trashed template shows no `version-history` link.
