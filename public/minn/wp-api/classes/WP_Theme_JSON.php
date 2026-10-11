@@ -115,7 +115,24 @@ class WP_Theme_JSON
         $valid_variations = static::get_valid_block_style_variations($blocks_metadata);
         $theme_json = static::unwrap_shared_block_style_variations($theme_json, $valid_variations);
         $theme_json = static::sanitize($theme_json, array_keys($blocks_metadata), array_keys(static::ELEMENTS), $valid_variations);
-        $this->theme_json = self::minn_presets_by_origin(static::maybe_opt_in_into_settings($theme_json), $origin);
+        $this->theme_json = self::minn_spacing_from_scale(self::minn_presets_by_origin(static::maybe_opt_in_into_settings($theme_json), $origin));
+    }
+
+    /**
+     * @internal each settings node's spacing scale made into its sizes, for
+     * every origin that has a scale and no sizes of its own (probe
+     * theme-json-css); an invalid scale makes none
+     */
+    private static function minn_spacing_from_scale(array $theme_json): array
+    {
+        foreach (self::minn_setting_paths($theme_json) as $node) {
+            foreach ((array) _wp_array_get($theme_json, array_merge($node, ['spacing', 'spacingScale']), []) as $origin => $scale) {
+                if (in_array($origin, static::VALID_ORIGINS, true) && _wp_array_get($theme_json, array_merge($node, ['spacing', 'spacingSizes', $origin]), null) === null) {
+                    _wp_array_set($theme_json, array_merge($node, ['spacing', 'spacingSizes', $origin]), Minn\Theme\SpacingScale::sizes((array) $scale));
+                }
+            }
+        }
+        return $theme_json;
     }
 
     /** @internal each preset (and the spacing scale) kept under the origin, at the root and for each block, unless it already is */
@@ -348,10 +365,26 @@ class WP_Theme_JSON
         return (array) ($this->theme_json['settings'] ?? []);
     }
 
+    /**
+     * The tree's CSS by type (variables, styles, presets, custom-css), the
+     * origins asked for, and the root_selector, scope and
+     * skip_root_layout_styles options (Minn\Theme\TreeStyles, probe
+     * theme-json-css). The base layout alone prints only for a theme without
+     * theme.json.
+     */
     public function get_stylesheet($types = ['variables', 'styles', 'presets'], $origins = NULL, $options = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_stylesheet');
-        return null;
+        $types = (array) $types;
+        if (in_array('base-layout-styles', $types, true) && wp_theme_has_theme_json()) {
+            $types = array_values(array_diff($types, ['base-layout-styles']));
+        }
+        return $this->minn_styles()->stylesheet($types, $origins === null ? static::VALID_ORIGINS : (array) $origins, (array) $options);
+    }
+
+    /** @internal the engine's writer over this tree */
+    private function minn_styles(): Minn\Theme\TreeStyles
+    {
+        return new Minn\Theme\TreeStyles((array) $this->theme_json);
     }
 
     /** A block's own CSS under its selector, nested rules unfolded (Minn\Theme\CustomCss::scoped, probe block-supports). */
@@ -389,28 +422,40 @@ class WP_Theme_JSON
         return $parts;
     }
 
+    /** Each style node's rules, one after another. */
     protected function get_block_classes($style_nodes)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_block_classes');
-        return null;
+        $out = '';
+        foreach ((array) $style_nodes as $node) {
+            $out .= $this->get_styles_for_block($node);
+        }
+        return $out;
     }
 
+    /** The root's block gap and layout rules; a block node has none of its own here. */
     protected function get_layout_styles($block_metadata, $options = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_layout_styles');
-        return null;
+        return ($block_metadata['path'] ?? null) === ['styles'] ? $this->minn_styles()->layoutStyles() : '';
     }
 
+    /** Each settings node's has-* classes for the origins given. */
     protected function get_preset_classes($setting_nodes, $origins)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_preset_classes');
-        return null;
+        $out = '';
+        foreach ((array) $setting_nodes as $node) {
+            $out .= $this->minn_styles()->classesOf((array) _wp_array_get($this->theme_json, (array) ($node['path'] ?? []), []), (array) $origins, (string) ($node['selector'] ?? ''));
+        }
+        return $out;
     }
 
+    /** Each settings node's custom properties for the origins given, under its selector. */
     protected function get_css_variables($nodes, $origins)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_css_variables');
-        return null;
+        $out = '';
+        foreach ((array) $nodes as $node) {
+            $out .= $this->minn_styles()->variablesOf((array) _wp_array_get($this->theme_json, (array) ($node['path'] ?? []), []), (array) $origins, (string) ($node['selector'] ?? ''));
+        }
+        return $out;
     }
 
     private static function get_feature_selector($feature_selectors, $feature_key, $default_selector)
@@ -758,16 +803,24 @@ class WP_Theme_JSON
         return $nodes;
     }
 
+    /** One style node's rules: the root's, a block's own (its elements are nodes of their own), or an element's (the root's or a block's). */
     public function get_styles_for_block($block_metadata)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_styles_for_block');
-        return null;
+        $path = array_values((array) ($block_metadata['path'] ?? []));
+        $styles = $this->minn_styles();
+        return match (true) {
+            $path === ['styles'] => $styles->rootStyles((string) ($block_metadata['selector'] ?? 'body')),
+            count($path) === 3 && $path[1] === 'blocks' => $styles->blockOwnStyles((string) $path[2]),
+            count($path) === 3 && $path[1] === 'elements' => $styles->elementStyles((string) $path[2]),
+            count($path) === 5 && $path[1] === 'blocks' && $path[3] === 'elements' => $styles->elementStyles((string) $path[4], (string) $path[2]),
+            default => '',
+        };
     }
 
+    /** The root layout under the selector: sizes, margin, padding and alignments, and for body the block gap and layouts. */
     public function get_root_layout_rules($selector, $block_metadata, $options = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_root_layout_rules');
-        return null;
+        return $this->minn_styles()->rootLayoutRules((string) $selector);
     }
 
     protected static function get_metadata_boolean($data, $path, $default_value = false)
@@ -830,9 +883,14 @@ class WP_Theme_JSON
         return $slugs;
     }
 
+    /** The name a preset of this slug has among the tree's default-origin presets under the path; null when none. */
     protected function get_name_from_defaults($slug, $base_path)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_name_from_defaults');
+        foreach ((array) _wp_array_get($this->theme_json, array_merge((array) $base_path, ['default']), []) as $preset) {
+            if (is_array($preset) && ($preset['slug'] ?? null) === $slug) {
+                return $preset['name'] ?? null;
+            }
+        }
         return null;
     }
 
@@ -1156,9 +1214,17 @@ class WP_Theme_JSON
         return $output;
     }
 
+    /**
+     * Deprecated since 6.6.0: the tree makes its spacing sizes when it is
+     * made. A scale it holds is keyed by origin, so it reads as invalid here
+     * and nothing changes.
+     */
     public function set_spacing_sizes()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::set_spacing_sizes');
+        _deprecated_function(__METHOD__, '6.6.0');
+        if (isset($this->theme_json['settings']['spacing']['spacingScale'])) {
+            wp_trigger_error(__METHOD__, __('Some of the theme.json settings.spacing.spacingScale values are invalid'));
+        }
         return null;
     }
 
@@ -1220,10 +1286,22 @@ class WP_Theme_JSON
         return $element_selectors;
     }
 
+    /**
+     * The declarations a block's feature selectors take, by selector: a
+     * property with a selector of its own first, then the rest of its
+     * feature under the feature's. What is taken leaves the node.
+     */
     protected function get_feature_declarations_for_node($metadata, &$node)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_feature_declarations_for_node');
-        return null;
+        [$taken, $node] = Minn\Theme\FeatureSelectors::split((array) ($metadata['selectors'] ?? []), (array) $node);
+        $declarations = [];
+        foreach ($taken as [$selector, $styles]) {
+            $found = static::compute_style_properties($styles, (array) ($this->theme_json['settings'] ?? []), null, $this->theme_json);
+            if ($found !== []) {
+                $declarations[$selector] = array_merge($declarations[$selector] ?? [], $found);
+            }
+        }
+        return $declarations;
     }
 
     private static function convert_variables_to_value($styles, $values)
@@ -1232,10 +1310,41 @@ class WP_Theme_JSON
         return null;
     }
 
+    /** The tree with every var: preset and custom reference in its styles replaced by the value it names (probe theme-json-css). */
     public static function resolve_variables($theme_json)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::resolve_variables');
-        return null;
+        $data = $theme_json->get_raw_data();
+        $values = [];
+        foreach (static::PRESETS_METADATA as $metadata) {
+            // A font size resolves to the size as written.
+            $key = $metadata['value_key'] ?? (isset($metadata['value_func']) ? 'size' : null);
+            if (!is_string($key) || !preg_match('/^--wp--preset--(.+)--\$slug$/', (string) ($metadata['css_vars'] ?? ''), $match)) {
+                continue;
+            }
+            $kind = $match[1];
+            foreach (static::VALID_ORIGINS as $origin) {
+                foreach ((array) _wp_array_get($data, array_merge(['settings'], $metadata['path'], [$origin]), []) as $preset) {
+                    if (is_array($preset) && isset($preset['slug'], $preset[$key])) {
+                        $values["preset|{$kind}|{$preset['slug']}"] = $preset[$key];
+                    }
+                }
+            }
+        }
+        $flatten = static function (array $tree, string $prefix) use (&$flatten, &$values): void {
+            foreach ($tree as $name => $value) {
+                is_array($value) ? $flatten($value, "{$prefix}|{$name}") : $values["{$prefix}|{$name}"] = $value;
+            }
+        };
+        $flatten((array) ($data['settings']['custom'] ?? []), 'custom');
+        $resolve = static function ($node) use (&$resolve, $values) {
+            if (is_array($node)) {
+                return array_map($resolve, $node);
+            }
+            return is_string($node) && str_starts_with($node, 'var:') && array_key_exists(substr($node, 4), $values) ? $values[substr($node, 4)] : $node;
+        };
+        $resolved = clone $theme_json;
+        $resolved->theme_json['styles'] = $resolve((array) ($data['styles'] ?? []));
+        return $resolved;
     }
 
     protected static function get_block_style_variation_selector($variation_name, $block_selector)

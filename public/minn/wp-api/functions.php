@@ -450,7 +450,8 @@ function _doing_it_wrong($function_name, $message, $version)
 
 function wp_trigger_error($function_name, $message, $error_level = E_USER_NOTICE)
 {
-    if (!defined('WP_DEBUG') || !WP_DEBUG) {
+    // wp_trigger_error_trigger_error silences the notice before anyone hears of it (probe theme-json-css).
+    if (!defined('WP_DEBUG') || !WP_DEBUG || !apply_filters('wp_trigger_error_trigger_error', true)) {
         return;
     }
     do_action('wp_trigger_error_run', $function_name, $message, $error_level);

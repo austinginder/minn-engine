@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 808,
-        "composes": 2367,
-        "leaf": 1039,
-        "noop": 2754,
-        "placeholder": 3,
+        "minn": 800,
+        "composes": 2374,
+        "leaf": 1041,
+        "noop": 2757,
+        "placeholder": 2,
         "deadend": 1768,
-        "functions": 8661,
-        "minnMethods": 986,
+        "functions": 8664,
+        "minnMethods": 992,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -29441,11 +29441,9 @@
         },
         "WP_Theme_JSON::get_block_classes": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::get_block_element_selectors": {
@@ -29503,12 +29501,12 @@
         },
         "WP_Theme_JSON::get_css_variables": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get"
+            ]
         },
         "WP_Theme_JSON::get_custom_css": {
             "file": "classes/WP_Theme_JSON.php",
@@ -29558,10 +29556,10 @@
         },
         "WP_Theme_JSON::get_feature_declarations_for_node": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
+            "lines": 9,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
+                "Minn\\Theme\\FeatureSelectors::split"
             ],
             "composes": []
         },
@@ -29585,11 +29583,9 @@
         },
         "WP_Theme_JSON::get_layout_styles": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::get_metadata_boolean": {
@@ -29603,12 +29599,12 @@
         },
         "WP_Theme_JSON::get_name_from_defaults": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get"
+            ]
         },
         "WP_Theme_JSON::get_patterns": {
             "file": "classes/WP_Theme_JSON.php",
@@ -29619,12 +29615,12 @@
         },
         "WP_Theme_JSON::get_preset_classes": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get"
+            ]
         },
         "WP_Theme_JSON::get_property_value": {
             "file": "classes/WP_Theme_JSON.php",
@@ -29644,11 +29640,9 @@
         },
         "WP_Theme_JSON::get_root_layout_rules": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::get_setting_nodes": {
@@ -29701,21 +29695,19 @@
         },
         "WP_Theme_JSON::get_styles_for_block": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 9,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::get_stylesheet": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_theme_has_theme_json"
+            ]
         },
         "WP_Theme_JSON::get_svg_filters": {
             "file": "classes/WP_Theme_JSON.php",
@@ -29948,6 +29940,27 @@
             "minn": [],
             "composes": []
         },
+        "WP_Theme_JSON::minn_spacing_from_scale": {
+            "file": "classes/WP_Theme_JSON.php",
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\SpacingScale::sizes"
+            ],
+            "composes": [
+                "_wp_array_get",
+                "_wp_array_set"
+            ]
+        },
+        "WP_Theme_JSON::minn_styles": {
+            "file": "classes/WP_Theme_JSON.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Theme\\TreeStyles::__construct"
+            ],
+            "composes": []
+        },
         "WP_Theme_JSON::minn_typed_settings": {
             "file": "classes/WP_Theme_JSON.php",
             "lines": 7,
@@ -30078,12 +30091,12 @@
         },
         "WP_Theme_JSON::resolve_variables": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 32,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_array_get"
+            ]
         },
         "WP_Theme_JSON::sanitize": {
             "file": "classes/WP_Theme_JSON.php",
@@ -30122,12 +30135,14 @@
         },
         "WP_Theme_JSON::set_spacing_sizes": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
-            "composes": []
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_deprecated_function",
+                "wp_trigger_error"
+            ]
         },
         "WP_Theme_JSON::should_override_preset": {
             "file": "classes/WP_Theme_JSON.php",
@@ -63829,6 +63844,22 @@
             "minn": [],
             "composes": []
         },
+        "wp_add_global_styles_for_blocks": {
+            "file": "script-loader.php",
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\TreeStyles::__construct",
+                "Minn\\Theme\\TreeStyles::blockElements",
+                "Minn\\Theme\\TreeStyles::blockOwnStyles",
+                "Minn\\Theme\\TreeStyles::elementStyles"
+            ],
+            "composes": [
+                "wp_add_inline_style",
+                "wp_should_load_block_assets_on_demand",
+                "wp_style_is"
+            ]
+        },
         "wp_add_id3_tag_data": {
             "file": "deadends.php",
             "lines": 2,
@@ -67643,11 +67674,16 @@
             "composes": []
         },
         "wp_enqueue_global_styles_css_custom_properties": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "script-loader.php",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_add_inline_style",
+                "wp_enqueue_style",
+                "wp_get_global_stylesheet",
+                "wp_register_style"
+            ]
         },
         "wp_enqueue_global_styles_custom_css": {
             "file": "block-supports-deprecated.php",
@@ -76499,10 +76535,11 @@
         },
         "wp_trigger_error": {
             "file": "functions.php",
-            "lines": 10,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "apply_filters",
                 "do_action",
                 "wp_kses"
             ]

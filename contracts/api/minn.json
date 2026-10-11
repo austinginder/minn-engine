@@ -12868,7 +12868,8 @@
             "usedBy": [
                 "Minn\\Blocks\\Layout",
                 "Minn\\Blocks\\Renderer",
-                "Minn\\Theme\\GlobalStyles"
+                "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\TreeStyles"
             ],
             "constructor": null,
             "cases": [],
@@ -20765,7 +20766,8 @@
                 "Minn\\Blocks\\Elements",
                 "Minn\\Blocks\\Layout",
                 "Minn\\Blocks\\Wrapper",
-                "Minn\\Theme\\GlobalStyles"
+                "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\TreeStyles"
             ],
             "constructor": null,
             "cases": [],
@@ -146230,7 +146232,8 @@
                 "Minn\\Theme\\GlobalStyles"
             ],
             "usedBy": [
-                "Minn\\Theme\\GlobalStyles"
+                "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\TreeStyles"
             ],
             "constructor": null,
             "cases": [],
@@ -146451,6 +146454,56 @@
                     ],
                     "line": 45,
                     "end": 55
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\FeatureSelectors",
+            "short": "FeatureSelectors",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/FeatureSelectors.php",
+            "lines": 33,
+            "doc": "A block's styles split between the selectors its metadata gives its\nfeatures (probe theme-json-css), in the metadata's order: a property with\na selector of its own first, then what is left of its feature under the\nfeature's selector. What is taken leaves the node.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "split",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "split(array $selectors, array $node): array",
+                    "doc": "The styles each feature selector takes, and the node left over.",
+                    "shapes": [
+                        "@param array<string, mixed> $selectors the block's metadata selectors",
+                        "@param array<string, mixed> $node the block's styles",
+                        "@return array{0: list<array{0: string, 1: array<string, mixed>}>, 1: array<string, mixed>} the styles each selector takes, in order, and what stays"
+                    ],
+                    "params": [
+                        {
+                            "name": "selectors",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block's metadata selectors"
+                        },
+                        {
+                            "name": "node",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the block's styles"
+                        }
+                    ],
+                    "line": 22,
+                    "end": 44
                 }
             ]
         },
@@ -147108,7 +147161,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/GlobalStyles.php",
-            "lines": 493,
+            "lines": 516,
             "doc": "theme.json to CSS. Presets become custom properties on :root and their\nhas-* utility classes; settings.layout sizes, root styles, elements, and\nper-block styles become rules; the containers, galleries, and style\nvariations the page actually rendered get their own stylesheets. The\nlayout rules themselves (flow, constrained, flex, grid, alignments) are\nthe engine's own, written to the same class hooks.",
             "implements": [],
             "extends": null,
@@ -147128,7 +147181,8 @@
                 "Minn\\Admin\\RenderController",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\CustomCss",
-                "Minn\\Theme\\PageRenderer"
+                "Minn\\Theme\\PageRenderer",
+                "Minn\\Theme\\TreeStyles"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Theme\\Theme $theme, ?array $user = NULL)",
@@ -147160,7 +147214,7 @@
                     "name": "ELEMENT_SELECTORS",
                     "value": "array (   'link' => 'a:where(:not(.wp-element-button))',   'heading' => 'h1, h2, h3, h4, h5, h6',   'h1' => 'h1',   'h2' => 'h2',   'h3' => 'h3',   'h4' => 'h4',   'h5' => 'h5',   'h6' => 'h6',   'button' => '.wp-element-button, .wp-block-button__link',   'caption' => '.wp-element-caption, .wp-block-audio figcaption, .wp-block-embed figcaption, .wp-block-gallery figcaption, .wp-block-image figcaption, .wp-block-table figcaption, .wp-block-video figcaption',   'cite' => 'cite', )",
                     "doc": "Element selectors in the order the reference prints them, whatever\norder theme.json or the saved styles list them in: the heading group\nlands before the individual levels, so an h1 line-height beats the\ngroup's. Themes list h1..h6 before heading and would otherwise win.",
-                    "visibility": "private"
+                    "visibility": "public"
                 },
                 {
                     "name": "BLOCK_SELECTORS",
@@ -147263,8 +147317,175 @@
                     "doc": "The @font-face rules for every family that declares font files\n(Theme\\FontFaces), with file:./ resolved against the theme that\ncarries the file. The page prints them through wp_print_font_faces on\nwp_head; the editor's styles read them here.",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 159
+                    "line": 158,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "rootRules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "rootRules(bool $aware): string",
+                    "doc": "The body's margin, the global padding rules under root-padding-aware alignments, and the site's alignments.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "aware",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 182,
+                    "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "blockGapRules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockGapRules(string $gap): string",
+                    "doc": "The block gap between the site's blocks and inside every layout.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "gap",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 195,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "layoutRules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "layoutRules(): string",
+                    "doc": "The layouts' own rules: alignments inside flow and constrained layouts, the content and wide sizes, flex and grid.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 203,
+                    "end": 209
+                },
+                {
+                    "routes": [],
+                    "name": "gapRules",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "gapRules(string $prefix, string $gap): string",
+                    "doc": "The block-gap rules for a layout scope: \"\" for the root, or a block's -is-layout- prefix.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gap",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 212,
+                    "end": 221
+                },
+                {
+                    "routes": [],
+                    "name": "elementStyles",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "elementStyles(array $elements, string $scope): string",
+                    "doc": "The element rules (links, headings, buttons, captions, citations), each state after it; under a block's selector when one is given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "elements",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 243,
+                    "end": 274
+                },
+                {
+                    "routes": [],
+                    "name": "blockStyles",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "blockStyles(string $name, array $blockStyles, string $scope = ''): string",
+                    "doc": "A block's rules: its root rule, its layout gap rules, then a rule for\neach feature its metadata gives a selector of its own (the avatar's\nborder on its image), its own CSS and its elements (probe\neditor-styles).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "blockStyles",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 297,
+                    "end": 322
+                },
+                {
+                    "routes": [],
+                    "name": "scoped",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "scoped(string $selector, string $scope): string",
+                    "doc": "Each selector in a list under the scope (\"\" for none).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -147283,8 +147504,61 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 316
+                    "line": 331,
+                    "end": 336
+                },
+                {
+                    "routes": [],
+                    "name": "selectorsOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "selectorsOf(string $name): array",
+                    "doc": "A core block's selectors from its metadata. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 339,
+                    "end": 342
+                },
+                {
+                    "routes": [],
+                    "name": "byFeature",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "byFeature(array $styles, array $selectors): array",
+                    "doc": "A block's styles split between its root selector and the features (or\na feature's single properties) its metadata selects elsewhere.",
+                    "shapes": [
+                        "@param array<string, mixed> $styles",
+                        "@param array<string, mixed> $selectors",
+                        "@return array{0: array<string, mixed>, 1: array<string, array<string, mixed>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selectors",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 352,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -147324,283 +147598,14 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 400
-                },
-                {
-                    "routes": [],
-                    "name": "parts",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "parts(): array",
-                    "doc": "",
-                    "shapes": [
-                        "@return array{variables: string, base: string, presets: string, blocks: array<string, mixed>}"
-                    ],
-                    "params": [],
-                    "line": 130,
-                    "end": 147
-                },
-                {
-                    "routes": [],
-                    "name": "fontUrl",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "fontUrl(string $src): ?string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "src",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 161,
-                    "end": 176
-                },
-                {
-                    "routes": [],
-                    "name": "structuralRules",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "structuralRules(string $gap, bool $aware = true): string",
-                    "doc": "The engine's own layout rules on the reference's class hooks; the global-padding rules exist only under root-padding-aware alignments.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "gap",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "aware",
-                            "type": "bool",
-                            "shape": "",
-                            "default": "true",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 179,
-                    "end": 196
-                },
-                {
-                    "routes": [],
-                    "name": "gapRules",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "gapRules(string $prefix, string $gap): string",
-                    "doc": "The block-gap rules for a layout scope: \"\" for the root, or a block's -is-layout- prefix.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "prefix",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "gap",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 199,
-                    "end": 208
-                },
-                {
-                    "routes": [],
-                    "name": "rootStyles",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "rootStyles(array $styles): string",
-                    "doc": "Root styles land on body. With root-padding-aware alignments the root\npadding is NOT applied to body; it becomes the custom properties the\nhas-global-padding rules read.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "styles",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 215,
-                    "end": 227
-                },
-                {
-                    "routes": [],
-                    "name": "elementStyles",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "elementStyles(array $elements, string $scope): string",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "elements",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "scope",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 229,
-                    "end": 260
-                },
-                {
-                    "routes": [],
-                    "name": "blockCustomProperties",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "blockCustomProperties(array $blocks): string",
-                    "doc": "Each block's own settings.custom as custom properties on the block's root selector. @param array<string, mixed> $blocks",
-                    "shapes": [
-                        "@param array<string, mixed> $blocks"
-                    ],
-                    "params": [
-                        {
-                            "name": "blocks",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 263,
-                    "end": 275
-                },
-                {
-                    "routes": [],
-                    "name": "blockStyles",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "blockStyles(string $name, array $blockStyles): string",
-                    "doc": "A block's rules: its root rule, its layout gap rules, then a rule for\neach feature its metadata gives a selector of its own (the avatar's\nborder on its image), its own CSS and its elements (probe\neditor-styles).",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "blockStyles",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 283,
-                    "end": 308
-                },
-                {
-                    "routes": [],
-                    "name": "selectorsOf",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "selectorsOf(string $name): array",
-                    "doc": "A core block's selectors from its metadata. @return array<string, mixed>",
-                    "shapes": [
-                        "@return array<string, mixed>"
-                    ],
-                    "params": [
-                        {
-                            "name": "name",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 319,
-                    "end": 322
-                },
-                {
-                    "routes": [],
-                    "name": "byFeature",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "byFeature(array $styles, array $selectors): array",
-                    "doc": "A block's styles split between its root selector and the features (or\na feature's single properties) its metadata selects elsewhere.",
-                    "shapes": [
-                        "@param array<string, mixed> $styles",
-                        "@param array<string, mixed> $selectors",
-                        "@return array{0: array<string, mixed>, 1: array<string, array<string, mixed>>}"
-                    ],
-                    "params": [
-                        {
-                            "name": "styles",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "selectors",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 332,
-                    "end": 357
-                },
-                {
-                    "routes": [],
-                    "name": "withoutEmpty",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "withoutEmpty(array $styles): array",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "styles",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 359,
-                    "end": 369
-                },
-                {
-                    "routes": [],
-                    "name": "containerStyles",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "containerStyles(): string",
-                    "doc": "The page's block-support rules (layouts, element styles, and the rest), which the facade keeps in the style engine's block-supports store.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 403,
-                    "end": 410
+                    "line": 398,
+                    "end": 420
                 },
                 {
                     "routes": [],
                     "name": "declarations",
                     "static": true,
-                    "visibility": "private",
+                    "visibility": "public",
                     "signature": "declarations(array $styles, array $skip): array",
                     "doc": "theme.json style properties to declarations: color, typography, spacing,\nborder, shadow, dimensions, outline.",
                     "shapes": [
@@ -147622,8 +147627,116 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 485
+                    "line": 438,
+                    "end": 508
+                },
+                {
+                    "routes": [],
+                    "name": "parts",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "parts(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array{variables: string, base: string, presets: string, blocks: array<string, mixed>}"
+                    ],
+                    "params": [],
+                    "line": 130,
+                    "end": 150
+                },
+                {
+                    "routes": [],
+                    "name": "fontUrl",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fontUrl(string $src): ?string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "src",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 164,
+                    "end": 179
+                },
+                {
+                    "routes": [],
+                    "name": "rootStyles",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "rootStyles(array $styles): string",
+                    "doc": "Root styles land on body. With root-padding-aware alignments the root\npadding is NOT applied to body; it becomes the custom properties the\nhas-global-padding rules read.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 228,
+                    "end": 240
+                },
+                {
+                    "routes": [],
+                    "name": "blockCustomProperties",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "blockCustomProperties(array $blocks): string",
+                    "doc": "Each block's own settings.custom as custom properties on the block's root selector. @param array<string, mixed> $blocks",
+                    "shapes": [
+                        "@param array<string, mixed> $blocks"
+                    ],
+                    "params": [
+                        {
+                            "name": "blocks",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 277,
+                    "end": 289
+                },
+                {
+                    "routes": [],
+                    "name": "withoutEmpty",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "withoutEmpty(array $styles): array",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "styles",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 379,
+                    "end": 389
+                },
+                {
+                    "routes": [],
+                    "name": "containerStyles",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "containerStyles(): string",
+                    "doc": "The page's block-support rules (layouts, element styles, and the rest), which the facade keeps in the style engine's block-supports store.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 423,
+                    "end": 430
                 },
                 {
                     "routes": [],
@@ -147645,8 +147758,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 495,
-                    "end": 512
+                    "line": 518,
+                    "end": 535
                 }
             ]
         },
@@ -149296,12 +149409,108 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\SpacingScale",
+            "short": "SpacingScale",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/SpacingScale.php",
+            "lines": 48,
+            "doc": "The spacing sizes a theme.json spacing scale makes (probe\ntheme-json-css): Medium (slug 50) at the medium step; below it, half the\nother steps rounded down, each divided by (or less) the increment, named\nSmall, X-Small, 2X-Small; above it the rest, multiplied by (or plus) it,\nnamed Large, X-Large, 2X-Large; slugs ten apart, values rounded to two\nplaces. An invalid scale makes none.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "sizes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sizes(array $scale): array",
+                    "doc": "The sizes the scale makes, smallest first.",
+                    "shapes": [
+                        "@param array<string, mixed> $scale operator, increment, steps, mediumStep, unit",
+                        "@return list<array{name: string, slug: string, size: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "scale",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "operator, increment, steps, mediumStep, unit"
+                        }
+                    ],
+                    "line": 23,
+                    "end": 46
+                },
+                {
+                    "routes": [],
+                    "name": "name",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "name(int $distance, string $side): string",
+                    "doc": "Small, X-Small, 2X-Small, and so on (Large likewise).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "distance",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "side",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 49,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "format",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "format(float $value, string $unit): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "unit",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 61
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\StylePresets",
             "short": "StylePresets",
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/StylePresets.php",
-            "lines": 161,
+            "lines": 148,
             "doc": "The preset side of theme.json: the colour, gradient, font-size,\nfont-family, spacing, and shadow lists a theme declares over core's\nown, as the custom properties on :root and the has-* utility classes\nthe reference prints for them. Pure: settings in, CSS fragments out.",
             "implements": [],
             "extends": null,
@@ -149312,7 +149521,8 @@
             ],
             "usedBy": [
                 "Minn\\Theme\\FontFaces",
-                "Minn\\Theme\\GlobalStyles"
+                "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\TreeStyles"
             ],
             "constructor": null,
             "cases": [],
@@ -149437,8 +149647,8 @@
                     "name": "presetClasses",
                     "static": true,
                     "visibility": "public",
-                    "signature": "presetClasses(array $presets): string",
-                    "doc": "The has-* utility classes the presets give every colour, gradient, font size, and font family.",
+                    "signature": "presetClasses(array $presets, string $prefix = ''): string",
+                    "doc": "The has-* utility classes the presets give every colour, gradient, font size, and font family; each under the prefix given (a block's :where(selector)).",
                     "shapes": [],
                     "params": [
                         {
@@ -149447,10 +149657,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
                         }
                     ],
                     "line": 108,
-                    "end": 130
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -149480,8 +149697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 150
+                    "line": 127,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -149509,8 +149726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 169
+                    "line": 146,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -149536,8 +149753,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 159,
+                    "end": 162
                 }
             ]
         },
@@ -152650,6 +152867,488 @@
             ]
         },
         {
+            "name": "Minn\\Theme\\TreeStyles",
+            "short": "TreeStyles",
+            "namespace": "Minn\\Theme",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Theme/TreeStyles.php",
+            "lines": 259,
+            "doc": "The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree\n(presets keyed by origin): its custom properties, its preset classes, its\nstyles (the root layout, the root, elements, blocks) and its own CSS, by\ntype, origin and option (probe theme-json-css). The rules are\nGlobalStyles'; what the page's writer takes for granted is read from the\ntree instead: block gaps only when the tree turns them on, the root padding\nonly on the sides it gives, and none of the engine's own defaults.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Blocks\\CoreBlocks",
+                "Minn\\Blocks\\Styles",
+                "Minn\\Theme\\CustomCss",
+                "Minn\\Theme\\GlobalStyles",
+                "Minn\\Theme\\StylePresets",
+                "Minn\\Theme\\Typography"
+            ],
+            "usedBy": [],
+            "constructor": {
+                "signature": "__construct(array $tree)",
+                "doc": "",
+                "shapes": [
+                    "@param array<string, mixed> $tree"
+                ],
+                "params": [
+                    {
+                        "name": "tree",
+                        "type": "array",
+                        "shape": "array<string, mixed>",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 36,
+                "end": 38
+            },
+            "cases": [],
+            "constants": [
+                {
+                    "name": "ORIGINS",
+                    "value": "array (   0 => 'default',   1 => 'blocks',   2 => 'theme',   3 => 'custom', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "KINDS",
+                    "value": "array (   'aspect-ratio' =>    array (     0 =>      array (       0 => 'dimensions',       1 => 'aspectRatios',     ),     1 => 'ratio',   ),   'color' =>    array (     0 =>      array (       0 => 'color',       1 => 'palette',     ),     1 => 'color',   ),   'gradient' =>    array (     0 =>      array (       0 => 'color',       1 => 'gradients',     ),     1 => 'gradient',   ),   'font-size' =>    array (     0 =>      array (       0 => 'typography',       1 => 'fontSizes',     ),     1 => 'size',   ),   'font-family' =>    array (     0 =>      array (       0 => 'typography',       1 => 'fontFamilies',     ),     1 => 'fontFamily',   ),   'spacing' =>    array (     0 =>      array (       0 => 'spacing',       1 => 'spacingSizes',     ),     1 => 'size',   ),   'shadow' =>    array (     0 =>      array (       0 => 'shadow',       1 => 'presets',     ),     1 => 'shadow',   ),   'border-radius' =>    array (     0 =>      array (       0 => 'border',       1 => 'radiusSizes',     ),     1 => 'size',   ),   'dimension' =>    array (     0 =>      array (       0 => 'dimensions',       1 => 'dimensionSizes',     ),     1 => 'size',   ), )",
+                    "doc": "Preset kinds in the order they print: where each sits under settings, and the key holding its value.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "tree",
+                    "type": "array",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "stylesheet",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "stylesheet(array $types, array $origins, array $options): string",
+                    "doc": "The stylesheet for the types asked for, in the order variables,\nstyles, presets, the tree's own CSS; origins narrow the presets.",
+                    "shapes": [
+                        "@param list<string> $types",
+                        "@param list<string> $origins",
+                        "@param array<string, mixed> $options root_selector, scope, skip_root_layout_styles"
+                    ],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "root_selector, scope, skip_root_layout_styles"
+                        }
+                    ],
+                    "line": 48,
+                    "end": 59
+                },
+                {
+                    "routes": [],
+                    "name": "variables",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "variables(array $origins, string $scope): string",
+                    "doc": "The presets and settings.custom as custom properties: on :root, then\non each block's settings selector that has its own.",
+                    "shapes": [
+                        "@param list<string> $origins"
+                    ],
+                    "params": [
+                        {
+                            "name": "origins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "variablesOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "variablesOf(array $settings, array $origins, string $selector): string",
+                    "doc": "One settings node's custom properties under its selector; nothing when it has none.",
+                    "shapes": [
+                        "@param array<string, mixed> $settings",
+                        "@param list<string> $origins"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "presetClasses",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "presetClasses(array $origins, string $scope): string",
+                    "doc": "The has-* classes: the root's bare, each block's under :where(its settings selector).",
+                    "shapes": [
+                        "@param list<string> $origins"
+                    ],
+                    "params": [
+                        {
+                            "name": "origins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 93,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "classesOf",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "classesOf(array $settings, array $origins, string $selector): string",
+                    "doc": "One settings node's has-* classes, under :where(selector) unless it is the bare :root.",
+                    "shapes": [
+                        "@param array<string, mixed> $settings",
+                        "@param list<string> $origins"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 111
+                },
+                {
+                    "routes": [],
+                    "name": "styles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "styles(array $options): string",
+                    "doc": "The styles: the root layout (unless skip_root_layout_styles), the\nroot's own rule, its CSS when the root is not body, the elements, then\neach block; under the root_selector and scope options.",
+                    "shapes": [
+                        "@param array<string, mixed> $options"
+                    ],
+                    "params": [
+                        {
+                            "name": "options",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 120,
+                    "end": 136
+                },
+                {
+                    "routes": [],
+                    "name": "rootLayoutRules",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rootLayoutRules(string $selector): string",
+                    "doc": "The root layout: the content and wide sizes, the body's margin, the\nglobal padding rules, the alignments; for body, the block gap (or the\nfallback gap of flex and grid) and the layouts' own rules.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 143,
+                    "end": 155
+                },
+                {
+                    "routes": [],
+                    "name": "layoutStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "layoutStyles(): string",
+                    "doc": "The block gap and the layouts' own rules; flex and grid fall back to a 0.5em gap when the tree has no block gap.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 158,
+                    "end": 162
+                },
+                {
+                    "routes": [],
+                    "name": "rootStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "rootStyles(string $selector): string",
+                    "doc": "The root's own rule: body as it is, any other root under :root :where().",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "selector",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 165,
+                    "end": 185
+                },
+                {
+                    "routes": [],
+                    "name": "blockStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockStyles(string $name, string $scope = ''): string",
+                    "doc": "One block's rules; its own block gap only when the tree turns block gaps on.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "scope",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 188,
+                    "end": 195
+                },
+                {
+                    "routes": [],
+                    "name": "blockOwnStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockOwnStyles(string $name): string",
+                    "doc": "One block's own rules, its elements left out: each element is a style node of its own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 198,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "blockElements",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "blockElements(string $name): array",
+                    "doc": "The elements a block styles, in the order they print.",
+                    "shapes": [
+                        "@return list<string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 213,
+                    "end": 216
+                },
+                {
+                    "routes": [],
+                    "name": "elementStyles",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "elementStyles(string $element, string $block = ''): string",
+                    "doc": "One element's rules, under a block's selector when it belongs to one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "element",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "block",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 219,
+                    "end": 223
+                },
+                {
+                    "routes": [],
+                    "name": "customCss",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "customCss(): string",
+                    "doc": "The tree's own top-level CSS, as written.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 226,
+                    "end": 229
+                },
+                {
+                    "routes": [],
+                    "name": "settingsSelector",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settingsSelector(string $name): string",
+                    "doc": "A block's settings selector: its experimental selector when it has one, else .wp-block-{slug}.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 271,
+                    "end": 276
+                },
+                {
+                    "routes": [],
+                    "name": "blockGap",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "blockGap(): ?string",
+                    "doc": "The block gap: the styles' value when the tree's settings turn block gaps on, else null.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 232,
+                    "end": 236
+                },
+                {
+                    "routes": [],
+                    "name": "presets",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "presets(array $settings, array $origins): array",
+                    "doc": "A settings node's presets by kind, the origins asked for in order, one\nper slug; a font size is written fluid by the root's typography\nsettings.",
+                    "shapes": [
+                        "@param array<string, mixed> $settings",
+                        "@param list<string> $origins",
+                        "@return array<string, list<array{slug: string, value: string}>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origins",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 247,
+                    "end": 268
+                }
+            ]
+        },
+        {
             "name": "Minn\\Theme\\Typography",
             "short": "Typography",
             "namespace": "Minn\\Theme",
@@ -152661,7 +153360,8 @@
             "extends": null,
             "uses": [],
             "usedBy": [
-                "Minn\\Theme\\StylePresets"
+                "Minn\\Theme\\StylePresets",
+                "Minn\\Theme\\TreeStyles"
             ],
             "constructor": null,
             "cases": [],

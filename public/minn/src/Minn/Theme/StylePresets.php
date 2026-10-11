@@ -104,27 +104,14 @@ final class StylePresets
         return $out;
     }
 
-    /** The has-* utility classes the presets give every colour, gradient, font size, and font family. */
-    public static function presetClasses(array $presets): string
+    /** The has-* utility classes the presets give every colour, gradient, font size, and font family; each under the prefix given (a block's :where(selector)). */
+    public static function presetClasses(array $presets, string $prefix = ''): string
     {
         $out = '';
-        foreach ($presets['color'] as $c) {
-            $out .= ".has-{$c['slug']}-color{color: var(--wp--preset--color--{$c['slug']}) !important;}";
-        }
-        foreach ($presets['color'] as $c) {
-            $out .= ".has-{$c['slug']}-background-color{background-color: var(--wp--preset--color--{$c['slug']}) !important;}";
-        }
-        foreach ($presets['color'] as $c) {
-            $out .= ".has-{$c['slug']}-border-color{border-color: var(--wp--preset--color--{$c['slug']}) !important;}";
-        }
-        foreach ($presets['gradient'] as $g) {
-            $out .= ".has-{$g['slug']}-gradient-background{background: var(--wp--preset--gradient--{$g['slug']}) !important;}";
-        }
-        foreach ($presets['font-size'] as $f) {
-            $out .= ".has-{$f['slug']}-font-size{font-size: var(--wp--preset--font-size--{$f['slug']}) !important;}";
-        }
-        foreach ($presets['font-family'] as $f) {
-            $out .= ".has-{$f['slug']}-font-family{font-family: var(--wp--preset--font-family--{$f['slug']}) !important;}";
+        foreach ([['color', 'color', 'color'], ['color', 'background-color', 'background-color'], ['color', 'border-color', 'border-color'], ['gradient', 'gradient-background', 'background'], ['font-size', 'font-size', 'font-size'], ['font-family', 'font-family', 'font-family']] as [$kind, $suffix, $property]) {
+            foreach ((array) ($presets[$kind] ?? []) as $preset) {
+                $out .= "{$prefix}.has-{$preset['slug']}-{$suffix}{{$property}: var(--wp--preset--{$kind}--{$preset['slug']}) !important;}";
+            }
         }
         return $out;
     }

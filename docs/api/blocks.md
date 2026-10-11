@@ -330,7 +330,7 @@ How many pages the listing makes.
 The core block types' metadata as the reference registers them
 (data/blocks.json): their supports and selectors, read once.
 
-Used by: `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Theme\GlobalStyles`
+Used by: `Minn\Blocks\Layout`, `Minn\Blocks\Renderer`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
 
 
 ### static `metadata(string $name): array`
@@ -1158,7 +1158,7 @@ their own wrapper (static blocks already carry them in stored markup).
 
 - const `SIDES` = `array (   0 => 'top',   1 => 'right',   2 => 'bottom',   3 => 'left', )`
 
-Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`
+Used by: `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Elements`, `Minn\Blocks\Layout`, `Minn\Blocks\Wrapper`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
 
 ### static `value(string $value): string`
 

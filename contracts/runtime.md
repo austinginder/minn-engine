@@ -14008,3 +14008,81 @@ Shared changes to the base editor, which GD uses too:
 Left open: what `image_strip_meta` would remove from a JPEG. Every profile
 ImageMagick can write into one survives, so the engine strips only names
 outside that set.
+
+## WP_Theme_JSON writes CSS for any tree (2026-10-11)
+
+Austin's D3 kept the engine's own CSS for the page, and it stays as it was.
+What was owed is `WP_Theme_JSON`'s CSS for a tree a plugin hands it. That is
+now real (probe `theme-json-css`) and byte for byte the reference's, both for
+a small tree of the probe's own and for the site's merged data.
+
+**The writer** is `Minn\Theme\TreeStyles`. It reuses `GlobalStyles`' rule
+helpers, which are now public and static: the root, block-gap and layout
+rules split three ways; element rules; block rules with a scope; and
+declarations. What the page writer takes for granted is read from the tree:
+
+- Block-gap rules print only when the tree's settings turn block gaps on.
+  Without them, flex and grid fall back to `gap: 0.5em`, and a block's own
+  block gap prints nothing.
+- The root padding prints only the sides given. Under root-padding-aware
+  alignments those sides become the `--wp--style--root--padding-*`
+  properties.
+- Presets come from the tree alone, by origin, one per slug. A later origin's
+  preset takes the earlier one's place: the theme's font sizes replace
+  core's.
+- Preset kinds print in the order aspect ratio, colour, gradient, font size,
+  font family, spacing, shadow, border radius, dimension. Duotone presets
+  print no property.
+- A block's presets print on its settings selector (its experimental
+  selector, else `.wp-block-{slug}`). Its preset classes print under
+  `:where(that selector)`.
+- `scope` prefixes every selector, so the root's preset classes sit under
+  `:where(.scope :root)`.
+- A root selector other than `body`, given directly or through `scope`:
+  - stops the root layout after the alignments;
+  - wraps the root rule in `:root :where()`;
+  - prints the tree's top-level CSS joined to that selector, as the reference
+    does (`.zz-rootbody `).
+- `custom-css` is the tree's top-level CSS as written.
+  `base-layout-styles` alone prints nothing while the theme has a theme.json.
+- The duotone filter now prints as a declaration, on the block's duotone
+  selector.
+
+**One style node at a time.** `get_styles_for_block()` gives the root's
+rule, a block's own rules, or an element's. A block's elements are nodes of
+their own. The other methods follow from the same writer:
+`get_root_layout_rules`, `get_layout_styles`, `get_block_classes`,
+`get_css_variables` and `get_preset_classes`.
+
+**Data, not CSS:**
+
+- **Spacing sizes.** The constructor now makes them from a spacing scale,
+  for each origin with a scale and no sizes of its own
+  (`Theme\SpacingScale`): Medium (50), half the rest below rounded down, the
+  remainder above, two decimals. An invalid scale gives an empty list.
+- **`set_spacing_sizes()`** is deprecated since 6.6.0. Since the scale is
+  kept by origin, it always reports "Some of the theme.json
+  settings.spacing.spacingScale values are invalid" and changes nothing.
+- **`get_name_from_defaults()`** reads the default-origin presets under the
+  path given.
+- **`resolve_variables()`** replaces each `var:preset|…` and `var:custom|…`
+  value in the styles with the value it names. A font size resolves to its
+  size as written.
+- **`get_feature_declarations_for_node()`** splits a node by the block's
+  feature selectors in the metadata's order (`Theme\FeatureSelectors`): a
+  property with a selector of its own first, then the rest of its feature.
+
+**The functions:**
+
+- `wp_enqueue_global_styles_css_custom_properties()` queues the global
+  variables as a stylesheet of their own.
+- `wp_add_global_styles_for_blocks()` adds each styled block's rules to
+  `global-styles`, its own rules then each element's as an entry each. While
+  block assets load on demand, only blocks whose stylesheet is queued count.
+
+**Found along the way:** the reference checks `wp_trigger_error_trigger_error`
+before it fires `wp_trigger_error_run`, so a silenced notice is never heard.
+The engine fired the action regardless. It now checks the filter first.
+
+Not probed: block style variations in the tree writer, and a
+classic theme's `base-layout-styles`.

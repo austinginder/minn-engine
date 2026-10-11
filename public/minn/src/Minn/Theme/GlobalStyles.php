@@ -26,7 +26,7 @@ final readonly class GlobalStyles
      * lands before the individual levels, so an h1 line-height beats the
      * group's. Themes list h1..h6 before heading and would otherwise win.
      */
-    private const ELEMENT_SELECTORS = [
+    public const ELEMENT_SELECTORS = [
         'link' => 'a:where(:not(.wp-element-button))',
         'heading' => 'h1, h2, h3, h4, h5, h6',
         'h1' => 'h1', 'h2' => 'h2', 'h3' => 'h3', 'h4' => 'h4', 'h5' => 'h5', 'h6' => 'h6',
@@ -96,7 +96,7 @@ final readonly class GlobalStyles
         foreach ($blocks as $name => $blockStyles) {
             $core = str_starts_with((string) $name, 'core/');
             if (!$core || isset($rendered[$name]) && !in_array($name, self::STYLESHEET_LESS, true)) {
-                $out .= $this->blockStyles((string) $name, (array) $blockStyles);
+                $out .= self::blockStyles((string) $name, (array) $blockStyles);
             }
         }
         $out .= $this->containerStyles();
@@ -120,7 +120,7 @@ final readonly class GlobalStyles
             $core = (array) Json::file(MINN_ENGINE_DIR . '/data/global-styles.json');
             $blocks = Theme::merge((array) ($core['styles']['blocks'] ?? []), $blocks);
             foreach ($blocks as $name => $blockStyles) {
-                $out .= $this->blockStyles((string) $name, (array) $blockStyles);
+                $out .= self::blockStyles((string) $name, (array) $blockStyles);
             }
         }
         return $out . (in_array('presets', $types, true) ? $presets : '');
@@ -140,7 +140,10 @@ final readonly class GlobalStyles
         $variables .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
         $layout = (array) ($settings['layout'] ?? []);
         $base = ':root { --wp--style--global--content-size: ' . ($layout['contentSize'] ?? '620px') . ';--wp--style--global--wide-size: ' . ($layout['wideSize'] ?? '1000px') . '; }';
-        $base .= self::structuralRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')), (bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false));
+        // The engine's own layout rules on the reference's class hooks; the global-padding rules exist only under root-padding-aware alignments.
+        $base .= self::rootRules((bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false))
+            . self::blockGapRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')))
+            . self::layoutRules();
         $base .= $this->rootStyles($styles);
         $base .= self::elementStyles((array) ($styles['elements'] ?? []), '');
         return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => (array) ($styles['blocks'] ?? [])];
@@ -175,8 +178,8 @@ final readonly class GlobalStyles
         return null;
     }
 
-    /** The engine's own layout rules on the reference's class hooks; the global-padding rules exist only under root-padding-aware alignments. */
-    private static function structuralRules(string $gap, bool $aware = true): string
+    /** The body's margin, the global padding rules under root-padding-aware alignments, and the site's alignments. */
+    public static function rootRules(bool $aware): string
     {
         $globalPadding = !$aware ? '' : '.wp-site-blocks { padding-top: var(--wp--style--root--padding-top); padding-bottom: var(--wp--style--root--padding-bottom); }'
             . '.has-global-padding { padding-right: var(--wp--style--root--padding-right); padding-left: var(--wp--style--root--padding-left); }'
@@ -185,18 +188,28 @@ final readonly class GlobalStyles
             . '.has-global-padding :where(:not(.alignfull.is-layout-flow) > .has-global-padding:not(.wp-block-block, .alignfull)) > .alignfull { margin-left: 0; margin-right: 0; }';
         return ':where(body) { margin: 0; }'
             . $globalPadding
-            . '.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }'
-            . ":where(.wp-site-blocks) > * { margin-block-start: {$gap}; margin-block-end: 0; }:where(.wp-site-blocks) > :first-child { margin-block-start: 0; }:where(.wp-site-blocks) > :last-child { margin-block-end: 0; }"
+            . '.wp-site-blocks > .alignleft { float: left; margin-right: 2em; }.wp-site-blocks > .alignright { float: right; margin-left: 2em; }.wp-site-blocks > .aligncenter { justify-content: center; margin-left: auto; margin-right: auto; }';
+    }
+
+    /** The block gap between the site's blocks and inside every layout. */
+    public static function blockGapRules(string $gap): string
+    {
+        return ":where(.wp-site-blocks) > * { margin-block-start: {$gap}; margin-block-end: 0; }:where(.wp-site-blocks) > :first-child { margin-block-start: 0; }:where(.wp-site-blocks) > :last-child { margin-block-end: 0; }"
             . ":root { --wp--style--block-gap: {$gap}; }"
-            . self::gapRules('', $gap)
-            . '.is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}'
+            . self::gapRules('', $gap);
+    }
+
+    /** The layouts' own rules: alignments inside flow and constrained layouts, the content and wide sizes, flex and grid. */
+    public static function layoutRules(): string
+    {
+        return '.is-layout-flow > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-flow > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-flow > .aligncenter{margin-left: auto !important;margin-right: auto !important;}'
             . '.is-layout-constrained > .alignleft{float: left;margin-inline-start: 0;margin-inline-end: 2em;}.is-layout-constrained > .alignright{float: right;margin-inline-start: 2em;margin-inline-end: 0;}.is-layout-constrained > .aligncenter{margin-left: auto !important;margin-right: auto !important;}'
             . '.is-layout-constrained > :where(:not(.alignleft):not(.alignright):not(.alignfull)){max-width: var(--wp--style--global--content-size);margin-left: auto !important;margin-right: auto !important;}.is-layout-constrained > .alignwide{max-width: var(--wp--style--global--wide-size);}'
             . 'body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}';
     }
 
     /** The block-gap rules for a layout scope: "" for the root, or a block's -is-layout- prefix. */
-    private static function gapRules(string $prefix, string $gap): string
+    public static function gapRules(string $prefix, string $gap): string
     {
         $flow = $prefix === '' ? '.is-layout-flow' : ".{$prefix}-is-layout-flow";
         $constrained = $prefix === '' ? '.is-layout-constrained' : ".{$prefix}-is-layout-constrained";
@@ -226,7 +239,8 @@ final readonly class GlobalStyles
         return 'body{' . implode(';', $declarations) . ';}';
     }
 
-    private static function elementStyles(array $elements, string $scope): string
+    /** The element rules (links, headings, buttons, captions, citations), each state after it; under a block's selector when one is given. */
+    public static function elementStyles(array $elements, string $scope): string
     {
         $out = '';
         foreach (self::ELEMENT_SELECTORS as $element => $selector) {
@@ -280,11 +294,11 @@ final readonly class GlobalStyles
      * border on its image), its own CSS and its elements (probe
      * editor-styles).
      */
-    private function blockStyles(string $name, array $blockStyles): string
+    public static function blockStyles(string $name, array $blockStyles, string $scope = ''): string
     {
         $slug = str_starts_with($name, 'core/') ? substr($name, 5) : str_replace('/', '-', $name);
         $selectors = self::selectorsOf($name);
-        $selector = self::rootSelector($name);
+        $selector = self::scoped(self::rootSelector($name), $scope);
         [$rootStyles, $features] = self::byFeature($blockStyles, $selectors);
         $out = '';
         $declarations = self::declarations($rootStyles, ['blockGap']);
@@ -297,7 +311,7 @@ final readonly class GlobalStyles
         foreach ($features as $featureSelector => $featureStyles) {
             $featureDeclarations = self::declarations($featureStyles, ['blockGap']);
             if ($featureDeclarations !== []) {
-                $out .= ":root :where({$featureSelector}){" . implode(';', $featureDeclarations) . ';}';
+                $out .= ':root :where(' . self::scoped((string) $featureSelector, $scope) . '){' . implode(';', $featureDeclarations) . ';}';
             }
         }
         if (isset($blockStyles['css'])) {
@@ -305,6 +319,12 @@ final readonly class GlobalStyles
         }
         $out .= self::elementStyles((array) ($blockStyles['elements'] ?? []), $selector);
         return $out;
+    }
+
+    /** Each selector in a list under the scope ("" for none). */
+    public static function scoped(string $selector, string $scope): string
+    {
+        return $scope === '' ? $selector : implode(', ', array_map(static fn (string $part) => $scope . ' ' . trim($part), explode(',', $selector)));
     }
 
     /** A block's root selector: its metadata's, the reference's own for a few core blocks, else .wp-block-{slug}. */
@@ -316,7 +336,7 @@ final readonly class GlobalStyles
     }
 
     /** A core block's selectors from its metadata. @return array<string, mixed> */
-    private static function selectorsOf(string $name): array
+    public static function selectorsOf(string $name): array
     {
         return (array) (CoreBlocks::metadata($name)['selectors'] ?? []);
     }
@@ -329,10 +349,10 @@ final readonly class GlobalStyles
      * @param array<string, mixed> $selectors
      * @return array{0: array<string, mixed>, 1: array<string, array<string, mixed>>}
      */
-    private static function byFeature(array $styles, array $selectors): array
+    public static function byFeature(array $styles, array $selectors): array
     {
         $features = [];
-        foreach (['border', 'color', 'typography', 'spacing', 'dimensions', 'shadow'] as $feature) {
+        foreach (['border', 'color', 'typography', 'spacing', 'dimensions', 'shadow', 'filter'] as $feature) {
             $where = $selectors[$feature] ?? null;
             if ($where === null || !isset($styles[$feature])) {
                 continue;
@@ -415,7 +435,7 @@ final readonly class GlobalStyles
      *
      * @return list<string>
      */
-    private static function declarations(array $styles, array $skip): array
+    public static function declarations(array $styles, array $skip): array
     {
         $out = [];
         $value = static fn ($v) => Styles::value((string) $v);
@@ -470,6 +490,9 @@ final readonly class GlobalStyles
         }
         if (isset($styles['shadow'])) {
             $out[] = 'box-shadow: ' . $value($styles['shadow']);
+        }
+        if (isset($styles['filter']['duotone']) && is_string($styles['filter']['duotone'])) {
+            $out[] = 'filter: ' . $value($styles['filter']['duotone']);
         }
         foreach (['aspectRatio' => 'aspect-ratio', 'height' => 'height', 'minHeight' => 'min-height', 'minWidth' => 'min-width', 'width' => 'width'] as $key => $property) {
             if (isset($styles['dimensions'][$key])) {

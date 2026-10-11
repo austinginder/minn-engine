@@ -468,6 +468,39 @@ function wp_enqueue_global_styles()
 {
 }
 
+/** The global custom properties as a stylesheet of their own, queued (probe theme-json-css). */
+function wp_enqueue_global_styles_css_custom_properties()
+{
+    wp_register_style('global-styles-css-custom-properties', false);
+    wp_add_inline_style('global-styles-css-custom-properties', wp_get_global_stylesheet(['variables']));
+    wp_enqueue_style('global-styles-css-custom-properties');
+}
+
+/**
+ * Each styled block's global styles, added to the global-styles stylesheet
+ * (its own rules, then each element's, an entry each); while block assets
+ * load on demand, only for the blocks whose own stylesheet is queued (probe
+ * theme-json-css).
+ */
+function wp_add_global_styles_for_blocks()
+{
+    $data = WP_Theme_JSON_Resolver::get_merged_data()->get_raw_data();
+    $styles = new Minn\Theme\TreeStyles((array) $data);
+    $on_demand = wp_should_load_block_assets_on_demand();
+    foreach (array_keys((array) ($data['styles']['blocks'] ?? [])) as $name) {
+        $slug = str_starts_with((string) $name, 'core/') ? substr((string) $name, 5) : str_replace('/', '-', (string) $name);
+        if ($on_demand && !wp_style_is("wp-block-{$slug}", 'enqueued')) {
+            continue;
+        }
+        // The block's own rules, then each of its elements, as a stylesheet entry each.
+        foreach ([$styles->blockOwnStyles((string) $name), ...array_map(static fn ($element) => $styles->elementStyles($element, (string) $name), $styles->blockElements((string) $name))] as $css) {
+            if ($css !== '') {
+                wp_add_inline_style('global-styles', $css);
+            }
+        }
+    }
+}
+
 function wp_enqueue_classic_theme_styles()
 {
 }

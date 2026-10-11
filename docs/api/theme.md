@@ -12,11 +12,12 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
+| [`FeatureSelectors`](#featureselectors) | final class | 33 | A block's styles split between the selectors its metadata gives its |
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 493 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 516 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 107 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 132 | Stands the main query for a themed page and runs the front-end steps |
@@ -26,7 +27,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 131 | The body-class tokens the main query stands for, in the reference's |
-| [`StylePresets`](#stylepresets) | final class | 161 | The preset side of theme.json: the colour, gradient, font-size, |
+| [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
+| [`StylePresets`](#stylepresets) | final class | 148 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 310 | Every block template and template part the site offers, in the order the |
@@ -38,6 +40,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 54 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
+| [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
 | [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
 
@@ -198,7 +201,7 @@ block's style.css): nested rules under "&" unfolded beneath the selector
 they belong to, each wrapped in :root :where() as the reference prints
 them. Pure: CSS and selectors in, rules out.
 
-Used by: `Minn\Theme\GlobalStyles`
+Used by: `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
 
 ### static `scoped(string $css, string $selector): string`
 
@@ -249,6 +252,24 @@ the body classes the theme's page would carry (the Minn bar's aside),
 read once its main query stands.
 
 - `@param Closure(): list<string> $bodyClasses`
+
+
+## FeatureSelectors
+
+`final class Minn\Theme\FeatureSelectors` · `public/minn/src/Minn/Theme/FeatureSelectors.php`
+
+A block's styles split between the selectors its metadata gives its
+features (probe theme-json-css), in the metadata's order: a property with
+a selector of its own first, then what is left of its feature under the
+feature's selector. What is taken leaves the node.
+
+### static `split(array $selectors, array $node): array`
+
+The styles each feature selector takes, and the node left over.
+
+- `@param array<string, mixed> $selectors the block's metadata selectors`
+- `@param array<string, mixed> $node the block's styles`
+- `@return array{0: list<array{0: string, 1: array<string, mixed>}>, 1: array<string, mixed>} the styles each selector takes, in order, and what stays`
 
 
 ## FeedHeaders
@@ -420,7 +441,7 @@ attaches them to the block's own stylesheet; these core blocks have
 none, so their styles never reach a page. A block from outside core
 has no such stylesheet to wait for, so its styles always print.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\CustomCss`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\RenderController`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\CustomCss`, `Minn\Theme\PageRenderer`, `Minn\Theme\TreeStyles`
 
 ```php
 __construct(Minn\Theme\Theme $theme, ?array $user = NULL)
@@ -456,9 +477,55 @@ The @font-face rules for every family that declares font files
 carries the file. The page prints them through wp_print_font_faces on
 wp_head; the editor's styles read them here.
 
+### static `rootRules(bool $aware): string`
+
+The body's margin, the global padding rules under root-padding-aware alignments, and the site's alignments.
+
+### static `blockGapRules(string $gap): string`
+
+The block gap between the site's blocks and inside every layout.
+
+### static `layoutRules(): string`
+
+The layouts' own rules: alignments inside flow and constrained layouts, the content and wide sizes, flex and grid.
+
+### static `gapRules(string $prefix, string $gap): string`
+
+The block-gap rules for a layout scope: "" for the root, or a block's -is-layout- prefix.
+
+### static `elementStyles(array $elements, string $scope): string`
+
+The element rules (links, headings, buttons, captions, citations), each state after it; under a block's selector when one is given.
+
+### static `blockStyles(string $name, array $blockStyles, string $scope = ''): string`
+
+A block's rules: its root rule, its layout gap rules, then a rule for
+each feature its metadata gives a selector of its own (the avatar's
+border on its image), its own CSS and its elements (probe
+editor-styles).
+
+### static `scoped(string $selector, string $scope): string`
+
+Each selector in a list under the scope ("" for none).
+
 ### static `rootSelector(string $name): string`
 
 A block's root selector: its metadata's, the reference's own for a few core blocks, else .wp-block-{slug}.
+
+### static `selectorsOf(string $name): array`
+
+A core block's selectors from its metadata. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
+### static `byFeature(array $styles, array $selectors): array`
+
+A block's styles split between its root selector and the features (or
+a feature's single properties) its metadata selects elsewhere.
+
+- `@param array<string, mixed> $styles`
+- `@param array<string, mixed> $selectors`
+- `@return array{0: array<string, mixed>, 1: array<string, array<string, mixed>>}`
 
 ### static `variationCss(string $name, string $style, int $instance, array $variation): string`
 
@@ -468,7 +535,14 @@ block's root selector (the class riding on the block's own class:
 .wp-block-button.is-style-outline--3 .wp-block-button__link), its own
 CSS, and the blocks styled inside it.
 
-Internals: `parts()` (private, line 130), `fontUrl()` (private, line 161), `structuralRules()` (private, line 179), `gapRules()` (private, line 199), `rootStyles()` (private, line 215), `elementStyles()` (private, line 229), `blockCustomProperties()` (private, line 263), `blockStyles()` (private, line 283), `selectorsOf()` (private, line 319), `byFeature()` (private, line 332), `withoutEmpty()` (private, line 359), `containerStyles()` (private, line 403), `declarations()` (private, line 418), `ordered()` (private, line 495)
+### static `declarations(array $styles, array $skip): array`
+
+theme.json style properties to declarations: color, typography, spacing,
+border, shadow, dimensions, outline.
+
+- `@return list<string>`
+
+Internals: `parts()` (private, line 130), `fontUrl()` (private, line 164), `rootStyles()` (private, line 228), `blockCustomProperties()` (private, line 277), `withoutEmpty()` (private, line 379), `containerStyles()` (private, line 423), `ordered()` (private, line 518)
 
 
 ## HeadLinks
@@ -781,6 +855,27 @@ The tokens for a main query.
 Internals: `format()` (private, line 61), `singular()` (private, line 71), `archive()` (private, line 100), `paging()` (private, line 127), `named()` (private, line 148)
 
 
+## SpacingScale
+
+`final class Minn\Theme\SpacingScale` · `public/minn/src/Minn/Theme/SpacingScale.php`
+
+The spacing sizes a theme.json spacing scale makes (probe
+theme-json-css): Medium (slug 50) at the medium step; below it, half the
+other steps rounded down, each divided by (or less) the increment, named
+Small, X-Small, 2X-Small; above it the rest, multiplied by (or plus) it,
+named Large, X-Large, 2X-Large; slugs ten apart, values rounded to two
+places. An invalid scale makes none.
+
+### static `sizes(array $scale): array`
+
+The sizes the scale makes, smallest first.
+
+- `@param array<string, mixed> $scale operator, increment, steps, mediumStep, unit`
+- `@return list<array{name: string, slug: string, size: string}>`
+
+Internals: `name()` (private, line 49), `format()` (private, line 58)
+
+
 ## StylePresets
 
 `final class Minn\Theme\StylePresets` · `public/minn/src/Minn/Theme/StylePresets.php`
@@ -790,7 +885,7 @@ font-family, spacing, and shadow lists a theme declares over core's
 own, as the custom properties on :root and the has-* utility classes
 the reference prints for them. Pure: settings in, CSS fragments out.
 
-Used by: `Minn\Theme\FontFaces`, `Minn\Theme\GlobalStyles`
+Used by: `Minn\Theme\FontFaces`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
 
 ### static `presets(array $settings): array`
 
@@ -823,9 +918,9 @@ are left out.
 
 - `@param array<array-key, mixed> $custom`
 
-### static `presetClasses(array $presets): string`
+### static `presetClasses(array $presets, string $prefix = ''): string`
 
-The has-* utility classes the presets give every colour, gradient, font size, and font family.
+The has-* utility classes the presets give every colour, gradient, font size, and font family; each under the prefix given (a block's :where(selector)).
 
 ### static `defaultSlugsFirst(array $presets, array $defaults): array`
 
@@ -1364,6 +1459,114 @@ way the theme's own are.
 Internals: `withSectionStyles()` (private, line 99), `partials()` (private, line 121), `defaults()` (private, line 134)
 
 
+## TreeStyles
+
+`final readonly class Minn\Theme\TreeStyles` · `public/minn/src/Minn/Theme/TreeStyles.php`
+
+The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree
+(presets keyed by origin): its custom properties, its preset classes, its
+styles (the root layout, the root, elements, blocks) and its own CSS, by
+type, origin and option (probe theme-json-css). The rules are
+GlobalStyles'; what the page's writer takes for granted is read from the
+tree instead: block gaps only when the tree turns them on, the root padding
+only on the sides it gives, and none of the engine's own defaults.
+
+- const `ORIGINS` = `array (   0 => 'default',   1 => 'blocks',   2 => 'theme',   3 => 'custom', )`
+- const `KINDS` = `array (   'aspect-ratio' =>    array (     0 =>      array (       0 => 'dimensions',       1 => 'aspectRatios',     ),     1 => 'ratio',   ),   'color' =>    array (     0 =>      array (       0 => 'color',       1 => 'palette',     ),     1 => 'color',   ),   'gradient' =>    array (     0 =>      array (       0 => 'color',       1 => 'gradients',     ),     1 => 'gradient',   ),   'font-size' =>    array (     0 =>      array (       0 => 'typography',       1 => 'fontSizes',     ),     1 => 'size',   ),   'font-family' =>    array (     0 =>      array (       0 => 'typography',       1 => 'fontFamilies',     ),     1 => 'fontFamily',   ),   'spacing' =>    array (     0 =>      array (       0 => 'spacing',       1 => 'spacingSizes',     ),     1 => 'size',   ),   'shadow' =>    array (     0 =>      array (       0 => 'shadow',       1 => 'presets',     ),     1 => 'shadow',   ),   'border-radius' =>    array (     0 =>      array (       0 => 'border',       1 => 'radiusSizes',     ),     1 => 'size',   ),   'dimension' =>    array (     0 =>      array (       0 => 'dimensions',       1 => 'dimensionSizes',     ),     1 => 'size',   ), )` — Preset kinds in the order they print: where each sits under settings, and the key holding its value.
+
+```php
+__construct(array $tree)
+```
+- `@param array<string, mixed> $tree`
+
+
+### `stylesheet(array $types, array $origins, array $options): string`
+
+The stylesheet for the types asked for, in the order variables,
+styles, presets, the tree's own CSS; origins narrow the presets.
+
+- `@param list<string> $types`
+- `@param list<string> $origins`
+- `@param array<string, mixed> $options root_selector, scope, skip_root_layout_styles`
+
+### `variables(array $origins, string $scope): string`
+
+The presets and settings.custom as custom properties: on :root, then
+on each block's settings selector that has its own.
+
+- `@param list<string> $origins`
+
+### `variablesOf(array $settings, array $origins, string $selector): string`
+
+One settings node's custom properties under its selector; nothing when it has none.
+
+- `@param array<string, mixed> $settings`
+- `@param list<string> $origins`
+
+### `presetClasses(array $origins, string $scope): string`
+
+The has-* classes: the root's bare, each block's under :where(its settings selector).
+
+- `@param list<string> $origins`
+
+### `classesOf(array $settings, array $origins, string $selector): string`
+
+One settings node's has-* classes, under :where(selector) unless it is the bare :root.
+
+- `@param array<string, mixed> $settings`
+- `@param list<string> $origins`
+
+### `styles(array $options): string`
+
+The styles: the root layout (unless skip_root_layout_styles), the
+root's own rule, its CSS when the root is not body, the elements, then
+each block; under the root_selector and scope options.
+
+- `@param array<string, mixed> $options`
+
+### `rootLayoutRules(string $selector): string`
+
+The root layout: the content and wide sizes, the body's margin, the
+global padding rules, the alignments; for body, the block gap (or the
+fallback gap of flex and grid) and the layouts' own rules.
+
+### `layoutStyles(): string`
+
+The block gap and the layouts' own rules; flex and grid fall back to a 0.5em gap when the tree has no block gap.
+
+### `rootStyles(string $selector): string`
+
+The root's own rule: body as it is, any other root under :root :where().
+
+### `blockStyles(string $name, string $scope = ''): string`
+
+One block's rules; its own block gap only when the tree turns block gaps on.
+
+### `blockOwnStyles(string $name): string`
+
+One block's own rules, its elements left out: each element is a style node of its own.
+
+### `blockElements(string $name): array`
+
+The elements a block styles, in the order they print.
+
+- `@return list<string>`
+
+### `elementStyles(string $element, string $block = ''): string`
+
+One element's rules, under a block's selector when it belongs to one.
+
+### `customCss(): string`
+
+The tree's own top-level CSS, as written.
+
+### static `settingsSelector(string $name): string`
+
+A block's settings selector: its experimental selector when it has one, else .wp-block-{slug}.
+
+Internals: `blockGap()` (private, line 232), `presets()` (private, line 247)
+
+
 ## Typography
 
 `final class Minn\Theme\Typography` · `public/minn/src/Minn/Theme/Typography.php`
@@ -1377,7 +1580,7 @@ own maximum) at the wide one.
 - const `SMALL_VIEWPORT` = `'320px'`
 - const `WIDE_VIEWPORT` = `'1600px'`
 
-Used by: `Minn\Theme\StylePresets`
+Used by: `Minn\Theme\StylePresets`, `Minn\Theme\TreeStyles`
 
 ### static `valueAndUnit(mixed $raw, array $options = array ( )): ?array`
 

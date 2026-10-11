@@ -194,8 +194,8 @@ $check('dead ends: public/minn/data/deadend-symbols.json is current', $deadEndsS
 $status = json_decode((string) shell_exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check 2>/dev/null'), true);
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/compat-status.php') . ' --check', $ignored, $statusStale);
 $check('compat status: contracts/api/compat-status.json is current', is_array($status) && $statusStale === 0, 'run php tests/tools/compat-status.php');
-$missingCeiling = ['functions' => 7, 'classes' => 6, 'methods' => 24];
-$verifiedFloor = ['functions' => 2944, 'classes' => 233, 'methods' => 2352];
+$missingCeiling = ['functions' => 6, 'classes' => 6, 'methods' => 24];
+$verifiedFloor = ['functions' => 2946, 'classes' => 233, 'methods' => 2363];
 foreach ($missingCeiling as $group => $ceiling) {
     $check("compat status: missing {$group} stay at or under {$ceiling}", is_array($status) && ($status[$group]['missing'] ?? PHP_INT_MAX) <= $ceiling, (string) ($status[$group]['missing'] ?? '?'));
     $check("compat status: verified {$group} stay at or over {$verifiedFloor[$group]}", is_array($status) && ($status[$group]['verified'] ?? 0) >= $verifiedFloor[$group], (string) ($status[$group]['verified'] ?? '?'));
