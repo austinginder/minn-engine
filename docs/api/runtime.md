@@ -61,7 +61,7 @@ the WordPress runtime plugins load against
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
-| [`Plugins`](#plugins) | final class | 264 | Loads the site's plugins into the runtime the way the reference does: |
+| [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
 | [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
@@ -100,7 +100,7 @@ the WordPress runtime plugins load against
 | [`TermQueryTree`](#termquerytree) | final class | 146 | What a term query does with its rows, as the reference does it (probe |
 | [`TermSave`](#termsave) | final class | 199 | wp_insert_term and wp_update_term in the reference's order (probe |
 | [`TermWriter`](#termwriter) | final readonly class | 125 | The decisions behind wp_delete_term and the object-term relationships: |
-| [`ThemeSupports`](#themesupports) | final class | 166 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
+| [`ThemeSupports`](#themesupports) | final class | 183 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
 | [`TreeWalk`](#treewalk) | final class | 179 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 150 | A post type's or taxonomy's properties from the arguments it was built |
@@ -2711,7 +2711,7 @@ plugin is running, otherwise why the gate refused it.
 
 True when the named plugin file is running as code this request.
 
-Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 148), `rememberThemeDomain()` (private, line 171), `includeFile()` (private, line 231), `registerRealpath()` (private, line 262), `isolatedInclude()` (private, line 277)
+Internals: `boot()` (private, line 67), `loadThemeFunctions()` (private, line 154), `rememberThemeDomain()` (private, line 177), `includeFile()` (private, line 237), `registerRealpath()` (private, line 268), `isolatedInclude()` (private, line 283)
 
 
 ## PostData
@@ -4997,6 +4997,17 @@ Core's features, then those registered since. @return array<string, array<string
 The active theme's supports as wp/v2/themes shows them: each feature shown in REST, shaped by its schema. @return array<string, mixed>
 
 - `@return array<string, mixed>`
+
+### static `prepared(mixed $support, array $config, string $feature, WP_REST_Request $request): mixed`
+
+One feature's support as the REST API shows it (the runtime's
+WP_REST_Themes_Controller::prepare_theme_support): a feature that is
+not variadic shown by its first value, through its prepare_callback
+or else cut to its schema.
+
+- `@param array<string, mixed> $config the feature as it was registered`
+
+Internals: `unwrapped()` (private, line 202)
 
 
 ## ThemeSwitch

@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 386 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 392 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -28,7 +28,7 @@ the wp/v2 surface: shapes and controllers
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 138 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
-| [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 128 | wp/v2/themes as the reference answers it (probe rest-themes): the |
+| [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 141 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
 | [`MediaController`](#mediacontroller) | final readonly class | 264 | wp/v2/media: list, single, upload on both transports (multipart field |
@@ -176,6 +176,12 @@ A template as wp/v2 shapes it in a context, for the route's own type (templates 
 
 - `@return array<string, mixed>`
 
+### `themeFields(WP_Theme $theme, WP_REST_Request $request): array`
+
+A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed>
+
+- `@return array<string, mixed>`
+
 ### `userObject(): Minn\Rest\UserObject`
 
 The wp/v2 user shape.
@@ -224,7 +230,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 358), `withPageLinks()` (private, line 372), `options()` (private, line 403), `withAllow()` (private, line 416)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 364), `withPageLinks()` (private, line 378), `options()` (private, line 409), `withAllow()` (private, line 422)
 
 
 ## ApplicationPasswordsController
@@ -1192,7 +1198,15 @@ Route: `GET /wp/v2/themes/{stylesheet:[^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?} (
 
 One theme by its stylesheet.
 
-Internals: `item()` (private, line 77), `links()` (private, line 111), `viewsThemes()` (private, line 134), `viewsActive()` (private, line 140), `status()` (private, line 145), `requireRuntime()` (private, line 151)
+### `fields(WP_Theme $theme, WP_REST_Request $request): array`
+
+A theme in the wp/v2 shape, its links included, before
+rest_prepare_theme (the runtime's WP_REST_Themes_Controller shapes
+through here); the request is what the supports' callbacks are handed.
+
+- `@return array<string, mixed>`
+
+Internals: `item()` (private, line 77), `links()` (private, line 124), `viewsThemes()` (private, line 147), `viewsActive()` (private, line 153), `status()` (private, line 158), `requireRuntime()` (private, line 164)
 
 
 ## Links

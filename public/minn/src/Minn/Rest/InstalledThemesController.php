@@ -77,6 +77,19 @@ final readonly class InstalledThemesController
     private function item(\WP_Theme $theme): array
     {
         $stylesheet = $theme->get_stylesheet();
+        return RuntimePrepare::item('rest_prepare_theme', $this->fields($theme, Runtime::current()->get('rest_prepare_request') ?? new \WP_REST_Request('GET', '/wp/v2/themes')), static fn () => \wp_get_theme($stylesheet));
+    }
+
+    /**
+     * A theme in the wp/v2 shape, its links included, before
+     * rest_prepare_theme (the runtime's WP_REST_Themes_Controller shapes
+     * through here); the request is what the supports' callbacks are handed.
+     *
+     * @return array<string, mixed>
+     */
+    public function fields(\WP_Theme $theme, \WP_REST_Request $request): array
+    {
+        $stylesheet = $theme->get_stylesheet();
         $active = self::status($stylesheet) === 'active';
         $text = static fn (string $header): array => ['raw' => $theme->display($header, false), 'rendered' => $theme->display($header)];
         $item = [
@@ -96,7 +109,7 @@ final readonly class InstalledThemesController
             'status' => self::status($stylesheet),
         ];
         if ($active) {
-            $item['theme_supports'] = ThemeSupports::forRest(Runtime::current()->get('rest_prepare_request') ?? new \WP_REST_Request('GET', '/wp/v2/themes'));
+            $item['theme_supports'] = ThemeSupports::forRest($request);
         }
         $item += ['is_block_theme' => $theme->is_block_theme(), 'stylesheet_uri' => $theme->get_stylesheet_directory_uri(), 'template_uri' => $theme->get_template_directory_uri()];
         if ($active) {
@@ -104,7 +117,7 @@ final readonly class InstalledThemesController
             $item['default_template_part_areas'] = \get_allowed_block_template_part_areas();
         }
         $item['_links'] = $this->links($theme);
-        return RuntimePrepare::item('rest_prepare_theme', $item, static fn () => \wp_get_theme($stylesheet));
+        return $item;
     }
 
     /** @return array<string, list<array<string, mixed>>> */

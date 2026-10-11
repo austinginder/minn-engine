@@ -175,15 +175,32 @@ final class ThemeSupports
                 continue;
             }
             $support = \get_theme_support($feature);
-            if (is_array($support) && !($config['variadic'] ?? false)) {
-                $support = $support[0] ?? [];
-            }
-            $out[$name] = match (true) {
-                is_callable($rest['prepare_callback'] ?? null) => call_user_func($rest['prepare_callback'], $support, $config, $feature, $request),
-                $feature === 'post-formats' => ['standard', ...(array) $support],
-                default => \rest_sanitize_value_from_schema($support, (array) $rest['schema'], $name),
-            };
+            $out[$name] = $feature === 'post-formats' ? ['standard', ...(array) self::unwrapped($support, $config)] : self::prepared($support, $config, $feature, $request);
         }
         return $out;
+    }
+
+    /**
+     * One feature's support as the REST API shows it (the runtime's
+     * WP_REST_Themes_Controller::prepare_theme_support): a feature that is
+     * not variadic shown by its first value, through its prepare_callback
+     * or else cut to its schema.
+     *
+     * @param array<string, mixed> $config the feature as it was registered
+     */
+    public static function prepared(mixed $support, array $config, string $feature, \WP_REST_Request $request): mixed
+    {
+        $rest = (array) ($config['show_in_rest'] ?? []);
+        $support = self::unwrapped($support, $config);
+        if (is_callable($rest['prepare_callback'] ?? null)) {
+            return call_user_func($rest['prepare_callback'], $support, $config, $feature, $request);
+        }
+        return \rest_sanitize_value_from_schema($support, (array) ($rest['schema'] ?? []), (string) ($rest['name'] ?? $feature));
+    }
+
+    /** @param array<string, mixed> $config */
+    private static function unwrapped(mixed $support, array $config): mixed
+    {
+        return is_array($support) && !($config['variadic'] ?? false) ? ($support[0] ?? []) : $support;
     }
 }

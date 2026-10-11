@@ -12647,3 +12647,45 @@ Fixed on the way:
   and `post_author` onto every template save. A new template without a
   slug no longer warns.
 - A trashed template shows no `version-history` link.
+
+## WP_REST_Themes_Controller (2026-10-11)
+
+Probe `rest-themes-controller` proves the themes controller class against
+the installed themes the two stacks share (twentytwentyfive active,
+twentytwentyfour, twentytwentythree, minn-site). Its fixtures are an
+author, an editor and a subscriber, removed again.
+
+- **The class is WordPress-shaped** over `wp_get_themes()` and
+  `wp_get_theme()`.
+  - A theme's shape is the engine's (`InstalledThemesController::fields`,
+    which the engine's route wraps in `rest_prepare_theme`).
+  - Supports are shaped by `ThemeSupports::prepared`, which the active
+    theme's `theme_supports` uses too.
+  - The schema's supports are the registered theme features shown in
+    REST.
+- **Permissions.**
+  - Listing needs `switch_themes` (or `manage_network_themes`).
+  - Asking only for the active status, or for the active theme, also
+    lets in whoever edits posts or any type shown in REST: authors and
+    editors, not subscribers.
+- **Parameters.**
+  - The stylesheet is urldecoded.
+  - `sanitize_theme_status` is deprecated (`_deprecated_function`, 5.7.0)
+    and parses a list without checking it.
+- **Shaping.**
+  - The fields asked for are kept, links only when the fields take them,
+    and the context doesn't narrow the theme.
+  - The list carries `X-WP-Total` and `X-WP-TotalPages`.
+  - The self link leaves its target hints to the server; the export link
+    keeps its own.
+- **`prepare_theme_support`** shows a feature that isn't variadic by its
+  first value, through its prepare callback or cut to its schema. The
+  active theme's formats add `standard` on top.
+
+Left out: theme tags. Under the command line the reference has the admin's
+feature list loaded and names them, so the HTTP probe `rest-themes` covers
+them as a request sees them.
+
+Fixed on the way: the probe runtime set the theme up twice when a probe
+loaded the plugins after it (`Plugins::load` after `loadTheme`), adding the
+default supports again (`html5` twice over). The theme is now set up once.

@@ -221,6 +221,12 @@ final readonly class Api
         return $templates === null ? [] : (new TemplateObject($templates, $s->posts(), $s->url(), $s->caller()))->view($record, Context::tryFrom($context) ?? Context::View, $as);
     }
 
+    /** A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed> */
+    public function themeFields(\WP_Theme $theme, \WP_REST_Request $request): array
+    {
+        return (new InstalledThemesController($this->services->url(), $this->services->caller()))->fields($theme, $request);
+    }
+
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {

@@ -104,11 +104,17 @@ final class Plugins
         Runtime::loadPluggables();
         $hooks->action('plugins_loaded', []);
         $hooks->action('sanitize_comment_cookies', []);
-        $hooks->action('setup_theme', []);
         // The core domain loads here, before the theme, as the reference loads it.
+        // The theme is set up once: the probe runtime has done it already (loadTheme) when a probe loads the plugins after.
+        $themeReady = $hooks->actionsDone('after_setup_theme') > 0;
+        if (!$themeReady) {
+            $hooks->action('setup_theme', []);
+        }
         \load_default_textdomain();
-        self::loadThemeFunctions($runtime);
-        $hooks->action('after_setup_theme', []);
+        if (!$themeReady) {
+            self::loadThemeFunctions($runtime);
+            $hooks->action('after_setup_theme', []);
+        }
         // The current user is settled here, as WP::init() settles it, with every plugin's determine_current_user in place.
         CurrentUser::settle($runtime);
         $hooks->action('init', []);

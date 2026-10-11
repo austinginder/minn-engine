@@ -88253,7 +88253,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 386,
+            "lines": 392,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88762,6 +88762,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "themeFields",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "themeFields(WP_Theme $theme, WP_REST_Request $request): array",
+                    "doc": "A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "theme",
+                            "type": "WP_Theme",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 225,
+                    "end": 228
+                },
+                {
+                    "routes": [],
                     "name": "userObject",
                     "static": false,
                     "visibility": "public",
@@ -88769,8 +88798,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 225,
-                    "end": 228
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -88781,8 +88810,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -88808,8 +88837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 251
+                    "line": 248,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -88828,8 +88857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 281
+                    "line": 260,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -88855,8 +88884,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 313
+                    "line": 298,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -88875,8 +88904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 320
+                    "line": 322,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -88902,8 +88931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 341
+                    "line": 335,
+                    "end": 347
                 },
                 {
                     "routes": [],
@@ -88931,8 +88960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 356
+                    "line": 355,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -88980,8 +89009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 365
+                    "line": 364,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -89007,8 +89036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 372,
-                    "end": 394
+                    "line": 378,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -89027,8 +89056,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 403,
-                    "end": 410
+                    "line": 409,
+                    "end": 416
                 },
                 {
                     "routes": [],
@@ -89054,8 +89083,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 420
+                    "line": 422,
+                    "end": 426
                 }
             ]
         },
@@ -94319,7 +94348,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/InstalledThemesController.php",
-            "lines": 128,
+            "lines": 141,
             "doc": "wp/v2/themes as the reference answers it (probe rest-themes): the\ninstalled themes, or only those with a status (active, inactive), each\nwith its style.css headers raw and rendered, where it lives, and whether\nit is a block theme. The active theme also carries its supports as the\neditor reads them, the template types and part areas it may define, and\na link to the theme export; any theme with user styles links to them. Anyone who can edit\na type shown in REST may read the active theme; listing the others takes\nswitch_themes. Each theme goes through rest_prepare_theme. Served with\nplugins loaded, since a theme's supports come from its own code.",
             "implements": [],
             "extends": null,
@@ -94451,6 +94480,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "fields",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "fields(WP_Theme $theme, WP_REST_Request $request): array",
+                    "doc": "A theme in the wp/v2 shape, its links included, before\nrest_prepare_theme (the runtime's WP_REST_Themes_Controller shapes\nthrough here); the request is what the supports' callbacks are handed.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "theme",
+                            "type": "WP_Theme",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 121
+                },
+                {
+                    "routes": [],
                     "name": "item",
                     "static": false,
                     "visibility": "private",
@@ -94469,7 +94527,7 @@
                         }
                     ],
                     "line": 77,
-                    "end": 108
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -94490,8 +94548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 131
+                    "line": 124,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -94502,8 +94560,8 @@
                     "doc": "May list the installed themes.",
                     "shapes": [],
                     "params": [],
-                    "line": 134,
-                    "end": 137
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -94514,8 +94572,8 @@
                     "doc": "May read the active theme: anyone who lists themes, or edits a type shown in REST.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 143
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -94534,8 +94592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 148
+                    "line": 158,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -94546,8 +94604,8 @@
                     "doc": "A theme's supports come from its own code: without the runtime there is no answer to give.",
                     "shapes": [],
                     "params": [],
-                    "line": 151,
-                    "end": 156
+                    "line": 164,
+                    "end": 169
                 }
             ]
         },
@@ -123406,7 +123464,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Plugins.php",
-            "lines": 264,
+            "lines": 270,
             "doc": "Loads the site's plugins into the runtime the way the reference does:\nmu-plugins first, then active_plugins in stored order, each file\nincluded once. A plugin loads only when the static symbol read finds\nnothing the runtime lacks; otherwise it is reported and skipped so the\nsite keeps rendering. The lifecycle actions fire between the phases.",
             "implements": [],
             "extends": null,
@@ -123501,8 +123559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 139
+                    "line": 131,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -123515,8 +123573,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 184,
-                    "end": 187
+                    "line": 190,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -123529,8 +123587,8 @@
                         "@return array<string, array<string, mixed>> plugin file => why it did not load"
                     ],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -123556,8 +123614,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 223
+                    "line": 212,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -123576,8 +123634,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 229
+                    "line": 232,
+                    "end": 235
                 },
                 {
                     "routes": [],
@@ -123597,7 +123655,7 @@
                         }
                     ],
                     "line": 67,
-                    "end": 116
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -123616,8 +123674,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 164
+                    "line": 154,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -123643,8 +123701,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 177
+                    "line": 177,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -123677,8 +123735,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 254
+                    "line": 237,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -123711,8 +123769,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 274
+                    "line": 268,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -123731,8 +123789,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 282
+                    "line": 283,
+                    "end": 288
                 }
             ]
         },
@@ -135878,7 +135936,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/ThemeSupports.php",
-            "lines": 166,
+            "lines": 183,
             "doc": "What a theme supports, as add_theme_support keeps it (probe rest-themes):\na bare feature is true, anything else its arguments. html5 lists add up\n(repeats and all), post thumbnails stay on for every type once on, post\nformats keep only real formats, the custom logo fills in its defaults at\nonce (flexible both ways when asked for bare), and the custom header and\nbackground get theirs as WordPress finishes loading, a header with no\nwidth or height made flexible that way. title-tag declared after loading\nis refused. A block theme supports thumbnails, responsive embeds, editor\nstyles, HTML5 markup and feed links before its own setup runs.\n\nThe features themselves (data/theme-features.json, and any a theme\nregisters) say how each is shown in REST: its schema, or the default\nwhen the theme does not support it.",
             "implements": [],
             "extends": null,
@@ -136106,7 +136164,79 @@
                         }
                     ],
                     "line": 164,
-                    "end": 188
+                    "end": 181
+                },
+                {
+                    "routes": [],
+                    "name": "prepared",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "prepared(mixed $support, array $config, string $feature, WP_REST_Request $request): mixed",
+                    "doc": "One feature's support as the REST API shows it (the runtime's\nWP_REST_Themes_Controller::prepare_theme_support): a feature that is\nnot variadic shown by its first value, through its prepare_callback\nor else cut to its schema.",
+                    "shapes": [
+                        "@param array<string, mixed> $config the feature as it was registered"
+                    ],
+                    "params": [
+                        {
+                            "name": "support",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "config",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the feature as it was registered"
+                        },
+                        {
+                            "name": "feature",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "request",
+                            "type": "WP_REST_Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 191,
+                    "end": 199
+                },
+                {
+                    "routes": [],
+                    "name": "unwrapped",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "unwrapped(mixed $support, array $config): mixed",
+                    "doc": "",
+                    "shapes": [
+                        "@param array<string, mixed> $config"
+                    ],
+                    "params": [
+                        {
+                            "name": "support",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "config",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 202,
+                    "end": 205
                 }
             ]
         },

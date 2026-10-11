@@ -162,53 +162,6 @@ class WP_REST_Settings_Controller extends WP_REST_Controller
     }
 }
 
-class WP_REST_Themes_Controller extends WP_REST_Controller
-{
-    const PATTERN = '[^\\/:<>\\*\\?"\\|]+(?:\\/[^\\/:<>\\*\\?"\\|]+)?';
-
-    public function __construct()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::__construct');
-        return null;
-    }
-
-    public function _sanitize_stylesheet_callback($stylesheet)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::_sanitize_stylesheet_callback');
-        return null;
-    }
-
-    protected function check_read_active_theme_permission()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::check_read_active_theme_permission');
-        return null;
-    }
-
-    protected function prepare_links($theme)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::prepare_links');
-        return null;
-    }
-
-    protected function is_same_theme($theme_a, $theme_b)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::is_same_theme');
-        return null;
-    }
-
-    protected function prepare_theme_support($support, $args, $feature, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::prepare_theme_support');
-        return null;
-    }
-
-    public function sanitize_theme_status($statuses, $request, $parameter)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Themes_Controller::sanitize_theme_status');
-        return null;
-    }
-}
-
 #[AllowDynamicProperties]
 class WP_Recovery_Mode_Link_Service
 {
