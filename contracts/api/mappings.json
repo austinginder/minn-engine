@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 801,
-        "composes": 2377,
+        "minn": 799,
+        "composes": 2379,
         "leaf": 1042,
         "noop": 2756,
         "placeholder": 1,
         "deadend": 1772,
         "functions": 8671,
-        "minnMethods": 993,
+        "minnMethods": 994,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -53409,7 +53409,6 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::isAdmin"
             ],
             "composes": []
@@ -54145,7 +54144,6 @@
             "lines": 5,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::isSecure",
                 "Minn\\Runtime\\Runtime::request"
             ],
@@ -66851,10 +66849,15 @@
         },
         "wp_debug_mode": {
             "file": "load.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters",
+                "wp_doing_ajax",
+                "wp_installing",
+                "wp_is_json_request"
+            ]
         },
         "wp_default_editor": {
             "file": "misc.php",
@@ -70870,12 +70873,8 @@
         "wp_installing": {
             "file": "load.php",
             "lines": 6,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "wp_interactivity": {
@@ -71027,12 +71026,8 @@
         "wp_is_block_theme": {
             "file": "load.php",
             "lines": 10,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::get",
-                "Minn\\Runtime\\Runtime::set"
-            ],
+            "kind": "composes",
+            "minn": [],
             "composes": [
                 "get_stylesheet",
                 "wp_get_theme"
@@ -71136,9 +71131,11 @@
         },
         "wp_is_json_media_type": {
             "file": "load.php",
-            "lines": 7,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Http\\MediaType::json"
+            ],
             "composes": []
         },
         "wp_is_json_request": {

@@ -14369,3 +14369,52 @@ Still owed:
   export, and the navigation fallback.
 - `wp_load_translations_early()` is still a placeholder.
 - `_wp_register_default_icons()` waits on D16 (the artwork's home).
+
+## The debug mode (2026-10-11)
+
+`wp_debug_mode()` is real (probe debug-mode). The engine's boot now sets
+PHP's error settings the same way, on every request (`Http\Failure::install()`
+through `Runtime\DebugMode`). Before this, the boot never set the error level,
+and it turned display on or off from `WP_DEBUG_DISPLAY` alone.
+
+What the reference's boot does, observed one boot per case over HTTP and
+pinned as data (`contracts/fixtures/debug-mode.json`, 55 cases, captured by
+`tests/tools/debug-mode-capture.php`, replayed by the unit suite):
+
+- **The error level.** A truthy `WP_DEBUG` reports everything (`E_ALL`).
+  Otherwise only errors and warnings are reported (4983: no notices, strict or
+  deprecation messages). Truthiness is PHP's own, so `"false"` turns debug on.
+- **Display, only while `WP_DEBUG` is on.** A truthy `WP_DEBUG_DISPLAY`, or
+  none defined, turns display on. A falsy one (`false`, `0`, `"0"`, `""`)
+  turns it off. `null` leaves PHP's own setting.
+- **The log, only while `WP_DEBUG` is on.**
+  - `true`, `1`, `1.0` and `"true"` in any case send it to `debug.log` in the
+    content folder (`WP_CONTENT_DIR`).
+  - Any other string but `""` and `"0"` is taken as the path, as written:
+    `"false"` and `" true"` are paths, and so is a relative path.
+  - Anything else (`false`, `0`, `2`) keeps no log.
+- **Requests whose errors never display**, whatever the constants say, even
+  with debug off:
+  - `XMLRPC_REQUEST`, `REST_REQUEST` and `MS_FILES_REQUEST` once defined, even
+    as false;
+  - an install or an ajax request, each only when true (`wp_installing()`,
+    `wp_doing_ajax()`, so the `wp_doing_ajax` filter counts);
+  - a request that asks for or sends JSON (`wp_is_json_request()`, vendor
+    `+json` types included).
+
+  A JSONP or XML request does not count. Nor does a REST request named by
+  `/wp-json/` or `?rest_route=`, since the boot reads this before the request
+  is parsed.
+- **`enable_wp_debug_mode_checks`** returning false makes the function do
+  nothing. WP-CLI hooks it with its own debug setup and a false, so the
+  reference's function never runs under WP-CLI. The probe takes WP-CLI's
+  callback off while it runs.
+
+Kept on purpose: with `WP_DEBUG` off, the engine turns display off. The
+reference leaves php.ini's setting, so a host whose php.ini displays errors
+shows them to visitors on WordPress and not on Minn. The engine's error page
+shows detail only while `display_errors` is on. Since `wp_is_json_media_type()`
+now lives in `Http\MediaType::json()`, the facade and the boot share one rule.
+
+The test site keeps display off, so the probe can't show the request cases.
+The fixture covers them.

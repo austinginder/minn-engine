@@ -4,7 +4,8 @@
  * Minn\Runtime\Constants at boot.
  */
 
-use Minn\Runtime\Runtime;
+use Minn\Http\MediaType;
+use Minn\Runtime\{DebugMode, Runtime};
 
 function is_admin()
 {
@@ -184,8 +185,21 @@ function wp_using_ext_object_cache($using = null)
     return $current;
 }
 
+/**
+ * PHP's error settings from the debug constants (Runtime\DebugMode), unless
+ * enable_wp_debug_mode_checks says no; errors never display for XML-RPC,
+ * REST, ms-files, an install, ajax, or a request that asks for or sends JSON
+ * (probe debug-mode; the engine's boot does the same in Http\Failure).
+ */
 function wp_debug_mode()
 {
+    if (!apply_filters('enable_wp_debug_mode_checks', true)) {
+        return;
+    }
+    DebugMode::apply(DebugMode::settings(DebugMode::defined(), WP_CONTENT_DIR));
+    if (defined('XMLRPC_REQUEST') || defined('REST_REQUEST') || defined('MS_FILES_REQUEST') || wp_installing() || wp_doing_ajax() || wp_is_json_request()) {
+        ini_set('display_errors', '0');
+    }
 }
 
 /** The protocol the request came over: HTTP/1.1, 2, 2.0 or 3 as the server says, anything else HTTP/1.0 (probe functions-remaining). */
@@ -621,13 +635,7 @@ function wp_magic_quotes()
 /** Whether a media type (or any in a comma-separated list) is JSON: application/json or application/{something}+json, case and parameters aside. */
 function wp_is_json_media_type($media_type)
 {
-    foreach (explode(',', (string) $media_type) as $type) {
-        $type = strtolower(trim(explode(';', $type)[0]));
-        if (preg_match('#^application/(?:[^/]+\+)?json$#', $type) === 1) {
-            return true;
-        }
-    }
-    return false;
+    return MediaType::json((string) $media_type);
 }
 
 /** Seconds since the request started ($timestart), as a float. */

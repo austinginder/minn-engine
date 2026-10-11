@@ -39322,7 +39322,7 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 286,
+            "lines": 288,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
@@ -39381,6 +39381,7 @@
                 "Minn\\Rest\\RestUrl",
                 "Minn\\Rest\\Types",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\DebugMode",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
@@ -39416,8 +39417,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 67,
-                "end": 72
+                "line": 69,
+                "end": 74
             },
             "cases": [],
             "constants": [
@@ -39458,8 +39459,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 83
+                    "line": 81,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -39478,8 +39479,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 109
+                    "line": 94,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -39498,8 +39499,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 119
+                    "line": 116,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -39532,8 +39533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 157
+                    "line": 130,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -39559,8 +39560,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 182
+                    "line": 170,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -39579,8 +39580,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 190,
-                    "end": 196
+                    "line": 194,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -39606,8 +39607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 277
+                    "line": 202,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -39703,8 +39704,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 346
+                    "line": 284,
+                    "end": 350
                 }
             ]
         },
@@ -60249,6 +60250,7 @@
                 "Minn\\Http\\LegacyHeaders",
                 "Minn\\Http\\Location",
                 "Minn\\Http\\Matched",
+                "Minn\\Http\\MediaType",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Outbound",
                 "Minn\\Http\\Policy",
@@ -62527,14 +62529,15 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Failure.php",
-            "lines": 176,
-            "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks\nfor them) and catches the fatal errors PHP would otherwise print.",
+            "lines": 185,
+            "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit sets PHP's error settings from the debug constants (display stays off\nunless WP_DEBUG and WP_DEBUG_DISPLAY ask for it) and catches the fatal\nerrors PHP would otherwise print.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Html",
                 "Minn\\Http",
-                "Minn\\Http\\Response"
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\DebugMode"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -62566,7 +62569,7 @@
                     "type": "bool",
                     "readonly": false,
                     "static": true,
-                    "doc": "Whether this site asked to see errors (WP_DEBUG_DISPLAY, else WP_DEBUG).",
+                    "doc": "Whether errors display for this request: display_errors, once the debug constants set it.",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -62590,8 +62593,8 @@
                     "doc": "Opens the window in which a failure is an extension's fault: while\nthe plugins and the theme's functions file load and the boot actions\nfire, code that fails fails for every visitor, so pausing it heals\nthe site. A failure after that (a route, a shortcode, a template)\nanswers to one request's input and is never grounds for a pause;\nit is logged and the request ends in the error page.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -62602,8 +62605,8 @@
                     "doc": "Closes the window armRecovery() opened.",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 44
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -62624,20 +62627,38 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 56
+                    "line": 55,
+                    "end": 58
                 },
                 {
                     "routes": [],
                     "name": "install",
                     "static": true,
                     "visibility": "public",
-                    "signature": "install(): void",
-                    "doc": "Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 59,
-                    "end": 79
+                    "signature": "install(array $constants, array $server): void",
+                    "doc": "Sets PHP's error settings from the debug constants as the reference's\nboot does (Runtime\\DebugMode), and installs the error handlers. With\nWP_DEBUG off, or for a request that answers a machine, errors never\ndisplay. In the first case the reference leaves php.ini's setting;\nthe engine never shows a visitor PHP's errors. Detail is shown only\nwhile display_errors is on.",
+                    "shapes": [
+                        "@param array<string, mixed> $constants the debug and request constants, by name",
+                        "@param array<string, mixed> $server the request's server variables"
+                    ],
+                    "params": [
+                        {
+                            "name": "constants",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the debug and request constants, by name"
+                        },
+                        {
+                            "name": "server",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's server variables"
+                        }
+                    ],
+                    "line": 71,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -62656,8 +62677,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 94
+                    "line": 101,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -62676,8 +62697,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 108
+                    "line": 111,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -62688,8 +62709,8 @@
                     "doc": "The 500 page.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 144
+                    "line": 151,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -62700,8 +62721,8 @@
                     "doc": "The 503 page the reference shows when the database cannot be reached.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 152
+                    "line": 158,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -62712,8 +62733,8 @@
                     "doc": "The 503 page while maintenance mode holds; monitors read the status, the retry hint, and the title.",
                     "shapes": [],
                     "params": [],
-                    "line": 155,
-                    "end": 162
+                    "line": 166,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -62753,8 +62774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 175
+                    "line": 180,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -62765,8 +62786,8 @@
                     "doc": "Whatever a half-finished render left in the output buffers goes; the error page must stand alone.",
                     "shapes": [],
                     "params": [],
-                    "line": 82,
-                    "end": 87
+                    "line": 93,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -62785,8 +62806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 116
+                    "line": 122,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -62807,8 +62828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 137
+                    "line": 136,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -62848,8 +62869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 190
+                    "line": 188,
+                    "end": 201
                 }
             ]
         },
@@ -63890,6 +63911,49 @@
                 }
             ],
             "methods": []
+        },
+        {
+            "name": "Minn\\Http\\MediaType",
+            "short": "MediaType",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/MediaType.php",
+            "lines": 18,
+            "doc": "Reading the media types a request names in its Accept and Content-Type headers.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\DebugMode"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "json",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "json(string $types): bool",
+                    "doc": "Whether a list of media types names JSON: application/json, or any\napplication/…+json vendor type, parameters and case ignored\n(wp_is_json_media_type(), probe load-remaining).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "types",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 15,
+                    "end": 24
+                }
+            ]
         },
         {
             "name": "Minn\\Http\\Method",
@@ -118122,6 +118186,172 @@
                     ],
                     "line": 80,
                     "end": 97
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\DebugMode",
+            "short": "DebugMode",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/DebugMode.php",
+            "lines": 104,
+            "doc": "PHP's error settings from the debug constants, as the reference's boot\nsets them (wp_debug_mode(); contracts/fixtures/debug-mode.json holds the\noracle's answer for each combination, and the unit suite replays it).\nWP_DEBUG reports every level, or only errors and warnings. With it on,\nWP_DEBUG_DISPLAY turns display on or off (null leaves PHP's own setting)\nand WP_DEBUG_LOG sends the log to a file. A request that answers a\nmachine never displays errors.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\MediaType"
+            ],
+            "usedBy": [
+                "Minn\\Engine",
+                "Minn\\Http\\Failure"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "QUIET",
+                    "value": "4983",
+                    "doc": "What PHP reports while WP_DEBUG is off: errors and warnings, no notices, strict or deprecation messages.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "DEFAULTS",
+                    "value": "array (   'WP_DEBUG' => false,   'WP_DEBUG_DISPLAY' => true,   'WP_DEBUG_LOG' => false, )",
+                    "doc": "The debug constants, each with the value it has when wp-config.php leaves it out.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "REQUESTS",
+                    "value": "array (   0 => 'XMLRPC_REQUEST',   1 => 'REST_REQUEST',   2 => 'MS_FILES_REQUEST',   3 => 'WP_INSTALLING',   4 => 'DOING_AJAX', )",
+                    "doc": "The request constants answersMachine() reads.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "settings",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settings(array $constants, string $contentDir): array",
+                    "doc": "The settings the debug constants ask for: the error level, and the ini\nvalues to set (none for what they leave alone).",
+                    "shapes": [
+                        "@param array<string, mixed> $constants the debug constants defined, by name; a missing one reads as its default",
+                        "@return array{level: int, ini: array<string, string>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "constants",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the debug constants defined, by name; a missing one reads as its default"
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 54
+                },
+                {
+                    "routes": [],
+                    "name": "logPath",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "logPath(mixed $setting, string $contentDir): ?string",
+                    "doc": "Where WP_DEBUG_LOG sends the log. True, 1 or \"true\" in any case mean\ndebug.log in the content folder; any other string but \"\" and \"0\" is\nthe path itself, \"false\" included; anything else keeps no log.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "setting",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 61,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "answersMachine",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "answersMachine(array $constants, array $server): bool",
+                    "doc": "Whether what the boot knows marks a request that answers a machine,\nwhose errors must never print into the answer: XML-RPC, REST or\nms-files declared at all, an install or ajax declared true, or a\nrequest that asks for or sends JSON (a JSONP or XML one is not). The\nfacade's wp_debug_mode() asks the same through wp_installing(),\nwp_doing_ajax() and wp_is_json_request(), filters included.",
+                    "shapes": [
+                        "@param array<string, mixed> $constants the request constants defined, by name",
+                        "@param array<string, mixed> $server the request's server variables"
+                    ],
+                    "params": [
+                        {
+                            "name": "constants",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request constants defined, by name"
+                        },
+                        {
+                            "name": "server",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the request's server variables"
+                        }
+                    ],
+                    "line": 80,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "defined",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defined(): array",
+                    "doc": "The debug and request constants defined right now, by name.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 98,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "apply",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "apply(array $settings): void",
+                    "doc": "Sets PHP's error level and ini values to what settings() asked for.",
+                    "shapes": [
+                        "@param array{level: int, ini: array<string, string>} $settings"
+                    ],
+                    "params": [
+                        {
+                            "name": "settings",
+                            "type": "array",
+                            "shape": "array{level: int, ini: array<string, string>}",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 114,
+                    "end": 120
                 }
             ]
         },

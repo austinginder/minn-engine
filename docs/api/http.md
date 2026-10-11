@@ -13,7 +13,7 @@ request, response, routing, and the outgoing client
 | [`Download`](#download) | final readonly class | 36 | A file the engine fetches for itself (a package, a language pack), over |
 | [`Envelope`](#envelope) | interface | 9 | What runs around a matched route once the router knows the route takes |
 | [`Exchange`](#exchange) | final readonly class | 74 | What came back: the final response's status, headers (repeats as lists), Set-Cookie values, and body, or the transport error. |
-| [`Failure`](#failure) | final class | 176 | What the public sees when the engine cannot answer: a plain page with no |
+| [`Failure`](#failure) | final class | 185 | What the public sees when the engine cannot answer: a plain page with no |
 | [`Fake`](#fake) | final class | 94 | Answers requests in place of the network, and keeps what was sent. A test |
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
@@ -21,6 +21,7 @@ request, response, routing, and the outgoing client
 | [`LegacyHeaders`](#legacyheaders) | final class | 60 | WP_Http's legacy readers, kept for plugins that still call them (probe |
 | [`Location`](#location) | final class | 65 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
 | [`Matched`](#matched) | final readonly class | 15 | A route the router matched to a request and whose policy it judged: the |
+| [`MediaType`](#mediatype) | final class | 18 | Reading the media types a request names in its Accept and Content-Type headers. |
 | [`Method`](#method) | enum | 33 |  |
 | [`Outbound`](#outbound) | final readonly class | 46 | One outgoing HTTP request, normalised: the transport needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 108 | What a route requires of its caller, as data on the route: the router |
@@ -325,8 +326,9 @@ than check.
 
 What the public sees when the engine cannot answer: a plain page with no
 detail, while the detail goes to the log. Installed once per request,
-it turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks
-for them) and catches the fatal errors PHP would otherwise print.
+it sets PHP's error settings from the debug constants (display stays off
+unless WP_DEBUG and WP_DEBUG_DISPLAY ask for it) and catches the fatal
+errors PHP would otherwise print.
 
 - const `FATAL` = `4437`
 
@@ -354,9 +356,17 @@ Installed once the runtime is up, since it needs the database.
 
 - `@param callable(array{type:int,file:string,line:int,message:string}): void $recorder`
 
-### static `install(): void`
+### static `install(array $constants, array $server): void`
 
-Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY.
+Sets PHP's error settings from the debug constants as the reference's
+boot does (Runtime\DebugMode), and installs the error handlers. With
+WP_DEBUG off, or for a request that answers a machine, errors never
+display. In the first case the reference leaves php.ini's setting;
+the engine never shows a visitor PHP's errors. Detail is shown only
+while display_errors is on.
+
+- `@param array<string, mixed> $constants the debug and request constants, by name`
+- `@param array<string, mixed> $server the request's server variables`
 
 ### static `report(Throwable $error): Minn\Http\Response`
 
@@ -385,7 +395,7 @@ The same page with the cause on it, for a site that asked to see
 errors. Only ever reached when WP_DEBUG_DISPLAY (or WP_DEBUG) is on:
 a site that has not asked never learns this much from a response.
 
-Internals: `discardOutput()` (private, line 82), `note()` (private, line 111), `record()` (private, line 125), `page()` (private, line 177)
+Internals: `discardOutput()` (private, line 93), `note()` (private, line 122), `record()` (private, line 136), `page()` (private, line 188)
 
 
 ## Fake
@@ -613,6 +623,21 @@ __construct(Minn\Http\Route $route, object $handler, string $method, array $capt
 - readonly `string $method`
 - readonly `array $captures`
 - readonly `array $methods`
+
+
+## MediaType
+
+`final class Minn\Http\MediaType` · `public/minn/src/Minn/Http/MediaType.php`
+
+Reading the media types a request names in its Accept and Content-Type headers.
+
+Used by: `Minn\Runtime\DebugMode`
+
+### static `json(string $types): bool`
+
+Whether a list of media types names JSON: application/json, or any
+application/…+json vendor type, parameters and case ignored
+(wp_is_json_media_type(), probe load-remaining).
 
 
 ## Method

@@ -1,0 +1,788 @@
+{
+    "about": "What the reference's boot leaves PHP's error settings as (wp_debug_mode()), for each combination of debug constants and request kinds. Each case starts from error_reporting 1, display_errors stderr, log_errors 0 and error_log /baseline.log; {root} is the WordPress folder. Captured by tests/tools/debug-mode-capture.php; replayed by tests/unit/debug-mode.php.",
+    "baseline": {
+        "error_reporting": 1,
+        "display_errors": "stderr",
+        "log_errors": "0",
+        "error_log": "/baseline.log"
+    },
+    "cases": [
+        {
+            "label": "none",
+            "constants": {},
+            "request": {},
+            "settings": {
+                "error_reporting": 4983,
+                "display_errors": "stderr",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug \"1\"",
+            "constants": {
+                "WP_DEBUG": "1"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug \"false\" (a string, so on)",
+            "constants": {
+                "WP_DEBUG": "false"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug 0",
+            "constants": {
+                "WP_DEBUG": 0
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 4983,
+                "display_errors": "stderr",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug \"\", log true",
+            "constants": {
+                "WP_DEBUG": "",
+                "WP_DEBUG_LOG": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 4983,
+                "display_errors": "stderr",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display true",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display false",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display null",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": null
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "stderr",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display 0",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": 0
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display \"0\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": "0"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display \"\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": ""
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display \"false\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": "false"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display 2",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": 2
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, log true",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "debug, log 1",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": 1
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "debug, log 1.0",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": 1
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "debug, log 2",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": 2
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, log \"1\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "1"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "debug, log \"true\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "true"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "debug, log \"TRUE\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "TRUE"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "debug, log \" true\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": " true"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": " true"
+            }
+        },
+        {
+            "label": "debug, log a path",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "/zz/minn-debug.log"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "/zz/minn-debug.log"
+            }
+        },
+        {
+            "label": "debug, log a relative path",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "zz-debug.log"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "zz-debug.log"
+            }
+        },
+        {
+            "label": "debug, log \"\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": ""
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, log \"0\"",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "0"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, log \"false\" (a path)",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": "false"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "false"
+            }
+        },
+        {
+            "label": "debug, log false",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, log 0",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": 0
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, log true, another content folder",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_LOG": true,
+                "WP_CONTENT_DIR": "/zz/content"
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "1",
+                "error_log": "/zz/content/debug.log"
+            }
+        },
+        {
+            "label": "debug, display false, log true",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": false,
+                "WP_DEBUG_LOG": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "no debug, display true, log true",
+            "constants": {
+                "WP_DEBUG": false,
+                "WP_DEBUG_DISPLAY": true,
+                "WP_DEBUG_LOG": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 4983,
+                "display_errors": "stderr",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, ajax",
+            "constants": {
+                "WP_DEBUG": true,
+                "DOING_AJAX": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, ajax false",
+            "constants": {
+                "WP_DEBUG": true,
+                "DOING_AJAX": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display true, ajax",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": true,
+                "DOING_AJAX": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, display null, ajax",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_DEBUG_DISPLAY": null,
+                "DOING_AJAX": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, ajax, log true",
+            "constants": {
+                "WP_DEBUG": true,
+                "DOING_AJAX": true,
+                "WP_DEBUG_LOG": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "1",
+                "error_log": "{root}/wp-content/debug.log"
+            }
+        },
+        {
+            "label": "no debug, ajax",
+            "constants": {
+                "DOING_AJAX": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 4983,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, XML-RPC",
+            "constants": {
+                "WP_DEBUG": true,
+                "XMLRPC_REQUEST": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, XML-RPC false",
+            "constants": {
+                "WP_DEBUG": true,
+                "XMLRPC_REQUEST": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, REST",
+            "constants": {
+                "WP_DEBUG": true,
+                "REST_REQUEST": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, REST false",
+            "constants": {
+                "WP_DEBUG": true,
+                "REST_REQUEST": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, ms-files",
+            "constants": {
+                "WP_DEBUG": true,
+                "MS_FILES_REQUEST": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, ms-files false",
+            "constants": {
+                "WP_DEBUG": true,
+                "MS_FILES_REQUEST": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, installing",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_INSTALLING": true
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, installing false",
+            "constants": {
+                "WP_DEBUG": true,
+                "WP_INSTALLING": false
+            },
+            "request": {},
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, asks for JSON",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "HTTP_ACCEPT": "application/json"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, asks for HTML or JSON",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "HTTP_ACCEPT": "text/html, application/json"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, asks for a JSON vendor type",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "HTTP_ACCEPT": "application/vnd.api+json"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, sends JSON",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "CONTENT_TYPE": "application/json"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, sends JSON with a charset",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "CONTENT_TYPE": "application/json; charset=utf-8"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "0",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, asks for XML",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "HTTP_ACCEPT": "text/xml"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, sends XML",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "CONTENT_TYPE": "text/xml"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, a JSONP request",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "_jsonp": "callback"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        },
+        {
+            "label": "debug, a REST route in the query",
+            "constants": {
+                "WP_DEBUG": true
+            },
+            "request": {
+                "rest_route": "/"
+            },
+            "settings": {
+                "error_reporting": 32767,
+                "display_errors": "1",
+                "log_errors": "0",
+                "error_log": "/baseline.log"
+            }
+        }
+    ]
+}

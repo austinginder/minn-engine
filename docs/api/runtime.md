@@ -34,6 +34,7 @@ the WordPress runtime plugins load against
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`CurrentUser`](#currentuser) | final class | 13 | Who the request is, as the reference settles it before init: the user |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
+| [`DebugMode`](#debugmode) | final class | 104 | PHP's error settings from the debug constants, as the reference's boot |
 | [`Deferrals`](#deferrals) | final class | 66 | The switches an importer flips for the length of a request (probe |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 78 | A file's type from its content as much as its name, as the reference's |
@@ -1412,6 +1413,63 @@ A table's index names.
 Runs one DDL statement.
 
 Internals: `definitions()` (private, line 80)
+
+
+## DebugMode
+
+`final class Minn\Runtime\DebugMode` · `public/minn/src/Minn/Runtime/DebugMode.php`
+
+PHP's error settings from the debug constants, as the reference's boot
+sets them (wp_debug_mode(); contracts/fixtures/debug-mode.json holds the
+oracle's answer for each combination, and the unit suite replays it).
+WP_DEBUG reports every level, or only errors and warnings. With it on,
+WP_DEBUG_DISPLAY turns display on or off (null leaves PHP's own setting)
+and WP_DEBUG_LOG sends the log to a file. A request that answers a
+machine never displays errors.
+
+- const `QUIET` = `4983` — What PHP reports while WP_DEBUG is off: errors and warnings, no notices, strict or deprecation messages.
+- const `DEFAULTS` = `array (   'WP_DEBUG' => false,   'WP_DEBUG_DISPLAY' => true,   'WP_DEBUG_LOG' => false, )` — The debug constants, each with the value it has when wp-config.php leaves it out.
+- const `REQUESTS` = `array (   0 => 'XMLRPC_REQUEST',   1 => 'REST_REQUEST',   2 => 'MS_FILES_REQUEST',   3 => 'WP_INSTALLING',   4 => 'DOING_AJAX', )` — The request constants answersMachine() reads.
+
+Used by: `Minn\Engine`, `Minn\Http\Failure`
+
+### static `settings(array $constants, string $contentDir): array`
+
+The settings the debug constants ask for: the error level, and the ini
+values to set (none for what they leave alone).
+
+- `@param array<string, mixed> $constants the debug constants defined, by name; a missing one reads as its default`
+- `@return array{level: int, ini: array<string, string>}`
+
+### static `logPath(mixed $setting, string $contentDir): ?string`
+
+Where WP_DEBUG_LOG sends the log. True, 1 or "true" in any case mean
+debug.log in the content folder; any other string but "" and "0" is
+the path itself, "false" included; anything else keeps no log.
+
+### static `answersMachine(array $constants, array $server): bool`
+
+Whether what the boot knows marks a request that answers a machine,
+whose errors must never print into the answer: XML-RPC, REST or
+ms-files declared at all, an install or ajax declared true, or a
+request that asks for or sends JSON (a JSONP or XML one is not). The
+facade's wp_debug_mode() asks the same through wp_installing(),
+wp_doing_ajax() and wp_is_json_request(), filters included.
+
+- `@param array<string, mixed> $constants the request constants defined, by name`
+- `@param array<string, mixed> $server the request's server variables`
+
+### static `defined(): array`
+
+The debug and request constants defined right now, by name.
+
+- `@return array<string, mixed>`
+
+### static `apply(array $settings): void`
+
+Sets PHP's error level and ini values to what settings() asked for.
+
+- `@param array{level: int, ini: array<string, string>} $settings`
 
 
 ## Deferrals

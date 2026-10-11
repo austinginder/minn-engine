@@ -47,6 +47,8 @@ use Minn\Cron\Cron;
 use Minn\Content\Reader;
 use Minn\Front\CommentPostController;
 use Minn\Extension\Extensions;
+use Minn\Runtime\AjaxController;
+use Minn\Runtime\DebugMode;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Recovery;
 use Minn\Runtime\Runtime;
@@ -78,8 +80,10 @@ final readonly class Engine
      */
     public function serve(): void
     {
-        Failure::install();
-        $this->answer(Request::fromGlobals())->send();
+        $request = Request::fromGlobals();
+        // admin-ajax.php declares DOING_AJAX before the reference's boot reads the debug constants.
+        Failure::install(DebugMode::defined() + (AjaxController::claims($request) ? ['DOING_AJAX' => true] : []), ['HTTP_ACCEPT' => $request->header('accept'), 'CONTENT_TYPE' => $request->header('content-type')]);
+        $this->answer($request)->send();
     }
 
     /**

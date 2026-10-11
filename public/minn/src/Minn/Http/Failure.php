@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace Minn\Http;
 
 use Minn\Html;
+use Minn\Runtime\DebugMode;
 use Throwable;
 
 /**
  * What the public sees when the engine cannot answer: a plain page with no
  * detail, while the detail goes to the log. Installed once per request,
- * it turns display_errors off (unless the site's own WP_DEBUG_DISPLAY asks
- * for them) and catches the fatal errors PHP would otherwise print.
+ * it sets PHP's error settings from the debug constants (display stays off
+ * unless WP_DEBUG and WP_DEBUG_DISPLAY ask for it) and catches the fatal
+ * errors PHP would otherwise print.
  */
 final class Failure
 {
@@ -19,7 +21,7 @@ final class Failure
 
     /** @var null|callable(array{type:int,file:string,line:int,message:string}): void */
     private static $recorder = null;
-    /** Whether this site asked to see errors (WP_DEBUG_DISPLAY, else WP_DEBUG). */
+    /** Whether errors display for this request: display_errors, once the debug constants set it. */
     private static bool $display = false;
     /** Whether a failure right now may be recorded against an extension: only while the extensions boot. */
     private static bool $armed = false;
@@ -55,16 +57,25 @@ final class Failure
         self::$recorder = $recorder;
     }
 
-    /** Installs the error handlers; detail is shown only under WP_DEBUG_DISPLAY. */
-    public static function install(): void
+    /**
+     * Sets PHP's error settings from the debug constants as the reference's
+     * boot does (Runtime\DebugMode), and installs the error handlers. With
+     * WP_DEBUG off, or for a request that answers a machine, errors never
+     * display. In the first case the reference leaves php.ini's setting;
+     * the engine never shows a visitor PHP's errors. Detail is shown only
+     * while display_errors is on.
+     *
+     * @param array<string, mixed> $constants the debug and request constants, by name
+     * @param array<string, mixed> $server the request's server variables
+     */
+    public static function install(array $constants, array $server): void
     {
-        $display = defined('WP_DEBUG_DISPLAY') ? (bool) WP_DEBUG_DISPLAY : (defined('WP_DEBUG') && WP_DEBUG);
-        self::$display = $display;
-        ini_set('display_errors', $display ? '1' : '0');
-        if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
-            ini_set('log_errors', '1');
-            ini_set('error_log', is_string(WP_DEBUG_LOG) ? WP_DEBUG_LOG : ABSPATH . 'wp-content/debug.log');
+        DebugMode::apply(DebugMode::settings($constants, defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content'));
+        if (empty($constants['WP_DEBUG']) || DebugMode::answersMachine($constants, $server)) {
+            ini_set('display_errors', '0');
         }
+        $display = in_array(strtolower((string) ini_get('display_errors')), ['1', 'on', 'yes', 'true', 'stdout'], true);
+        self::$display = $display;
         register_shutdown_function(static function () use ($display): void {
             $error = error_get_last();
             if ($error === null || ($error['type'] & self::FATAL) === 0) {
