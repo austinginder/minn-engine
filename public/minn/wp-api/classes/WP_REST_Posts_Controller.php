@@ -179,38 +179,112 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
 
     public function create_item_permissions_check($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::create_item_permissions_check');
-        return null;
+        // No id; another author only for someone who edits others' posts; sticky only for someone who publishes and edits others'; then creating, then the terms.
+        if (!empty($request['id'])) {
+            return new WP_Error('rest_post_exists', __('Cannot create existing post.'), ['status' => 400]);
+        }
+        $object = get_post_type_object($this->post_type);
+        if (!empty($request['author']) && get_current_user_id() !== $request['author'] && !current_user_can($object->cap->edit_others_posts)) {
+            return new WP_Error('rest_cannot_edit_others', __('Sorry, you are not allowed to create posts as this user.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!empty($request['sticky']) && !current_user_can($object->cap->edit_others_posts) && !current_user_can($object->cap->publish_posts)) {
+            return new WP_Error('rest_cannot_assign_sticky', __('Sorry, you are not allowed to make posts sticky.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!current_user_can($object->cap->create_posts)) {
+            return new WP_Error('rest_cannot_create', __('Sorry, you are not allowed to create posts as this user.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!$this->check_assign_terms_permission($request)) {
+            return new WP_Error('rest_cannot_assign_term', __('Sorry, you are not allowed to assign the provided terms.'), ['status' => rest_authorization_required_code()]);
+        }
+        return true;
     }
 
     public function create_item($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::create_item');
-        return null;
+        // The engine writes the post (its save, terms, meta and actions); the answer is the edit view through this controller.
+        if (!empty($request['id'])) {
+            return new WP_Error('rest_post_exists', __('Cannot create existing post.'), ['status' => 400]);
+        }
+        $created = $this->minn_engine_write('POST', '/' . $this->namespace . '/' . $this->rest_base, $request);
+        if (is_wp_error($created)) {
+            return $created;
+        }
+        $post = get_post((int) ($created['id'] ?? 0));
+        $request->set_param('context', 'edit');
+        $response = rest_ensure_response($this->prepare_item_for_response($post, $request));
+        $response->set_status(201);
+        $response->header('Location', rest_url(rest_get_route_for_post($post)));
+        return $response;
     }
 
     public function update_item_permissions_check($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::update_item_permissions_check');
-        return null;
+        $post = $this->get_post($request['id']);
+        if (is_wp_error($post)) {
+            return $post;
+        }
+        $object = get_post_type_object($this->post_type);
+        if ($post && !$this->check_update_permission($post)) {
+            return new WP_Error('rest_cannot_edit', __('Sorry, you are not allowed to edit this post.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!empty($request['author']) && get_current_user_id() !== $request['author'] && !current_user_can($object->cap->edit_others_posts)) {
+            return new WP_Error('rest_cannot_edit_others', __('Sorry, you are not allowed to update posts as this user.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!empty($request['sticky']) && !current_user_can($object->cap->edit_others_posts) && !current_user_can($object->cap->publish_posts)) {
+            return new WP_Error('rest_cannot_assign_sticky', __('Sorry, you are not allowed to make posts sticky.'), ['status' => rest_authorization_required_code()]);
+        }
+        if (!$this->check_assign_terms_permission($request)) {
+            return new WP_Error('rest_cannot_assign_term', __('Sorry, you are not allowed to assign the provided terms.'), ['status' => rest_authorization_required_code()]);
+        }
+        return true;
     }
 
     public function update_item($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::update_item');
-        return null;
+        $post = $this->get_post($request['id']);
+        if (is_wp_error($post)) {
+            return $post;
+        }
+        $updated = $this->minn_engine_write($request->get_method() === 'PATCH' ? 'PATCH' : 'PUT', '/' . $this->namespace . '/' . $this->rest_base . '/' . $post->ID, $request);
+        if (is_wp_error($updated)) {
+            return $updated;
+        }
+        $request->set_param('context', 'edit');
+        return rest_ensure_response($this->prepare_item_for_response(get_post($post->ID), $request));
     }
 
     public function delete_item_permissions_check($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::delete_item_permissions_check');
-        return null;
+        $post = $this->get_post($request['id']);
+        if (is_wp_error($post)) {
+            return $post;
+        }
+        if ($post && !$this->check_delete_permission($post)) {
+            return new WP_Error('rest_cannot_delete', __('Sorry, you are not allowed to delete this post.'), ['status' => rest_authorization_required_code()]);
+        }
+        return true;
     }
 
     public function delete_item($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::delete_item');
-        return null;
+        // Trashed, the post in its edit view; deleted for good, the view it had before as previous.
+        $post = $this->get_post($request['id']);
+        if (is_wp_error($post)) {
+            return $post;
+        }
+        $force = (bool) $request['force'];
+        $request->set_param('context', 'edit');
+        $previous = $force ? $this->prepare_item_for_response($post, $request) : null;
+        $deleted = $this->minn_engine_write('DELETE', '/' . $this->namespace . '/' . $this->rest_base . '/' . $post->ID, $request);
+        if (is_wp_error($deleted)) {
+            return $deleted;
+        }
+        if ($previous !== null) {
+            $response = new WP_REST_Response();
+            $response->set_data(['deleted' => true, 'previous' => $previous->get_data()]);
+            return $response;
+        }
+        return rest_ensure_response($this->prepare_item_for_response(get_post($post->ID), $request));
     }
 
     protected function prepare_items_query($prepared_args = [], $request = NULL)
@@ -244,49 +318,193 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
 
     protected function prepare_item_for_database($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::prepare_item_for_database');
-        return null;
+        // The fields the request sets and the type has, in the reference's order, then rest_pre_insert_{type}.
+        $prepared = new stdClass();
+        if (isset($request['id'])) {
+            $existing = $this->get_post($request['id']);
+            if (is_wp_error($existing)) {
+                return $existing;
+            }
+            $prepared->ID = $existing->ID;
+        }
+        $schema = $this->get_item_schema();
+        foreach (['title' => 'post_title', 'content' => 'post_content', 'excerpt' => 'post_excerpt'] as $field => $column) {
+            if (!empty($schema['properties'][$field]) && isset($request[$field])) {
+                $prepared->{$column} = is_string($request[$field]) ? $request[$field] : ($request[$field]['raw'] ?? null);
+            }
+        }
+        $prepared->post_type = $this->post_type;
+        $prepared = $this->minn_prepared_settings($prepared, $request, $schema);
+        return is_wp_error($prepared) ? $prepared : apply_filters("rest_pre_insert_{$this->post_type}", $prepared, $request);
     }
 
     public function check_status($status, $request, $param)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_status');
-        return null;
+        // The status must be one the route takes.
+        return rest_validate_request_arg($status, $request, $param);
     }
 
     protected function handle_status_param($post_status, $post_type)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_status_param');
-        return null;
+        // Drafts and pending posts for anyone; private, published and scheduled ones need publishing; an unknown status is a draft.
+        switch ($post_status) {
+            case 'draft':
+            case 'pending':
+                break;
+            case 'private':
+                if (!current_user_can($post_type->cap->publish_posts)) {
+                    return new WP_Error('rest_cannot_publish', __('Sorry, you are not allowed to create private posts in this post type.'), ['status' => rest_authorization_required_code()]);
+                }
+                break;
+            case 'publish':
+            case 'future':
+                if (!current_user_can($post_type->cap->publish_posts)) {
+                    return new WP_Error('rest_cannot_publish', __('Sorry, you are not allowed to publish posts in this post type.'), ['status' => rest_authorization_required_code()]);
+                }
+                break;
+            default:
+                if (!get_post_status_object($post_status)) {
+                    $post_status = 'draft';
+                }
+        }
+        return $post_status;
     }
 
     protected function handle_featured_media($featured_media, $post_id)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_featured_media');
-        return null;
+        // A media id becomes the thumbnail when it can be one; none removes it.
+        $featured_media = (int) $featured_media;
+        if (!$featured_media) {
+            return delete_post_thumbnail($post_id);
+        }
+        if (set_post_thumbnail($post_id, $featured_media)) {
+            return true;
+        }
+        return new WP_Error('rest_invalid_featured_media', __('Invalid featured media ID.'), ['status' => 400]);
     }
 
     public function check_template($template, $request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_template');
-        return null;
+        // No template, the post's own, or one the theme offers for the type.
+        if (!$template) {
+            return true;
+        }
+        $post = !empty($request['id']) ? get_post((int) $request['id']) : null;
+        if ($post && get_page_template_slug($post) === $template) {
+            return true;
+        }
+        $allowed = wp_get_theme()->get_page_templates($post, $this->post_type);
+        if (isset($allowed[$template])) {
+            return true;
+        }
+        /* translators: 1: Parameter, 2: List of valid values. */
+        return new WP_Error('rest_invalid_param', sprintf(__('%1$s is not one of %2$s.'), 'template', implode(', ', array_keys($allowed))));
     }
 
     public function handle_template($template, $post_id, $validate = false)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_template');
+        // Checked against the theme's templates for the post when asked; an unknown one is cleared.
+        if ($validate && !array_key_exists($template, wp_get_theme()->get_page_templates(get_post($post_id)))) {
+            $template = '';
+        }
+        update_post_meta($post_id, '_wp_page_template', $template);
     }
 
     protected function handle_terms($post_id, $request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::handle_terms');
-        return null;
+        // Each REST taxonomy the request names, set to the terms it lists.
+        foreach ($this->minn_rest_taxonomies() as $base => $taxonomy) {
+            if (!isset($request[$base])) {
+                continue;
+            }
+            $result = wp_set_object_terms($post_id, $request[$base], $taxonomy->name);
+            if (is_wp_error($result)) {
+                return $result;
+            }
+        }
     }
 
     protected function check_assign_terms_permission($request)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Posts_Controller::check_assign_terms_permission');
-        return null;
+        // Every term the request lists, in each REST taxonomy, must be one the user may assign (a term that does not exist is refused later).
+        foreach ($this->minn_rest_taxonomies() as $base => $taxonomy) {
+            foreach (isset($request[$base]) ? (array) $request[$base] : [] as $term_id) {
+                if (get_term($term_id, $taxonomy->name) && !current_user_can('assign_term', (int) $term_id)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /** @internal the status, dates, slug, author, password, parent, order and discussion the request sets, as the reference orders them; an error when one is not allowed */
+    private function minn_prepared_settings(stdClass $prepared, $request, array $schema)
+    {
+        if (!empty($schema['properties']['status']) && isset($request['status'])) {
+            $status = $this->handle_status_param($request['status'], get_post_type_object($this->post_type));
+            if (is_wp_error($status)) {
+                return $status;
+            }
+            $prepared->post_status = $status;
+        }
+        $dates = !empty($schema['properties']['date']) && !empty($request['date']) ? rest_get_date_with_gmt($request['date']) : (!empty($schema['properties']['date_gmt']) && !empty($request['date_gmt']) ? rest_get_date_with_gmt($request['date_gmt'], true) : null);
+        if (!empty($dates)) {
+            [$prepared->post_date, $prepared->post_date_gmt] = $dates;
+            $prepared->edit_date = true;
+        }
+        if (!empty($schema['properties']['slug']) && isset($request['slug'])) {
+            $prepared->post_name = $request['slug'];
+        }
+        if (!empty($schema['properties']['author']) && !empty($request['author'])) {
+            if (get_current_user_id() !== (int) $request['author'] && !get_userdata((int) $request['author'])) {
+                return new WP_Error('rest_invalid_author', __('Invalid author ID.'), ['status' => 400]);
+            }
+            $prepared->post_author = $request['author'];
+        }
+        return $this->minn_prepared_access($prepared, $request, $schema);
+    }
+
+    /** @internal the password (never with sticky), the parent (which must exist), the order and the discussion settings */
+    private function minn_prepared_access(stdClass $prepared, $request, array $schema)
+    {
+        if (!empty($schema['properties']['password']) && isset($request['password'])) {
+            $prepared->post_password = $request['password'];
+            if ($request['password'] !== '' && (!empty($request['sticky']) || (!empty($request['id']) && is_sticky((int) $request['id'])))) {
+                return new WP_Error('rest_invalid_field', __('A post can not be sticky and have a password.'), ['status' => 400]);
+            }
+        }
+        if (!empty($schema['properties']['parent']) && isset($request['parent'])) {
+            if ((int) $request['parent'] !== 0 && !get_post((int) $request['parent'])) {
+                return new WP_Error('rest_post_invalid_id', __('Invalid post parent ID.'), ['status' => 400]);
+            }
+            $prepared->post_parent = (int) $request['parent'];
+        }
+        foreach (['menu_order' => 'menu_order', 'comment_status' => 'comment_status', 'ping_status' => 'ping_status'] as $field => $column) {
+            if (!empty($schema['properties'][$field]) && isset($request[$field])) {
+                $prepared->{$column} = $field === 'menu_order' ? (int) $request[$field] : $request[$field];
+            }
+        }
+        // The template is set after the save, not through it.
+        $prepared->page_template = null;
+        return $prepared;
+    }
+
+    /** @internal one of the engine's own writes for this type, answering the request in process: the written object, or the error it refused with */
+    private function minn_engine_write(string $method, string $route, $request)
+    {
+        $write = clone $request;
+        $write->set_method($method);
+        $write->set_route($route);
+        $api = WP_REST_Server::minn_engine_api($write);
+        $engine = Minn\Rest\RuntimePrepare::during($write, static fn () => $api->handleEngineOnly($route, $write));
+        if ($engine === null) {
+            return new WP_Error('rest_no_route', __('No route was found matching the URL and request method.'), ['status' => 404]);
+        }
+        $body = json_decode($engine->body, true);
+        if ($engine->status >= 400) {
+            return new WP_Error((string) ($body['code'] ?? 'rest_error'), (string) ($body['message'] ?? ''), $body['data'] ?? ['status' => $engine->status]);
+        }
+        return (array) $body;
     }
 
     protected function check_is_post_type_allowed($post_type)

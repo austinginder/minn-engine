@@ -12039,3 +12039,62 @@ Left: the write side: create, update and delete with their permission
 checks, `prepare_item_for_database`, the status, template, featured media
 and terms handlers, and the tax query helpers. Also owed: the engine's
 `OPTIONS /wp/v2/posts` omits the schema the reference returns.
+
+## WP_REST_Posts_Controller, write side (2026-10-11)
+
+Probe `rest-posts-write` proves the write half of the posts controller.
+It uses a visitor, a contributor and an administrator, a draft of each
+author's, and a post created, updated, trashed and deleted through the
+class. The rows, the user and the sticky list are put back.
+
+- **Create, update, delete** run the engine's own write route for the type
+  in process (its save, terms, meta, revisions and the `rest_insert_*`,
+  `rest_after_insert_*` and `rest_delete_*` actions). The answer is the
+  post in its edit view through `prepare_item_for_response`, so a subclass
+  shapes it.
+  - A create is a 201 with a Location header.
+  - A trash answers the trashed post.
+  - A forced delete answers `deleted` and the `previous` view, shaped
+    before the delete.
+  - Creating with an id is `rest_post_exists` (400).
+  - An unknown post is `rest_post_invalid_id`.
+  - Trashing twice is the engine's `rest_already_trashed` (410).
+- **Permission checks.**
+  - Create: no id; another author only for someone who edits others'
+    posts; sticky only for someone who publishes or edits others'; then the
+    create capability; then the terms.
+  - Update: editing the post, then the same author, sticky and terms rules.
+  - Delete: deleting the post.
+  - A visitor's refusals are 401s, a signed-in user's 403s.
+  - Terms are refused only for a term that exists but may not be assigned;
+    a missing one is left to the save.
+- **`handle_status_param`.** Draft and pending are open to anyone. Private
+  and publish/future need publishing (two messages). Another registered
+  status stays; an unknown one is draft.
+- **`check_status`** only validates against the route's enum. A private
+  status with a password passes here.
+- **`prepare_item_for_database`**, in this order: the id of an existing
+  post, the title, content and excerpt (a string or its raw), the type, the
+  status, the dates (`date` first, else `date_gmt`, with `edit_date`), the
+  slug as given, the author, the password, the parent, the menu order, the
+  comment and ping status, then `page_template` null always. Then
+  `rest_pre_insert_{type}`.
+  - A field is set only when the type's schema has it and the request
+    sends it.
+  - An unknown author, a parent that does not exist, and sticky with a
+    password (or a password on a sticky post) are errors.
+  - An empty or invalid date sets nothing.
+- **Templates.** `check_template` passes no template, the post's own, or
+  one the theme offers for the type. Otherwise it is `rest_invalid_param`
+  listing them. `handle_template` stores the template as given, or clears
+  an unknown one when asked to check.
+- **Featured media and terms.** An id becomes the thumbnail or is
+  `rest_invalid_featured_media`; none removes the thumbnail.
+  `handle_terms` sets each REST taxonomy the request names.
+
+Fixed on the way: the engine's delete route read `force` from the query
+only. A DELETE may carry it in the body, as the reference reads it.
+
+Left in the class: the private tax query helpers (the engine's own list
+answers the queries). Owed alongside: a type outside wp/v2 has no engine
+route to write through yet.

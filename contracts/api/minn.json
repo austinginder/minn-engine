@@ -98786,7 +98786,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 451,
+            "lines": 452,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "extends": null,
@@ -99147,7 +99147,7 @@
                         }
                     ],
                     "line": 267,
-                    "end": 298
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -99168,8 +99168,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 452,
-                    "end": 457
+                    "line": 453,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -99188,8 +99188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 474,
-                    "end": 480
+                    "line": 475,
+                    "end": 481
                 },
                 {
                     "routes": [],
@@ -99375,8 +99375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 310
+                    "line": 306,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -99404,8 +99404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 326
+                    "line": 320,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -99431,8 +99431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 339
+                    "line": 330,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -99467,8 +99467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 382
+                    "line": 349,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -99503,8 +99503,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 391,
-                    "end": 418
+                    "line": 392,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -99539,8 +99539,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 436
+                    "line": 428,
+                    "end": 437
                 },
                 {
                     "routes": [],
@@ -99566,8 +99566,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 448
+                    "line": 440,
+                    "end": 449
                 },
                 {
                     "routes": [],
@@ -99586,8 +99586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 465
+                    "line": 460,
+                    "end": 466
                 },
                 {
                     "routes": [],
@@ -99606,8 +99606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 471
+                    "line": 469,
+                    "end": 472
                 }
             ]
         },
