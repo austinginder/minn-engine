@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 392 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 398 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -21,7 +21,7 @@ the wp/v2 surface: shapes and controllers
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
-| [`Embed`](#embed) | final class | 201 | The _embed decoration and the embed context. Every embeddable link in an |
+| [`Embed`](#embed) | final class | 218 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
@@ -182,6 +182,12 @@ A theme in the wp/v2 shape, links included, before rest_prepare_theme. @return a
 
 - `@return array<string, mixed>`
 
+### `embedLinks(array $data, array $rels): array`
+
+A response's data with its embeddable links answered in-process as this caller; every rel when none is named. @param list<string> $rels @return array<string, mixed>
+
+- `@param list<string> $rels @return array<string, mixed>`
+
 ### `userObject(): Minn\Rest\UserObject`
 
 The wp/v2 user shape.
@@ -230,7 +236,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 364), `withPageLinks()` (private, line 378), `options()` (private, line 409), `withAllow()` (private, line 422)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 370), `withPageLinks()` (private, line 384), `options()` (private, line 415), `withAllow()` (private, line 428)
 
 
 ## ApplicationPasswordsController
@@ -912,9 +918,10 @@ Deletes a term of a registered taxonomy.
 
 The _embed decoration and the embed context. Every embeddable link in an
 object's _links is answered in-process as the same caller with
-context=embed and placed under _embedded[rel]; a rel whose every embed
-came back empty or as an error is left out, while an empty list beside a
-full one stays (wp:term keeps its empty tags list next to the categories).
+context=embed and placed under _embedded[rel], an error as the error
+itself; a rel whose every embed came back empty is left out, while an
+empty list beside a full one stays (wp:term keeps its empty tags list
+next to the categories).
 Lists have _fields applied per item before the links are read, so a
 _fields value without _links embeds nothing there; a single object embeds
 first and is filtered afterwards. The embed context is the view object
@@ -939,13 +946,21 @@ Null when _embed is absent; [] for every rel; otherwise the rels asked for. @ret
 
 Decorates a finished response: the embed context, then _embedded, then the deferred _fields.
 
+### `embedded(Minn\Http\Request $request, array $item, array $rels): array`
+
+A response's data with its embeddable links answered (the runtime's
+WP_REST_Server::embed_links): every rel when none is named.
+
+- `@param array<string, mixed> $item @param list<string> $rels`
+- `@return array<string, mixed>`
+
 ### static `shape(string $type, array $item): array`
 
 An item cut to the embed shape of its object type (a post type, a taxonomy, attachment, user or comment); any other kept whole. @param array<string, mixed> $item @return array<string, mixed>
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-Internals: `decorateItem()` (private, line 96), `answer()` (private, line 128), `target()` (private, line 158), `kind()` (private, line 176), `taxonomyBase()` (private, line 192), `context()` (private, line 216)
+Internals: `decorateItem()` (private, line 97), `answer()` (private, line 141), `target()` (private, line 176), `kind()` (private, line 194), `taxonomyBase()` (private, line 210), `context()` (private, line 234)
 
 
 ## EngineRoutes
@@ -2099,7 +2114,7 @@ on lists.
 
 - const `HEADERS` = `array (   'Content-Type' => 'application/json; charset=UTF-8',   'X-Content-Type-Options' => 'nosniff',   'Access-Control-Expose-Headers' => 'X-WP-Total, X-WP-TotalPages, Link',   'Access-Control-Allow-Headers' => 'Authorization, X-WP-Nonce, Content-Disposition, Content-MD5, Content-Type', )`
 
-Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\BundleController`, `Minn\Admin\EditorController`, `Minn\Admin\LanguageController`, `Minn\Admin\OverviewController`, `Minn\Admin\PackagesController`, `Minn\Admin\PreferencesController`, `Minn\Admin\RenderController`, `Minn\Admin\SessionsController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\SystemController`, `Minn\Admin\ThemesController`, `Minn\Admin\UpdatesController`, `Minn\Admin\V1Controller`, `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 ### static `answer(Minn\Http\Request $request, mixed $data, int $status = 200): Minn\Http\Response`
 

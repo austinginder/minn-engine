@@ -15,9 +15,10 @@ use Minn\Runtime\Runtime;
 /**
  * The _embed decoration and the embed context. Every embeddable link in an
  * object's _links is answered in-process as the same caller with
- * context=embed and placed under _embedded[rel]; a rel whose every embed
- * came back empty or as an error is left out, while an empty list beside a
- * full one stays (wp:term keeps its empty tags list next to the categories).
+ * context=embed and placed under _embedded[rel], an error as the error
+ * itself; a rel whose every embed came back empty is left out, while an
+ * empty list beside a full one stays (wp:term keeps its empty tags list
+ * next to the categories).
  * Lists have _fields applied per item before the links are read, so a
  * _fields value without _links embeds nothing there; a single object embeds
  * first and is filtered afterwards. The embed context is the view object
@@ -124,7 +125,19 @@ final class Embed
         return $item;
     }
 
-    /** The linked object in embed context, or null when the link answers with an error. */
+    /**
+     * A response's data with its embeddable links answered (the runtime's
+     * WP_REST_Server::embed_links): every rel when none is named.
+     *
+     * @param array<string, mixed> $item @param list<string> $rels
+     * @return array<string, mixed>
+     */
+    public function embedded(Request $request, array $item, array $rels): array
+    {
+        return $this->decorateItem($request, $item, $rels, null);
+    }
+
+    /** The linked object in embed context; an error answer as the error itself (probe rest-server-methods); null when nothing came back. */
     private function answer(Request $request, string $href): ?array
     {
         if (array_key_exists($href, $this->cache)) {
@@ -137,10 +150,15 @@ final class Embed
         try {
             // Plugins preparing the linked object see its own request, in embed context.
             $response = Runtime::booted() ? RuntimePrepare::during(RuntimeRoutes::wpRequest($inner), fn () => $this->router->dispatch($inner)) : $this->router->dispatch($inner);
-        } catch (RestError) {
-            $response = null;
+        } catch (RestError $error) {
+            $response = Reply::error($error);
         }
-        $data = $response === null || $response->status >= 300 ? null : Json::decode($response->body, or: null);
+        $response ??= Reply::error(RestError::noRoute());
+        $data = Json::decode($response->body, or: null);
+        if ($response->status >= 300) {
+            // An error is embedded as it was answered (a missing author, a refused read).
+            return $this->cache[$href] = is_array($data) ? $data : null;
+        }
         if (is_array($data)) {
             $kind = self::kind($path);
             if (array_is_list($data)) {

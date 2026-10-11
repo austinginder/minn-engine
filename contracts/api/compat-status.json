@@ -21,12 +21,12 @@
         },
         "methods": {
             "total": 4075,
-            "real": 2272,
+            "real": 2278,
             "deadend": 1618,
             "placeholder": 52,
-            "missing": 133,
-            "verified": 2221,
-            "resolved": 3942
+            "missing": 127,
+            "verified": 2227,
+            "resolved": 3948
         }
     }
 }

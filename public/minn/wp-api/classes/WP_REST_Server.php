@@ -350,12 +350,35 @@ class WP_REST_Server
 
     public function response_to_data($response, $embed)
     {
+        // The data with its links, and the linked resources embedded when asked (each item of a list on its own).
         $data = $response->get_data();
         $links = self::get_compact_response_links($response);
         if (!empty($links)) {
             $data['_links'] = $links;
         }
+        if ($embed && is_array($data)) {
+            $data = array_is_list($data) && $data !== [] ? array_map(fn ($item) => is_array($item) ? $this->embed_links($item, $embed) : $item, $data) : $this->embed_links($data, $embed);
+        }
         return $data;
+    }
+
+    /** The methods a link's caller may use there: an allow list, [] for none, null for a link that is not one of this site's routes. */
+    protected static function get_target_hints_for_link($link)
+    {
+        $allow = Minn\Rest\RuntimeRoutes::targetHints((string) ($link['href'] ?? ''));
+        if ($allow === null) {
+            return null;
+        }
+        return $allow === [] ? [] : ['allow' => $allow];
+    }
+
+    /** The data's embeddable links answered in-process as the same caller, in the embed context (the engine's embedding); every rel unless a list names some. */
+    protected function embed_links($data, $embed = true)
+    {
+        if (empty($data['_links'])) {
+            return $data;
+        }
+        return self::minn_engine_api(new WP_REST_Request('GET', '/'))->embedLinks($data, is_array($embed) ? array_values($embed) : []);
     }
 
     public static function get_response_links($response)
@@ -370,11 +393,9 @@ class WP_REST_Server
             foreach ($items as $item) {
                 $attributes = (array) $item['attributes'];
                 // A self link says which methods its caller may use there, as the reference's do.
-                if ($rel === 'self' && !isset($attributes['targetHints'])) {
-                    $allow = Minn\Rest\RuntimeRoutes::targetHints((string) $item['href']);
-                    if ($allow !== null && $allow !== []) {
-                        $attributes['targetHints'] = ['allow' => $allow];
-                    }
+                $hints = $rel === 'self' && !isset($attributes['targetHints']) ? static::get_target_hints_for_link($item) : null;
+                if (!empty($hints)) {
+                    $attributes['targetHints'] = $hints;
                 }
                 $data[$rel][] = Links::item((string) $rel, (string) $item['href'], $attributes);
             }
@@ -428,13 +449,55 @@ class WP_REST_Server
             'home' => home_url(),
             'gmt_offset' => get_option('gmt_offset'),
             'timezone_string' => get_option('timezone_string'),
+            'page_for_posts' => (int) get_option('page_for_posts'),
+            'page_on_front' => (int) get_option('page_on_front'),
+            'show_on_front' => get_option('show_on_front'),
             'namespaces' => array_keys($this->namespaces),
             'authentication' => [],
             'routes' => $this->get_data_for_routes($this->get_routes(), $request['context']),
         ];
         $response = new WP_REST_Response($available);
         $response->add_link('help', 'https://developer.wordpress.org/rest-api/');
+        $this->add_active_theme_link_to_index($response);
+        $this->add_site_logo_to_index($response);
+        $this->add_site_icon_to_index($response);
         return apply_filters('rest_index', $response, $request);
+    }
+
+    /** A link to the active theme for whoever may read it: who switches themes, or edits posts or any type shown in REST. */
+    protected function add_active_theme_link_to_index(WP_REST_Response $response)
+    {
+        $may = current_user_can('switch_themes') || current_user_can('manage_network_themes') || current_user_can('edit_posts');
+        foreach ($may ? [] : get_post_types(['show_in_rest' => true], 'objects') as $post_type) {
+            $may = $may || current_user_can($post_type->cap->edit_posts);
+        }
+        if ($may) {
+            $response->add_link('https://api.w.org/active-theme', rest_url('wp/v2/themes/' . get_stylesheet()));
+        }
+    }
+
+    protected function add_site_logo_to_index(WP_REST_Response $response)
+    {
+        $this->add_image_to_index($response, get_option('site_logo'), 'site_logo');
+    }
+
+    protected function add_site_icon_to_index(WP_REST_Response $response)
+    {
+        $this->add_image_to_index($response, get_option('site_icon'), 'site_icon');
+        $data = $response->get_data();
+        $data['site_icon_url'] = get_site_icon_url();
+        $response->set_data($data);
+    }
+
+    /** The image's id under its type, and an embeddable link to it when there is one. */
+    protected function add_image_to_index(WP_REST_Response $response, $image_id, $type)
+    {
+        $data = $response->get_data();
+        $data[$type] = (int) $image_id;
+        $response->set_data($data);
+        if ($image_id) {
+            $response->add_link('https://api.w.org/featuredmedia', rest_url(rest_get_route_for_post($image_id)), ['embeddable' => true, 'type' => $type]);
+        }
     }
 
     public function get_namespace_index($request)

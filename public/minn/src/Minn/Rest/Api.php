@@ -227,6 +227,12 @@ final readonly class Api
         return (new InstalledThemesController($this->services->url(), $this->services->caller()))->fields($theme, $request);
     }
 
+    /** A response's data with its embeddable links answered in-process as this caller; every rel when none is named. @param list<string> $rels @return array<string, mixed> */
+    public function embedLinks(array $data, array $rels): array
+    {
+        return $this->embed->embedded($this->request, $data, $rels);
+    }
+
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {

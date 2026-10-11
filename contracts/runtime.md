@@ -12835,3 +12835,44 @@ answer, where the processor stands after it, and the document at the end.
 `Minn\Html\Tags` gains `bookmarkSpan` (replacing `bookmarkStart`, whose one
 caller now reads the span) and `replaceAfter`, which splices a span at or
 after the current token so that the new text is read next.
+
+## WP_REST_Server: target hints, embedding, the index (2026-10-11)
+
+Probe `rest-server-methods` proves the six REST server methods still owed.
+
+- **`get_target_hints_for_link`** gives the methods a link's caller may use
+  there.
+  - It answers `{"allow": [...]}`, or `[]` when none are allowed (a
+    visitor asking for `?context=edit`).
+  - It answers null for a link that is not one of this site's routes, or
+    is another site's.
+  - Hints already on the link don't change the answer.
+  - `get_response_links` now puts a self link's hints through it.
+- **`embed_links`** answers a data array's embeddable links in-process as
+  the same caller, in the embed context, through the engine's embedding
+  (`Rest\Embed::embedded`, via `Api::embedLinks`).
+  - A list names the rels to embed; `true`, or even `false`, embeds every
+    rel.
+  - A rel whose embeds all came back empty is left out (replies with no
+    comments).
+  - `response_to_data` now embeds when asked, each item of a list on its
+    own.
+- **The index.** The facade's `get_index` carries `page_for_posts`,
+  `page_on_front` and `show_on_front`, then:
+  - `add_active_theme_link_to_index`: for whoever may read the active
+    theme (who switches themes, or edits posts or any type shown in
+    REST), so authors, not subscribers;
+  - `add_site_logo_to_index`;
+  - `add_site_icon_to_index`, which adds `site_icon_url`.
+
+  The logo and icon go through `add_image_to_index`: the id under its
+  type, and an embeddable `featuredmedia` link typed by it when there is
+  one.
+
+Fixed on the way: an embed whose link answers with an error is embedded as
+the error, over HTTP too. Before, the engine left the rel out; the
+reference shows `_embedded.author` as the 404 for a post whose author is
+gone.
+
+The probe turns application passwords on for both stacks: neither runs it
+over HTTPS, and the reference's own must-use plugin turns them on there.

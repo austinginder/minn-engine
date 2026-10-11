@@ -88287,7 +88287,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 392,
+            "lines": 398,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88825,6 +88825,35 @@
                 },
                 {
                     "routes": [],
+                    "name": "embedLinks",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "embedLinks(array $data, array $rels): array",
+                    "doc": "A response's data with its embeddable links answered in-process as this caller; every rel when none is named. @param list<string> $rels @return array<string, mixed>",
+                    "shapes": [
+                        "@param list<string> $rels @return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "rels",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "@return array<string, mixed>"
+                        }
+                    ],
+                    "line": 231,
+                    "end": 234
+                },
+                {
+                    "routes": [],
                     "name": "userObject",
                     "static": false,
                     "visibility": "public",
@@ -88832,8 +88861,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 237,
+                    "end": 240
                 },
                 {
                     "routes": [],
@@ -88844,8 +88873,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 243,
+                    "end": 246
                 },
                 {
                     "routes": [],
@@ -88871,8 +88900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 257
+                    "line": 254,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -88891,8 +88920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 287
+                    "line": 266,
+                    "end": 293
                 },
                 {
                     "routes": [],
@@ -88918,8 +88947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 319
+                    "line": 304,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -88938,8 +88967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 322,
-                    "end": 326
+                    "line": 328,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -88965,8 +88994,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 335,
-                    "end": 347
+                    "line": 341,
+                    "end": 353
                 },
                 {
                     "routes": [],
@@ -88994,8 +89023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 355,
-                    "end": 362
+                    "line": 361,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -89043,8 +89072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 371
+                    "line": 370,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -89070,8 +89099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 378,
-                    "end": 400
+                    "line": 384,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -89090,8 +89119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 409,
-                    "end": 416
+                    "line": 415,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -89117,8 +89146,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 422,
-                    "end": 426
+                    "line": 428,
+                    "end": 432
                 }
             ]
         },
@@ -92895,8 +92924,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Embed.php",
-            "lines": 201,
-            "doc": "The _embed decoration and the embed context. Every embeddable link in an\nobject's _links is answered in-process as the same caller with\ncontext=embed and placed under _embedded[rel]; a rel whose every embed\ncame back empty or as an error is left out, while an empty list beside a\nfull one stays (wp:term keeps its empty tags list next to the categories).\nLists have _fields applied per item before the links are read, so a\n_fields value without _links embeds nothing there; a single object embeds\nfirst and is filtered afterwards. The embed context is the view object\ncut to the reference's key set for that kind of item.",
+            "lines": 218,
+            "doc": "The _embed decoration and the embed context. Every embeddable link in an\nobject's _links is answered in-process as the same caller with\ncontext=embed and placed under _embedded[rel], an error as the error\nitself; a rel whose every embed came back empty is left out, while an\nempty list beside a full one stays (wp:term keeps its empty tags list\nnext to the categories).\nLists have _fields applied per item before the links are read, so a\n_fields value without _links embeds nothing there; a single object embeds\nfirst and is filtered afterwards. The embed context is the view object\ncut to the reference's key set for that kind of item.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -92909,6 +92938,7 @@
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\RegisteredFields",
+                "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Taxonomies",
@@ -92947,8 +92977,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 39,
-                "end": 44
+                "line": 40,
+                "end": 45
             },
             "cases": [],
             "constants": [
@@ -93017,8 +93047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 62
+                    "line": 48,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -93044,8 +93074,45 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 93
+                    "line": 66,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "embedded",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "embedded(Minn\\Http\\Request $request, array $item, array $rels): array",
+                    "doc": "A response's data with its embeddable links answered (the runtime's\nWP_REST_Server::embed_links): every rel when none is named.",
+                    "shapes": [
+                        "@param array<string, mixed> $item @param list<string> $rels",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "item",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "@param list<string> $rels"
+                        },
+                        {
+                            "name": "rels",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -93073,8 +93140,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 203,
-                    "end": 213
+                    "line": 221,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -93116,8 +93183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 125
+                    "line": 97,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -93125,7 +93192,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "answer(Minn\\Http\\Request $request, string $href): ?array",
-                    "doc": "The linked object in embed context, or null when the link answers with an error.",
+                    "doc": "The linked object in embed context; an error answer as the error itself (probe rest-server-methods); null when nothing came back.",
                     "shapes": [],
                     "params": [
                         {
@@ -93143,8 +93210,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 155
+                    "line": 141,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -93165,8 +93232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 173
+                    "line": 176,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -93185,8 +93252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 190
+                    "line": 194,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -93205,8 +93272,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 200
+                    "line": 210,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -93232,8 +93299,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 225
+                    "line": 234,
+                    "end": 243
                 }
             ]
         },
@@ -100851,6 +100918,7 @@
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentsController",
+                "Minn\\Rest\\Embed",
                 "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\IndexController",
                 "Minn\\Rest\\InstalledThemesController",
