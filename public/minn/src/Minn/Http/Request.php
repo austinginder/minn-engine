@@ -118,6 +118,12 @@ final readonly class Request
         return filter_var($this->query($key, ''), FILTER_VALIDATE_BOOLEAN);
     }
 
+    /** A boolean the query or the body sets, as a DELETE may carry force in either (probes rest-posts-write, rest-terms-controller). */
+    public function flagged(string $key): bool
+    {
+        return $this->flag($key) || filter_var($this->json()[$key] ?? false, FILTER_VALIDATE_BOOLEAN);
+    }
+
     /** Whether the query carries this key at all, even empty. */
     public function has(string $key): bool
     {

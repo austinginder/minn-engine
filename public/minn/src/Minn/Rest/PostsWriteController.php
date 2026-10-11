@@ -278,8 +278,7 @@ final readonly class PostsWriteController
         $fields = Fields::fromQuery($request->query);
 
         $events = $this->events();
-        // Force comes in the query or, as a DELETE may carry it, in the body (probe rest-posts-write).
-        if (!$request->flag('force') && !filter_var($request->json()['force'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+        if (!$request->flagged('force')) {
             if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }

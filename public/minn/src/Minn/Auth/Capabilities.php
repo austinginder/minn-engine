@@ -239,8 +239,8 @@ final readonly class Capabilities
      * A term capability on a plugin's taxonomy as the reference maps it
      * (probe rest-plugin-caps): the taxonomy's own name for it (edit_terms,
      * delete_terms, assign_terms), mapped in turn; nothing for a term that
-     * does not exist or a default term's deletion. Null for the built-in
-     * taxonomies, whose mapping is fixed.
+     * does not exist or a default term's deletion (in any taxonomy). Null
+     * otherwise for the built-in taxonomies, whose mapping is fixed.
      *
      * @return list<string>|null
      */
@@ -250,12 +250,13 @@ final readonly class Capabilities
             return null;
         }
         $taxonomy = $this->db->value("SELECT taxonomy FROM {$this->db->table('term_taxonomy')} WHERE term_id = ? LIMIT 1", [$termId]);
+        // A taxonomy's default term is never deleted, a built-in one's (the default category) too (probe rest-terms-controller).
+        if (is_string($taxonomy) && $capability === 'delete_term' && in_array($termId, [(int) ($this->db->option("default_{$taxonomy}") ?? 0), (int) ($this->db->option("default_term_{$taxonomy}") ?? 0)], true)) {
+            return ['do_not_allow'];
+        }
         $registered = is_string($taxonomy) ? RegisteredCaps::ofTaxonomy($taxonomy) : null;
         if ($registered === null) {
             return $taxonomy === null && \Minn\Runtime\Runtime::booted() ? ['do_not_allow'] : null;
-        }
-        if ($capability === 'delete_term' && in_array($termId, [(int) ($this->db->option("default_{$taxonomy}") ?? 0), (int) ($this->db->option("default_term_{$taxonomy}") ?? 0)], true)) {
-            return ['do_not_allow'];
         }
         return $this->map((string) ($registered->cap->{$capability . 's'} ?? $capability), $userId, $termId);
     }

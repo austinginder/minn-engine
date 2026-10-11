@@ -44,7 +44,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 452 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 451 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -1878,7 +1878,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 137), `hasOrder()` (private, line 143), `events()` (private, line 149), `newColumns()` (private, line 160), `writeNewPost()` (private, line 194), `rememberOld()` (private, line 306), `floatingDate()` (private, line 320), `scheduledIfFuture()` (private, line 330), `fieldColumns()` (private, line 349), `statusColumns()` (private, line 392), `checkStickyChange()` (private, line 428), `checkStickyPasswordConflict()` (private, line 440), `validStatus()` (private, line 460), `clean()` (private, line 469)
+Internals: `hasParent()` (private, line 137), `hasOrder()` (private, line 143), `events()` (private, line 149), `newColumns()` (private, line 160), `writeNewPost()` (private, line 194), `rememberOld()` (private, line 305), `floatingDate()` (private, line 319), `scheduledIfFuture()` (private, line 329), `fieldColumns()` (private, line 348), `statusColumns()` (private, line 391), `checkStickyChange()` (private, line 427), `checkStickyPasswordConflict()` (private, line 439), `validStatus()` (private, line 459), `clean()` (private, line 468)
 
 
 ## RegisteredFields

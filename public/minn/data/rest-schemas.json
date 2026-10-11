@@ -5222,5 +5222,91 @@
             "edit"
         ],
         "readonly": true
+    },
+    "term-properties": {
+        "id": {
+            "description": "Unique identifier for the term.",
+            "type": "integer",
+            "context": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "count": {
+            "description": "Number of published posts for the term.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "description": {
+            "description": "HTML description of the term.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "link": {
+            "description": "URL of the term.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "name": {
+            "description": "HTML title for the term.",
+            "type": "string",
+            "context": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            },
+            "required": true
+        },
+        "slug": {
+            "description": "An alphanumeric identifier for the term unique to its type.",
+            "type": "string",
+            "context": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "@this:sanitize_slug"
+            }
+        },
+        "taxonomy": {
+            "description": "Type attribution for the term.",
+            "type": "string",
+            "enum": [
+                "category"
+            ],
+            "context": [
+                "view",
+                "embed",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "parent": {
+            "description": "The parent term ID.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ]
+        }
     }
 }

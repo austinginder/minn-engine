@@ -9,7 +9,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
-| [`Capabilities`](#capabilities) | final readonly class | 264 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
+| [`Capabilities`](#capabilities) | final readonly class | 265 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
@@ -300,7 +300,7 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
-Internals: `mapMore()` (private, line 139), `mapCommentCapability()` (private, line 167), `mapPostCapability()` (private, line 190), `mapTermCapability()` (private, line 247), `fold()` (private, line 267), `trashedFrom()` (private, line 272)
+Internals: `mapMore()` (private, line 139), `mapCommentCapability()` (private, line 167), `mapPostCapability()` (private, line 190), `mapTermCapability()` (private, line 247), `fold()` (private, line 268), `trashedFrom()` (private, line 273)
 
 
 ## Cookie

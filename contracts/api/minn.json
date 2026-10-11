@@ -8378,7 +8378,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 264,
+            "lines": 265,
             "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nwhat those roles and the user's own capabilities grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
@@ -8749,7 +8749,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "mapTermCapability(string $capability, int $userId, ?int $termId): ?array",
-                    "doc": "A term capability on a plugin's taxonomy as the reference maps it\n(probe rest-plugin-caps): the taxonomy's own name for it (edit_terms,\ndelete_terms, assign_terms), mapped in turn; nothing for a term that\ndoes not exist or a default term's deletion. Null for the built-in\ntaxonomies, whose mapping is fixed.",
+                    "doc": "A term capability on a plugin's taxonomy as the reference maps it\n(probe rest-plugin-caps): the taxonomy's own name for it (edit_terms,\ndelete_terms, assign_terms), mapped in turn; nothing for a term that\ndoes not exist or a default term's deletion (in any taxonomy). Null\notherwise for the built-in taxonomies, whose mapping is fixed.",
                     "shapes": [
                         "@return list<string>|null"
                     ],
@@ -8777,7 +8777,7 @@
                         }
                     ],
                     "line": 247,
-                    "end": 261
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -8806,8 +8806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 270
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -8826,8 +8826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 279
+                    "line": 273,
+                    "end": 280
                 }
             ]
         },
@@ -64988,7 +64988,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Request.php",
-            "lines": 139,
+            "lines": 145,
             "doc": "An immutable picture of the incoming request. Built once from the PHP\nglobals at the edge; handlers only ever see this object.",
             "implements": [],
             "extends": null,
@@ -65393,6 +65393,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "flagged",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "flagged(string $key): bool",
+                    "doc": "A boolean the query or the body sets, as a DELETE may carry force in either (probes rest-posts-write, rest-terms-controller).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 125
+                },
+                {
+                    "routes": [],
                     "name": "has",
                     "static": false,
                     "visibility": "public",
@@ -65408,8 +65428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 125
+                    "line": 128,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -65428,8 +65448,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 131
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -65448,8 +65468,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 137
+                    "line": 140,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -65460,8 +65480,8 @@
                     "doc": "The path split into non-empty segments: \"/a/b/\" becomes [\"a\", \"b\"].",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 143
+                    "line": 146,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -65480,8 +65500,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 150
+                    "line": 152,
+                    "end": 156
                 }
             ]
         },
@@ -98863,7 +98883,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PostsWriteController.php",
-            "lines": 452,
+            "lines": 451,
             "doc": "wp/v2 posts and pages, write side: create, update, trash, and force\ndelete, each gated by the capability engine and answering with the\nedit-context object the reference returns.",
             "implements": [],
             "extends": null,
@@ -99224,7 +99244,7 @@
                         }
                     ],
                     "line": 267,
-                    "end": 299
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -99245,8 +99265,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 453,
-                    "end": 458
+                    "line": 452,
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -99265,8 +99285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 475,
-                    "end": 481
+                    "line": 474,
+                    "end": 480
                 },
                 {
                     "routes": [],
@@ -99452,8 +99472,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 311
+                    "line": 305,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -99481,8 +99501,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 320,
-                    "end": 327
+                    "line": 319,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -99508,8 +99528,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 330,
-                    "end": 340
+                    "line": 329,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -99544,8 +99564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 349,
-                    "end": 383
+                    "line": 348,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -99580,8 +99600,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 392,
-                    "end": 419
+                    "line": 391,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -99616,8 +99636,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 437
+                    "line": 427,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -99643,8 +99663,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 440,
-                    "end": 449
+                    "line": 439,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -99663,8 +99683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 460,
-                    "end": 466
+                    "line": 459,
+                    "end": 465
                 },
                 {
                     "routes": [],
@@ -99683,8 +99703,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 469,
-                    "end": 472
+                    "line": 468,
+                    "end": 471
                 }
             ]
         },

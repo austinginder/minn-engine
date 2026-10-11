@@ -12150,3 +12150,48 @@ Fixed on the way:
   the reference maps them.
 - **Post cache:** the post cache is cleaned after the engine writes an
   autosave row, so `get_post` reads the new one.
+
+## WP_REST_Terms_Controller (2026-10-11)
+
+Probe `rest-terms-controller` proves the terms controller class. It uses
+a contributor, a parent and child category and a tag, and a category and
+a tag made, renamed and deleted through the class; all are removed again.
+
+- **Construction.** The taxonomy's rest base and namespace, the term meta
+  fields, batching allowed. `sort_column` and `total_terms` start empty.
+- **The schema** is the term fields captured from the reference (id,
+  count, description, link, name required, slug, taxonomy), the parent in
+  a hierarchical taxonomy, the meta, then the fields plugins register.
+  The taxonomy enum is the taxonomy itself.
+- **Collection parameters** are the engine's term arguments
+  (`Http\Args::TERMS`): an offset for a flat taxonomy, a parent for a
+  hierarchical one. The base controller's four go first, the context
+  defaults to view, then `rest_{taxonomy}_collection_params`.
+- **Permissions.**
+  - A taxonomy not shown in REST answers false.
+  - A post's terms need reading the post (by its type's controller); a
+    missing post is a 400.
+  - The edit context needs editing the taxonomy's terms, or the term.
+  - Creating needs editing terms (hierarchical) or assigning them (flat).
+  - Update and delete need the term's own caps.
+  - A missing term, or one of another taxonomy, is `rest_term_invalid`.
+- **Reading** goes through the engine's `TermObject`, cut to the fields and
+  context asked for. The links go on the response when asked for; the
+  `prepare_links` post type links are a list.
+- **Listing** runs the engine's own list for the taxonomy and shapes each
+  term here, with the totals and page links.
+- **Writes** run the engine's routes in process:
+  - a create is a 201 with a Location header;
+  - `term_exists` carries the existing term's id;
+  - a missing parent is `rest_term_invalid`;
+  - a delete needs `force`, and its previous view is shaped before the
+    term goes.
+- **`prepare_item_for_database`**: the name, slug and description, and in a
+  hierarchical taxonomy the parent (a missing one is 0), then
+  `rest_pre_insert_{taxonomy}`.
+
+Fixed on the way:
+- The capability map refuses deleting a built-in taxonomy's default term
+  (the default category) as it did a plugin taxonomy's.
+- Both delete routes (posts, terms) read `force` from a DELETE body as well
+  as the query (`Http\Request::flagged`).

@@ -27,7 +27,7 @@ request, response, routing, and the outgoing client
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
 | [`RawResponse`](#rawresponse) | final class | 105 | An HTTP response as text, the way the Requests library hands it from |
 | [`Refusal`](#refusal) | interface | 5 | A refusal a route judges after its arguments and before its policy: the |
-| [`Request`](#request) | final readonly class | 139 | An immutable picture of the incoming request. Built once from the PHP |
+| [`Request`](#request) | final readonly class | 145 | An immutable picture of the incoming request. Built once from the PHP |
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 123 | What a handler returns. Nothing is written to the client until the |
@@ -886,6 +886,10 @@ One query value as a string, or the default when it is absent or not a string.
 ### `flag(string $key): bool`
 
 A query value read as the reference reads a boolean argument: true, 1, yes, on; anything else is false.
+
+### `flagged(string $key): bool`
+
+A boolean the query or the body sets, as a DELETE may carry force in either (probes rest-posts-write, rest-terms-controller).
 
 ### `has(string $key): bool`
 

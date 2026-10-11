@@ -396,63 +396,12 @@ class WP_REST_Menu_Items_Controller extends WP_REST_Posts_Controller
     }
 }
 
-class WP_REST_Terms_Controller extends WP_REST_Controller
-{
-    protected $taxonomy = NULL;
-    protected $meta = NULL;
-    protected $sort_column = NULL;
-    protected $total_terms = NULL;
-    protected $allow_batch = ['v1' => true];
-
-    public function __construct($taxonomy)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::__construct');
-        return null;
-    }
-
-    public function check_read_terms_permission_for_post($post, $request)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::check_read_terms_permission_for_post');
-        return null;
-    }
-
-    protected function get_term($id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::get_term');
-        return null;
-    }
-
-    protected function prepare_links($term)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::prepare_links');
-        return null;
-    }
-
-    protected function check_is_taxonomy_allowed($taxonomy)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Terms_Controller::check_is_taxonomy_allowed');
-        return null;
-    }
-}
-
 class WP_REST_Menus_Controller extends WP_REST_Terms_Controller
 {
-
-    protected function get_term($id)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::get_term');
-        return null;
-    }
 
     protected function check_has_read_only_access($request)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::check_has_read_only_access');
-        return null;
-    }
-
-    protected function prepare_links($term)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Menus_Controller::prepare_links');
         return null;
     }
 
