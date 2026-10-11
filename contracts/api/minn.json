@@ -118287,7 +118287,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Interactivity.php",
-            "lines": 509,
+            "lines": 521,
             "doc": "Server-side directive processing for the Interactivity API: the state and\nconfig stores, and the pass that resolves data-wp-bind, data-wp-class,\ndata-wp-style, data-wp-text, and data-wp-each against state and context\nbefore the markup leaves the server. Behaviour pinned by the interactivity\nprobe fixture.",
             "implements": [],
             "extends": null,
@@ -118387,9 +118387,38 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
+                },
+                {
+                    "name": "routerRegion",
+                    "type": "?Closure",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
                 }
             ],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "whenRouterRegion",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "whenRouterRegion(Closure $callback): void",
+                    "doc": "What to run when processing meets a router region.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "callback",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 42
+                },
                 {
                     "routes": [],
                     "name": "state",
@@ -118416,8 +118445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 54
+                    "line": 49,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -118430,8 +118459,8 @@
                         "@return array<string, array<string, mixed>> every namespace's state, for the client"
                     ],
                     "params": [],
-                    "line": 61,
-                    "end": 64
+                    "line": 69,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -118444,8 +118473,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 71,
-                    "end": 74
+                    "line": 79,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -118473,8 +118502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 87
+                    "line": 89,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -118495,8 +118524,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 102
+                    "line": 102,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -118509,8 +118538,8 @@
                         "@return array<string, mixed>|null"
                     ],
                     "params": [],
-                    "line": 109,
-                    "end": 116
+                    "line": 117,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -118529,8 +118558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 133
+                    "line": 127,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -118541,8 +118570,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 135,
-                    "end": 138
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -118563,8 +118592,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 202
+                    "line": 154,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -118592,8 +118621,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 261
+                    "line": 213,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -118629,8 +118658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 323
+                    "line": 275,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -118663,8 +118692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 349
+                    "line": 337,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -118683,8 +118712,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 351,
-                    "end": 362
+                    "line": 363,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -118703,8 +118732,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 364,
-                    "end": 378
+                    "line": 376,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -118730,8 +118759,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 425
+                    "line": 393,
+                    "end": 437
                 },
                 {
                     "routes": [],
@@ -118774,8 +118803,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 431,
-                    "end": 462
+                    "line": 443,
+                    "end": 474
                 },
                 {
                     "routes": [],
@@ -118801,8 +118830,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 465,
-                    "end": 491
+                    "line": 477,
+                    "end": 503
                 },
                 {
                     "routes": [],
@@ -118824,8 +118853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 504
+                    "line": 509,
+                    "end": 516
                 },
                 {
                     "routes": [],
@@ -118854,8 +118883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 510,
-                    "end": 513
+                    "line": 522,
+                    "end": 525
                 },
                 {
                     "routes": [],
@@ -118874,8 +118903,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 515,
-                    "end": 518
+                    "line": 527,
+                    "end": 530
                 },
                 {
                     "routes": [],
@@ -118894,8 +118923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 520,
-                    "end": 523
+                    "line": 532,
+                    "end": 535
                 }
             ]
         },

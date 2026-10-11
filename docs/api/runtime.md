@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 354 | The hook registry plugin code registers into and the engine fires. |
-| [`Interactivity`](#interactivity) | final class | 509 | Server-side directive processing for the Interactivity API: the state and |
+| [`Interactivity`](#interactivity) | final class | 521 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 230 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
@@ -1694,6 +1694,10 @@ probe fixture.
 Used by: `Minn\Runtime\Runtime`
 
 
+### `whenRouterRegion(Closure $callback): void`
+
+What to run when processing meets a router region.
+
 ### `state(?string $namespace, array $state = array ( )): array`
 
 Reads or extends a namespace's state.
@@ -1734,7 +1738,7 @@ The element whose directives are being evaluated.
 
 HTML with its directives resolved on the server.
 
-Internals: `namespace()` (private, line 135), `tokenize()` (private, line 146), `walk()` (private, line 205), `applyDirectives()` (private, line 267), `bind()` (private, line 325), `interactiveNamespace()` (private, line 351), `pushContext()` (private, line 364), `evaluate()` (private, line 381), `expandEach()` (private, line 431), `markChildren()` (private, line 465), `attributeMap()` (private, line 497), `relative()` (private, line 510), `escape()` (private, line 515), `camel()` (private, line 520)
+Internals: `namespace()` (private, line 143), `tokenize()` (private, line 154), `walk()` (private, line 213), `applyDirectives()` (private, line 275), `bind()` (private, line 337), `interactiveNamespace()` (private, line 363), `pushContext()` (private, line 376), `evaluate()` (private, line 393), `expandEach()` (private, line 443), `markChildren()` (private, line 477), `attributeMap()` (private, line 509), `relative()` (private, line 522), `escape()` (private, line 527), `camel()` (private, line 532)
 
 
 ## MenuEvents

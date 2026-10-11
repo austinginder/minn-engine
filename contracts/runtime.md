@@ -12749,3 +12749,42 @@ would ask wordpress.org.
 Fixed on the way: endpoint arguments built from a schema
 (`rest_get_endpoint_args_for_schema`) keep the `title` keyword, before the
 description, as the reference keeps it.
+
+## WP_Interactivity_API: hooks, module data, client navigation, the router (2026-10-11)
+
+Probe `interactivity-api-methods` proves the eight methods the Interactivity
+API object still lacked, and with them the whole class (no probe had named
+it before).
+
+- **`add_hooks`** registers the object's own methods, as the reference does:
+  - `filter_script_module_interactivity_data` (the stored config, then
+    state, each only when there is some);
+  - `filter_script_module_interactivity_router_data` (the two loading
+    announcements);
+  - `add_load_on_client_navigation_attribute_to_script_modules` on
+    `wp_script_attributes`.
+
+  The engine used to hook anonymous closures, which a plugin couldn't
+  remove.
+- **Client navigation.** `add_client_navigation_support_to_script_module`
+  opts a module in. Its script tag (a `module` type, its id with or
+  without `-js-module`) then gets `data-wp-router-options`
+  `{"loadOnClientNavigation":true}`, overwriting any given.
+- **The router.**
+  - `print_router_markup` prints the loading bar.
+  - Processing a router region, inside an interactive region or not,
+    readies the router once: the markup goes on `wp_footer`, and the
+    inline `wp-interactivity-router-animations` style is registered
+    (with no source) and enqueued.
+  - The engine's processor tells the facade through
+    `Interactivity::whenRouterRegion`. Before this it did neither, so a
+    page with an enhanced-pagination query had no loading bar.
+- **Deprecated in 6.7** (the notices are recorded in the probe):
+  - `print_client_interactivity_data` prints nothing.
+  - `register_script_modules` names `wp_default_script_modules` as its
+    replacement.
+  - `print_router_loading_and_screen_reader_markup` prints the router
+    markup.
+
+Next: `WP_Interactivity_API_Directives_Processor`, the class the reference
+processes with (balanced tags, template content).

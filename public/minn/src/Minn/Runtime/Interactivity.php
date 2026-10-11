@@ -32,6 +32,14 @@ final class Interactivity
     /** @var array<string, mixed>|null the element whose directives are being evaluated */
     private ?array $element = null;
     private bool $processing = false;
+    /** @var \Closure|null what a router region found while processing sets off (the runtime's footer markup and styles) */
+    private ?\Closure $routerRegion = null;
+
+    /** What to run when processing meets a router region. */
+    public function whenRouterRegion(\Closure $callback): void
+    {
+        $this->routerRegion = $callback;
+    }
 
     /**
      * Reads or extends a namespace's state.
@@ -278,6 +286,10 @@ final class Interactivity
             return $tag;
         }
         foreach ($directives as [$name, $value]) {
+            if ($name === 'data-wp-router-region' && $this->routerRegion !== null) {
+                // A router region, inside an interactive region or not (probe interactivity-api-methods).
+                ($this->routerRegion)();
+            }
             if ($name === 'data-wp-interactive') {
                 $namespace = $this->interactiveNamespace($value);
                 if ($namespace !== null) {

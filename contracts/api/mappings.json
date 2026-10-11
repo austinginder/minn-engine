@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 803,
-        "composes": 2294,
+        "minn": 805,
+        "composes": 2298,
         "leaf": 989,
-        "noop": 2749,
+        "noop": 2752,
         "placeholder": 61,
         "deadend": 1661,
-        "functions": 8479,
+        "functions": 8488,
         "minnMethods": 968,
         "leafLinesOver15": 12
     },
@@ -14372,12 +14372,32 @@
             "composes": [],
             "deadend": "admin"
         },
-        "WP_Interactivity_API::add_hooks": {
+        "WP_Interactivity_API::add_client_navigation_support_to_script_module": {
             "file": "classes/WP_Interactivity_API.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_Interactivity_API::add_hooks": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::interactivity"
+            ],
+            "composes": [
+                "add_filter"
+            ]
+        },
+        "WP_Interactivity_API::add_load_on_client_navigation_attribute_to_script_modules": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_json_encode"
+            ]
         },
         "WP_Interactivity_API::config": {
             "file": "classes/WP_Interactivity_API.php",
@@ -14395,6 +14415,24 @@
             "minn": [],
             "composes": [
                 "wp_interactivity_data_wp_context"
+            ]
+        },
+        "WP_Interactivity_API::filter_script_module_interactivity_data": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 9,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::interactivity"
+            ],
+            "composes": []
+        },
+        "WP_Interactivity_API::filter_script_module_interactivity_router_data": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
             ]
         },
         "WP_Interactivity_API::get_context": {
@@ -14422,6 +14460,43 @@
             "minn": [],
             "composes": []
         },
+        "WP_Interactivity_API::minn_router_region": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action",
+                "wp_add_inline_style",
+                "wp_enqueue_style",
+                "wp_register_style"
+            ]
+        },
+        "WP_Interactivity_API::print_client_interactivity_data": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
+        "WP_Interactivity_API::print_router_loading_and_screen_reader_markup": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
+        "WP_Interactivity_API::print_router_markup": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Interactivity_API::process_directives": {
             "file": "classes/WP_Interactivity_API.php",
             "lines": 1,
@@ -14430,6 +14505,15 @@
                 "Minn\\Runtime\\Runtime::interactivity"
             ],
             "composes": []
+        },
+        "WP_Interactivity_API::register_script_modules": {
+            "file": "classes/WP_Interactivity_API.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "WP_Interactivity_API::state": {
             "file": "classes/WP_Interactivity_API.php",
