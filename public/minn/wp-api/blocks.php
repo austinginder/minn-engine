@@ -638,9 +638,25 @@ function get_hooked_blocks()
     return $hooked;
 }
 
+/** @deprecated 6.3.0 The global styles' SVG filters printed, outside the admin (probe preview-output-helpers). */
+function wp_global_styles_render_svg_filters()
+{
+    _deprecated_function(__FUNCTION__, '6.3.0');
+    if (is_admin()) {
+        return;
+    }
+    $filters = wp_get_global_styles_svg_filters();
+    if (!empty($filters)) {
+        echo $filters;
+    }
+}
+
+/** @deprecated 6.3.0 The global styles' duotone presets as hidden SVG filters: every origin under a theme.json, the defaults alone otherwise. */
 function wp_get_global_styles_svg_filters()
 {
-    return '';
+    _deprecated_function(__FUNCTION__, '6.3.0');
+    $origins = wp_theme_has_theme_json() ? ['default', 'theme', 'custom'] : ['default'];
+    return WP_Theme_JSON_Resolver::get_merged_data()->get_svg_filters($origins);
 }
 
 function register_block_style($block_name, $style_properties)

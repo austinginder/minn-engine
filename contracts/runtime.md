@@ -11539,3 +11539,57 @@ Left:
   directory. That is a question for Austin under the no-wordpress.org goal.
 - The theme pattern headers are read from the files on every request. The
   reference caches them in a site transient (`wp_theme_files_patterns-*`).
+
+## Theme previews and two output helpers (2026-10-10)
+
+Probe `preview-output-helpers` proves 6 missing functions:
+- the four of `theme-previews.php`, in a new `wp-api/theme-previews.php`;
+- `wp_enqueue_block_template_skip_link`;
+- the deprecated `wp_global_styles_render_svg_filters`.
+
+It also makes `WP_Theme_JSON::get_svg_filters` real (it was a
+placeholder) and `wp_get_global_styles_svg_filters` (it answered an empty
+string). It covers:
+- the theme a preview names, for nobody, a subscriber and an
+  administrator, through the stylesheet and template filters too;
+- the hooks a preview request sets up;
+- the middleware script;
+- the activation nonce script;
+- the skip link;
+- the SVG filters.
+
+The probe's user is removed and `$_GET` put back.
+
+- **Previews.** `wp_get_theme_preview_path` answers the current stylesheet
+  for anyone who may not switch themes, and for a theme that is not there.
+  Otherwise it answers the theme `wp_theme_preview` names, tags stripped
+  (the active theme when it names none). Through the template filter it
+  answers the theme's template.
+  - `wp_initialize_theme_preview_hooks` is hooked on `plugins_loaded` at 1.
+    When a preview is named, it filters the stylesheet and template and
+    hooks the middleware on init and the nonce on admin_head.
+  - The middleware is an inline "after" script on wp-api-fetch.
+  - The nonce prints `window.WP_BLOCK_THEME_ACTIVATE_NONCE` for
+    `switch-theme_{theme}`.
+  - Signed out, a request naming a preview renders the same page on both
+    stacks.
+- **The skip link's style** is enqueued while a block template renders.
+  The first call in a request decides, and later calls do nothing, even
+  when the first found no template. The function is not hooked on the
+  engine's front: the engine writes the skip link itself and has no
+  WordPress stylesheet to point at. The reference inlines that stylesheet
+  as `wp-block-template-skip-link-inline-css`.
+- **SVG filters** (deprecated 6.3.0).
+  - The printer prints outside the admin.
+  - The filters are every duotone preset's hidden SVG for the origins:
+    default, theme and custom under a theme.json, default alone otherwise.
+    That means the 8 default presets, whatever `defaultDuotone` says.
+  - Each preset announces `get_filter_svg_from_preset` and
+    `get_filter_id_from_preset` as deprecated, as on the reference.
+
+Left, for Austin: `_print_emoji_detection_script` and the view
+transitions admin styles (`wp_get_view_transitions_admin_css`,
+`wp_enqueue_view_transitions_admin_css`) print WordPress's own JavaScript
+and CSS. Minn prints no emoji plumbing today, and carrying those assets
+would put WordPress code in the repository. They are candidates to leave
+out on purpose.

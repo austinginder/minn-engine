@@ -338,10 +338,23 @@ class WP_Theme_JSON
         }
     }
 
+    /** The hidden SVG filter of every duotone preset in the given origins, the root's then each block's (probe preview-output-helpers). */
     public function get_svg_filters($origins)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_svg_filters');
-        return null;
+        $settings = (array) ($this->theme_json['settings'] ?? []);
+        $nodes = [$settings];
+        foreach ((array) ($settings['blocks'] ?? []) as $block) {
+            $nodes[] = (array) $block;
+        }
+        $filters = '';
+        foreach ($nodes as $node) {
+            foreach ((array) $origins as $origin) {
+                foreach ((array) ($node['color']['duotone'][$origin] ?? []) as $preset) {
+                    $filters .= WP_Duotone::get_filter_svg_from_preset($preset);
+                }
+            }
+        }
+        return $filters;
     }
 
     protected static function should_override_preset($theme_json, $path, $override)
