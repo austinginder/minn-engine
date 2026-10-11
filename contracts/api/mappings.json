@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 808,
-        "composes": 2303,
-        "leaf": 1001,
-        "noop": 2768,
-        "placeholder": 61,
+        "minn": 810,
+        "composes": 2304,
+        "leaf": 1003,
+        "noop": 2765,
+        "placeholder": 60,
         "deadend": 1661,
-        "functions": 8524,
-        "minnMethods": 972,
+        "functions": 8525,
+        "minnMethods": 978,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -6620,16 +6620,6 @@
             "minn": [],
             "composes": []
         },
-        "WP::__construct": {
-            "file": "classes/WP_Rewrite.php",
-            "lines": 3,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::engineDir"
-            ],
-            "composes": []
-        },
         "WP::add_query_var": {
             "file": "classes/WP_Rewrite.php",
             "lines": 3,
@@ -6651,36 +6641,58 @@
         },
         "WP::handle_404": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 0,
-            "kind": "noop",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\FrontLifecycle::handle404"
+            ],
             "composes": []
         },
         "WP::init": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 0,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
-        },
-        "WP::main": {
-            "file": "classes/WP_Rewrite.php",
-            "lines": 0,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
-        },
-        "WP::parse_request": {
-            "file": "classes/WP_Rewrite.php",
             "lines": 1,
             "kind": "noop",
             "minn": [],
+            "composes": [
+                "wp_get_current_user"
+            ]
+        },
+        "WP::main": {
+            "file": "classes/WP_Rewrite.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "do_action_ref_array"
+            ]
+        },
+        "WP::minn_parse": {
+            "file": "classes/WP_Rewrite.php",
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Front\\RequestParse::mismatch",
+                "Minn\\Front\\RequestParse::vars",
+                "Minn\\Front\\RuleTable::match"
+            ],
+            "composes": [
+                "_minn_die_variable_mismatch",
+                "parse_url"
+            ]
+        },
+        "WP::parse_request": {
+            "file": "classes/WP_Rewrite.php",
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Theme\\FrontLifecycle::parseRequest"
+            ],
             "composes": []
         },
         "WP::query_posts": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -6703,9 +6715,11 @@
         },
         "WP::send_headers": {
             "file": "classes/WP_Rewrite.php",
-            "lines": 0,
+            "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Theme\\FrontLifecycle::sendHeaders"
+            ],
             "composes": []
         },
         "WP::set_query_var": {
@@ -35803,6 +35817,16 @@
             "minn": [],
             "composes": []
         },
+        "_minn_die_variable_mismatch": {
+            "file": "functions.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_die"
+            ]
+        },
         "_minn_dirsize": {
             "file": "functions.php",
             "lines": 13,
@@ -37120,10 +37144,11 @@
         },
         "_minn_rewrite": {
             "file": "misc.php",
-            "lines": 8,
+            "lines": 12,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\RewriteRules::builtins"
+                "Minn\\Runtime\\RewriteRules::builtins",
+                "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": []
         },
@@ -62636,9 +62661,9 @@
             ]
         },
         "wp": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "functions.php",
+            "lines": 5,
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },

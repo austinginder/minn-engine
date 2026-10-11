@@ -48,9 +48,13 @@ final readonly class MainQueryBridge
         \_minn_seed_wp_request($vars);
         $wp = $GLOBALS['wp'];
         $request = Runtime::current()->request;
-        $given = $request === null ? [] : $request->form + $request->query;
+        $given = $request === null ? [] : $request->query + $request->form;
         // With the request known, the vars are the reference's parse of it; what the caller adds (a feed's kind, a sitemap's name) takes its place among them.
-        $parse = $request === null ? null : static function (array $public) use ($resolution, $given, $extra): array {
+        $parse = $request === null ? null : static function (array $public) use ($resolution, $given, $extra, $request): array {
+            // A public var the query string and the form give two values is refused, as on the reference.
+            if (RequestParse::mismatch($public, $request->query, $request->form)) {
+                \_minn_die_variable_mismatch();
+            }
             $vars = RequestParse::vars($resolution->vars, $public, $given);
             foreach ($extra as $name => $value) {
                 $vars[$name] = is_bool($value) ? ($value ? 'true' : '') : $value;
@@ -58,6 +62,9 @@ final readonly class MainQueryBridge
             return $vars;
         };
         $parsed = FrontLifecycle::parseRequest($wp, $vars, $given, $parse);
+        if ($parsed) {
+            $wp->build_query_string();
+        }
         $page = $parsed ? $this->queried($resolution, (array) $wp->query_vars) : $this->seeded($resolution, $vars);
         if ($parsed) {
             FrontLifecycle::handle404($GLOBALS['wp_query'], $resolution->kind === Kind::NotFound);

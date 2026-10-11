@@ -76,7 +76,7 @@ the WordPress runtime plugins load against
 | [`PostRevisions`](#postrevisions) | final class | 67 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 210 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
-| [`QueryFlags`](#queryflags) | final readonly class | 188 | The conditional flags a set of query variables implies (is_single, is_archive, |
+| [`QueryFlags`](#queryflags) | final readonly class | 197 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
@@ -3445,7 +3445,7 @@ query variable carries a value, as [taxonomy name, query var].
 
 - `@return array{0: string, 1: string}|null`
 
-Internals: `sanitize()` (private, line 115), `archiveFlags()` (private, line 145)
+Internals: `sanitize()` (private, line 123), `archiveFlags()` (private, line 154)
 
 
 ## Recovery

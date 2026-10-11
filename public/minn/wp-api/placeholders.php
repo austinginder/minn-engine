@@ -19,12 +19,6 @@ function get_the_block_template_html()
     return null;
 }
 
-function wp($query_vars = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp');
-    return null;
-}
-
 function wp_add_post_tags($post_id = 0, $tags = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_add_post_tags');

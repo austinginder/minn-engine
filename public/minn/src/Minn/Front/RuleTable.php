@@ -26,16 +26,33 @@ final class RuleTable
      */
     public static function vars(string $path): ?array
     {
+        $match = self::match($path);
+        return $match === null || $match['rule'] === '' ? null : $match['vars'];
+    }
+
+    /**
+     * What the request parse makes of a path (WP::parse_request): the path
+     * under the home's, the rule it fits and that rule's query with the
+     * matches put in, and its vars; the rule and query empty when none
+     * fits. Null when the site has no rules (plain permalinks).
+     *
+     * @return array{request: string, rule: string, query: string, vars: array<string, string>}|null
+     */
+    public static function match(string $path): ?array
+    {
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
-        if (!$rewrite instanceof \WP_Rewrite) {
-            return null;
-        }
-        $rules = $rewrite->wp_rewrite_rules();
+        $rules = $rewrite instanceof \WP_Rewrite ? $rewrite->wp_rewrite_rules() : null;
         if (!is_array($rules) || $rules === []) {
             return null;
         }
-        $matched = self::first($rules, self::subject($path), (bool) $rewrite->use_verbose_page_rules, self::pageAt(...));
-        return $matched === null ? null : self::varsOf($matched[1], $matched[2]);
+        $subject = self::subject($path);
+        $matched = self::first($rules, $subject, (bool) $rewrite->use_verbose_page_rules, self::pageAt(...));
+        if ($matched === null) {
+            return ['request' => $subject, 'rule' => '', 'query' => '', 'vars' => []];
+        }
+        $query = self::queryOf($matched[1], $matched[2]);
+        parse_str($query, $vars);
+        return ['request' => $subject, 'rule' => $matched[0], 'query' => $query, 'vars' => array_map('strval', array_filter($vars, 'is_scalar'))];
     }
 
     /** The address as the rules read it: under the home's own path, without the slashes at its ends. */
@@ -77,22 +94,19 @@ final class RuleTable
     }
 
     /**
-     * A matched rule's query vars: its query with the matches put in
-     * (urlencoded, so a captured "&x=1" cannot split into extra vars).
+     * A matched rule's query with the matches put in (urlencoded, so a
+     * captured "&x=1" cannot split into extra vars).
      *
      * @param array<int|string, string> $matches
-     * @return array<string, string>
      */
-    private static function varsOf(string $query, array $matches): array
+    private static function queryOf(string $query, array $matches): string
     {
         $query = (string) preg_replace('!^.+\?!', '', $query);
-        $query = (string) preg_replace_callback(
+        return (string) preg_replace_callback(
             '/\$matches\[(\d+)\]/',
             static fn (array $m): string => urlencode((string) ($matches[(int) $m[1]] ?? '')),
             $query,
         );
-        parse_str($query, $vars);
-        return array_map('strval', array_filter($vars, 'is_scalar'));
     }
 
     /** Whether a page stands at a path (not one in the trash). */

@@ -48267,7 +48267,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/RequestParse.php",
-            "lines": 42,
+            "lines": 68,
             "doc": "The query vars the reference's request parse sets for an address\n(WP::parse_request), which plugins read off $wp->query_vars and\nget_query_var: each public var the query string or form carries, else\nthe one the matched rewrite rule set (Front\\RuleTable), all in the\npublic vars' order (a plugin's own after the core ones); a post type's\nown var brings post_type and name; a path no rule matches is error=404\n(the query string's error is ignored).",
             "implements": [],
             "extends": null,
@@ -48293,7 +48293,7 @@
                         "@param array<string, string> $rule the matched rule's vars",
                         "@param list<string> $publicVars the public query vars, after the query_vars filter",
                         "@param array<string, mixed> $given the query string's and the form's values",
-                        "@return array<string, string>"
+                        "@return array<string, string|array<mixed>>"
                     ],
                     "params": [
                         {
@@ -48319,7 +48319,45 @@
                         }
                     ],
                     "line": 28,
-                    "end": 46
+                    "end": 53
+                },
+                {
+                    "routes": [],
+                    "name": "mismatch",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "mismatch(array $publicVars, array $query, array $form): bool",
+                    "doc": "Whether the query string and the form give a public var two different\nvalues: the reference refuses such a request (A variable mismatch has\nbeen detected, a 400) before it reads either.",
+                    "shapes": [
+                        "@param list<string> $publicVars",
+                        "@param array<string, mixed> $query",
+                        "@param array<string, mixed> $form"
+                    ],
+                    "params": [
+                        {
+                            "name": "publicVars",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "form",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 64,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -48338,8 +48376,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 58
+                    "line": 75,
+                    "end": 84
                 }
             ]
         },
@@ -49833,7 +49871,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/RuleTable.php",
-            "lines": 86,
+            "lines": 100,
             "doc": "An address read as WordPress's request parse reads it (suites\npermalinks, request-vars, plugin-rules): against the site's rewrite\nrules (made and stored when there are none, a plugin's own among them,\neach place's endpoints too), the first rule the address fits winning, as\ntyped or decoded; a page's rule fits only when a page stands at the path\nit captured, under verbose page rules. A match is the rule's query vars\nwith the matches put in. Which of them count is the request parse's\nbusiness (the public vars, after the query_vars filter).",
             "implements": [],
             "extends": null,
@@ -49866,7 +49904,29 @@
                         }
                     ],
                     "line": 27,
-                    "end": 39
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "match",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "match(string $path): ?array",
+                    "doc": "What the request parse makes of a path (WP::parse_request): the path\nunder the home's, the rule it fits and that rule's query with the\nmatches put in, and its vars; the rule and query empty when none\nfits. Null when the site has no rules (plain permalinks).",
+                    "shapes": [
+                        "@return array{request: string, rule: string, query: string, vars: array<string, string>}|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -49885,8 +49945,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 50
+                    "line": 59,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -49930,19 +49990,18 @@
                             "doc": "whether a page stands at a path"
                         }
                     ],
-                    "line": 60,
-                    "end": 77
+                    "line": 77,
+                    "end": 94
                 },
                 {
                     "routes": [],
-                    "name": "varsOf",
+                    "name": "queryOf",
                     "static": true,
                     "visibility": "private",
-                    "signature": "varsOf(string $query, array $matches): array",
-                    "doc": "A matched rule's query vars: its query with the matches put in\n(urlencoded, so a captured \"&x=1\" cannot split into extra vars).",
+                    "signature": "queryOf(string $query, array $matches): string",
+                    "doc": "A matched rule's query with the matches put in (urlencoded, so a\ncaptured \"&x=1\" cannot split into extra vars).",
                     "shapes": [
-                        "@param array<int|string, string> $matches",
-                        "@return array<string, string>"
+                        "@param array<int|string, string> $matches"
                     ],
                     "params": [
                         {
@@ -49960,8 +50019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 96
+                    "line": 102,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -49980,8 +50039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 103
+                    "line": 113,
+                    "end": 117
                 }
             ]
         },
@@ -127879,7 +127938,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/QueryFlags.php",
-            "lines": 188,
+            "lines": 197,
             "doc": "The conditional flags a set of query variables implies (is_single, is_archive,\nis_home, ...), derived the way the reference's parse step derives them, plus\nthe variables after the integer casts that step applies.",
             "implements": [],
             "extends": null,
@@ -128019,7 +128078,7 @@
                         }
                     ],
                     "line": 52,
-                    "end": 105
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -128047,8 +128106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 198
+                    "line": 198,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -128070,8 +128129,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 142
+                    "line": 123,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -128099,8 +128158,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 181
+                    "line": 154,
+                    "end": 190
                 }
             ]
         },
@@ -145547,7 +145606,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/FrontLifecycle.php",
-            "lines": 105,
+            "lines": 108,
             "doc": "WordPress's front-end request steps around the main query, as WP::main\nruns them (front lifecycle trace): parse the request (do_parse_request\nmay take it over; query_vars names the public variables, a plugin's own\nread from the query string; request filters the result; parse_request\nfollows), the main query, the 404 decision (pre_handle_404 first), the\nglobals, and the headers (wp_headers, the status, send_headers). The\nengine has already resolved the URL; these steps tell plugins about it\nin the reference's order and let them change what the query asks.",
             "implements": [],
             "extends": null,
@@ -145571,7 +145630,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "parseRequest(WP $wp, array $vars, array $given, ?Closure $parse = NULL): bool",
-                    "doc": "Parses the request: false when a plugin's do_parse_request took the\nparse over (the main query then does not run).",
+                    "doc": "Parses the request: false when a plugin's do_parse_request took the\nparse over (the main query then does not run). The query string is\nthe main query's to build, after.",
                     "shapes": [
                         "@param array<string, mixed> $vars the variables the engine resolved",
                         "@param array<string, mixed> $given the query string and form, where a plugin's own variables are read",
@@ -145607,7 +145666,7 @@
                             "doc": "the reference's parse vars for the public vars, when the request is known"
                         }
                     ],
-                    "line": 31,
+                    "line": 32,
                     "end": 52
                 },
                 {
@@ -145635,7 +145694,7 @@
                         }
                     ],
                     "line": 64,
-                    "end": 80
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -145654,8 +145713,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 124
+                    "line": 91,
+                    "end": 127
                 }
             ]
         },
@@ -146677,7 +146736,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/MainQueryBridge.php",
-            "lines": 125,
+            "lines": 132,
             "doc": "Stands the main query for a themed page and runs the front-end steps\naround it as WP::main does (FrontLifecycle): the request parsed, the main\nquery through WP_Query (so pre_get_posts and every posts_* filter shape\nit), the 404 decision, the globals, the headers, then \"wp\" and\ntemplate_redirect. A listing's posts are the query's, and so is the 404\nfor an empty page past the first or an empty date; a single post the\nquery does not find (a preview, a draft its author reads) is the one the\nengine resolved. When a plugin takes the parse over no query runs, as\non the reference, and the page stands empty.",
             "implements": [],
             "extends": null,
@@ -146766,7 +146825,7 @@
                         }
                     ],
                     "line": 40,
-                    "end": 73
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -146785,8 +146844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 85
+                    "line": 87,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -146797,8 +146856,8 @@
                     "doc": "Posts per page.",
                     "shapes": [],
                     "params": [],
-                    "line": 88,
-                    "end": 91
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -146819,8 +146878,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 104
+                    "line": 107,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -146841,8 +146900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 123
+                    "line": 119,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -146870,8 +146929,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 141
+                    "line": 138,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -146899,8 +146958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 148
+                    "line": 151,
+                    "end": 155
                 }
             ]
         },

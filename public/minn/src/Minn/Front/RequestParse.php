@@ -23,16 +23,23 @@ final class RequestParse
      * @param array<string, string> $rule the matched rule's vars
      * @param list<string> $publicVars the public query vars, after the query_vars filter
      * @param array<string, mixed> $given the query string's and the form's values
-     * @return array<string, string>
+     * @return array<string, string|array<mixed>>
      */
     public static function vars(array $rule, array $publicVars, array $given): array
     {
         $vars = [];
+        $queryable = array_keys(array_filter(Runtime::registry()->postTypes(), static fn (array $type): bool => !empty($type['publicly_queryable'])));
         foreach ($publicVars as $var) {
             // error is the parse's own verdict (no rule matched), never the query string's.
             $value = ($var === 'error' ? null : $given[$var] ?? null) ?? $rule[$var] ?? null;
-            if ($value !== null && is_scalar($value)) {
-                $vars[$var] = (string) $value;
+            // A list stays a list of strings (cat[]=1&cat[]=2), as the reference keeps it.
+            $value = is_array($value) ? array_map(static fn ($item) => is_scalar($item) ? (string) $item : $item, $value) : (is_scalar($value) ? (string) $value : null);
+            // The post type asked for counts only when it is publicly queryable (not page, not an unknown one).
+            if ($var === 'post_type' && $value !== null) {
+                $value = is_array($value) ? array_values(array_intersect($value, $queryable)) : (in_array($value, $queryable, true) ? $value : null);
+            }
+            if ($value !== null) {
+                $vars[$var] = $value;
             }
         }
         foreach (Runtime::registry()->postTypes() as $name => $type) {
@@ -43,6 +50,25 @@ final class RequestParse
             }
         }
         return isset($rule['error']) ? $vars + ['error' => '404'] : $vars;
+    }
+
+    /**
+     * Whether the query string and the form give a public var two different
+     * values: the reference refuses such a request (A variable mismatch has
+     * been detected, a 400) before it reads either.
+     *
+     * @param list<string> $publicVars
+     * @param array<string, mixed> $query
+     * @param array<string, mixed> $form
+     */
+    public static function mismatch(array $publicVars, array $query, array $form): bool
+    {
+        foreach ($publicVars as $var) {
+            if (isset($query[$var], $form[$var]) && $query[$var] !== $form[$var]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** The reference's query string for parse vars (WP::build_query_string): each one with a value, encoded. */

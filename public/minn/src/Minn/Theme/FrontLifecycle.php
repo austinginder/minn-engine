@@ -22,7 +22,8 @@ final class FrontLifecycle
 {
     /**
      * Parses the request: false when a plugin's do_parse_request took the
-     * parse over (the main query then does not run).
+     * parse over (the main query then does not run). The query string is
+     * the main query's to build, after.
      *
      * @param array<string, mixed> $vars the variables the engine resolved
      * @param array<string, mixed> $given the query string and form, where a plugin's own variables are read
@@ -47,7 +48,6 @@ final class FrontLifecycle
         // A date archive whose year, month or day is a post's numeric slug is that post, before plugins see the request.
         $wp->query_vars = (array) \apply_filters('request', \wp_resolve_numeric_slug_conflicts($parse === null ? $vars : $parse($wp->public_query_vars)));
         \do_action_ref_array('parse_request', [&$wp]);
-        $wp->build_query_string();
         return true;
     }
 
@@ -68,6 +68,9 @@ final class FrontLifecycle
         }
         $empty = empty($query->posts) && !$query->is_robots() && !$query->is_favicon();
         $bareDate = $query->is_date() && !$query->is_search() && $query->get_queried_object() === null;
+        // A term or author the query names but the site does not have (?tag[]=a) is not found, whatever the address resolved to.
+        $named = $query->is_category() || $query->is_tag() || $query->is_tax() || $query->is_author();
+        $notFound = $notFound || ($empty && $named && $query->get_queried_object() === null);
         // A sitemap request is the sitemaps server's to judge at template_redirect, since 7.1.3 (suite sitemap-hooks).
         $sitemap = (string) $query->get('sitemap') !== '';
         if (!$sitemap && !$query->is_feed() && ($notFound || ($empty && ($query->is_paged() || $bareDate)))) {

@@ -1787,3 +1787,19 @@ function wp_post_preview_js()
     $script = "\t( function() {\n\t\tvar query = document.location.search;\n\n\t\tif ( query && query.indexOf( 'preview=true' ) !== -1 ) {\n\t\t\twindow.name = '{$name}';\n\t\t}\n\n\t\tif ( window.addEventListener ) {\n\t\t\twindow.addEventListener( 'pagehide', function() { window.name = ''; } );\n\t\t}\n\t}());\n\t//# sourceURL=wp_post_preview_js\t";
     wp_print_inline_script_tag($script);
 }
+
+/** The request run through the WP object (WP::main), the main query its result; the query of record set when none is. */
+function wp($query_vars = '')
+{
+    global $wp, $wp_query, $wp_the_query;
+    $wp->main($query_vars);
+    if (!isset($wp_the_query)) {
+        $wp_the_query = $wp_query;
+    }
+}
+
+/** @internal the reference's refusal of a request whose query string and form disagree on a public var */
+function _minn_die_variable_mismatch(): void
+{
+    wp_die(__('A variable mismatch has been detected.'), __('Sorry, you are not allowed to view this item.'), 400);
+}

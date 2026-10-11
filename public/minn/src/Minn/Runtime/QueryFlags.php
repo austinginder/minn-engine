@@ -51,10 +51,21 @@ final readonly class QueryFlags
      */
     public static function derive(array $vars, Registry $registry, callable $option, array $asked): self
     {
+        // A post id that is a list or below zero asks for nothing: 0, and a 404.
+        $badPost = isset($vars['p']) && $vars['p'] !== '' && (!is_scalar($vars['p']) || (int) $vars['p'] < 0);
         foreach (self::INTEGER_VARS as $key) {
-            if (isset($vars[$key]) && $vars[$key] !== '' && !is_array($vars[$key])) {
-                $vars[$key] = (int) $vars[$key];
+            if (isset($vars[$key]) && $vars[$key] !== '') {
+                // A list where a number belongs is 0 (?monthnum[]=10), as on the reference.
+                $vars[$key] = is_scalar($vars[$key]) ? (int) $vars[$key] : 0;
             }
+        }
+        if ($badPost) {
+            $vars['p'] = 0;
+            $vars['error'] = '404';
+        }
+        // A page id is read without its sign.
+        if (is_int($vars['page_id'] ?? null)) {
+            $vars['page_id'] = abs($vars['page_id']);
         }
         $vars = self::sanitize($vars);
         if (is_string($vars['feed'] ?? null) && str_starts_with($vars['feed'], 'comments-')) {
@@ -62,9 +73,6 @@ final readonly class QueryFlags
             $vars['withcomments'] = 1;
         }
         $on = [];
-        if ((int) $vars['p'] < 0 || (int) $vars['page_id'] < 0) {
-            $vars['error'] = '404';
-        }
         $on['is_404'] = ($vars['error'] ?? null) === '404';
         $on['is_embed'] = !empty($vars['embed']);
         $on['is_trackback'] = !empty($vars['tb']);
@@ -116,7 +124,8 @@ final readonly class QueryFlags
     {
         $vars['m'] = is_scalar($vars['m']) ? preg_replace('|[^0-9]|', '', (string) $vars['m']) : '';
         $ids = static fn ($value) => preg_replace('|[^0-9,-]|', '', (string) $value);
-        $vars['cat'] = is_array($vars['cat']) ? array_map($ids, $vars['cat']) : $ids($vars['cat']);
+        // A list of categories reads as their comma list (?cat[]=5&cat[]=6 is cat=5,6).
+        $vars['cat'] = $ids(is_array($vars['cat']) ? implode(',', array_filter($vars['cat'], 'is_scalar')) : $vars['cat']);
         $vars['author'] = is_scalar($vars['author']) ? preg_replace('|[^0-9,-]|', '', (string) $vars['author']) : '';
         foreach (['pagename', 'name', 'title'] as $key) {
             $vars[$key] = is_scalar($vars[$key]) ? trim((string) $vars[$key]) : '';

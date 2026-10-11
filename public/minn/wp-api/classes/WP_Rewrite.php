@@ -404,8 +404,9 @@ class WP_Rewrite
 #[AllowDynamicProperties]
 class WP
 {
-    public $public_query_vars;
-    public $private_query_vars;
+    // A new WP knows the reference's own vars; registration (a taxonomy's, REST, sitemaps) adds to the global one (probe wp-request).
+    public $public_query_vars = ['m', 'p', 'posts', 'w', 'cat', 'withcomments', 'withoutcomments', 's', 'search', 'exact', 'sentence', 'calendar', 'page', 'paged', 'more', 'tb', 'pb', 'author', 'order', 'orderby', 'year', 'monthnum', 'day', 'hour', 'minute', 'second', 'name', 'category_name', 'tag', 'feed', 'author_name', 'pagename', 'page_id', 'error', 'attachment', 'attachment_id', 'subpost', 'subpost_id', 'preview', 'robots', 'favicon', 'taxonomy', 'term', 'cpage', 'post_type', 'embed'];
+    public $private_query_vars = ['offset', 'posts_per_page', 'posts_per_archive_page', 'showposts', 'nopaging', 'post_type', 'post_status', 'category__in', 'category__not_in', 'category__and', 'tag__in', 'tag__not_in', 'tag__and', 'tag_slug__in', 'tag_slug__and', 'tag_id', 'post_mime_type', 'perm', 'comments_per_page', 'post__in', 'post__not_in', 'post_parent', 'post_parent__in', 'post_parent__not_in', 'title', 'fields'];
     public $extra_query_vars = [];
     public $query_vars = [];
     public $query_string = '';
@@ -413,13 +414,6 @@ class WP
     public $matched_rule = '';
     public $matched_query = '';
     public $did_permalink = false;
-
-    public function __construct()
-    {
-        $data = json_decode((string) file_get_contents(Runtime::current()->engineDir . '/data/registry.json'), true) ?: [];
-        $this->public_query_vars = $data['public_query_vars'] ?? [];
-        $this->private_query_vars = $data['private_query_vars'] ?? [];
-    }
 
     public function add_query_var($qv)
     {
@@ -438,13 +432,50 @@ class WP
         $this->query_vars[$key] = $value;
     }
 
+    /**
+     * The request read from its address and query string (probe
+     * wp-request): the rule the path fits (none: error 404), the public
+     * vars from the extra vars, the query string, the form and the rule in
+     * that order, the extra private vars after them; through
+     * do_parse_request, query_vars, request and parse_request
+     * (Theme\FrontLifecycle). A public var the query string and the form
+     * disagree on is refused.
+     */
     public function parse_request($extra_query_vars = '')
     {
-        return true;
+        $extra = is_array($extra_query_vars) ? $extra_query_vars : [];
+        if (is_string($extra_query_vars) && $extra_query_vars !== '') {
+            parse_str($extra_query_vars, $extra);
+        }
+        return Minn\Theme\FrontLifecycle::parseRequest($this, [], [], fn (array $public): array => $this->minn_parse($public, $extra));
     }
 
+    /** @internal the parse itself, once no plugin has taken it over */
+    private function minn_parse(array $public, array $extra): array
+    {
+        $this->extra_query_vars = $extra;
+        $match = Minn\Front\RuleTable::match((string) parse_url((string) ($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH));
+        $this->request = $match === null ? '' : $match['request'];
+        $this->did_permalink = $this->request !== '';
+        $this->matched_rule = $this->did_permalink ? $match['rule'] : '';
+        $this->matched_query = $this->did_permalink ? $match['query'] : '';
+        if (Minn\Front\RequestParse::mismatch($public, $_GET, $_POST)) {
+            _minn_die_variable_mismatch();
+        }
+        $rule = $this->did_permalink ? ($match['rule'] === '' ? ['error' => '404'] : $match['vars']) : [];
+        $vars = Minn\Front\RequestParse::vars($rule, $public, $extra + $_GET + $_POST);
+        foreach ((array) $this->private_query_vars as $var) {
+            if (isset($extra[$var])) {
+                $vars[$var] = $extra[$var];
+            }
+        }
+        return $vars;
+    }
+
+    /** The headers for the request (Theme\FrontLifecycle::sendHeaders): through wp_headers, then send_headers. */
     public function send_headers()
     {
+        Minn\Theme\FrontLifecycle::sendHeaders($this);
     }
 
     /** The vars with a value, encoded; a query_string filter (deprecated, still honoured) rewrites both. */
@@ -480,19 +511,45 @@ class WP
         }
     }
 
+    /** The current user, set up. */
     public function init()
     {
+        wp_get_current_user();
     }
 
+    /** The main query for the parsed vars, with the query string built from them. */
     public function query_posts()
     {
+        $this->build_query_string();
+        if (!($GLOBALS['wp_the_query'] ?? null) instanceof WP_Query) {
+            $GLOBALS['wp_the_query'] = new WP_Query();
+        }
+        $GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
+        $GLOBALS['wp_the_query']->query($this->query_vars);
     }
 
+    /**
+     * The 404 decision on the main query (Theme\FrontLifecycle::handle404):
+     * a single item the query did not find is one.
+     */
     public function handle_404()
     {
+        $query = $GLOBALS['wp_query'] ?? null;
+        if ($query instanceof WP_Query) {
+            Minn\Theme\FrontLifecycle::handle404($query, empty($query->posts) && $query->is_singular());
+        }
     }
 
+    /** The request whole, in the reference's order: parse, query, 404, globals, headers, then "wp". */
     public function main($query_args = '')
     {
+        $this->init();
+        if ($this->parse_request($query_args)) {
+            $this->query_posts();
+            $this->handle_404();
+            $this->register_globals();
+        }
+        $this->send_headers();
+        do_action_ref_array('wp', [&$this]);
     }
 }

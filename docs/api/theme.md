@@ -15,11 +15,11 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FeedHeaders`](#feedheaders) | final class | 50 | The headers a feed is sent with, as the reference's send_headers sends |
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
-| [`FrontLifecycle`](#frontlifecycle) | final class | 105 | WordPress's front-end request steps around the main query, as WP::main |
+| [`FrontLifecycle`](#frontlifecycle) | final class | 108 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 493 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 107 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 132 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 178 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 52 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
@@ -372,7 +372,8 @@ Used by: `Minn\Theme\MainQueryBridge`
 ### static `parseRequest(WP $wp, array $vars, array $given, ?Closure $parse = NULL): bool`
 
 Parses the request: false when a plugin's do_parse_request took the
-parse over (the main query then does not run).
+parse over (the main query then does not run). The query string is
+the main query's to build, after.
 
 - `@param array<string, mixed> $vars the variables the engine resolved`
 - `@param array<string, mixed> $given the query string and form, where a plugin's own variables are read`
@@ -629,7 +630,7 @@ vars it was asked under.
 
 Posts per page.
 
-Internals: `vars()` (private, line 100), `postVars()` (private, line 112), `queried()` (private, line 131), `seeded()` (private, line 144)
+Internals: `vars()` (private, line 107), `postVars()` (private, line 119), `queried()` (private, line 138), `seeded()` (private, line 151)
 
 
 ## NotModified

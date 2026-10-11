@@ -12990,3 +12990,58 @@ Fixed on the way, in the navigation block:
 
 The layout container hash stays engine-defined (contracts/blocks.md); the
 probe masks it, as the suites do.
+
+## The request object, WP, and wp() (2026-10-11)
+
+Probe `wp-request`. `WP` was mostly hollow; now it is real.
+
+- **A new `WP`** knows the reference's own 46 public and 26 private vars.
+  Registration adds to the global one (post formats, REST, sitemaps), as
+  WordPress's own registrations do. The engine's global is made with the
+  registry's full list.
+- **`parse_request`** runs through `Theme\FrontLifecycle::parseRequest`
+  (do_parse_request, query_vars, request, parse_request):
+  - The path from REQUEST_URI is matched against the rules
+    (`Front\RuleTable::match`), which gives `request`, `matched_rule`, and
+    `matched_query` (the rule's query with each match urlencoded).
+  - The root, or plain permalinks, matches nothing and is no permalink.
+    A path no rule fits is error 404.
+  - Public vars come from the extra vars, then the query string, then the
+    form, then the rule, in that order, as strings. A list stays a list of
+    strings. The post type counts only when it is publicly queryable, so
+    page and unknown types are dropped (from a list too).
+  - The extra vars' private vars follow, as given.
+  - A public var that the query string and the form give two values is
+    refused: "A variable mismatch has been detected.", 400, over HTTP too.
+  - The query string is not built here. The main query builds it, which
+    moved out of `FrontLifecycle::parseRequest` into the bridge.
+- **`send_headers`** is `FrontLifecycle::sendHeaders` (wp_headers, then
+  send_headers). **`init`** sets up the current user. **`query_posts`**
+  builds the query string and queries the query of record.
+- **`handle_404`** is `FrontLifecycle::handle404`. A singular the query did
+  not find is not found.
+- **`main`** runs, in the reference's order: parse, query, 404, globals,
+  headers, then `wp`.
+- **`wp()`** is real; it was a placeholder.
+
+Fixed on the way, on the front:
+
+- `?s[]=zz` is an empty search and `?cat[]=1&cat[]=2` the category archive,
+  as on the reference (the engine dropped list values).
+- In `WP_Query`:
+  - a list where a number belongs is 0;
+  - a post id that is a list or below zero is 0 and a 404;
+  - a page id is read without its sign;
+  - a list of categories is their comma list, flagged as a category
+    archive.
+- A term or author archive whose object the site does not have is a 404,
+  whatever the address resolved to (`?tag[]=a`).
+
+Left owed:
+
+- These still differ from the reference: `?p[]=1` and `?p=-3` (a 404 query
+  with a 200 status), `?name[]=x` (the home page), and `?page_id=-2` (a
+  301). The engine's address resolution decides those before the query
+  runs.
+- Repeating an identical main query in one process: the reference splits
+  the second by `wp_posts.*`, the engine by ID.

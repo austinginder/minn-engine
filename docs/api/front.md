@@ -33,11 +33,11 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`QueryMoves`](#querymoves) | final readonly class | 119 | Where the root's archive query forms move under pretty permalinks, as |
 | [`Redirects`](#redirects) | enum | 23 | Whether a resolution may answer with a canonical redirect. A GET or HEAD |
 | [`Renderer`](#renderer) | final readonly class | 90 | The interim public theme: one clean template until the block-theme |
-| [`RequestParse`](#requestparse) | final class | 42 | The query vars the reference's request parse sets for an address |
+| [`RequestParse`](#requestparse) | final class | 68 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 325 | Turns a public URL into a Resolution the way the reference's request |
 | [`RuleRoutes`](#ruleroutes) | final readonly class | 151 | What a matched rewrite rule's query vars name, as the reference's main |
-| [`RuleTable`](#ruletable) | final class | 86 | An address read as WordPress's request parse reads it (suites |
+| [`RuleTable`](#ruletable) | final class | 100 | An address read as WordPress's request parse reads it (suites |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
 | [`SingleQueries`](#singlequeries) | final readonly class | 100 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
@@ -1042,7 +1042,17 @@ The parse's vars, in the reference's order.
 - `@param array<string, string> $rule the matched rule's vars`
 - `@param list<string> $publicVars the public query vars, after the query_vars filter`
 - `@param array<string, mixed> $given the query string's and the form's values`
-- `@return array<string, string>`
+- `@return array<string, string|array<mixed>>`
+
+### static `mismatch(array $publicVars, array $query, array $form): bool`
+
+Whether the query string and the form give a public var two different
+values: the reference refuses such a request (A variable mismatch has
+been detected, a 400) before it reads either.
+
+- `@param list<string> $publicVars`
+- `@param array<string, mixed> $query`
+- `@param array<string, mixed> $form`
 
 ### static `queryString(array $vars): string`
 
@@ -1247,7 +1257,16 @@ The vars the site's rules give a path, or null when no rule fits it
 
 - `@return array<string, string>|null`
 
-Internals: `subject()` (private, line 42), `first()` (private, line 60), `varsOf()` (private, line 86), `pageAt()` (private, line 99)
+### static `match(string $path): ?array`
+
+What the request parse makes of a path (WP::parse_request): the path
+under the home's, the rule it fits and that rule's query with the
+matches put in, and its vars; the rule and query empty when none
+fits. Null when the site has no rules (plain permalinks).
+
+- `@return array{request: string, rule: string, query: string, vars: array<string, string>}|null`
+
+Internals: `subject()` (private, line 59), `first()` (private, line 77), `queryOf()` (private, line 102), `pageAt()` (private, line 113)
 
 
 ## SingleAddresses

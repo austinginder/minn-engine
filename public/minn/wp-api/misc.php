@@ -16,6 +16,10 @@ function _minn_rewrite(): WP_Rewrite
     }
     if (!isset($GLOBALS['wp']) || !$GLOBALS['wp'] instanceof WP) {
         $GLOBALS['wp'] = new WP();
+        // The vars the reference's registrations add at boot (post formats, REST, sitemaps).
+        foreach (Runtime::registry()->publicQueryVars as $var) {
+            $GLOBALS['wp']->add_query_var($var);
+        }
     }
     return $GLOBALS['wp_rewrite'];
 }
