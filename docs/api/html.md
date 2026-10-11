@@ -9,7 +9,7 @@ the HTML tag processor
 | [`Escaped`](#escaped) | final readonly class | 6 | An attribute value that comes already escaped (a URL through esc_url), written as it is. |
 | [`Scanner`](#scanner) | final class | 291 | Reads one token's shape out of raw HTML at an offset: a tag with its |
 | [`TagQuery`](#tagquery) | final readonly class | 37 | A tag processor's next_tag() query: a tag name (any case), a class, the |
-| [`Tags`](#tags) | final class | 584 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
+| [`Tags`](#tags) | final class | 587 | A streaming HTML tokenizer with in-place edits: tags, text, comments, |
 | [`TokenMap`](#tokenmap) | final class | 87 | A map from words to replacements that reads the longest word at a place |
 
 ## Decoder
@@ -320,7 +320,7 @@ Advances to the next token; false at the end or at an incomplete one.
 
 ### `nextTag(array $query): bool`
 
-Advances to the next tag matching the query; false when none.
+Advances to the next tag matching the query; false when none. @param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query
 
 - `@param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query`
 
@@ -372,9 +372,9 @@ The decoded value, true for a bare attribute, null when absent; a pending edit a
 
 ### `attributeNames(string $prefix): ?array`
 
-The current tag's attribute names with a prefix, lower-cased.
+The current tag's attribute names with a prefix, lower-cased, in source order; null off a tag. @return list<string>|null
 
-- `@return list<string>|null lowercase names, in source order, null off a tag`
+- `@return list<string>|null`
 
 ### `classes(): array`
 
@@ -449,15 +449,19 @@ Where the current text token's text sits: [start, length].
 
 The source between two offsets, updates written in.
 
-### `bookmarkStart(string $name): ?int`
+### `bookmarkSpan(string $name): ?array`
 
-Where a bookmark starts, or null when there is none of that name.
+Where a bookmark sits: [start, end], or null when there is none of that name.
+
+### `replaceAfter(int $start, int $end, string $text): void`
+
+Replaces a span at or after the current token's end, updates written in first: the new text is read next, and bookmarks past the span move with it.
 
 ### `html(): string`
 
 The document with every update written in.
 
-Internals: `setToken()` (private, line 134), `resetToken()` (private, line 144), `takeTag()` (private, line 158), `take()` (private, line 188), `baseClassList()` (private, line 368), `baseClassValue()` (private, line 373), `flush()` (private, line 540), `applyReplacements()` (private, line 561), `rescanCurrent()` (private, line 567), `rescan()` (private, line 583)
+Internals: `setToken()` (private, line 134), `resetToken()` (private, line 144), `takeTag()` (private, line 158), `take()` (private, line 188), `baseClassList()` (private, line 360), `baseClassValue()` (private, line 365), `flush()` (private, line 543), `applyReplacements()` (private, line 564), `rescanCurrent()` (private, line 570), `rescan()` (private, line 586)
 
 
 ## TokenMap

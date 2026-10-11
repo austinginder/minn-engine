@@ -12788,3 +12788,50 @@ it before).
 
 Next: `WP_Interactivity_API_Directives_Processor`, the class the reference
 processes with (balanced tags, template content).
+
+## WP_Interactivity_API_Directives_Processor (2026-10-11)
+
+Probe `interactivity-directives-processor` proves the Interactivity API's
+tag processor, a subclass of the tag processor, case by case: each step's
+answer, where the processor stands after it, and the document at the end.
+
+- **`has_and_visits_its_closer_tag`.**
+  - True for a tag with a closer the processor stops at. That includes
+    a closer itself, `noscript`, a self-closing `div` (HTML ignores the
+    slash) and a self-closing `path` in SVG.
+  - False with no current tag, for void elements (a `br` in SVG too), and
+    for the raw-text elements: iframe, noembed, noframes, script, style,
+    textarea, title, xmp.
+- **`next_balanced_tag_closer_tag`** walks to the closer that balances the
+  current tag.
+  - It counts tags of its name and passes over those whose closers it
+    never visits.
+  - From a closer it walks on to the end.
+  - Unclosed tags of other names don't count (`<div><p>x</div>` finds the
+    div's closer).
+- **`skip_to_tag_closer`** counts only tags of the current name. A void
+  element, an unclosed tag, a closer, or no tag at all walks to the end
+  and answers false.
+- **`get_content_between_balanced_template_tags`** works only at a
+  template.
+  - It answers the source between the template and its balanced closer,
+    and leaves the processor at the closer.
+  - It answers null at another tag (the processor stays put), and null at
+    an unclosed template or a template's closer (it has walked to the
+    end).
+- **`set_content_between_balanced_tags`** replaces the content between a
+  tag and its balanced closer.
+  - The text is HTML-escaped, and the processor stays at the tag.
+  - Pending attribute edits are written first.
+  - A void element answers false without moving. A closer or an unclosed
+    tag answers false at the end.
+- **`append_content_after_template_tag_closer`** puts raw markup right
+  after a template's closer.
+  - The markup is read next, and a second append lands ahead of the
+    first.
+  - It answers false for empty content, a template's opener, or any other
+    closer.
+
+`Minn\Html\Tags` gains `bookmarkSpan` (replacing `bookmarkStart`, whose one
+caller now reads the span) and `replaceAfter`, which splices a span at or
+after the current token so that the new text is read next.

@@ -53603,7 +53603,7 @@
             "namespace": "Minn\\Html",
             "kind": "final class",
             "file": "public/minn/src/Minn/Html/Tags.php",
-            "lines": 584,
+            "lines": 587,
             "doc": "A streaming HTML tokenizer with in-place edits: tags, text, comments,\ndoctypes, and processing instructions in document order, attribute reads\nwith character references decoded, attribute and class edits applied to\nthe source without reserialising anything else, bookmarks to seek back to.\nBehaviour pinned by the html-tag-processor probe fixture.",
             "implements": [],
             "extends": null,
@@ -53983,7 +53983,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "nextTag(array $query): bool",
-                    "doc": "Advances to the next tag matching the query; false when none.",
+                    "doc": "Advances to the next tag matching the query; false when none. @param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query",
                     "shapes": [
                         "@param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query"
                     ],
@@ -53996,8 +53996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 228
+                    "line": 210,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -54008,8 +54008,8 @@
                     "doc": "Whether the scan stopped inside an unfinished token.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -54020,8 +54020,8 @@
                     "doc": "The current token's kind.",
                     "shapes": [],
                     "params": [],
-                    "line": 237,
-                    "end": 240
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -54032,8 +54032,8 @@
                     "doc": "The current token's name.",
                     "shapes": [],
                     "params": [],
-                    "line": 243,
-                    "end": 251
+                    "line": 239,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -54044,8 +54044,8 @@
                     "doc": "The current tag name, upper-cased; a processing instruction's target, or a PI lookalike's, as written.",
                     "shapes": [],
                     "params": [],
-                    "line": 254,
-                    "end": 261
+                    "line": 250,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -54056,8 +54056,8 @@
                     "doc": "Whether the current tag is a closer.",
                     "shapes": [],
                     "params": [],
-                    "line": 264,
-                    "end": 267
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -54068,8 +54068,8 @@
                     "doc": "Whether the current tag has the self-closing flag.",
                     "shapes": [],
                     "params": [],
-                    "line": 270,
-                    "end": 273
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -54080,8 +54080,8 @@
                     "doc": "The current comment's kind.",
                     "shapes": [],
                     "params": [],
-                    "line": 276,
-                    "end": 279
+                    "line": 272,
+                    "end": 275
                 },
                 {
                     "routes": [],
@@ -54092,8 +54092,8 @@
                     "doc": "The current comment's whole text (a funky comment's is its text).",
                     "shapes": [],
                     "params": [],
-                    "line": 282,
-                    "end": 289
+                    "line": 278,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -54104,8 +54104,8 @@
                     "doc": "The current token's text as a reader sees it.",
                     "shapes": [],
                     "params": [],
-                    "line": 292,
-                    "end": 306
+                    "line": 288,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -54118,8 +54118,8 @@
                         "@return array{name: ?string, public: ?string, system: ?string}|null"
                     ],
                     "params": [],
-                    "line": 309,
-                    "end": 315
+                    "line": 305,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -54138,8 +54138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 330
+                    "line": 314,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -54147,9 +54147,9 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "attributeNames(string $prefix): ?array",
-                    "doc": "The current tag's attribute names with a prefix, lower-cased.",
+                    "doc": "The current tag's attribute names with a prefix, lower-cased, in source order; null off a tag. @return list<string>|null",
                     "shapes": [
-                        "@return list<string>|null lowercase names, in source order, null off a tag"
+                        "@return list<string>|null"
                     ],
                     "params": [
                         {
@@ -54160,8 +54160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 350
+                    "line": 329,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -54174,8 +54174,8 @@
                         "@return list<string> distinct class names after pending edits"
                     ],
                     "params": [],
-                    "line": 353,
-                    "end": 359
+                    "line": 345,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -54194,8 +54194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 362,
-                    "end": 365
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -54221,8 +54221,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 392
+                    "line": 371,
+                    "end": 384
                 },
                 {
                     "routes": [],
@@ -54241,8 +54241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 407
+                    "line": 387,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -54261,8 +54261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 417
+                    "line": 402,
+                    "end": 409
                 },
                 {
                     "routes": [],
@@ -54281,8 +54281,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 420,
-                    "end": 427
+                    "line": 412,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -54301,8 +54301,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 430,
-                    "end": 433
+                    "line": 422,
+                    "end": 425
                 },
                 {
                     "routes": [],
@@ -54321,8 +54321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 436,
-                    "end": 446
+                    "line": 428,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -54341,8 +54341,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 449,
-                    "end": 456
+                    "line": 441,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -54361,8 +54361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 459,
-                    "end": 462
+                    "line": 451,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -54381,8 +54381,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 465,
-                    "end": 475
+                    "line": 457,
+                    "end": 467
                 },
                 {
                     "routes": [],
@@ -54408,8 +54408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 487
+                    "line": 475,
+                    "end": 479
                 },
                 {
                     "routes": [],
@@ -54428,8 +54428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 490,
-                    "end": 493
+                    "line": 482,
+                    "end": 485
                 },
                 {
                     "routes": [],
@@ -54440,8 +54440,8 @@
                     "doc": "Back to the start of the document, with every update written in and the bookmarks kept.",
                     "shapes": [],
                     "params": [],
-                    "line": 496,
-                    "end": 506
+                    "line": 488,
+                    "end": 498
                 },
                 {
                     "routes": [],
@@ -54452,8 +54452,8 @@
                     "doc": "Where the current token sits in the document: [start, end].",
                     "shapes": [],
                     "params": [],
-                    "line": 509,
-                    "end": 512
+                    "line": 501,
+                    "end": 504
                 },
                 {
                     "routes": [],
@@ -54464,8 +54464,8 @@
                     "doc": "Where the current text token's text sits: [start, length].",
                     "shapes": [],
                     "params": [],
-                    "line": 515,
-                    "end": 518
+                    "line": 507,
+                    "end": 510
                 },
                 {
                     "routes": [],
@@ -54491,16 +54491,16 @@
                             "doc": ""
                         }
                     ],
-                    "line": 521,
-                    "end": 524
+                    "line": 513,
+                    "end": 516
                 },
                 {
                     "routes": [],
-                    "name": "bookmarkStart",
+                    "name": "bookmarkSpan",
                     "static": false,
                     "visibility": "public",
-                    "signature": "bookmarkStart(string $name): ?int",
-                    "doc": "Where a bookmark starts, or null when there is none of that name.",
+                    "signature": "bookmarkSpan(string $name): ?array",
+                    "doc": "Where a bookmark sits: [start, end], or null when there is none of that name.",
                     "shapes": [],
                     "params": [
                         {
@@ -54511,8 +54511,42 @@
                             "doc": ""
                         }
                     ],
-                    "line": 527,
-                    "end": 530
+                    "line": 519,
+                    "end": 522
+                },
+                {
+                    "routes": [],
+                    "name": "replaceAfter",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "replaceAfter(int $start, int $end, string $text): void",
+                    "doc": "Replaces a span at or after the current token's end, updates written in first: the new text is read next, and bookmarks past the span move with it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "start",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "end",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "text",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 525,
+                    "end": 533
                 },
                 {
                     "routes": [],
@@ -54523,8 +54557,8 @@
                     "doc": "The document with every update written in.",
                     "shapes": [],
                     "params": [],
-                    "line": 533,
-                    "end": 537
+                    "line": 536,
+                    "end": 540
                 },
                 {
                     "routes": [],
@@ -54651,8 +54685,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 368,
-                    "end": 371
+                    "line": 360,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -54663,8 +54697,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 373,
-                    "end": 376
+                    "line": 365,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -54675,8 +54709,8 @@
                     "doc": "Writes every pending update into the source, keeping bookmarks and the current token aligned.",
                     "shapes": [],
                     "params": [],
-                    "line": 540,
-                    "end": 558
+                    "line": 543,
+                    "end": 561
                 },
                 {
                     "routes": [],
@@ -54697,8 +54731,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 561,
-                    "end": 564
+                    "line": 564,
+                    "end": 567
                 },
                 {
                     "routes": [],
@@ -54709,8 +54743,8 @@
                     "doc": "Re-reads the current token so attribute offsets match the new source.",
                     "shapes": [],
                     "params": [],
-                    "line": 567,
-                    "end": 581
+                    "line": 570,
+                    "end": 584
                 },
                 {
                     "routes": [],
@@ -54721,8 +54755,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 583,
-                    "end": 595
+                    "line": 586,
+                    "end": 598
                 }
             ]
         },

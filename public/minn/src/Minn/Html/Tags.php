@@ -206,11 +206,7 @@ final class Tags
         return true;
     }
 
-    /**
-     * Advances to the next tag matching the query; false when none.
-     *
-     * @param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query
-     */
+    /** Advances to the next tag matching the query; false when none. @param array{tag_name?: ?string, class_name?: ?string, match_offset?: int, tag_closers?: string} $query */
     public function nextTag(array $query): bool
     {
         $query = TagQuery::from($query);
@@ -329,11 +325,7 @@ final class Tags
         return ($pending['escaped'] ?? false) ? Decoder::attribute((string) $pending['value']) : ($pending['value'] ?? Scanner::attributeValue($this->attributes, $lower));
     }
 
-    /**
-     * The current tag's attribute names with a prefix, lower-cased.
-     *
-     * @return list<string>|null lowercase names, in source order, null off a tag
-     */
+    /** The current tag's attribute names with a prefix, lower-cased, in source order; null off a tag. @return list<string>|null */
     public function attributeNames(string $prefix): ?array
     {
         if ($this->type !== self::TAG || $this->closer) {
@@ -523,10 +515,21 @@ final class Tags
         return substr($this->html, $start, $length);
     }
 
-    /** Where a bookmark starts, or null when there is none of that name. */
-    public function bookmarkStart(string $name): ?int
+    /** Where a bookmark sits: [start, end], or null when there is none of that name. */
+    public function bookmarkSpan(string $name): ?array
     {
-        return $this->bookmarks[$name][0] ?? null;
+        return $this->bookmarks[$name] ?? null;
+    }
+
+    /** Replaces a span at or after the current token's end, updates written in first: the new text is read next, and bookmarks past the span move with it. */
+    public function replaceAfter(int $start, int $end, string $text): void
+    {
+        $this->flush();
+        $this->html = substr_replace($this->html, $text, $start, $end - $start);
+        $delta = strlen($text) - ($end - $start);
+        foreach ($this->bookmarks as $name => [$from, $to]) {
+            $this->bookmarks[$name] = $from >= $end ? [$from + $delta, $to + $delta] : [$from, $to];
+        }
     }
 
     /** The document with every update written in. */

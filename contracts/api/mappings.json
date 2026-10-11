@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 805,
-        "composes": 2298,
-        "leaf": 989,
+        "composes": 2299,
+        "leaf": 995,
         "noop": 2752,
         "placeholder": 61,
         "deadend": 1661,
-        "functions": 8488,
+        "functions": 8495,
         "minnMethods": 968,
         "leafLinesOver15": 12
     },
@@ -14522,6 +14522,57 @@
             "minn": [
                 "Minn\\Runtime\\Runtime::interactivity"
             ],
+            "composes": []
+        },
+        "WP_Interactivity_API_Directives_Processor::append_content_after_template_tag_closer": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Interactivity_API_Directives_Processor::get_after_opener_tag_and_before_closer_tag_positions": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 14,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Interactivity_API_Directives_Processor::get_content_between_balanced_template_tags": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Interactivity_API_Directives_Processor::has_and_visits_its_closer_tag": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 3,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Interactivity_API_Directives_Processor::next_balanced_tag_closer_tag": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 15,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Interactivity_API_Directives_Processor::set_content_between_balanced_tags": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "esc_html"
+            ]
+        },
+        "WP_Interactivity_API_Directives_Processor::skip_to_tag_closer": {
+            "file": "classes/WP_Interactivity_API_Directives_Processor.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "WP_Internal_Pointers::dismiss_pointers_for_new_users": {

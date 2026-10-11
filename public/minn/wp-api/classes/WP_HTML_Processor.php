@@ -266,7 +266,7 @@ class WP_HTML_Processor extends WP_HTML_Tag_Processor
 
     public function seek($bookmark_name): bool
     {
-        $start = $this->tags->bookmarkStart((string) $bookmark_name);
+        $start = $this->tags->bookmarkSpan((string) $bookmark_name)[0] ?? null;
         $op = $this->minnBookmarkOps[$bookmark_name] ?? null;
         $this->tags->rewind();
         $this->minnBuilder->reset();
