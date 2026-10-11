@@ -740,14 +740,14 @@ function _block_bindings_pattern_overrides_get_value(array $source_args, $block_
     return $name === '' ? null : _wp_array_get($block_instance->context, ['pattern/overrides', $name, $attribute_name], null);
 }
 
-/** A post's date (ISO 8601), its modified date when later than that ("" otherwise), or its link, for a binding. */
+/** A post's date (ISO 8601), its modified date when later than that ("" otherwise), or its link, for a binding; the field named by field, or by key as older bindings name it (probe template-bindings-helpers). */
 function _block_bindings_post_data_get_value(array $source_args, $block_instance)
 {
     $post_id = $block_instance->context['postId'] ?? 0;
     if (empty($post_id) || !_minn_block_bindings_post_readable(get_post($post_id))) {
         return null;
     }
-    return match ($source_args['key'] ?? '') {
+    return match ($source_args['field'] ?? $source_args['key'] ?? '') {
         'date' => get_the_date('c', $post_id),
         'modified' => get_the_modified_date('U', $post_id) > get_the_date('U', $post_id) ? get_the_modified_date('c', $post_id) : '',
         'link' => get_permalink($post_id),
@@ -755,10 +755,22 @@ function _block_bindings_post_data_get_value(array $source_args, $block_instance
     };
 }
 
-/** Term data for a binding: no case the probe could make gave a value on the reference, so none is given here. */
+/** A term's name, description, link, slug or id (as text) for a binding, from the termId and taxonomy in context (probe template-bindings-helpers). */
 function _block_bindings_term_data_get_value(array $source_args, $block_instance)
 {
-    return null;
+    $id = $block_instance->context['termId'] ?? 0;
+    $term = empty($id) ? null : get_term((int) $id, (string) ($block_instance->context['taxonomy'] ?? ''));
+    if (!$term instanceof WP_Term) {
+        return null;
+    }
+    return match ($source_args['field'] ?? '') {
+        'id' => (string) $term->term_id,
+        'name' => $term->name,
+        'slug' => $term->slug,
+        'description' => $term->description,
+        'link' => get_term_link($term),
+        default => null,
+    };
 }
 
 // The core bindings sources, each registered by its own function at init, as the reference registers them.
@@ -2244,7 +2256,7 @@ function _filter_block_template_part_area($type)
     if (in_array($type, array_column(get_allowed_block_template_part_areas(), 'area'), true)) {
         return $type;
     }
-    wp_trigger_error('', sprintf(__('"%1$s" is not a supported wp_template_part area value and has been added as "%2$s".'), $type, WP_TEMPLATE_PART_AREA_UNCATEGORIZED), E_USER_NOTICE);
+    wp_trigger_error(__FUNCTION__, sprintf(__('"%1$s" is not a supported wp_template_part area value and has been added as "%2$s".'), $type, WP_TEMPLATE_PART_AREA_UNCATEGORIZED), E_USER_NOTICE);
     return WP_TEMPLATE_PART_AREA_UNCATEGORIZED;
 }
 

@@ -13286,3 +13286,34 @@ reference's nav and the engine's now match on every page.
 Found on the way: `build_comment_query_vars_from_block` pages only when
 `page_comments` is the string `'1'`, as the settings screen stores it (an
 option saved as the integer 1 does not page on either stack).
+
+## Template-part and binding helpers (2026-10-11)
+
+Probe `template-bindings-helpers`. The template-part helpers already
+matched:
+
+- an area checked against the allowed ones (an unknown one becomes
+  uncategorized, with a notice);
+- the allowed areas;
+- the theme attribute put on and taken off template-part blocks only;
+- a template file's suffix stripped.
+
+The bindings sources' values are read for a paragraph handed the context
+each source reads. Under the CLI no core block declares every key, so the
+probe sets the block's context directly, and the same on both stacks.
+
+Fixed:
+
+- **The term data source** gave nothing (its note said no case had given a
+  value on the reference). It reads the term in context (termId, taxonomy):
+  - name, description, slug and link;
+  - the id as text.
+
+  It reads `field` only.
+- **The post data source** reads `field`, as bindings name it now, or `key`
+  as older ones did. It read only `key`, so a binding to `field: date` gave
+  nothing.
+- **`_filter_block_template_part_area`'s notice** names the function, so
+  it reads `_filter_block_template_part_area(): "…" is not a supported…`.
+
+Post meta and pattern overrides matched as they were.
