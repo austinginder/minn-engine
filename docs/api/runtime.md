@@ -57,7 +57,7 @@ the WordPress runtime plugins load against
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 71 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
-| [`PluginActivation`](#pluginactivation) | final class | 64 | Switching a plugin on and off the way the reference's activate_plugin |
+| [`PluginActivation`](#pluginactivation) | final class | 70 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
@@ -2547,7 +2547,7 @@ each plugin, then writes the list once.
 
 Used by: `Minn\Content\PluginState`
 
-### static `activate(string $plugin, ?Minn\Runtime\Hooks $announce): ?Minn\Runtime\Refusal`
+### static `activate(string $plugin, ?Minn\Runtime\Hooks $announce, ?Closure $networkStore = NULL): ?Minn\Runtime\Refusal`
 
 Activates one plugin ("dir/file.php"), announcing it to the hooks
 given, or to nobody (silent); null when it is active afterwards with
@@ -2560,7 +2560,7 @@ given, or to nobody (silent); those not active are passed over.
 
 - `@param list<string> $plugins`
 
-Internals: `active()` (private, line 81)
+Internals: `active()` (private, line 87)
 
 
 ## PluginRemoval

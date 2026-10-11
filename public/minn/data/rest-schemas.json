@@ -6337,5 +6337,142 @@
             "sanitize_callback": "sanitize_url",
             "validate_callback": "@closure"
         }
+    },
+    "plugin": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "plugin",
+        "type": "object",
+        "properties": {
+            "plugin": {
+                "description": "The plugin file.",
+                "type": "string",
+                "pattern": "[^.\\/]+(?:\\/[^.\\/]+)?",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "status": {
+                "description": "The plugin activation status.",
+                "type": "string",
+                "enum": [
+                    "inactive",
+                    "active"
+                ],
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "name": {
+                "description": "The plugin name.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "plugin_uri": {
+                "description": "The plugin's website address.",
+                "type": "string",
+                "format": "uri",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "author": {
+                "description": "The plugin author.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "author_uri": {
+                "description": "Plugin author's website address.",
+                "type": "string",
+                "format": "uri",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "description": {
+                "description": "The plugin description.",
+                "type": "object",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit"
+                ],
+                "properties": {
+                    "raw": {
+                        "description": "The raw plugin description.",
+                        "type": "string"
+                    },
+                    "rendered": {
+                        "description": "The plugin description formatted for display.",
+                        "type": "string"
+                    }
+                }
+            },
+            "version": {
+                "description": "The plugin version number.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            },
+            "network_only": {
+                "description": "Whether the plugin can only be activated network-wide.",
+                "type": "boolean",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "requires_wp": {
+                "description": "Minimum required version of WordPress.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "requires_php": {
+                "description": "Minimum required version of PHP.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit",
+                    "embed"
+                ]
+            },
+            "textdomain": {
+                "description": "The plugin's text domain.",
+                "type": "string",
+                "readonly": true,
+                "context": [
+                    "view",
+                    "edit"
+                ]
+            }
+        }
     }
 }

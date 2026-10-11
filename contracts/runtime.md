@@ -12536,3 +12536,59 @@ Fixed on the way:
 Still owed: the engine's own `post-process`, `edit`, `sideload` and
 `finalize` routes (the class answers them when a plugin registers them).
 `convert_format` on a sideload is accepted but not applied.
+
+## WP_REST_Plugins_Controller (2026-10-11)
+
+Probe `rest-plugins-controller` proves the plugins controller class. The
+two stacks have different plugin folders, so it writes plugins of its
+own into its stack's folder: one with every header, a network-only one,
+one to delete, and a single file. It removes them again and puts the
+plugin options back (`active_sitewide_plugins` included). Installing from
+a directory is left out: it would ask the network.
+
+- **The class is WordPress-shaped** over the runtime's plugin functions:
+  - the list is `get_plugins()`;
+  - a status change goes through `activate_plugin` / `deactivate_plugins`;
+  - a delete goes through `delete_plugins`.
+
+  The engine's own route also lists Minn extensions; the class doesn't.
+  Installing goes through the engine's route (the Minn update service).
+- **The item** is the engine's shape from the plugin's headers
+  (`PluginsController::shape`, which the engine's route uses too).
+  - It keeps every field whatever the context or `_fields`; the server
+    filters later.
+  - The self link comes only when the fields take links.
+  - It goes through `rest_prepare_plugin`.
+- **The plugin parameter.**
+  - `validate_plugin_param` accepts a string that begins like a plugin
+    file (anchored at the start only, so `zz.rplc` and `a/b/c` pass).
+  - `sanitize_plugin_param` appends `.php`.
+  - Direct calls skip the sanitizing, so the class expects the file with
+    `.php` (as dispatch hands it over).
+- **Permissions.**
+  - Listing needs `activate_plugins` (`rest_cannot_view_plugins`).
+  - Reading needs the same (`rest_cannot_view_plugin`), then a plugin
+    that is there.
+  - Installing needs `install_plugins`, and `activate_plugins` when it is
+    to be active.
+  - Updating and deleting answer `rest_cannot_manage_plugins`, then
+    "Plugin not found."
+  - A status change needs `activate_plugin` or `deactivate_plugin` for
+    that plugin.
+- **Matching a list request.** The search is found in any of the plugin's
+  facts (its file included) with tags stripped, case as written, one fact
+  at a time. The status must be among those asked for.
+- **Status.**
+  - An unchanged status does nothing.
+  - Deactivating a plugin that is not in the site's list fires nothing.
+  - Network activation on a single site writes the `active_sitewide_plugins`
+    site option rather than `active_plugins`.
+- **Deleting** an active plugin is `rest_cannot_delete_active_plugin`
+  (400). The answer for a deleted one is what it was.
+
+Fixed on the way: `activate_plugin` with `$network_wide` keeps the plugin in
+`active_sitewide_plugins` (in the reference's order), and the activation
+hooks are told it is network-wide. Before, it went into the site's list.
+
+Not probed: the multisite paths (network-only plugins, network
+activation permissions), and a filesystem that asks for credentials.

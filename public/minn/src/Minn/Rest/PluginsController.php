@@ -221,12 +221,25 @@ final readonly class PluginsController
      */
     private function pluginItem(string $relative, string $path, bool $active): array
     {
-        $headers = \get_plugin_data($path, false, false);
+        return self::shape($relative, $path, \get_plugin_data($path, false, false), $active ? 'active' : 'inactive') + ['_links' => $this->links((string) preg_replace('/\.php$/', '', $relative))];
+    }
+
+    /**
+     * A WordPress plugin's item from its headers, as the reference's
+     * controller shapes one (the runtime's WP_REST_Plugins_Controller
+     * shapes through here too): the headers translated and cut to the
+     * allowed markup once for the fields and once more, marked up, for the
+     * rendered description.
+     *
+     * @param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them
+     * @return array<string, mixed>
+     */
+    public static function shape(string $relative, string $path, array $headers, string $status): array
+    {
         $plain = \_get_plugin_data_markup_translate($path, $headers, false, true);
-        $key = preg_replace('/\.php$/', '', $relative);
         return [
-            'plugin' => $key,
-            'status' => $active ? 'active' : 'inactive',
+            'plugin' => (string) preg_replace('/\.php$/', '', $relative),
+            'status' => $status,
             'name' => $plain['Name'],
             'plugin_uri' => $plain['PluginURI'],
             'author' => $plain['AuthorName'],
@@ -237,7 +250,6 @@ final readonly class PluginsController
             'requires_wp' => $headers['RequiresWP'],
             'requires_php' => $headers['RequiresPHP'],
             'textdomain' => $headers['TextDomain'],
-            '_links' => $this->links($key),
         ];
     }
 

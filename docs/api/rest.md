@@ -38,7 +38,7 @@ the wp/v2 surface: shapes and controllers
 | [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 231 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
@@ -1610,7 +1610,18 @@ Route: `DELETE /wp/v2/plugins/{plugin:[^.\/]+(?:\/[^.\/]+)?} (cap activate_plugi
 
 Deletes an inactive plugin.
 
-Internals: `items()` (private, line 144), `find()` (private, line 158), `statusOf()` (private, line 172), `manifestFor()` (private, line 184), `extensionItem()` (private, line 194), `pluginItem()` (private, line 222), `links()` (private, line 244), `extensionKey()` (private, line 249), `refuse()` (private, line 256)
+### static `shape(string $relative, string $path, array $headers, string $status): array`
+
+A WordPress plugin's item from its headers, as the reference's
+controller shapes one (the runtime's WP_REST_Plugins_Controller
+shapes through here too): the headers translated and cut to the
+allowed markup once for the fields and once more, marked up, for the
+rendered description.
+
+- `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
+- `@return array<string, mixed>`
+
+Internals: `items()` (private, line 144), `find()` (private, line 158), `statusOf()` (private, line 172), `manifestFor()` (private, line 184), `extensionItem()` (private, line 194), `pluginItem()` (private, line 222), `links()` (private, line 256), `extensionKey()` (private, line 261), `refuse()` (private, line 268)
 
 
 ## PolicyGate

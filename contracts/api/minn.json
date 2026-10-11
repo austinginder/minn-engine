@@ -96670,7 +96670,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 231,
+            "lines": 243,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
@@ -96945,6 +96945,50 @@
                 },
                 {
                     "routes": [],
+                    "name": "shape",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shape(string $relative, string $path, array $headers, string $status): array",
+                    "doc": "A WordPress plugin's item from its headers, as the reference's\ncontroller shapes one (the runtime's WP_REST_Plugins_Controller\nshapes through here too): the headers translated and cut to the\nallowed markup once for the fields and once more, marked up, for the\nrendered description.",
+                    "shapes": [
+                        "@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "relative",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "headers",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the plugin's headers, as get_plugins() holds them"
+                        },
+                        {
+                            "name": "status",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 237,
+                    "end": 254
+                },
+                {
+                    "routes": [],
                     "name": "items",
                     "static": false,
                     "visibility": "private",
@@ -97076,7 +97120,7 @@
                         }
                     ],
                     "line": 222,
-                    "end": 242
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -97095,8 +97139,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 247
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -97115,8 +97159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 252
+                    "line": 261,
+                    "end": 264
                 },
                 {
                     "routes": [],
@@ -97135,8 +97179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 261
+                    "line": 268,
+                    "end": 273
                 }
             ]
         },
@@ -122816,7 +122860,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PluginActivation.php",
-            "lines": 64,
+            "lines": 70,
             "doc": "Switching a plugin on and off the way the reference's activate_plugin\nand deactivate_plugins do (probe plugin-activation), for the facade and\nfor the engine's own REST routes and WP-CLI verbs alike. Activating\nchecks the plugin's requirements, then loads its main file through the\nruntime's gate (so its activation hook is registered, silent or not),\nfires activate_plugin and activate_<file> (which runs that hook), writes\nactive_plugins sorted through update_option, and fires activated_plugin;\nwhatever the plugin printed meanwhile makes the answer unexpected_output,\nwith the plugin left active, as the reference leaves it. Silent skips the\nactions, not the load. A plugin the gate will not load (it needs\nfunctions or classes the runtime lacks) is refused rather than recorded\nactive with code that could never run its activation hook. Deactivating\nfires deactivate_plugin, deactivate_<file> and deactivated_plugin for\neach plugin, then writes the list once.",
             "implements": [],
             "extends": null,
@@ -122840,7 +122884,7 @@
                     "name": "activate",
                     "static": true,
                     "visibility": "public",
-                    "signature": "activate(string $plugin, ?Minn\\Runtime\\Hooks $announce): ?Minn\\Runtime\\Refusal",
+                    "signature": "activate(string $plugin, ?Minn\\Runtime\\Hooks $announce, ?Closure $networkStore = NULL): ?Minn\\Runtime\\Refusal",
                     "doc": "Activates one plugin (\"dir/file.php\"), announcing it to the hooks\ngiven, or to nobody (silent); null when it is active afterwards with\nnothing to report.",
                     "shapes": [],
                     "params": [
@@ -122857,10 +122901,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "networkStore",
+                            "type": "?Closure",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
                     "line": 30,
-                    "end": 57
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -122888,8 +122939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 78
+                    "line": 71,
+                    "end": 84
                 },
                 {
                     "routes": [],
@@ -122902,8 +122953,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 81,
-                    "end": 85
+                    "line": 87,
+                    "end": 91
                 }
             ]
         },

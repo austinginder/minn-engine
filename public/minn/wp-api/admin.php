@@ -486,9 +486,15 @@ function revoke_super_admin($user_id)
 }
 
 /** Activation as the reference runs it (probe plugin-activation): requirements, the plugin loaded, the actions, the list. */
+/** A plugin activated; network-wide it is kept in active_sitewide_plugins (a site option, on one site too) rather than the site's list (probe rest-plugins-controller). */
 function activate_plugin($plugin, $redirect = '', $network_wide = false, $silent = false)
 {
-    $refusal = Minn\Runtime\PluginActivation::activate(plugin_basename(trim((string) $plugin)), $silent ? null : Minn\Runtime\Runtime::hooks());
+    $plugin = plugin_basename(trim((string) $plugin));
+    if ($network_wide && isset(((array) get_site_option('active_sitewide_plugins', []))[$plugin])) {
+        return null;
+    }
+    $store = $network_wide ? static fn (string $file) => update_site_option('active_sitewide_plugins', array_replace((array) get_site_option('active_sitewide_plugins', []), [$file => time()])) : null;
+    $refusal = Minn\Runtime\PluginActivation::activate($plugin, $silent ? null : Minn\Runtime\Runtime::hooks(), $store);
     return $refusal === null ? null : new WP_Error($refusal->code, $refusal->message, $refusal->data);
 }
 

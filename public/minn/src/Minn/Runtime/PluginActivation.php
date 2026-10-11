@@ -27,10 +27,12 @@ final class PluginActivation
      * given, or to nobody (silent); null when it is active afterwards with
      * nothing to report.
      */
-    public static function activate(string $plugin, ?Hooks $announce): ?Refusal
+    public static function activate(string $plugin, ?Hooks $announce, ?\Closure $networkStore = null): ?Refusal
     {
+        // A network-wide activation is stored by the caller (the network's list); the site's list is left alone.
+        $network = $networkStore !== null;
         $active = self::active();
-        if (in_array($plugin, $active, true)) {
+        if (!$network && in_array($plugin, $active, true)) {
             return null;
         }
         if (!is_file(WP_PLUGIN_DIR . '/' . $plugin)) {
@@ -46,12 +48,16 @@ final class PluginActivation
             ob_end_clean();
             return new Refusal('plugin_unsupported', $refused);
         }
-        $announce?->action('activate_plugin', [$plugin, false]);
-        $announce?->action("activate_{$plugin}", [false]);
-        $active[] = $plugin;
-        sort($active);
-        \update_option('active_plugins', $active);
-        $announce?->action('activated_plugin', [$plugin, false]);
+        $announce?->action('activate_plugin', [$plugin, $network]);
+        $announce?->action("activate_{$plugin}", [$network]);
+        if ($network) {
+            $networkStore($plugin);
+        } else {
+            $active[] = $plugin;
+            sort($active);
+            \update_option('active_plugins', $active);
+        }
+        $announce?->action('activated_plugin', [$plugin, $network]);
         $printed = (string) ob_get_clean();
         return $printed === '' ? null : new Refusal('unexpected_output', 'The plugin generated unexpected output.', $printed);
     }
