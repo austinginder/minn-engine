@@ -63515,7 +63515,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Kernel.php",
-            "lines": 36,
+            "lines": 38,
             "doc": "The edge. Turns a request into a response through the router and turns\na RestError thrown anywhere underneath into the WordPress error shape.",
             "implements": [],
             "extends": null,
@@ -63586,7 +63586,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "harden(Minn\\Http\\Request $request, Minn\\Http\\Response $response): Minn\\Http\\Response",
-                    "doc": "Headers every response carries: no content sniffing anywhere; the\nsign-in and admin pages refuse framing and keep their referrer to\nthemselves, as the reference's do.",
+                    "doc": "Headers every response carries: no content sniffing anywhere; the\nsign-in and admin pages refuse framing (both headers), keep their\nreferrer to themselves and are never cached, as the reference's do.",
                     "shapes": [],
                     "params": [
                         {
@@ -63605,7 +63605,7 @@
                         }
                     ],
                     "line": 35,
-                    "end": 47
+                    "end": 49
                 }
             ]
         },

@@ -13827,3 +13827,67 @@ Three effects:
 
 Nothing is written unless the webroot's `wp-settings.php` boots
 `minn/bootstrap.php`. The releases unit suite pins the rules.
+
+## Header-only functions proven over HTTP (2026-10-11)
+
+Austin's D9: a check in an HTTP suite that compares the engine with the
+reference counts as proof for a function that only sends headers. PHP keeps
+no header list under the CLI, so an api probe cannot see what these do.
+
+**How the proof works.**
+
+- The runtime fixture plugin calls each function by name, one per request:
+  `?minn-test-headers=nosniff|frame|javascript|link`.
+- Its REST route `minn-test/v1/deprecated?case=` makes deprecated calls
+  inside a REST request.
+- `tests/runtime.test.php` compares the headers with the reference's, under
+  labels written out whole.
+- `contracts/api/http-proofs.json` names each function's suite and label.
+  compat-status counts the function as verified when it is real and the
+  suite holds that label word for word. Otherwise it warns.
+
+Seven functions are proven this way:
+
+- `send_nosniff_header`
+- `send_frame_options_header`
+- `cache_javascript_headers`
+- `rest_output_link_header`
+- `rest_handle_deprecated_function`
+- `rest_handle_deprecated_argument`
+- `rest_handle_doing_it_wrong`
+
+What the reference does, and the engine now does too:
+
+- **`send_frame_options_header()`** sends
+  `Content-Security-Policy: frame-ancestors 'self';` as well as
+  `X-Frame-Options: SAMEORIGIN`.
+- **`cache_javascript_headers()`** was empty. It sends:
+  - `Content-Type: text/javascript; charset=<site charset>`;
+  - `Vary: Accept-Encoding`;
+  - `Expires`, ten days from the request.
+- **The sign-in and admin pages** also send the CSP header and the 1984
+  `Expires` (`Http\Kernel::harden`).
+- **The REST deprecation handlers.** `rest_api_default_filters()` adds them
+  only while a REST request is being served, with WP_DEBUG on or off (probe
+  `rest-default-filters`). That covers the three `*_run` actions, plus
+  `__return_false` on the three `*_trigger_error` filters, so a REST request
+  logs no deprecation notice.
+  - Each handler sends its header only under WP_DEBUG. This was observed with
+    the reference served by PHP's built-in server and WP_DEBUG defined false
+    before `wp-config.php`.
+  - Each header holds only the last call of its kind.
+  - The wording, as captured:
+    - `X-WP-DeprecatedFunction: <fn> (since <v>; use <replacement> instead)`, or
+      `(since <v>; no alternative available)` without a replacement;
+    - `X-WP-DeprecatedParam: <fn> (since <v>; <message>)`, or
+      `no alternative available` without a message;
+    - `X-WP-DoingItWrong: <fn> (since <v>; <message>)`, or `<fn> (<message>)`
+      without a version. The message is kept as given, tags and all.
+
+The `http-transports` fixture was recaptured because it records the engine's
+own sign-in page, fetched over HTTP from both stacks. Its header names gained
+`content-security-policy` and `expires`.
+
+One difference is kept on purpose: the engine still sends
+`X-Content-Type-Options: nosniff` on every response, the sign-in page
+included, where the reference doesn't.

@@ -72,6 +72,33 @@ add_action('rest_api_init', static function () {
         'callback' => static fn (WP_REST_Request $request) => rest_ensure_response(['id' => (int) $request['id'], 'exists' => get_post((int) $request['id']) !== null]),
         'permission_callback' => '__return_true',
     ]);
+    // Deprecated calls inside a REST request, one case per request (?case=): under WP_DEBUG the reference reports them in response headers.
+    register_rest_route('minn-test/v1', '/deprecated', [
+        'methods' => 'GET',
+        'callback' => static function (WP_REST_Request $request) {
+            $cases = [
+                'function' => static fn () => _deprecated_function('minn_test_old', '1.2.3', 'minn_test_new'),
+                'function-bare' => static fn () => _deprecated_function('minn_test_gone', '1.2.4'),
+                'argument' => static fn () => _deprecated_argument('minn_test_fn', '2.0.0', 'The zz argument is gone.'),
+                'argument-bare' => static fn () => _deprecated_argument('minn_test_fn_quiet', '2.0.1'),
+                'wrong' => static fn () => _doing_it_wrong('minn_test_fn', 'Call <code>it</code> later.', '3.0.0'),
+                'wrong-bare' => static fn () => _doing_it_wrong('minn_test_fn_unversioned', 'No version.', ''),
+                'all' => static function () {
+                    _deprecated_function('minn_test_first', '1.0.0');
+                    _deprecated_function('minn_test_second', '1.0.1', 'minn_test_third');
+                    _deprecated_argument('minn_test_a', '1.0.0', 'First.');
+                    _doing_it_wrong('minn_test_b', 'First.', '1.0.0');
+                    _doing_it_wrong('minn_test_c', 'Second.', '1.0.1');
+                },
+            ];
+            $case = (string) $request->get_param('case');
+            if (isset($cases[$case])) {
+                $cases[$case]();
+            }
+            return ['case' => $case];
+        },
+        'permission_callback' => '__return_true',
+    ]);
     // A string cut mid-character: the reference still answers with the data, the bad byte as "?".
     register_rest_route('minn-test/v1', '/cut', [
         'methods' => 'GET',
@@ -100,3 +127,19 @@ add_filter('template_include', static function ($template) {
     }
     return $template;
 });
+
+// The functions that only send headers, each called by name on a request of its own (?minn-test-headers=).
+add_action('init', static function () {
+    $which = isset($_GET['minn-test-headers']) ? (string) $_GET['minn-test-headers'] : '';
+    $send = [
+        'nosniff' => static fn () => send_nosniff_header(),
+        'frame' => static fn () => send_frame_options_header(),
+        'javascript' => static fn () => cache_javascript_headers(),
+        'link' => static fn () => rest_output_link_header(),
+    ];
+    if (isset($send[$which])) {
+        $send[$which]();
+        echo 'minn-test-headers ' . $which;
+        exit;
+    }
+}, 999);

@@ -17,7 +17,7 @@ request, response, routing, and the outgoing client
 | [`Fake`](#fake) | final class | 94 | Answers requests in place of the network, and keeps what was sent. A test |
 | [`Ipv6`](#ipv6) | final class | 62 | IPv6 addresses as text: written out in full (eight groups, or six and an |
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
-| [`Kernel`](#kernel) | final readonly class | 36 | The edge. Turns a request into a response through the router and turns |
+| [`Kernel`](#kernel) | final readonly class | 38 | The edge. Turns a request into a response through the router and turns |
 | [`LegacyHeaders`](#legacyheaders) | final class | 60 | WP_Http's legacy readers, kept for plugins that still call them (probe |
 | [`Location`](#location) | final class | 65 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
 | [`Matched`](#matched) | final readonly class | 15 | A route the router matched to a request and whose policy it judged: the |

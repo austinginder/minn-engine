@@ -603,8 +603,12 @@ function wp_get_nocache_headers()
     return $headers;
 }
 
+/** A script served by PHP: JavaScript in the site's charset, kept for ten days (runtime suite, over HTTP). */
 function cache_javascript_headers()
 {
+    header('Content-Type: text/javascript; charset=' . get_bloginfo('charset'));
+    header('Vary: Accept-Encoding');
+    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + 10 * DAY_IN_SECONDS) . ' GMT');
 }
 
 function wp_send_json($response, $status_code = null, $flags = 0)
@@ -951,9 +955,11 @@ function wp_validate_boolean($value)
     return Minn\Support\Flag::of($value);
 }
 
+/** The page refuses to be framed by another site, in both the old header and the policy one (runtime suite, over HTTP). */
 function send_frame_options_header()
 {
     header('X-Frame-Options: SAMEORIGIN');
+    header("Content-Security-Policy: frame-ancestors 'self';");
 }
 
 function send_nosniff_header()

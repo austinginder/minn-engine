@@ -6,7 +6,9 @@ declare(strict_types=1);
  * How far the engine is from the reference's whole PHP API, in the two
  * numbers that matter: resolved (the symbol exists, so nothing fatals) and
  * verified (a probe in tests/tools/*-probe.php calls it, so its behaviour is
- * checked against the reference by tests/api.test.php). Every reference
+ * checked against the reference by tests/api.test.php; a function that only
+ * sends headers, by the HTTP suite check contracts/api/http-proofs.json
+ * names). Every reference
  * function, class and public or protected method is one of:
  *
  * - real: the facade defines it by hand;
@@ -111,6 +113,17 @@ foreach ($probes as $probe) {
     preg_match_all('/(?<![\w$>\\\\])([A-Za-z_]\w*(?:\\\\\w+)+)\s*\(/', (string) file_get_contents($probe), $qualified);
     foreach ($qualified[1] as $name) {
         $probed[strtolower($name)] = true;
+    }
+}
+
+// A function that only sends headers is proven by an HTTP suite's check against the reference
+// (contracts/api/http-proofs.json, Austin's D9), once that suite holds the check word for word.
+foreach ((array) (json_decode((string) @file_get_contents("{$root}/contracts/api/http-proofs.json"), true)['functions'] ?? []) as $name => $proof) {
+    $suite = (string) @file_get_contents("{$root}/" . ($proof['suite'] ?? ''));
+    if (($proof['check'] ?? '') !== '' && str_contains($suite, (string) $proof['check'])) {
+        $probed[strtolower((string) $name)] = true;
+    } else {
+        fwrite(STDERR, "http-proofs.json: {$name}'s check is not in " . ($proof['suite'] ?? '(no suite)') . "\n");
     }
 }
 

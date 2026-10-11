@@ -50,11 +50,47 @@ function rest_api_register_rewrites()
  */
 function rest_api_default_filters()
 {
+    // While a REST request is served, a deprecated call is reported in a response header instead of raised (probe rest-default-filters).
+    if (wp_is_serving_rest_request()) {
+        add_action('deprecated_function_run', 'rest_handle_deprecated_function', 10, 3);
+        add_filter('deprecated_function_trigger_error', '__return_false');
+        add_action('deprecated_argument_run', 'rest_handle_deprecated_argument', 10, 3);
+        add_filter('deprecated_argument_trigger_error', '__return_false');
+        add_action('doing_it_wrong_run', 'rest_handle_doing_it_wrong', 10, 3);
+        add_filter('doing_it_wrong_trigger_error', '__return_false');
+    }
     add_filter('rest_pre_serve_request', 'rest_send_cors_headers');
     add_filter('rest_post_dispatch', 'rest_send_allow_header', 10, 3);
     add_filter('rest_post_dispatch', 'rest_filter_response_fields', 10, 3);
     add_filter('rest_pre_dispatch', 'rest_handle_options_request', 10, 3);
     add_filter('rest_index', 'rest_add_application_passwords_to_index');
+}
+
+/** Under WP_DEBUG, the last deprecated function a REST request called, in X-WP-DeprecatedFunction (runtime suite, over HTTP). */
+function rest_handle_deprecated_function($function_name, $replacement, $version)
+{
+    if (!WP_DEBUG || headers_sent()) {
+        return;
+    }
+    header(sprintf('X-WP-DeprecatedFunction: %s (since %s; %s)', $function_name, $version, $replacement ? "use {$replacement} instead" : 'no alternative available'));
+}
+
+/** Under WP_DEBUG, the last deprecated argument a REST request passed, in X-WP-DeprecatedParam (runtime suite, over HTTP). */
+function rest_handle_deprecated_argument($function_name, $message, $version)
+{
+    if (!WP_DEBUG || headers_sent()) {
+        return;
+    }
+    header(sprintf('X-WP-DeprecatedParam: %s (since %s; %s)', $function_name, $version, $message ?: 'no alternative available'));
+}
+
+/** Under WP_DEBUG, the last function a REST request called incorrectly, in X-WP-DoingItWrong (runtime suite, over HTTP). */
+function rest_handle_doing_it_wrong($function_name, $message, $version)
+{
+    if (!WP_DEBUG || headers_sent()) {
+        return;
+    }
+    header($version ? sprintf('X-WP-DoingItWrong: %s (since %s; %s)', $function_name, $version, $message) : sprintf('X-WP-DoingItWrong: %s (%s)', $function_name, $message));
 }
 
 function register_rest_route($route_namespace, $route, $args = [], $override = false)

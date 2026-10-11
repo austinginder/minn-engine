@@ -115,6 +115,51 @@ if ($referenceUp) {
     echo "  --  reference not running on :8123; routed-page parity row skipped\n";
 }
 
+// The functions that only send headers, each called by name on a request of its own and compared with the
+// reference over HTTP. contracts/api/http-proofs.json names these checks as the proof for those functions.
+$picked = static function (array $headers, array $names): array {
+    $out = [];
+    foreach ($names as $name) {
+        if (isset($headers[$name])) {
+            // Expires is ten days from the request: compared as that offset, within a minute.
+            $out[$name] = $name === 'expires' && abs((int) strtotime($headers[$name]) - time() - 10 * 86400) < 60 ? 'ten days on' : $headers[$name];
+        }
+    }
+    return $out;
+};
+// Labels are written out whole: the manifest finds each by its text.
+$sent = [
+    "send_nosniff_header() sends the reference's headers" => ['nosniff', ['x-content-type-options']],
+    "send_frame_options_header() sends the reference's headers" => ['frame', ['x-frame-options', 'content-security-policy']],
+    "cache_javascript_headers() sends the reference's headers" => ['javascript', ['content-type', 'vary', 'expires']],
+    "rest_output_link_header() sends the reference's headers" => ['link', ['link']],
+];
+// Under WP_DEBUG (the test site's), a REST request reports the last deprecated call of each kind in a header.
+$reported = [
+    'a REST request reports a deprecated function and its replacement as the reference does' => 'function',
+    'a REST request reports a deprecated function with none as the reference does' => 'function-bare',
+    'a REST request reports a deprecated argument and its message as the reference does' => 'argument',
+    'a REST request reports a deprecated argument with no message as the reference does' => 'argument-bare',
+    'a REST request reports a call made incorrectly, with its version, as the reference does' => 'wrong',
+    'a REST request reports a call made incorrectly, with no version, as the reference does' => 'wrong-bare',
+    'a REST request reports only the last call of each kind, as the reference does' => 'all',
+];
+$deprecations = ['x-wp-deprecatedfunction', 'x-wp-deprecatedparam', 'x-wp-doingitwrong'];
+if ($referenceUp) {
+    foreach ($sent as $label => [$which, $names]) {
+        [$eh] = minn_test_fetch($base . '/?minn-test-headers=' . $which);
+        [$rh] = minn_test_fetch($reference . '/?minn-test-headers=' . $which);
+        $check($label, $picked($eh, $names) !== [] && $picked($eh, $names) === $picked($rh, $names), json_encode([$picked($eh, $names), $picked($rh, $names)], JSON_UNESCAPED_SLASHES));
+    }
+    foreach ($reported as $label => $case) {
+        [$eh] = minn_test_fetch($base . '/wp-json/minn-test/v1/deprecated?case=' . $case);
+        [$rh] = minn_test_fetch($reference . '/?rest_route=/minn-test/v1/deprecated&case=' . $case);
+        $check($label, $picked($eh, $deprecations) !== [] && $picked($eh, $deprecations) === $picked($rh, $deprecations), json_encode([$picked($eh, $deprecations), $picked($rh, $deprecations)], JSON_UNESCAPED_SLASHES));
+    }
+} else {
+    echo "  --  reference not reachable; header rows skipped\n";
+}
+
 update_option('active_plugins', $before);
 $flush();
 [, $off] = minn_test_fetch($base . '/hello-world/');

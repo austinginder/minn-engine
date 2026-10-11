@@ -29,8 +29,8 @@ final readonly class Kernel
 
     /**
      * Headers every response carries: no content sniffing anywhere; the
-     * sign-in and admin pages refuse framing and keep their referrer to
-     * themselves, as the reference's do.
+     * sign-in and admin pages refuse framing (both headers), keep their
+     * referrer to themselves and are never cached, as the reference's do.
      */
     private static function harden(Request $request, Response $response): Response
     {
@@ -40,7 +40,9 @@ final readonly class Kernel
         if (str_starts_with($request->path, '/wp-login.php') || str_starts_with($request->path, '/minn-admin')) {
             $response = $response
                 ->withHeader('X-Frame-Options', 'SAMEORIGIN')
+                ->withHeader('Content-Security-Policy', "frame-ancestors 'self';")
                 ->withHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+                ->withHeader('Expires', 'Wed, 11 Jan 1984 05:00:00 GMT')
                 ->withHeader('Cache-Control', 'no-cache, must-revalidate, max-age=0, no-store, private');
         }
         return $response;

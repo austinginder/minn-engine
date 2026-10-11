@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 808,
-        "composes": 2345,
+        "composes": 2350,
         "leaf": 1022,
-        "noop": 2749,
+        "noop": 2747,
         "placeholder": 26,
         "deadend": 1719,
-        "functions": 8591,
+        "functions": 8594,
         "minnMethods": 985,
         "leafLinesOver15": 12
     },
@@ -42785,10 +42785,13 @@
         },
         "cache_javascript_headers": {
             "file": "functions.php",
-            "lines": 0,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_bloginfo",
+                "header"
+            ]
         },
         "cache_users": {
             "file": "pluggable.php",
@@ -58571,11 +58574,13 @@
         },
         "rest_api_default_filters": {
             "file": "rest-api.php",
-            "lines": 5,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "add_filter"
+                "add_action",
+                "add_filter",
+                "wp_is_serving_rest_request"
             ]
         },
         "rest_api_init": {
@@ -58919,6 +58924,33 @@
             "minn": [],
             "composes": [
                 "apply_filters"
+            ]
+        },
+        "rest_handle_deprecated_argument": {
+            "file": "rest-api.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header"
+            ]
+        },
+        "rest_handle_deprecated_function": {
+            "file": "rest-api.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header"
+            ]
+        },
+        "rest_handle_doing_it_wrong": {
+            "file": "rest-api.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "header"
             ]
         },
         "rest_handle_multi_type_schema": {
@@ -59819,8 +59851,8 @@
         },
         "send_frame_options_header": {
             "file": "functions.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
             "composes": [
                 "header"
