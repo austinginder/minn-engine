@@ -72,7 +72,7 @@ final class EngineRoutes
                 break;
             }
         }
-        return array_map(static fn (string $route) => preg_replace_callback('/\{(\w+)(?::([^}]+)|\*)?\}/', static function (array $m): string {
+        return array_map(static fn (string $route) => preg_replace_callback('/\{(\w+)(?::((?:[^{}]|\{[^{}]*\})+)|\*)?\}/', static function (array $m): string {
             $constraint = isset($m[2]) && $m[2] !== '' ? $m[2] : (str_ends_with($m[0], '*}') ? '.*' : '[^/]+');
             return '(?P<' . $m[1] . '>' . $constraint . ')';
         }, $route), $routes);

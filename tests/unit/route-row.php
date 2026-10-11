@@ -55,4 +55,16 @@ return [
             && array_keys($rows[0]->toArray()['args']) === ['context']
             ? true : json_encode($data);
     },
+    'a constraint may hold braces of its own, as a quantifier does' => static function () {
+        $route = new Route(Method::Delete, '/minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}');
+        $forms = Minn\Rest\EngineRoutes::forms('/minn-admin/v1/users/{id:\d+}/sessions/{verifier:[a-f0-9]{40,64}}');
+        return $route->regex() === '#^/minn\-admin/v1/users/(?P<id>\d+)/sessions/(?P<verifier>[a-f0-9]{40,64})$#'
+            && preg_match($route->regex(), '/minn-admin/v1/users/1/sessions/' . str_repeat('a', 64)) === 1
+            && preg_match($route->regex(), '/minn-admin/v1/users/1/sessions/abc') === 0
+            && $forms === ['/minn-admin/v1/users/(?P<id>\d+)/sessions/(?P<verifier>[a-f0-9]{40,64})']
+            ? true : json_encode([$route->regex(), $forms]);
+    },
+    'the batch route belongs to no namespace' => static fn () => Minn\Rest\RouteCatalogue::namespaceOf('/batch/v1') === ''
+        && Minn\Rest\RouteCatalogue::namespaceOf('/wp/v2/posts') === 'wp/v2'
+        && Minn\Rest\RouteCatalogue::namespaceOf('/oembed/1.0/embed') === 'oembed/1.0',
 ];

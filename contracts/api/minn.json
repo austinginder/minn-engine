@@ -66294,7 +66294,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Route.php",
-            "lines": 74,
+            "lines": 75,
             "doc": "Declares a handler method as a route. The policy lives here, as\nmetadata the router enforces before the handler runs, so the\nauthorization surface of the engine is a grep away; a route with no\npolicy is one the ratchet in the style suite counts down. The parameter\nsets it reads live here too, judged before the policy is (the reference\nrefuses a bad argument before it refuses a caller), so the REST index can\ntell a client what a route takes as well as what it requires of them.\n\nPatterns: \"/wp/v2/posts/{id}\" captures one segment, \"{id:\\d+}\" constrains\nit, and \"/{path*}\" captures the rest of the path (slashes included).",
             "implements": [],
             "extends": null,
@@ -66568,7 +66568,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 73,
-                    "end": 94
+                    "end": 95
                 }
             ]
         },
@@ -103593,7 +103593,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RouteCatalogue.php",
-            "lines": 61,
+            "lines": 78,
             "doc": "The routes the engine serves, described in the reference's shape for the\nindex and for an OPTIONS request: every route's namespace, its methods\nand the parameters it declares, gathered per concrete route from the\nattributes so a client learns what really works on it, with the\nnamespaces they fall under. Routes are keyed as the reference spells them\n('/wp/v2/posts/(?P<id>[\\d]+)').",
             "implements": [],
             "extends": null,
@@ -103635,11 +103635,18 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 22,
+                "end": 24
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "SERVER_ROUTES",
+                    "value": "array (   0 => '/batch/v1', )",
+                    "doc": "The routes the reference's server registers itself, outside any namespace.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "router",
@@ -103681,8 +103688,28 @@
                         "@return array{namespaces: list<string>, routes: array<string, array<string, mixed>>}"
                     ],
                     "params": [],
-                    "line": 29,
-                    "end": 60
+                    "line": 32,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "namespaceOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "namespaceOf(string $route): string",
+                    "doc": "The namespace a route is listed under: its first two segments when the\nsecond is a version. The routes the reference's server registers\nitself, the batch route among them, belong to none, so none is listed\nfor them and their path answers no namespace index.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "route",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -103703,8 +103730,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 76
+                    "line": 85,
+                    "end": 93
                 }
             ]
         },

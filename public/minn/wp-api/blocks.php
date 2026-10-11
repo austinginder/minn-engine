@@ -197,11 +197,18 @@ function _minn_resolve_pattern_blocks(array $blocks, array $open): array
                 continue;
             }
             $open[$slug] = true;
-            $resolved = _minn_resolve_pattern_blocks(parse_blocks($markup), $open);
-            // A pattern of one block names itself on that block (probe block-helpers-remaining).
+            // The pattern's markup is trimmed first, so the white space around its blocks makes no blocks (probe rest-block-patterns).
+            $resolved = _minn_resolve_pattern_blocks(parse_blocks(trim($markup)), $open);
+            // A pattern of one block names itself on that block: its slug, title, and its description and categories when it has them (probes block-helpers-remaining, rest-block-patterns).
             if (count($resolved) === 1 && is_array($resolved[0])) {
-                $title = WP_Block_Patterns_Registry::get_instance()->get_registered($slug)['title'] ?? null;
-                $resolved[0]['attrs']['metadata'] = array_merge((array) ($resolved[0]['attrs']['metadata'] ?? []), ['patternName' => $slug], $title === null ? [] : ['name' => $title]);
+                $pattern = WP_Block_Patterns_Registry::get_instance()->get_registered($slug) ?? [];
+                $named = ['patternName' => $slug];
+                foreach (['title' => 'name', 'description' => 'description', 'categories' => 'categories'] as $field => $key) {
+                    if (!empty($pattern[$field])) {
+                        $named[$key] = $pattern[$field];
+                    }
+                }
+                $resolved[0]['attrs']['metadata'] = array_merge((array) ($resolved[0]['attrs']['metadata'] ?? []), $named);
             }
             array_push($out, ...$resolved);
             unset($open[$slug]);

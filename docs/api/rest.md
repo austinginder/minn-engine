@@ -54,7 +54,7 @@ the wp/v2 surface: shapes and controllers
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
 | [`RevisionsController`](#revisionscontroller) | final readonly class | 139 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
-| [`RouteCatalogue`](#routecatalogue) | final readonly class | 61 | The routes the engine serves, described in the reference's shape for the |
+| [`RouteCatalogue`](#routecatalogue) | final readonly class | 78 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
@@ -2333,6 +2333,8 @@ attributes so a client learns what really works on it, with the
 namespaces they fall under. Routes are keyed as the reference spells them
 ('/wp/v2/posts/(?P<id>[\d]+)').
 
+- const `SERVER_ROUTES` = `array (   0 => '/batch/v1', )` — The routes the reference's server registers itself, outside any namespace.
+
 Used by: `Minn\Rest\Api`, `Minn\Rest\IndexController`
 
 ```php
@@ -2346,6 +2348,13 @@ Every route the engine serves, the root and each namespace's index
 among them, and the namespaces.
 
 - `@return array{namespaces: list<string>, routes: array<string, array<string, mixed>>}`
+
+### static `namespaceOf(string $route): string`
+
+The namespace a route is listed under: its first two segments when the
+second is a version. The routes the reference's server registers
+itself, the batch route among them, belong to none, so none is listed
+for them and their path answers no namespace index.
 
 ### `describing(string $path): ?array`
 

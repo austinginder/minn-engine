@@ -32,7 +32,7 @@ request, response, routing, and the outgoing client
 | [`RequestFailed`](#requestfailed) | final class | 7 | Thrown by Exchange::throw() when no response arrived or it was not a 2xx; the exchange rides along. |
 | [`RequestsNames`](#requestsnames) | final class | 18 | The Requests library's PSR-0 class names (Requests_Exception_HTTP_404, |
 | [`Response`](#response) | final readonly class | 123 | What a handler returns. Nothing is written to the client until the |
-| [`Route`](#route) | final readonly class | 74 | Declares a handler method as a route. The policy lives here, as |
+| [`Route`](#route) | final readonly class | 75 | Declares a handler method as a route. The policy lives here, as |
 | [`RouteMiss`](#routemiss) | final class | 3 | A handler declining a request its pattern matched: the router swallows |
 | [`RouteParams`](#routeparams) | interface | 10 | The parameters a route takes when they depend on what its captures name |
 | [`RouteRow`](#routerow) | final readonly class | 81 | One line of the route table: what a route is, who it is for, and what it |

@@ -14464,3 +14464,58 @@ The probes found two gaps elsewhere, both fixed:
   engine kept the domain out at both levels. `I18n\TextDomains::accept()` now
   records what `load_textdomain()` loaded, and the global functions read
   `opened()`; the controller still reads `has()`.
+
+## The core REST routes, part one: the survey, block patterns, and a widget preview (2026-10-11)
+
+`create_initial_rest_routes()` is the last real function without a proof.
+Comparing the REST index route by route, WordPress has 260 routes and the
+engine 222. The 41 that only WordPress has:
+
+- **26 belong to controllers that are already dead ends.** Site Health is
+  admin (D6). The editor's block and pattern directories, font library
+  (collections, families, faces), site export, navigation fallback, and the
+  template and template-part autosaves and revisions are editor dead ends.
+  The engine leaves these out on purpose.
+- **16 are real gaps on real classes:**
+  - block patterns and their categories, 2 (done here);
+  - the widget-type render, 1 (done here);
+  - the single autosave for posts, pages and blocks, plus navigation and
+    menu-item autosaves, 7;
+  - navigation revisions, 2;
+  - media edit, post-process, sideload and finalize, 4.
+
+The proof comes once these are in: a probe registers the core routes onto a
+fresh `WP_REST_Server` and compares the route table, routes and methods,
+leaving out the dead-end controllers' routes.
+
+Landed here (probe rest-block-patterns):
+
+- **Block patterns.** `WP_REST_Block_Patterns_Controller` and
+  `WP_REST_Block_Pattern_Categories_Controller` are registered. Both are
+  compared with remote patterns off, which D12 leaves out.
+  `prepare_item_for_response()` writes out the patterns a pattern names, as
+  the reference does. `resolve_pattern_blocks()` now matches it in two ways:
+  - It trims a nested pattern's markup first, so the white space around its
+    blocks makes no blocks.
+  - The one block a pattern makes is named with the pattern's slug and title,
+    and also its description and categories when they're non-empty. Any
+    metadata the block already has is kept in place.
+- **A legacy widget's preview.** `POST widget-types/{id}/render` is
+  registered on the facade controller alone, since the engine's
+  `SidebarsController` answers the other widget-types routes. Its page now
+  has the reference's skeleton, white space included: the `#page` and
+  `#content` wrappers, and the reset styles after `wp_head()`.
+- **The batch route belongs to no namespace**, as on the reference.
+  `/batch/v1` is POST only, a GET answers `rest_no_route`, and the index no
+  longer lists a `batch/v1` namespace (`RouteCatalogue::namespaceOf()`).
+- **Route patterns with braces inside a constraint.** The router and the
+  index stopped a capture at the first `}`, so
+  `{verifier:[a-f0-9]{40,64}}` compiled to a pattern that never matched.
+  Minn Admin's own registration of that route covered for it. A constraint
+  may now hold one level of braces.
+
+Found and left for later: 96 of the 218 shared routes describe their
+endpoints differently in the index. The reference lists one endpoint per
+method group, each with its arguments; the engine merges each route into one
+endpoint, and many of its own routes list no arguments. Some Minn Admin routes
+also list only GET where the reference lists GET and POST.

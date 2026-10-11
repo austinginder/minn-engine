@@ -16,6 +16,9 @@ use Minn\Http\Router;
  */
 final readonly class RouteCatalogue
 {
+    /** The routes the reference's server registers itself, outside any namespace. */
+    private const SERVER_ROUTES = ['/batch/v1'];
+
     public function __construct(private Router $router, private Types $types, private RestUrl $url)
     {
     }
@@ -42,7 +45,7 @@ final readonly class RouteCatalogue
                 if ($route === '/') {
                     continue;
                 }
-                $namespace = preg_match('#^/([^/]+/(?:v\d+|\d+\.\d+))#', $route, $m) ? $m[1] : '';
+                $namespace = self::namespaceOf($route);
                 if ($namespace !== '' && !in_array($namespace, $namespaces, true)) {
                     $namespaces[] = $namespace;
                     $routes['/' . $namespace] = ['namespace' => $namespace, 'methods' => ['GET'], 'endpoints' => [['methods' => ['GET'], 'args' => ['namespace' => ['default' => $namespace, 'required' => false], 'context' => ['default' => 'view', 'required' => false]]]], '_links' => ['self' => [['href' => $this->url->to('/' . $namespace)]]]];
@@ -57,6 +60,20 @@ final readonly class RouteCatalogue
             }
         }
         return ['namespaces' => $namespaces, 'routes' => $routes];
+    }
+
+    /**
+     * The namespace a route is listed under: its first two segments when the
+     * second is a version. The routes the reference's server registers
+     * itself, the batch route among them, belong to none, so none is listed
+     * for them and their path answers no namespace index.
+     */
+    public static function namespaceOf(string $route): string
+    {
+        if (in_array($route, self::SERVER_ROUTES, true)) {
+            return '';
+        }
+        return preg_match('#^/([^/]+/(?:v\d+|\d+\.\d+))#', $route, $m) === 1 ? $m[1] : '';
     }
 
     /**

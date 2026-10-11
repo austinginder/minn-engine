@@ -855,9 +855,14 @@ function rest_output_rsd()
 function create_initial_rest_routes()
 {
     // The engine answers most of wp/v2 itself; these routes are served by their controller classes (probes abilities-rest-controllers, icons, rest-view-config, type-object-sharing, rest-embed-details).
-    foreach ([new WP_REST_Post_Types_Controller(), new WP_REST_Taxonomies_Controller(), new WP_REST_Icons_Controller(), new WP_REST_Icon_Collections_Controller(), new WP_REST_View_Config_Controller(), new WP_REST_URL_Details_Controller(), new WP_REST_Abilities_V1_Categories_Controller(), new WP_REST_Abilities_V1_Run_Controller(), new WP_REST_Abilities_V1_List_Controller()] as $controller) {
+    foreach ([new WP_REST_Post_Types_Controller(), new WP_REST_Taxonomies_Controller(), new WP_REST_Icons_Controller(), new WP_REST_Icon_Collections_Controller(), new WP_REST_View_Config_Controller(), new WP_REST_URL_Details_Controller(), new WP_REST_Abilities_V1_Categories_Controller(), new WP_REST_Abilities_V1_Run_Controller(), new WP_REST_Abilities_V1_List_Controller(), new WP_REST_Block_Patterns_Controller(), new WP_REST_Block_Pattern_Categories_Controller()] as $controller) {
         $controller->register_routes();
     }
+    // A legacy widget's preview page is the controller class's; the other widget-types routes are the engine's own (Rest\SidebarsController).
+    $widgets = new WP_REST_Widget_Types_Controller();
+    register_rest_route('wp/v2', '/widget-types/(?P<id>[a-zA-Z0-9_-]+)/render', [
+        ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$widgets, 'get_item_permissions_check'], 'callback' => [$widgets, 'render'], 'args' => ['id' => ['description' => __('The widget type id.'), 'type' => 'string'], 'instance' => ['description' => __('Current instance settings of the widget.'), 'type' => 'object']]],
+    ]);
 }
 
 /** @internal the subtypes a search request names among a handler's: every one of them for "any" (probe rest-search-handlers) */

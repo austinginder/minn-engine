@@ -85,6 +85,10 @@ class WP_REST_Block_Patterns_Controller extends WP_REST_Controller
                 $data[$rest_key] = $item[$item_key];
             }
         }
+        // The patterns a pattern names are written out in its content (probe rest-block-patterns).
+        if (isset($data['content'])) {
+            $data['content'] = serialize_blocks(resolve_pattern_blocks(parse_blocks($data['content'])));
+        }
         return rest_ensure_response($data);
     }
 

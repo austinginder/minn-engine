@@ -186,21 +186,25 @@ class WP_REST_Widget_Types_Controller extends WP_REST_Controller
         return rest_ensure_response(['form' => trim($form), 'preview' => trim($preview), 'instance' => $encoded]);
     }
 
-    /** A whole preview page with the widget in it, as the editor shows a legacy widget. */
+    /**
+     * A whole preview page with the widget in it, as the editor shows a
+     * legacy widget: the reference's page skeleton, white space and all,
+     * with the head's styles reset after wp_head() (probe rest-block-patterns).
+     */
     public function render($request)
     {
         $instance = $this->minn_instance($request);
         ob_start();
-        echo '<!doctype html><html ', get_language_attributes(), '><head><meta charset="', esc_attr(get_bloginfo('charset')), '" /><meta name="viewport" content="width=device-width, initial-scale=1" />';
+        echo "\t\t<!doctype html>\n\t\t<html ", get_language_attributes(), ">\n\t\t<head>\n\t\t\t<meta charset=\"", esc_attr(get_bloginfo('charset')), "\" />\n\t\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n\t\t\t<link rel=\"profile\" href=\"https://gmpg.org/xfn/11\" />\n\t\t\t";
         wp_head();
-        echo '</head><body ', 'class="' . esc_attr(implode(' ', get_body_class())) . '"', '><div class="widget">';
+        echo "\t\t\t<style>\n\t\t\t\t/* Reset theme styles */\n\t\t\t\thtml, body, #page, #content {\n\t\t\t\t\tpadding: 0 !important;\n\t\t\t\t\tmargin: 0 !important;\n\t\t\t\t}\n\t\t\t</style>\n\t\t</head>\n\t\t<body ", 'class="' . esc_attr(implode(' ', get_body_class())) . '"', ">\n\t\t<div id=\"page\" class=\"site\">\n\t\t\t<div id=\"content\" class=\"site-content\">\n\t\t\t\t";
         $widget = $GLOBALS['wp_widget_factory']->get_widget_object($request['id']);
         if ($widget && !is_wp_error($instance)) {
             the_widget(get_class($widget), $instance);
         }
-        echo '</div>';
+        echo "\t\t\t</div><!-- #content -->\n\t\t</div><!-- #page -->\n\t\t";
         wp_footer();
-        echo '</body></html>';
+        echo "\t\t</body>\n\t\t</html>\n\t\t";
         return ['preview' => ob_get_clean()];
     }
 

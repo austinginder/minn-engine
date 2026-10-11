@@ -72,7 +72,8 @@ final readonly class Route
     /** The pattern as a regular expression with named captures. */
     public function regex(): string
     {
-        $parts = preg_split('/\{(\w+(?:\*|:[^}]+)?)\}/', $this->pattern, -1, PREG_SPLIT_DELIM_CAPTURE);
+        // A constraint may hold one level of braces itself, as a quantifier does: "{verifier:[a-f0-9]{40,64}}".
+        $parts = preg_split('/\{(\w+(?:\*|:(?:[^{}]|\{[^{}]*\})+)?)\}/', $this->pattern, -1, PREG_SPLIT_DELIM_CAPTURE);
         $regex = '';
         foreach ($parts as $index => $part) {
             if ($index % 2 === 0) {

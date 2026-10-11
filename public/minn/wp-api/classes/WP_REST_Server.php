@@ -6,6 +6,7 @@ use Minn\Http\Request;
 use Minn\Rest\Api;
 use Minn\Rest\BatchRequest;
 use Minn\Rest\Links;
+use Minn\Rest\RouteCatalogue;
 use Minn\Rest\RouteIndex;
 use Minn\Rest\RouteMatch;
 use Minn\Rest\RouteTable;
@@ -183,7 +184,7 @@ class WP_REST_Server
             $methods = in_array('*', $methods, true) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : $methods;
             $this->engine_endpoints[$route] = [
                 ['methods' => implode(',', $methods), 'callback' => [$this, 'engine_callback'], 'permission_callback' => '__return_true', 'args' => []],
-                'namespace' => preg_match('#^/([^/]+/v\d+)#', $route, $m) ? $m[1] : '',
+                'namespace' => RouteCatalogue::namespaceOf($route),
             ];
         }
         return $this->engine_endpoints;

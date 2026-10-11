@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 799,
-        "composes": 2380,
-        "leaf": 1042,
+        "composes": 2381,
+        "leaf": 1041,
         "noop": 2756,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8671,
-        "minnMethods": 994,
+        "minnMethods": 995,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -19369,12 +19369,15 @@
         },
         "WP_REST_Block_Patterns_Controller::prepare_item_for_response": {
             "file": "classes/WP_REST_Block_Patterns_Controller.php",
-            "lines": 10,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "parse_blocks",
+                "resolve_pattern_blocks",
                 "rest_ensure_response",
-                "rest_is_field_included"
+                "rest_is_field_included",
+                "serialize_blocks"
             ]
         },
         "WP_REST_Block_Patterns_Controller::register_routes": {
@@ -23099,6 +23102,7 @@
             "minn": [
                 "Minn\\Http\\Request::__construct",
                 "Minn\\Rest\\Api::forRequest",
+                "Minn\\Rest\\RouteCatalogue::namespaceOf",
                 "Minn\\Runtime\\Runtime::booted",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db",
@@ -38052,7 +38056,7 @@
         },
         "_minn_resolve_pattern_blocks": {
             "file": "blocks.php",
-            "lines": 33,
+            "lines": 40,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -44276,10 +44280,13 @@
         },
         "create_initial_rest_routes": {
             "file": "rest-api.php",
-            "lines": 4,
-            "kind": "leaf",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
         },
         "create_initial_taxonomies": {
             "file": "taxonomy.php",
