@@ -14213,3 +14213,44 @@ Array forms leave out what is unset; a function response keeps its response.
 **Not carried yet:** the SDK's abstract provider classes, so an AI provider
 plugin cannot register on Minn. The registry refuses every registration. Core
 ships no provider, so a stock site answers exactly as WordPress does.
+
+## What the boot sets up, run again (2026-10-11)
+
+Probe `boot-defaults`. These run once at boot on both stacks, so the probe
+calls them again and compares what a second run does.
+
+- **`wp_cookie_constants()` and `wp_plugin_directory_constants()`** are
+  silent, and the constants are the reference's.
+  - `COOKIE_DOMAIN` was false on the engine and `''` on the reference; it is
+    now `''`.
+  - `COOKIEHASH` and the cookie names follow the site URL.
+- **`_wp_connectors_init()`** makes a connector registry of its own and asks
+  `WP_Connector_Registry::set_instance()` to install it. Outside `init` that
+  is refused with "The connector registry instance must be set during the
+  init action.", and the instance is kept. The new registry still gets the
+  default AI providers and is handed to `wp_connectors_init`. The engine used
+  the instance itself; it now matches.
+- **`_wp_register_default_icon_collections()`** is refused: "Icon collection
+  is already registered."
+- **`register_core_block_types_from_metadata()`** (new) re-registers the 27
+  core blocks the reference registers from their metadata alone: the static
+  blocks, less details, page-list-item and paragraph. Each is refused as
+  already registered, by name, in order.
+- **`spawn_cron()`** now matches the reference instead of running events in
+  place.
+  - With an event due and no lock younger than `WP_CRON_LOCK_TIMEOUT`, it
+    takes the `doing_cron` lock, whose key is the request's.
+  - It passes `{url, key, args}` through `cron_request`; the args are
+    timeout 0.01, non-blocking, and `sslverify` from `https_local_ssl_verify`
+    (false).
+  - It POSTs to `wp-cron.php?doing_wp_cron={key}`, and the engine's own Cron
+    serves that request.
+  - It is false when nothing is due or the lock holds.
+- **`wp_cron()`** is left as it is. The reference hooks `_wp_cron` on
+  `shutdown`, which spawns that loopback. The engine runs due events after
+  the response under its own lock (`_wp_cron` was left out, Austin
+  2026-10-09), and its `wp_cron()` runs them at once.
+
+A note for probes: calling the reference's `wp_cron()` leaves `_wp_cron`
+hooked on `shutdown`, and it then sends a real loopback after the probe's
+filters are gone. Unhook it, or don't call `wp_cron()`.

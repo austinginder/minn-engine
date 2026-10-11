@@ -92,6 +92,18 @@ function _minn_register_core_block(string $name): void
     }
 }
 
+/**
+ * The core blocks registered from their metadata alone, as the reference
+ * lists them (probe boot-defaults): the static blocks, less details,
+ * page-list-item and paragraph. Each is refused while it is registered.
+ */
+function register_core_block_types_from_metadata()
+{
+    foreach (['accordion-heading', 'accordion-panel', 'audio', 'buttons', 'code', 'column', 'columns', 'embed', 'freeform', 'group', 'html', 'list-item', 'math', 'missing', 'more', 'nextpage', 'preformatted', 'pullquote', 'quote', 'separator', 'social-links', 'spacer', 'tab-panels', 'table', 'terms-query', 'text-columns', 'verse'] as $name) {
+        _minn_register_core_block("core/{$name}");
+    }
+}
+
 /** @internal a core block rendered by the engine's own renderer, with the wrapper classes the engine gives it */
 function _minn_render_core_block(WP_Block $block, string $content = '', bool $filtered = true): string
 {

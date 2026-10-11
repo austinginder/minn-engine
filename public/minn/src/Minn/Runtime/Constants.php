@@ -42,7 +42,7 @@ final class Constants
             'COOKIEHASH' => md5($siteUrl),
             'COOKIEPATH' => rtrim((string) (parse_url((string) ($runtime->site->option('home') ?? ''), PHP_URL_PATH) ?: ''), '/') . '/',
             'SITECOOKIEPATH' => rtrim((string) (parse_url($siteUrl, PHP_URL_PATH) ?: ''), '/') . '/',
-            'COOKIE_DOMAIN' => false,
+            'COOKIE_DOMAIN' => '',
             'WP_ADMIN' => $runtime->isAdmin,
             'MINN_RUNTIME' => true,
         ];

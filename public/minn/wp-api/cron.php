@@ -228,9 +228,25 @@ function wp_get_ready_cron_jobs()
     return CronTable::due(_get_cron_array(), time());
 }
 
+/**
+ * A loopback request that runs the due events (probe boot-defaults): with an
+ * event due and no lock younger than WP_CRON_LOCK_TIMEOUT, the lock is taken
+ * (the doing_cron transient, the request's key) and a non-blocking POST goes
+ * to wp-cron.php?doing_wp_cron={key}, through cron_request. False when
+ * nothing is due or the lock holds. The engine's own Cron serves the request.
+ */
 function spawn_cron($gmt_time = 0)
 {
-    return wp_cron() !== false;
+    $now = $gmt_time ? (float) $gmt_time : microtime(true);
+    $lock = (float) get_transient('doing_cron');
+    $due = array_keys(wp_get_ready_cron_jobs());
+    if (wp_doing_cron() || ($lock > 0 && $lock + WP_CRON_LOCK_TIMEOUT > $now && $lock <= $now + 10 * MINUTE_IN_SECONDS) || $due === [] || $due[0] > $now) {
+        return false;
+    }
+    $key = sprintf('%.22F', $now);
+    set_transient('doing_cron', $key);
+    $request = apply_filters('cron_request', ['url' => add_query_arg('doing_wp_cron', $key, site_url('wp-cron.php')), 'key' => $key, 'args' => ['timeout' => 0.01, 'blocking' => false, 'sslverify' => apply_filters('https_local_ssl_verify', false)]], $key);
+    return !is_wp_error(wp_remote_post($request['url'], $request['args']));
 }
 
 function wp_cron()

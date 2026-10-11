@@ -28,9 +28,15 @@ function _wp_connectors_register_default_ai_providers(WP_Connector_Registry $reg
     $registry->store()->registerDefaults(static fn (string $file): bool => is_plugin_active($file));
 }
 
+/**
+ * A connector registry of its own, made the instance (only while init runs;
+ * otherwise refused, and the instance kept), given the default AI providers,
+ * then handed to wp_connectors_init (probe boot-defaults).
+ */
 function _wp_connectors_init(): void
 {
-    $registry = WP_Connector_Registry::get_instance();
+    $registry = new WP_Connector_Registry();
+    WP_Connector_Registry::set_instance($registry);
     _wp_connectors_register_default_ai_providers($registry);
     do_action('wp_connectors_init', $registry);
 }
