@@ -475,14 +475,75 @@ function render_block_core_pattern($attributes)
     return _minn_render_core_callback('core/pattern', ...func_get_args());
 }
 
+/** A playlist of its tracks with attachments, made interactive; none gives nothing (probe playlist-block). */
 function render_block_core_playlist($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/playlist', $attributes, $content, $block);
+    $tracks = [];
+    foreach ($block instanceof WP_Block ? (array) $block->parsed_block['innerBlocks'] : [] as $inner) {
+        if (($inner['blockName'] ?? '') === 'core/playlist-track') {
+            $tracks[] = (array) ($inner['attrs'] ?? []);
+        }
+    }
+    return _minn_playlist((array) $attributes, (string) $content, $tracks);
 }
 
+/** A track's button: its image (unless the playlist hides images), title, artist and length, and the play label (probe playlist-block). */
 function render_block_core_playlist_track($attributes, $content = '', $block = null)
 {
-    return _minn_render_core_callback('core/playlist-track', $attributes, $content, $block);
+    $images = !$block instanceof WP_Block || ($block->context['showImages'] ?? true) !== false;
+    $image = $images && !empty($attributes['image']) ? '<img class="wp-block-playlist-track__image" src="' . esc_url((string) $attributes['image']) . '" alt="' . esc_attr((string) ($attributes['imageAlt'] ?? '')) . '" />' : '';
+    $artist = empty($attributes['artist']) ? '' : '<span class="wp-block-playlist-track__artist">' . esc_html((string) $attributes['artist']) . '</span>';
+    $length = empty($attributes['length']) ? '' : '<span class="wp-block-playlist-track__length"><span class="screen-reader-text">' . esc_html__('Duration:') . ' </span>' . esc_html((string) $attributes['length']) . '</span>';
+    $title = '<span class="wp-block-playlist-track__title">' . esc_html((string) (($attributes['title'] ?? '') ?: __('Unknown title'))) . '</span>';
+    return '<li ' . get_block_wrapper_attributes() . '><button data-wp-on--click="actions.changeTrack" data-wp-bind--aria-current="state.isCurrentTrack" class="wp-block-playlist-track__button">' . $image . '<span class="wp-block-playlist-track__content">' . $title . $artist . '</span>' . $length . '<span class="screen-reader-text" data-wp-text="state.trackButtonActionLabel">' . esc_html__('Play') . '</span></button></li>';
+}
+
+/**
+ * @internal A playlist's markup made interactive: its tracks (those with an
+ * attachment) in the core/playlist state under an id of its own, the figure
+ * given the playlist's context, each track button its own, and the waveform
+ * player first inside the figure.
+ */
+function _minn_playlist(array $attributes, string $content, array $tracks): string
+{
+    $tracks = array_values(array_filter($tracks, static fn (array $track): bool => !empty($track['id'])));
+    if ($tracks === []) {
+        return '';
+    }
+    $id = wp_unique_id('playlist-');
+    $state = [];
+    foreach ($tracks as $index => $track) {
+        $state["track-{$index}"] = _minn_playlist_track_state($track);
+    }
+    wp_interactivity_state('core/playlist', ['playlists' => [$id => ['tracks' => $state]]]);
+    $tags = new WP_HTML_Tag_Processor($content);
+    _minn_set_attributes($tags, ['tag_name' => 'figure'], ['data-wp-interactive' => 'core/playlist', 'data-wp-context' => wp_json_encode(['playlistId' => $id, 'currentId' => 'track-0', 'isPlaying' => false, 'tracks' => array_keys($state), 'waveformStyle' => $attributes['waveformStyle'] ?? 'bars', 'showPlayButtonArtwork' => (bool) ($attributes['showPlayButtonArtwork'] ?? false), 'labelPauseTrack' => __('Pause'), 'labelSelectTrack' => __('Play')])]);
+    for ($index = 0; $tags->next_tag(['tag_name' => 'button', 'class_name' => 'wp-block-playlist-track__button']); $index++) {
+        $tags->set_attribute('data-wp-context', wp_json_encode(['trackId' => "track-{$index}"]));
+    }
+    $player = '<div class="wp-block-playlist__waveform-player"' . "\n\t\t" . 'data-wp-watch="callbacks.initWaveformPlayer"' . "\n\t\t" . 'data-label-play="' . esc_attr__('Play') . '"' . "\n\t\t" . 'data-label-pause="' . esc_attr__('Pause') . '"' . "\n\t\t" . 'data-label-seek="' . esc_attr__('Seek') . '"' . "\n\t\t" . 'data-label-seek-value="' . esc_attr__('%1$s of %2$s') . '"' . "\n\t" . '></div>';
+    return _minn_after_tag($tags->get_updated_html(), 'FIGURE', $player);
+}
+
+/** @internal what the playlist state knows of a track: its own attributes, its title or "Unknown title", and a label naming the artist and album when it has both */
+function _minn_playlist_track_state(array $track): array
+{
+    $title = (string) (($track['title'] ?? '') ?: __('Unknown title'));
+    $artist = (string) ($track['artist'] ?? '');
+    $album = (string) ($track['album'] ?? '');
+    $label = $artist !== '' && $album !== '' ? sprintf(__('%1$s by %2$s from the album %3$s'), $title, $artist, $album) : $title;
+    return ['url' => (string) ($track['src'] ?? ''), 'title' => $title, 'artist' => $artist, 'album' => $album, 'image' => (string) ($track['image'] ?? ''), 'imageAlt' => (string) ($track['imageAlt'] ?? ''), 'ariaLabel' => $label];
+}
+
+/** @internal the text put just after the first tag of a name (a tag inside a script or comment is not one); the markup as it was without one */
+function _minn_after_tag(string $html, string $tag, string $text): string
+{
+    $tags = new Minn\Html\Tags($html);
+    if (!$tags->nextTag(['tag_name' => $tag])) {
+        return $html;
+    }
+    $end = $tags->tokenSpan()[1];
+    return substr($html, 0, $end) . $text . substr($html, $end);
 }
 
 function render_block_core_post_author($attributes, $content, $block)
@@ -1363,15 +1424,12 @@ function _minn_register_block_renderers(MinnRenderer $renderer): void
         'core/comments-pagination-previous' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_comments_pagination_link('previous', $block->attrs, _minn_comment_page_context($renderer), _minn_wrapper_attributes('a', 'wp-block-comments-pagination-previous', $block)),
         'core/comments-pagination-next' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_comments_pagination_link('next', $block->attrs, _minn_comment_page_context($renderer), _minn_wrapper_attributes('a', 'wp-block-comments-pagination-next', $block)),
         'core/comments-pagination-numbers' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_comments_pagination_numbers(_minn_comment_page_context($renderer), _minn_wrapper_attributes('div', 'wp-block-comments-pagination-numbers', $block)),
-        'core/comment-edit-link' => static function (MinnBlock $block, MinnRenderer $renderer): string {
-            $comment = $renderer->context()->comment();
-            $link = $comment === null ? '' : _minn_comment_edit_anchor($block->attrs, (int) $comment->id);
-            $align = (string) $block->attr('textAlign', '');
-            return $link === '' ? '' : Wrapper::open('div', 'wp-block-comment-edit-link', $block, extraClasses: $align === '' ? [] : ['has-text-align-' . $align]) . $link . '</div>';
-        },
+        'core/comment-edit-link' => '_minn_block_comment_edit_link',
         'core/tab-list' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, _minn_tab_list($block->attrs, _minn_inner_html($block, $renderer), $renderer->blockContext())),
         'core/tab-panel' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, _minn_tab_panel($block->attrs, _minn_inner_html($block, $renderer), $renderer->blockContext())),
         'core/icon' => '_minn_block_icon',
+        'core/playlist' => '_minn_block_playlist',
+        'core/playlist-track' => '_minn_block_playlist_track',
         'core/terms-query' => '_minn_block_terms_query',
         'core/term-template' => '_minn_block_term_template',
     ];
@@ -1420,13 +1478,43 @@ function _minn_wrapper_attributes(string $tag, string $blockClass, MinnBlock $bl
     return trim(substr(Wrapper::open($tag, $blockClass, $block), strlen($tag) + 1, -1));
 }
 
+/** @internal a comment's edit link in a page, for the comment in scope; nothing without one */
+function _minn_block_comment_edit_link(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $comment = $renderer->context()->comment();
+    $link = $comment === null ? '' : _minn_comment_edit_anchor($block->attrs, (int) $comment->id);
+    $align = (string) $block->attr('textAlign', '');
+    return $link === '' ? '' : Wrapper::open('div', 'wp-block-comment-edit-link', $block, extraClasses: $align === '' ? [] : ['has-text-align-' . $align]) . $link . '</div>';
+}
+
 /** @internal an icon in a page: rendered as the reference renders it, its wrapper from the block supports (the ones it skips stay off) */
 function _minn_block_icon(MinnBlock $block): string
 {
+    return _minn_as_rendered(['blockName' => 'core/icon', 'attrs' => $block->attrs], static fn (): string => render_block_core_icon($block->attrs));
+}
+
+/** @internal a playlist in a page: its tracks rendered with the artists and images it shows, then made interactive */
+function _minn_block_playlist(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $content = $renderer->providing(['showArtists' => $block->attr('showArtists', true), 'showImages' => $block->attr('showImages', true)], static fn (): string => _minn_inner_html($block, $renderer));
+    $tracks = array_map(static fn (MinnBlock $inner): array => $inner->attrs, array_filter($block->innerBlocks, static fn (MinnBlock $inner): bool => $inner->name === 'core/playlist-track'));
+    return _minn_playlist($block->attrs, $content, $tracks);
+}
+
+/** @internal a track in a page, with the context its playlist provides */
+function _minn_block_playlist_track(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $parsed = ['blockName' => 'core/playlist-track', 'attrs' => $block->attrs, 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []];
+    return _minn_as_rendered($parsed, static fn (): string => render_block_core_playlist_track($block->attrs, '', new WP_Block($parsed, $renderer->blockContext())));
+}
+
+/** @internal a facade render function called with this block as the one being rendered, so get_block_wrapper_attributes() reads it */
+function _minn_as_rendered(array $parsed, Closure $render): string
+{
     $parent = WP_Block_Supports::$block_to_render;
-    WP_Block_Supports::$block_to_render = ['blockName' => 'core/icon', 'attrs' => $block->attrs];
+    WP_Block_Supports::$block_to_render = $parsed;
     try {
-        return render_block_core_icon($block->attrs);
+        return (string) $render();
     } finally {
         WP_Block_Supports::$block_to_render = $parent;
     }

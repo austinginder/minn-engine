@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 814,
-        "composes": 2332,
-        "leaf": 1021,
-        "noop": 2747,
+        "minn": 815,
+        "composes": 2338,
+        "leaf": 1022,
+        "noop": 2746,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8557,
+        "functions": 8564,
         "minnMethods": 982,
         "leafLinesOver15": 12
     },
@@ -34885,6 +34885,17 @@
             "minn": [],
             "composes": []
         },
+        "_minn_after_tag": {
+            "file": "core-blocks.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Html\\Tags::__construct",
+                "Minn\\Html\\Tags::nextTag",
+                "Minn\\Html\\Tags::tokenSpan"
+            ],
+            "composes": []
+        },
         "_minn_alias_requests_class": {
             "file": "http.php",
             "lines": 13,
@@ -34973,6 +34984,13 @@
             "minn": [
                 "Minn\\Blocks\\Block::fromArray"
             ],
+            "composes": []
+        },
+        "_minn_as_rendered": {
+            "file": "core-blocks.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "_minn_asset_url": {
@@ -35207,6 +35225,17 @@
                 "wp_list_categories"
             ]
         },
+        "_minn_block_comment_edit_link": {
+            "file": "core-blocks.php",
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "_minn_comment_edit_anchor"
+            ]
+        },
         "_minn_block_comments_pagination": {
             "file": "core-blocks.php",
             "lines": 5,
@@ -35257,10 +35286,11 @@
         },
         "_minn_block_icon": {
             "file": "core-blocks.php",
-            "lines": 7,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
+                "_minn_as_rendered",
                 "render_block_core_icon"
             ]
         },
@@ -35285,6 +35315,26 @@
                 "is_user_logged_in",
                 "wp_login_form",
                 "wp_loginout"
+            ]
+        },
+        "_minn_block_playlist": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_inner_html",
+                "_minn_playlist"
+            ]
+        },
+        "_minn_block_playlist_track": {
+            "file": "core-blocks.php",
+            "lines": 2,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_as_rendered",
+                "render_block_core_playlist_track"
             ]
         },
         "_minn_block_post_author": {
@@ -36847,6 +36897,22 @@
             ],
             "composes": []
         },
+        "_minn_playlist": {
+            "file": "core-blocks.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "_minn_after_tag",
+                "_minn_playlist_track_state",
+                "_minn_set_attributes",
+                "esc_attr__",
+                "wp_interactivity_state",
+                "wp_json_encode",
+                "wp_unique_id"
+            ]
+        },
         "_minn_playlist_attachments": {
             "file": "media.php",
             "lines": 12,
@@ -36872,6 +36938,15 @@
                 "wp_get_attachment_url",
                 "wp_get_mime_types",
                 "wp_mime_type_icon"
+            ]
+        },
+        "_minn_playlist_track_state": {
+            "file": "core-blocks.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
             ]
         },
         "_minn_post_before_save": {
@@ -37154,13 +37229,10 @@
         },
         "_minn_register_block_renderers": {
             "file": "core-blocks.php",
-            "lines": 39,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Blocks\\Wrapper::open"
-            ],
+            "lines": 36,
+            "kind": "composes",
+            "minn": [],
             "composes": [
-                "_minn_comment_edit_anchor",
                 "_minn_comment_page_context",
                 "_minn_comments_pagination_link",
                 "_minn_comments_pagination_numbers",
@@ -57844,20 +57916,25 @@
         },
         "render_block_core_playlist": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_playlist"
             ]
         },
         "render_block_core_playlist_track": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "__",
+                "esc_attr",
+                "esc_html",
+                "esc_html__",
+                "esc_url",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_post_author": {

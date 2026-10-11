@@ -13591,3 +13591,46 @@ its wrapper.
 
 Owed: the playlist, which needs audio attachments and its interactivity
 state. It gets a batch of its own.
+
+## The playlist block (2026-10-11)
+
+Probe `playlist-block`. Each block's callback is swapped for one that calls
+the core function by name, over two audio attachments the probe makes. A
+page renders both natively, through the same functions; the native output,
+and the state it leaves, were checked against the reference.
+
+**`render_block_core_playlist_track()`** is one track's `li` (block-supports
+wrapper, so the track's own class comes first) holding a button. The button
+carries `data-wp-on--click="actions.changeTrack"` and
+`data-wp-bind--aria-current="state.isCurrentTrack"`, and holds, in order:
+
+- the image, unless the playlist hides images (`showImages` context);
+- the title, or "Unknown title";
+- the artist, when given. `showArtists` does not hide it;
+- the length, after a screen-reader "Duration: ";
+- a screen-reader "Play" that `data-wp-text` replaces inside a playlist.
+
+Everything comes from the block's own attributes; the attachment is not read.
+
+**`render_block_core_playlist()`** counts only tracks with an attachment id;
+with none it gives nothing. Otherwise:
+
+- its id comes from `wp_unique_id('playlist-')`, so the counter is shared;
+- each track's url, title, artist, album, image and alt go into the
+  `core/playlist` state under that id. Its `ariaLabel` is
+  "<title> by <artist> from the album <album>" when it has both, else the
+  title;
+- the figure gets `data-wp-interactive` and a context (the id, the first
+  track as current, the track ids, the waveform style, the play-button
+  artwork flag, the pause and play labels);
+- each track button gets its `trackId`;
+- the waveform player (its exact line breaks kept) goes first in the
+  figure.
+
+`order` changes nothing on the server. Directive processing at the
+interactive root then empties the play label and leaves `aria-current` off,
+as the state has no such values yet.
+
+Owed: the engine's `playlist-view.js` is still the empty module, so a
+playlist does not play in the browser. A clean-room view module is front-end
+work of its own.
