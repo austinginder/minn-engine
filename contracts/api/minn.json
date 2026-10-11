@@ -140133,7 +140133,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/WidgetAreas.php",
-            "lines": 113,
+            "lines": 184,
             "doc": "The widgets helper functions as the reference answers them (probe\nwidget-helpers): a widget id split into its base and number, a sidebar\nby id (the inactive widgets are a sidebar too, with a name and nothing\nelse), finding and moving a widget between sidebars, one widget rendered\nin its sidebar as dynamic_sidebar renders each (an unregistered widget\nrenders nothing), and the sidebars with every registered one present.",
             "implements": [],
             "extends": null,
@@ -140151,6 +140151,12 @@
                     "value": "'wp_inactive_widgets'",
                     "doc": "",
                     "visibility": "public"
+                },
+                {
+                    "name": "MAPPING_GROUPS",
+                    "value": "array (   0 =>    array (     0 => 'sidebar',     1 => 'primary',     2 => 'main',     3 => 'right',   ),   1 =>    array (     0 => 'second',     1 => 'left',   ),   2 =>    array (     0 => 'sidebar-2',     1 => 'footer',     2 => 'bottom',   ),   3 =>    array (     0 => 'header',     1 => 'top',   ), )",
+                    "doc": "The id fragments a theme switch matches sidebars by, group by group (probe sidebars-mapping).",
+                    "visibility": "private"
                 }
             ],
             "properties": [],
@@ -140334,6 +140340,82 @@
                 },
                 {
                     "routes": [],
+                    "name": "map",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "map(array $existing, array $areas, array $stored, array $registered): array",
+                    "doc": "The old theme's widget lists fitted to the new theme's sidebars\n(probe sidebars-mapping). One old sidebar and one new map straight\nacross. Otherwise a sidebar of the same id keeps its widgets; then,\ngroup by group, the new sidebars whose ids hold one of the group's\nfragments take, in order, the old ones that do (a new sidebar may take\nfrom several groups); what is left goes after the inactive widgets.\nWhen nothing is inactive then, the stored inactive widgets that are\nregistered and placed nowhere come back, keys kept.",
+                    "shapes": [
+                        "@param array<string, mixed> $existing the old theme's lists",
+                        "@param list<string> $areas the new theme's sidebars",
+                        "@param array<array-key, mixed> $stored the theme's stored inactive widgets",
+                        "@param list<string> $registered the registered widgets",
+                        "@return array<string, array<array-key, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "existing",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": "the old theme's lists"
+                        },
+                        {
+                            "name": "areas",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the new theme's sidebars"
+                        },
+                        {
+                            "name": "stored",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": "the theme's stored inactive widgets"
+                        },
+                        {
+                            "name": "registered",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the registered widgets"
+                        }
+                    ],
+                    "line": 134,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "inGroup",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "inGroup(string $id, array $fragments): bool",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $fragments"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fragments",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 184
+                },
+                {
+                    "routes": [],
                     "name": "unmentioned",
                     "static": true,
                     "visibility": "private",
@@ -140360,8 +140442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 126
+                    "line": 193,
+                    "end": 197
                 }
             ]
         },

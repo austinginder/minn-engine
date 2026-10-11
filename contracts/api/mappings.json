@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 800,
+        "minn": 801,
         "composes": 2376,
         "leaf": 1042,
         "noop": 2757,
         "placeholder": 2,
         "deadend": 1768,
-        "functions": 8667,
-        "minnMethods": 992,
+        "functions": 8668,
+        "minnMethods": 993,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -72132,6 +72132,17 @@
                 "Minn\\Runtime\\ThemeSwitch::mapLocations"
             ],
             "composes": []
+        },
+        "wp_map_sidebars_widgets": {
+            "file": "widgets.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\WidgetAreas::map"
+            ],
+            "composes": [
+                "get_theme_mod"
+            ]
         },
         "wp_mark_auto_generate_control_attributes": {
             "file": "block-supports-render.php",

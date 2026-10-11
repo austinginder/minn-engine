@@ -112,7 +112,7 @@ the WordPress runtime plugins load against
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
 | [`UserQueryRunner`](#userqueryrunner) | final class | 218 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
-| [`WidgetAreas`](#widgetareas) | final class | 113 | The widgets helper functions as the reference answers them (probe |
+| [`WidgetAreas`](#widgetareas) | final class | 184 | The widgets helper functions as the reference answers them (probe |
 
 ## Abilities
 
@@ -5534,6 +5534,7 @@ in its sidebar as dynamic_sidebar renders each (an unregistered widget
 renders nothing), and the sidebars with every registered one present.
 
 - const `INACTIVE` = `'wp_inactive_widgets'`
+- const `MAPPING_GROUPS` = `array (   0 =>    array (     0 => 'sidebar',     1 => 'primary',     2 => 'main',     3 => 'right',   ),   1 =>    array (     0 => 'second',     1 => 'left',   ),   2 =>    array (     0 => 'sidebar-2',     1 => 'footer',     2 => 'bottom',   ),   3 =>    array (     0 => 'header',     1 => 'top',   ), )` — The id fragments a theme switch matches sidebars by, group by group (probe sidebars-mapping).
 
 Used by: `Minn\Rest\SidebarsController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
 
@@ -5579,5 +5580,22 @@ registered, which go.
 - `@param list<string> $registered the registered widgets`
 - `@return array<string, list<string>>`
 
-Internals: `unmentioned()` (private, line 122)
+### static `map(array $existing, array $areas, array $stored, array $registered): array`
+
+The old theme's widget lists fitted to the new theme's sidebars
+(probe sidebars-mapping). One old sidebar and one new map straight
+across. Otherwise a sidebar of the same id keeps its widgets; then,
+group by group, the new sidebars whose ids hold one of the group's
+fragments take, in order, the old ones that do (a new sidebar may take
+from several groups); what is left goes after the inactive widgets.
+When nothing is inactive then, the stored inactive widgets that are
+registered and placed nowhere come back, keys kept.
+
+- `@param array<string, mixed> $existing the old theme's lists`
+- `@param list<string> $areas the new theme's sidebars`
+- `@param array<array-key, mixed> $stored the theme's stored inactive widgets`
+- `@param list<string> $registered the registered widgets`
+- `@return array<string, array<array-key, mixed>>`
+
+Internals: `inGroup()` (private, line 176), `unmentioned()` (private, line 193)
 

@@ -14282,3 +14282,38 @@ Probe `connector-defaults`.
 screen. Its pairing of changed lines (inline word marks for some pairs, split
 rows for others) would take a long black-box study, so it is in D17 as a
 proposed admin dead end.
+
+## The widget lists fitted to a new theme (2026-10-11)
+
+`wp_map_sidebars_widgets()` is real (probe `sidebars-mapping`,
+`Runtime\WidgetAreas::map`). It came from a run of experiments on the
+reference, each one registering a set of sidebars for a single call.
+
+- **Nothing old** gives just an empty inactive list.
+- **One old sidebar and one new** map straight across, whatever their ids.
+  Old `orphaned_widgets_*` lists don't count toward the one; their widgets go
+  to inactive. An `array_version` key does count, so it sends the call down
+  the full path.
+- **The full path:**
+  - A new sidebar of the same id keeps its widgets.
+  - **Groups of id fragments**, tried in order: sidebar/primary/main/right,
+    then second/left, then sidebar-2/footer/bottom, then header/top.
+  - **Pairing within a group.** The new sidebars whose ids hold one of the
+    group's fragments (a case-insensitive substring, ids only, never names)
+    take, in registration order, the unused non-empty old sidebars that hold
+    one, in their order. The pairing is one to one; surplus on either side
+    waits.
+  - A new sidebar may take from several groups, and may already hold its
+    same-id widgets. `sidebar-2` registered beside `primary` takes both
+    `sidebar-1`'s and `footer`'s widgets, in group order.
+  - An old sidebar that is empty is passed over. Every old sidebar left over
+    goes after the inactive widgets, in its order, with no de-duplication.
+    A missing inactive list becomes empty, and a string becomes a list.
+  - Widget lists come back reindexed.
+- **When nothing is inactive at the end of the full path**, the theme's
+  stored inactive widgets (`get_theme_mod('sidebars_widgets')['data']`) come
+  back, but only those that are registered widgets and placed nowhere, with
+  their original keys. On the test site these are block-2 to block-6.
+  The one-to-one path never does this.
+
+Dropped: a non-array old sidebar, which fatals the reference.

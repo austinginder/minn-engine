@@ -494,6 +494,14 @@ function retrieve_widgets($theme_changed = false)
     return $sidebars;
 }
 
+/** The old theme's widget lists fitted to the registered sidebars, the theme's stored inactive widgets as the fallback (Minn\Runtime\WidgetAreas::map, probe sidebars-mapping). */
+function wp_map_sidebars_widgets($existing_sidebars_widgets)
+{
+    $mod = get_theme_mod('sidebars_widgets');
+    $stored = is_array($mod) ? (array) ($mod['data']['wp_inactive_widgets'] ?? []) : [];
+    return WidgetAreas::map((array) $existing_sidebars_widgets, array_map('strval', array_keys($GLOBALS['wp_registered_sidebars'] ?? [])), $stored, array_map('strval', array_keys($GLOBALS['wp_registered_widgets'] ?? [])));
+}
+
 /** The number after the highest of a widget base's registered instances (1 when there are none), plus one. */
 function next_widget_id_number($id_base)
 {
