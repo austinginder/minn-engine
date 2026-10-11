@@ -202,6 +202,34 @@ function wp_debug_mode()
     }
 }
 
+/**
+ * The translations an early screen needs, before the options are read. It
+ * runs once per process: a first call after init only marks it done. Before
+ * init it loads the default text domain from the WPLANG constant's file (the
+ * languages folder first, then wp-includes/languages; nothing when neither
+ * has it), then builds a fresh WP_Locale (probes translations-early*).
+ */
+function wp_load_translations_early()
+{
+    global $wp_locale;
+    static $loaded = false;
+    if ($loaded) {
+        return;
+    }
+    $loaded = true;
+    if (did_action('init')) {
+        return;
+    }
+    $locale = defined('WPLANG') ? (string) WPLANG : '';
+    foreach ($locale === '' ? [] : [WP_LANG_DIR, ABSPATH . WPINC . '/languages'] as $folder) {
+        if (is_file("{$folder}/{$locale}.mo")) {
+            load_textdomain('default', "{$folder}/{$locale}.mo", $locale);
+            break;
+        }
+    }
+    $wp_locale = new WP_Locale();
+}
+
 /** The protocol the request came over: HTTP/1.1, 2, 2.0 or 3 as the server says, anything else HTTP/1.0 (probe functions-remaining). */
 function wp_get_server_protocol()
 {

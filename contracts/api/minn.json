@@ -69628,7 +69628,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/TextDomains.php",
-            "lines": 171,
+            "lines": 191,
             "doc": "The text domains this request knows: each domain's files in the order they\nwere loaded, and the domains looked for and not found (known, with no\nfiles), all in the order they first appeared, which is the order a locale\nswitch reloads them in. A lookup asks a domain's files in load order and\nthe first one with a translation answers, each under its own plural rule.\nThe registry also remembers the folder a plugin or theme named for its\ndomain (and how files there are named), and the domains unloaded for good.",
             "implements": [],
             "extends": null,
@@ -69677,6 +69677,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
+                },
+                {
+                    "name": "accepted",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
                 }
             ],
             "methods": [
@@ -69711,8 +69720,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 35
+                    "line": 34,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -69731,8 +69740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 41
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [],
@@ -69751,8 +69760,48 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 49
+                    "line": 47,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "accept",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "accept(string $domain): void",
+                    "doc": "Records that load_textdomain() loaded a file for the domain. A file\nthat does not parse adds nothing to look up, yet the reference's\nglobal functions count its domain as loaded, while its translation\ncontroller does not (probe translations-early-wplang).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "opened",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "opened(string $domain): bool",
+                    "doc": "Whether the global functions count the domain as loaded: a file loaded, or one load_textdomain() accepted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -69771,8 +69820,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 56
+                    "line": 72,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -69791,8 +69840,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 67
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -69811,8 +69860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -69825,8 +69874,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 80,
-                    "end": 83
+                    "line": 100,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -69852,8 +69901,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 91
+                    "line": 106,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -69874,8 +69923,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 101
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -69901,8 +69950,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 113
+                    "line": 124,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -69937,8 +69986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 132
+                    "line": 142,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -69964,8 +70013,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 139
+                    "line": 155,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -69991,8 +70040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 146
+                    "line": 162,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -70018,8 +70067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 163
+                    "line": 176,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -70038,8 +70087,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 169
+                    "line": 186,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -70058,8 +70107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 175
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -70072,8 +70121,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -70092,8 +70141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 153
+                    "line": 168,
+                    "end": 173
                 }
             ]
         },

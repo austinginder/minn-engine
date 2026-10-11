@@ -27,6 +27,9 @@ final class TextDomains
     /** @var array<string, true> domains named a folder since they were last looked for in vain */
     private array $lookAgain = [];
 
+    /** @var array<string, true> domains load_textdomain() loaded, a file that did not parse included */
+    private array $accepted = [];
+
     /** Adds a loaded file to a domain; a file already loaded there is not added twice. */
     public function add(string $domain, string $file, Catalog $catalog): void
     {
@@ -44,8 +47,25 @@ final class TextDomains
     public function unload(string $domain): bool
     {
         $had = $this->has($domain);
-        unset($this->loaded[$domain]);
+        unset($this->loaded[$domain], $this->accepted[$domain]);
         return $had;
+    }
+
+    /**
+     * Records that load_textdomain() loaded a file for the domain. A file
+     * that does not parse adds nothing to look up, yet the reference's
+     * global functions count its domain as loaded, while its translation
+     * controller does not (probe translations-early-wplang).
+     */
+    public function accept(string $domain): void
+    {
+        $this->accepted[$domain] = true;
+    }
+
+    /** Whether the global functions count the domain as loaded: a file loaded, or one load_textdomain() accepted. */
+    public function opened(string $domain): bool
+    {
+        return $this->has($domain) || isset($this->accepted[$domain]);
     }
 
     /** Records that a domain was asked for, so it is looked for once and reloaded on a switch. */

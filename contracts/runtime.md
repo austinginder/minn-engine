@@ -14418,3 +14418,49 @@ now lives in `Http\MediaType::json()`, the facade and the boot share one rule.
 
 The test site keeps display off, so the probe can't show the request cases.
 The fixture covers them.
+
+## The early translations, and the locale's names (2026-10-11)
+
+`wp_load_translations_early()` is real. It was the last placeholder, so
+every function, class and method in the inventory is now accounted for.
+Observed over HTTP at each boot stage, and pinned by three probes, since only
+the first call in a process can show anything:
+
+- **Once per process.** The first call marks it done before anything else.
+  A first call after `init` therefore does nothing, and no later call does
+  either (probe translations-early-after-init).
+- **Before `init`:**
+  - With the legacy `WPLANG` constant set, it loads that locale's file into the
+    default text domain. It looks in the languages folder first, then
+    `wp-includes/languages`, and loads only the first it finds; with neither,
+    it loads nothing (probe translations-early-wplang).
+  - The locale comes only from the constant. The `locale` filter, the `WPLANG`
+    option and `$wp_local_package` are not read.
+  - Then it builds a fresh `WP_Locale` (probe translations-early).
+
+The probes found two gaps elsewhere, both fixed:
+
+- **`WP_Locale` translated in the wrong order and the wrong way.** The
+  reference translates:
+  - all the weekdays, then their initials (`_x()` with "Sunday initial" and so
+    on), then the abbreviations;
+  - all the months, then the genitive forms (`_x()`, "genitive"), then the
+    abbreviations (`_x()`, "January abbreviation");
+  - then the meridiem, the number format, the list separator, the text
+    direction and the word count type, which the engine had copied as English
+    constants.
+
+  Now, as on the reference (probe locale-names):
+  - The initials and abbreviations are keyed by the translated names.
+  - An untranslated thousands separator or decimal point falls back to `,` and
+    `.`; an empty translation stays empty.
+  - Only `rtl` exactly changes the text direction, and only a characters type
+    changes the word count type. A second `init()` without those translations
+    keeps both.
+- **A file that doesn't parse.** `load_textdomain()` with an empty or broken
+  file returns true on both stacks. The reference's `is_textdomain_loaded()`
+  then says yes, even after lookups, and `get_translations_for_domain()`
+  returns a `WP_Translations`. Its controller doesn't count the domain. The
+  engine kept the domain out at both levels. `I18n\TextDomains::accept()` now
+  records what `load_textdomain()` loaded, and the global functions read
+  `opened()`; the controller still reads `has()`.

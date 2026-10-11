@@ -29,24 +29,50 @@ class WP_Locale
         $this->init();
     }
 
+    /**
+     * The names, each through the translation functions, in the reference's
+     * order (probe translations-early): the weekdays, their initials and
+     * abbreviations keyed by the translated name, the months, their genitive
+     * forms, their abbreviations, then the meridiem, the number format (an
+     * untranslated separator falls back to the English one), the list
+     * separator, the text direction (only "rtl" changes it) and the word
+     * count type (only a characters type changes it).
+     */
     public function init()
     {
         foreach (MinnLocale::WEEKDAYS as $index => $day) {
             $this->weekday[$index] = __($day);
-            $this->weekday_initial[__($day)] = __(MinnLocale::weekdayInitial($day));
-            $this->weekday_abbrev[__($day)] = __(MinnLocale::abbreviation($day));
+        }
+        foreach (MinnLocale::WEEKDAYS as $index => $day) {
+            $this->weekday_initial[$this->weekday[$index]] = _x(MinnLocale::weekdayInitial($day), "{$day} initial");
+        }
+        foreach (MinnLocale::WEEKDAYS as $index => $day) {
+            $this->weekday_abbrev[$this->weekday[$index]] = __(MinnLocale::abbreviation($day));
         }
         foreach (MinnLocale::MONTHS as $index => $month) {
-            $key = MinnLocale::monthKey($index + 1);
-            $this->month[$key] = __($month);
-            $this->month_genitive[$key] = __($month);
-            $this->month_abbrev[__($month)] = __(MinnLocale::abbreviation($month));
+            $this->month[MinnLocale::monthKey($index + 1)] = __($month);
         }
-        $this->meridiem = MinnLocale::MERIDIEM;
-        $this->number_format = MinnLocale::NUMBER_FORMAT;
-        $this->text_direction = MinnLocale::TEXT_DIRECTION;
-        $this->list_item_separator = MinnLocale::LIST_ITEM_SEPARATOR;
-        $this->word_count_type = MinnLocale::WORD_COUNT_TYPE;
+        foreach (MinnLocale::MONTHS as $index => $month) {
+            $this->month_genitive[MinnLocale::monthKey($index + 1)] = _x($month, 'genitive');
+        }
+        foreach (MinnLocale::MONTHS as $index => $month) {
+            $this->month_abbrev[$this->month[MinnLocale::monthKey($index + 1)]] = _x(MinnLocale::abbreviation($month), "{$month} abbreviation");
+        }
+        $this->meridiem = array_map(static fn (string $text) => __($text), MinnLocale::MERIDIEM);
+        $thousands = __('number_format_thousands_sep');
+        $decimal = __('number_format_decimal_point');
+        $this->number_format = [
+            'thousands_sep' => $thousands === 'number_format_thousands_sep' ? MinnLocale::NUMBER_FORMAT['thousands_sep'] : $thousands,
+            'decimal_point' => $decimal === 'number_format_decimal_point' ? MinnLocale::NUMBER_FORMAT['decimal_point'] : $decimal,
+        ];
+        $this->list_item_separator = __(', ');
+        if (_x('ltr', 'text direction') === 'rtl') {
+            $this->text_direction = 'rtl';
+        }
+        $count = _x('words', 'Word count type. Do not translate!');
+        if (in_array($count, ['characters_excluding_spaces', 'characters_including_spaces'], true)) {
+            $this->word_count_type = $count;
+        }
     }
 
     public function get_weekday($weekday_number)

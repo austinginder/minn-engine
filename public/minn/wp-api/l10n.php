@@ -228,6 +228,7 @@ function load_textdomain($domain, $mofile, $locale = null)
         if (WP_Translation_Controller::get_instance()->load_file($file, (string) $domain, (string) $locale)) {
             // The folder a domain loaded from is where its script translations are looked for when no folder is given.
             $GLOBALS['wp_textdomain_registry']->set((string) $domain, (string) $locale, dirname($file));
+            Runtime::textDomains()->accept((string) $domain);
             return true;
         }
     }
@@ -313,14 +314,14 @@ function load_default_textdomain($locale = null)
 
 function is_textdomain_loaded($domain)
 {
-    return Runtime::textDomains()->has((string) $domain);
+    return Runtime::textDomains()->opened((string) $domain);
 }
 
 function get_translations_for_domain($domain)
 {
     static $noop = null;
     _load_textdomain_just_in_time($domain);
-    if (!Runtime::textDomains()->has((string) $domain)) {
+    if (!Runtime::textDomains()->opened((string) $domain)) {
         return $noop ??= new NOOP_Translations();
     }
     return new WP_Translations(WP_Translation_Controller::get_instance(), (string) $domain);
