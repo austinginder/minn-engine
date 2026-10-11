@@ -427,10 +427,10 @@ class WP_Theme_JSON
         return null;
     }
 
+    /** The pattern directory slugs the data lists (probe block-patterns); [] when it lists none. */
     public function get_patterns()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_patterns');
-        return null;
+        return is_array($this->theme_json['patterns'] ?? null) ? $this->theme_json['patterns'] : [];
     }
 
     public function get_data()

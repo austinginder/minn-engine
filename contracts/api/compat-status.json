@@ -3,12 +3,12 @@
     "summary": {
         "functions": {
             "total": 3914,
-            "real": 2936,
+            "real": 2940,
             "deadend": 903,
             "placeholder": 21,
-            "missing": 54,
-            "verified": 2857,
-            "resolved": 3860
+            "missing": 50,
+            "verified": 2861,
+            "resolved": 3864
         },
         "classes": {
             "total": 380,

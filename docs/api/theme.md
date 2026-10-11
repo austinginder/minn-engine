@@ -22,7 +22,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 125 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 178 | A whole page from the active block theme: the template the resolution |
-| [`PatternHeaders`](#patternheaders) | final class | 51 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
+| [`PatternHeaders`](#patternheaders) | final class | 52 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 131 | The body-class tokens the main query stands for, in the reference's |
@@ -37,7 +37,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 20 | The theme's theme.json as plugins and the theme's own functions may |
-| [`ThemeStyles`](#themestyles) | final readonly class | 115 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
+| [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
 | [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
 
@@ -693,8 +693,9 @@ Internals: `pluginTemplate()` (private, line 159), `skipLinkTarget()` (private, 
 A theme's pattern files read by their headers, as WP_Theme::get_block_patterns
 lists them (probe wp-theme). Each one gives title, slug and description
 (empty when the header has none), then whatever of viewportWidth (a
-number), inserter (false for "no"), and the comma lists categories,
-keywords, blockTypes, postTypes and templateTypes it declares. A file
+number), inserter (false for "no"), and the lists categories,
+keywords, blockTypes, postTypes and templateTypes it declares, split on
+commas and whitespace. A file
 without a title and a slug is not a pattern.
 
 - const `LISTS` = `array (   'categories' => 'Categories',   'keywords' => 'Keywords',   'blockTypes' => 'Block Types',   'postTypes' => 'Post Types',   'templateTypes' => 'Template Types', )`
@@ -1338,6 +1339,12 @@ The site's active theme as styling data, whether or not it is a block theme.
 
 Settings: presets by origin, appearanceTools expanded, the defaults underneath.
 
+### `patterns(): array`
+
+The pattern directory slugs the theme.json lists (its patterns), as given; [] when it lists none. @return array<mixed>
+
+- `@return array<mixed>`
+
 ### `styles(): array`
 
 Styles: the theme's over the defaults, block style partials and section styles in, every var:preset token resolved.
@@ -1351,7 +1358,7 @@ way the theme's own are.
 
 - `@return list<array>`
 
-Internals: `withSectionStyles()` (private, line 92), `partials()` (private, line 114), `defaults()` (private, line 127)
+Internals: `withSectionStyles()` (private, line 99), `partials()` (private, line 121), `defaults()` (private, line 134)
 
 
 ## Typography

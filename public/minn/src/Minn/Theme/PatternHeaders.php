@@ -8,8 +8,9 @@ namespace Minn\Theme;
  * A theme's pattern files read by their headers, as WP_Theme::get_block_patterns
  * lists them (probe wp-theme). Each one gives title, slug and description
  * (empty when the header has none), then whatever of viewportWidth (a
- * number), inserter (false for "no"), and the comma lists categories,
- * keywords, blockTypes, postTypes and templateTypes it declares. A file
+ * number), inserter (false for "no"), and the lists categories,
+ * keywords, blockTypes, postTypes and templateTypes it declares, split on
+ * commas and whitespace. A file
  * without a title and a slug is not a pattern.
  */
 final class PatternHeaders
@@ -55,7 +56,8 @@ final class PatternHeaders
             $record['inserter'] = in_array(strtolower($inserter), ['yes', 'true'], true);
         }
         foreach (self::LISTS as $key => $name) {
-            $list = array_values(array_filter(array_map('trim', explode(',', (string) $field($name))), static fn (string $item): bool => $item !== ''));
+            // A list is split on commas and on whitespace alike ("frequently asked questions" is three keywords; probe block-patterns).
+            $list = preg_split('/[\s,]+/', (string) $field($name), -1, PREG_SPLIT_NO_EMPTY) ?: [];
             if ($list !== []) {
                 $record[$key] = $list;
             }

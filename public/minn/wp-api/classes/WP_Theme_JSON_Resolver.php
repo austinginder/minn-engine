@@ -187,7 +187,9 @@ final class WP_Theme_JSON_Resolver
             $settings = Minn\Theme\Theme::merge($settings, (array) ($user['settings'] ?? []));
             $styles = Minn\Theme\Theme::merge($styles, (array) ($user['styles'] ?? []));
         }
-        return new WP_Theme_JSON(['version' => 3, 'settings' => $settings, 'styles' => $styles]);
+        // The pattern directory slugs a theme.json lists come along when it lists any (probe block-patterns).
+        $patterns = $theme->patterns();
+        return new WP_Theme_JSON(['version' => 3, 'settings' => $settings, 'styles' => $styles] + ($patterns !== [] ? ['patterns' => $patterns] : []));
     }
 
     /**

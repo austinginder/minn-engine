@@ -42,6 +42,13 @@ final readonly class ThemeStyles
         return Theme::merge($settings, $own);
     }
 
+    /** The pattern directory slugs the theme.json lists (its patterns), as given; [] when it lists none. @return array<mixed> */
+    public function patterns(): array
+    {
+        $patterns = $this->theme?->json()['patterns'] ?? [];
+        return is_array($patterns) ? $patterns : [];
+    }
+
     /** Styles: the theme's over the defaults, block style partials and section styles in, every var:preset token resolved. */
     public function styles(): array
     {

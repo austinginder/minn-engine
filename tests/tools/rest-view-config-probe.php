@@ -93,11 +93,6 @@ $configs = [];
 foreach (['post', 'page', 'attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part', 'wp_global_styles', 'wp_navigation', 'wp_font_family', 'wp_font_face', 'zzvc', 'zzvcplain', 'zzvchidden', 'revision', 'zz-none'] as $type) {
     $configs["postType/{$type}"] = $try(static fn () => $controller->get_items($request('postType', $type)));
 }
-// The patterns' views without core's own pattern categories, which the engine does not register yet (owed): the
-// probe's, the theme's and the fixed views keep the order they are sorted into.
-if (isset($configs['postType/wp_block'][1]['view_list'])) {
-    $configs['postType/wp_block'][1]['view_list'] = array_values(array_filter($configs['postType/wp_block'][1]['view_list'], static fn ($view) => in_array($view['slug'], ['all-patterns', 'my-patterns', 'uncategorized'], true) || preg_match('/^(zzvc|twentytwentyfive_)/', (string) $view['slug'])));
-}
 foreach (['category', 'post_tag', 'zzvctax', 'post_format'] as $taxonomy) {
     $configs["taxonomy/{$taxonomy}"] = $try(static fn () => $controller->get_items($request('taxonomy', $taxonomy)));
 }

@@ -1,0 +1,243 @@
+{
+    "categories": [
+        {
+            "name": "banner",
+            "label": "Banners",
+            "description": "Bold sections designed to showcase key content."
+        },
+        {
+            "name": "buttons",
+            "label": "Buttons",
+            "description": "Patterns that contain buttons and call to actions."
+        },
+        {
+            "name": "columns",
+            "label": "Columns",
+            "description": "Multi-column patterns with more complex layouts."
+        },
+        {
+            "name": "text",
+            "label": "Text",
+            "description": "Patterns containing mostly text."
+        },
+        {
+            "name": "query",
+            "label": "Posts",
+            "description": "Display your latest posts in lists, grids or other layouts."
+        },
+        {
+            "name": "featured",
+            "label": "Featured",
+            "description": "A set of high quality curated patterns."
+        },
+        {
+            "name": "call-to-action",
+            "label": "Call to action",
+            "description": "Sections whose purpose is to trigger a specific action."
+        },
+        {
+            "name": "team",
+            "label": "Team",
+            "description": "A variety of designs to display your team members."
+        },
+        {
+            "name": "testimonials",
+            "label": "Testimonials",
+            "description": "Share reviews and feedback about your brand/business."
+        },
+        {
+            "name": "services",
+            "label": "Services",
+            "description": "Briefly describe what your business does and how you can help."
+        },
+        {
+            "name": "contact",
+            "label": "Contact",
+            "description": "Display your contact information."
+        },
+        {
+            "name": "about",
+            "label": "About",
+            "description": "Introduce yourself."
+        },
+        {
+            "name": "portfolio",
+            "label": "Portfolio",
+            "description": "Showcase your latest work."
+        },
+        {
+            "name": "gallery",
+            "label": "Gallery",
+            "description": "Different layouts for displaying images."
+        },
+        {
+            "name": "media",
+            "label": "Media",
+            "description": "Different layouts containing video or audio."
+        },
+        {
+            "name": "videos",
+            "label": "Videos",
+            "description": "Different layouts containing videos."
+        },
+        {
+            "name": "audio",
+            "label": "Audio",
+            "description": "Different layouts containing audio."
+        },
+        {
+            "name": "posts",
+            "label": "Posts",
+            "description": "Display your latest posts in lists, grids or other layouts."
+        },
+        {
+            "name": "footer",
+            "label": "Footers",
+            "description": "A variety of footer designs displaying information and site navigation."
+        },
+        {
+            "name": "header",
+            "label": "Headers",
+            "description": "A variety of header designs displaying your site title and navigation."
+        },
+        {
+            "name": "navigation",
+            "label": "Navigation",
+            "description": "A variety of designs displaying site navigation."
+        }
+    ],
+    "patterns": [
+        {
+            "title": "Standard",
+            "blockTypes": [
+                "core/query"
+            ],
+            "categories": [
+                "query"
+            ],
+            "content": "<!-- wp:query {\"query\":{\"perPage\":3,\"pages\":0,\"offset\":0,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"\",\"inherit\":false}} -->\n\t\t\t\t\t<div class=\"wp-block-query\">\n\t\t\t\t\t<!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:post-title {\"isLink\":true} /-->\n\t\t\t\t\t<!-- wp:post-featured-image {\"isLink\":true,\"align\":\"wide\"} /-->\n\t\t\t\t\t<!-- wp:post-excerpt /-->\n\t\t\t\t\t<!-- wp:separator -->\n\t\t\t\t\t<hr class=\"wp-block-separator\"/>\n\t\t\t\t\t<!-- /wp:separator -->\n\t\t\t\t\t<!-- wp:post-date /-->\n\t\t\t\t\t<!-- /wp:post-template -->\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- /wp:query -->",
+            "source": "core",
+            "name": "core/query-standard-posts"
+        },
+        {
+            "title": "Image at left",
+            "blockTypes": [
+                "core/query"
+            ],
+            "categories": [
+                "query"
+            ],
+            "content": "<!-- wp:query {\"query\":{\"perPage\":3,\"pages\":0,\"offset\":0,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"\",\"inherit\":false}} -->\n\t\t\t\t\t<div class=\"wp-block-query\">\n\t\t\t\t\t<!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:columns {\"align\":\"wide\"} -->\n\t\t\t\t\t<div class=\"wp-block-columns alignwide\"><!-- wp:column {\"width\":\"66.66%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column\" style=\"flex-basis:66.66%\"><!-- wp:post-featured-image {\"isLink\":true} /--></div>\n\t\t\t\t\t<!-- /wp:column -->\n\t\t\t\t\t<!-- wp:column {\"width\":\"33.33%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column\" style=\"flex-basis:33.33%\"><!-- wp:post-title {\"isLink\":true} /-->\n\t\t\t\t\t<!-- wp:post-excerpt /--></div>\n\t\t\t\t\t<!-- /wp:column --></div>\n\t\t\t\t\t<!-- /wp:columns -->\n\t\t\t\t\t<!-- /wp:post-template -->\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- /wp:query -->",
+            "source": "core",
+            "name": "core/query-medium-posts"
+        },
+        {
+            "title": "Small image and title",
+            "blockTypes": [
+                "core/query"
+            ],
+            "categories": [
+                "query"
+            ],
+            "content": "<!-- wp:query {\"query\":{\"perPage\":3,\"pages\":0,\"offset\":0,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"\",\"inherit\":false}} -->\n\t\t\t\t\t<div class=\"wp-block-query\">\n\t\t\t\t\t<!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:columns {\"verticalAlignment\":\"center\"} -->\n\t\t\t\t\t<div class=\"wp-block-columns are-vertically-aligned-center\"><!-- wp:column {\"verticalAlignment\":\"center\",\"width\":\"25%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column is-vertically-aligned-center\" style=\"flex-basis:25%\"><!-- wp:post-featured-image {\"isLink\":true} /--></div>\n\t\t\t\t\t<!-- /wp:column -->\n\t\t\t\t\t<!-- wp:column {\"verticalAlignment\":\"center\",\"width\":\"75%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column is-vertically-aligned-center\" style=\"flex-basis:75%\"><!-- wp:post-title {\"isLink\":true} /--></div>\n\t\t\t\t\t<!-- /wp:column --></div>\n\t\t\t\t\t<!-- /wp:columns -->\n\t\t\t\t\t<!-- /wp:post-template -->\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- /wp:query -->",
+            "source": "core",
+            "name": "core/query-small-posts"
+        },
+        {
+            "title": "Grid",
+            "blockTypes": [
+                "core/query"
+            ],
+            "categories": [
+                "query"
+            ],
+            "content": "<!-- wp:query {\"query\":{\"perPage\":6,\"pages\":0,\"offset\":0,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"exclude\",\"inherit\":false},\"displayLayout\":{\"type\":\"flex\",\"columns\":3}} -->\n\t\t\t\t\t<div class=\"wp-block-query\">\n\t\t\t\t\t<!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:group {\"style\":{\"spacing\":{\"padding\":{\"top\":\"30px\",\"right\":\"30px\",\"bottom\":\"30px\",\"left\":\"30px\"}}},\"layout\":{\"inherit\":false}} -->\n\t\t\t\t\t<div class=\"wp-block-group\" style=\"padding-top:30px;padding-right:30px;padding-bottom:30px;padding-left:30px\"><!-- wp:post-title {\"isLink\":true} /-->\n\t\t\t\t\t<!-- wp:post-excerpt /-->\n\t\t\t\t\t<!-- wp:post-date /--></div>\n\t\t\t\t\t<!-- /wp:group -->\n\t\t\t\t\t<!-- /wp:post-template -->\n\t\t\t\t\t</div>\n\t\t\t\t\t<!-- /wp:query -->",
+            "source": "core",
+            "name": "core/query-grid-posts"
+        },
+        {
+            "title": "Large title",
+            "blockTypes": [
+                "core/query"
+            ],
+            "categories": [
+                "query"
+            ],
+            "content": "<!-- wp:group {\"align\":\"full\",\"style\":{\"spacing\":{\"padding\":{\"top\":\"100px\",\"right\":\"100px\",\"bottom\":\"100px\",\"left\":\"100px\"}},\"color\":{\"text\":\"#ffffff\",\"background\":\"#000000\"}}} -->\n\t\t\t\t\t<div class=\"wp-block-group alignfull has-text-color has-background\" style=\"background-color:#000000;color:#ffffff;padding-top:100px;padding-right:100px;padding-bottom:100px;padding-left:100px\"><!-- wp:query {\"query\":{\"perPage\":3,\"pages\":0,\"offset\":0,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"\",\"inherit\":false}} -->\n\t\t\t\t\t<div class=\"wp-block-query\"><!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:separator {\"customColor\":\"#ffffff\",\"align\":\"wide\",\"className\":\"is-style-wide\"} -->\n\t\t\t\t\t<hr class=\"wp-block-separator alignwide has-text-color has-background is-style-wide\" style=\"background-color:#ffffff;color:#ffffff\"/>\n\t\t\t\t\t<!-- /wp:separator -->\n\n\t\t\t\t\t<!-- wp:columns {\"verticalAlignment\":\"center\",\"align\":\"wide\"} -->\n\t\t\t\t\t<div class=\"wp-block-columns alignwide are-vertically-aligned-center\"><!-- wp:column {\"verticalAlignment\":\"center\",\"width\":\"20%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column is-vertically-aligned-center\" style=\"flex-basis:20%\"><!-- wp:post-date {\"style\":{\"color\":{\"text\":\"#ffffff\"}},\"fontSize\":\"extra-small\"} /--></div>\n\t\t\t\t\t<!-- /wp:column -->\n\n\t\t\t\t\t<!-- wp:column {\"verticalAlignment\":\"center\",\"width\":\"80%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column is-vertically-aligned-center\" style=\"flex-basis:80%\"><!-- wp:post-title {\"isLink\":true,\"style\":{\"typography\":{\"fontSize\":\"72px\",\"lineHeight\":\"1.1\"},\"color\":{\"text\":\"#ffffff\",\"link\":\"#ffffff\"}}} /--></div>\n\t\t\t\t\t<!-- /wp:column --></div>\n\t\t\t\t\t<!-- /wp:columns -->\n\t\t\t\t\t<!-- /wp:post-template --></div>\n\t\t\t\t\t<!-- /wp:query --></div>\n\t\t\t\t\t<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/query-large-title-posts"
+        },
+        {
+            "title": "Offset",
+            "blockTypes": [
+                "core/query"
+            ],
+            "categories": [
+                "query"
+            ],
+            "content": "<!-- wp:group {\"style\":{\"spacing\":{\"padding\":{\"top\":\"30px\",\"right\":\"30px\",\"bottom\":\"30px\",\"left\":\"30px\"}}},\"layout\":{\"inherit\":false}} -->\n\t\t\t\t\t<div class=\"wp-block-group\" style=\"padding-top:30px;padding-right:30px;padding-bottom:30px;padding-left:30px\"><!-- wp:columns -->\n\t\t\t\t\t<div class=\"wp-block-columns\"><!-- wp:column {\"width\":\"50%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column\" style=\"flex-basis:50%\"><!-- wp:query {\"query\":{\"perPage\":2,\"pages\":0,\"offset\":0,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"exclude\",\"inherit\":false},\"displayLayout\":{\"type\":\"list\"}} -->\n\t\t\t\t\t<div class=\"wp-block-query\"><!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:post-featured-image /-->\n\t\t\t\t\t<!-- wp:post-title /-->\n\t\t\t\t\t<!-- wp:post-date /-->\n\t\t\t\t\t<!-- wp:spacer {\"height\":200} -->\n\t\t\t\t\t<div style=\"height:200px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n\t\t\t\t\t<!-- /wp:spacer -->\n\t\t\t\t\t<!-- /wp:post-template --></div>\n\t\t\t\t\t<!-- /wp:query --></div>\n\t\t\t\t\t<!-- /wp:column -->\n\t\t\t\t\t<!-- wp:column {\"width\":\"50%\"} -->\n\t\t\t\t\t<div class=\"wp-block-column\" style=\"flex-basis:50%\"><!-- wp:query {\"query\":{\"perPage\":2,\"pages\":0,\"offset\":2,\"postType\":\"post\",\"order\":\"desc\",\"orderBy\":\"date\",\"author\":\"\",\"search\":\"\",\"exclude\":[],\"sticky\":\"exclude\",\"inherit\":false},\"displayLayout\":{\"type\":\"list\"}} -->\n\t\t\t\t\t<div class=\"wp-block-query\"><!-- wp:post-template -->\n\t\t\t\t\t<!-- wp:spacer {\"height\":200} -->\n\t\t\t\t\t<div style=\"height:200px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n\t\t\t\t\t<!-- /wp:spacer -->\n\t\t\t\t\t<!-- wp:post-featured-image /-->\n\t\t\t\t\t<!-- wp:post-title /-->\n\t\t\t\t\t<!-- wp:post-date /-->\n\t\t\t\t\t<!-- /wp:post-template --></div>\n\t\t\t\t\t<!-- /wp:query --></div>\n\t\t\t\t\t<!-- /wp:column --></div>\n\t\t\t\t\t<!-- /wp:columns --></div>\n\t\t\t\t\t<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/query-offset-posts"
+        },
+        {
+            "title": "Navigation Overlay",
+            "blockTypes": [
+                "core/template-part/navigation-overlay"
+            ],
+            "categories": [
+                "navigation"
+            ],
+            "content": "<!-- wp:group {\"metadata\":{\"name\":\"Navigation Overlay\"},\"style\":{\"spacing\":{\"padding\":{\"right\":\"var:preset|spacing|40\",\"left\":\"var:preset|spacing|40\",\"top\":\"var:preset|spacing|40\",\"bottom\":\"var:preset|spacing|40\"}},\"dimensions\":{\"minHeight\":\"100vh\"},\"elements\":{\"link\":{\"color\":{\"text\":\"var:preset|color|black\"}}}},\"backgroundColor\":\"white\",\"textColor\":\"black\",\"layout\":{\"type\":\"default\"}} -->\n<div class=\"wp-block-group has-black-color has-white-background-color has-text-color has-background has-link-color\" style=\"min-height:100vh;padding-top:var(--wp--preset--spacing--40);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40);padding-left:var(--wp--preset--spacing--40)\"><!-- wp:group {\"align\":\"wide\",\"layout\":{\"type\":\"flex\",\"flexWrap\":\"nowrap\",\"justifyContent\":\"right\"}} -->\n<div class=\"wp-block-group alignwide\"><!-- wp:navigation-overlay-close /--></div>\n<!-- /wp:group -->\n\n<!-- wp:navigation {\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\"},\"showSubmenuIcon\":false,\"submenuVisibility\":\"always\"} /--></div>\n<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/navigation-overlay"
+        },
+        {
+            "title": "Overlay with black background",
+            "blockTypes": [
+                "core/template-part/navigation-overlay"
+            ],
+            "categories": [
+                "navigation"
+            ],
+            "content": "<!-- wp:group {\"metadata\":{\"name\":\"Navigation Overlay\"},\"style\":{\"spacing\":{\"padding\":{\"right\":\"var:preset|spacing|40\",\"left\":\"var:preset|spacing|40\",\"top\":\"var:preset|spacing|40\",\"bottom\":\"var:preset|spacing|40\"}},\"dimensions\":{\"minHeight\":\"100vh\"},\"elements\":{\"link\":{\"color\":{\"text\":\"var:preset|color|white\"}}},\"color\":{\"background\":\"#000000\"}},\"textColor\":\"white\",\"layout\":{\"type\":\"default\"}} -->\n<div class=\"wp-block-group has-white-color has-text-color has-background has-link-color\" style=\"background-color:#000000;min-height:100vh;padding-top:var(--wp--preset--spacing--40);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40);padding-left:var(--wp--preset--spacing--40)\"><!-- wp:group {\"align\":\"wide\",\"style\":{\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|30\",\"bottom\":\"var:preset|spacing|30\",\"left\":\"var:preset|spacing|30\",\"right\":\"var:preset|spacing|30\"}}},\"layout\":{\"type\":\"flex\",\"flexWrap\":\"nowrap\",\"justifyContent\":\"space-between\",\"verticalAlignment\":\"top\"}} -->\n<div class=\"wp-block-group alignwide\" style=\"padding-top:var(--wp--preset--spacing--30);padding-right:var(--wp--preset--spacing--30);padding-bottom:var(--wp--preset--spacing--30);padding-left:var(--wp--preset--spacing--30)\"><!-- wp:navigation {\"style\":{\"typography\":{\"lineHeight\":\"1\"}},\"fontSize\":\"xx-large\",\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\"}} /-->\n\n<!-- wp:navigation-overlay-close {\"displayMode\":\"text\",\"style\":{\"elements\":{\"link\":{\"color\":{\"text\":\"var:preset|color|white\"}}},\"spacing\":{\"padding\":{\"top\":\"0\",\"bottom\":\"0\",\"left\":\"0\",\"right\":\"0\"}}},\"textColor\":\"white\"} /--></div>\n<!-- /wp:group --></div>\n<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/navigation-overlay-black-bg"
+        },
+        {
+            "title": "Overlay with orange background",
+            "blockTypes": [
+                "core/template-part/navigation-overlay"
+            ],
+            "categories": [
+                "navigation"
+            ],
+            "content": "<!-- wp:group {\"metadata\":{\"name\":\"Navigation Overlay\"},\"style\":{\"spacing\":{\"padding\":{\"right\":\"var:preset|spacing|50\",\"left\":\"var:preset|spacing|50\",\"top\":\"var:preset|spacing|50\",\"bottom\":\"var:preset|spacing|50\"}},\"color\":{\"background\":\"#f57600\"},\"dimensions\":{\"minHeight\":\"100vh\"},\"elements\":{\"link\":{\"color\":{\"text\":\"var:preset|color|black\"}}}},\"textColor\":\"black\",\"layout\":{\"type\":\"grid\",\"columnCount\":2,\"minimumColumnWidth\":\"600px\",\"rowCount\":2,\"isManualPlacement\":true}} -->\n<div class=\"wp-block-group has-black-color has-text-color has-background has-link-color\" style=\"background-color:#f57600;min-height:100vh;padding-top:var(--wp--preset--spacing--50);padding-right:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50);padding-left:var(--wp--preset--spacing--50)\"><!-- wp:group {\"style\":{\"layout\":{\"columnStart\":1,\"rowStart\":1}},\"layout\":{\"type\":\"default\"}} -->\n<div class=\"wp-block-group\"><!-- wp:navigation-overlay-close {\"style\":{\"layout\":{\"columnStart\":1,\"rowStart\":1}}} /--></div>\n<!-- /wp:group -->\n\n<!-- wp:group {\"style\":{\"typography\":{\"lineHeight\":\"0.8\"},\"layout\":{\"columnStart\":1,\"rowStart\":2}},\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\",\"verticalAlignment\":\"bottom\"}} -->\n<div class=\"wp-block-group\" style=\"line-height:0.8\"><!-- wp:site-title {\"fontSize\":\"large\"} /-->\n\n<!-- wp:site-tagline {\"style\":{\"typography\":{\"lineHeight\":\"1.2\"},\"elements\":{\"link\":{\"color\":{\"text\":\"#000000a6\"}}},\"color\":{\"text\":\"#000000a6\"}},\"fontSize\":\"large\"} /--></div>\n<!-- /wp:group -->\n\n<!-- wp:spacer {\"height\":\"10rem\",\"style\":{\"layout\":{\"columnStart\":2,\"rowStart\":2}}} -->\n<div style=\"height:10rem\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n<!-- /wp:spacer -->\n\n<!-- wp:navigation {\"overlayMenu\":\"never\",\"style\":{\"typography\":{\"lineHeight\":\"1\"},\"layout\":{\"columnStart\":2,\"rowStart\":1}},\"fontSize\":\"large\",\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\"}} /--></div>\n<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/navigation-overlay-accent-bg"
+        },
+        {
+            "title": "Overlay with centered navigation",
+            "blockTypes": [
+                "core/template-part/navigation-overlay"
+            ],
+            "categories": [
+                "navigation"
+            ],
+            "content": "<!-- wp:group {\"metadata\":{\"name\":\"Navigation Overlay\"},\"style\":{\"spacing\":{\"padding\":{\"right\":\"var:preset|spacing|40\",\"left\":\"var:preset|spacing|40\",\"top\":\"var:preset|spacing|40\",\"bottom\":\"var:preset|spacing|40\"}},\"dimensions\":{\"minHeight\":\"100vh\"},\"elements\":{\"link\":{\"color\":{\"text\":\"var:preset|color|black\"}}},\"color\":{\"background\":\"#eeeeee\"}},\"textColor\":\"black\",\"layout\":{\"type\":\"default\"}} -->\n<div class=\"wp-block-group has-black-color has-text-color has-background has-link-color\" style=\"background-color:#eeeeee;min-height:100vh;padding-top:var(--wp--preset--spacing--40);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40);padding-left:var(--wp--preset--spacing--40)\"><!-- wp:group {\"align\":\"wide\",\"layout\":{\"type\":\"flex\",\"flexWrap\":\"nowrap\",\"justifyContent\":\"right\"}} -->\n<div class=\"wp-block-group alignwide\"><!-- wp:navigation-overlay-close /--></div>\n<!-- /wp:group -->\n\n<!-- wp:group {\"align\":\"wide\",\"style\":{\"dimensions\":{\"minHeight\":\"90vh\"}},\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\",\"justifyContent\":\"center\",\"verticalAlignment\":\"center\"}} -->\n<div class=\"wp-block-group alignwide\" style=\"min-height:90vh\"><!-- wp:navigation {\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\",\"justifyContent\":\"center\"}} /--></div>\n<!-- /wp:group --></div>\n<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/navigation-overlay-centered"
+        },
+        {
+            "title": "Overlay with site info and CTA",
+            "blockTypes": [
+                "core/template-part/navigation-overlay"
+            ],
+            "categories": [
+                "navigation"
+            ],
+            "content": "<!-- wp:group {\"metadata\":{\"name\":\"Navigation Overlay\"},\"style\":{\"spacing\":{\"padding\":{\"right\":\"var:preset|spacing|40\",\"left\":\"var:preset|spacing|40\",\"top\":\"var:preset|spacing|40\",\"bottom\":\"var:preset|spacing|40\"}},\"dimensions\":{\"minHeight\":\"100vh\"},\"elements\":{\"link\":{\"color\":{\"text\":\"var:preset|color|black\"}}}},\"backgroundColor\":\"white\",\"textColor\":\"black\",\"layout\":{\"type\":\"default\"}} -->\n<div class=\"wp-block-group has-black-color has-white-background-color has-text-color has-background has-link-color\" style=\"min-height:100vh;padding-top:var(--wp--preset--spacing--40);padding-right:var(--wp--preset--spacing--40);padding-bottom:var(--wp--preset--spacing--40);padding-left:var(--wp--preset--spacing--40)\"><!-- wp:group {\"align\":\"wide\",\"layout\":{\"type\":\"flex\",\"flexWrap\":\"nowrap\",\"justifyContent\":\"right\"}} -->\n<div class=\"wp-block-group alignwide\"><!-- wp:navigation-overlay-close /--></div>\n<!-- /wp:group -->\n\n<!-- wp:group {\"align\":\"wide\",\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group alignwide\"><!-- wp:site-logo {\"width\":80,\"isLink\":false,\"align\":\"center\",\"className\":\"is-style-rounded\"} /-->\n\n<!-- wp:site-title {\"textAlign\":\"center\",\"fontSize\":\"large\"} /-->\n\n<!-- wp:site-tagline {\"textAlign\":\"center\",\"fontSize\":\"medium\"} /-->\n\n<!-- wp:group {\"style\":{\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|50\",\"bottom\":\"var:preset|spacing|50\"}}},\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group\" style=\"padding-top:var(--wp--preset--spacing--50);padding-bottom:var(--wp--preset--spacing--50)\"><!-- wp:navigation {\"overlayMenu\":\"never\",\"style\":{\"typography\":{\"textTransform\":\"uppercase\"}},\"fontSize\":\"x-large\",\"layout\":{\"type\":\"flex\",\"orientation\":\"vertical\",\"justifyContent\":\"center\"}} /--></div>\n<!-- /wp:group -->\n\n<!-- wp:group {\"align\":\"full\",\"style\":{\"border\":{\"top\":{\"color\":\"#eeeeee\",\"width\":\"1px\"}},\"spacing\":{\"padding\":{\"top\":\"var:preset|spacing|60\",\"bottom\":\"var:preset|spacing|60\"}}},\"layout\":{\"type\":\"constrained\"}} -->\n<div class=\"wp-block-group alignfull\" style=\"border-top-color:#eeeeee;border-top-width:1px;padding-top:var(--wp--preset--spacing--60);padding-bottom:var(--wp--preset--spacing--60)\"><!-- wp:paragraph {\"style\":{\"typography\":{\"textAlign\":\"center\"}}} -->\n<p class=\"has-text-align-center\">Find out how we can help your business. <a href=\"#\">Learn more</a></p>\n<!-- /wp:paragraph -->\n\n<!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"center\"}} -->\n<div class=\"wp-block-buttons\"><!-- wp:button {\"style\":{\"typography\":{\"textTransform\":\"uppercase\"}}} -->\n<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\" style=\"text-transform:uppercase\">Get started today!</a></div>\n<!-- /wp:button -->\n\n<!-- wp:button -->\n<div class=\"wp-block-button\"><a class=\"wp-block-button__link wp-element-button\"></a></div>\n<!-- /wp:button --></div>\n<!-- /wp:buttons --></div>\n<!-- /wp:group --></div>\n<!-- /wp:group --></div>\n<!-- /wp:group -->",
+            "source": "core",
+            "name": "core/navigation-overlay-centered-with-extras"
+        }
+    ]
+}

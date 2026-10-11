@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 795,
-        "composes": 2043,
+        "composes": 2046,
         "leaf": 909,
-        "noop": 2712,
+        "noop": 2714,
         "placeholder": 213,
         "deadend": 1662,
-        "functions": 8256,
+        "functions": 8261,
         "minnMethods": 958,
         "leafLinesOver15": 11
     },
@@ -26386,11 +26386,9 @@
         },
         "WP_Theme_JSON::get_patterns": {
             "file": "classes/WP_Theme_JSON.php",
-            "lines": 2,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Runtime\\PlaceholderTrace::hit"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": []
         },
         "WP_Theme_JSON::get_preset_classes": {
@@ -26900,7 +26898,7 @@
         },
         "WP_Theme_JSON_Resolver::get_merged_data": {
             "file": "classes/WP_Theme_JSON_Resolver.php",
-            "lines": 9,
+            "lines": 11,
             "kind": "minn",
             "minn": [
                 "Minn\\Theme\\Theme::merge"
@@ -32847,6 +32845,15 @@
             "minn": [],
             "composes": []
         },
+        "_minn_core_block_patterns": {
+            "file": "block-patterns.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Json::file"
+            ],
+            "composes": []
+        },
         "_minn_core_block_rows": {
             "file": "blocks.php",
             "lines": 2,
@@ -35252,6 +35259,29 @@
             "composes": [
                 "_x",
                 "register_block_bindings_source"
+            ]
+        },
+        "_register_core_block_patterns_and_categories": {
+            "file": "block-patterns.php",
+            "lines": 9,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_core_block_patterns",
+                "get_theme_support",
+                "register_block_pattern",
+                "register_block_pattern_category"
+            ]
+        },
+        "_register_theme_block_patterns": {
+            "file": "block-patterns.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "register_block_pattern",
+                "translate_with_gettext_context",
+                "wp_get_theme"
             ]
         },
         "_register_widget_form_callback": {
@@ -38018,7 +38048,7 @@
         },
         "apply_block_hooks_to_content": {
             "file": "blocks.php",
-            "lines": 6,
+            "lines": 8,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -50673,10 +50703,12 @@
         },
         "make_before_block_visitor": {
             "file": "blocks.php",
-            "lines": 8,
-            "kind": "leaf",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_inject_theme_attribute_in_template_part_block"
+            ]
         },
         "make_clickable": {
             "file": "formatting.php",
@@ -65608,6 +65640,13 @@
             ],
             "composes": []
         },
+        "wp_get_theme_directory_pattern_slugs": {
+            "file": "block-patterns.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "wp_get_theme_error": {
             "file": "deadends.php",
             "lines": 2,
@@ -68201,6 +68240,13 @@
             "minn": [
                 "Minn\\Support\\Paths::normalize"
             ],
+            "composes": []
+        },
+        "wp_normalize_remote_block_pattern": {
+            "file": "block-patterns.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
             "composes": []
         },
         "wp_normalize_state_preset_vars": {

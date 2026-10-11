@@ -1118,6 +1118,7 @@ function insert_hooked_blocks_and_set_ignored_hooked_blocks_metadata(&$parsed_an
 function make_before_block_visitor($hooked_blocks, $context, $callback = 'insert_hooked_blocks')
 {
     return static function (&$block, &$parent_block = null, $prev = null) use ($hooked_blocks, $context, $callback) {
+        _inject_theme_attribute_in_template_part_block($block);
         $markup = '';
         if ($parent_block && !$prev) {
             $markup .= $callback($parent_block, 'first_child', $hooked_blocks, $context);
@@ -1194,14 +1195,21 @@ function traverse_and_serialize_blocks($blocks, $pre_callback = null, $post_call
 }
 
 /** Content with its hooked blocks inserted; untouched when nothing hooks anywhere. */
+/**
+ * Content with its hooked blocks put in (probes block-hooks, block-patterns).
+ * Every block is written out again and each template part without a theme
+ * gets the active one, whether or not any block is hooked.
+ */
 function apply_block_hooks_to_content($content, $context = null, $callback = 'insert_hooked_blocks')
 {
     $hooked_blocks = get_hooked_blocks();
-    if ($hooked_blocks === [] && !has_filter('hooked_block_types')) {
-        return $content;
+    $before = '_inject_theme_attribute_in_template_part_block';
+    $after = null;
+    if ($hooked_blocks !== [] || has_filter('hooked_block_types')) {
+        $before = make_before_block_visitor($hooked_blocks, $context, $callback);
+        $after = make_after_block_visitor($hooked_blocks, $context, $callback);
     }
-    $blocks = parse_blocks((string) $content);
-    return traverse_and_serialize_blocks($blocks, make_before_block_visitor($hooked_blocks, $context, $callback), make_after_block_visitor($hooked_blocks, $context, $callback));
+    return traverse_and_serialize_blocks(parse_blocks((string) $content), $before, $after);
 }
 
 /** A template part by its attributes, through the engine's template-part block. */

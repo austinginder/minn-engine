@@ -11478,3 +11478,64 @@ parts. Registrations and filters live for the request only. It covers:
 Left: core's own pattern categories and patterns
 (`_register_core_block_patterns_and_categories`) are still not
 registered, so the probe compares the patterns' views without them.
+
+## Block patterns as core and the theme register them (2026-10-10)
+
+Probe `block-patterns` proves 4 of the 5 missing functions of
+`block-patterns.php` and `global-styles-and-settings.php`, in a new
+`wp-api/block-patterns.php`:
+- `_register_core_block_patterns_and_categories`;
+- `_register_theme_block_patterns`;
+- `wp_normalize_remote_block_pattern`;
+- `wp_get_theme_directory_pattern_slugs`.
+
+It also makes `WP_Theme_JSON::get_patterns` real (it was a placeholder).
+It covers:
+- every category and pattern registered by init, with each pattern's
+  content as a length and hash;
+- core's registration alone, again, and with its patterns turned off;
+- the theme's registration alone, and again with one pattern missing and
+  one slug already taken;
+- the theme's titles and descriptions, tagged by their translation context
+  and domain;
+- remote patterns normalized;
+- the slugs a theme.json lists;
+- the block hooks pass.
+
+- **Registered on init**, as on the reference: 21 core categories, the 11
+  core patterns (6 query layouts, 5 navigation overlays), then the theme's
+  98 patterns, then the theme's own categories. The engine used to
+  register none, so the patterns REST routes and the patterns' view list
+  were missing core's categories.
+- **Core's** categories and patterns are data (`data/core-block-patterns.json`,
+  captured). Patterns register only while the theme supports
+  `core-block-patterns`. Every theme does: the engine turns the support on
+  at boot, before plugins and the theme load, so either can turn it off.
+- **The theme's** patterns come from its patterns folder (and its
+  parent's), by their headers. Each gets the file to render, and its title
+  and description translated in the theme's domain (`Pattern title`,
+  `Pattern description`; an empty description is left alone). A slug
+  already registered is skipped.
+- **Header lists split on commas and whitespace alike.** "frequently asked
+  questions" is three keywords. The engine used to split on commas only.
+- **The block hooks pass** (`apply_block_hooks_to_content`) now always
+  writes every block out again and gives each template part without a
+  theme the active one, whether or not any block is hooked. The engine
+  used to hand the content back untouched when nothing was hooked. So
+  `"spacing":{}` comes back as `"spacing":[]`, as on the reference.
+- **Remote patterns** take the local names: `block_types` becomes
+  `blockTypes` and `viewport_width` becomes `viewportWidth`. A local key
+  that is already there keeps its place and takes the remote value; a new
+  one goes last.
+- **Theme.json pattern slugs** are the theme.json's `patterns` list,
+  filters included. The merged theme data now carries the list when there
+  is one.
+- **View configurations.** Probes `rest-view-config` and
+  `view-config-functions` now compare the patterns' views with core's
+  categories in, rather than leaving them out.
+
+Left:
+- `_register_remote_theme_patterns` fetches from the wordpress.org pattern
+  directory. That is a question for Austin under the no-wordpress.org goal.
+- The theme pattern headers are read from the files on every request. The
+  reference caches them in a site transient (`wp_theme_files_patterns-*`).

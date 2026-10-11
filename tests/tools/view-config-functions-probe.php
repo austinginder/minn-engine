@@ -29,15 +29,8 @@ $try = static function (Closure $run) {
 if (!did_action('init')) {
     do_action('init');
 }
-// What a configuration holds, read from inside it; the patterns' views without core's own pattern categories,
-// which the engine does not register yet (owed, as in probe rest-view-config).
-$ownViews = static function ($config) {
-    if (is_array($config['view_list'] ?? null) && ($config['view_list'][0]['slug'] ?? '') === 'all-patterns') {
-        $config['view_list'] = array_values(array_filter($config['view_list'], static fn ($view) => in_array($view['slug'], ['all-patterns', 'my-patterns', 'uncategorized'], true) || preg_match('/^(zz|twentytwentyfive_)/', (string) $view['slug'])));
-    }
-    return $config;
-};
-$config = static fn (WP_View_Config_Data $data) => $ownViews(Closure::bind(fn () => $this->config, $data, WP_View_Config_Data::class)());
+// What a configuration holds, read from inside it.
+$config = static fn (WP_View_Config_Data $data) => Closure::bind(fn () => $this->config, $data, WP_View_Config_Data::class)();
 
 $say('filter names', [
     'a post type' => wp_get_entity_view_config_hook_name('postType', 'page'),
@@ -73,7 +66,7 @@ register_post_type('zzview', ['public' => true, 'show_in_rest' => true, 'labels'
 $say('configurations', [
     'pages' => $try(static fn () => wp_get_entity_view_config('postType', 'page')),
     'posts' => $try(static fn () => wp_get_entity_view_config('postType', 'post')),
-    'patterns' => $try(static fn () => $ownViews(wp_get_entity_view_config('postType', 'wp_block'))),
+    'patterns' => $try(static fn () => wp_get_entity_view_config('postType', 'wp_block')),
     'templates' => $try(static fn () => wp_get_entity_view_config('postType', 'wp_template')),
     'template parts' => $try(static fn () => wp_get_entity_view_config('postType', 'wp_template_part')),
     'media' => $try(static fn () => wp_get_entity_view_config('postType', 'attachment')),
