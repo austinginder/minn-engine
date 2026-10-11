@@ -268,6 +268,9 @@ final readonly class UsersController
             }
             $columns['user_email'] = $email;
         }
+        if (!empty($body['username']) && (string) $body['username'] !== $user->login) {
+            throw new RestError('rest_user_invalid_argument', 'Username is not editable.', 400);
+        }
         if (isset($body['url'])) {
             $columns['user_url'] = Kses::url((string) $body['url']);
         }
@@ -309,10 +312,13 @@ final readonly class UsersController
     {
         $userId = (int) $id;
         $user = $this->users->find($userId);
-        if (!$request->has('reassign')) {
+        // reassign and force come in the query or, as a DELETE may carry them, in the body (probe rest-users-controller).
+        $body = $request->json();
+        if (!$request->has('reassign') && !array_key_exists('reassign', $body)) {
             throw RestError::missingParams(['reassign']);
         }
-        $reassign = (string) $request->query('reassign', '');
+        $given = $request->has('reassign') ? $request->query('reassign', '') : $body['reassign'];
+        $reassign = $given === false ? '' : (string) $given;
         // Nothing, "false" or a number (the reference's own sanitizer, not the integer type): anything else is refused.
         if ($reassign !== '' && $reassign !== 'false' && !is_numeric($reassign)) {
             throw RestError::invalidParam('reassign', 'Invalid user parameter(s).', 'rest_invalid_param', ['status' => 400]);
@@ -323,7 +329,7 @@ final readonly class UsersController
         if (!$this->caller->can('delete_users')) {
             throw $this->caller->refuse('rest_user_cannot_delete', 'Sorry, you are not allowed to delete this user.');
         }
-        if (!$request->flag('force')) {
+        if (!$request->flagged('force')) {
             throw new RestError('rest_trash_not_supported', "Users do not support trashing. Set 'force=true' to delete.", 501);
         }
         $target = 0;

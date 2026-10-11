@@ -63747,6 +63747,7 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Rest\\ArgCheck",
                 "Minn\\Rest\\BatchController",
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\BlockTypesController",
@@ -89396,12 +89397,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/ArgCheck.php",
-            "lines": 84,
+            "lines": 85,
             "doc": "Judges a route's declared arguments against the request before the\npolicy is judged, the way the reference does: a required parameter that\ndid not arrive is rest_missing_callback_param; the shared collection\nparameters (context, page, per_page, search) are judged first and a\nrefusal among them is answered alone; then every other invalid one is\nlisted in rest_invalid_param, in the order the route declares them, with\nthe schema's own refusal under details. The query is read against the\nroute's args, the JSON body against its body set, and a JSON body that\ndoes not parse is refused on every route first. An argument its handler\njudges (Args::HANDLER_VALIDATES) is left to the handler.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Http\\Args",
+                "Minn\\Http\\Method",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Route",
                 "Minn\\Json",
@@ -89427,8 +89429,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 32
+                "line": 31,
+                "end": 33
             },
             "cases": [],
             "constants": [],
@@ -89453,8 +89455,8 @@
                     "doc": "The check as the router takes it.",
                     "shapes": [],
                     "params": [],
-                    "line": 35,
-                    "end": 38
+                    "line": 36,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -89489,8 +89491,8 @@
                             "doc": "what the path named, for a route whose parameters depend on it"
                         }
                     ],
-                    "line": 41,
-                    "end": 58
+                    "line": 42,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -89509,8 +89511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 71
+                    "line": 63,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -89539,8 +89541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 88
+                    "line": 79,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -89561,8 +89563,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 110
+                    "line": 93,
+                    "end": 112
                 }
             ]
         },
@@ -109579,7 +109581,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/UsersController.php",
-            "lines": 342,
+            "lines": 348,
             "doc": "wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives.",
             "implements": [],
             "extends": null,
@@ -109911,7 +109913,7 @@
                         }
                     ],
                     "line": 241,
-                    "end": 304
+                    "end": 307
                 },
                 {
                     "routes": [
@@ -109939,8 +109941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 308,
-                    "end": 351
+                    "line": 311,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -110076,8 +110078,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 358,
-                    "end": 366
+                    "line": 364,
+                    "end": 372
                 }
             ]
         },

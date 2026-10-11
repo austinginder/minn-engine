@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Http\Args;
 use Closure;
 use JsonException;
+use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Route;
 use Minn\Json;
@@ -47,7 +48,8 @@ final readonly class ArgCheck
         $body = $route->bodyArguments();
         $this->missing($shared, $request->query);
         $this->round([[$shared, $request->query]]);
-        $sources = [[$own, $request->query]];
+        // A request with a body reads its own arguments there first, then from the query, as the reference's request does (probe rest-users-controller).
+        $sources = [[$own, in_array($request->method, [Method::Post, Method::Put, Method::Patch, Method::Delete], true) ? $request->json() + $request->query : $request->query]];
         if ($body !== []) {
             $sources[] = [$body, $request->json()];
         }

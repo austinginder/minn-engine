@@ -12195,3 +12195,52 @@ Fixed on the way:
   (the default category) as it did a plugin taxonomy's.
 - Both delete routes (posts, terms) read `force` from a DELETE body as well
   as the query (`Http\Request::flagged`).
+
+## WP_REST_Users_Controller (2026-10-11)
+
+Probe `rest-users-controller` proves the users controller class. It uses
+a contributor and a subscriber (both removed again) and a user created,
+renamed and deleted through the class.
+
+- **The schema** is the user fields captured from the reference, with the
+  locale enum (empty, en_US and the installed languages) and the avatar
+  sizes built from `rest_get_avatar_sizes`. Then the meta, then the
+  fields plugins register.
+- **Collection parameters** are the engine's user arguments with the base
+  controller's four, the context defaulting to view, then
+  `rest_user_collection_params`.
+- **Permissions.**
+  - Listing is open. The edit context, ordering by email or registration
+    date, and filtering by role or capability need `list_users` (each its
+    own message).
+  - Asking for authors needs editing posts of a REST type with author
+    support.
+  - Reading a user is open for oneself, for anyone who may edit or list
+    users, and for a user with published posts.
+  - Changing roles needs `promote_user` and is judged before editing.
+  - Deleting needs `delete_user`.
+  - The current-user routes act on the signed-in user (none: an invalid
+    id, or `rest_not_logged_in` for reading).
+- **Values.**
+  - `check_username` refuses what `validate_username` refuses; spaces pass.
+  - `check_user_password` refuses an empty password and a backslash.
+  - `check_reassign` passes false and numbers and refuses anything else.
+  - `check_role_update` refuses an unknown role, one's own role without
+    `edit_users`, and a role the user may not give.
+- **`prepare_item_for_database`**: email, login, the id of an existing user,
+  password, display name, first and last name, nickname, nicename,
+  description, URL, locale, then `role` false when roles are sent, then
+  `rest_pre_insert_user`.
+- **Reading and writing** go through the engine's `UserObject` and its user
+  routes.
+  - An error the save raised itself (`existing_user_login`) carries no
+    data here, as the reference's does.
+  - A forced delete shapes the previous view first; reassigning to the
+    user being deleted is refused.
+
+Fixed on the way:
+- The engine's user update refuses a username change (`rest_user_invalid_argument`).
+- The user delete reads `reassign` and `force` from a DELETE body.
+- The router's argument check reads a write request's arguments from its
+  body first, then the query, as the reference's request does
+  (`Rest\ArgCheck`).

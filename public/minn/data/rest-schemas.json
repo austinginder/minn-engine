@@ -5308,5 +5308,218 @@
                 "edit"
             ]
         }
+    },
+    "user-properties": {
+        "id": {
+            "description": "Unique identifier for the user.",
+            "type": "integer",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "username": {
+            "description": "Login name for the user.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "required": true,
+            "arg_options": {
+                "sanitize_callback": "@this:check_username"
+            }
+        },
+        "name": {
+            "description": "Display name for the user.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "first_name": {
+            "description": "First name for the user.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "last_name": {
+            "description": "Last name for the user.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "email": {
+            "description": "The email address for the user.",
+            "type": "string",
+            "format": "email",
+            "context": [
+                "edit"
+            ],
+            "required": true
+        },
+        "url": {
+            "description": "URL of the user.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ]
+        },
+        "description": {
+            "description": "Description of the user.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ]
+        },
+        "link": {
+            "description": "Author URL of the user.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true
+        },
+        "locale": {
+            "description": "Locale for the user.",
+            "type": "string",
+            "enum": [
+                "",
+                "en_US"
+            ],
+            "context": [
+                "edit"
+            ]
+        },
+        "nickname": {
+            "description": "The nickname for the user.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "slug": {
+            "description": "An alphanumeric identifier for the user.",
+            "type": "string",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "@this:sanitize_slug"
+            }
+        },
+        "registered_date": {
+            "description": "Registration date for the user.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "roles": {
+            "description": "Roles assigned to the user.",
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "context": [
+                "edit"
+            ]
+        },
+        "password": {
+            "description": "Password for the user (never included).",
+            "type": "string",
+            "context": [],
+            "required": true,
+            "arg_options": {
+                "sanitize_callback": "@this:check_user_password"
+            }
+        },
+        "capabilities": {
+            "description": "All capabilities assigned to the user.",
+            "type": "object",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "extra_capabilities": {
+            "description": "Any extra capabilities assigned to the user.",
+            "type": "object",
+            "context": [
+                "edit"
+            ],
+            "readonly": true
+        },
+        "avatar_urls": {
+            "description": "Avatar URLs for the user.",
+            "type": "object",
+            "context": [
+                "embed",
+                "view",
+                "edit"
+            ],
+            "readonly": true,
+            "properties": {
+                "24": {
+                    "description": "Avatar URL with image size of 24 pixels.",
+                    "type": "string",
+                    "format": "uri",
+                    "context": [
+                        "embed",
+                        "view",
+                        "edit"
+                    ]
+                },
+                "48": {
+                    "description": "Avatar URL with image size of 48 pixels.",
+                    "type": "string",
+                    "format": "uri",
+                    "context": [
+                        "embed",
+                        "view",
+                        "edit"
+                    ]
+                },
+                "96": {
+                    "description": "Avatar URL with image size of 96 pixels.",
+                    "type": "string",
+                    "format": "uri",
+                    "context": [
+                        "embed",
+                        "view",
+                        "edit"
+                    ]
+                }
+            }
+        }
     }
 }
