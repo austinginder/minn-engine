@@ -7,6 +7,18 @@
  * aliases.
  */
 
+/**
+ * SimplePie's old cache class for WordPress: its create() hands back the
+ * transient cache feeds use today (probe loose-classes).
+ */
+class WP_Feed_Cache extends SimplePie\Cache
+{
+    public function create($location, $filename, $extension)
+    {
+        return new WP_Feed_Cache_Transient($location, $filename, $extension);
+    }
+}
+
 class WP_Feed_Cache_Transient implements SimplePie\Cache\Base
 {
     public $name;

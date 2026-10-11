@@ -53,9 +53,11 @@ final class Html
         if ($classes === []) {
             return $html;
         }
+        // An attribute's value may be double- or single-quoted (the navigation's data-wp-context is single-quoted).
+        $attribute = '\s+[^\s=>\/]+(?:=(?:"[^"]*"|\'[^\']*\'))?';
         $pattern = $onClass === null
-            ? '/<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/]+(?:="[^"]*")?)*)\s*(\/?)>/'
-            : '/<([a-zA-Z][\w-]*)((?:\s+[^\s=>\/]+(?:="[^"]*")?)*\s+class="[^"]*\b' . preg_quote($onClass, '/') . '\b[^"]*"(?:\s+[^\s=>\/]+(?:="[^"]*")?)*)\s*(\/?)>/';
+            ? '/<([a-zA-Z][\w-]*)((?:' . $attribute . ')*)\s*(\/?)>/'
+            : '/<([a-zA-Z][\w-]*)((?:' . $attribute . ')*\s+class="[^"]*\b' . preg_quote($onClass, '/') . '\b[^"]*"(?:' . $attribute . ')*)\s*(\/?)>/';
         $joined = self::attr(implode(' ', $classes));
         return (string) preg_replace_callback($pattern, static function (array $m) use ($joined): string {
             [$whole, $tag, $attributes, $selfClose] = $m;

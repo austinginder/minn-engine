@@ -14,6 +14,11 @@ use Minn\Runtime\Runtime;
 #[AllowDynamicProperties]
 class WP_Locale_Switcher
 {
+    /** Nothing to note: the stack is the runtime's, so a switcher made later starts where the request stands. */
+    public function __construct()
+    {
+    }
+
     public function init()
     {
         add_filter('locale', [$this, 'filter_locale']);

@@ -14502,8 +14502,8 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Navigation.php",
-            "lines": 368,
-            "doc": "navigation, navigation-link, page-list. A navigation block's items come\nfrom its inner blocks, the wp_navigation post it references, the newest\npublished wp_navigation post, or (when none of those exist) the first\nclassic nav_menu; a responsive menu wraps them in the overlay markup\nthe reference emits.",
+            "lines": 374,
+            "doc": "navigation, navigation-link, page-list. A navigation block's items come\nfrom its inner blocks, the wp_navigation post it references, the newest\npublished wp_navigation post, or (when none of those exist) the first\nclassic nav_menu; a block naming a menu that is gone has none, and no\nlist. A responsive menu wraps them in the overlay markup the reference\nemits. The nav is labelled by the block's aria label, or the menu's\ntitle, made unique in the request; the list carries the aria label as\ngiven (probe loose-classes).",
             "implements": [],
             "extends": null,
             "uses": [
@@ -14561,8 +14561,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 71,
-                "end": 77
+                "line": 74,
+                "end": 80
             },
             "cases": [],
             "constants": [
@@ -14649,8 +14649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 59
+                    "line": 51,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -14669,8 +14669,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 87
+                    "line": 83,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -14689,8 +14689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 69
+                    "line": 65,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -14716,8 +14716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 152
+                    "line": 92,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -14771,8 +14771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 159,
-                    "end": 185
+                    "line": 166,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -14800,8 +14800,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 203
+                    "line": 202,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -14822,8 +14822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 225
+                    "line": 215,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -14842,8 +14842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 238
+                    "line": 237,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -14869,8 +14869,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 258
+                    "line": 249,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -14896,8 +14896,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 285
+                    "line": 275,
+                    "end": 294
                 },
                 {
                     "routes": [],
@@ -14916,8 +14916,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 296
+                    "line": 297,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -14930,8 +14930,8 @@
                         "@return list<Block>"
                     ],
                     "params": [],
-                    "line": 299,
-                    "end": 303
+                    "line": 308,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -14957,8 +14957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 316
+                    "line": 314,
+                    "end": 325
                 },
                 {
                     "routes": [],
@@ -14986,8 +14986,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 334
+                    "line": 328,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -15034,8 +15034,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 343,
-                    "end": 371
+                    "line": 352,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -15084,8 +15084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 381
+                    "line": 383,
+                    "end": 390
                 },
                 {
                     "routes": [],
@@ -15104,8 +15104,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 383,
-                    "end": 390
+                    "line": 392,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -15116,8 +15116,8 @@
                     "doc": "Interactive navigation markup brings the block's view module with it, as on the reference.",
                     "shapes": [],
                     "params": [],
-                    "line": 393,
-                    "end": 398
+                    "line": 402,
+                    "end": 407
                 }
             ]
         },
@@ -51955,7 +51955,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Html.php",
-            "lines": 107,
+            "lines": 109,
             "doc": "HTML, the front door for escaping and cutting markup: plain static calls,\none import away (use Minn\\Html;), the way Minn\\Http and Minn\\Json are.\nEscaping at output boundaries goes through here.",
             "implements": [],
             "extends": null,
@@ -52118,7 +52118,7 @@
                         }
                     ],
                     "line": 51,
-                    "end": 73
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -52144,8 +52144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 83
+                    "line": 78,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -52187,8 +52187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 108
+                    "line": 94,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -52207,8 +52207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 119
+                    "line": 118,
+                    "end": 121
                 }
             ]
         },

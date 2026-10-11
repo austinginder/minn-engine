@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 807,
-        "composes": 2302,
+        "minn": 808,
+        "composes": 2303,
         "leaf": 1001,
-        "noop": 2761,
+        "noop": 2768,
         "placeholder": 61,
         "deadend": 1661,
-        "functions": 8515,
+        "functions": 8524,
         "minnMethods": 972,
         "leafLinesOver15": 12
     },
@@ -11525,6 +11525,13 @@
             "minn": [],
             "composes": []
         },
+        "WP_Feed_Cache::create": {
+            "file": "simplepie/Wp.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Feed_Cache_Transient::__construct": {
             "file": "simplepie/Wp.php",
             "lines": 4,
@@ -15395,6 +15402,13 @@
             "minn": [],
             "composes": []
         },
+        "WP_Locale_Switcher::__construct": {
+            "file": "classes/WP_Locale_Switcher.php",
+            "lines": 0,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
         "WP_Locale_Switcher::changed": {
             "file": "classes/WP_Locale_Switcher.php",
             "lines": 2,
@@ -15930,6 +15944,15 @@
                 "apply_filters",
                 "wp_get_nav_menu_object",
                 "wp_nav_menu"
+            ]
+        },
+        "WP_Navigation_Block_Renderer::render": {
+            "file": "classes/WP_Navigation_Block_Renderer.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "render_block_core_navigation"
             ]
         },
         "WP_Navigation_Fallback::create_classic_menu_fallback": {
@@ -29560,6 +29583,15 @@
             ],
             "composes": []
         },
+        "WP_Theme_JSON_Resolver::get_block_data": {
+            "file": "classes/WP_Theme_JSON_Resolver.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "WP_Theme_JSON_Resolver::get_core_data": {
             "file": "classes/WP_Theme_JSON_Resolver.php",
             "lines": 2,
@@ -32942,6 +32974,24 @@
             "minn": [],
             "composes": []
         },
+        "Walker_Nav_Menu::__construct": {
+            "file": "classes/Walker_Nav_Menu.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "get_privacy_policy_url"
+            ]
+        },
+        "Walker_Nav_Menu::build_atts": {
+            "file": "classes/Walker_Nav_Menu.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_link_attributes"
+            ]
+        },
         "Walker_Nav_Menu::end_el": {
             "file": "classes/Walker_Nav_Menu.php",
             "lines": 2,
@@ -32956,6 +33006,17 @@
             "minn": [],
             "composes": []
         },
+        "Walker_Nav_Menu::first_print_of": {
+            "file": "classes/Walker_Nav_Menu.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::get",
+                "Minn\\Runtime\\Runtime::set"
+            ],
+            "composes": []
+        },
         "Walker_Nav_Menu::spacing": {
             "file": "classes/Walker_Nav_Menu.php",
             "lines": 2,
@@ -32965,11 +33026,10 @@
         },
         "Walker_Nav_Menu::start_el": {
             "file": "classes/Walker_Nav_Menu.php",
-            "lines": 25,
+            "lines": 30,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_link_attributes",
                 "apply_filters",
                 "esc_attr"
             ]
@@ -63926,6 +63986,24 @@
                 "Minn\\Runtime\\WidgetAreas::assign"
             ],
             "composes": []
+        },
+        "wp_atom_server::__call": {
+            "file": "classes/wp_atom_server.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
+        },
+        "wp_atom_server::__callStatic": {
+            "file": "classes/wp_atom_server.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_deprecated_function"
+            ]
         },
         "wp_attach_theme_preview_middleware": {
             "file": "theme-previews.php",

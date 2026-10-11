@@ -6,7 +6,7 @@
 // The SimplePie classes load the first time a plugin or fetch_feed() names
 // one, as the reference loads them only when a feed is fetched.
 spl_autoload_register(static function (string $class): void {
-    if (preg_match('/^(SimplePie(\\\\|_|$)|WP_SimplePie_|WP_Feed_Cache_Transient$)/', ltrim($class, '\\'))) {
+    if (preg_match('/^(SimplePie(\\\\|_|$)|WP_SimplePie_|WP_Feed_Cache(_Transient)?$)/', ltrim($class, '\\'))) {
         _minn_load_simplepie();
     }
 });

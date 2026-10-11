@@ -12936,3 +12936,57 @@ Left owed as inline placeholders:
 
 The probe's Links cases with an empty instance were dropped: the
 reference warns on the missing keys.
+
+## The loose classes: sentinel, Atom server, feed cache, walker, block data, navigation renderer (2026-10-11)
+
+Probe `loose-classes`. What landed:
+
+- **`WP_Filter_Sentinel`**: a final class with nothing in it, as the
+  reference's is.
+- **`wp_atom_server`**: any call, an object's or the class's, is reported
+  deprecated since 3.5.0 in favour of "the Atom Publishing Protocol plugin"
+  and answers null.
+- **`WP_Feed_Cache`** extends `SimplePie\Cache`. Its `create` hands back a
+  `WP_Feed_Cache_Transient`. It loads with the SimplePie classes, the
+  first time something names it, as on the reference.
+- **`WP_Locale_Switcher::__construct`** notes nothing. The engine keeps the
+  switching stack in the runtime, so a switcher made later starts where
+  the request stands (the reference's starts its own stack; nothing
+  observable differs unless a second switcher is made while switched).
+- **`Walker_Nav_Menu`**:
+  - `__construct` notes the privacy policy address. A link to exactly that
+    address gets `privacy-policy` added to its rel (after an XFN rel of its
+    own). A walker made before the page was set adds nothing.
+  - `build_atts` is the link's attribute string, the engine's
+    `_minn_link_attributes`: set values escaped (0 and `'0'` print), the
+    href as a URL.
+  - An item's id attribute is printed once a request, keyed by the item's
+    ID, whichever walker prints it. The `nav_menu_item_id` filter still
+    runs for a repeat.
+- **`WP_Theme_JSON_Resolver::get_block_data`**: the styles the registered
+  blocks bring, through `wp_theme_json_data_blocks`, made afresh on every
+  call:
+  - a block's `supports.__experimentalStyle` as its styles;
+  - `spacing.blockGap` null for a block whose gap support names an
+    `__experimentalDefault`.
+- **`WP_Navigation_Block_Renderer::render`** is the block's rendering
+  (`render_block_core_navigation`). The probe calls it as the block's render
+  callback, so the block supports see the block being rendered.
+
+Fixed on the way, in the navigation block:
+
+- The nav is labelled by the block's `ariaLabel`, made unique in the
+  request ("ZZ main", then "ZZ main 2"). The list carries the aria label as
+  given.
+- An unlabelled non-responsive nav prints no aria-label (it printed an
+  empty one).
+- A block naming a menu that is gone has no items and no list: no fallback
+  to the classic menu.
+- The overlay's content area has an empty line after the list. The live
+  front page was missing it too.
+- `Html::addClasses` reads single-quoted attribute values. A nav's
+  `data-wp-context` is single-quoted, so the layout support skipped the nav
+  and put its classes on the open button.
+
+The layout container hash stays engine-defined (contracts/blocks.md); the
+probe masks it, as the suites do.

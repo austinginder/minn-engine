@@ -5,7 +5,7 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 257 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 368 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Navigation`](#navigation) | final readonly class | 374 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 259 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -38,8 +38,11 @@ Internals: `comments()` (private, line 54), `title()` (private, line 68), `templ
 navigation, navigation-link, page-list. A navigation block's items come
 from its inner blocks, the wp_navigation post it references, the newest
 published wp_navigation post, or (when none of those exist) the first
-classic nav_menu; a responsive menu wraps them in the overlay markup
-the reference emits.
+classic nav_menu; a block naming a menu that is gone has none, and no
+list. A responsive menu wraps them in the overlay markup the reference
+emits. The nav is labelled by the block's aria label, or the menu's
+title, made unique in the request; the list carries the aria label as
+given (probe loose-classes).
 
 - const `SUBMENU_CONTEXT` = `'{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null, "previousFocus": null }'` — A submenu's interactivity context.
 - const `SUBMENU_TOGGLE` = `'data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick"'`
@@ -63,7 +66,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 62), `navigation()` (private, line 89), `responsive()` (private, line 159), `items()` (private, line 193), `presetClasses()` (private, line 206), `overlayColors()` (private, line 228), `link()` (private, line 240), `submenu()` (private, line 266), `overlayClose()` (private, line 288), `classicItems()` (private, line 299), `pageList()` (private, line 305), `ancestorsOf()` (private, line 319), `pageItems()` (private, line 343), `navParent()` (private, line 374), `menuPost()` (private, line 383), `enqueueView()` (private, line 393)
+Internals: `wiring()` (private, line 65), `navigation()` (private, line 92), `responsive()` (private, line 166), `items()` (private, line 202), `presetClasses()` (private, line 215), `overlayColors()` (private, line 237), `link()` (private, line 249), `submenu()` (private, line 275), `overlayClose()` (private, line 297), `classicItems()` (private, line 308), `pageList()` (private, line 314), `ancestorsOf()` (private, line 328), `pageItems()` (private, line 352), `navParent()` (private, line 383), `menuPost()` (private, line 392), `enqueueView()` (private, line 402)
 
 
 ## PostBlocks

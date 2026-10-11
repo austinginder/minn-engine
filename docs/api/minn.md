@@ -8,7 +8,7 @@ the front door, the autoloader, the one database door, the REST error
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
 | [`Db`](#db) | final class | 287 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 285 | The engine's front door. An unmodified wp-config.php ends by requiring |
-| [`Html`](#html) | final class | 107 | HTML, the front door for escaping and cutting markup: plain static calls, |
+| [`Html`](#html) | final class | 109 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 115 | JSON in and out, for the engine and for code written for Minn: |
 | [`RestError`](#resterror) | final class | 60 | A WordPress-shaped error, thrown from anywhere and rendered once by the |

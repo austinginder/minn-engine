@@ -233,6 +233,28 @@ final class WP_Theme_JSON_Resolver
         return $out;
     }
 
+    /**
+     * The styles the registered blocks bring (probe loose-classes): a
+     * block's style default from its supports, and a block gap left unset
+     * for a block whose gap support names a default of its own; through
+     * wp_theme_json_data_blocks, made afresh on every call.
+     */
+    public static function get_block_data()
+    {
+        $blocks = [];
+        foreach (WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type) {
+            $supports = (array) $type->supports;
+            if (isset($supports['__experimentalStyle'])) {
+                $blocks[$name] = (array) $supports['__experimentalStyle'];
+            }
+            if (isset($supports['spacing']['blockGap']['__experimentalDefault'])) {
+                $blocks[$name]['spacing']['blockGap'] = null;
+            }
+        }
+        $data = apply_filters('wp_theme_json_data_blocks', new WP_Theme_JSON_Data(['version' => 3, 'styles' => ['blocks' => $blocks]], 'blocks'));
+        return $data->get_theme_json();
+    }
+
     /** The engine's defaults alone. */
     public static function get_core_data(): WP_Theme_JSON
     {

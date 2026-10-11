@@ -26,8 +26,11 @@ use Minn\Support\Kses;
  * navigation, navigation-link, page-list. A navigation block's items come
  * from its inner blocks, the wp_navigation post it references, the newest
  * published wp_navigation post, or (when none of those exist) the first
- * classic nav_menu; a responsive menu wraps them in the overlay markup
- * the reference emits.
+ * classic nav_menu; a block naming a menu that is gone has none, and no
+ * list. A responsive menu wraps them in the overlay markup the reference
+ * emits. The nav is labelled by the block's aria label, or the menu's
+ * title, made unique in the request; the list carries the aria label as
+ * given (probe loose-classes).
  */
 final readonly class Navigation
 {
@@ -89,18 +92,21 @@ final readonly class Navigation
     private function navigation(Block $block, Renderer $renderer): string
     {
         $items = $block->innerBlocks;
+        $ariaLabel = (string) $block->attr('ariaLabel', '');
         $label = '';
         $menuKey = null;
         if ($items === []) {
-            $menu = $this->menuPost((int) $block->attr('ref', 0));
+            $ref = (int) $block->attr('ref', 0);
+            $menu = $this->menuPost($ref);
             $menuKey = $menu === null ? null : 'menu:' . (int) $menu['ID'];
             if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
-            $items = $menu === null ? $this->classicItems() : Parser::parse((string) $menu['post_content']);
+            $items = $menu !== null ? Parser::parse((string) $menu['post_content']) : ($ref > 0 ? [] : $this->classicItems());
             // The menu's title labels the nav only when the block names the menu.
-            $label = (int) $block->attr('ref', 0) > 0 ? (string) ($menu['post_title'] ?? '') : '';
+            $label = $ref > 0 ? (string) ($menu['post_title'] ?? '') : '';
         }
+        $label = $ariaLabel !== '' ? $ariaLabel : $label;
         // Only blocks are items; the whitespace between them is not rendered.
         $items = array_values(array_filter($items, static fn (Block $item) => $item->name !== null));
         $label = $renderer->state()->uniqueLabel($label);
@@ -129,7 +135,8 @@ final readonly class Navigation
         $renderer->state()->enterNavigation();
         // Submenus read how they open from the navigation, as block context.
         $settings = ['showSubmenuIcon' => (bool) $block->attr('showSubmenuIcon', true), 'openSubmenusOnClick' => (bool) $block->attr('openSubmenusOnClick', false)];
-        $list = '<ul ' . $style . 'class="' . Html::attr($listClasses) . '">' . $renderer->providing($settings, fn (): string => $this->items($items, $renderer)) . '</ul>';
+        $listLabel = $ariaLabel === '' ? '' : ' aria-label="' . Html::attr($ariaLabel) . '"';
+        $list = $items === [] ? '' : '<ul ' . $style . 'class="' . Html::attr($listClasses) . '"' . $listLabel . '>' . $renderer->providing($settings, fn (): string => $this->items($items, $renderer)) . '</ul>';
         $renderer->state()->leaveNavigation();
         if ($menuKey !== null) {
             $renderer->state()->leave($menuKey);
@@ -146,7 +153,7 @@ final readonly class Navigation
         ]));
         $nav = '<nav ' . $style . 'class="' . Html::attr(implode(' ', $navClasses)) . '"';
         if (!$responsive) {
-            return $nav . ' aria-label="' . Html::attr($label) . '">' . $list . '</nav>';
+            return $nav . ($label === '' ? '' : ' aria-label="' . Html::attr($label) . '"') . '>' . $list . '</nav>';
         }
         return $this->responsive($nav, $label, $list, $id, (bool) $block->attr('hasIcon', true), $colors);
     }
@@ -178,6 +185,8 @@ final readonly class Navigation
             . "\n\t\t\t\t\t\t\t" . '<button ' . $close . ' class="wp-block-navigation__responsive-container-close" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.closeMenuOnClick"' . "\n\t\t\t" . '>' . $closeInner . '</button>'
             . "\n\t\t\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-container-content" ' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.focusFirstElement"' . "\n\t\t\t" . ' id="modal-' . $id . '-content">'
             . "\n\t\t\t\t\t\t\t\t" . $list
+            // An empty line follows the list, where the reference's template leaves room after it.
+            . "\n\t\t\t\t\t\t\t\t"
             . "\n\t\t\t\t\t\t\t" . '</div>'
             . "\n\t\t\t\t\t\t" . '</div>'
             . "\n\t\t\t\t\t" . '</div>'
