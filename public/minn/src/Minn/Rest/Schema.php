@@ -474,8 +474,11 @@ final readonly class Schema
             if ($creatable && !empty($params['required'])) {
                 $arg['required'] = true;
             }
-            if (isset($params['description'])) {
-                $arg['description'] = $params['description'];
+            // The title and description keywords go along too (probe rest-settings-controller).
+            foreach (['title', 'description'] as $keyword) {
+                if (isset($params[$keyword])) {
+                    $arg[$keyword] = $params[$keyword];
+                }
             }
             foreach (self::ENDPOINT_KEYWORDS as $keyword) {
                 if (isset($params[$keyword])) {

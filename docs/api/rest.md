@@ -61,7 +61,7 @@ the wp/v2 surface: shapes and controllers
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 468 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 523 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 526 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |

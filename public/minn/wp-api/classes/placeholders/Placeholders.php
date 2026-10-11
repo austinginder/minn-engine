@@ -110,58 +110,6 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor
     }
 }
 
-class WP_REST_Block_Patterns_Controller extends WP_REST_Controller
-{
-    private $remote_patterns_loaded = NULL;
-    protected static $categories_migration = ['buttons' => 'call-to-action', 'columns' => 'text', 'query' => 'posts'];
-
-    public function __construct()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Block_Patterns_Controller::__construct');
-        return null;
-    }
-
-    protected function migrate_pattern_categories($pattern)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Block_Patterns_Controller::migrate_pattern_categories');
-        return null;
-    }
-}
-
-class WP_REST_Settings_Controller extends WP_REST_Controller
-{
-
-    public function __construct()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::__construct');
-        return null;
-    }
-
-    protected function prepare_value($value, $schema)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::prepare_value');
-        return null;
-    }
-
-    protected function get_registered_options()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::get_registered_options');
-        return null;
-    }
-
-    public function sanitize_callback($value, $request, $param)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::sanitize_callback');
-        return null;
-    }
-
-    protected function set_additional_properties_to_false($schema)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Settings_Controller::set_additional_properties_to_false');
-        return null;
-    }
-}
-
 #[AllowDynamicProperties]
 class WP_Recovery_Mode_Link_Service
 {

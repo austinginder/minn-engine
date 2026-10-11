@@ -12689,3 +12689,63 @@ them as a request sees them.
 Fixed on the way: the probe runtime set the theme up twice when a probe
 loaded the plugins after it (`Plugins::load` after `loadTheme`), adding the
 default supports again (`html5` twice over). The theme is now set up once.
+
+## WP_REST_Settings_Controller and WP_REST_Block_Patterns_Controller (2026-10-11)
+
+Probes `rest-settings-controller` and `rest-block-patterns-controller`
+prove the last two REST controller classes still owed.
+
+**Settings.** The probe registers three settings (an object with a nested
+object, an integer under another REST name, a plain string) and one not
+shown in REST. It puts every option it changes back.
+
+- **The class is WordPress-shaped** over the registered settings and the
+  options API. The engine's own route serves through `Rest\LiveSettings`,
+  which validates and sanitizes the body itself.
+- **`get_registered_options`** lists each setting shown in REST, by its REST
+  name:
+  - its schema is type, label as title, description and default, then the
+    setting's own schema;
+  - types outside the six JSON ones are left out;
+  - objects are closed (`rest_default_additional_properties_to_false`);
+  - then comes the option name.
+- **Permissions.** `get_item_permissions_check` answers the boolean
+  `manage_options`.
+- **Reading.** `get_item` asks `rest_pre_get_setting`, then the option
+  with its default. Through `prepare_value`, a value its schema refuses
+  reads as null; otherwise it is sanitized.
+- **Updating.** `update_item` takes the request's values as given; called
+  directly, nothing validates them.
+  - Each value is offered to `rest_pre_update_setting`.
+  - Null deletes the option, refused (`rest_invalid_stored_value`, 500)
+    when what is stored does not fit the schema.
+  - Anything else goes to `update_option`.
+- **Sanitizing.** `sanitize_callback` passes null and parses anything else
+  as its parameter.
+- **`set_additional_properties_to_false`** is deprecated (6.1.0, use
+  `rest_default_additional_properties_to_false()`).
+
+**Block patterns.** The probe registers a full pattern and a plain one.
+The remote patterns stay off (`should_load_remote_block_patterns`): they
+would ask wordpress.org.
+
+- **Base and access.**
+  - The base is `block-patterns/patterns`, with one GET route.
+  - Who edits posts, or any type shown in REST, may read the patterns
+    (`rest_cannot_view` otherwise): contributors, not subscribers.
+- **Migrating categories.** `migrate_pattern_categories` maps the old
+  category names (buttons, columns, query) to the new ones wherever they
+  stand, keys kept, repeats allowed. A list that is not an array stays
+  as it is.
+- **Shaping.** A pattern shows the fields it has under their REST names,
+  those asked for, whatever the context, without links.
+- **Listing.** `get_items` loads the remote patterns once (dead ends here;
+  `_register_remote_theme_patterns` still waits on a decision and is
+  called only when the runtime has it). It then lists every registered
+  pattern with its categories migrated.
+- **The engine route.** The engine serves no `wp/v2/block-patterns` route
+  of its own; the editor reads it.
+
+Fixed on the way: endpoint arguments built from a schema
+(`rest_get_endpoint_args_for_schema`) keep the `title` keyword, before the
+description, as the reference keeps it.
