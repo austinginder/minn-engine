@@ -21,11 +21,11 @@
         },
         "methods": {
             "total": 4075,
-            "real": 1960,
+            "real": 1964,
             "deadend": 1618,
-            "placeholder": 350,
+            "placeholder": 346,
             "missing": 147,
-            "verified": 1903,
+            "verified": 1907,
             "resolved": 3928
         }
     }

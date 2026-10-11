@@ -113,6 +113,20 @@ function wp_theme_has_theme_json()
     return is_file(get_stylesheet_directory() . '/theme.json') || is_file(get_template_directory() . '/theme.json');
 }
 
+/**
+ * @internal a WP_Theme_JSON holding data the engine has already worked
+ * out (merged, presets under their origins), as the reference's merged
+ * objects hold theirs: not built again, so not sanitized twice.
+ */
+function _minn_theme_json_object(array $data): WP_Theme_JSON
+{
+    $object = (new ReflectionClass(WP_Theme_JSON::class))->newInstanceWithoutConstructor();
+    Closure::bind(function () use ($data): void {
+        $this->theme_json = $data;
+    }, $object, WP_Theme_JSON::class)();
+    return $object;
+}
+
 function wp_theme_get_element_class_name($element)
 {
     return WP_Theme_JSON::get_element_class_name($element);

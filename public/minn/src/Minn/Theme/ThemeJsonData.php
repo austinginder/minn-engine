@@ -28,8 +28,42 @@ final class ThemeJsonData
             return $cached;
         }
         $data = \apply_filters('wp_theme_json_data_theme', new \WP_Theme_JSON_Data($json, 'theme'));
-        $filtered = $data instanceof \WP_Theme_JSON_Data ? (array) $data->get_data() : $json;
+        $filtered = $data instanceof \WP_Theme_JSON_Data ? self::asWritten((array) $data->get_theme_json()->get_raw_data()) : $json;
         Runtime::current()->set($key, $filtered);
         return $filtered;
+    }
+
+    /**
+     * The filtered layer back in theme.json's own shape: each preset (and
+     * the spacing scale) the theme's list again, everything else in the
+     * order it came, as the reference's resolver keeps the layer's object.
+     *
+     * @param array<string, mixed> $raw
+     * @return array<string, mixed>
+     */
+    private static function asWritten(array $raw): array
+    {
+        $paths = array_merge(array_column(\WP_Theme_JSON::PRESETS_METADATA, 'path'), [['spacing', 'spacingScale']]);
+        $nodes = [['settings']];
+        foreach (array_keys((array) ($raw['settings']['blocks'] ?? [])) as $block) {
+            $nodes[] = ['settings', 'blocks', (string) $block];
+        }
+        foreach ($nodes as $node) {
+            foreach ($paths as $path) {
+                $ref = &$raw;
+                foreach (array_merge($node, $path) as $key) {
+                    if (!is_array($ref) || !array_key_exists($key, $ref)) {
+                        unset($ref);
+                        continue 2;
+                    }
+                    $ref = &$ref[$key];
+                }
+                if (is_array($ref) && array_key_exists('theme', $ref)) {
+                    $ref = $ref['theme'];
+                }
+                unset($ref);
+            }
+        }
+        return $raw;
     }
 }

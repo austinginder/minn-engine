@@ -19676,7 +19676,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Selector.php",
-            "lines": 42,
+            "lines": 43,
             "doc": "The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys.",
             "implements": [],
             "extends": null,
@@ -19737,7 +19737,7 @@
                         }
                     ],
                     "line": 17,
-                    "end": 36
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -19765,8 +19765,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 48
+                    "line": 40,
+                    "end": 49
                 }
             ]
         },
@@ -150170,7 +150170,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final class",
             "file": "public/minn/src/Minn/Theme/ThemeJsonData.php",
-            "lines": 20,
+            "lines": 54,
             "doc": "The theme's theme.json as plugins and the theme's own functions may\nchange it (wp_theme_json_data_theme, a WP_Theme_JSON_Data they update\nwith presets and settings of their own), as the reference's resolver\nhands it to them. Worked out once a request for each set of callbacks,\nso a filter added late still counts.",
             "implements": [],
             "extends": null,
@@ -150213,6 +150213,29 @@
                     ],
                     "line": 19,
                     "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "asWritten",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "asWritten(array $raw): array",
+                    "doc": "The filtered layer back in theme.json's own shape: each preset (and\nthe spacing scale) the theme's list again, everything else in the\norder it came, as the reference's resolver keeps the layer's object.",
+                    "shapes": [
+                        "@param array<string, mixed> $raw",
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "raw",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 68
                 }
             ]
         },

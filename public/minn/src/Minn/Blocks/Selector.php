@@ -28,9 +28,10 @@ final class Selector
         if (is_array($declared) && isset($declared['root'])) {
             return $declared['root'];
         }
+        // A feature's own selector from the supports is scoped under the block's root (probe theme-json-construct).
         $feature = (string) ($path[0] ?? '');
         if ($feature !== '' && is_string($supports[$feature]['__experimentalSelector'] ?? null)) {
-            return $supports[$feature]['__experimentalSelector'];
+            return implode(', ', array_map(static fn (string $part): string => $root . ' ' . trim($part), explode(',', $supports[$feature]['__experimentalSelector'])));
         }
         return $fallback ? $root : null;
     }

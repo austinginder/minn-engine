@@ -11754,3 +11754,75 @@ keeps what it is given) and everything built on it. That means
 `sanitize`, the `remove_insecure_*` family, the stylesheet and its nodes,
 blocks metadata, `get_name_from_defaults`, `resolve_variables` and
 `set_spacing_sizes`.
+
+## WP_Theme_JSON's constructor (2026-10-10)
+
+Probe `theme-json-construct` proves the constructor and what it rests on.
+It reads the blocks metadata and the style variations each block allows,
+builds about 25 theme.json documents in each origin, and reads each back
+raw and as data. It also merges four of them in origin order.
+
+- **The constructor**, in order:
+  1. An origin that is not one becomes `theme`.
+  2. Older versions are migrated.
+  3. Shared variations are spread to the blocks that have them.
+  4. The document is sanitized.
+  5. Appearance tools are opted in.
+  6. Each preset, and the spacing scale, is kept under the origin, at the
+     root and for each block. A value already keyed by origins is left
+     alone.
+- **Sanitizing.**
+  - Only the known top-level keys stay.
+  - Styles and settings are pruned to a schema built from the registered
+    blocks, elements and style variations. A subtree pruned to nothing
+    goes.
+  - Elements allow their pseudo selectors. Blocks allow their elements,
+    pseudo selectors and custom states, and their registered variations.
+  - A variation may hold elements and nested blocks, each with the valid
+    styles. Font families are pruned by their own schema, at the root and
+    per origin.
+- **Shared variations** (`styles.variations`) are merged under each
+  block's own definition of the same variation, which wins key by key.
+  The shared list is then removed.
+- **Blocks metadata**, per registered block, in this key order:
+  - `selector` and `selectors`. A block without selectors of its own gets
+    the root plus a feature selector for each support that names one.
+  - `elements`.
+  - `duotone`, when the block has a duotone selector.
+  - `styleVariations`, from the block type's own styles and then the
+    styles registry.
+  - `states`, the block's custom states from `selectors.states`.
+
+  The metadata is cached until the set of blocks or registered styles
+  changes.
+- **A feature's own selector** (`__experimentalSelector` in a support) is
+  scoped under the block's root, one part per comma. For example,
+  `.wp-block-calendar table, .wp-block-calendar th`. The engine's
+  `Blocks\Selector` used to answer it unscoped.
+- **`get_data`.**
+  - Theme and custom presets are flattened by slug (custom wins). Defaults
+    are left out, and keys are sorted recursively.
+  - A settings node with every appearance tool set reads as having asked
+    for them: the tools turned on go, any group left empty goes, and
+    `appearanceTools` is true. A tool turned off stays as written. This
+    holds when the tools are spelled out by hand, and when all are off.
+  - A node with only some tools set keeps them as written.
+
+Kept on purpose: `WP_Theme_JSON_Resolver` still builds its objects from
+data already in origin form, without running the constructor
+(`_minn_theme_json_object`). The engine's merged theme data is already
+in the shape probe `theme-json-resolver` proves, so it is not migrated or
+sanitized a second time. `Theme\ThemeJsonData` reads a filtered document's presets
+back out of the `theme` origin, for the engine's own reader.
+
+Presets that are not lists can be built and read raw. The reference warns
+when it flattens them, so the probe reads them raw only.
+
+Left in `WP_Theme_JSON`:
+- the stylesheet and its node walkers (`get_stylesheet`,
+  `get_style_nodes`, `get_setting_nodes`, `get_styles_for_block`, the
+  layout and root rules, `compute_style_properties`);
+- the `remove_insecure_*` family, which `wp_filter_global_styles_post`
+  waits on;
+- `get_name_from_defaults`, `set_spacing_sizes`, `resolve_variables` and
+  `get_feature_declarations_for_node`.

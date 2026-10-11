@@ -36,7 +36,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
-| [`ThemeJsonData`](#themejsondata) | final class | 20 | The theme's theme.json as plugins and the theme's own functions may |
+| [`ThemeJsonData`](#themejsondata) | final class | 54 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
 | [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
@@ -1312,6 +1312,8 @@ Used by: `Minn\Theme\Theme`
 The theme layer through wp_theme_json_data_theme; as written when nothing filters it. @param array<string, mixed> $json
 
 - `@param array<string, mixed> $json`
+
+Internals: `asWritten()` (private, line 44)
 
 
 ## ThemeStyles

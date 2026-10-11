@@ -20,7 +20,7 @@ the block parser and renderer
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 335 | Per-request rendering state, owned by the renderer. The reference numbers |
 | [`Renderer`](#renderer) | final class | 350 | Renders a block tree the way the reference renders post_content: |
-| [`Selector`](#selector) | final class | 42 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
+| [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
 | [`StyleEngine`](#styleengine) | final class | 195 | What a block's style object comes to, as the reference's style engine |
@@ -962,7 +962,7 @@ The CSS selector a block's style targets, or null.
 - `@param array<string, mixed> $supports the block type's supports`
 - `@param string|list<string>|null $target 'root', a dotted feature path, or a path list`
 
-Internals: `at()` (private, line 39)
+Internals: `at()` (private, line 40)
 
 
 ## Serializer

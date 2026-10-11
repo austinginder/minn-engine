@@ -189,7 +189,7 @@ final class WP_Theme_JSON_Resolver
         }
         // The pattern directory slugs a theme.json lists come along when it lists any (probe block-patterns).
         $patterns = $theme->patterns();
-        return new WP_Theme_JSON(['version' => 3, 'settings' => $settings, 'styles' => $styles] + ($patterns !== [] ? ['patterns' => $patterns] : []));
+        return _minn_theme_json_object(['version' => 3, 'settings' => $settings, 'styles' => $styles] + ($patterns !== [] ? ['patterns' => $patterns] : []));
     }
 
     /**
@@ -237,14 +237,14 @@ final class WP_Theme_JSON_Resolver
     public static function get_core_data(): WP_Theme_JSON
     {
         $core = new Minn\Theme\ThemeStyles(null, '');
-        return new WP_Theme_JSON(['version' => 3, 'settings' => $core->settings(), 'styles' => $core->styles()]);
+        return _minn_theme_json_object(['version' => 3, 'settings' => $core->settings(), 'styles' => $core->styles()]);
     }
 
     /** The site editor's saved styles for the active theme, normalized the way the REST item reports them. */
     public static function get_user_data(): WP_Theme_JSON
     {
         $saved = _minn_user_styles();
-        return new WP_Theme_JSON([
+        return _minn_theme_json_object([
             'version' => 3,
             'isGlobalStylesUserThemeJSON' => true,
             'settings' => StyleSettings::normalize($saved['settings'], 'custom'),

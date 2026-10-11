@@ -32,6 +32,9 @@ class WP_Theme_JSON
     protected $theme_json = NULL;
     protected static $blocks_metadata = [];
 
+    /** @internal what the cached blocks metadata was worked out from */
+    private static $minn_blocks_signature = null;
+
     public static function get_viewport_media_queries($viewport_settings = NULL, $options = [])
     {
         // The breakpoints given that are sizes (the defaults when none are given): mobile up to its size, tablet above mobile up to its own.
@@ -83,15 +86,118 @@ class WP_Theme_JSON
         return static::__EXPERIMENTAL_ELEMENT_CLASS_NAMES[$element] ?? '';
     }
 
+    /**
+     * A theme.json as an origin brings it (probe theme-json-construct):
+     * migrated to the latest schema, shared variations spread to the blocks
+     * that have them, sanitized against the registered blocks, elements and
+     * variations, appearance tools opted in, and each preset kept under the
+     * origin. An origin that is not one is the theme.
+     */
     public function __construct($theme_json = ['version' => 3], $origin = 'theme')
     {
-        $this->theme_json = is_array($theme_json) ? $theme_json : [];
+        $origin = in_array($origin, static::VALID_ORIGINS, true) ? $origin : 'theme';
+        $theme_json = WP_Theme_JSON_Schema::migrate($theme_json, $origin);
+        $blocks_metadata = static::get_blocks_metadata();
+        $valid_variations = static::get_valid_block_style_variations($blocks_metadata);
+        $theme_json = static::unwrap_shared_block_style_variations($theme_json, $valid_variations);
+        $theme_json = static::sanitize($theme_json, array_keys($blocks_metadata), array_keys(static::ELEMENTS), $valid_variations);
+        $this->theme_json = self::minn_presets_by_origin(static::maybe_opt_in_into_settings($theme_json), $origin);
+    }
+
+    /** @internal each preset (and the spacing scale) kept under the origin, at the root and for each block, unless it already is */
+    private static function minn_presets_by_origin(array $theme_json, string $origin): array
+    {
+        $paths = array_merge(array_column(static::PRESETS_METADATA, 'path'), [['spacing', 'spacingScale']]);
+        foreach (self::minn_setting_paths($theme_json) as $node) {
+            foreach ($paths as $path) {
+                $value = _wp_array_get($theme_json, array_merge($node, $path), null);
+                $keyed = is_array($value) && $value !== [] && array_diff(array_keys($value), static::VALID_ORIGINS) === [];
+                if ($value !== null && !$keyed) {
+                    _wp_array_set($theme_json, array_merge($node, $path), [$origin => $value]);
+                }
+            }
+        }
+        return $theme_json;
+    }
+
+    /** @internal the paths of the settings nodes: the root's and each block's @return list<list<string>> */
+    private static function minn_setting_paths(array $theme_json): array
+    {
+        $paths = isset($theme_json['settings']) ? [['settings']] : [];
+        foreach (array_keys((array) ($theme_json['settings']['blocks'] ?? [])) as $block) {
+            $paths[] = ['settings', 'blocks', (string) $block];
+        }
+        return $paths;
+    }
+
+    /**
+     * @internal the schema a theme.json is sanitized against: the valid
+     * styles at the root, for each element (with its pseudo selectors) and
+     * each block (with its elements, pseudo selectors, custom states and
+     * variations, which may nest elements and blocks); the valid settings
+     * at the root and for each block, font families by their own schema.
+     */
+    private static function minn_schema(array $block_names, array $element_names, array $variations): array
+    {
+        $elements = [];
+        foreach ($element_names as $element) {
+            $elements[$element] = static::VALID_STYLES + array_fill_keys(static::VALID_ELEMENT_PSEUDO_SELECTORS[$element] ?? [], static::VALID_STYLES);
+        }
+        $styled = static::VALID_STYLES + ['elements' => $elements];
+        $nested = array_fill_keys($block_names, $styled);
+        $blocks = [];
+        foreach ($block_names as $block) {
+            $states = array_merge(static::VALID_BLOCK_PSEUDO_SELECTORS[$block] ?? [], static::VALID_BLOCK_CUSTOM_STATES[$block] ?? []);
+            $blocks[$block] = $styled + array_fill_keys($states, static::VALID_STYLES) + ['variations' => array_fill_keys((array) ($variations[$block] ?? []), $styled + ['blocks' => $nested])];
+        }
+        $settings = ['blocks' => array_fill_keys($block_names, static::VALID_SETTINGS)] + static::VALID_SETTINGS;
+        $settings['typography']['fontFamilies'] = static::schema_in_root_and_per_origin(static::FONT_FAMILY_SCHEMA);
+        return ['styles' => $styled + ['blocks' => $blocks], 'settings' => $settings];
+    }
+
+    /** @internal one block's metadata: its selector and selectors, element selectors, duotone, style variations and custom states */
+    private static function minn_block_metadata(WP_Block_Type $block_type, array $registered_styles): array
+    {
+        $selector = (string) wp_get_block_css_selector($block_type);
+        $metadata = ['selector' => $selector, 'selectors' => static::get_block_selectors($block_type, $selector), 'elements' => static::get_block_element_selectors($selector)];
+        $duotone = wp_get_block_css_selector($block_type, 'filter.duotone');
+        if (!empty($duotone)) {
+            $metadata['duotone'] = $duotone;
+        }
+        $variations = [];
+        foreach (array_merge((array) $block_type->styles, array_values($registered_styles)) as $style) {
+            if (isset($style['name'])) {
+                $variations[$style['name']] = static::get_block_style_variation_selector($style['name'], $selector);
+            }
+        }
+        if ($variations !== []) {
+            $metadata['styleVariations'] = $variations;
+        }
+        foreach (static::VALID_BLOCK_CUSTOM_STATES[$block_type->name] ?? [] as $state) {
+            if (isset($metadata['selectors']['states'][$state])) {
+                $metadata['states'][$state] = $metadata['selectors']['states'][$state];
+            }
+        }
+        return $metadata;
     }
 
     private static function unwrap_shared_block_style_variations($theme_json, $valid_variations)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::unwrap_shared_block_style_variations');
-        return null;
+        // A shared variation goes to every block that has a style by its name, under the block's own definition of it.
+        $shared = $theme_json['styles']['variations'] ?? null;
+        if (!is_array($shared)) {
+            return $theme_json;
+        }
+        unset($theme_json['styles']['variations']);
+        foreach ($shared as $name => $variation) {
+            foreach ((array) $valid_variations as $block => $names) {
+                if (is_array($variation) && in_array($name, (array) $names, true)) {
+                    $own = $theme_json['styles']['blocks'][$block]['variations'][$name] ?? [];
+                    $theme_json['styles']['blocks'][$block]['variations'][$name] = array_replace_recursive($variation, is_array($own) ? $own : []);
+                }
+            }
+        }
+        return $theme_json;
     }
 
     protected static function maybe_opt_in_into_settings($theme_json)
@@ -120,8 +226,19 @@ class WP_Theme_JSON
 
     protected static function sanitize($input, $valid_block_names, $valid_element_names, $valid_variations)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::sanitize');
-        return null;
+        if (!is_array($input)) {
+            return [];
+        }
+        // The known top-level keys stay; styles and settings keep what the schema has, and go when nothing is left.
+        $output = array_intersect_key($input, array_flip(static::VALID_TOP_LEVEL_KEYS));
+        $schema = self::minn_schema((array) $valid_block_names, (array) $valid_element_names, (array) $valid_variations);
+        foreach (['styles', 'settings'] as $subtree) {
+            $output[$subtree] = is_array($input[$subtree] ?? null) ? static::remove_keys_not_in_schema($input[$subtree], $schema[$subtree]) : [];
+            if (empty($output[$subtree])) {
+                unset($output[$subtree]);
+            }
+        }
+        return $output;
     }
 
     protected static function append_to_selector($selector, $to_append)
@@ -155,8 +272,19 @@ class WP_Theme_JSON
 
     protected static function get_blocks_metadata()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_blocks_metadata');
-        return null;
+        // Each registered block's selectors, worked out again only when the registered blocks or block styles change.
+        $blocks = WP_Block_Type_Registry::get_instance()->get_all_registered();
+        $styles = WP_Block_Styles_Registry::get_instance()->get_all_registered();
+        $signature = md5(serialize([array_keys($blocks), array_map('array_keys', (array) $styles)]));
+        if (self::$minn_blocks_signature === $signature) {
+            return static::$blocks_metadata;
+        }
+        static::$blocks_metadata = [];
+        foreach ($blocks as $name => $block_type) {
+            static::$blocks_metadata[$name] = self::minn_block_metadata($block_type, (array) ($styles[$name] ?? []));
+        }
+        self::$minn_blocks_signature = $signature;
+        return static::$blocks_metadata;
     }
 
     protected static function remove_keys_not_in_schema($tree, $schema)
@@ -630,9 +758,61 @@ class WP_Theme_JSON
         return is_array($this->theme_json['patterns'] ?? null) ? $this->theme_json['patterns'] : [];
     }
 
+    /** The data as a theme.json reads: each preset flattened (the theme's, a custom one replacing it by slug; the defaults left out), every key sorted (probe theme-json-construct). */
     public function get_data()
     {
-        return $this->theme_json;
+        $output = $this->theme_json;
+        foreach (self::minn_setting_paths((array) $output) as $node) {
+            foreach (static::PRESETS_METADATA as $metadata) {
+                $path = array_merge($node, $metadata['path']);
+                $preset = _wp_array_get($output, $path, null);
+                if ($preset === null) {
+                    continue;
+                }
+                $items = [];
+                foreach (['theme', 'custom'] as $origin) {
+                    foreach ((array) ($preset[$origin] ?? []) as $item) {
+                        $slug = (string) ($item['slug'] ?? '');
+                        unset($item['slug']);
+                        $items[$slug] = $item;
+                    }
+                }
+                _wp_array_set($output, $path, array_map(static fn ($slug, $item) => ['slug' => (string) $slug] + $item, array_keys($items), array_values($items)));
+            }
+            $output = self::minn_opt_in_folded($output, $node);
+        }
+        wp_recursive_ksort($output);
+        return $output;
+    }
+
+    /**
+     * @internal a node whose every appearance tool is set reads as having
+     * asked for them: the ones turned on go (and any group left empty), and
+     * appearanceTools is true; one turned off stays as it is.
+     */
+    private static function minn_opt_in_folded(array $output, array $node): array
+    {
+        foreach (static::APPEARANCE_TOOLS_OPT_INS as $path) {
+            if (_wp_array_get($output, array_merge($node, $path), null) === null) {
+                return $output;
+            }
+        }
+        foreach (static::APPEARANCE_TOOLS_OPT_INS as $path) {
+            [$group, $tool] = $path;
+            $settings = &$output;
+            foreach ($node as $key) {
+                $settings = &$settings[$key];
+            }
+            if (($settings[$group][$tool] ?? null) === true) {
+                unset($settings[$group][$tool]);
+                if ($settings[$group] === []) {
+                    unset($settings[$group]);
+                }
+            }
+            $settings['appearanceTools'] = true;
+            unset($settings);
+        }
+        return $output;
     }
 
     public function set_spacing_sizes()
@@ -667,8 +847,18 @@ class WP_Theme_JSON
 
     protected static function get_block_selectors($block_type, $root_selector)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_block_selectors');
-        return null;
+        // A block's own selectors as given; without any, its root and the feature selectors its supports name.
+        if (!empty($block_type->selectors)) {
+            return $block_type->selectors;
+        }
+        $selectors = ['root' => $root_selector];
+        foreach (static::BLOCK_SUPPORT_FEATURE_LEVEL_SELECTORS as $support => $feature) {
+            $feature_selector = wp_get_block_css_selector($block_type, $support);
+            if ($feature_selector !== null) {
+                $selectors[$feature] = ['root' => $feature_selector];
+            }
+        }
+        return $selectors;
     }
 
     protected static function get_block_element_selectors($root_selector)
@@ -736,8 +926,13 @@ class WP_Theme_JSON
 
     protected static function get_valid_block_style_variations($blocks_metadata = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_valid_block_style_variations');
-        return null;
+        $valid = [];
+        foreach (empty($blocks_metadata) ? static::get_blocks_metadata() : $blocks_metadata as $block => $metadata) {
+            if (isset($metadata['styleVariations'])) {
+                $valid[$block] = array_keys($metadata['styleVariations']);
+            }
+        }
+        return $valid;
     }
 
     private static function get_block_name_from_metadata_path($block_metadata)
