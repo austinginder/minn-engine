@@ -3157,3 +3157,9 @@ function wp_delete_auto_drafts()
 function wp_queue_posts_for_term_meta_lazyload($posts)
 {
 }
+
+/** Tags added to a post's own, kept (probe placeholder-helpers): the terms it now has; false without a post. */
+function wp_add_post_tags($post_id = 0, $tags = '')
+{
+    return wp_set_post_tags($post_id, $tags, true);
+}

@@ -13634,3 +13634,34 @@ as the state has no such values yet.
 Owed: the engine's `playlist-view.js` is still the empty module, so a
 playlist does not play in the browser. A clean-room view module is front-end
 work of its own.
+
+## Placeholders made real: form and settings helpers (2026-10-11)
+
+Probe `placeholder-helpers`. Six placeholders are now real:
+
+- `form_option()` prints the option escaped for an attribute.
+- `wp_add_post_tags()` adds tags to a post, keeping the ones it has, and
+  returns its terms; false without a post.
+- `wp_timezone_choice()` returns the settings form's choices, one per line
+  (`Minn\Support\TimezoneChoice`), matching the reference byte for byte:
+  - each continent's zones in an `optgroup`, cities in natural,
+    case-insensitive order (`strnatcasecmp`, so Fortaleza comes before
+    Fort Nelson);
+  - a three-part zone reads "City - Sub-city";
+  - then UTC, then the "Manual Offsets": the value is `UTC+5.75`, the label
+    `UTC+5:45`, and zero is `UTC+0`;
+  - "Select a city" leads when nothing is chosen. A real zone outside the
+    list (an old name, `Etc/`) leads, marked, when it is the one chosen. An
+    unknown one marks nothing.
+- `wp_update_php_annotation()` prints the host's note, in its wrapper, only
+  when `wp_update_php_url` gives an address of the host's own; it returns
+  the note instead when asked not to print.
+- `wp_heartbeat_settings()` sets the admin-ajax address (replacing one
+  given), and the heartbeat nonce for someone signed in. It is hooked on
+  `heartbeat_settings`, as on the reference.
+- `wp_clean_update_cache()` deletes the plugin, theme and core update
+  transients.
+
+Decided (Austin, 2026-10-11): WordPress's GPL icon library is not carried.
+`_wp_register_default_icons()` stays empty of it; any icons the engine ships
+are custom-made.

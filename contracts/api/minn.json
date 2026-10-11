@@ -140451,6 +140451,7 @@
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\UpdateCounts",
                 "Minn\\Support\\KsesAttributes",
+                "Minn\\Support\\TimezoneChoice",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Widgets\\WidgetForms"
             ],
@@ -144010,6 +144011,199 @@
                     ],
                     "line": 17,
                     "end": 27
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Support\\TimezoneChoice",
+            "short": "TimezoneChoice",
+            "namespace": "Minn\\Support",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Support/TimezoneChoice.php",
+            "lines": 98,
+            "doc": "The timezone choices a settings form offers (wp_timezone_choice, probe\nplaceholder-helpers): the zones of each continent, cities in natural\norder (a zone with three parts reads \"City - Sub-city\"), then UTC, then\nthe offsets set by hand. \"Select a city\" leads when nothing is chosen, and\na real zone outside the list (an old name, Etc/) leads when it is the one\nchosen. Each choice is a line of its own.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Support\\Escape"
+            ],
+            "usedBy": [],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "CONTINENTS",
+                    "value": "array (   0 => 'Africa',   1 => 'America',   2 => 'Antarctica',   3 => 'Arctic',   4 => 'Asia',   5 => 'Atlantic',   6 => 'Australia',   7 => 'Europe',   8 => 'Indian',   9 => 'Pacific', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "OFFSETS",
+                    "value": "array (   0 => -12,   1 => -11.5,   2 => -11,   3 => -10.5,   4 => -10,   5 => -9.5,   6 => -9,   7 => -8.5,   8 => -8,   9 => -7.5,   10 => -7,   11 => -6.5,   12 => -6,   13 => -5.5,   14 => -5,   15 => -4.5,   16 => -4,   17 => -3.5,   18 => -3,   19 => -2.5,   20 => -2,   21 => -1.5,   22 => -1,   23 => -0.5,   24 => 0,   25 => 0.5,   26 => 1,   27 => 1.5,   28 => 2,   29 => 2.5,   30 => 3,   31 => 3.5,   32 => 4,   33 => 4.5,   34 => 5,   35 => 5.5,   36 => 5.75,   37 => 6,   38 => 6.5,   39 => 7,   40 => 7.5,   41 => 8,   42 => 8.5,   43 => 8.75,   44 => 9,   45 => 9.5,   46 => 10,   47 => 10.5,   48 => 11,   49 => 11.5,   50 => 12,   51 => 12.75,   52 => 13,   53 => 13.75,   54 => 14, )",
+                    "doc": "The offsets offered by hand, in hours.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "html",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "html(string $selected, Closure $translate): string",
+                    "doc": "The choices as option lines, the chosen zone marked.",
+                    "shapes": [
+                        "@param \\Closure(string, string): string $translate a text in a text domain, translated"
+                    ],
+                    "params": [
+                        {
+                            "name": "selected",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "translate",
+                            "type": "Closure",
+                            "shape": "\\Closure(string, string): string",
+                            "default": null,
+                            "doc": "a text in a text domain, translated"
+                        }
+                    ],
+                    "line": 27,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "zones",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "zones(Closure $translate): array",
+                    "doc": "The continents' zones in order: continent, city, then sub-city, each\ncompared naturally and without case.",
+                    "shapes": [
+                        "@return list<array{value: string, continent: string, city: string, sub: string, label: string}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "translate",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 74
+                },
+                {
+                    "routes": [],
+                    "name": "groups",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "groups(array $zones): array",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<array{value: string, continent: string, city: string, sub: string, label: string}> $zones",
+                        "@return array<string, list<array{value: string, continent: string, city: string, sub: string, label: string}>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "zones",
+                            "type": "array",
+                            "shape": "list<array{value: string, continent: string, city: string, sub: string, label: string}>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "outsideList",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "outsideList(string $selected, array $listed): bool",
+                    "doc": "Whether a chosen zone is a real one the list leaves out (not UTC, not an offset). @param list<string> $listed",
+                    "shapes": [
+                        "@param list<string> $listed"
+                    ],
+                    "params": [
+                        {
+                            "name": "selected",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "listed",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "offset",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "offset(int|float $offset): array",
+                    "doc": "An offset's value (UTC+5.75) and label (UTC+5:45). @return array{0: string, 1: string}",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "offset",
+                            "type": "int|float",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "option",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "option(string $value, string $label, string $chosen): string",
+                    "doc": "One choice, marked when it is the chosen zone.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "chosen",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 111
                 }
             ]
         },

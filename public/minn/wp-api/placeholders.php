@@ -7,21 +7,9 @@ function create_initial_taxonomies()
     return null;
 }
 
-function form_option($option)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('form_option');
-    return null;
-}
-
 function get_the_block_template_html()
 {
     \Minn\Runtime\PlaceholderTrace::hit('get_the_block_template_html');
-    return null;
-}
-
-function wp_add_post_tags($post_id = 0, $tags = '')
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_add_post_tags');
     return null;
 }
 
@@ -37,12 +25,6 @@ function wp_admin_css_color($key, $name, $url, $colors = [], $icons = [])
     return null;
 }
 
-function wp_clean_update_cache()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_clean_update_cache');
-    return null;
-}
-
 function wp_editor($content, $editor_id, $settings = [])
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_editor');
@@ -52,12 +34,6 @@ function wp_editor($content, $editor_id, $settings = [])
 function wp_enqueue_global_styles_css_custom_properties()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_global_styles_css_custom_properties');
-    return null;
-}
-
-function wp_heartbeat_settings($settings)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_heartbeat_settings');
     return null;
 }
 
@@ -103,20 +79,8 @@ function wp_templating_constants()
     return null;
 }
 
-function wp_timezone_choice($selected_zone, $locale = NULL)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_timezone_choice');
-    return null;
-}
-
 function wp_tinymce_inline_scripts()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_tinymce_inline_scripts');
-    return null;
-}
-
-function wp_update_php_annotation($before = '<p class="description">', $after = '</p>', $display = true)
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_update_php_annotation');
     return null;
 }

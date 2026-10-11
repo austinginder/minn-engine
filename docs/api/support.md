@@ -32,6 +32,7 @@ escaping, serialized readers, small helpers
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
+| [`TimezoneChoice`](#timezonechoice) | final class | 98 | The timezone choices a settings form offers (wp_timezone_choice, probe |
 | [`Url`](#url) | final class | 220 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 154 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
@@ -161,7 +162,7 @@ rather than encoded again, the specials and both quotes encoded, then the
 filter plugins hook (esc_html, attribute_escape) handed the result and the
 original.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -934,6 +935,29 @@ Human-scale spans: a number of seconds as the largest whole unit it fills, round
 A number of seconds as its largest whole unit and count.
 
 - `@return array{0: int, 1: string} count and unit name`
+
+
+## TimezoneChoice
+
+`final class Minn\Support\TimezoneChoice` · `public/minn/src/Minn/Support/TimezoneChoice.php`
+
+The timezone choices a settings form offers (wp_timezone_choice, probe
+placeholder-helpers): the zones of each continent, cities in natural
+order (a zone with three parts reads "City - Sub-city"), then UTC, then
+the offsets set by hand. "Select a city" leads when nothing is chosen, and
+a real zone outside the list (an old name, Etc/) leads when it is the one
+chosen. Each choice is a line of its own.
+
+- const `CONTINENTS` = `array (   0 => 'Africa',   1 => 'America',   2 => 'Antarctica',   3 => 'Arctic',   4 => 'Asia',   5 => 'Atlantic',   6 => 'Australia',   7 => 'Europe',   8 => 'Indian',   9 => 'Pacific', )`
+- const `OFFSETS` = `array (   0 => -12,   1 => -11.5,   2 => -11,   3 => -10.5,   4 => -10,   5 => -9.5,   6 => -9,   7 => -8.5,   8 => -8,   9 => -7.5,   10 => -7,   11 => -6.5,   12 => -6,   13 => -5.5,   14 => -5,   15 => -4.5,   16 => -4,   17 => -3.5,   18 => -3,   19 => -2.5,   20 => -2,   21 => -1.5,   22 => -1,   23 => -0.5,   24 => 0,   25 => 0.5,   26 => 1,   27 => 1.5,   28 => 2,   29 => 2.5,   30 => 3,   31 => 3.5,   32 => 4,   33 => 4.5,   34 => 5,   35 => 5.5,   36 => 5.75,   37 => 6,   38 => 6.5,   39 => 7,   40 => 7.5,   41 => 8,   42 => 8.5,   43 => 8.75,   44 => 9,   45 => 9.5,   46 => 10,   47 => 10.5,   48 => 11,   49 => 11.5,   50 => 12,   51 => 12.75,   52 => 13,   53 => 13.75,   54 => 14, )` — The offsets offered by hand, in hours.
+
+### static `html(string $selected, Closure $translate): string`
+
+The choices as option lines, the chosen zone marked.
+
+- `@param \Closure(string, string): string $translate a text in a text domain, translated`
+
+Internals: `zones()` (private, line 60), `groups()` (private, line 80), `outsideList()` (private, line 90), `offset()` (private, line 97), `option()` (private, line 108)
 
 
 ## Url

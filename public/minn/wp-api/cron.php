@@ -268,3 +268,11 @@ function _minn_run_cron()
 function wp_schedule_update_checks()
 {
 }
+
+/** The core, plugin and theme update checks forgotten, so the next check asks again (probe placeholder-helpers). */
+function wp_clean_update_cache()
+{
+    foreach (['update_plugins', 'update_themes', 'update_core'] as $transient) {
+        delete_site_transient($transient);
+    }
+}

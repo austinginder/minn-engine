@@ -1257,3 +1257,14 @@ function wp_finalize_template_enhancement_output_buffer(string $output, int $pha
     do_action('wp_finalized_template_enhancement_output_buffer', $filtered);
     return $filtered;
 }
+
+/** The heartbeat's settings: the admin-ajax address, and the heartbeat nonce for someone signed in (probe placeholder-helpers). */
+function wp_heartbeat_settings($settings)
+{
+    $settings = (array) $settings;
+    $settings['ajaxurl'] = admin_url('admin-ajax.php');
+    if (is_user_logged_in()) {
+        $settings['nonce'] = wp_create_nonce('heartbeat-nonce');
+    }
+    return $settings;
+}

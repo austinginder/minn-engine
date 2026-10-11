@@ -1806,3 +1806,23 @@ function _minn_die_variable_mismatch(): void
 {
     wp_die(__('A variable mismatch has been detected.'), __('Sorry, you are not allowed to view this item.'), 400);
 }
+
+/** The timezone choices for a settings form, the chosen one marked (Minn\\Support\\TimezoneChoice; probe placeholder-helpers). */
+function wp_timezone_choice($selected_zone, $locale = null)
+{
+    return Minn\Support\TimezoneChoice::html((string) $selected_zone, static fn (string $text, string $domain): string => translate($text, $domain));
+}
+
+/** The note under a PHP update notice when the host gave its own address: printed in the wrapper, or returned (probe placeholder-helpers). */
+function wp_update_php_annotation($before = '<p class="description">', $after = '</p>', $display = true)
+{
+    $annotation = wp_get_update_php_annotation();
+    if ($annotation === '') {
+        return null;
+    }
+    if (!$display) {
+        return $before . $annotation . $after;
+    }
+    echo $before . $annotation . $after;
+    return null;
+}

@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 815,
-        "composes": 2338,
+        "composes": 2341,
         "leaf": 1022,
-        "noop": 2746,
-        "placeholder": 60,
+        "noop": 2749,
+        "placeholder": 54,
         "deadend": 1661,
         "functions": 8564,
-        "minnMethods": 982,
+        "minnMethods": 983,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -45237,11 +45237,14 @@
             ]
         },
         "form_option": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "option.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "esc_attr",
+                "get_option"
+            ]
         },
         "format_code_lang": {
             "file": "deadends.php",
@@ -63173,11 +63176,13 @@
             "composes": []
         },
         "wp_add_post_tags": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "post.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_set_post_tags"
+            ]
         },
         "wp_add_privacy_policy_content": {
             "file": "admin.php",
@@ -65256,11 +65261,13 @@
             ]
         },
         "wp_clean_update_cache": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "cron.php",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "delete_site_transient"
+            ]
         },
         "wp_clear_auth_cookie": {
             "file": "pluggable.php",
@@ -69469,11 +69476,15 @@
             "deadend": "admin"
         },
         "wp_heartbeat_settings": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "template.php",
+            "lines": 6,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "admin_url",
+                "is_user_logged_in",
+                "wp_create_nonce"
+            ]
         },
         "wp_high_priority_element_flag": {
             "file": "media.php",
@@ -75427,11 +75438,15 @@
             ]
         },
         "wp_timezone_choice": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
-            "minn": [],
-            "composes": []
+            "file": "functions.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\TimezoneChoice::html"
+            ],
+            "composes": [
+                "translate"
+            ]
         },
         "wp_timezone_override_offset": {
             "file": "functions.php",
@@ -76087,11 +76102,13 @@
             ]
         },
         "wp_update_php_annotation": {
-            "file": "placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "functions.php",
+            "lines": 9,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "wp_get_update_php_annotation"
+            ]
         },
         "wp_update_plugin": {
             "file": "deadends.php",

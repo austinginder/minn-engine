@@ -796,3 +796,9 @@ function delete_all_user_settings()
     update_user_option($user, 'user-settings', '', false);
     setcookie('wp-settings-' . $user, ' ', time() - YEAR_IN_SECONDS, SITECOOKIEPATH);
 }
+
+/** An option printed for a form field's value, escaped for an attribute (probe placeholder-helpers). */
+function form_option($option)
+{
+    echo esc_attr(get_option($option));
+}
