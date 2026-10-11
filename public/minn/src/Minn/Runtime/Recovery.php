@@ -184,7 +184,7 @@ final readonly class Recovery
      */
     public function pausedPlugins(): array
     {
-        return $this->read(self::PLUGINS_OPTION);
+        return $this->paused('plugin');
     }
 
     /**
@@ -194,7 +194,27 @@ final readonly class Recovery
      */
     public function pausedThemes(): array
     {
-        return $this->read(self::THEMES_OPTION);
+        return $this->paused('theme');
+    }
+
+    /**
+     * The extensions of one kind ('plugin' or 'theme') recovery has paused.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function paused(string $kind): array
+    {
+        return $this->read($kind === 'theme' ? self::THEMES_OPTION : self::PLUGINS_OPTION);
+    }
+
+    /** Lets every extension of one kind load again. Returns how many were released. */
+    public function resumeKind(string $kind): int
+    {
+        $released = 0;
+        foreach (array_keys($this->paused($kind)) as $name) {
+            $released += (int) $this->resume($kind, (string) $name);
+        }
+        return $released;
     }
 
     /** Lets an extension load again. Returns false when it was not paused. */

@@ -13891,3 +13891,49 @@ own sign-in page, fetched over HTTP from both stacks. Its header names gained
 One difference is kept on purpose: the engine still sends
 `X-Content-Type-Options: nosniff` on every response, the sign-in page
 included, where the reference doesn't.
+
+## Recovery through WordPress's API, read from Minn's own pauses (2026-10-11)
+
+Austin's D4: Minn keeps its own recovery and need not follow WordPress;
+WordPress's recovery functions map onto it. Minn pauses a plugin or theme
+itself, after a second boot failure inside ten minutes (`Runtime\Recovery`).
+WordPress pauses only inside a recovery session that an emailed link
+starts.
+
+What the reference answers outside a session (probe `recovery`):
+
+- `wp_paused_plugins()` and `wp_paused_themes()` each return one
+  `WP_Paused_Extensions_Storage`, the same object every call.
+- The storage has nothing paused. `set()`, `delete()` and `delete_all()`
+  return false and store nothing, for a plugin, a theme, or a type it does not
+  know.
+- `wp_skip_paused_plugins()` and `wp_skip_paused_themes()` return their lists
+  as given, keys kept.
+- `wp_recovery_mode()` returns one `WP_Recovery_Mode`, the same every call.
+  `wp_is_recovery_mode()` is false.
+
+The engine gives the same answers, from its own pause records:
+
+- `get()` and `get_all()` read `paused_plugins` and `paused_themes`. A plugin
+  is found by its plugin file or its folder.
+- `delete()` and `delete_all()` let the extension load again. They return
+  false when nothing was paused, as the reference does.
+- `set()` is refused. Only the engine's own strike rule pauses anything.
+- `wp_skip_paused_plugins()` and `wp_skip_paused_themes()` drop what the
+  engine paused, keys kept.
+
+The recovery suite pins the mapping with a real pause. The probe can only
+compare the "nothing paused" state, since the reference has no session to
+pause in.
+
+**Left out on purpose** (`omitted.json`, D4):
+
+- `WP_Recovery_Mode` and its cookie, key, link and email services: the
+  emailed-link session. The classes keep their constants
+  (`WP_Recovery_Mode_Link_Service::LOGIN_ACTION_ENTERED` and the rest), which
+  security plugins read on their login screens.
+- `WP_Fatal_Error_Handler` and `wp_register_fatal_error_handler()`: the
+  engine's own failure page answers a fatal.
+
+`wp_recovery_mode()` is real: it returns that dead-end object, so a plugin's
+`wp_recovery_mode()->is_active()` answers nothing instead of failing.

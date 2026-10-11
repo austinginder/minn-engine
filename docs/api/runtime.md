@@ -77,7 +77,7 @@ the WordPress runtime plugins load against
 | [`PostSave`](#postsave) | final class | 210 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 197 | The conditional flags a set of query variables implies (is_single, is_archive, |
-| [`Recovery`](#recovery) | final readonly class | 214 | Recovery from a fatal in someone else's code. When a plugin or theme |
+| [`Recovery`](#recovery) | final readonly class | 234 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 467 | Post types, taxonomies, and statuses as plugin code registers and reads |
@@ -3539,6 +3539,16 @@ The themes recovery mode has paused.
 
 - `@return array<string, array<string, mixed>>`
 
+### `paused(string $kind): array`
+
+The extensions of one kind ('plugin' or 'theme') recovery has paused.
+
+- `@return array<string, array<string, mixed>>`
+
+### `resumeKind(string $kind): int`
+
+Lets every extension of one kind load again. Returns how many were released.
+
 ### `resume(string $kind, string $name): bool`
 
 Lets an extension load again. Returns false when it was not paused.
@@ -3547,7 +3557,7 @@ Lets an extension load again. Returns false when it was not paused.
 
 Lets everything load again. Returns how many were released.
 
-Internals: `pluginFile()` (private, line 91), `activePlugins()` (private, line 105), `strikes()` (private, line 162), `forgetStrikes()` (private, line 169), `read()` (private, line 224), `write()` (private, line 232)
+Internals: `pluginFile()` (private, line 91), `activePlugins()` (private, line 105), `strikes()` (private, line 162), `forgetStrikes()` (private, line 169), `read()` (private, line 244), `write()` (private, line 252)
 
 
 ## Refusal

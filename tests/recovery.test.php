@@ -76,6 +76,10 @@ $check(str_contains($status, 'minn_recovery_probe_no_such_function'), 'the pause
 [$second] = minn_test_fetch($ENGINE . '/');
 $check($second['status'] === 200, 'the next request recovers', (string) $second['status']);
 
+// WordPress's recovery API reads the engine's own pauses (Austin, D4; probe recovery pins the answers with nothing paused).
+$read = json_decode($wp('eval ' . escapeshellarg('echo json_encode(["all" => array_keys(wp_paused_plugins()->get_all()), "by folder" => wp_paused_plugins()->get(' . var_export($slug, true) . ') !== null, "by file" => wp_paused_plugins()->get(' . var_export($plugin, true) . ') !== null, "set" => wp_paused_plugins()->set("zz-other", []), "skipped" => array_values(array_map("plugin_basename", wp_skip_paused_plugins([WP_PLUGIN_DIR . "/" . ' . var_export($plugin, true) . ', WP_PLUGIN_DIR . "/hello.php"]))), "themes" => wp_paused_themes()->get_all()]);')), true);
+$check($read === ['all' => [$plugin], 'by folder' => true, 'by file' => true, 'set' => false, 'skipped' => ['hello.php'], 'themes' => []], 'wp_paused_plugins() and wp_skip_paused_plugins() answer from the engine\'s pause; set() is refused', json_encode($read));
+
 // The list is stored the way WordPress stores it.
 $option = json_decode($wp('option get paused_plugins --format=json'), true);
 $entry = is_array($option) ? ($option[$plugin] ?? null) : null;
@@ -93,6 +97,12 @@ $wp('plugin deactivate ' . escapeshellarg($slug));
 $wp('minn recovery resume-all');
 [$fourth] = minn_test_fetch($ENGINE . '/');
 $check($fourth['status'] === 200, 'the site is well once the plugin is off', (string) $fourth['status']);
+
+// Deleting through WordPress's storage lets the extension load again.
+$wp('option update paused_plugins ' . escapeshellarg(json_encode(['zz-paused/zz-paused.php' => ['type' => 1, 'file' => 'x.php', 'line' => 1, 'message' => 'ZZ']])) . ' --format=json');
+$deleted = json_decode($wp('eval ' . escapeshellarg('echo json_encode([wp_paused_plugins()->delete("zz-paused"), wp_paused_plugins()->get_all(), wp_paused_plugins()->delete("zz-paused"), wp_paused_plugins()->delete_all()]);')), true);
+$check($deleted === [true, [], false, false], 'delete() resumes a pause and says false once there is nothing left, as delete_all() does', json_encode($deleted));
+$wp('option delete paused_plugins');
 
 // A failure after boot answers to one request's input and never pauses anything,
 // however often it happens: a route that throws is not grounds to take a plugin down.

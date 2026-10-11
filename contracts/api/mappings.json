@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 808,
-        "composes": 2350,
-        "leaf": 1022,
-        "noop": 2747,
-        "placeholder": 26,
-        "deadend": 1719,
-        "functions": 8594,
-        "minnMethods": 985,
+        "composes": 2352,
+        "leaf": 1029,
+        "noop": 2753,
+        "placeholder": 20,
+        "deadend": 1768,
+        "functions": 8652,
+        "minnMethods": 986,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -11587,6 +11587,46 @@
             "minn": [],
             "composes": []
         },
+        "WP_Fatal_Error_Handler::detect_error": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Fatal_Error_Handler::display_default_error_template": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 1,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Fatal_Error_Handler::display_error_template": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 1,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Fatal_Error_Handler::handle": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Fatal_Error_Handler::should_handle_error": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
         "WP_Feed_Cache::create": {
             "file": "simplepie/Wp.php",
             "lines": 1,
@@ -16070,6 +16110,81 @@
             "composes": [
                 "__"
             ]
+        },
+        "WP_Paused_Extensions_Storage::__construct": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::delete": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::delete_all": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::get": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::get_all": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::get_option_name": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::is_api_loaded": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::key": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::recovery": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Content\\Site::__construct",
+                "Minn\\Runtime\\Recovery::__construct",
+                "Minn\\Runtime\\Runtime::current",
+                "Minn\\Runtime\\Runtime::db"
+            ],
+            "composes": []
+        },
+        "WP_Paused_Extensions_Storage::set": {
+            "file": "classes/WP_Paused_Extensions_Storage.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "WP_Plugin_Dependencies::check_for_circular_dependencies": {
             "file": "classes/WP_Plugin_Dependencies.php",
@@ -25285,33 +25400,349 @@
             "minn": [],
             "composes": []
         },
-        "WP_Recovery_Mode_Link_Service::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
+        "WP_Recovery_Mode::__construct": {
+            "file": "classes/deadends/DeadEnds.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "deadend",
             "minn": [],
-            "composes": []
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::clean_expired_keys": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::exit_recovery_mode": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::get_email_rate_limit": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::get_extension_for_error": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::get_link_ttl": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::get_session_id": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::handle_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::handle_error": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::handle_exit_recovery_mode": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::initialize": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::is_active": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::is_initialized": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::is_network_plugin": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::redirect_protected": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode::store_error": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::clear_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::generate_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::get_session_id_from_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::is_cookie_set": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::parse_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::recovery_mode_hash": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::set_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Cookie_Service::validate_cookie": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::__construct": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::clear_rate_limit": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::get_cause": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::get_debug": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::get_plugin": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::get_recovery_mode_email_address": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::maybe_send_recovery_mode_email": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Email_Service::send_recovery_mode_email": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::clean_expired_keys": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::generate_and_store_recovery_mode_key": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::generate_recovery_mode_token": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::get_keys": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::remove_key": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::update_keys": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Key_Service::validate_recovery_mode_key": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
+        },
+        "WP_Recovery_Mode_Link_Service::__construct": {
+            "file": "classes/deadends/DeadEnds.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
         },
         "WP_Recovery_Mode_Link_Service::generate_url": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/deadends/DeadEnds.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "deadend",
             "minn": [],
-            "composes": []
+            "composes": [],
+            "deadend": "omitted"
         },
         "WP_Recovery_Mode_Link_Service::get_recovery_mode_begin_url": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/deadends/DeadEnds.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "deadend",
             "minn": [],
-            "composes": []
+            "composes": [],
+            "deadend": "omitted"
         },
         "WP_Recovery_Mode_Link_Service::handle_begin_link": {
-            "file": "classes/placeholders/Placeholders.php",
+            "file": "classes/deadends/DeadEnds.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "deadend",
             "minn": [],
-            "composes": []
+            "composes": [],
+            "deadend": "omitted"
         },
         "WP_Rewrite::__construct": {
             "file": "classes/WP_Rewrite.php",
@@ -72435,16 +72866,16 @@
             ]
         },
         "wp_paused_plugins": {
-            "file": "placeholders.php",
+            "file": "load.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
         "wp_paused_themes": {
-            "file": "placeholders.php",
+            "file": "load.php",
             "lines": 2,
-            "kind": "placeholder",
+            "kind": "leaf",
             "minn": [],
             "composes": []
         },
@@ -73114,6 +73545,13 @@
                 "__checked_selected_helper"
             ]
         },
+        "wp_recovery_mode": {
+            "file": "load.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "wp_recovery_mode_nag": {
             "file": "deadends.php",
             "lines": 2,
@@ -73386,6 +73824,14 @@
             "composes": [
                 "_deprecated_function"
             ]
+        },
+        "wp_register_fatal_error_handler": {
+            "file": "deadends.php",
+            "lines": 2,
+            "kind": "deadend",
+            "minn": [],
+            "composes": [],
+            "deadend": "omitted"
         },
         "wp_register_font_collection": {
             "file": "fonts.php",
@@ -75313,6 +75759,25 @@
                 "_deprecated_function",
                 "_minn_skips_serialization",
                 "wp_should_skip_block_supports_serialization"
+            ]
+        },
+        "wp_skip_paused_plugins": {
+            "file": "load.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "plugin_basename",
+                "wp_paused_plugins"
+            ]
+        },
+        "wp_skip_paused_themes": {
+            "file": "load.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "wp_paused_themes"
             ]
         },
         "wp_skip_spacing_serialization": {

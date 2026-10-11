@@ -401,6 +401,48 @@ function wp_is_recovery_mode()
     return false;
 }
 
+/** The recovery-mode object, one for the request (probe recovery). Minn keeps no recovery session, so its methods answer nothing (Austin, D4). */
+function wp_recovery_mode()
+{
+    static $mode = null;
+    return $mode ??= new WP_Recovery_Mode();
+}
+
+/** The paused plugins, one storage for the request, read from the engine's own pauses (probe recovery). */
+function wp_paused_plugins()
+{
+    static $storage = null;
+    return $storage ??= new WP_Paused_Extensions_Storage('plugin');
+}
+
+/** The paused themes, one storage for the request, read from the engine's own pauses (probe recovery). */
+function wp_paused_themes()
+{
+    static $storage = null;
+    return $storage ??= new WP_Paused_Extensions_Storage('theme');
+}
+
+/** The plugin files given, less the ones the engine has paused, keys kept (probe recovery). */
+function wp_skip_paused_plugins(array $plugins)
+{
+    if (wp_paused_plugins()->get_all() === []) {
+        return $plugins;
+    }
+    return array_filter($plugins, static function ($plugin) {
+        $file = plugin_basename((string) $plugin);
+        return wp_paused_plugins()->get($file) === null && (!str_contains($file, '/') || wp_paused_plugins()->get(dirname($file)) === null);
+    });
+}
+
+/** The theme folders given, less the themes the engine has paused, keys kept (probe recovery). */
+function wp_skip_paused_themes(array $themes)
+{
+    if (wp_paused_themes()->get_all() === []) {
+        return $themes;
+    }
+    return array_filter($themes, static fn ($theme) => wp_paused_themes()->get(basename((string) $theme)) === null);
+}
+
 /**
  * @internal the database object: a db.php drop-in may set $wpdb itself (Query
  * Monitor's subclass, a replication class); otherwise the facade's wpdb.

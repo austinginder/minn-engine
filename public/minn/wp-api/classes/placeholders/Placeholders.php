@@ -109,36 +109,3 @@ class WP_Image_Editor_Imagick extends WP_Image_Editor
         return null;
     }
 }
-
-#[AllowDynamicProperties]
-class WP_Recovery_Mode_Link_Service
-{
-    const LOGIN_ACTION_ENTER = 'enter_recovery_mode';
-    const LOGIN_ACTION_ENTERED = 'entered_recovery_mode';
-    private $key_service = NULL;
-    private $cookie_service = NULL;
-
-    public function __construct($cookie_service, $key_service)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::__construct');
-        return null;
-    }
-
-    public function generate_url()
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::generate_url');
-        return null;
-    }
-
-    public function handle_begin_link($ttl)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::handle_begin_link');
-        return null;
-    }
-
-    private function get_recovery_mode_begin_url($token, $key)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::get_recovery_mode_begin_url');
-        return null;
-    }
-}

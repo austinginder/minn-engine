@@ -4079,6 +4079,12 @@ function wp_refresh_post_nonces($response, $data, $screen_id)
     return null;
 }
 
+function wp_register_fatal_error_handler()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_fatal_error_handler');
+    return null;
+}
+
 function wp_register_font_library_menu_item($id, $label, $to, $parent_id = '', $parent_type = '')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_register_font_library_menu_item');

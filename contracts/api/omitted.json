@@ -8,12 +8,19 @@
         "_wp_check_split_default_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
         "_wp_check_split_nav_menu_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
         "_wp_check_split_terms_in_menus": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
-        "_wp_cron": "The reference hooks it on shutdown to spawn a loopback request to wp-cron.php when events are due; the engine's own Cron runs due events after the response under its own lock, so hooking it as well would run them twice (Austin, 2026-10-09)."
+        "_wp_cron": "The reference hooks it on shutdown to spawn a loopback request to wp-cron.php when events are due; the engine's own Cron runs due events after the response under its own lock, so hooking it as well would run them twice (Austin, 2026-10-09).",
+        "wp_register_fatal_error_handler": "Registers WordPress's fatal error handler at boot (Austin, 2026-10-11, D4). The engine's own failure page answers a fatal, and its own recovery pauses the plugin or theme that caused it."
     },
     "classes": {
         "POP3": "The post-by-email mail client (wp-mail.php); Minn does not fetch mail to post it, and no catalogue plugin uses the class.",
         "Services_JSON": "A pure-PHP JSON library kept for PHP without ext/json; json_encode and json_decode replaced it, and no catalogue plugin uses it.",
         "Services_JSON_Error": "A pure-PHP JSON library kept for PHP without ext/json; json_encode and json_decode replaced it, and no catalogue plugin uses it. Services_JSON_Error is its error class, from the same file.",
-        "Snoopy": "An old HTTP client kept for back-compat; WP_Http and the Requests library replaced it, and no catalogue plugin uses it."
+        "Snoopy": "An old HTTP client kept for back-compat; WP_Http and the Requests library replaced it, and no catalogue plugin uses it.",
+        "WP_Recovery_Mode": "Part of WordPress's emailed-link recovery session (Austin, 2026-10-11, D4). Minn recovers on its own: it pauses a plugin or theme after a second boot failure inside ten minutes, and wp_paused_plugins() and friends read those pauses.",
+        "WP_Recovery_Mode_Cookie_Service": "Part of WordPress's emailed-link recovery session (Austin, 2026-10-11, D4). Minn recovers on its own: it pauses a plugin or theme after a second boot failure inside ten minutes, and wp_paused_plugins() and friends read those pauses.",
+        "WP_Recovery_Mode_Key_Service": "Part of WordPress's emailed-link recovery session (Austin, 2026-10-11, D4). Minn recovers on its own: it pauses a plugin or theme after a second boot failure inside ten minutes, and wp_paused_plugins() and friends read those pauses.",
+        "WP_Recovery_Mode_Link_Service": "Part of WordPress's emailed-link recovery session (Austin, 2026-10-11, D4). Minn recovers on its own: it pauses a plugin or theme after a second boot failure inside ten minutes, and wp_paused_plugins() and friends read those pauses.",
+        "WP_Recovery_Mode_Email_Service": "Part of WordPress's emailed-link recovery session (Austin, 2026-10-11, D4). Minn recovers on its own: it pauses a plugin or theme after a second boot failure inside ten minutes, and wp_paused_plugins() and friends read those pauses.",
+        "WP_Fatal_Error_Handler": "WordPress's fatal error page and the recovery session it starts (Austin, 2026-10-11, D4). The engine's own failure page answers a fatal, and its own recovery pauses the plugin or theme that caused it."
     }
 }

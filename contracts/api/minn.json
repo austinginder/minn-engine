@@ -129169,7 +129169,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/Recovery.php",
-            "lines": 214,
+            "lines": 234,
             "doc": "Recovery from a fatal in someone else's code. When a plugin or theme\nkills the boot of a request, the file it died in names it; a second\nsuch failure inside ten minutes records it as paused, and the next\nrequest loads without it: the site comes back on its own instead of\nstaying down until a human reads the log. One failure is only noted:\na pause is a site-wide decision, and a single request can be a\ncrafted one. Failures after boot (a route, a template) never pause\nanything; see Failure::armRecovery().\n\nThe paused list is stored where WordPress stores it, in the same shape\n(`paused_plugins` keyed by plugin file, `paused_themes` by stylesheet,\neach holding type, file, line and message), so a site that ejects back\nto WordPress finds the pause it left with. The strikes live in the\nengine's own `minn_recovery_strikes` option.",
             "implements": [],
             "extends": null,
@@ -129375,6 +129375,48 @@
                 },
                 {
                     "routes": [],
+                    "name": "paused",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "paused(string $kind): array",
+                    "doc": "The extensions of one kind ('plugin' or 'theme') recovery has paused.",
+                    "shapes": [
+                        "@return array<string, array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 205,
+                    "end": 208
+                },
+                {
+                    "routes": [],
+                    "name": "resumeKind",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "resumeKind(string $kind): int",
+                    "doc": "Lets every extension of one kind load again. Returns how many were released.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 211,
+                    "end": 218
+                },
+                {
+                    "routes": [],
                     "name": "resume",
                     "static": false,
                     "visibility": "public",
@@ -129397,8 +129439,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 212
+                    "line": 221,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -129409,8 +129451,8 @@
                     "doc": "Lets everything load again. Returns how many were released.",
                     "shapes": [],
                     "params": [],
-                    "line": 215,
-                    "end": 221
+                    "line": 235,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -129511,8 +129553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 224,
-                    "end": 229
+                    "line": 244,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -129540,8 +129582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 239
+                    "line": 252,
+                    "end": 259
                 }
             ]
         },

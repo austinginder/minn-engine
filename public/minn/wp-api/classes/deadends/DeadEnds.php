@@ -3343,6 +3343,39 @@ class WP_Debug_Data
     }
 }
 
+#[AllowDynamicProperties]
+class WP_Fatal_Error_Handler
+{
+
+    public function handle()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Fatal_Error_Handler::handle');
+        return null;
+    }
+
+    protected function detect_error()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Fatal_Error_Handler::detect_error');
+        return null;
+    }
+
+    protected function should_handle_error($error)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Fatal_Error_Handler::should_handle_error');
+        return null;
+    }
+
+    protected function display_error_template($error, $handled)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Fatal_Error_Handler::display_error_template');
+    }
+
+    protected function display_default_error_template($error, $handled)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Fatal_Error_Handler::display_default_error_template');
+    }
+}
+
 class WP_Filesystem_FTPext extends WP_Filesystem_Base
 {
     public $link = NULL;
@@ -4850,6 +4883,304 @@ class WP_REST_Template_Revisions_Controller extends WP_REST_Revisions_Controller
     protected function prepare_links($template)
     {
         \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Template_Revisions_Controller::prepare_links');
+        return null;
+    }
+}
+
+#[AllowDynamicProperties]
+class WP_Recovery_Mode
+{
+    const EXIT_ACTION = 'exit_recovery_mode';
+    private $cookie_service = NULL;
+    private $key_service = NULL;
+    private $link_service = NULL;
+    private $email_service = NULL;
+    private $is_initialized = false;
+    private $is_active = false;
+    private $session_id = '';
+
+    public function __construct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::__construct');
+        return null;
+    }
+
+    public function initialize()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::initialize');
+        return null;
+    }
+
+    public function is_active()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::is_active');
+        return null;
+    }
+
+    public function get_session_id()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::get_session_id');
+        return null;
+    }
+
+    public function is_initialized()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::is_initialized');
+        return null;
+    }
+
+    public function handle_error($error)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::handle_error');
+        return null;
+    }
+
+    public function exit_recovery_mode()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::exit_recovery_mode');
+        return null;
+    }
+
+    public function handle_exit_recovery_mode()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::handle_exit_recovery_mode');
+        return null;
+    }
+
+    public function clean_expired_keys()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::clean_expired_keys');
+        return null;
+    }
+
+    protected function handle_cookie()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::handle_cookie');
+        return null;
+    }
+
+    protected function get_email_rate_limit()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::get_email_rate_limit');
+        return null;
+    }
+
+    protected function get_link_ttl()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::get_link_ttl');
+        return null;
+    }
+
+    protected function get_extension_for_error($error)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::get_extension_for_error');
+        return null;
+    }
+
+    protected function is_network_plugin($extension)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::is_network_plugin');
+        return null;
+    }
+
+    protected function store_error($error)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::store_error');
+        return null;
+    }
+
+    protected function redirect_protected()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode::redirect_protected');
+        return null;
+    }
+}
+
+#[AllowDynamicProperties]
+class WP_Recovery_Mode_Cookie_Service
+{
+
+    public function is_cookie_set()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::is_cookie_set');
+        return null;
+    }
+
+    public function set_cookie()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::set_cookie');
+        return null;
+    }
+
+    public function clear_cookie()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::clear_cookie');
+        return null;
+    }
+
+    public function validate_cookie($cookie = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::validate_cookie');
+        return null;
+    }
+
+    public function get_session_id_from_cookie($cookie = '')
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::get_session_id_from_cookie');
+        return null;
+    }
+
+    private function parse_cookie($cookie)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::parse_cookie');
+        return null;
+    }
+
+    private function generate_cookie()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::generate_cookie');
+        return null;
+    }
+
+    private function recovery_mode_hash($data)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Cookie_Service::recovery_mode_hash');
+        return null;
+    }
+}
+
+#[AllowDynamicProperties]
+class WP_Recovery_Mode_Email_Service
+{
+    const RATE_LIMIT_OPTION = 'recovery_mode_email_last_sent';
+    private $link_service = NULL;
+
+    public function __construct($link_service)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::__construct');
+        return null;
+    }
+
+    public function maybe_send_recovery_mode_email($rate_limit, $error, $extension)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::maybe_send_recovery_mode_email');
+        return null;
+    }
+
+    public function clear_rate_limit()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::clear_rate_limit');
+        return null;
+    }
+
+    private function send_recovery_mode_email($rate_limit, $error, $extension)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::send_recovery_mode_email');
+        return null;
+    }
+
+    private function get_recovery_mode_email_address()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::get_recovery_mode_email_address');
+        return null;
+    }
+
+    private function get_cause($extension)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::get_cause');
+        return null;
+    }
+
+    private function get_plugin($extension)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::get_plugin');
+        return null;
+    }
+
+    private function get_debug($extension)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Email_Service::get_debug');
+        return null;
+    }
+}
+
+#[AllowDynamicProperties]
+class WP_Recovery_Mode_Key_Service
+{
+    private $option_name = 'recovery_keys';
+
+    public function generate_recovery_mode_token()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::generate_recovery_mode_token');
+        return null;
+    }
+
+    public function generate_and_store_recovery_mode_key($token)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::generate_and_store_recovery_mode_key');
+        return null;
+    }
+
+    public function validate_recovery_mode_key($token, $key, $ttl)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::validate_recovery_mode_key');
+        return null;
+    }
+
+    public function clean_expired_keys($ttl)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::clean_expired_keys');
+        return null;
+    }
+
+    private function remove_key($token)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::remove_key');
+        return null;
+    }
+
+    private function get_keys()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::get_keys');
+        return null;
+    }
+
+    private function update_keys($keys)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Key_Service::update_keys');
+        return null;
+    }
+}
+
+#[AllowDynamicProperties]
+class WP_Recovery_Mode_Link_Service
+{
+    const LOGIN_ACTION_ENTER = 'enter_recovery_mode';
+    const LOGIN_ACTION_ENTERED = 'entered_recovery_mode';
+    private $key_service = NULL;
+    private $cookie_service = NULL;
+
+    public function __construct($cookie_service, $key_service)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::__construct');
+        return null;
+    }
+
+    public function generate_url()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::generate_url');
+        return null;
+    }
+
+    public function handle_begin_link($ttl)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::handle_begin_link');
+        return null;
+    }
+
+    private function get_recovery_mode_begin_url($token, $key)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_Recovery_Mode_Link_Service::get_recovery_mode_begin_url');
         return null;
     }
 }
