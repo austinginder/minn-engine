@@ -43,8 +43,10 @@ foreach ($files as $file) {
     $src = (string) file_get_contents($file);
     $kind = str_contains($file, 'deadends') ? 'deadend' : (str_contains($file, 'placeholders') ? 'placeholder' : 'real');
     preg_match_all('/^function\s+&?(\w+)\s*\(/m', $src, $m);
+    // A file in a namespace (Avifinfo's helpers) defines its functions under it.
+    $namespace = preg_match('/^namespace\s+([\w\\\\]+)\s*;/m', $src, $ns) === 1 ? $ns[1] . '\\' : '';
     foreach ($m[1] as $name) {
-        $defined['functions'][strtolower($name)] = $kind;
+        $defined['functions'][strtolower($namespace . $name)] = $kind;
     }
     // A class may sit inside an if (!class_exists()) guard, indented: its closing brace is at its own indent.
     preg_match_all('/^([ \t]*)(?:#\[[^\]]*\]\s*)?(?:abstract\s+|final\s+)?(?:class|interface|trait)\s+(\w+)(?:\s+extends\s+(\w+))?[^{]*\{(.*?)^\1\}/ms', $src, $found, PREG_SET_ORDER);
@@ -80,6 +82,11 @@ foreach ($probes as $probe) {
     preg_match_all('/(?<![\w$>])([A-Za-z_]\w*)\s*(?:\(|::)|new\s+\\\\?([A-Za-z_]\w*)/', (string) file_get_contents($probe), $calls, PREG_SET_ORDER);
     foreach ($calls as $call) {
         $probed[strtolower(($call[2] ?? '') !== '' ? $call[2] : $call[1])] = true;
+    }
+    // A namespaced function called by its qualified name (Avifinfo\read()).
+    preg_match_all('/(?<![\w$>\\\\])([A-Za-z_]\w*(?:\\\\\w+)+)\s*\(/', (string) file_get_contents($probe), $qualified);
+    foreach ($qualified[1] as $name) {
+        $probed[strtolower($name)] = true;
     }
 }
 

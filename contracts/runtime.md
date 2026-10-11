@@ -11593,3 +11593,51 @@ transitions admin styles (`wp_get_view_transitions_admin_css`,
 and CSS. Minn prints no emoji plumbing today, and carrying those assets
 would put WordPress code in the repository. They are candidates to leave
 out on purpose.
+
+## The AVIF helpers and the Connectors page's data (2026-10-10)
+
+Probe `avif-connectors-helpers` proves 4 missing functions:
+- the AVIF parser's three namespaced helpers (`Avifinfo\read`,
+  `Avifinfo\skip`, `Avifinfo\read_big_endian`), in a new
+  `wp-api/avif-info.php`;
+- `_wp_connectors_get_connector_script_module_data`.
+
+- **AVIF helpers.** The engine reads AVIF files itself
+  (`Minn\Media\AvifInfo`); these are for code that calls the reference
+  parser's helpers.
+  - `read` answers the next bytes only when the stream holds them all, and
+    false otherwise; the position moves either way.
+  - `skip` is true even past the end.
+  - `read_big_endian` reads the first bytes as one unsigned number.
+  - Reading zero bytes throws, as on the reference.
+- **The Connectors page's data**, on
+  `script_module_data_options-connectors-wp-admin`, lists every
+  registered connector by id. For each it gives the name, description,
+  logo, type, authentication and plugin (installed, active).
+  - Authentication is the key's setting, where to get a key, where the key
+    comes from (`keySource`: database, constant, env, none) and
+    `isConnected`.
+  - A stored key connects a spam filter. An AI provider stays unconnected
+    without its plugin active. The plugin-active branch is not probed: no
+    provider plugin is installed on the test site.
+  - `isFileModDisabled` says whether plugins may be installed.
+  - CleanTalk in the list comes from the Minn Admin plugin
+    (`minn_admin_cleantalk_register_connector`), not from core. The probe
+    runs the engine's plugin lifecycle to see it, as the connectors probe
+    does.
+- **Tools.** `compat-status` and the api suite's inventory check now read
+  a facade file's `namespace`. The proof count now sees a probe's
+  qualified calls (`Avifinfo\read(`), so namespaced functions count like
+  any other.
+
+Left, for Austin: WordPress's recovery mode (`WP_Recovery_Mode` and its
+cookie, key, link and email services, `WP_Fatal_Error_Handler`,
+`WP_Paused_Extensions_Storage`, `wp_recovery_mode`,
+`wp_register_fatal_error_handler`, `wp_skip_paused_plugins` and
+`wp_skip_paused_themes`). This sits against the engine's own recovery,
+which deliberately has no recovery email and no session (see "Recovery",
+2026-09-01). The choice is to leave these out on purpose, or make the
+classes real for direct calls without wiring them into boot. Also left:
+`WP_Theme_JSON::remove_insecure_properties` (a placeholder), which
+`wp_filter_global_styles_post` needs; that is a theme.json sanitizer
+batch of its own.

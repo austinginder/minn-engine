@@ -96,6 +96,42 @@ function _minn_connector_answer(string $id, array $connector, string $setting, $
     return _wp_connectors_mask_api_key($value);
 }
 
+/**
+ * The connectors the Connectors options page is given (probe
+ * avif-connectors-helpers), by id: each one's name, description, logo,
+ * type, how it authenticates (its key's setting, where to get one, where
+ * the key comes from, whether it is connected) and its plugin (installed,
+ * active). A key connects a spam filter; an AI provider also needs its
+ * plugin active. Whether file changes are refused comes along.
+ */
+function _wp_connectors_get_connector_script_module_data(array $data): array
+{
+    $connectors = [];
+    foreach (wp_get_connectors() as $id => $connector) {
+        $auth = (array) ($connector['authentication'] ?? []);
+        $file = (string) ($connector['plugin']['file'] ?? '');
+        $active = $file !== '' && is_plugin_active($file);
+        $authentication = ['method' => $auth['method'] ?? ''];
+        if (($auth['method'] ?? '') === 'api_key') {
+            $source = _wp_connectors_get_api_key_source((string) ($auth['setting_name'] ?? ''), (string) ($auth['env_var_name'] ?? ''), (string) ($auth['constant_name'] ?? ''));
+            $authentication += ['settingName' => $auth['setting_name'] ?? '', 'credentialsUrl' => $auth['credentials_url'] ?? null, 'keySource' => $source, 'isConnected' => $source !== 'none' && (($connector['type'] ?? '') !== 'ai_provider' || $active)];
+        }
+        $connectors[$id] = [
+            'name' => $connector['name'] ?? '',
+            'description' => $connector['description'] ?? '',
+            'logoUrl' => $connector['logo_url'] ?? null,
+            'type' => $connector['type'] ?? '',
+            'authentication' => $authentication,
+            'plugin' => ['file' => $file, 'isInstalled' => $file !== '' && file_exists(WP_PLUGIN_DIR . '/' . $file), 'isActivated' => $active],
+        ];
+    }
+    ksort($connectors);
+    $data['connectors'] = $connectors;
+    // Whether plugins can be installed from the page.
+    $data['isFileModDisabled'] = !wp_is_file_mod_allowed('install_plugins');
+    return $data;
+}
+
 function _wp_connectors_mask_api_key(string $key): string
 {
     return Connectors::mask($key);

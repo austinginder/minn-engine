@@ -438,6 +438,7 @@ add_filter('rest_pre_serve_request', '_oembed_rest_pre_serve_request', 10, 4);
 add_action('xmlrpc_rsd_apis', 'rest_output_rsd');
 add_action('rest_api_init', 'create_initial_rest_routes', 99);
 add_action('plugins_loaded', 'wp_initialize_theme_preview_hooks', 1);
+add_filter('script_module_data_options-connectors-wp-admin', '_wp_connectors_get_connector_script_module_data');
 // The core types patch their view configurations (probe view-config-functions).
 add_filter('get_entity_view_config_posttype_page', '_wp_get_entity_view_config_posttype_page', 5);
 add_filter('get_entity_view_config_posttype_wp_block', '_wp_get_entity_view_config_posttype_wp_block', 5);

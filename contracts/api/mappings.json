@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 794,
-        "composes": 2052,
-        "leaf": 910,
-        "noop": 2714,
+        "composes": 2053,
+        "leaf": 912,
+        "noop": 2715,
         "placeholder": 213,
         "deadend": 1662,
-        "functions": 8267,
+        "functions": 8271,
         "minnMethods": 958,
         "leafLinesOver15": 11
     },
@@ -27271,7 +27271,9 @@
                 "Minn\\I18n\\TranslationFiles::read",
                 "Minn\\Runtime\\Runtime::textDomains"
             ],
-            "composes": []
+            "composes": [
+                "read"
+            ]
         },
         "WP_Translation_Controller::locate_translation": {
             "file": "classes/WP_Translation_Controller.php",
@@ -36018,6 +36020,18 @@
             ],
             "composes": [
                 "get_option"
+            ]
+        },
+        "_wp_connectors_get_connector_script_module_data": {
+            "file": "connectors.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_wp_connectors_get_api_key_source",
+                "is_plugin_active",
+                "wp_get_connectors",
+                "wp_is_file_mod_allowed"
             ]
         },
         "_wp_connectors_init": {
@@ -52646,6 +52660,20 @@
                 "map_deep"
             ]
         },
+        "read": {
+            "file": "avif-info.php",
+            "lines": 2,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "read_big_endian": {
+            "file": "avif-info.php",
+            "lines": 5,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
         "recurse_dirsize": {
             "file": "functions.php",
             "lines": 25,
@@ -56773,6 +56801,13 @@
             "composes": [
                 "number_format_i18n"
             ]
+        },
+        "skip": {
+            "file": "avif-info.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": []
         },
         "smilies_init": {
             "file": "formatting.php",
