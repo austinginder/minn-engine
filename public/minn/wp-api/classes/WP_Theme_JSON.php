@@ -530,8 +530,21 @@ class WP_Theme_JSON
 
     protected static function compute_style_properties($styles, $settings = [], $properties = NULL, $theme_json = NULL, $selector = NULL, $use_root_padding = NULL)
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::compute_style_properties');
-        return null;
+        // Each property with a value at its path, in the list's order: an array's sides stand in for its shorthand, presets stay as written.
+        $styles = self::minn_background_defaults((array) $styles);
+        $root_padding = $use_root_padding && $selector === static::ROOT_BLOCK_SELECTOR && is_array($styles['spacing']['padding'] ?? null);
+        $declarations = [];
+        foreach ($properties ?? static::PROPERTIES_METADATA as $name => $path) {
+            $root = str_starts_with((string) $name, '--wp--style--root--padding');
+            $value = $root !== $root_padding && ($root || str_starts_with((string) $name, 'padding')) ? null : self::minn_declared_value((array) $styles, (string) $name, (array) $path, (array) $settings, $theme_json);
+            if ($value !== null && $name === 'aspect-ratio') {
+                $declarations[] = ['name' => 'min-height', 'value' => 'unset'];
+            }
+            if ($value !== null) {
+                $declarations[] = ['name' => $name, 'value' => $value];
+            }
+        }
+        return $declarations;
     }
 
     protected static function get_property_value($styles, $path, $theme_json = NULL)
@@ -549,20 +562,35 @@ class WP_Theme_JSON
 
     protected static function get_setting_nodes($theme_json, $selectors = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_setting_nodes');
-        return null;
+        // The root's settings, then each block's, with the selectors given for it.
+        if (!isset($theme_json['settings'])) {
+            return [];
+        }
+        $nodes = [['path' => ['settings'], 'selector' => static::ROOT_CSS_PROPERTIES_SELECTOR]];
+        foreach (array_keys((array) ($theme_json['settings']['blocks'] ?? [])) as $name) {
+            $nodes[] = ['path' => ['settings', 'blocks', $name], 'selector' => $selectors[$name]['selector'] ?? null, 'selectors' => $selectors[$name]['selectors'] ?? []];
+        }
+        return $nodes;
     }
 
     protected static function get_style_nodes($theme_json, $selectors = [], $options = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_style_nodes');
-        return null;
+        // The root, its elements in their own order (each pseudo selector a node of its own), then the blocks.
+        if (!isset($theme_json['styles'])) {
+            return [];
+        }
+        $nodes = [['path' => ['styles'], 'selector' => static::ROOT_BLOCK_SELECTOR]];
+        foreach (static::ELEMENTS as $element => $selector) {
+            if (isset($theme_json['styles']['elements'][$element])) {
+                $nodes = array_merge($nodes, self::minn_element_nodes(['styles', 'elements', $element], $selector, (array) $theme_json['styles']['elements'][$element], $element));
+            }
+        }
+        return array_merge($nodes, static::get_block_nodes($theme_json, empty($selectors) ? static::get_blocks_metadata() : $selectors, (array) $options));
     }
 
     public function get_styles_block_nodes()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_styles_block_nodes');
-        return null;
+        return static::get_block_nodes($this->theme_json, static::get_blocks_metadata());
     }
 
     private static function update_separator_declarations($declarations)
@@ -585,8 +613,122 @@ class WP_Theme_JSON
 
     private static function get_block_nodes($theme_json, $selectors = [], $options = [])
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Theme_JSON::get_block_nodes');
-        return null;
+        // Each block in the order given, with its pseudo selectors, states and elements; only paths when asked.
+        $nodes = [];
+        foreach ((array) ($theme_json['styles']['blocks'] ?? []) as $name => $block) {
+            $nodes = array_merge($nodes, empty($options['include_node_paths_only'])
+                ? self::minn_block_nodes((string) $name, (array) $block, (array) ($selectors[$name] ?? []), (array) $options)
+                : self::minn_block_paths((string) $name, (array) $block, (array) $options));
+        }
+        return $nodes;
+    }
+
+    /** @internal an uploaded image (one with an id) covers unless sized, and is centred when contained */
+    private static function minn_background_defaults(array $styles): array
+    {
+        if (empty($styles['background']['backgroundImage']['id'])) {
+            return $styles;
+        }
+        $styles['background']['backgroundSize'] ??= 'cover';
+        if ($styles['background']['backgroundSize'] === 'contain') {
+            $styles['background']['backgroundPosition'] ??= '50% 50%';
+        }
+        return $styles;
+    }
+
+    /** @internal a property's value, null when it has none: a background image as url(), a font size through fluid typography */
+    private static function minn_declared_value(array $styles, string $name, array $path, array $settings, $theme_json)
+    {
+        $value = $name === 'background-image' ? self::minn_background_image($styles, $path, $theme_json) : static::get_property_value($styles, $path, $theme_json);
+        if ($value === '' || $value === null || is_array($value)) {
+            return null;
+        }
+        return $name === 'font-size' ? wp_get_typography_font_size_value(['size' => $value], $settings) : $value;
+    }
+
+    /** @internal a background image's url() (its ref followed, to an image or a string), or the string given */
+    private static function minn_background_image(array $styles, array $path, $theme_json)
+    {
+        $image = _wp_array_get($styles, $path, null);
+        if (is_array($image) && isset($image['ref'])) {
+            $image = _wp_array_get((array) $theme_json, explode('.', (string) $image['ref']), null);
+        }
+        if (is_array($image)) {
+            return ($image['url'] ?? '') !== '' ? "url('" . $image['url'] . "')" : null;
+        }
+        return $image;
+    }
+
+    /** @internal an element's node, then one for each of its pseudo selectors that has styles, in their own order */
+    private static function minn_element_nodes(array $path, string $selector, array $styles, string $element): array
+    {
+        $nodes = [['path' => $path, 'selector' => $selector]];
+        foreach (static::VALID_ELEMENT_PSEUDO_SELECTORS[$element] ?? [] as $pseudo) {
+            if (isset($styles[$pseudo])) {
+                $nodes[] = ['path' => $path, 'selector' => static::append_to_selector($selector, $pseudo)];
+            }
+        }
+        return $nodes;
+    }
+
+    /** @internal a block's node, its pseudo selectors and states, then its elements the block's metadata knows */
+    private static function minn_block_nodes(string $name, array $block, array $meta, array $options): array
+    {
+        $path = ['styles', 'blocks', $name];
+        $selector = $meta['selector'] ?? null;
+        $node = ['name' => $name, 'path' => $path, 'selector' => $selector, 'selectors' => $meta['selectors'] ?? null, 'elements' => $meta['elements'] ?? [], 'duotone' => $meta['duotone'] ?? null, 'variations' => [], 'css' => $selector];
+        if (!empty($options['include_block_style_variations'])) {
+            $node['variations'] = array_map(static fn ($variation) => ['name' => $variation, 'path' => array_merge($path, ['variations', $variation]), 'selector' => $meta['styleVariations'][$variation] ?? null], array_keys((array) ($block['variations'] ?? [])));
+        }
+        $nodes = array_merge([$node], self::minn_block_state_nodes($node, $block, $meta));
+        foreach ((array) ($block['elements'] ?? []) as $element => $styles) {
+            if (isset($meta['elements'][$element])) {
+                $nodes = array_merge($nodes, self::minn_element_nodes(array_merge($path, ['elements', $element]), $meta['elements'][$element], (array) $styles, (string) $element));
+            }
+        }
+        return $nodes;
+    }
+
+    /** @internal a block's pseudo selectors that have styles (appended to each of its selectors), then its custom states */
+    private static function minn_block_state_nodes(array $node, array $block, array $meta): array
+    {
+        $nodes = [];
+        foreach (static::VALID_BLOCK_PSEUDO_SELECTORS[$node['name']] ?? [] as $pseudo) {
+            if (isset($block[$pseudo])) {
+                $selector = static::append_to_selector($node['selector'], $pseudo);
+                $nodes[] = array_replace($node, ['path' => array_merge($node['path'], [$pseudo]), 'selector' => $selector, 'selectors' => self::minn_selectors_appended($node['selectors'], $pseudo), 'css' => $selector]);
+            }
+        }
+        foreach (static::VALID_BLOCK_CUSTOM_STATES[$node['name']] ?? [] as $state) {
+            if (isset($block[$state])) {
+                $nodes[] = array_replace($node, ['path' => array_merge($node['path'], [$state]), 'selector' => $meta['states'][$state] ?? null, 'css' => $meta['states'][$state] ?? null]);
+            }
+        }
+        return $nodes;
+    }
+
+    /** @internal each of a block's feature selectors with the pseudo selector appended */
+    private static function minn_selectors_appended($selectors, string $pseudo)
+    {
+        if (!is_array($selectors)) {
+            return $selectors;
+        }
+        return array_map(static fn ($selector) => is_array($selector) ? self::minn_selectors_appended($selector, $pseudo) : static::append_to_selector($selector, $pseudo), $selectors);
+    }
+
+    /** @internal a block's path, its variations' when asked, and each of its elements' */
+    private static function minn_block_paths(string $name, array $block, array $options): array
+    {
+        $path = ['styles', 'blocks', $name];
+        $node = ['path' => $path];
+        if (!empty($options['include_block_style_variations']) && isset($block['variations'])) {
+            $node['variations'] = array_map(static fn ($variation) => ['path' => array_merge($path, ['variations', $variation])], array_keys((array) $block['variations']));
+        }
+        $nodes = [$node];
+        foreach (array_keys((array) ($block['elements'] ?? [])) as $element) {
+            $nodes[] = ['path' => array_merge($path, ['elements', $element])];
+        }
+        return $nodes;
     }
 
     public function get_styles_for_block($block_metadata)

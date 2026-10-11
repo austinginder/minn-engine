@@ -11826,3 +11826,55 @@ Left in `WP_Theme_JSON`:
   waits on;
 - `get_name_from_defaults`, `set_spacing_sizes`, `resolve_variables` and
   `get_feature_declarations_for_node`.
+
+## WP_Theme_JSON's declarations and nodes (2026-10-10)
+
+Probe `theme-json-nodes` proves `compute_style_properties`, the settings
+and style node walkers, and `get_styles_block_nodes`.
+
+- **Declarations** come out in the property list's order (by default the
+  properties metadata), one `name`/`value` pair for each property with a
+  value at its path.
+  - An array value stands in for its sides: the shorthand is skipped and
+    each side is its own declaration. Other arrays, `''` and `null` print
+    nothing. Zero and `'0'` stay. Numbers stay numbers.
+  - Presets and `var:custom|…` stay as written, and a ref follows the
+    rules of `get_property_value`.
+  - A font size goes through `wp_get_typography_font_size_value` with the
+    settings given. Empty settings mean the site's own, so fluid typography
+    applies unless the settings turn it off.
+  - An aspect ratio adds `min-height: unset` just before it.
+  - A background image prints as `url('…')`, its URL as written, and a ref
+    to an image or a string is followed. An uploaded image (one with an
+    id) covers unless a size is given, and is centred (`50% 50%`) when
+    contained without a position.
+  - The root padding custom properties replace the padding sides only for
+    the `body` selector with root padding on and a padding of sides. A
+    padding string stays `padding`.
+- **Settings nodes**: the root's (`:root`), then each block's in the order
+  given, with the selector and selectors handed in for it (`null` and
+  `[]` otherwise).
+- **Style nodes**: the root (`body`), then its elements in the elements'
+  own order. An element's pseudo selectors with styles follow it, in the
+  pseudo selectors' order, on the element's path with the selector
+  appended. Then the blocks, in the order given, each with:
+  - name, path, selector, selectors, element selectors, duotone,
+    variations and `css`, from the blocks metadata (fetched when none is
+    handed in; `null`, or `[]` for elements, for a block it lacks);
+  - a node per pseudo selector with styles, every selector appended;
+  - a node per custom state, at the state's selector;
+  - its elements in the order given, those the metadata knows, with their
+    pseudo selectors.
+
+  Variations are listed (name, path, the metadata's variation selector)
+  only when asked. Paths only, when asked, applies to blocks: a path per
+  block, per variation and per element (every key), and no pseudo
+  selector or state nodes.
+- **`get_styles_block_nodes`** answers the block nodes of the theme.json
+  against the registered blocks, without variations.
+
+Left in `WP_Theme_JSON`: the stylesheet and its other pieces
+(`get_stylesheet`, `get_styles_for_block`, the layout and root rules, CSS
+variables, preset and block classes, feature declarations), the
+`remove_insecure_*` family, `get_name_from_defaults`, `set_spacing_sizes`
+and `resolve_variables`.
