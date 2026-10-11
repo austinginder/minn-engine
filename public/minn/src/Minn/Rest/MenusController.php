@@ -122,7 +122,7 @@ final readonly class MenusController
         if ($row === null) {
             throw new RestError('rest_term_invalid', 'Term does not exist.', 404);
         }
-        if (!$request->flag('force')) {
+        if (!$request->flagged('force')) {
             throw new RestError('rest_trash_not_supported', "Menus do not support trashing. Set 'force=true' to delete.", 501);
         }
         $previous = $this->menuObject->view($row);
@@ -204,7 +204,7 @@ final readonly class MenusController
         if ($item === null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
-        if (!$request->flag('force')) {
+        if (!$request->flagged('force')) {
             throw new RestError('rest_trash_not_supported', "Menu items do not support trashing. Set 'force=true' to delete.", 501);
         }
         $previous = $this->itemObject->view($item, Context::View);

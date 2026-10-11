@@ -178,6 +178,12 @@ final readonly class Api
         return $this->services->termObject();
     }
 
+    /** The wp/v2 comment shape. */
+    public function commentObject(): CommentObject
+    {
+        return $this->services->commentObject();
+    }
+
     /** The wp/v2 user shape. */
     public function userObject(): UserObject
     {

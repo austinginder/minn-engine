@@ -5521,5 +5521,181 @@
                 }
             }
         }
+    },
+    "comment-properties": {
+        "id": {
+            "description": "Unique identifier for the comment.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "author": {
+            "description": "The ID of the user object, if author was a user.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "author_email": {
+            "description": "Email address for the comment author.",
+            "type": "string",
+            "format": "email",
+            "context": [
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "@this:check_comment_author_email",
+                "validate_callback": null
+            }
+        },
+        "author_ip": {
+            "description": "IP address for the comment author.",
+            "type": "string",
+            "format": "ip",
+            "context": [
+                "edit"
+            ]
+        },
+        "author_name": {
+            "description": "Display name for the comment author.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "author_url": {
+            "description": "URL for the comment author.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "author_user_agent": {
+            "description": "User agent for the comment author.",
+            "type": "string",
+            "context": [
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_text_field"
+            }
+        },
+        "content": {
+            "description": "The content for the comment.",
+            "type": "object",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "arg_options": {
+                "sanitize_callback": null,
+                "validate_callback": null
+            },
+            "properties": {
+                "raw": {
+                    "description": "Content for the comment, as it exists in the database.",
+                    "type": "string",
+                    "context": [
+                        "edit"
+                    ]
+                },
+                "rendered": {
+                    "description": "HTML content for the comment, transformed for display.",
+                    "type": "string",
+                    "context": [
+                        "view",
+                        "edit",
+                        "embed"
+                    ],
+                    "readonly": true
+                }
+            }
+        },
+        "date": {
+            "description": "The date the comment was published, in the site's timezone.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "date_gmt": {
+            "description": "The date the comment was published, as GMT.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "link": {
+            "description": "URL to the comment.",
+            "type": "string",
+            "format": "uri",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true
+        },
+        "parent": {
+            "description": "The ID for the parent of the comment.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "default": 0
+        },
+        "post": {
+            "description": "The ID of the associated post object.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "default": 0
+        },
+        "status": {
+            "description": "State of the comment.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit"
+            ],
+            "arg_options": {
+                "sanitize_callback": "sanitize_key"
+            }
+        },
+        "type": {
+            "description": "Type of the comment.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ],
+            "readonly": true,
+            "default": "comment"
+        }
     }
 }

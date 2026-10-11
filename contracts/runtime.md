@@ -12244,3 +12244,52 @@ Fixed on the way:
 - The router's argument check reads a write request's arguments from its
   body first, then the query, as the reference's request does
   (`Rest\ArgCheck`).
+
+## WP_REST_Comments_Controller (2026-10-11)
+
+Probe `rest-comments-controller` proves the comments controller class. It
+uses a contributor, an open, a closed and a draft post, and approved,
+held, reply and own comments. A comment is created, updated, moved
+between statuses, trashed and deleted through the class; all of it is
+removed again.
+
+- **The schema** is the comment fields captured from the reference, the
+  author avatars in the REST sizes, then the meta.
+- **Collection parameters** are the engine's comment arguments, with the
+  status and type sanitized as keys (`sanitize_key` and
+  `rest_validate_request_arg`, in the reference's key order). Then
+  `rest_comment_collection_params`.
+- **Permissions.**
+  - Listing needs each named post to be readable; no post at all needs
+    moderating.
+  - The edit context needs moderating.
+  - Without `edit_posts`, the private parameters are refused by name
+    (author, author_exclude, author_email; a type other than comment; a
+    status other than approve). Called without dispatch's defaults, even a
+    plain list names type and status.
+  - Reading needs the comment to be readable: approved on a readable post
+    for anyone, otherwise one's own or one the user may edit.
+  - Creating needs a signed-in user (or anonymous comments allowed), and
+    a readable, open post that is neither a draft nor in the trash. Only
+    moderators may set another author, the IP or the status.
+  - Update and delete need moderating or `edit_comment`.
+  - The target post check is a moderator's, on a post that exists.
+- **Helpers.**
+  - `normalize_query_param` prefixes `comment_` (`id`, `post` and
+    `include` have their own names).
+  - `prepare_status_response` maps 1 and approve to approved, 0 to hold.
+  - `handle_status_param` changes the status only when it differs.
+  - `check_comment_author_email` passes an empty email.
+  - `check_is_comment_content_allowed` refuses only empty content (spaces
+    pass) unless `allow_empty_comment` says otherwise.
+- **`prepare_item_for_database`**, in this order: content, post, parent, the
+  author (with their name, email and URL, which the request may override),
+  the IP (a moderator's given one, else the caller's, else 127.0.0.1), the
+  user agent, the dates, then `rest_preprocess_comment`. An unknown author
+  is `rest_comment_author_invalid`.
+- **Reading, listing and writing** go through the engine's `CommentObject`
+  and comment routes. The list sends its totals as strings, as the
+  reference's does.
+
+Fixed on the way: every remaining delete route (comments, media, menus,
+templates) reads `force` from a DELETE body as well as the query.

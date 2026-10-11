@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 343 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 349 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -144,6 +144,10 @@ The wp/v2 post shape.
 
 The wp/v2 term shape.
 
+### `commentObject(): Minn\Rest\CommentObject`
+
+The wp/v2 comment shape.
+
 ### `userObject(): Minn\Rest\UserObject`
 
 The wp/v2 user shape.
@@ -192,7 +196,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 315), `withPageLinks()` (private, line 329), `options()` (private, line 360), `withAllow()` (private, line 373)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 321), `withPageLinks()` (private, line 335), `options()` (private, line 366), `withAllow()` (private, line 379)
 
 
 ## ApplicationPasswordsController
@@ -672,7 +676,7 @@ collection (as rest_comment_collection_params left it) still has it.
 
 The wp/v2 comment object; edit context adds the moderation-desk fields.
 
-Used by: `Minn\Rest\CommentsController`, `Minn\Rest\Services`
+Used by: `Minn\Rest\Api`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Content\Comments $comments, Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)

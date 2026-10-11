@@ -88183,7 +88183,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 343,
+            "lines": 349,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88218,6 +88218,7 @@
                 "Minn\\Rest\\BlockTypesController",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\Caller",
+                "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Context",
                 "Minn\\Rest\\DeclaredPostsController",
@@ -88543,6 +88544,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "commentObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "commentObject(): Minn\\Rest\\CommentObject",
+                    "doc": "The wp/v2 comment shape.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 182,
+                    "end": 185
+                },
+                {
+                    "routes": [],
                     "name": "userObject",
                     "static": false,
                     "visibility": "public",
@@ -88550,8 +88563,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -88562,8 +88575,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -88589,8 +88602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 208
+                    "line": 205,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -88609,8 +88622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 238
+                    "line": 217,
+                    "end": 244
                 },
                 {
                     "routes": [],
@@ -88636,8 +88649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 270
+                    "line": 255,
+                    "end": 276
                 },
                 {
                     "routes": [],
@@ -88656,8 +88669,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 277
+                    "line": 279,
+                    "end": 283
                 },
                 {
                     "routes": [],
@@ -88683,8 +88696,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 286,
-                    "end": 298
+                    "line": 292,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -88712,8 +88725,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 313
+                    "line": 312,
+                    "end": 319
                 },
                 {
                     "routes": [],
@@ -88761,8 +88774,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 315,
-                    "end": 322
+                    "line": 321,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -88788,8 +88801,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 351
+                    "line": 335,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -88808,8 +88821,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 367
+                    "line": 366,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -88835,8 +88848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 373,
-                    "end": 377
+                    "line": 379,
+                    "end": 383
                 }
             ]
         },
@@ -91408,6 +91421,7 @@
                 "Minn\\Rest\\UserObject"
             ],
             "usedBy": [
+                "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\Services"
             ],
