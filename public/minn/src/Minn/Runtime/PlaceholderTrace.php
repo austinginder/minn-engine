@@ -16,6 +16,16 @@ final class PlaceholderTrace
     private static ?string $file = null;
     private static bool $checked = false;
 
+    /**
+     * Logs a call to a method of a real class that Minn answers with nothing by
+     * design (an admin-screen helper): compat-status counts the method as a
+     * dead end, where a hit() marks one still owed.
+     */
+    public static function deadEnd(string $symbol): void
+    {
+        self::hit($symbol);
+    }
+
     /** Logs a placeholder symbol being called, when the trace file exists. */
     public static function hit(string $symbol): void
     {

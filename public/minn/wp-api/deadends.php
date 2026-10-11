@@ -181,6 +181,12 @@ function _preload_old_requests_classes_and_interfaces($to)
     return null;
 }
 
+function _print_emoji_detection_script()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_print_emoji_detection_script');
+    return null;
+}
+
 function _publish_post_hook($post_id)
 {
     \Minn\Runtime\PlaceholderTrace::hit('_publish_post_hook');
@@ -190,6 +196,12 @@ function _publish_post_hook($post_id)
 function _redirect_to_about_wordpress($new_version)
 {
     \Minn\Runtime\PlaceholderTrace::hit('_redirect_to_about_wordpress');
+    return null;
+}
+
+function _register_remote_theme_patterns()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_register_remote_theme_patterns');
     return null;
 }
 
@@ -364,6 +376,12 @@ function _wp_dashboard_control_callback($dashboard, $meta_box)
 function _wp_dashboard_recent_comments_row(&$comment, $show_date = true)
 {
     \Minn\Runtime\PlaceholderTrace::hit('_wp_dashboard_recent_comments_row');
+    return null;
+}
+
+function _wp_delete_all_temp_backups()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('_wp_delete_all_temp_backups');
     return null;
 }
 
@@ -806,6 +824,12 @@ function edit_user($user_id = 0)
     return null;
 }
 
+function enqueue_editor_block_styles_assets()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('enqueue_editor_block_styles_assets');
+    return null;
+}
+
 function export_wp($args = [])
 {
     \Minn\Runtime\PlaceholderTrace::hit('export_wp');
@@ -1121,6 +1145,12 @@ function get_users_drafts($user_id)
 function got_url_rewrite()
 {
     \Minn\Runtime\PlaceholderTrace::hit('got_url_rewrite');
+    return null;
+}
+
+function handle_legacy_widget_preview_iframe()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('handle_legacy_widget_preview_iframe');
     return null;
 }
 
@@ -2425,6 +2455,18 @@ function wp_admin_canonical_url()
     return null;
 }
 
+function wp_admin_css($file = 'wp-admin', $force_echo = false)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_admin_css');
+    return null;
+}
+
+function wp_admin_css_color($key, $name, $url, $colors = [], $icons = [])
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_admin_css_color');
+    return null;
+}
+
 function wp_admin_css_uri($file = 'wp-admin')
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_admin_css_uri');
@@ -2995,6 +3037,12 @@ function wp_ajax_wp_remove_post_lock()
     return null;
 }
 
+function wp_auth_check_load()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_auth_check_load');
+    return null;
+}
+
 function wp_autosave($post_data)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_autosave');
@@ -3277,6 +3325,36 @@ function wp_dashboard_trigger_widget_control($widget_control_id = false)
     return null;
 }
 
+function wp_default_packages($scripts)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_default_packages');
+    return null;
+}
+
+function wp_default_packages_inline_scripts($scripts)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_default_packages_inline_scripts');
+    return null;
+}
+
+function wp_default_packages_scripts($scripts)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_default_packages_scripts');
+    return null;
+}
+
+function wp_default_packages_vendor($scripts)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_default_packages_vendor');
+    return null;
+}
+
+function wp_delete_all_temp_backups()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_delete_all_temp_backups');
+    return null;
+}
+
 function wp_direct_php_update_button()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_direct_php_update_button');
@@ -3325,6 +3403,41 @@ function wp_edit_theme_plugin_file($args)
     return null;
 }
 
+function wp_enqueue_command_palette_assets()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_command_palette_assets');
+    return null;
+}
+
+function wp_enqueue_editor()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_editor');
+    return null;
+}
+
+function wp_enqueue_editor_block_directory_assets()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_editor_block_directory_assets');
+    return null;
+}
+
+function wp_enqueue_editor_format_library_assets()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_editor_format_library_assets');
+    return null;
+}
+
+function wp_enqueue_media($args = [])
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_media');
+    return null;
+}
+
+function wp_enqueue_view_transitions_admin_css()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_enqueue_view_transitions_admin_css');
+}
+
 function wp_ensure_editable_role($role)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_ensure_editable_role');
@@ -3364,6 +3477,12 @@ function wp_font_library_wp_admin_preload_data()
 function wp_font_library_wp_admin_render_page()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_font_library_wp_admin_render_page');
+    return null;
+}
+
+function wp_generate_block_templates_export_file()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_generate_block_templates_export_file');
     return null;
 }
 
@@ -3493,6 +3612,12 @@ function wp_get_theme_file_editable_extensions($theme)
     return null;
 }
 
+function wp_get_view_transitions_admin_css()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_get_view_transitions_admin_css');
+    return '';
+}
+
 function wp_heartbeat_set_suspension($settings)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_heartbeat_set_suspension');
@@ -3601,6 +3726,12 @@ function wp_list_widgets()
     return null;
 }
 
+function wp_localize_community_events()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_localize_community_events');
+    return null;
+}
+
 function wp_make_plugin_file_tree($plugin_editable_files)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_make_plugin_file_tree');
@@ -3610,6 +3741,12 @@ function wp_make_plugin_file_tree($plugin_editable_files)
 function wp_make_theme_file_tree($allowed_files)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_make_theme_file_tree');
+    return null;
+}
+
+function wp_maybe_auto_update()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_maybe_auto_update');
     return null;
 }
 
@@ -3777,6 +3914,12 @@ function wp_plugin_update_row($file, $plugin_data)
 function wp_plugin_update_rows()
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_plugin_update_rows');
+    return null;
+}
+
+function wp_plupload_default_settings()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_plupload_default_settings');
     return null;
 }
 
@@ -3978,6 +4121,12 @@ function wp_register_options_connectors_menu_item($id, $label, $to, $parent_id =
     return null;
 }
 
+function wp_register_options_connectors_page_routes()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_options_connectors_page_routes');
+    return null;
+}
+
 function wp_register_options_connectors_route($path, $content_module = NULL, $route_module = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_register_options_connectors_route');
@@ -3990,9 +4139,27 @@ function wp_register_options_connectors_wp_admin_menu_item($id, $label, $to, $pa
     return null;
 }
 
+function wp_register_options_connectors_wp_admin_page_routes()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_options_connectors_wp_admin_page_routes');
+    return null;
+}
+
 function wp_register_options_connectors_wp_admin_route($path, $content_module = NULL, $route_module = NULL)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_register_options_connectors_wp_admin_route');
+    return null;
+}
+
+function wp_register_page_routes($page_routes, $register_function_name)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_page_routes');
+    return null;
+}
+
+function wp_register_tinymce_scripts($scripts, $force_uncompressed = false)
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_register_tinymce_scripts');
     return null;
 }
 
@@ -4017,6 +4184,12 @@ function wp_save_image_file($filename, $image, $mime_type, $post_id)
 function wp_save_nav_menu_items($menu_id = 0, $menu_data = [])
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_save_nav_menu_items');
+    return null;
+}
+
+function wp_schedule_update_checks()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_schedule_update_checks');
     return null;
 }
 
@@ -4080,6 +4253,12 @@ function wp_theme_update_rows()
 function wp_tiny_mce($teeny = false, $settings = false)
 {
     \Minn\Runtime\PlaceholderTrace::hit('wp_tiny_mce');
+    return null;
+}
+
+function wp_tinymce_inline_scripts()
+{
+    \Minn\Runtime\PlaceholderTrace::hit('wp_tinymce_inline_scripts');
     return null;
 }
 

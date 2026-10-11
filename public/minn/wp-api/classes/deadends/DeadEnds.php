@@ -4762,6 +4762,71 @@ class WP_REST_Pattern_Directory_Controller extends WP_REST_Controller
     }
 }
 
+class WP_REST_Site_Health_Controller extends WP_REST_Controller
+{
+    private $site_health = NULL;
+
+    public function __construct($site_health)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::__construct');
+        return null;
+    }
+
+    protected function validate_request_permission($check)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::validate_request_permission');
+        return null;
+    }
+
+    public function test_background_updates()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::test_background_updates');
+        return null;
+    }
+
+    public function test_dotorg_communication()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::test_dotorg_communication');
+        return null;
+    }
+
+    public function test_loopback_requests()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::test_loopback_requests');
+        return null;
+    }
+
+    public function test_https_status()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::test_https_status');
+        return null;
+    }
+
+    public function test_authorization_header()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::test_authorization_header');
+        return null;
+    }
+
+    public function test_page_cache()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::test_page_cache');
+        return null;
+    }
+
+    public function get_directory_sizes()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::get_directory_sizes');
+        return null;
+    }
+
+    protected function load_admin_textdomain()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('WP_REST_Site_Health_Controller::load_admin_textdomain');
+        return null;
+    }
+}
+
 class WP_REST_Template_Autosaves_Controller extends WP_REST_Autosaves_Controller
 {
     private $parent_post_type = NULL;
@@ -5276,16 +5341,144 @@ class Walker_Category_Checklist extends Walker
 
 class Walker_Nav_Menu_Checklist extends Walker_Nav_Menu
 {
-
-    public function __construct($fields = false)
-    {
-        \Minn\Runtime\PlaceholderTrace::hit('Walker_Nav_Menu_Checklist::__construct');
-        return null;
-    }
 }
 
 class Walker_Nav_Menu_Edit extends Walker_Nav_Menu
 {
+}
+
+class _WP_Editors
+{
+    public static $mce_locale = NULL;
+    private static $mce_settings = [];
+    private static $qt_settings = [];
+    private static $plugins = [];
+    private static $qt_buttons = [];
+    private static $ext_plugins = NULL;
+    private static $baseurl = NULL;
+    private static $first_init = NULL;
+    private static $this_tinymce = false;
+    private static $this_quicktags = false;
+    private static $has_tinymce = false;
+    private static $has_quicktags = false;
+    private static $has_medialib = false;
+    private static $editor_buttons_css = true;
+    private static $drag_drop_upload = false;
+    private static $translation = NULL;
+    private static $tinymce_scripts_printed = false;
+    private static $link_dialog_printed = false;
+
+    private function __construct()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::__construct');
+        return null;
+    }
+
+    public static function parse_settings($editor_id, $settings)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::parse_settings');
+        return null;
+    }
+
+    public static function editor($content, $editor_id, $settings = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::editor');
+        return null;
+    }
+
+    public static function editor_settings($editor_id, $set)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::editor_settings');
+        return null;
+    }
+
+    private static function _parse_init($init)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::_parse_init');
+        return null;
+    }
+
+    public static function enqueue_scripts($default_scripts = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::enqueue_scripts');
+        return null;
+    }
+
+    public static function enqueue_default_editor()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::enqueue_default_editor');
+        return null;
+    }
+
+    public static function print_default_editor_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::print_default_editor_scripts');
+    }
+
+    public static function get_mce_locale()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::get_mce_locale');
+        return null;
+    }
+
+    public static function get_baseurl()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::get_baseurl');
+        return null;
+    }
+
+    private static function default_settings()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::default_settings');
+        return null;
+    }
+
+    private static function get_translation()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::get_translation');
+        return null;
+    }
+
+    public static function wp_mce_translation($mce_locale = '', $json_only = false)
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_mce_translation');
+        return null;
+    }
+
+    public static function force_uncompressed_tinymce()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::force_uncompressed_tinymce');
+        return null;
+    }
+
+    public static function print_tinymce_scripts()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::print_tinymce_scripts');
+    }
+
+    public static function editor_js()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::editor_js');
+        return null;
+    }
+
+    public static function wp_fullscreen_html()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_fullscreen_html');
+        return null;
+    }
+
+    public static function wp_link_query($args = [])
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_link_query');
+        return null;
+    }
+
+    public static function wp_link_dialog()
+    {
+        \Minn\Runtime\PlaceholderTrace::hit('_WP_Editors::wp_link_dialog');
+        return null;
+    }
 }
 
 class _WP_List_Table_Compat extends WP_List_Table

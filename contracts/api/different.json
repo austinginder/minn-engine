@@ -1,0 +1,14 @@
+{
+    "about": "Symbols Minn answers on purpose in its own way, not as WordPress does. Each is real code, but its output is Minn's by design, so no probe compares it with the reference; it counts as accounted for and stays out of the proven figure (tests/tools/deadends.php gives it the area 'different'). Austin decides what goes here; every entry names its reason.",
+    "functions": {
+        "wp_version_check": "Minn answers the core update check itself, with no request to wordpress.org: update_core holds one 'latest' offer for the WordPress release Minn speaks (Austin, 2026-10-11, D8).",
+        "wp_update_plugins": "Plugin updates come from the Minn update service and the plugins' own update filters, not from wordpress.org; Minn Admin calls this to refresh its offers (Austin, 2026-10-11, D8).",
+        "wp_update_themes": "Theme updates come from the Minn update service, not from wordpress.org; Minn Admin calls this to refresh its offers (Austin, 2026-10-11, D8).",
+        "_maybe_update_core": "Runs Minn's own core check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8).",
+        "_maybe_update_plugins": "Runs Minn's own plugin check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8).",
+        "_maybe_update_themes": "Runs Minn's own theme check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8)."
+    },
+    "classes": {
+        "WP_Sitemaps_Stylesheet": "The sitemaps' XSL stylesheet is Minn's own writing; WordPress's stylesheet text is WordPress's own work and is not carried (Austin, 2026-10-11, D11)."
+    }
+}

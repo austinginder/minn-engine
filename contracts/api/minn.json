@@ -123647,7 +123647,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PlaceholderTrace.php",
-            "lines": 27,
+            "lines": 37,
             "doc": "Records every call into a generated placeholder while a site opts in by\nhaving wp-content/minn-placeholder-trace.log on disk: one line per call\nwith the symbol, the plugin file that called it, and the request. The\nlog says which placeholders deserve behaviour; an absent file costs one\nstat per request.",
             "implements": [],
             "extends": null,
@@ -123681,6 +123681,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "deadEnd",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deadEnd(string $symbol): void",
+                    "doc": "Logs a call to a method of a real class that Minn answers with nothing by\ndesign (an admin-screen helper): compat-status counts the method as a\ndead end, where a hit() marks one still owed.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "symbol",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 24,
+                    "end": 27
+                },
+                {
+                    "routes": [],
                     "name": "hit",
                     "static": true,
                     "visibility": "public",
@@ -123696,8 +123716,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 39
+                    "line": 30,
+                    "end": 49
                 }
             ]
         },

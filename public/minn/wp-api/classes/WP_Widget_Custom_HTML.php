@@ -47,7 +47,7 @@ class WP_Widget_Custom_HTML extends WP_Widget
 
     public function enqueue_admin_scripts()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Widget_Custom_HTML::enqueue_admin_scripts');
+        \Minn\Runtime\PlaceholderTrace::deadEnd('WP_Widget_Custom_HTML::enqueue_admin_scripts');
     }
 
     /** The control template; the note on refused tags is for a user who may not post unfiltered HTML. */
@@ -58,7 +58,7 @@ class WP_Widget_Custom_HTML extends WP_Widget
 
     public static function add_help_text()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Widget_Custom_HTML::add_help_text');
+        \Minn\Runtime\PlaceholderTrace::deadEnd('WP_Widget_Custom_HTML::add_help_text');
     }
 
     /** The settings form (Widgets\WidgetForms::customHtml). */

@@ -1288,3 +1288,15 @@ function get_the_block_template_html()
     $content = str_replace(']]>', ']]&gt;', wp_filter_content_tags($content, 'template'));
     return '<div class="wp-site-blocks">' . $content . '</div>';
 }
+
+/**
+ * An editor field (an editor dead end answered by real code: Austin,
+ * 2026-10-11, D7). The engine ships no TinyMCE or Quicktags, so a form gets a
+ * plain textarea with the editor's id, name, rows, class and content, which
+ * still submits; Minn's own editor lives in Minn Admin.
+ */
+function wp_editor($content, $editor_id, $settings = [])
+{
+    $settings = wp_parse_args($settings, ['textarea_name' => $editor_id, 'textarea_rows' => 20, 'editor_class' => '']);
+    printf('<textarea class="%s" rows="%d" cols="40" name="%s" id="%s">%s</textarea>', esc_attr(trim('wp-editor-area ' . $settings['editor_class'])), (int) $settings['textarea_rows'], esc_attr((string) $settings['textarea_name']), esc_attr((string) $editor_id), esc_textarea((string) $content));
+}

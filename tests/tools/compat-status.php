@@ -12,7 +12,9 @@ declare(strict_types=1);
  * - real: the facade defines it by hand;
  * - deadend: wp-admin, the editors, the Customizer or XML-RPC, answered by a
  *   generated stub, a hand-written class's DeadEndCalls, or real code
- *   (public/minn/data/deadend-symbols.json);
+ *   (public/minn/data/deadend-symbols.json), with what Austin left out
+ *   (omitted.json) and what Minn answers its own way (different.json); a real
+ *   class's method marked PlaceholderTrace::deadEnd;
  * - placeholder: a generated stub for behaviour the engine still owes;
  * - missing: nothing, so calling it fatals.
  *
@@ -40,6 +42,7 @@ $parents = [];
 $catchAll = [];
 // Methods whose body is an inline placeholder (PlaceholderTrace) in an otherwise real class: owed, not real.
 $stubs = [];
+$deadMethods = [];
 $files = [...glob("{$facade}/*.php"), ...glob("{$facade}/*/*.php"), ...glob("{$facade}/classes/*/*.php")];
 foreach ($files as $file) {
     $src = (string) file_get_contents($file);
@@ -64,6 +67,10 @@ foreach ($files as $file) {
         for ($i = 1; $i + 1 < count($parts); $i += 2) {
             if (str_contains($parts[$i + 1], 'PlaceholderTrace::hit')) {
                 $stubs[$lower][strtolower($parts[$i])] = true;
+            }
+            // A real class's method Minn answers with nothing by design (an admin-screen helper) is a dead end.
+            if (str_contains($parts[$i + 1], 'PlaceholderTrace::deadEnd')) {
+                $deadMethods[$lower][strtolower($parts[$i])] = true;
             }
         }
         if (str_contains($class[4], 'DeadEndCalls') || isset($methods[$lower]['__call'])) {
@@ -125,6 +132,9 @@ foreach ($classes as $name => $spec) {
         $methodKind = $kind === 'missing' ? 'missing' : ($has($name, $method) ? $status['classes'][$name] : 'missing');
         if ($methodKind === 'real' && $isStub($name, $method)) {
             $methodKind = 'placeholder';
+        }
+        if ($methodKind === 'real' && isset($deadMethods[strtolower($name)][strtolower($method)])) {
+            $methodKind = 'deadend';
         }
         $status['methods']["{$name}::{$method}"] = $methodKind;
     }

@@ -794,9 +794,6 @@ function wp_widget_description($id)
     return esc_html($GLOBALS['wp_registered_widgets'][$id]['description']);
 }
 
-function wp_auth_check_load()
-{
-}
 
 function wp_auth_check_html()
 {

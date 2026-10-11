@@ -89,7 +89,7 @@ class WP_Widget_Text extends WP_Widget
 
     public function enqueue_admin_scripts()
     {
-        \Minn\Runtime\PlaceholderTrace::hit('WP_Widget_Text::enqueue_admin_scripts');
+        \Minn\Runtime\PlaceholderTrace::deadEnd('WP_Widget_Text::enqueue_admin_scripts');
     }
 
     public static function render_control_template_scripts()

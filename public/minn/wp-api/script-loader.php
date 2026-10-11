@@ -361,13 +361,7 @@ function wp_enqueue_code_editor($args)
     return $settings;
 }
 
-function wp_enqueue_media($args = [])
-{
-}
 
-function wp_enqueue_editor()
-{
-}
 
 /**
  * The handles the reference registers itself and plugin code depends on: the MIT libraries the engine ships under

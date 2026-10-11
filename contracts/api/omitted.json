@@ -1,6 +1,8 @@
 {
     "about": "Symbols Minn leaves behind on purpose: too old, unneeded, or replaced. Each is a dead end in the mappings (area omitted), answered by an inert stub so a plugin that calls it does not fatal. Austin decides what goes here; every entry names its reason. tests/tools/deadends.php reads this file.",
     "functions": {
+        "_print_emoji_detection_script": "Prints WordPress's own emoji loader script; modern browsers draw emoji themselves, and the engine already points emoji images at the Minn update service (Austin, 2026-10-11, D12).",
+        "_register_remote_theme_patterns": "Fetches a theme's patterns from the wordpress.org pattern directory; Minn makes no wordpress.org requests (Austin, 2026-10-11, D12).",
         "_wp_batch_split_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
         "_wp_check_for_scheduled_split_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",
         "_wp_check_split_default_terms": "WordPress 4.2 split terms shared between taxonomies once, by cron, on upgrade; a site that ran 4.2 or later has none left, and no catalogue plugin calls it.",

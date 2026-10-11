@@ -13718,3 +13718,43 @@ The positional cases don't fit one rule yet.
 Also owed: `wp_templating_constants()` (a second call warns on the
 reference) and `wp_load_translations_early()` (nothing observable in
 English).
+
+## Austin's decided dead ends, omissions and differences (2026-10-11)
+
+Austin answered the open items. This batch applies the ones that need no
+new behaviour.
+
+- **Dead ends, approved (D6, D7):**
+  - the Site Health REST controller, since Minn Admin has its own health
+    screen;
+  - the editor, TinyMCE and admin assets that live in wp-includes:
+    `_WP_Editors`, the TinyMCE scripts, the editor package registrations,
+    the command palette, block directory and format library enqueues,
+    `wp_enqueue_editor`, `wp_enqueue_media`, `wp_auth_check_load`,
+    `wp_admin_css` and its colours, the admin page routes, the
+    view-transitions admin CSS, community events, the template export and
+    the legacy widget preview iframe;
+  - the three admin-only widget methods, marked with the new
+    `PlaceholderTrace::deadEnd()`, which compat-status counts as dead ends.
+
+  `wp_editor()` is a dead end answered by real code: the engine ships no
+  TinyMCE, so it prints a plain textarea with the editor's id, name, rows,
+  class and content, and a front-end form still submits. Minn's own editor
+  lives in Minn Admin.
+- **Update work with no Minn equivalent (D8):** `wp_maybe_auto_update`,
+  `wp_schedule_update_checks` and the two temp-backup cleanups are dead
+  ends.
+- **Omitted (D12):** `_register_remote_theme_patterns`, which would ask
+  wordpress.org's pattern directory, and `_print_emoji_detection_script`,
+  WordPress's own loader script.
+- **A new area, `different` (`contracts/api/different.json`):** real code
+  that is Minn's own by design. It counts as accounted for and stays out of
+  the proven figure. It holds:
+  - `wp_version_check`, `wp_update_plugins` and `wp_update_themes`, which
+    ask Minn's update service; Minn Admin calls them to refresh its offers,
+    so a dead end would have broken its update checks;
+  - the three `_maybe_update_*` functions, now real: Minn's checks, run
+    when the stored answer is older than twelve hours;
+  - `WP_Sitemaps_Stylesheet`, whose XSL is Minn's own (D11).
+
+  The site's status dialog lists the area as "Answered Minn's own way".

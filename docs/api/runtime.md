@@ -55,7 +55,7 @@ the WordPress runtime plugins load against
 | [`Options`](#options) | final class | 266 | Options as plugin code sees them: PHP values, decoded from the stored |
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
-| [`PlaceholderTrace`](#placeholdertrace) | final class | 27 | Records every call into a generated placeholder while a site opts in by |
+| [`PlaceholderTrace`](#placeholdertrace) | final class | 37 | Records every call into a generated placeholder while a site opts in by |
 | [`Placeholders`](#placeholders) | final class | 71 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginActivation`](#pluginactivation) | final class | 70 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
@@ -2489,6 +2489,12 @@ with the symbol, the plugin file that called it, and the request. The
 log says which placeholders deserve behaviour; an absent file costs one
 stat per request.
 
+
+### static `deadEnd(string $symbol): void`
+
+Logs a call to a method of a real class that Minn answers with nothing by
+design (an admin-screen helper): compat-status counts the method as a
+dead end, where a hit() marks one still owed.
 
 ### static `hit(string $symbol): void`
 

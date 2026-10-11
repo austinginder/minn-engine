@@ -265,9 +265,6 @@ function _minn_run_cron()
     return $ran;
 }
 
-function wp_schedule_update_checks()
-{
-}
 
 /** The core, plugin and theme update checks forgotten, so the next check asks again (probe placeholder-helpers). */
 function wp_clean_update_cache()
@@ -275,4 +272,31 @@ function wp_clean_update_cache()
     foreach (['update_plugins', 'update_themes', 'update_core'] as $transient) {
         delete_site_transient($transient);
     }
+}
+
+/**
+ * Minn's own core, plugin and theme checks, run when the stored answer is
+ * older than twelve hours (a deliberate difference: the reference asks
+ * wordpress.org; contracts/api/different.json).
+ */
+function _maybe_update_core()
+{
+    _minn_update_check_is_fresh('update_core') || wp_version_check();
+}
+
+function _maybe_update_plugins()
+{
+    _minn_update_check_is_fresh('update_plugins') || wp_update_plugins();
+}
+
+function _maybe_update_themes()
+{
+    _minn_update_check_is_fresh('update_themes') || wp_update_themes();
+}
+
+/** @internal whether an update transient was filled in the last twelve hours */
+function _minn_update_check_is_fresh(string $transient): bool
+{
+    $stored = get_site_transient($transient);
+    return is_object($stored) && isset($stored->last_checked) && time() - (int) $stored->last_checked < 12 * HOUR_IN_SECONDS;
 }
