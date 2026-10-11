@@ -190,13 +190,17 @@ final readonly class Capabilities
     private function mapPostCapability(string $capability, int $userId, int $postId): array
     {
         $post = $this->db->row(
-            "SELECT post_author, post_status, post_type FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1",
+            "SELECT post_author, post_status, post_type, post_parent FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1",
             [$postId],
         );
         if ($post === null) {
             return ['do_not_allow'];
         }
         $record = PostRecord::fromRow($post + ['ID' => $postId]);
+        // A revision is never deleted this way; editing or reading one is editing or reading its post (probe rest-revisions).
+        if ($record->type === 'revision') {
+            return $capability === 'delete_post' || $record->parentId <= 0 ? ['do_not_allow'] : $this->mapPostCapability($capability, $userId, $record->parentId);
+        }
         // A plugin's type that does not map meta capabilities asks for its own primitive one.
         $registered = RegisteredCaps::ofType($record->type);
         if ($registered !== null && !$registered->map_meta_cap) {

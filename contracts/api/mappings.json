@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 761,
-        "composes": 2111,
-        "leaf": 959,
-        "noop": 2725,
-        "placeholder": 171,
+        "minn": 765,
+        "composes": 2135,
+        "leaf": 961,
+        "noop": 2728,
+        "placeholder": 161,
         "deadend": 1662,
-        "functions": 8311,
+        "functions": 8334,
         "minnMethods": 960,
         "leafLinesOver15": 12
     },
@@ -18445,25 +18445,127 @@
             "composes": []
         },
         "WP_REST_Autosaves_Controller::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "get_post_type_object"
+            ]
+        },
+        "WP_REST_Autosaves_Controller::create_item": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 18,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\RuntimePrepare::during"
+            ],
+            "composes": [
+                "__",
+                "clean_post_cache",
+                "get_post",
+                "rest_ensure_response"
+            ]
+        },
+        "WP_REST_Autosaves_Controller::create_item_permissions_check": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
         },
         "WP_REST_Autosaves_Controller::create_post_autosave": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "clean_post_cache",
+                "get_current_user_id",
+                "get_post",
+                "normalize_whitespace",
+                "wp_get_post_autosave"
+            ]
+        },
+        "WP_REST_Autosaves_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
         },
+        "WP_REST_Autosaves_Controller::get_item": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "wp_get_post_autosave"
+            ]
+        },
+        "WP_REST_Autosaves_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Autosaves_Controller::get_items": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "rest_ensure_response",
+                "wp_get_post_revisions"
+            ]
+        },
+        "WP_REST_Autosaves_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
         "WP_REST_Autosaves_Controller::get_parent": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Autosaves_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_preview_post_link",
+                "rest_is_field_included",
+                "wp_create_nonce"
+            ]
+        },
+        "WP_REST_Autosaves_Controller::register_routes": {
+            "file": "classes/WP_REST_Autosaves_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
         },
         "WP_REST_Block_Directory_Controller::__construct": {
             "file": "classes/deadends/DeadEnds.php",
@@ -18741,6 +18843,29 @@
                 "__",
                 "register_rest_route"
             ]
+        },
+        "WP_REST_Blocks_Controller::check_read_permission": {
+            "file": "classes/WP_REST_Blocks_Controller.php",
+            "lines": 4,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "current_user_can"
+            ]
+        },
+        "WP_REST_Blocks_Controller::filter_response_by_context": {
+            "file": "classes/WP_REST_Blocks_Controller.php",
+            "lines": 6,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "WP_REST_Blocks_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Blocks_Controller.php",
+            "lines": 10,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
         },
         "WP_REST_Comment_Meta_Fields::get_meta_subtype": {
             "file": "classes/WP_REST_Comment_Meta_Fields.php",
@@ -21160,52 +21285,189 @@
             "composes": []
         },
         "WP_REST_Revisions_Controller::__construct": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_post_type_object"
+            ]
+        },
+        "WP_REST_Revisions_Controller::delete_item": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 18,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "do_action",
+                "is_wp_error",
+                "wp_delete_post"
+            ]
+        },
+        "WP_REST_Revisions_Controller::delete_item_permissions_check": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 15,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
+        },
+        "WP_REST_Revisions_Controller::get_collection_params": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__"
+            ]
+        },
+        "WP_REST_Revisions_Controller::get_item": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 13,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "is_wp_error"
+            ]
+        },
+        "WP_REST_Revisions_Controller::get_item_permissions_check": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Revisions_Controller::get_item_schema": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 18,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\SchemaData::of"
+            ],
+            "composes": []
+        },
+        "WP_REST_Revisions_Controller::get_items": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 30,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "add_query_arg",
+                "is_wp_error",
+                "rest_ensure_response",
+                "rest_url",
+                "urlencode_deep",
+                "wp_revisions_enabled"
+            ]
+        },
+        "WP_REST_Revisions_Controller::get_items_permissions_check": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "current_user_can",
+                "is_wp_error",
+                "rest_authorization_required_code"
+            ]
         },
         "WP_REST_Revisions_Controller::get_parent": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "get_post"
+            ]
         },
         "WP_REST_Revisions_Controller::get_revision": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 5,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "__",
+                "get_post"
+            ]
+        },
+        "WP_REST_Revisions_Controller::minn_revision_page": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 30,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "apply_filters"
+            ]
         },
         "WP_REST_Revisions_Controller::prepare_date_response": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 7,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "mysql_to_rfc3339"
+            ]
         },
         "WP_REST_Revisions_Controller::prepare_excerpt_response": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_REST_Revisions_Controller::prepare_item_for_response": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 12,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters",
+                "get_post",
+                "rest_ensure_response",
+                "rest_get_route_for_post",
+                "rest_is_field_included",
+                "rest_url",
+                "setup_postdata"
+            ]
         },
         "WP_REST_Revisions_Controller::prepare_items_query": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 2,
-            "kind": "placeholder",
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "apply_filters"
+            ]
+        },
+        "WP_REST_Revisions_Controller::register_routes": {
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 11,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route"
+            ]
         },
         "WP_REST_Revisions_Controller::restore_post_data": {
-            "file": "classes/placeholders/Placeholders.php",
-            "lines": 1,
-            "kind": "placeholder",
-            "minn": [],
+            "file": "classes/WP_REST_Revisions_Controller.php",
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\PlaceholderTrace::hit"
+            ],
             "composes": []
         },
         "WP_REST_Search_Controller::__construct": {

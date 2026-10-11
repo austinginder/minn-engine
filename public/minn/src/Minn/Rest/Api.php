@@ -153,6 +153,19 @@ final readonly class Api
         }
     }
 
+    /** A revision (or autosave) row as wp/v2 shapes it, in the view or edit context. @param array<string, mixed> $row */
+    public function revisionObject(array $row, Context $context): array
+    {
+        $s = $this->services;
+        return (new RevisionsController($s->posts(), $s->revisions(), $s->url(), $s->caller()))->object($row, $context);
+    }
+
+    /** Saves a user's autosave of a post in its one slot per author; the revision's id. */
+    public function saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int
+    {
+        return $this->services->revisions()->saveAutosave($parentId, $userId, $title, $content, $excerpt);
+    }
+
     /** The wp/v2 post shape. */
     public function postObject(): PostObject
     {

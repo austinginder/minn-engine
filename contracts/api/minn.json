@@ -8378,7 +8378,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/Capabilities.php",
-            "lines": 260,
+            "lines": 264,
             "doc": "The capability engine: a user's roles from {prefix}capabilities usermeta,\nwhat those roles and the user's own capabilities grant, and the meta-capability mapping for\nedit_post, delete_post, and read_post.",
             "implements": [],
             "extends": null,
@@ -8741,7 +8741,7 @@
                         }
                     ],
                     "line": 190,
-                    "end": 232
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -8776,8 +8776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 257
+                    "line": 247,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -8806,8 +8806,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 266
+                    "line": 267,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -8826,8 +8826,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 275
+                    "line": 272,
+                    "end": 279
                 }
             ]
         },
@@ -88162,7 +88162,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 330,
+            "lines": 343,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -88421,6 +88421,83 @@
                 },
                 {
                     "routes": [],
+                    "name": "revisionObject",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "revisionObject(array $row, Minn\\Rest\\Context $context): array",
+                    "doc": "A revision (or autosave) row as wp/v2 shapes it, in the view or edit context. @param array<string, mixed> $row",
+                    "shapes": [
+                        "@param array<string, mixed> $row"
+                    ],
+                    "params": [
+                        {
+                            "name": "row",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "Minn\\Rest\\Context",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 157,
+                    "end": 161
+                },
+                {
+                    "routes": [],
+                    "name": "saveAutosave",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int",
+                    "doc": "Saves a user's autosave of a post in its one slot per author; the revision's id.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "userId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "title",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "excerpt",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 164,
+                    "end": 167
+                },
+                {
+                    "routes": [],
                     "name": "postObject",
                     "static": false,
                     "visibility": "public",
@@ -88428,8 +88505,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -88440,8 +88517,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 166
+                    "line": 176,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -88452,8 +88529,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 169,
-                    "end": 172
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -88464,8 +88541,8 @@
                     "doc": "The post types the surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 175,
-                    "end": 178
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -88491,8 +88568,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 195
+                    "line": 199,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -88511,8 +88588,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 225
+                    "line": 211,
+                    "end": 238
                 },
                 {
                     "routes": [],
@@ -88538,8 +88615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 257
+                    "line": 249,
+                    "end": 270
                 },
                 {
                     "routes": [],
@@ -88558,8 +88635,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 264
+                    "line": 273,
+                    "end": 277
                 },
                 {
                     "routes": [],
@@ -88585,8 +88662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 285
+                    "line": 286,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -88614,8 +88691,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 300
+                    "line": 306,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -88663,8 +88740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 309
+                    "line": 315,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -88690,8 +88767,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 316,
-                    "end": 338
+                    "line": 329,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -88710,8 +88787,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 354
+                    "line": 360,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -88737,8 +88814,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 364
+                    "line": 373,
+                    "end": 377
                 }
             ]
         },
@@ -101493,7 +101570,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RevisionsController.php",
-            "lines": 142,
+            "lines": 139,
             "doc": "wp/v2 revisions and autosaves under posts, pages, and blocks.",
             "implements": [],
             "extends": null,
@@ -101752,7 +101829,7 @@
                         }
                     ],
                     "line": 73,
-                    "end": 85
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -101778,8 +101855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 124
+                    "line": 90,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -101798,8 +101875,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -101825,8 +101902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 136
+                    "line": 124,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -101852,8 +101929,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 148
+                    "line": 136,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -101879,8 +101956,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 164
+                    "line": 148,
+                    "end": 161
                 }
             ]
         },

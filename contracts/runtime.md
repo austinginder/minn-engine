@@ -12098,3 +12098,55 @@ only. A DELETE may carry it in the body, as the reference reads it.
 Left in the class: the private tax query helpers (the engine's own list
 answers the queries). Owed alongside: a type outside wp/v2 has no engine
 route to write through yet.
+
+## Revisions, autosaves and patterns as classes (2026-10-11)
+
+Probe `rest-revisions` proves `WP_REST_Revisions_Controller`,
+`WP_REST_Autosaves_Controller` and `WP_REST_Blocks_Controller`. It uses a
+post with revisions, a page, a password-protected post and a pattern. All
+of them, with their revisions and autosaves, are removed afterwards.
+
+- **Revisions.**
+  - The parent controller is the type's own (`get_rest_controller`),
+    and the meta is the parent type's.
+  - Routes: the list and one revision, read or delete.
+  - The schema has the revision's own fields (captured from the
+    reference), then the guid, title, content and excerpt as the parent's
+    schema has them (a pattern's title and content raw only), then the meta.
+  - Listing is a revision query:
+    - all of them without a page size;
+    - pages, an offset, include, exclude and search as the reference does;
+    - ordering by date breaks ties by id;
+    - totals and previous/next page links.
+
+    Past the last page or offset is an error, and so is ordering by
+    relevance without a search or by include without an include.
+  - Reading checks the revision's parent:
+    `rest_revision_parent_id_mismatch` names the parent's id.
+  - A revision's shape is the engine's (`Rest\RevisionsController::object`).
+    The parent link is added only when the parent field is shown.
+  - Deleting needs `force`; otherwise 501. The permission check is
+    deleting the parent, then the revision.
+- **Autosaves.**
+  - Creating runs the engine's autosave route (one slot per author). A
+    field the request leaves out keeps the user's earlier autosave's (the
+    engine's route used to blank it).
+  - Reading one answers the user's autosave of the parent, whichever id was
+    asked for, or `rest_post_no_autosave`.
+  - The list is the parent's autosave revisions, without pages.
+  - The edit context adds the preview link (the post's preview link with a
+    preview nonce).
+  - `create_post_autosave` with the post's own fields leaves an existing
+    autosave as it is and answers its id.
+- **Patterns.** Reading needs `read_post` before the posts controller's
+  own check, so a visitor reads none, not even a published post. The title
+  and content lose their rendered parts in the schema (raw readable in
+  view) and in a response. The sync status moves out of meta, empty when
+  there is none.
+
+Fixed on the way:
+- **Revision caps:** the engine's capability map now refuses `delete_post`
+  on a revision, and judges `edit_post` and `read_post` on its parent, as
+  the reference maps them.
+- **Post cache:** the post cache is cleaned after the engine writes an
+  autosave row, so `get_post` reads the new one.

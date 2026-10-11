@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 330 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 343 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 84 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -52,7 +52,7 @@ the wp/v2 surface: shapes and controllers
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 142 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 139 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 61 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
@@ -126,6 +126,16 @@ the shape asked for: the facade's controller class shapes them itself.
 
 - `@param \Closure(\Minn\Content\PostRecord, Context): array<string, mixed> $shape`
 
+### `revisionObject(array $row, Minn\Rest\Context $context): array`
+
+A revision (or autosave) row as wp/v2 shapes it, in the view or edit context. @param array<string, mixed> $row
+
+- `@param array<string, mixed> $row`
+
+### `saveAutosave(int $parentId, int $userId, string $title, string $content, string $excerpt): int`
+
+Saves a user's autosave of a post in its one slot per author; the revision's id.
+
 ### `postObject(): Minn\Rest\PostObject`
 
 The wp/v2 post shape.
@@ -182,7 +192,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 302), `withPageLinks()` (private, line 316), `options()` (private, line 347), `withAllow()` (private, line 360)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 315), `withPageLinks()` (private, line 329), `options()` (private, line 360), `withAllow()` (private, line 373)
 
 
 ## ApplicationPasswordsController
@@ -2214,7 +2224,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 87), `withPreviewLink()` (private, line 127), `meta()` (private, line 139), `requireParent()` (private, line 151)
+Internals: `clean()` (private, line 84), `withPreviewLink()` (private, line 124), `meta()` (private, line 136), `requireParent()` (private, line 148)
 
 
 ## RouteArgs

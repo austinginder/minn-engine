@@ -5138,5 +5138,89 @@
                 "edit"
             ]
         }
+    },
+    "revision-properties": {
+        "author": {
+            "description": "The ID for the author of the revision.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "date": {
+            "description": "The date the revision was published, in the site's timezone.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "date_gmt": {
+            "description": "The date the revision was published, as GMT.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "id": {
+            "description": "Unique identifier for the revision.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "modified": {
+            "description": "The date the revision was last modified, in the site's timezone.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "modified_gmt": {
+            "description": "The date the revision was last modified, as GMT.",
+            "type": "string",
+            "format": "date-time",
+            "context": [
+                "view",
+                "edit"
+            ]
+        },
+        "parent": {
+            "description": "The ID for the parent of the revision.",
+            "type": "integer",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        },
+        "slug": {
+            "description": "An alphanumeric identifier for the revision unique to its type.",
+            "type": "string",
+            "context": [
+                "view",
+                "edit",
+                "embed"
+            ]
+        }
+    },
+    "autosave-preview-link": {
+        "description": "Preview link for the post.",
+        "type": "string",
+        "format": "uri",
+        "context": [
+            "edit"
+        ],
+        "readonly": true
     }
 }

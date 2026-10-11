@@ -74,13 +74,10 @@ final readonly class RevisionsController
     {
         $userId = $this->requireParent((int) $id, $base);
         $body = $request->json();
-        $revisionId = $this->revisions->saveAutosave(
-            (int) $id,
-            $userId,
-            $this->clean(PostsWriteController::field($body['title'] ?? '')),
-            $this->clean(PostsWriteController::field($body['content'] ?? '')),
-            $this->clean(PostsWriteController::field($body['excerpt'] ?? '')),
-        );
+        // A field the request leaves out keeps the user's earlier autosave's (probe rest-revisions).
+        $earlier = array_values(array_filter(PostRecord::fromRows($this->revisions->autosavesOf((int) $id)), static fn (PostRecord $row) => $row->authorId === $userId))[0] ?? null;
+        $field = fn (string $key, string $kept) => array_key_exists($key, $body) ? $this->clean(PostsWriteController::field($body[$key])) : $kept;
+        $revisionId = $this->revisions->saveAutosave((int) $id, $userId, $field('title', $earlier->title ?? ''), $field('content', $earlier->content ?? ''), $field('excerpt', $earlier->excerpt ?? ''));
         return Reply::item($this->withPreviewLink($this->object($this->posts->find($revisionId), Context::Edit), (int) $id), Fields::fromQuery($request->query));
     }
 
