@@ -192,7 +192,9 @@ function wp_apply_anchor_support($block_type, $block_attributes)
 
 function wp_apply_aria_label_support($block_type, $block_attributes)
 {
-    return block_has_support($block_type, 'ariaLabel', false) && !empty($block_attributes['ariaLabel']) ? ['aria-label' => (string) $block_attributes['ariaLabel']] : [];
+    // A block that skips the label's serialization puts it elsewhere itself (core/icon, on its drawing).
+    $applies = block_has_support($block_type, 'ariaLabel', false) && !wp_should_skip_block_supports_serialization($block_type, 'ariaLabel');
+    return $applies && !empty($block_attributes['ariaLabel']) ? ['aria-label' => (string) $block_attributes['ariaLabel']] : [];
 }
 
 function wp_apply_custom_classname_support($block_type, $block_attributes)
@@ -249,11 +251,12 @@ function wp_apply_typography_support($block_type, $block_attributes)
 /** Border color, radius, style and width, all round or side by side, a preset color as its classes. */
 function wp_apply_border_support($block_type, $block_attributes)
 {
-    if (!($block_type->supports['__experimentalBorder'] ?? false) || wp_should_skip_block_supports_serialization($block_type, 'border')) {
+    // Skipping is read under the support's own key, __experimentalBorder (probe icon-term-template).
+    if (!($block_type->supports['__experimentalBorder'] ?? false) || wp_should_skip_block_supports_serialization($block_type, '__experimentalBorder')) {
         return [];
     }
     $border = (array) ($block_attributes['style']['border'] ?? []);
-    $allowed = static fn (string $feature): bool => wp_has_border_feature_support($block_type, $feature) && !wp_should_skip_block_supports_serialization($block_type, 'border', $feature);
+    $allowed = static fn (string $feature): bool => wp_has_border_feature_support($block_type, $feature) && !wp_should_skip_block_supports_serialization($block_type, '__experimentalBorder', $feature);
     $styles = [];
     if ($allowed('color')) {
         $styles['color'] = !empty($block_attributes['borderColor']) ? "var:preset|color|{$block_attributes['borderColor']}" : ($border['color'] ?? null);

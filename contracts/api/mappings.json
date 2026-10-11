@@ -2,13 +2,13 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 813,
-        "composes": 2325,
-        "leaf": 1020,
-        "noop": 2749,
+        "minn": 814,
+        "composes": 2332,
+        "leaf": 1021,
+        "noop": 2747,
         "placeholder": 60,
         "deadend": 1661,
-        "functions": 8550,
+        "functions": 8557,
         "minnMethods": 982,
         "leafLinesOver15": 12
     },
@@ -35255,6 +35255,15 @@
                 "wp_kses_post"
             ]
         },
+        "_minn_block_icon": {
+            "file": "core-blocks.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "render_block_core_icon"
+            ]
+        },
         "_minn_block_level_presets": {
             "file": "block-supports-render.php",
             "lines": 2,
@@ -35435,6 +35444,30 @@
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_minn_block_term_template": {
+            "file": "core-blocks.php",
+            "lines": 6,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Wrapper::open"
+            ],
+            "composes": [
+                "_minn_inner_html",
+                "_minn_laid_out",
+                "_minn_term_item",
+                "_minn_term_template_terms"
+            ]
+        },
+        "_minn_block_terms_query": {
+            "file": "core-blocks.php",
+            "lines": 3,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_inner_html",
+                "_minn_laid_out"
+            ]
         },
         "_minn_block_to_array": {
             "file": "blocks.php",
@@ -36287,6 +36320,24 @@
             "minn": [],
             "composes": []
         },
+        "_minn_icon_style": {
+            "file": "core-blocks.php",
+            "lines": 7,
+            "kind": "leaf",
+            "minn": [],
+            "composes": []
+        },
+        "_minn_icon_svg": {
+            "file": "core-blocks.php",
+            "lines": 16,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_icon_style",
+                "_minn_set_attributes",
+                "wp_style_engine_get_styles"
+            ]
+        },
         "_minn_image_lightbox_state": {
             "file": "core-blocks-content.php",
             "lines": 19,
@@ -37103,7 +37154,7 @@
         },
         "_minn_register_block_renderers": {
             "file": "core-blocks.php",
-            "lines": 36,
+            "lines": 39,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Wrapper::open"
@@ -37688,6 +37739,15 @@
                 "get_terms"
             ]
         },
+        "_minn_term_item": {
+            "file": "core-blocks.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "esc_attr"
+            ]
+        },
         "_minn_term_lookup": {
             "file": "taxonomy.php",
             "lines": 7,
@@ -37753,6 +37813,16 @@
             "composes": [
                 "get_term",
                 "get_term_by",
+                "get_terms",
+                "is_taxonomy_hierarchical"
+            ]
+        },
+        "_minn_term_template_terms": {
+            "file": "core-blocks.php",
+            "lines": 8,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
                 "get_terms",
                 "is_taxonomy_hierarchical"
             ]
@@ -57651,11 +57721,12 @@
         },
         "render_block_core_icon": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_icon_svg",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_image": {
@@ -58131,11 +58202,13 @@
         },
         "render_block_core_term_template": {
             "file": "core-blocks.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 10,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "_minn_render_core_callback"
+                "_minn_term_item",
+                "_minn_term_template_terms",
+                "get_block_wrapper_attributes"
             ]
         },
         "render_block_core_video": {
@@ -64165,16 +64238,17 @@
         },
         "wp_apply_aria_label_support": {
             "file": "block-supports.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 3,
+            "kind": "composes",
             "minn": [],
             "composes": [
-                "block_has_support"
+                "block_has_support",
+                "wp_should_skip_block_supports_serialization"
             ]
         },
         "wp_apply_border_support": {
             "file": "block-supports.php",
-            "lines": 24,
+            "lines": 25,
             "kind": "composes",
             "minn": [],
             "composes": [

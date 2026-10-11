@@ -340,9 +340,49 @@ function render_block_core_home_link($attributes, $content, $block)
     return _minn_render_core_callback('core/home-link', $attributes, $content, $block);
 }
 
+/** An icon from the registry in its wrapper; an unknown or missing icon gives nothing (probe icon-term-template). */
 function render_block_core_icon($attributes)
 {
-    return _minn_render_core_callback('core/icon', ...func_get_args());
+    $svg = _minn_icon_svg((array) $attributes);
+    return $svg === '' ? '' : '<div ' . get_block_wrapper_attributes() . '>' . $svg . '</div>';
+}
+
+/**
+ * @internal An icon block's drawing. A first pass names it (its label, or
+ * hidden from assistive technology) and gives it the colour and border
+ * classes; a second flips it and styles it: the colours, border, width and
+ * padding the block skips on its wrapper, then its rotation.
+ */
+function _minn_icon_svg(array $attributes): string
+{
+    $icon = WP_Icons_Registry::get_instance()->get_registered_icon((string) ($attributes['icon'] ?? ''));
+    if (!is_array($icon) || (string) ($icon['content'] ?? '') === '') {
+        return '';
+    }
+    $styles = wp_style_engine_get_styles(_minn_icon_style($attributes));
+    $label = (string) ($attributes['ariaLabel'] ?? '');
+    $tags = new WP_HTML_Tag_Processor((string) $icon['content']);
+    _minn_set_attributes($tags, ['tag_name' => 'svg'], array_filter(['aria-label' => $label ?: null, 'role' => $label !== '' ? 'img' : null, 'aria-hidden' => $label === '' ? 'true' : null, 'focusable' => $label === '' ? 'false' : null, 'class' => ($styles['classnames'] ?? '') ?: null]));
+    $tags = new WP_HTML_Tag_Processor($tags->get_updated_html());
+    $tags->next_tag('svg');
+    foreach (['flipHorizontal' => 'is-flip-horizontal', 'flipVertical' => 'is-flip-vertical'] as $flag => $class) {
+        empty($attributes[$flag]) || $tags->add_class($class);
+    }
+    $style = implode(' ', array_filter([(string) ($styles['css'] ?? ''), empty($attributes['rotation']) ? '' : 'rotate: ' . $attributes['rotation'] . 'deg;']));
+    $style === '' || $tags->set_attribute('style', $style);
+    return $tags->get_updated_html();
+}
+
+/** @internal the styles an icon block puts on its drawing: preset colours as references, then its own colours, border, width and padding */
+function _minn_icon_style(array $attributes): array
+{
+    $own = (array) ($attributes['style'] ?? []);
+    $color = array_filter(['text' => empty($attributes['textColor']) ? ($own['color']['text'] ?? null) : 'var:preset|color|' . $attributes['textColor'], 'background' => empty($attributes['backgroundColor']) ? ($own['color']['background'] ?? null) : 'var:preset|color|' . $attributes['backgroundColor']]);
+    $border = (array) ($own['border'] ?? []);
+    if (!empty($attributes['borderColor'])) {
+        $border['color'] = 'var:preset|color|' . $attributes['borderColor'];
+    }
+    return array_filter(['color' => $color, 'border' => $border, 'dimensions' => array_filter(['width' => $own['dimensions']['width'] ?? null]), 'spacing' => array_filter(['padding' => $own['spacing']['padding'] ?? null])]);
 }
 
 function render_block_core_image($attributes, $content, $block)
@@ -733,9 +773,43 @@ function render_block_core_term_name($attributes, $content, $block)
     return _minn_render_core_callback('core/term-name', $attributes, $content, $block);
 }
 
+/**
+ * The terms a terms query asks for, each a list item (term-{id}, its
+ * taxonomy twice) holding the template's blocks with that term as their
+ * context; nothing without the query or with no terms (probe
+ * icon-term-template).
+ */
 function render_block_core_term_template($attributes, $content, $block)
 {
-    return _minn_render_core_callback('core/term-template', $attributes, $content, $block);
+    $query = $block instanceof WP_Block ? ($block->context['termQuery'] ?? null) : null;
+    $items = '';
+    foreach (is_array($query) ? _minn_term_template_terms($query) : [] as $term) {
+        $inner = '';
+        foreach ((array) $block->parsed_block['innerBlocks'] as $inner_block) {
+            $inner .= (new WP_Block($inner_block, ['termId' => $term->term_id, 'taxonomy' => $term->taxonomy]))->render();
+        }
+        $items .= _minn_term_item($term, $inner);
+    }
+    return $items === '' ? '' : '<ul ' . get_block_wrapper_attributes() . '>' . $items . '</ul>';
+}
+
+/** @internal the terms for a terms query: top-level only unless nested, empty ones only when asked, an include list in its own order */
+function _minn_term_template_terms(array $query): array
+{
+    $taxonomy = (string) ($query['taxonomy'] ?? 'category');
+    $include = array_values(array_filter(array_map('intval', (array) ($query['include'] ?? []))));
+    $args = ['taxonomy' => $taxonomy, 'number' => (int) ($query['perPage'] ?? 10), 'order' => (string) ($query['order'] ?? 'asc'), 'orderby' => $include === [] ? (string) ($query['orderBy'] ?? 'name') : 'include', 'hide_empty' => !empty($query['hideEmpty']), 'include' => $include];
+    if (empty($query['showNested']) && is_taxonomy_hierarchical($taxonomy)) {
+        $args['parent'] = 0;
+    }
+    $terms = get_terms($args);
+    return is_array($terms) ? array_values(array_filter($terms, static fn ($term) => $term instanceof WP_Term)) : [];
+}
+
+/** @internal one term's list item */
+function _minn_term_item(WP_Term $term, string $inner): string
+{
+    return '<li class="' . esc_attr("wp-block-term term-{$term->term_id} {$term->taxonomy} taxonomy-{$term->taxonomy}") . '">' . $inner . '</li>';
 }
 
 function render_block_core_video($attributes, $content)
@@ -1297,6 +1371,9 @@ function _minn_register_block_renderers(MinnRenderer $renderer): void
         },
         'core/tab-list' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, _minn_tab_list($block->attrs, _minn_inner_html($block, $renderer), $renderer->blockContext())),
         'core/tab-panel' => static fn (MinnBlock $block, MinnRenderer $renderer): string => _minn_laid_out($block, _minn_tab_panel($block->attrs, _minn_inner_html($block, $renderer), $renderer->blockContext())),
+        'core/icon' => '_minn_block_icon',
+        'core/terms-query' => '_minn_block_terms_query',
+        'core/term-template' => '_minn_block_term_template',
     ];
     foreach ($renderers as $name => $render) {
         $renderer->registerDynamic($name, $render);
@@ -1341,6 +1418,37 @@ function _minn_comment_page_context(MinnRenderer $renderer): array
 function _minn_wrapper_attributes(string $tag, string $blockClass, MinnBlock $block): string
 {
     return trim(substr(Wrapper::open($tag, $blockClass, $block), strlen($tag) + 1, -1));
+}
+
+/** @internal an icon in a page: rendered as the reference renders it, its wrapper from the block supports (the ones it skips stay off) */
+function _minn_block_icon(MinnBlock $block): string
+{
+    $parent = WP_Block_Supports::$block_to_render;
+    WP_Block_Supports::$block_to_render = ['blockName' => 'core/icon', 'attrs' => $block->attrs];
+    try {
+        return render_block_core_icon($block->attrs);
+    } finally {
+        WP_Block_Supports::$block_to_render = $parent;
+    }
+}
+
+/** @internal a terms query in a page: its query, with the block type's defaults, provided to the blocks inside */
+function _minn_block_terms_query(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $type = WP_Block_Type_Registry::get_instance()->get_registered('core/terms-query');
+    $query = (array) $block->attr('termQuery', $type->attributes['termQuery']['default'] ?? []);
+    return _minn_laid_out($block, $renderer->providing(['termQuery' => $query], static fn (): string => _minn_inner_html($block, $renderer)));
+}
+
+/** @internal a term template in a page: each term's items with the term provided to the blocks inside */
+function _minn_block_term_template(MinnBlock $block, MinnRenderer $renderer): string
+{
+    $query = $renderer->blockContext()['termQuery'] ?? null;
+    $items = '';
+    foreach (is_array($query) ? _minn_term_template_terms($query) : [] as $term) {
+        $items .= _minn_term_item($term, $renderer->providing(['termId' => $term->term_id, 'taxonomy' => $term->taxonomy], static fn (): string => _minn_inner_html($block, $renderer)));
+    }
+    return $items === '' ? '' : _minn_laid_out($block, Wrapper::open('ul', 'wp-block-term-template', $block) . $items . '</ul>');
 }
 
 /** @internal a tabs block in a page: its id and panel list provided to the blocks inside, as render_block_context gives them on the reference */

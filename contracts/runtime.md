@@ -13541,3 +13541,53 @@ leaves that case out. Owed:
 - `get_option()` here fires neither `pre_wp_load_alloptions` nor
   `alloptions`. The reference fires both on every read. That is option-layer
   work for its own batch.
+
+## The icon block and the term template (2026-10-11)
+
+Probe `icon-term-template`. Each block's callback is swapped for one that
+calls the core function by name. A page renders both blocks natively; the
+native output was checked against the reference with the same markup.
+
+**`render_block_core_icon()`** draws an icon from the registry. The probe
+registers its own icon in its own collection: WordPress's core icons are its
+GPL icon library, and the engine registers none of them, so whether to carry
+them is a decision for Austin. The drawing takes two tag-processor passes;
+the processor writes new attributes after the tag name in alphabetical order,
+so the passes decide the order:
+
+1. its label (`aria-label`, `role="img"`), or `aria-hidden` and `focusable`
+   when it has none, plus the style engine's class names for its colours and
+   border;
+2. the flip classes, then a style made of the style engine's CSS (colours as
+   preset references or the block's own, border, width, padding) followed by
+   `rotate: Ndeg;`.
+
+The wrapper takes what the block does not skip: align, class name, anchor,
+margin. An unknown or unnamed icon gives nothing. In a page, the native
+renderer goes through the same function, with the block set as the one being
+rendered.
+
+**`render_block_core_term_template()`** lists the terms the enclosing terms
+query asks for. In a page, the terms query provides its `termQuery`, with the
+block type's default, and takes its layout classes.
+
+- Only top-level terms are listed, unless `showNested`; then every term is
+  listed, flat.
+- Empty terms only with `hideEmpty` off.
+- `perPage` limits the list; `orderBy` and `order` sort it, and an
+  `include` list keeps its own order.
+- Each term is an `li` (`wp-block-term term-{id} {taxonomy}
+  taxonomy-{taxonomy}`) holding the template's blocks, with `termId` and
+  `taxonomy` as their context.
+- No terms, or no query around the template, gives nothing.
+- `inherit` on a page that is not an archive lists as usual. The archive
+  case is unprobed.
+
+Fixed in the block supports (shared): the aria-label support honours
+`__experimentalSkipSerialization`. The border support reads its skip under
+`__experimentalBorder`, its own key, as the reference does; it used to read
+it under `border`. A block that skips them (core/icon) no longer gets them on
+its wrapper.
+
+Owed: the playlist, which needs audio attachments and its interactivity
+state. It gets a batch of its own.
