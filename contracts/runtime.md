@@ -14317,3 +14317,55 @@ reference, each one registering a set of sidebars for a single call.
   The one-to-one path never does this.
 
 Dropped: a non-array old sidebar, which fatals the reference.
+
+## The boot plumbing accounted for (D17, 2026-10-11)
+
+Austin's D17 rule ("go with whatever you recommend") settles the boot plumbing
+the probes could not reach. Each function is now one of these:
+
+- **Real and proven by a probe.** `wp_templating_constants()` is real. The
+  boot defines `TEMPLATEPATH` and `STYLESHEETPATH` before plugins load
+  (`Runtime\Constants::define()`, from the `template` and `stylesheet`
+  options); before this, the engine never defined them. A second call, as on
+  the reference, draws PHP's own "Constant TEMPLATEPATH already defined"
+  warning, then the same for `STYLESHEETPATH`, because both are defined
+  unconditionally. `WP_DEFAULT_THEME` is defined only when it is missing.
+  Probe boot-defaults, case "the templating constants".
+- **Real and proven over HTTP.** `redirect_canonical()` sends the canonical
+  redirects, so its proof is the canonical suite's comparison with the
+  reference (`tests/canonical-hooks.test.php`, ": status, destination and
+  notes"). It sits in `contracts/api/http-proofs.json`, whose `about` now
+  covers redirects as well as headers.
+- **Different (`contracts/api/different.json`): real, accounted for, out of
+  the proof.**
+  - `wp_cron`: Minn runs due events itself, after the response; `spawn_cron()`
+    is still the reference's loopback.
+  - `wp_enqueue_global_styles`: the engine's own global-styles writer (D3).
+  - `wp_enqueue_classic_theme_styles`, `wp_default_styles` and
+    `wp_default_scripts`: WordPress's stylesheets and JavaScript files are not
+    part of the engine. The reference registers 420 style handles and 234
+    script handles; the engine has its own small set.
+  - `_wp_register_default_font_collections`: the collection is served from
+    wordpress.org (Track H), and the font library is an editor dead end.
+  - `_wp_connectors_pass_default_keys_to_ai_client`: Minn carries no AI
+    provider classes (D5), so a stored key has no provider to go to.
+- **Omitted (`contracts/api/omitted.json`).** These three point at
+  WordPress's own block folders and stylesheets, which Minn does not ship:
+  `register_core_block_style_handles`,
+  `wp_register_core_block_metadata_collection` and
+  `_wp_enqueue_auto_register_blocks`.
+- **An admin dead end.** `wp_text_diff()`: the revisions screen's diff table
+  (the facade's empty stub is gone).
+
+Still owed:
+
+- `wp_debug_mode()` is empty. The reference sends errors to `debug.log` when
+  `WP_DEBUG_LOG` is set; the engine leaves PHP's own log. This is to be
+  observed on the reference under different constant settings, then made real.
+- `create_initial_rest_routes()` is real, but about 40 core routes are
+  missing. Some are dead by decision (site health, fonts, the block and
+  pattern directories). The rest are work: block patterns, navigation and
+  menu-item autosaves and revisions, media edit and post-process, the editor
+  export, and the navigation fallback.
+- `wp_load_translations_early()` is still a placeholder.
+- `_wp_register_default_icons()` waits on D16 (the artwork's home).

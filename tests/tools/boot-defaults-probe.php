@@ -1,7 +1,8 @@
 <?php
 /**
- * What the boot sets up, run again (probe boot-defaults): the cookie and
- * plugin-directory constants; the connector registry refused outside init;
+ * What the boot sets up, run again (probe boot-defaults): the cookie,
+ * templating and plugin-directory constants (a second templating call warns
+ * that each theme folder is already defined); the connector registry refused outside init;
  * the default icon collections and the core blocks registered from their
  * metadata, each refused as already registered; and the cron spawn, its
  * loopback request caught by pre_http_request and answered here. The cron
@@ -30,6 +31,17 @@ $cookies = ['COOKIEHASH', 'USER_COOKIE', 'PASS_COOKIE', 'AUTH_COOKIE', 'SECURE_A
 $plugins = ['WP_PLUGIN_URL', 'PLUGINDIR', 'WPMU_PLUGIN_URL', 'MUPLUGINDIR'];
 $constants = static fn (array $names) => array_combine($names, array_map(static fn ($name) => defined($name) ? $root(constant($name)) : 'undefined', $names));
 $say('the cookie constants', ['call' => $heard(static fn () => wp_cookie_constants()), 'values' => $constants($cookies)]);
+$warned = static function (callable $run): array {
+    $seen = [];
+    set_error_handler(static function ($level, $message) use (&$seen) {
+        $seen[] = [$level, $message];
+        return true;
+    });
+    $returned = $run();
+    restore_error_handler();
+    return ['returned' => $returned, 'warnings' => $seen];
+};
+$say('the templating constants', ['call' => $warned(static fn () => wp_templating_constants()), 'values' => $constants(['TEMPLATEPATH', 'STYLESHEETPATH', 'WP_DEFAULT_THEME']), 'the theme folders' => [TEMPLATEPATH === get_template_directory(), STYLESHEETPATH === get_stylesheet_directory()]]);
 $say('the plugin directory constants', ['call' => $heard(static fn () => wp_plugin_directory_constants()), 'values' => $constants($plugins), 'plugin folder' => basename(WP_PLUGIN_DIR), 'must-use folder' => basename(WPMU_PLUGIN_DIR)]);
 
 $fired = [];

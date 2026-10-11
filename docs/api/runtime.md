@@ -30,7 +30,7 @@ the WordPress runtime plugins load against
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 196 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`Connectors`](#connectors) | final class | 221 | The connectors registry: the external services a site talks to (AI |
-| [`Constants`](#constants) | final class | 83 | The constants plugin code expects: the fixed set from data/constants.json |
+| [`Constants`](#constants) | final class | 91 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`CurrentUser`](#currentuser) | final class | 13 | Who the request is, as the reference settles it before init: the user |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
@@ -1283,7 +1283,7 @@ Used by: `Minn\Runtime\Runtime`
 
 Defines the constants the reference defines at boot.
 
-Internals: `maxMemoryLimit()` (private, line 84)
+Internals: `maxMemoryLimit()` (private, line 92)
 
 
 ## CronTable

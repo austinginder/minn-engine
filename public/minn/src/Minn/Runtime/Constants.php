@@ -46,6 +46,14 @@ final class Constants
             'WP_ADMIN' => $runtime->isAdmin,
             'MINN_RUNTIME' => true,
         ];
+        // The active theme's folders, as the reference defines them before plugins load (probe boot-defaults).
+        $themes = (defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : $abs . 'wp-content') . '/themes/';
+        foreach (['TEMPLATEPATH' => 'template', 'STYLESHEETPATH' => 'stylesheet'] as $name => $option) {
+            $theme = (string) ($runtime->site->option($option) ?? '');
+            if ($theme !== '') {
+                $computed[$name] = $themes . $theme;
+            }
+        }
         // The reference's wp-cron.php declares itself before anything loads, and a plugin reads it at plugins_loaded.
         if ($runtime->request?->path === '/wp-cron.php') {
             $computed['DOING_CRON'] = true;

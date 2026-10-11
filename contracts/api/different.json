@@ -6,7 +6,14 @@
         "wp_update_themes": "Theme updates come from the Minn update service, not from wordpress.org; Minn Admin calls this to refresh its offers (Austin, 2026-10-11, D8).",
         "_maybe_update_core": "Runs Minn's own core check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8).",
         "_maybe_update_plugins": "Runs Minn's own plugin check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8).",
-        "_maybe_update_themes": "Runs Minn's own theme check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8)."
+        "_maybe_update_themes": "Runs Minn's own theme check when the stored answer is old; the reference asks wordpress.org (Austin, 2026-10-11, D8).",
+        "wp_cron": "Minn runs due events itself, after the response and under its own lock; the reference hooks _wp_cron on shutdown to spawn a loopback, which Minn left out (Austin, 2026-10-09). spawn_cron() is the reference's loopback (Austin, 2026-10-11, D17).",
+        "wp_enqueue_global_styles": "Minn prints the global styles with its own writer (Theme\\GlobalStyles, D3) instead of queueing a global-styles stylesheet (Austin, 2026-10-11, D17).",
+        "wp_enqueue_classic_theme_styles": "Minn ships none of WordPress's stylesheets, the classic theme styles among them; the engine's own block CSS covers classic themes (Austin, 2026-10-11, D17).",
+        "_wp_register_default_font_collections": "The google-fonts collection is served from wordpress.org; Minn makes no wordpress.org requests (Track H) and its font library is an editor dead end (Austin, 2026-10-11, D17).",
+        "wp_default_scripts": "Minn registers its own small set of scripts; WordPress's JavaScript files (234 handles on the reference) are not part of the engine (Austin, 2026-10-11, D17).",
+        "wp_default_styles": "Minn registers none of WordPress's stylesheets (420 handles on the reference); the engine prints its own CSS (Austin, 2026-10-11, D17).",
+        "_wp_connectors_pass_default_keys_to_ai_client": "Minn carries no AI provider classes (D5), so there is no provider to hand a stored key to; the connectors and their keys work as on the reference (Austin, 2026-10-11, D17)."
     },
     "classes": {
         "WP_Sitemaps_Stylesheet": "The sitemaps' XSL stylesheet is Minn's own writing; WordPress's stylesheet text is WordPress's own work and is not carried (Austin, 2026-10-11, D11)."

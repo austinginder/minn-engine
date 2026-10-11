@@ -6,9 +6,3 @@ function wp_load_translations_early()
     \Minn\Runtime\PlaceholderTrace::hit('wp_load_translations_early');
     return null;
 }
-
-function wp_templating_constants()
-{
-    \Minn\Runtime\PlaceholderTrace::hit('wp_templating_constants');
-    return null;
-}

@@ -776,6 +776,21 @@ function wp_cookie_constants()
 {
 }
 
+/**
+ * The theme folders as TEMPLATEPATH and STYLESHEETPATH, and the default
+ * theme when not yet defined. Runtime\Constants::define() defines the
+ * folders at boot, before plugins load, so a second call draws PHP's own
+ * "already defined" warning for each, as on the reference (probe boot-defaults).
+ */
+function wp_templating_constants()
+{
+    define('TEMPLATEPATH', get_template_directory());
+    define('STYLESHEETPATH', get_stylesheet_directory());
+    if (!defined('WP_DEFAULT_THEME')) {
+        define('WP_DEFAULT_THEME', 'twentytwentyfive');
+    }
+}
+
 /** Runtime\Constants::define() already defined the plugin directory constants at boot. */
 function wp_plugin_directory_constants()
 {

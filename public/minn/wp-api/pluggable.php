@@ -314,13 +314,6 @@ function wp_new_user_notification($user_id, $deprecated = null, $notify = '')
 }
 endif;
 
-if (!function_exists('wp_text_diff')) :
-function wp_text_diff($left_string, $right_string, $args = null)
-{
-    return '';
-}
-endif;
-
 if (!function_exists('cache_users')) :
 /** The users not yet cached, read in one query and cached with their meta (probe pluggable-remaining). */
 function cache_users($user_ids)

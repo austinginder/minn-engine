@@ -117460,7 +117460,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Constants.php",
-            "lines": 83,
+            "lines": 91,
             "doc": "The constants plugin code expects: the fixed set from data/constants.json\n(captured from the reference) and the per-site ones computed here. Nothing\nalready defined is touched, so wp-config.php keeps the last word.",
             "implements": [],
             "extends": null,
@@ -117495,7 +117495,7 @@
                         }
                     ],
                     "line": 17,
-                    "end": 78
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -117506,8 +117506,8 @@
                     "doc": "256M, unless PHP starts with no limit or a higher one, which is then\nkept as written (probe: the reference started at 128M, 300M, 1G, -1).",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 95
+                    "line": 92,
+                    "end": 103
                 }
             ]
         },

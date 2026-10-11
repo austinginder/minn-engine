@@ -1,12 +1,37 @@
 {
-    "about": "Functions that only send headers. PHP keeps no header list under the CLI, so an api probe cannot compare them; each is proven instead by a check in an HTTP suite that compares the engine's response with the reference's (Austin, D9, 2026-10-11). compat-status counts a function here as verified when it is real and its suite holds the check, label for label.",
+    "about": "Functions whose whole effect is the HTTP response: headers sent, or a redirect. PHP keeps no header list under the CLI, so an api probe cannot compare them; each is proven instead by a check in an HTTP suite that compares the engine's response with the reference's (Austin, D9 and D17, 2026-10-11). compat-status counts a function here as verified when it is real and its suite holds the check, label for label.",
     "functions": {
-        "send_nosniff_header": {"suite": "tests/runtime.test.php", "check": "send_nosniff_header() sends the reference's headers"},
-        "send_frame_options_header": {"suite": "tests/runtime.test.php", "check": "send_frame_options_header() sends the reference's headers"},
-        "cache_javascript_headers": {"suite": "tests/runtime.test.php", "check": "cache_javascript_headers() sends the reference's headers"},
-        "rest_output_link_header": {"suite": "tests/runtime.test.php", "check": "rest_output_link_header() sends the reference's headers"},
-        "rest_handle_deprecated_function": {"suite": "tests/runtime.test.php", "check": "a REST request reports a deprecated function and its replacement as the reference does"},
-        "rest_handle_deprecated_argument": {"suite": "tests/runtime.test.php", "check": "a REST request reports a deprecated argument and its message as the reference does"},
-        "rest_handle_doing_it_wrong": {"suite": "tests/runtime.test.php", "check": "a REST request reports a call made incorrectly, with its version, as the reference does"}
+        "send_nosniff_header": {
+            "suite": "tests/runtime.test.php",
+            "check": "send_nosniff_header() sends the reference's headers"
+        },
+        "send_frame_options_header": {
+            "suite": "tests/runtime.test.php",
+            "check": "send_frame_options_header() sends the reference's headers"
+        },
+        "cache_javascript_headers": {
+            "suite": "tests/runtime.test.php",
+            "check": "cache_javascript_headers() sends the reference's headers"
+        },
+        "rest_output_link_header": {
+            "suite": "tests/runtime.test.php",
+            "check": "rest_output_link_header() sends the reference's headers"
+        },
+        "rest_handle_deprecated_function": {
+            "suite": "tests/runtime.test.php",
+            "check": "a REST request reports a deprecated function and its replacement as the reference does"
+        },
+        "rest_handle_deprecated_argument": {
+            "suite": "tests/runtime.test.php",
+            "check": "a REST request reports a deprecated argument and its message as the reference does"
+        },
+        "rest_handle_doing_it_wrong": {
+            "suite": "tests/runtime.test.php",
+            "check": "a REST request reports a call made incorrectly, with its version, as the reference does"
+        },
+        "redirect_canonical": {
+            "suite": "tests/canonical-hooks.test.php",
+            "check": ": status, destination and notes"
+        }
     }
 }
