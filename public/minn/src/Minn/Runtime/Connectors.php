@@ -112,29 +112,38 @@ final class Connectors
     }
 
     /**
-     * The reference's three AI providers and Akismet. Activation is
-     * checked through the caller's closure, so the plugin list is read
-     * when asked.
-     * @param Closure(string): bool $pluginActive
+     * The reference's three AI providers. Whether a provider's plugin is
+     * active is asked of the caller's closure, by the connector's id, when
+     * asked (probe connector-defaults).
+     * @param Closure(string): bool $loaded
      */
-    public function registerDefaults(Closure $pluginActive): void
+    public function registerAiProviders(Closure $loaded): void
     {
         $provider = static fn (string $name, string $description, string $url, string $id, string $slug, string $constant): array => [
             'name' => $name,
             'description' => $description,
             'type' => 'ai_provider',
             'authentication' => ['method' => 'api_key', 'credentials_url' => $url, 'setting_name' => "connectors_ai_{$id}_api_key", 'constant_name' => $constant, 'env_var_name' => $constant],
-            'plugin' => ['file' => "{$slug}/plugin.php", 'is_active' => static fn (): bool => $pluginActive("{$slug}/plugin.php")],
+            'plugin' => ['file' => "{$slug}/plugin.php", 'is_active' => static fn (): bool => $loaded($id)],
         ];
         $this->register('anthropic', $provider('Anthropic', 'Text generation with Claude.', 'https://platform.claude.com/settings/keys', 'anthropic', 'ai-provider-for-anthropic', 'ANTHROPIC_API_KEY'));
         $this->register('google', $provider('Google', 'Text and image generation with Gemini and Imagen.', 'https://aistudio.google.com/api-keys', 'google', 'ai-provider-for-google', 'GOOGLE_API_KEY'));
         $this->register('openai', $provider('OpenAI', 'Text and image generation with GPT and Dall-E.', 'https://platform.openai.com/api-keys', 'openai', 'ai-provider-for-openai', 'OPENAI_API_KEY'));
+    }
+
+    /**
+     * Akismet, the spam filter connector the reference adds after the AI
+     * providers. Whether its plugin is active is asked of the caller's closure.
+     * @param Closure(): bool $loaded
+     */
+    public function registerAkismet(Closure $loaded): void
+    {
         $this->register('akismet', [
             'name' => 'Akismet Anti-spam',
             'description' => 'Protect your site from spam.',
             'type' => 'spam_filtering',
             'authentication' => ['method' => 'api_key', 'credentials_url' => 'https://akismet.com/get/', 'setting_name' => 'wordpress_api_key', 'constant_name' => 'WPCOM_API_KEY'],
-            'plugin' => ['file' => 'akismet/akismet.php', 'is_active' => static fn (): bool => $pluginActive('akismet/akismet.php')],
+            'plugin' => ['file' => 'akismet/akismet.php', 'is_active' => static fn (): bool => $loaded()],
         ]);
     }
 

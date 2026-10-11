@@ -40013,7 +40013,7 @@
         },
         "_wp_connectors_init": {
             "file": "connectors.php",
-            "lines": 4,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -40051,9 +40051,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [],
-            "composes": [
-                "is_plugin_active"
-            ]
+            "composes": []
         },
         "_wp_connectors_resolve_ai_provider_logo_url": {
             "file": "connectors.php",

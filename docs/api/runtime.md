@@ -29,7 +29,7 @@ the WordPress runtime plugins load against
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 123 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 196 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
-| [`Connectors`](#connectors) | final class | 212 | The connectors registry: the external services a site talks to (AI |
+| [`Connectors`](#connectors) | final class | 221 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 83 | The constants plugin code expects: the fixed set from data/constants.json |
 | [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`CurrentUser`](#currentuser) | final class | 13 | Who the request is, as the reference settles it before init: the user |
@@ -1221,13 +1221,20 @@ One connector, or null.
 
 Whether a connector is registered.
 
-### `registerDefaults(Closure $pluginActive): void`
+### `registerAiProviders(Closure $loaded): void`
 
-The reference's three AI providers and Akismet. Activation is
-checked through the caller's closure, so the plugin list is read
-when asked.
+The reference's three AI providers. Whether a provider's plugin is
+active is asked of the caller's closure, by the connector's id, when
+asked (probe connector-defaults).
 
-- `@param Closure(string): bool $pluginActive`
+- `@param Closure(string): bool $loaded`
+
+### `registerAkismet(Closure $loaded): void`
+
+Akismet, the spam filter connector the reference adds after the AI
+providers. Whether its plugin is active is asked of the caller's closure.
+
+- `@param Closure(): bool $loaded`
 
 ### static `mask(string $key): string`
 

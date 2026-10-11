@@ -14254,3 +14254,31 @@ calls them again and compares what a second run does.
 A note for probes: calling the reference's `wp_cron()` leaves `_wp_cron`
 hooked on `shutdown`, and it then sends a real loopback after the probe's
 filters are gone. Unhook it, or don't call `wp_cron()`.
+
+## The default connectors (2026-10-11)
+
+Probe `connector-defaults`.
+
+- **`_wp_connectors_register_default_ai_providers($registry)`** gives a
+  registry the three AI providers: Anthropic, Google and OpenAI. Each has its
+  name, description, the `api_key` authentication (credentials URL, setting,
+  constant and environment variable names) and its plugin (file, and an
+  `is_active` callable). It does not add Akismet. The engine added Akismet
+  here; now `_wp_connectors_init()` adds it, after the AI providers and before
+  `wp_connectors_init`. That is where the site's list has it: anthropic,
+  google, openai, akismet, then what plugins add.
+- **Whether a connector's plugin is active.** On the reference, listing the
+  plugin as active (a filter on `active_plugins`) is not enough, even with its
+  file on disk: `is_active` still answers false.
+  - The engine now reads "active" as "its code is loaded". An AI provider
+    counts once it has registered its provider with the AI client (asking
+    never loads the AI client). Akismet counts once its class exists.
+  - No provider plugin can be loaded to see the reference's true case, so that
+    side is the engine's reading, consistent with every case observed.
+- **`_wp_register_default_connector_settings()`** registers a key setting
+  only for a connector whose plugin is active, so none on a site without one.
+
+`wp_text_diff()` stays empty for now. It serves wp-admin's revision compare
+screen. Its pairing of changed lines (inline word marks for some pairs, split
+rows for others) would take a long black-box study, so it is in D17 as a
+proposed admin dead end.

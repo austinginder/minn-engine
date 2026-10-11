@@ -23,21 +23,29 @@ function wp_is_connector_registered(string $id): bool
     return WP_Connector_Registry::get_instance()->is_registered($id);
 }
 
+/**
+ * The three AI providers (probe connector-defaults). A provider's plugin
+ * counts as active once it has registered its provider with the AI client;
+ * listing the plugin as active is not enough on the reference. Asking does
+ * not load the AI client.
+ */
 function _wp_connectors_register_default_ai_providers(WP_Connector_Registry $registry): void
 {
-    $registry->store()->registerDefaults(static fn (string $file): bool => is_plugin_active($file));
+    $registry->store()->registerAiProviders(static fn (string $id): bool => class_exists('WordPress\\AiClient\\AiClient', false) && WordPress\AiClient\AiClient::defaultRegistry()->hasProvider($id));
 }
 
 /**
  * A connector registry of its own, made the instance (only while init runs;
- * otherwise refused, and the instance kept), given the default AI providers,
- * then handed to wp_connectors_init (probe boot-defaults).
+ * otherwise refused, and the instance kept), given the default AI providers
+ * and Akismet, then handed to wp_connectors_init (probe boot-defaults).
  */
 function _wp_connectors_init(): void
 {
     $registry = new WP_Connector_Registry();
     WP_Connector_Registry::set_instance($registry);
     _wp_connectors_register_default_ai_providers($registry);
+    // Akismet follows the AI providers; its plugin counts as active once its class is loaded.
+    $registry->store()->registerAkismet(static fn (): bool => class_exists('Akismet', false));
     do_action('wp_connectors_init', $registry);
 }
 

@@ -117071,7 +117071,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Connectors.php",
-            "lines": 212,
+            "lines": 221,
             "doc": "The connectors registry: the external services a site talks to (AI\nproviders, spam filters, cloud services) and how each authenticates.\nRows are normalised on the way in, the way the reference keeps them;\nthe facade class hands them back to plugin code.",
             "implements": [],
             "extends": null,
@@ -117218,17 +117218,17 @@
                 },
                 {
                     "routes": [],
-                    "name": "registerDefaults",
+                    "name": "registerAiProviders",
                     "static": false,
                     "visibility": "public",
-                    "signature": "registerDefaults(Closure $pluginActive): void",
-                    "doc": "The reference's three AI providers and Akismet. Activation is\nchecked through the caller's closure, so the plugin list is read\nwhen asked.",
+                    "signature": "registerAiProviders(Closure $loaded): void",
+                    "doc": "The reference's three AI providers. Whether a provider's plugin is\nactive is asked of the caller's closure, by the connector's id, when\nasked (probe connector-defaults).",
                     "shapes": [
-                        "@param Closure(string): bool $pluginActive"
+                        "@param Closure(string): bool $loaded"
                     ],
                     "params": [
                         {
-                            "name": "pluginActive",
+                            "name": "loaded",
                             "type": "Closure",
                             "shape": "Closure(string): bool",
                             "default": null,
@@ -117236,7 +117236,29 @@
                         }
                     ],
                     "line": 120,
-                    "end": 139
+                    "end": 132
+                },
+                {
+                    "routes": [],
+                    "name": "registerAkismet",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "registerAkismet(Closure $loaded): void",
+                    "doc": "Akismet, the spam filter connector the reference adds after the AI\nproviders. Whether its plugin is active is asked of the caller's closure.",
+                    "shapes": [
+                        "@param Closure(): bool $loaded"
+                    ],
+                    "params": [
+                        {
+                            "name": "loaded",
+                            "type": "Closure",
+                            "shape": "Closure(): bool",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 139,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -117255,8 +117277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 148
+                    "line": 151,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -117298,8 +117320,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 167
+                    "line": 164,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -117318,8 +117340,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 182
+                    "line": 179,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -117347,8 +117369,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 198
+                    "line": 198,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -117384,8 +117406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 225
+                    "line": 215,
+                    "end": 234
                 },
                 {
                     "routes": [],
