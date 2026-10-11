@@ -200,6 +200,7 @@ add_filter('embed_oembed_html', 'wp_maybe_enqueue_oembed_host_js');
 add_action('wp_footer', 'wp_print_speculation_rules', 10);
 add_action('wp_footer', 'wp_print_footer_scripts', 20);
 add_action('wp_print_footer_scripts', '_wp_footer_scripts', 10);
+add_action('wp_default_styles', 'wp_load_classic_theme_block_styles_on_demand', 0);
 add_filter('option_blog_charset', '_wp_specialchars');
 // The robots meta directives, in the reference's registration order (it decides the directive order in the tag).
 add_filter('wp_robots', 'wp_robots_noindex');

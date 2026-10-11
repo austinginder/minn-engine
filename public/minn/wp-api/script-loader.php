@@ -241,9 +241,12 @@ function _minn_print_engine_styles()
     echo (string) Runtime::current()->get('engine_head_styles', '');
 }
 
+/** The head's scripts; wp_print_scripts fires first, once a request (probe script-printing). */
 function wp_print_head_scripts()
 {
-    do_action('wp_print_scripts');
+    if (!did_action('wp_print_scripts')) {
+        do_action('wp_print_scripts');
+    }
     return wp_scripts()->do_head_items();
 }
 
@@ -286,6 +289,59 @@ function print_late_styles()
 function print_head_scripts()
 {
     return wp_print_head_scripts();
+}
+
+/**
+ * A classic theme's block styles loaded on demand (wp_default_styles 0):
+ * the page is buffered for enhancement, core block assets load separately
+ * and on demand, and styles printed late are hoisted into the head. A block
+ * theme, a buffer filtered off, or a REST request stops it part way (probe
+ * script-printing).
+ */
+function wp_load_classic_theme_block_styles_on_demand()
+{
+    if (wp_is_block_theme()) {
+        return;
+    }
+    add_filter('wp_should_output_buffer_template_for_enhancement', '__return_true', 0);
+    if (!wp_should_output_buffer_template_for_enhancement()) {
+        return;
+    }
+    add_filter('should_load_separate_core_block_assets', '__return_true', 0);
+    if (wp_is_rest_endpoint()) {
+        return;
+    }
+    add_filter('should_load_block_assets_on_demand', '__return_true', 0);
+    add_action('wp_template_enhancement_output_buffer_started', 'wp_hoist_late_printed_styles');
+}
+
+/** The footer prints its scripts alone; the styles queued late print before the head closes, through the enhancement buffer. */
+function wp_hoist_late_printed_styles()
+{
+    $late = '';
+    remove_action('wp_print_footer_scripts', '_wp_footer_scripts');
+    add_action('wp_print_footer_scripts', static function () use (&$late) {
+        ob_start();
+        print_late_styles();
+        $late = (string) ob_get_clean();
+        print_footer_scripts();
+    });
+    add_filter('wp_template_enhancement_output_buffer', static function ($buffer) use (&$late) {
+        return $late === '' ? $buffer : _minn_before_head_closer((string) $buffer, $late . "\n");
+    });
+}
+
+/** @internal the text put just before the document's first HEAD closer (a closer inside a script or comment is not one); the document as it was without one */
+function _minn_before_head_closer(string $html, string $text): string
+{
+    $tags = new Minn\Html\Tags($html);
+    while ($tags->nextTag(['tag_name' => 'HEAD', 'tag_closers' => 'visit'])) {
+        if ($tags->isCloser()) {
+            $start = $tags->tokenSpan()[0];
+            return substr($html, 0, $start) . $text . substr($html, $start);
+        }
+    }
+    return $html;
 }
 
 function wp_enqueue_code_editor($args)
@@ -561,7 +617,7 @@ function wp_localize_jquery_ui_datepicker()
         return;
     }
     $format = str_replace(['d', 'j', 'l', 'z', 'F', 'M', 'n', 'm', 'Y', 'y'], ['dd', 'd', 'DD', 'o', 'MM', 'M', 'm', 'mm', 'yy', 'y'], (string) get_option('date_format'));
-    $defaults = wp_json_encode(['closeText' => __('Close'), 'currentText' => __('Today'), 'monthNames' => array_values($wp_locale->month), 'monthNamesShort' => array_values($wp_locale->month_abbrev), 'nextText' => __('Next'), 'prevText' => __('Previous'), 'dayNames' => array_values($wp_locale->weekday), 'dayNamesShort' => array_values($wp_locale->weekday_abbrev), 'dayNamesMin' => array_values($wp_locale->weekday_initial), 'dateFormat' => $format, 'firstDay' => absint(get_option('start_of_week')), 'isRTL' => $wp_locale->is_rtl()]);
+    $defaults = wp_json_encode(['closeText' => __('Close'), 'currentText' => __('Today'), 'monthNames' => array_values($wp_locale->month), 'monthNamesShort' => array_values($wp_locale->month_abbrev), 'nextText' => __('Next'), 'prevText' => __('Previous'), 'dayNames' => array_values($wp_locale->weekday), 'dayNamesShort' => array_values($wp_locale->weekday_abbrev), 'dayNamesMin' => array_values($wp_locale->weekday_initial), 'dateFormat' => $format, 'firstDay' => absint(get_option('start_of_week')), 'isRTL' => $wp_locale->is_rtl()], JSON_UNESCAPED_SLASHES);
     wp_add_inline_script('jquery-ui-datepicker', "jQuery(function(jQuery){jQuery.datepicker.setDefaults({$defaults});});");
 }
 

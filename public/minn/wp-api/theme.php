@@ -486,9 +486,14 @@ function create_initial_theme_features()
 }
 
 /** What every block theme supports before its own setup runs. */
+/** A block theme's default supports, and its core block assets loaded separately and on demand. */
 function _add_default_theme_supports()
 {
     ThemeSupports::blockThemeDefaults();
+    if (wp_is_block_theme()) {
+        add_filter('should_load_separate_core_block_assets', '__return_true');
+        add_filter('should_load_block_assets_on_demand', '__return_true');
+    }
 }
 
 /** The custom header's and background's defaults, filled in once WordPress has loaded. */

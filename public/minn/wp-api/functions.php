@@ -637,9 +637,12 @@ function wp_is_serving_rest_request()
     return defined('REST_REQUEST') && REST_REQUEST;
 }
 
+/** Whether this is a REST request, or a REST request is being dispatched inside this one; the filter may say otherwise (probe script-printing). */
 function wp_is_rest_endpoint()
 {
-    return wp_is_serving_rest_request();
+    $server = $GLOBALS['wp_rest_server'] ?? null;
+    $dispatching = $server instanceof WP_REST_Server && $server->is_dispatching();
+    return (bool) apply_filters('wp_is_rest_endpoint', wp_is_serving_rest_request() || $dispatching);
 }
 
 function wp_is_mobile()

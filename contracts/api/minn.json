@@ -112628,7 +112628,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Assets.php",
-            "lines": 431,
+            "lines": 432,
             "doc": "The registry behind wp_register_/wp_enqueue_ for scripts and styles:\nhandles, sources, dependencies, versions, inline additions, localized\ndata, and the head/footer split. Printing follows the reference's tag\nshapes as far as captured; see contracts/runtime.md.",
             "implements": [],
             "extends": null,
@@ -113286,7 +113286,7 @@
                         }
                     ],
                     "line": 316,
-                    "end": 335
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -113299,8 +113299,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 338,
-                    "end": 341
+                    "line": 339,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -113313,8 +113313,8 @@
                         "@return array<string, string> handle => path"
                     ],
                     "params": [],
-                    "line": 386,
-                    "end": 396
+                    "line": 387,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -113333,8 +113333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 399,
-                    "end": 405
+                    "line": 400,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -113353,8 +113353,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 408,
-                    "end": 412
+                    "line": 409,
+                    "end": 413
                 },
                 {
                     "routes": [],
@@ -113373,8 +113373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 418
+                    "line": 416,
+                    "end": 419
                 },
                 {
                     "routes": [],
@@ -113387,8 +113387,8 @@
                         "@return array<string, array<string, mixed>>"
                     ],
                     "params": [],
-                    "line": 425,
-                    "end": 428
+                    "line": 426,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -113401,8 +113401,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 435,
-                    "end": 438
+                    "line": 436,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -113413,8 +113413,8 @@
                     "doc": "Whether these are scripts or styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 441,
-                    "end": 444
+                    "line": 442,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -113494,8 +113494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 377
+                    "line": 348,
+                    "end": 378
                 }
             ]
         },

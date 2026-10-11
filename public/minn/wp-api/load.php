@@ -126,9 +126,19 @@ function is_customize_preview()
     return false;
 }
 
+/** Whether the current theme is a block theme: the booted one's answer, or, for a stylesheet a filter swapped in, that theme's own. */
 function wp_is_block_theme()
 {
-    return Runtime::current()->get('block_theme', true);
+    $runtime = Runtime::current();
+    $theme = $runtime->get('theme');
+    $stylesheet = get_stylesheet();
+    if ($runtime->get('block_theme') === null || $theme instanceof Minn\Theme\Theme && $stylesheet === $theme->slug) {
+        return true;
+    }
+    $known = (array) $runtime->get('block_theme_by_stylesheet', []);
+    $known[$stylesheet] ??= wp_get_theme($stylesheet)->is_block_theme();
+    $runtime->set('block_theme_by_stylesheet', $known);
+    return $known[$stylesheet];
 }
 
 function wp_get_environment_type()

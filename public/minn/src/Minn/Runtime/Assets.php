@@ -325,9 +325,10 @@ final class Assets
                 $data[$k] = html_entity_decode((string) $v, ENT_QUOTES, 'UTF-8');
             }
         }
-        // The reference prints localized data with slashes unescaped, and keeps it in the
-        // script's data string: each object a line after what is there (add_data replaces it all).
-        $script = 'var ' . $name . ' = ' . Json::encode($data, JSON_UNESCAPED_SLASHES) . ';';
+        // The reference prints localized data with slashes unescaped and angle brackets as \u003C/\u003E (so a
+        // value can never close the script element), and keeps it in the script's data string: each object a line
+        // after what is there (add_data replaces it all).
+        $script = 'var ' . $name . ' = ' . Json::encode($data, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) . ';';
         $held = $this->items[$handle]['data']['data'] ?? '';
         $this->items[$handle]['data']['data'] = is_string($held) && $held !== '' ? $held . "\n" . $script : $script;
         $this->changed();

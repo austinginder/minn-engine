@@ -13385,3 +13385,64 @@ Fixed:
 
 Still unproven among the classes: `WP_Sitemaps_Stylesheet`. The engine prints
 its own XSL on purpose.
+
+## Printing scripts and styles (2026-10-11)
+
+Probe `script-printing`. It covers:
+
+- a script tag built from its attributes;
+- the head scripts, then the footer's, then styles queued late;
+- the jQuery UI datepicker told the site's date format;
+- `wp_enqueue_scripts` fired;
+- block styles on demand for a classic theme. The probe makes a throwaway
+  `zz-classic-probe` theme folder, switches to it through the options' pre
+  filters, and removes it again;
+- styles printed late hoisted into the head through the template
+  enhancement buffer.
+
+Already matched: the script tag, the footer scripts and late styles (each
+printed once), and the datepicker's date format translation.
+
+New, as observed:
+
+- **`wp_load_classic_theme_block_styles_on_demand()`** is hooked on
+  `wp_default_styles` at 0 and does nothing for a block theme. For a classic
+  theme it:
+  1. turns the template enhancement buffer on (`__return_true` at 0) and
+     stops if the buffer is filtered off anyway;
+  2. turns separate core block assets on, and stops on a REST request;
+  3. turns block assets on demand on;
+  4. hooks `wp_hoist_late_printed_styles` to the buffer's start.
+- **`wp_hoist_late_printed_styles()`** takes `_wp_footer_scripts` off the
+  footer. The footer then prints its scripts alone and keeps what the late
+  styles printed. The buffer puts that text and a newline just before the
+  document's first real HEAD closer, matched in any case and ignoring a
+  closer inside a script or comment. A page with no closer, or no late
+  styles, is left as it was.
+
+Fixed:
+
+- **Localized script data** encodes `<` and `>` as `<` and `>`, so
+  a value can never close its script element. Slashes stay unescaped and
+  other characters are escaped as before.
+- **`wp_print_scripts` fires once** from `wp_print_head_scripts()` and
+  `print_head_scripts()`. Only `wp_print_scripts()` fires it every time.
+- **The datepicker's defaults** keep slashes unescaped (`dd/mm/yy`).
+- **`wp_is_rest_endpoint()`** is true inside an internal dispatch
+  (`rest_do_request`) too, and goes through its `wp_is_rest_endpoint`
+  filter. It used to answer only whether the request itself was REST.
+- **`wp_is_block_theme()`** answers for the current stylesheet. While that
+  is the booted block theme, it uses the boot flag as before. A stylesheet a
+  filter swaps in, or a classic site's, is checked through `wp_get_theme()`
+  and remembered for the request. It used to return the boot flag always.
+- **`_add_default_theme_supports()`** also hooks `__return_true` on
+  `should_load_separate_core_block_assets` and
+  `should_load_block_assets_on_demand` for a block theme, as the reference
+  does. The answers are the same as before; a plugin removing those filters
+  now finds them.
+
+The engine ships no jQuery UI, so it holds no datepicker handle. The probe
+registers a stand-in there. Owed: `wp_enqueue_global_styles()` and
+`wp_enqueue_classic_theme_styles()` are still empty. The engine prints the
+global styles from its page renderers, not through the style registry, so
+`wp_dequeue_style('global-styles')` does not remove them yet.
