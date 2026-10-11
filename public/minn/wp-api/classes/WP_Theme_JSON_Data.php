@@ -3,7 +3,8 @@
 /**
  * One layer of theme.json data as the wp_theme_json_data_* filters hand it
  * to plugins and themes: update_with() merges what they bring (maps key by
- * key, lists replaced), get_data() is the result as a theme.json reads.
+ * key, lists replaced), get_data() is the result as held, presets under
+ * their origin.
  */
 #[AllowDynamicProperties]
 class WP_Theme_JSON_Data
@@ -23,10 +24,10 @@ class WP_Theme_JSON_Data
         return $this;
     }
 
-    /** The data as a theme.json reads (WP_Theme_JSON::get_data: presets flattened, keys sorted). */
+    /** The data as it is held: presets under their origin, keys in the order given (probe small-classes). */
     public function get_data()
     {
-        return $this->theme_json->get_data();
+        return $this->theme_json->get_raw_data();
     }
 
     public function get_theme_json()

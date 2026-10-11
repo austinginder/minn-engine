@@ -13179,3 +13179,31 @@ do:
   - Then the `allow_{kind}_auto_core_updates` filter decides.
   - The dev branch rules apply only when the running version is a
     development one, which the engine's never is, so they are not modelled.
+
+## Six small classes proven (2026-10-11)
+
+Probe `small-classes` names and exercises six real classes no probe had
+named. All matched the reference except one:
+
+- **`WP_User_Meta_Session_Tokens`**: its protected methods are called on
+  the manager `get_instance` hands out:
+  - reading drops expired sessions and turns a bare expiration into a
+    session;
+  - one session added or ended, the lot replaced, all but one ended, all
+    ended;
+  - writing an empty set deletes the meta.
+
+  `drop_sessions` is stopped at its delete through `delete_user_metadata`
+  (it would log out every user of the shared database). It asks for user 0,
+  `session_tokens`, no value, delete-all.
+- **`WP_MatchesMapRegex`**: matches are urlencoded into a rule's query;
+  missing indexes become empty; `$matches[0]` and non-numeric indexes are
+  left alone.
+- **`WP_User_Request`**: built from a post-shaped object.
+- **`WP_HTML_Unsupported_Exception`**: its token, its stack, its message.
+- **`WP_Feed_Cache_Transient`**: the lifetime filter, then save, load, its
+  time, touch and unlink over the two site transients.
+- **`WP_Theme_JSON_Data`**: fixed. `get_data()` returns the data as held
+  (presets under their origin, keys in the order given), not flattened and
+  sorted. A plugin reading it inside a `wp_theme_json_data_*` filter sees
+  the reference's shape.
