@@ -102,15 +102,47 @@ final readonly class TermWriter
         return $removed > 0;
     }
 
-    /** How many published objects a term holds, as the stored count keeps it. */
-    public function publishedCount(int $ttId): int
+    /**
+     * How many objects in the counted statuses a term holds, as the stored
+     * count keeps it (published ones unless a plugin widens the list).
+     *
+     * @param list<string> $statuses
+     */
+    public function publishedCount(int $ttId, array $statuses = ['publish']): int
     {
+        $statuses = $statuses === [] ? ['publish'] : $statuses;
         return (int) $this->db->value(
             "SELECT COUNT(*) FROM {$this->db->table('term_relationships')} tr
              JOIN {$this->db->table('posts')} p ON p.ID = tr.object_id
-             WHERE tr.term_taxonomy_id = ? AND p.post_status = 'publish'",
-            [$ttId],
+             WHERE tr.term_taxonomy_id = ? AND p.post_status IN (" . implode(', ', array_fill(0, count($statuses), '?')) . ')',
+            [$ttId, ...$statuses],
         );
+    }
+
+    /**
+     * Gives a taxonomy row that shares its term with another taxonomy a
+     * term of its own (the same name, slug and group), and moves its
+     * children under it. Null when no other taxonomy holds the term.
+     *
+     * @return array{0: int, 1: string, 2: list<int>}|null the new term id, the taxonomy, the children moved
+     */
+    public function split(int $termId, int $ttId): ?array
+    {
+        $tt = $this->db->table('term_taxonomy');
+        $taxonomy = $this->db->value("SELECT taxonomy FROM {$tt} WHERE term_taxonomy_id = ? AND term_id = ?", [$ttId, $termId]);
+        $shared = (int) $this->db->value("SELECT COUNT(*) FROM {$tt} WHERE term_id = ? AND term_taxonomy_id <> ?", [$termId, $ttId]);
+        $term = $this->db->row("SELECT name, slug, term_group FROM {$this->db->table('terms')} WHERE term_id = ?", [$termId]);
+        if ($taxonomy === null || $shared === 0 || $term === null) {
+            return null;
+        }
+        $this->db->execute("INSERT INTO {$this->db->table('terms')} (name, slug, term_group) VALUES (?, ?, ?)", [(string) $term['name'], (string) $term['slug'], (int) $term['term_group']]);
+        $newId = $this->db->insertId();
+        $this->db->execute("UPDATE {$tt} SET term_id = ? WHERE term_taxonomy_id = ?", [$newId, $ttId]);
+        $children = array_map(static fn (array $row): int => (int) $row['term_id'], $this->db->rows("SELECT term_id FROM {$tt} WHERE parent = ? AND taxonomy = ?", [$termId, (string) $taxonomy]));
+        if ($children !== []) {
+            $this->db->execute("UPDATE {$tt} SET parent = ? WHERE parent = ? AND taxonomy = ?", [$newId, $termId, (string) $taxonomy]);
+        }
+        return [$newId, (string) $taxonomy, $children];
     }
 
     /** Every object filed under a term, whatever it is: the count a taxonomy of links or other non-posts keeps. */

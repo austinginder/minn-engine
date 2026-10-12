@@ -22,7 +22,7 @@ final class Gallery
      * @param list<array{icon: string, orientation: string, caption: string, caption_id: string}> $items
      * @param array{itemtag: string, icontag: string, captiontag: string, columns: int, size: string} $args
      */
-    public static function render(array $items, array $args, int $instance, int $postId): string
+    public static function render(array $items, array $args, int $instance, int $postId, ?string $opening = null): string
     {
         if ($items === []) {
             return '';
@@ -30,10 +30,7 @@ final class Gallery
         $itemTag = self::tag($args['itemtag'], 'dl');
         $iconTag = self::tag($args['icontag'], 'dt');
         $captionTag = self::tag($args['captiontag'], 'dd');
-        $classes = 'gallery galleryid-' . $postId
-            . ' gallery-columns-' . $args['columns']
-            . ' gallery-size-' . self::token($args['size']);
-        $out = "<div id='gallery-" . $instance . "' class='" . $classes . "'>";
+        $out = $opening ?? self::opening($args, $instance, $postId);
         foreach ($items as $item) {
             $out .= '<' . $itemTag . " class='gallery-item'>\n\t\t\t"
                 . '<' . $iconTag . " class='gallery-icon " . $item['orientation'] . "'>\n\t\t\t\t"
@@ -43,6 +40,28 @@ final class Gallery
                 . '</' . $itemTag . '>';
         }
         return $out . "\n\t\t</div>\n";
+    }
+
+    /** The gallery's opening element: its instance id, its post, columns and size as classes. */
+    public static function opening(array $args, int $instance, int $postId): string
+    {
+        $classes = 'gallery galleryid-' . $postId
+            . ' gallery-columns-' . $args['columns']
+            . ' gallery-size-' . self::token($args['size']);
+        return "<div id='gallery-" . $instance . "' class='" . $classes . "'>";
+    }
+
+    /**
+     * The style block printed before a gallery when use_default_gallery_style
+     * asks for it (themes without HTML5 galleries), as the reference prints
+     * it (probe filter-inputs-3): the items floated in equal whole-percent
+     * columns, a border on the images, the caption flush left.
+     */
+    public static function defaultStyle(int $instance, int $columns): string
+    {
+        $id = '#gallery-' . $instance;
+        $width = $columns > 0 ? (int) floor(100 / $columns) : 100;
+        return "\n\t\t<style>\n\t\t\t{$id} {\n\t\t\t\tmargin: auto;\n\t\t\t}\n\t\t\t{$id} .gallery-item {\n\t\t\t\tfloat: left;\n\t\t\t\tmargin-top: 10px;\n\t\t\t\ttext-align: center;\n\t\t\t\twidth: {$width}%;\n\t\t\t}\n\t\t\t{$id} img {\n\t\t\t\tborder: 2px solid #cfcfcf;\n\t\t\t}\n\t\t\t{$id} .gallery-caption {\n\t\t\t\tmargin-left: 0;\n\t\t\t}\n\t\t\t/* see gallery_shortcode() in wp-includes/media.php */\n\t\t</style>\n\t\t";
     }
 
     /** @param array{caption: string, caption_id: string} $item */

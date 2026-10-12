@@ -467,7 +467,8 @@ function set_transient($transient, $value, $expiration = 0)
     }
     if ($result) {
         do_action("set_transient_{$transient}", $value, $expiration, $transient);
-        do_action('setted_transient', $transient, $value, $expiration);
+        do_action('set_transient', $transient, $value, $expiration);
+        do_action_deprecated('setted_transient', [$transient, $value, $expiration], '6.8.0', 'set_transient');
     }
     return $result;
 }
@@ -527,6 +528,7 @@ function set_site_transient($transient, $value, $expiration = 0)
     if ($result) {
         do_action("set_site_transient_{$transient}", $value, $expiration, $transient);
         do_action('set_site_transient', $transient, $value, $expiration);
+        do_action_deprecated('setted_site_transient', [$transient, $value, $expiration], '6.8.0', 'set_site_transient');
     }
     return $result;
 }

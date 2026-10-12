@@ -4,7 +4,6 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AdjacentScope`](#adjacentscope) | final readonly class | 16 | Which posts count as a post's neighbours (get_adjacent_post, probe |
 | [`Autop`](#autop) | final class | 168 | Classic-content paragraphing (wpautop): blank lines become paragraphs, |
 | [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
@@ -23,7 +22,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
 | [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
 | [`Page`](#page) | final readonly class | 43 | One page of a listing: the rows on it and how many rows the whole |
-| [`PasswordGate`](#passwordgate) | final class | 44 | A password-protected post on the front end: its body is the password |
+| [`PasswordGate`](#passwordgate) | final class | 75 | A password-protected post on the front end: its body is the password |
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
 | [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
 | [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
@@ -32,7 +31,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 497 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 536 | Reads over the posts table. A post comes back as a PostRecord; a listing |
+| [`Posts`](#posts) | final readonly class | 553 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`RowCache`](#rowcache) | final class | 100 | Rows read once a request: posts, their terms, users, and every object's |
@@ -44,33 +43,9 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 219 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
-| [`Texturize`](#texturize) | final class | 182 | The texturize subset the reference applies to rendered text: straight |
+| [`Texturize`](#texturize) | final class | 241 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 286 |  |
-
-## AdjacentScope
-
-`final readonly class Minn\Content\AdjacentScope` · `public/minn/src/Minn/Content/AdjacentScope.php`
-
-Which posts count as a post's neighbours (get_adjacent_post, probe
-link-template-tags): published ones, and private ones the reader may see
-(all of them, or only their own); kept to posts sharing one of $sameTerms
-when given, and away from any post in $excludedTerms, both in $taxonomy.
-
-Used by: `Minn\Content\Posts`
-
-```php
-__construct(string $private = 'none', int $reader = 0, array $sameTerms = array ( ), array $excludedTerms = array ( ), string $taxonomy = 'category')
-```
-- `@param list<int> $sameTerms`
-- `@param list<int> $excludedTerms`
-
-- readonly `string $private`
-- readonly `int $reader`
-- readonly `array $sameTerms`
-- readonly `array $excludedTerms`
-- readonly `string $taxonomy`
-
 
 ## Autop
 
@@ -921,9 +896,25 @@ otherwise make one request hash up to 2^30 times.
 
 "Protected: " for a password, "Private: " for a private post, as the reference prefixes titles.
 
-### static `form(Minn\Content\PostRecord $post, string $siteUrl, string $permalink): string`
+### static `form(Minn\Content\PostRecord $post, string $siteUrl, string $permalink, string $invalid = ''): string`
 
-The form, with the reference's stray closing p after the hidden field.
+The form, with the reference's stray closing p after the hidden field;
+with the message a wrong password earns ($invalid, see invalid()) above
+the field and named by it.
+
+### static `formForReader(Minn\Content\PostRecord $post, string $siteUrl, string $permalink): string`
+
+The form as the current reader sees it: with the wrong-password message when their own form sent them back.
+
+### static `invalid(string $permalink, string $referer, string $cookie, Closure $post): string`
+
+The message over the form for a reader the post's own page sent back
+with a password cookie set (the referer is exactly its address), as
+plugins word it (the_password_form_incorrect_password); '' for anyone
+else. The cookie is not checked: the form only shows while it fails.
+$post gives the post the filter is handed, asked for only then.
+
+- `@param \Closure(): mixed $post`
 
 
 ## PersonalData
@@ -1417,6 +1408,13 @@ list's rendering reads none of them again.
 - `@param list<int> $ids`
 - `@param list<string> $taxonomies`
 
+### `rememberRows(array $rows): void`
+
+Keeps rows a query already read (WP_Query's whole posts), so priming
+those posts reads them no second time.
+
+- `@param list<array<string, mixed>> $rows`
+
 ### `primeRows(array $ids): void`
 
 Reads the rows of the posts not read yet, in one query. @param list<int> $ids
@@ -1535,14 +1533,6 @@ The latest revision id, an autosave counting as one, newest by date then id (pro
 
 Whether a live post carries an autosave newer than its saved state.
 
-### `next(Minn\Content\PostRecord $post, Minn\Content\AdjacentScope $scope = \Minn\Content\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))): ?Minn\Content\PostRecord`
-
-The post of the same type after this one, by date then id, among those the scope allows (published only by default), or null.
-
-### `previous(Minn\Content\PostRecord $post, Minn\Content\AdjacentScope $scope = \Minn\Content\AdjacentScope::__set_state(array(    'private' => 'none',    'reader' => 0,    'sameTerms' =>    array (   ),    'excludedTerms' =>    array (   ),    'taxonomy' => 'category', ))): ?Minn\Content\PostRecord`
-
-The post of the same type before this one, by date then id, among those the scope allows, or null.
-
 ### `newest(array $types, string $column): ?string`
 
 The newest value of a date column (post_date, post_modified, or their
@@ -1557,17 +1547,37 @@ The days of one month a published post of a type was dated on, ascending.
 
 - `@return list<int>`
 
-### `archiveBuckets(string $granularity, string $type, string $order, int $limit): array`
+### `archiveBuckets(string $granularity, string $type, string $order, int $limit, string $where = '', string $join = ''): array`
 
 The periods holding a published post of a type, newest first by
 default: one row per month, year, day, or week, with the count and the
-earliest post date inside it.
+earliest post date inside it. A WHERE and JOIN given (what
+wp_get_archives' getarchives_where and getarchives_join answered) are
+used as they are.
 
 - `@return list<array{year: int, month: int, day: int, week: int, count: int, first: string}>`
 
-### `archiveList(string $type, string $orderBy, string $order, int $limit): array`
+### `adjacentClauses(Minn\Content\PostRecord $post, string $direction, string $taxonomy, array $sameTerms, array $excluded, string $private, int $reader): array`
 
-Published posts of a type for a post-by-post archive, by date or by title.
+The JOIN, WHERE and ORDER BY of the post before ($direction "previous")
+or after a post, written as the reference writes them for
+get_adjacent_post (probe filter-inputs), for its filters to edit: kept
+to $sameTerms in $taxonomy when there are some, out of the $excluded
+terms, and published, or private too ($private "all"), or the
+reader's own private ones too ($private "own").
+
+- `@param list<int> $sameTerms`
+- `@param list<int> $excluded`
+- `@return array{0: string, 1: string, 2: string}`
+
+### `adjacentId(string $join, string $where, string $sort): int`
+
+The post the clauses find (as their filters left them), or 0.
+
+### `archiveList(string $type, string $orderBy, string $order, int $limit, string $where = '', string $join = ''): array`
+
+Published posts of a type for a post-by-post archive, by date or by
+title; a WHERE and JOIN given are used as they are (archiveBuckets).
 
 - `@return list<PostRecord>`
 
@@ -1587,7 +1597,7 @@ The newest autosave of a post (by date, then id), by one author or, given 0, any
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 20), `ids()` (private, line 117), `byName()` (private, line 139), `byPath()` (private, line 214), `readTerms()` (private, line 303), `revisions()` (private, line 339), `readRevisions()` (private, line 350), `neighbour()` (private, line 391), `weekMode()` (private, line 480), `monthBeside()` (private, line 515)
+Internals: `record()` (private, line 20), `ids()` (private, line 133), `byName()` (private, line 155), `byPath()` (private, line 230), `readTerms()` (private, line 319), `revisions()` (private, line 355), `readRevisions()` (private, line 366), `weekMode()` (private, line 455), `monthBeside()` (private, line 532)
 
 
 ## Reader
@@ -2122,16 +2132,38 @@ quotes, apostrophes, ellipses, dashes, and primes become numeric
 entities, outside the skip elements only. Coverage is pinned by the
 texturize battery post; anything beyond it is a documented gap.
 
-- const `SKIP` = `'pre|code|kbd|style|script|tt|textarea'`
+- const `SKIP` = `array (   0 => 'pre',   1 => 'code',   2 => 'kbd',   3 => 'style',   4 => 'script',   5 => 'tt', )`
 
 Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Format`, `Minn\Admin\Notifications`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Blocks`, `Minn\Content\Excerpt`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaObject`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Theme\ClassicContent`, `Minn\Theme\PageRenderer`
 
-### static `html(string $html): string`
+
+### static `enabled(): bool`
+
+Whether text is texturized at all (run_wptexturize): asked on the first
+text of a request and again after askAgain(); once the answer is no, it
+holds for the rest of the request (probe filter-inputs-3).
+
+### static `askAgain(): void`
+
+Has the next text ask run_wptexturize again (wptexturize's reset), unless the answer was already no.
+
+### static `skipPattern(): string`
+
+The elements whose text stays as written (no_texturize_tags: pre, code,
+kbd, style, script and tt), read on every text, as a pattern alternation.
+
+### static `html(string $html, ?string $skip = NULL): string`
 
 Curly quotes, dashes, and ellipses in the text of HTML, leaving tags
-and pre, code, kbd, style, and script alone; registered shortcodes
-stay as written (probe shortcode-run), and so does the text inside
-the ones no_texturize_shortcodes names ([code] by default).
+and the skipped elements alone; registered shortcodes stay as written
+(probe shortcode-run), and so does the text inside the ones
+no_texturize_shortcodes names ([code] by default). Nothing changes once
+texturizing is off. A caller that already read the skip pattern hands
+it over, so each text asks the filters once.
+
+### static `entities(string $html, string $skip): string`
+
+Bare ampersands made entities outside the skipped elements, as wptexturize leaves them after the rest.
 
 ### static `text(string $text): string`
 
@@ -2167,7 +2199,7 @@ double quote becomes the closing quote, and a single one does only
 where a word ends (before the end, whitespace, a no-break space or
 . , ; : ! ? ) ] } -), staying an apostrophe or opening quote elsewhere.
 
-Internals: `shortcodePattern()` (private, line 58), `quiet()` (private, line 77), `endsWord()` (private, line 192)
+Internals: `shortcodePattern()` (private, line 117), `quiet()` (private, line 136), `endsWord()` (private, line 251)
 
 
 ## UserRecord

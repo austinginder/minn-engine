@@ -80,6 +80,7 @@ final readonly class PostsController
         $this->posts->prime($ids, array_map('strval', $taxonomies));
         $this->posts->primeRevisions($ids);
         $objects = [];
+        $fields = Fields::fromQuery($request->query);
         foreach ((array) $posts as $post) {
             if (!$post instanceof \WP_Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : $this->readable($post))) {
                 continue;
@@ -88,10 +89,10 @@ final readonly class PostsController
             $objects[] = match (true) {
                 $shape !== null => $shape($record, $context),
                 $context->isEdit() => $this->object->edit($record, $this->caller->id()),
-                default => $this->object->view($record),
+                default => $this->object->view($record, $fields),
             };
         }
-        return Reply::list($objects, $total, $pages, Fields::fromQuery($request->query));
+        return Reply::list($objects, $total, $pages, $fields);
     }
 
     /**
@@ -204,7 +205,7 @@ final readonly class PostsController
         if ($row->status !== 'publish' && !$this->caller->can('read_post', $postId)) {
             throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
         }
-        return self::withAlternate(Reply::item($this->object->view($row), $fields), $row);
+        return self::withAlternate(Reply::item($this->object->view($row, $fields), $fields), $row);
     }
 
     /** A viewable type's single post points at its page on the site. */

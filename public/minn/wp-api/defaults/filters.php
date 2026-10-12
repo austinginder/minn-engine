@@ -602,3 +602,6 @@ foreach (['rss2_head', 'commentsrss2_head', 'rss_head', 'rdf_header', 'atom_head
 }
 add_action('rss2_head', 'rss2_site_icon');
 add_action('atom_head', 'atom_site_icon');
+
+// %l in wp_sprintf() is a list.
+add_filter('wp_sprintf', 'wp_sprintf_l', 10, 2);

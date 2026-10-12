@@ -266,7 +266,7 @@ function wp_list_users($args = [])
 {
     $args = wp_parse_args($args, ['orderby' => 'name', 'order' => 'ASC', 'number' => '', 'exclude_admin' => true, 'show_fullname' => false, 'feed' => '', 'feed_image' => '', 'feed_type' => '', 'echo' => true, 'style' => 'list', 'html' => true, 'exclude' => '', 'include' => '']);
     $items = [];
-    foreach (get_users(wp_array_slice_assoc($args, ['orderby', 'order', 'number', 'exclude', 'include']) + ['fields' => 'ids']) as $id) {
+    foreach (get_users(apply_filters('wp_list_users_args', wp_array_slice_assoc($args, ['orderby', 'order', 'number', 'exclude', 'include']) + ['fields' => 'ids'], $args)) as $id) {
         $user = get_userdata($id);
         if (!$user || ($args['exclude_admin'] && $user->display_name === 'admin')) {
             continue;
@@ -492,6 +492,8 @@ function get_password_reset_key($user)
     if ($user === null) {
         return new WP_Error('invalid_user', 'Invalid user.');
     }
+    // The misspelt name came first and is still heard, with a notice (probe hook-inputs).
+    do_action_deprecated('retreive_password', [$user['user_login']], '1.5.1', 'retrieve_password');
     do_action('retrieve_password', $user['user_login']);
     $allow = apply_filters('allow_password_reset', true, (int) $user['ID']);
     if (!$allow) {
@@ -982,6 +984,67 @@ function _minn_confirm_user_request(?string $request_id, ?string $confirm_key): 
     return [true, _wp_privacy_account_request_confirmed_message((int) $request_id)];
 }
 
+/**
+ * @internal wp-login.php's administration email check: where a sign-in by
+ * this user goes first, the confirmation screen ('' for straight on).
+ * Someone who manages options goes there once admin_email_lifespan has
+ * passed, unless admin_email_check_interval turns the check off.
+ */
+function _minn_admin_email_due(int $user_id, string $landing, string $login_url): string
+{
+    if (!user_can($user_id, 'manage_options')) {
+        return '';
+    }
+    $interval = (int) apply_filters('admin_email_check_interval', 6 * MONTH_IN_SECONDS);
+    if ($interval <= 0 || time() <= (int) get_option('admin_email_lifespan')) {
+        return '';
+    }
+    return add_query_arg(['redirect_to' => urlencode($landing), 'action' => 'confirm_admin_email', 'wp_lang' => get_user_locale($user_id)], $login_url);
+}
+
+/**
+ * @internal The administration email screen's answer to the signed-in
+ * user: 'confirmed' when "The email is correct" came with its nonce (the
+ * check waits admin_email_check_interval again), 'later' when "Remind me
+ * later" did (admin_email_remind_interval), 'refused' for a stale nonce,
+ * else 'screen' with what the screen shows: the address, the nonce field,
+ * the remind link's nonce, and what admin_email_confirm and
+ * admin_email_confirm_form print. Null for someone who may not see it.
+ *
+ * @return array{0: string, 1: array<string, string>}|null
+ */
+function _minn_admin_email_screen(string $confirm_nonce, string $remind_nonce): ?array
+{
+    if (!current_user_can('manage_options')) {
+        return null;
+    }
+    $remind = (int) apply_filters('admin_email_remind_interval', 3 * DAY_IN_SECONDS);
+    if ($remind_nonce !== '' && wp_verify_nonce($remind_nonce, 'remind_me_later_nonce')) {
+        update_option('admin_email_lifespan', time() + $remind);
+        return ['later', []];
+    }
+    if ($confirm_nonce !== '') {
+        if (!wp_verify_nonce($confirm_nonce, 'confirm_admin_email')) {
+            return ['refused', []];
+        }
+        update_option('admin_email_lifespan', time() + (int) apply_filters('admin_email_check_interval', 6 * MONTH_IN_SECONDS));
+        return ['confirmed', []];
+    }
+    $printed = static function (string $hook, mixed ...$args): string {
+        ob_start();
+        do_action($hook, ...$args);
+        return (string) ob_get_clean();
+    };
+    return ['screen', [
+        'email' => (string) get_option('admin_email'),
+        'nonceField' => wp_nonce_field('confirm_admin_email', 'confirm_admin_email_nonce', true, false),
+        'remindNonce' => $remind > 0 ? wp_create_nonce('remind_me_later_nonce') : '',
+        'confirm' => $printed('admin_email_confirm', new WP_Error()),
+        'form' => $printed('admin_email_confirm_form'),
+        'updateUrl' => admin_url('options-general.php?highlight=confirm_admin_email'),
+    ]];
+}
+
 /** The old user globals set for a user (the current one by default), or emptied for nobody. */
 function setup_userdata($for_user_id = 0)
 {
@@ -1009,6 +1072,10 @@ function count_many_users_posts($users, $post_type = 'post', $public_only = fals
 {
     if (empty($users) || !is_array($users)) {
         return [];
+    }
+    $pre = apply_filters('pre_count_many_users_posts', null, $users, $post_type, $public_only);
+    if ($pre !== null) {
+        return $pre;
     }
     $counts = _minn_post_lookup()->countsByAuthors(array_map('absint', $users), array_map('strval', (array) $post_type), $public_only ? ['publish'] : ['publish', 'private']);
     foreach ($users as $id) {

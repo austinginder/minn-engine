@@ -1,0 +1,713 @@
+[
+    [
+        "adjacent posts",
+        [
+            [
+                "get_previous_post_excluded_terms",
+                [
+                    ""
+                ]
+            ],
+            [
+                "get_previous_post_join",
+                [
+                    "",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_where",
+                [
+                    "WHERE (p.post_date < '{date}' OR (p.post_date = '{date}' AND p.ID < {zz-fi-two})) AND p.post_type = 'post'  AND p.post_status = 'publish'",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_sort",
+                [
+                    "ORDER BY p.post_date DESC, p.ID DESC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "DESC"
+                ]
+            ],
+            [
+                "get_next_post_excluded_terms",
+                [
+                    ""
+                ]
+            ],
+            [
+                "get_next_post_join",
+                [
+                    "",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_where",
+                [
+                    "WHERE (p.post_date > '{date}' OR (p.post_date = '{date}' AND p.ID > {zz-fi-two})) AND p.post_type = 'post'  AND p.post_status = 'publish'",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_sort",
+                [
+                    "ORDER BY p.post_date ASC, p.ID ASC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "ASC"
+                ]
+            ]
+        ]
+    ],
+    [
+        "adjacent posts in the same tag",
+        [
+            [
+                "get_previous_post_excluded_terms",
+                [
+                    ""
+                ]
+            ],
+            [
+                "get_previous_post_join",
+                [
+                    " INNER JOIN wp_term_relationships AS tr ON p.ID = tr.object_id INNER JOIN wp_term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id",
+                    true,
+                    "",
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_where",
+                [
+                    "WHERE (p.post_date < '{date}' OR (p.post_date = '{date}' AND p.ID < {zz-fi-two})) AND p.post_type = 'post' AND tt.taxonomy = 'post_tag' AND tt.term_id IN ({zz-fi-blue},{zz-fi-red}) AND p.post_status = 'publish'",
+                    true,
+                    "",
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_sort",
+                [
+                    "ORDER BY p.post_date DESC, p.ID DESC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "DESC"
+                ]
+            ],
+            [
+                "get_next_post_excluded_terms",
+                [
+                    ""
+                ]
+            ],
+            [
+                "get_next_post_join",
+                [
+                    " INNER JOIN wp_term_relationships AS tr ON p.ID = tr.object_id INNER JOIN wp_term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id",
+                    true,
+                    "",
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_where",
+                [
+                    "WHERE (p.post_date > '{date}' OR (p.post_date = '{date}' AND p.ID > {zz-fi-two})) AND p.post_type = 'post' AND tt.taxonomy = 'post_tag' AND tt.term_id IN ({zz-fi-blue},{zz-fi-red}) AND p.post_status = 'publish'",
+                    true,
+                    "",
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_sort",
+                [
+                    "ORDER BY p.post_date ASC, p.ID ASC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "ASC"
+                ]
+            ]
+        ]
+    ],
+    [
+        "adjacent posts, a tag excluded",
+        [
+            [
+                "get_previous_post_excluded_terms",
+                [
+                    [
+                        "{zz-fi-blue}"
+                    ]
+                ]
+            ],
+            [
+                "get_previous_post_join",
+                [
+                    "",
+                    false,
+                    [
+                        "{zz-fi-blue}"
+                    ],
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_where",
+                [
+                    "WHERE (p.post_date < '{date}' OR (p.post_date = '{date}' AND p.ID < {zz-fi-two})) AND p.post_type = 'post'  AND p.ID NOT IN ( SELECT tr.object_id FROM wp_term_relationships tr LEFT JOIN wp_term_taxonomy tt ON (tr.term_taxonomy_id = tt.term_taxonomy_id) WHERE tt.term_id IN ({zz-fi-blue}) ) AND p.post_status = 'publish'",
+                    false,
+                    [
+                        "{zz-fi-blue}"
+                    ],
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_sort",
+                [
+                    "ORDER BY p.post_date DESC, p.ID DESC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "DESC"
+                ]
+            ],
+            [
+                "get_next_post_excluded_terms",
+                [
+                    [
+                        "{zz-fi-blue}"
+                    ]
+                ]
+            ],
+            [
+                "get_next_post_join",
+                [
+                    " INNER JOIN wp_term_relationships AS tr ON p.ID = tr.object_id INNER JOIN wp_term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id",
+                    true,
+                    [
+                        "{zz-fi-blue}"
+                    ],
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_where",
+                [
+                    "WHERE (p.post_date > '{date}' OR (p.post_date = '{date}' AND p.ID > {zz-fi-two})) AND p.post_type = 'post' AND tt.taxonomy = 'post_tag' AND tt.term_id IN ({zz-fi-red}) AND p.ID NOT IN ( SELECT tr.object_id FROM wp_term_relationships tr LEFT JOIN wp_term_taxonomy tt ON (tr.term_taxonomy_id = tt.term_taxonomy_id) WHERE tt.term_id IN ({zz-fi-blue}) ) AND p.post_status = 'publish'",
+                    true,
+                    [
+                        "{zz-fi-blue}"
+                    ],
+                    "post_tag",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_sort",
+                [
+                    "ORDER BY p.post_date ASC, p.ID ASC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "ASC"
+                ]
+            ]
+        ]
+    ],
+    [
+        "adjacent posts, an administrator",
+        [
+            [
+                "get_previous_post_excluded_terms",
+                [
+                    ""
+                ]
+            ],
+            [
+                "get_previous_post_join",
+                [
+                    "",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_where",
+                [
+                    "WHERE (p.post_date < '{date}' OR (p.post_date = '{date}' AND p.ID < {zz-fi-two})) AND p.post_type = 'post'  AND ( p.post_status = 'publish' OR p.post_status = 'private' )",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_previous_post_sort",
+                [
+                    "ORDER BY p.post_date DESC, p.ID DESC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "DESC"
+                ]
+            ]
+        ]
+    ],
+    [
+        "adjacent posts, a subscriber",
+        [
+            [
+                "get_next_post_excluded_terms",
+                [
+                    ""
+                ]
+            ],
+            [
+                "get_next_post_join",
+                [
+                    "",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_where",
+                [
+                    "WHERE (p.post_date > '{date}' OR (p.post_date = '{date}' AND p.ID > {zz-fi-two})) AND p.post_type = 'post'  AND ( p.post_status = 'publish' OR (p.post_author = {zz_fi_sub} AND p.post_status = 'private') )",
+                    false,
+                    "",
+                    "category",
+                    "post:post:zz-fi-two"
+                ]
+            ],
+            [
+                "get_next_post_sort",
+                [
+                    "ORDER BY p.post_date ASC, p.ID ASC LIMIT 1",
+                    "post:post:zz-fi-two",
+                    "ASC"
+                ]
+            ]
+        ]
+    ],
+    [
+        "archives, monthly",
+        [
+            [
+                "wp_get_archives_args",
+                [
+                    {
+                        "type": "monthly",
+                        "echo": 0,
+                        "limit": 2
+                    }
+                ]
+            ],
+            [
+                "getarchives_where",
+                [
+                    "WHERE post_type = 'post' AND post_status = 'publish'",
+                    {
+                        "type": "monthly",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ],
+            [
+                "getarchives_join",
+                [
+                    "",
+                    {
+                        "type": "monthly",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "archives, yearly",
+        [
+            [
+                "wp_get_archives_args",
+                [
+                    {
+                        "type": "yearly",
+                        "echo": 0,
+                        "limit": 2
+                    }
+                ]
+            ],
+            [
+                "getarchives_where",
+                [
+                    "WHERE post_type = 'post' AND post_status = 'publish'",
+                    {
+                        "type": "yearly",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ],
+            [
+                "getarchives_join",
+                [
+                    "",
+                    {
+                        "type": "yearly",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "archives, daily",
+        [
+            [
+                "wp_get_archives_args",
+                [
+                    {
+                        "type": "daily",
+                        "echo": 0,
+                        "limit": 2
+                    }
+                ]
+            ],
+            [
+                "getarchives_where",
+                [
+                    "WHERE post_type = 'post' AND post_status = 'publish'",
+                    {
+                        "type": "daily",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ],
+            [
+                "getarchives_join",
+                [
+                    "",
+                    {
+                        "type": "daily",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "archives, postbypost",
+        [
+            [
+                "wp_get_archives_args",
+                [
+                    {
+                        "type": "postbypost",
+                        "echo": 0,
+                        "limit": 2
+                    }
+                ]
+            ],
+            [
+                "getarchives_where",
+                [
+                    "WHERE post_type = 'post' AND post_status = 'publish'",
+                    {
+                        "type": "postbypost",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ],
+            [
+                "getarchives_join",
+                [
+                    "",
+                    {
+                        "type": "postbypost",
+                        "limit": " LIMIT 2",
+                        "format": "html",
+                        "before": "",
+                        "after": "",
+                        "show_post_count": false,
+                        "echo": 0,
+                        "order": "DESC",
+                        "post_type": "post",
+                        "year": "",
+                        "monthnum": "",
+                        "day": "",
+                        "w": ""
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "tag cloud",
+        [
+            [
+                "tag_cloud_sort",
+                [
+                    [
+                        "term:post_tag:zz-fi-red",
+                        "term:post_tag:zz-fi-blue"
+                    ],
+                    {
+                        "smallest": 8,
+                        "largest": 22,
+                        "unit": "pt",
+                        "number": 45,
+                        "format": "flat",
+                        "separator": "\n",
+                        "orderby": "name",
+                        "order": "ASC",
+                        "topic_count_text": null,
+                        "topic_count_text_callback": null,
+                        "topic_count_scale_callback": "default_topic_count_scale",
+                        "filter": 1,
+                        "show_count": 0,
+                        "exclude": "",
+                        "include": [
+                            "{zz-fi-red}",
+                            "{zz-fi-blue}"
+                        ],
+                        "link": "view",
+                        "taxonomy": "post_tag",
+                        "post_type": "",
+                        "echo": false
+                    }
+                ]
+            ],
+            [
+                "wp_generate_tag_cloud_data",
+                [
+                    [
+                        {
+                            "id": "{zz-fi-blue}",
+                            "url": "{home}/tag/zz-fi-blue/",
+                            "role": "",
+                            "name": "zz-fi-blue",
+                            "formatted_count": "1 item",
+                            "slug": "zz-fi-blue",
+                            "real_count": 1,
+                            "class": "tag-cloud-link tag-link-{zz-fi-blue}",
+                            "font_size": 8,
+                            "aria_label": " aria-label=\"zz-fi-blue (1 item)\"",
+                            "show_count": ""
+                        },
+                        {
+                            "id": "{zz-fi-red}",
+                            "url": "{home}/tag/zz-fi-red/",
+                            "role": "",
+                            "name": "zz-fi-red",
+                            "formatted_count": "2 items",
+                            "slug": "zz-fi-red",
+                            "real_count": 2,
+                            "class": "tag-cloud-link tag-link-{zz-fi-red}",
+                            "font_size": 22,
+                            "aria_label": " aria-label=\"zz-fi-red (2 items)\"",
+                            "show_count": ""
+                        }
+                    ]
+                ]
+            ],
+            [
+                "wp_tag_cloud",
+                [
+                    "<a href=\"{home}/tag/zz-fi-blue/\" class=\"tag-cloud-link tag-link-{zz-fi-blue} tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"zz-fi-blue (1 item)\">zz-fi-blue</a>\n<a href=\"{home}/tag/zz-fi-red/\" class=\"tag-cloud-link tag-link-{zz-fi-red} tag-link-position-2\" style=\"font-size: 22pt;\" aria-label=\"zz-fi-red (2 items)\">zz-fi-red</a>",
+                    {
+                        "smallest": 8,
+                        "largest": 22,
+                        "unit": "pt",
+                        "number": 45,
+                        "format": "flat",
+                        "separator": "\n",
+                        "orderby": "name",
+                        "order": "ASC",
+                        "exclude": "",
+                        "include": [
+                            "{zz-fi-red}",
+                            "{zz-fi-blue}"
+                        ],
+                        "link": "view",
+                        "taxonomy": "post_tag",
+                        "post_type": "",
+                        "echo": false,
+                        "show_count": 0
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "calendar",
+        [
+            [
+                "get_calendar_args",
+                [
+                    {
+                        "initial": true,
+                        "display": false,
+                        "post_type": "post"
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "search form",
+        [
+            [
+                "pre_get_search_form",
+                [
+                    {
+                        "echo": false
+                    }
+                ]
+            ],
+            [
+                "search_form_args",
+                [
+                    {
+                        "echo": false,
+                        "aria_label": ""
+                    }
+                ]
+            ],
+            [
+                "search_form_format",
+                [
+                    "html5",
+                    {
+                        "echo": false,
+                        "aria_label": ""
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "feed links",
+        [
+            [
+                "feed_links_args",
+                [
+                    {
+                        "separator": "&raquo;",
+                        "feedtitle": "%1$s %2$s Feed",
+                        "comstitle": "%1$s %2$s Comments Feed"
+                    }
+                ]
+            ],
+            [
+                "feed_links_extra_args",
+                [
+                    {
+                        "separator": "&raquo;",
+                        "singletitle": "%1$s %2$s %3$s Comments Feed",
+                        "cattitle": "%1$s %2$s %3$s Category Feed",
+                        "tagtitle": "%1$s %2$s %3$s Tag Feed",
+                        "taxtitle": "%1$s %2$s %3$s %4$s Feed",
+                        "authortitle": "%1$s %2$s Posts by %3$s Feed",
+                        "searchtitle": "%1$s %2$s Search Results for &#8220;%3$s&#8221; Feed",
+                        "posttypetitle": "%1$s %2$s %3$s Feed"
+                    }
+                ]
+            ]
+        ]
+    ]
+]

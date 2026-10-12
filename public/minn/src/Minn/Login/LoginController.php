@@ -49,11 +49,11 @@ final readonly class LoginController
     }
 
     /** Clean path segment => the action wp-login.php spells with ?action=. */
-    private const SEGMENTS = ['lost-password' => 'lostpassword', 'reset' => 'rp', 'logout' => 'logout', 'register' => 'register'];
+    private const SEGMENTS = ['lost-password' => 'lostpassword', 'reset' => 'rp', 'logout' => 'logout', 'register' => 'register', 'confirm-email' => 'confirm_admin_email'];
 
     /** The sign-in, lost-password, reset, and logout pages. */
     #[Route(Method::Get, self::PATH)]
-    #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout|register}')]
+    #[Route(Method::Get, self::PATH . '/{segment:lost-password|reset|logout|register|confirm-email}')]
     #[Route(Method::Get, '/wp-login.php', policy: new Policy(Access::Public))]
     public function form(Request $request): Response
     {
@@ -67,7 +67,7 @@ final readonly class LoginController
         if ($request->has('user_id') && $request->has('cove_login_token')) {
             return $this->tokenLogin($request);
         }
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        $siteName = $this->siteName();
         if ($this->action($request) === 'register') {
             return $this->register($request, $siteName);
         }
@@ -80,7 +80,8 @@ final readonly class LoginController
                     'expiredkey' => 'Error: Your password reset link has expired. Please request a new link below.',
                     default => '',
                 };
-                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::plain($code, $error))));
+                $redirect = (new LoginHooks($this->users))->lostPasswordPage((string) ($request->query('redirect_to') ?? ''), $error === '' ? new \WP_Error() : new \WP_Error($code, $error));
+                return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::plain($code, $error)), $redirect));
             case 'confirmaction':
                 // A personal data request's link: the facade checks the key and confirms it, as wp-login.php does.
                 [$confirmed, $message] = \_minn_confirm_user_request($request->has('request_id') ? (string) $request->query('request_id') : null, $request->has('confirm_key') ? (string) $request->query('confirm_key') : null);
@@ -91,6 +92,8 @@ final readonly class LoginController
                 return Response::html(LoginForm::checkEmail($siteName, $this->permalinks->url($this->base($request)), $this->parts('checkemail', 'Check your email', $siteName, null, $this->signInNotices($request, $this->checkEmail($request)))));
             case 'rp':
                 return $this->openResetLink($request);
+            case 'confirm_admin_email':
+                return $this->adminEmail($request, $siteName);
             case 'resetpass':
                 [$user, $key] = $this->resetSession($request);
                 if ($user === null) {
@@ -154,8 +157,9 @@ final readonly class LoginController
         if ($action === 'postpass') {
             // The reference hashes the password into a ten-day cookie and sends the reader back; a wrong password simply stays locked.
             $back = $this->safeRedirect((string) ($request->form['redirect_to'] ?? $request->header('referer') ?? ''));
+            $expires = (new LoginHooks($this->users))->postPasswordExpiry(time() + 10 * self::DAY);
             return Response::redirect($back === $this->permalinks->url('/minn-admin/') ? $this->permalinks->url('/') : $back, 302)
-                ->withCookie('wp-postpass_' . $this->signIn->hash(), PortableHash::hash((string) ($request->form['post_password'] ?? '')), ['expires' => time() + 10 * self::DAY, 'path' => '/', 'secure' => $request->secure, 'samesite' => 'Lax']);
+                ->withCookie('wp-postpass_' . $this->signIn->hash(), PortableHash::hash((string) ($request->form['post_password'] ?? '')), ['expires' => $expires, 'path' => '/', 'secure' => $request->secure, 'samesite' => 'Lax']);
         }
         if ($action !== 'lostpassword' && $action !== 'retrievepassword') {
             return null;
@@ -165,7 +169,7 @@ final readonly class LoginController
             return $this->tooManyAttempts($request, $wait);
         }
         $login = trim((string) ($request->form['user_login'] ?? ''));
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        $siteName = $this->siteName();
         return $this->retrieve($request, $login, $siteName);
     }
 
@@ -178,13 +182,16 @@ final readonly class LoginController
     private function retrieve(Request $request, string $login, string $siteName): Response
     {
         $result = \retrieve_password($login);
+        $requested = (string) ($request->form['redirect_to'] ?? $request->query('redirect_to') ?? '');
         if (!$result instanceof \WP_Error) {
-            return Response::redirect($this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
+            // The form's own address when it named one, else "check your email" (lostpassword_redirect wrote it into the form).
+            return Response::redirect($requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
         }
         if (in_array($result->get_error_code(), ['invalidcombo', 'invalid_email'], true)) {
             $this->signIn->recordFailure($request->remoteAddress);
         }
-        return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), '', '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::of($result))));
+        $redirect = (new LoginHooks($this->users))->lostPasswordPage($requested, $result);
+        return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), '', '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::of($result)), $redirect));
     }
 
     /**
@@ -204,7 +211,7 @@ final readonly class LoginController
         if ($user === null) {
             return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
         }
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        $siteName = $this->siteName();
         return Response::html(LoginForm::resetPassword($siteName, $this->actionUrl($request, 'resetpass'), $cookieKey, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user)));
     }
 
@@ -235,7 +242,7 @@ final readonly class LoginController
         if ($user === null || !hash_equals($key, $formKey)) {
             return Response::redirect($this->actionUrl($request, 'lostpassword', 'error=invalidkey'), 302);
         }
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        $siteName = $this->siteName();
         $pass1 = (string) ($request->form['pass1'] ?? '');
         $pass2 = (string) ($request->form['pass2'] ?? '');
         $action = $this->actionUrl($request, 'resetpass');
@@ -346,7 +353,7 @@ final readonly class LoginController
 
     /** Handles the posted form for each of those pages. */
     #[Route(Method::Post, self::PATH)]
-    #[Route(Method::Post, self::PATH . '/{segment:lost-password|reset|logout}')]
+    #[Route(Method::Post, self::PATH . '/{segment:lost-password|reset|logout|confirm-email}')]
     #[Route(Method::Post, '/wp-login.php', policy: new Policy(Access::Public))]
     public function signIn(Request $request): Response
     {
@@ -356,11 +363,14 @@ final readonly class LoginController
         $hooks = new LoginHooks($this->users);
         $hooks->enter($this->action($request) ?: 'login');
         if ($this->action($request) === 'register') {
-            return $this->register($request, (string) ($this->site->option('blogname') ?? 'Site'));
+            return $this->register($request, $this->siteName());
         }
         $reset = $this->lostPassword($request);
         if ($reset !== null) {
             return $reset;
+        }
+        if ($this->action($request) === 'confirm_admin_email') {
+            return $this->adminEmail($request, $this->siteName());
         }
         $wait = $this->signIn->retryAfter($request->remoteAddress);
         if ($wait !== null) {
@@ -379,10 +389,36 @@ final readonly class LoginController
         $remember = !empty($request->form['rememberme']);
         $requested = (string) ($request->form['redirect_to'] ?? '');
         $redirect = $this->safeRedirect($hooks->landing($this->safeRedirect($requested), $requested, $user));
+        // An administrator whose site email is due a check confirms it on the way (wp-login.php's own screen).
+        $redirect = \_minn_admin_email_due($user->id, $redirect, $this->permalinks->url($this->base($request))) ?: $redirect;
         $response = Response::redirect($redirect, 302);
         $response = $remember ? $this->signIn->remember($response, $user, $request) : $this->signIn->establish($response, $user, $request);
         $hooks->signedIn($user);
         return $response;
+    }
+
+    /**
+     * The administration email check (action confirm_admin_email): the
+     * screen, or on to where the sign-in was going once the address is
+     * confirmed or the reminder put off; someone who may not answer it is
+     * sent to sign in.
+     */
+    private function adminEmail(Request $request, string $siteName): Response
+    {
+        $redirect = $this->safeRedirect((string) ($request->form['redirect_to'] ?? $request->query('redirect_to') ?? ''));
+        $answer = \_minn_admin_email_screen((string) ($request->form['confirm_admin_email_nonce'] ?? ''), (string) ($request->query('remind_me_later') ?? ''));
+        if ($answer === null) {
+            return Response::redirect($this->permalinks->url($this->base($request)), 302);
+        }
+        [$state, $screen] = $answer;
+        $remind = ($screen['remindNonce'] ?? '') === '' ? '' : $this->actionUrl($request, 'confirm_admin_email', 'redirect_to=' . rawurlencode($redirect) . '&remind_me_later=' . $screen['remindNonce']);
+        return match ($state) {
+            'confirmed' => Response::redirect($redirect, 302),
+            // A reminder put off says so to where the reader lands, as the reference's does.
+            'later' => Response::redirect($redirect . (str_contains($redirect, '?') ? '&' : '?') . 'admin_email_remind_later=1', 302),
+            'refused' => Response::html(LoginForm::failure($siteName, 'The link you followed has expired.'), 403),
+            default => Response::html(LoginForm::adminEmail($siteName, $this->actionUrl($request, 'confirm_admin_email'), $redirect, $remind, $screen, $this->parts('confirm_admin_email', 'Confirm your administration email', $siteName))),
+        };
     }
 
     /**
@@ -422,7 +458,7 @@ final readonly class LoginController
             $link = $this->actionUrl($request, 'logout', '_wpnonce=' . Nonce::create($session->id(), $session->token, 'log-out'));
             return Response::html(
                 '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Log Out</title></head><body>'
-                . '<p>You are attempting to log out of ' . Html::esc((string) ($this->site->option('blogname') ?? 'this site')) . '.</p>'
+                . '<p>You are attempting to log out of ' . Html::esc($this->site->option('blogname') === null ? 'this site' : $this->siteName()) . '.</p>'
                 . '<p>Do you really want to <a href="' . Html::attr($link) . '">log out</a>?</p></body></html>',
             );
         }
@@ -461,6 +497,12 @@ final readonly class LoginController
         return $this->permalinks->url(self::PATH . '/' . $segment . ($query === '' ? '' : '?' . $query));
     }
 
+    /** The site's name, as the sign-in pages head themselves ("Site" when it has none). */
+    private function siteName(): string
+    {
+        return (string) ($this->site->option('blogname') ?? 'Site');
+    }
+
     /** The sign-in page this request arrived at: the clean page, or wp-login.php for the tooling that still names it. */
     private function base(Request $request): string
     {
@@ -478,15 +520,16 @@ final readonly class LoginController
     /** The sign-in page, its notices through wp_login_errors first. */
     private function render(Request $request, LoginNotices $notices, string $redirect): string
     {
-        $siteName = (string) ($this->site->option('blogname') ?? 'Site');
+        $siteName = $this->siteName();
+        $lostPasswordUrl = $this->actionUrl($request, 'lostpassword');
         return LoginForm::render(
             $siteName,
             $this->permalinks->url($this->base($request)),
             $redirect,
             '',
             '',
-            $this->actionUrl($request, 'lostpassword'),
-            $this->parts($this->action($request) ?: 'login', 'Log In', $siteName, null, $this->signInNotices($request, $notices)),
+            $lostPasswordUrl,
+            $this->parts($this->action($request) ?: 'login', 'Log In', $siteName, null, $this->signInNotices($request, $notices)) + (new LoginHooks($this->users))->signInFurniture($lostPasswordUrl),
         );
     }
 }

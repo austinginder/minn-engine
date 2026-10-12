@@ -31,7 +31,7 @@ final class ClassicContent
         $raw = (string) ($post->content);
         if (PasswordGate::is($post)) {
             // The form takes the content's place and runs the content filters, paragraphs first, as the reference's the_content does.
-            return Runtime::contentFilter(\wpautop(PasswordGate::form($post, $permalinks->url(''), $permalinks->forPost($post))));
+            return Runtime::contentFilter(\wpautop(PasswordGate::formForReader($post, $permalinks->url(''), $permalinks->forPost($post))));
         }
         if (trim($raw) === '') {
             return '';

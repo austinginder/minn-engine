@@ -13,7 +13,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
-| [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
+| [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 59 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`PortableHash`](#portablehash) | final class | 90 | The portable phpass hash ("$P$"), from the published algorithm: an |
@@ -458,11 +458,18 @@ under the nonce salt, accepted for the current tick and the one before.
 
 Used by: `Minn\Admin\BootPayload`, `Minn\Auth\Authenticator`, `Minn\Front\AdminBar`, `Minn\Front\Resolver`, `Minn\Login\LoginController`, `Minn\Rest\RevisionsController`
 
-### static `tick(): float`
+### static `lifetime(string|int $action): int`
 
-The current half-life tick a nonce is bound to.
+How long a nonce for an action lives, in seconds (nonce_life, handed
+the action as the caller gave it; probe filter-inputs-3). A plugin's
+filter reaches every nonce the engine makes and checks once plugins
+have loaded; a lifetime under a second keeps the default.
 
-### static `create(int $userId, string $token, string $action = 'wp_rest'): string`
+### static `tick(string|int $action = -1): float`
+
+The current half-life tick a nonce for an action is bound to.
+
+### static `create(int $userId, string $token, string|int $action = 'wp_rest'): string`
 
 A wp_rest nonce for a user and session token at the current tick.
 

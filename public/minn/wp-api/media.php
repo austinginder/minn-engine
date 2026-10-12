@@ -105,7 +105,12 @@ function image_resize_dimensions($orig_w, $orig_h, $dest_w, $dest_h, $crop = fal
     if ($output !== null) {
         return $output;
     }
-    return Sizing::resize($orig_w, $orig_h, $dest_w, $dest_h, (bool) $crop, static fn (int $w, int $h, int $mw, int $mh): array => wp_constrain_dimensions($w, $h, $mw, $mh)) ?? false;
+    $box = Sizing::resize($orig_w, $orig_h, $dest_w, $dest_h, (bool) $crop, static fn (int $w, int $h, int $mw, int $mh): array => wp_constrain_dimensions($w, $h, $mw, $mh));
+    if ($box === null || !Sizing::sameSize($box, $orig_w, $orig_h)) {
+        return $box ?? false;
+    }
+    // The image's own size again: only when wp_image_resize_identical_dimensions asks for it (probe image-resize-boxes).
+    return apply_filters('wp_image_resize_identical_dimensions', false, $orig_w, $orig_h) ? $box : false;
 }
 
 function image_constrain_size_for_editor($width, $height, $size = 'medium', $context = null)
@@ -128,7 +133,8 @@ function image_constrain_size_for_editor($width, $height, $size = 'medium', $con
         $max_width = (int) $sizes[$size]['width'];
         $max_height = (int) $sizes[$size]['height'];
     }
-    return wp_constrain_dimensions($width, $height, $max_width, $max_height);
+    [$max_width, $max_height] = (array) apply_filters('editor_max_image_size', [$max_width, $max_height], $size, $context) + [0, 0];
+    return wp_constrain_dimensions($width, $height, (int) $max_width, (int) $max_height);
 }
 
 function wp_get_attachment_metadata($attachment_id = 0, $unfiltered = false)
@@ -468,44 +474,94 @@ function wp_img_tag_add_loading_attr($image, $context)
 
 function wp_get_loading_optimization_attributes($tag_name, $attr, $context)
 {
+    // A plugin may answer first, and an array it returns is the answer (probe filter-inputs-3).
+    $answer = apply_filters('pre_wp_get_loading_optimization_attributes', false, $tag_name, $attr, $context);
+    if (is_array($answer)) {
+        return $answer;
+    }
     $optimization = [];
     // An image made while the_content runs is fitted with the rest of the content, as the reference leaves it;
     // the template context is handled where the template is (probe theme-symbols).
     if ($tag_name !== 'img' && $tag_name !== 'iframe' || $context === 'template' || ($context !== 'the_content' && doing_filter('the_content'))) {
-        return $optimization;
+        return apply_filters('wp_get_loading_optimization_attributes', $optimization, $tag_name, $attr, $context);
     }
     if ($tag_name === 'img') {
-        $optimization['decoding'] = 'async';
+        // A caller's own decoding is kept, whatever it says.
+        $optimization['decoding'] = $attr['decoding'] ?? 'async';
     }
-    // A caller's own loading (off, eager, auto: anything but lazy) is never made lazy.
-    $explicitLoading = array_key_exists('loading', $attr) && $attr['loading'] !== 'lazy';
-    $explicitPriority = array_key_exists('fetchpriority', $attr) && $attr['fetchpriority'] === 'high';
-    if ($explicitPriority) {
-        // A caller that asks for high priority keeps it, and no later image competes.
-        $optimization['fetchpriority'] = 'high';
-        RenderState::current()->closePriority();
-    } elseif ($explicitLoading) {
-        // Never lazy, and high priority only for an image large enough to deserve it (a logo usually is not).
-        $optimization += _minn_earned_priority($attr);
-    } elseif ($context === 'get_header_image_tag' || $context === 'template_part_header') {
-        // A header image, or one in the header template part, is in view (probes custom-header, theme-symbols): never lazy, one of the eager images.
-        RenderState::current()->nextImage();
-        $optimization += _minn_earned_priority($attr);
-    } elseif ($tag_name === 'img' && ((RenderState::current()->inside('template') && RenderState::current()->depth() > 0) || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
-        // Inside a page's template (or its main loop) the image shares the engine's budget:
-        // three eager images, and the first one large enough to be worth the
-        // network's attention takes high priority. A thumbnail or an avatar is
-        // not, so the flag can fall to a later image.
-        $optimization += _minn_earned_priority($attr);
-    } elseif (wp_lazy_loading_enabled($tag_name, $context)) {
-        $optimization['loading'] = 'lazy';
+    // Only an element with both dimensions set (zero will do) is fitted further: first by the caller's
+    // own fetchpriority and loading, then by where it sits.
+    if (isset($attr['width'], $attr['height'])) {
+        $priority = in_array($attr['fetchpriority'] ?? null, ['high', 'low', 'auto'], true) ? $attr['fetchpriority'] : null;
+        if ($priority === 'low' || $priority === 'auto') {
+            $optimization['fetchpriority'] = $priority;
+        }
+        $optimization = $priority === 'low' ? $optimization : (_minn_loading_asked((string) $tag_name, (array) $attr, $priority, $optimization) ?? _minn_loading_by_place((string) $tag_name, (array) $attr, (string) $context, $optimization));
     }
     return apply_filters('wp_get_loading_optimization_attributes', $optimization, $tag_name, $attr, $context);
 }
 
-/** @internal fetchpriority high for an image large enough to deserve it, while no other image has taken it */
-function _minn_earned_priority(array $attr): array
+/**
+ * @internal What a caller's own fetchpriority high or loading settles (probe
+ * filter-inputs-3); null when it named neither. Only an image takes high
+ * priority, and an element that names a loading other than lazy is never made
+ * lazy.
+ */
+function _minn_loading_asked(string $tag_name, array $attr, ?string $priority, array $optimization): ?array
 {
+    $loading = $attr['loading'] ?? null;
+    if ($priority === 'high') {
+        if ($tag_name === 'img') {
+            $optimization['fetchpriority'] = 'high';
+        }
+        if ($loading === 'lazy') {
+            // Both are kept, and the reference reports the pair as a mistake.
+            if ($tag_name === 'img') {
+                _doing_it_wrong('wp_get_loading_optimization_attributes', __('An image should not be lazy-loaded and marked as high priority at the same time.'), '6.3.0');
+            }
+            return $optimization + ['loading' => 'lazy'];
+        }
+        // A caller that asks for high priority keeps it, and no later image competes.
+        if ($tag_name === 'img') {
+            RenderState::current()->closePriority();
+        }
+        return $optimization;
+    }
+    if ($loading === null) {
+        return null;
+    }
+    // Never lazy unless asked, and high priority only for an image large enough to deserve it (a logo usually is not).
+    return $loading === 'lazy' ? $optimization + ['loading' => 'lazy'] : $optimization + _minn_earned_priority($tag_name, $attr);
+}
+
+/**
+ * @internal Where an element sits settles the rest. One in a header context
+ * (as the filter leaves the list) is in view: never lazy, one of the eager
+ * images (probes custom-header, theme-symbols). Inside a page's template, or
+ * its main loop, an image shares the engine's budget: three eager images, and
+ * the first one large enough to be worth the network's attention takes high
+ * priority (a thumbnail or an avatar is not, so the flag can fall to a later
+ * image). Anything else waits, where lazy loading is on.
+ */
+function _minn_loading_by_place(string $tag_name, array $attr, string $context, array $optimization): array
+{
+    $header = apply_filters('wp_loading_optimization_force_header_contexts', ['template_part_header' => true, 'get_header_image_tag' => true]);
+    if (is_array($header) && isset($header[$context])) {
+        RenderState::current()->nextImage();
+        return $optimization + _minn_earned_priority($tag_name, $attr);
+    }
+    if ($tag_name === 'img' && ((RenderState::current()->inside('template') && RenderState::current()->depth() > 0) || (in_the_loop() && is_main_query())) && !(defined('REST_REQUEST') && REST_REQUEST) && RenderState::current()->nextImage() <= 3) {
+        return $optimization + _minn_earned_priority($tag_name, $attr);
+    }
+    return wp_lazy_loading_enabled($tag_name, $context) ? $optimization + ['loading' => 'lazy'] : $optimization;
+}
+
+/** @internal fetchpriority high for an image large enough to deserve it, while no other image has taken it */
+function _minn_earned_priority(string $tag_name, array $attr): array
+{
+    if ($tag_name !== 'img') {
+        return [];
+    }
     $pixels = (int) ($attr['width'] ?? 0) * (int) ($attr['height'] ?? 0);
     return $pixels >= (int) apply_filters('wp_min_priority_img_pixels', 50000) && RenderState::current()->claimPriority() ? ['fetchpriority' => 'high'] : [];
 }
@@ -547,7 +603,7 @@ function wp_maybe_add_fetchpriority_high_attr($loading_attrs, $tag_name, $attr)
     if (($loading_attrs['loading'] ?? null) === 'lazy' || !wp_high_priority_element_flag()) {
         return $loading_attrs;
     }
-    return $loading_attrs + _minn_earned_priority((array) $attr);
+    return $loading_attrs + _minn_earned_priority('img', (array) $attr);
 }
 
 /** @internal an attribute's value as a tag carries it, or null when the tag has none */
@@ -750,7 +806,7 @@ function wp_calculate_image_srcset($size_array, $image_src, $image_meta, $attach
     if (!is_array($image_meta)) {
         return false;
     }
-    $sources = Sizing::sources([(int) ($size_array[0] ?? 0), (int) ($size_array[1] ?? 0)], (string) $image_src, $image_meta, static fn (int $sw, int $sh, int $tw, int $th): bool => (bool) wp_image_matches_ratio($sw, $sh, $tw, $th), (string) wp_get_upload_dir()['baseurl']);
+    $sources = Sizing::sources([(int) ($size_array[0] ?? 0), (int) ($size_array[1] ?? 0)], (string) $image_src, $image_meta, static fn (int $sw, int $sh, int $tw, int $th): bool => (bool) wp_image_matches_ratio($sw, $sh, $tw, $th), (string) wp_get_upload_dir()['baseurl'], static fn (array $size): int => (int) apply_filters('max_srcset_image_width', 2048, $size));
     if ($sources === []) {
         return false;
     }
@@ -890,12 +946,23 @@ function wp_get_attachment_link($post = 0, $size = 'thumbnail', $permalink = fal
     if (trim((string) $link_text) === '') {
         $link_text = esc_html(pathinfo(get_attached_file($post->ID), PATHINFO_FILENAME));
     }
-    $attributes = '';
-    return apply_filters('wp_get_attachment_link', "<a href='" . esc_url($url) . "'{$attributes}>{$link_text}</a>", $post->ID, $size, $permalink, $icon, $text, $attr);
+    // The link's attributes through wp_get_attachment_link_attributes, the address first (probe filter-inputs-2).
+    $attributes = (array) apply_filters('wp_get_attachment_link_attributes', ['href' => $url], $post->ID);
+    $more = '';
+    foreach ($attributes as $name => $value) {
+        if ($name !== 'href') {
+            $more .= ' ' . $name . "='" . esc_attr((string) $value) . "'";
+        }
+    }
+    return apply_filters('wp_get_attachment_link', "<a href='" . esc_url((string) ($attributes['href'] ?? '')) . "'{$more}>{$link_text}</a>", $post->ID, $size, $permalink, $icon, $text, $attr);
 }
 
 function attachment_url_to_postid($url)
 {
+    $found = apply_filters('pre_attachment_url_to_postid', null, $url);
+    if ($found !== null) {
+        return (int) $found;
+    }
     $dir = wp_get_upload_dir();
     $path = (string) $url;
     $site_url = parse_url($dir['url']);
@@ -1807,7 +1874,35 @@ function gallery_shortcode($attr)
         }
         $attr['include'] = $attr['ids'];
     }
-    $atts = shortcode_atts([
+    $atts = _minn_gallery_atts($attr, $postId);
+    $short = apply_filters('post_gallery', '', $attr, $instance);
+    if ($short !== '') {
+        return $short;
+    }
+    $items = [];
+    foreach (_minn_gallery_attachments($atts) as $attachment) {
+        $items[] = _minn_gallery_item($attachment, $atts);
+    }
+    $args = [
+        'itemtag' => (string) $atts['itemtag'],
+        'icontag' => (string) $atts['icontag'],
+        'captiontag' => (string) $atts['captiontag'],
+        'columns' => (int) $atts['columns'],
+        'size' => (string) $atts['size'],
+    ];
+    if ($items === []) {
+        return '';
+    }
+    // The opening (the default style when use_default_gallery_style asks for it, then the element) through gallery_style (probe filter-inputs-3).
+    $style = apply_filters('use_default_gallery_style', !current_theme_supports('html5', 'gallery')) ? Minn\Media\Gallery::defaultStyle($instance, $args['columns']) : '';
+    $opening = (string) apply_filters('gallery_style', $style . Minn\Media\Gallery::opening($args, $instance, (int) $atts['id']));
+    return Minn\Media\Gallery::render($items, $args, $instance, (int) $atts['id'], $opening);
+}
+
+/** @internal a gallery's attributes with the defaults filled in (shortcode_atts_gallery) */
+function _minn_gallery_atts(array $attr, int $postId): array
+{
+    return shortcode_atts([
         'order' => 'ASC',
         'orderby' => 'menu_order ID',
         'id' => $postId,
@@ -1820,21 +1915,6 @@ function gallery_shortcode($attr)
         'exclude' => '',
         'link' => '',
     ], $attr, 'gallery');
-    $short = apply_filters('post_gallery', '', $attr, $instance);
-    if ($short !== '') {
-        return $short;
-    }
-    $items = [];
-    foreach (_minn_gallery_attachments($atts) as $attachment) {
-        $items[] = _minn_gallery_item($attachment, $atts);
-    }
-    return Minn\Media\Gallery::render($items, [
-        'itemtag' => (string) $atts['itemtag'],
-        'icontag' => (string) $atts['icontag'],
-        'captiontag' => (string) $atts['captiontag'],
-        'columns' => (int) $atts['columns'],
-        'size' => (string) $atts['size'],
-    ], $instance, (int) $atts['id']);
 }
 
 /** @internal the attachments a gallery names, in the order it asked for */

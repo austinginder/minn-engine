@@ -30,14 +30,15 @@ final readonly class Archives
     }
 
     /**
-     * The periods of one granularity: monthly, yearly, daily, or weekly.
+     * The periods of one granularity: monthly, yearly, daily, or weekly; a
+     * WHERE and JOIN given are the query's (Posts::archiveBuckets).
      *
      * @return list<array{period: array{year: int, month: int, day: int, week: int}, url: string, text: string, count: int}>
      */
-    public function periods(string $granularity, string $type, string $order, int $limit, Closure $weekLink): array
+    public function periods(string $granularity, string $type, string $order, int $limit, Closure $weekLink, string $where = '', string $join = ''): array
     {
         $out = [];
-        foreach ($this->posts->archiveBuckets($granularity, $type, $order, $limit) as $bucket) {
+        foreach ($this->posts->archiveBuckets($granularity, $type, $order, $limit, $where, $join) as $bucket) {
             $period = ['year' => $bucket['year'], 'month' => $bucket['month'], 'day' => $bucket['day'], 'week' => $bucket['week']];
             $out[] = ['period' => $period] + match ($granularity) {
                 'yearly' => ['url' => ($this->dateLink)($bucket['year'], null, null), 'text' => sprintf('%d', $bucket['year']), 'count' => $bucket['count']],
@@ -67,10 +68,10 @@ final readonly class Archives
      * @param Closure(int): string $link
      * @return list<array{url: string, text: string, count: int, id: int}>
      */
-    public function posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link): array
+    public function posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link, string $where = '', string $join = ''): array
     {
         $out = [];
-        foreach ($this->posts->archiveList($type, $orderBy, $order, $limit) as $post) {
+        foreach ($this->posts->archiveList($type, $orderBy, $order, $limit, $where, $join) as $post) {
             $out[] = ['url' => $link($post->id), 'text' => $title($post->id, $post->title), 'count' => 0, 'id' => $post->id];
         }
         return $out;

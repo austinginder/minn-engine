@@ -41,14 +41,14 @@ final class Sizing
 
     /**
      * The GD-style resize box (dst x, dst y, src x, src y, dst w, dst h, src w, src h),
-     * or null when the image would only grow or nothing changes.
+     * or null when every asked dimension is larger than the image (nothing to make).
      *
      * @param Closure(int, int, int, int): array{0: int, 1: int} $constrain scales a box into a maximum
      * @return array{0: int, 1: int, 2: int, 3: int, 4: int, 5: int, 6: int, 7: int}|null
      */
     public static function resize(int $origW, int $origH, int $destW, int $destH, bool $crop, Closure $constrain): ?array
     {
-        if ($origW < $destW && $origH < $destH) {
+        if (($destW <= 0 || $destW > $origW) && ($destH <= 0 || $destH > $origH)) {
             return null;
         }
         if ($crop) {
@@ -70,13 +70,18 @@ final class Sizing
             [$cropW, $cropH, $sx, $sy] = [$origW, $origH, 0, 0];
             [$newW, $newH] = $constrain($origW, $origH, $destW, $destH);
         }
-        if ($newW >= $origW && $newH >= $origH && $destW !== $origW && $destH !== $origH) {
-            return null;
-        }
-        if ($newW === $origW && $newH === $origH) {
-            return null;
-        }
         return [0, 0, $sx, $sy, (int) $newW, (int) $newH, (int) $cropW, (int) $cropH];
+    }
+
+    /**
+     * Whether a resize box makes the image's own size again, a pixel either
+     * way counting as rounding.
+     *
+     * @param array{0: int, 1: int, 2: int, 3: int, 4: int, 5: int, 6: int, 7: int} $box
+     */
+    public static function sameSize(array $box, int $origW, int $origH): bool
+    {
+        return abs($box[4] - $origW) <= 1 && abs($box[5] - $origH) <= 1;
     }
 
     /**
@@ -142,28 +147,30 @@ final class Sizing
 
     /**
      * The srcset candidates by width: every size on the image's ratio (and
-     * the same edit, when the file was edited), the source itself winning a
-     * width clash.
+     * the same edit, when the file was edited) no wider than the cap, the
+     * source itself winning a width clash and passing the cap.
      *
      * @param array{0: int, 1: int} $sizeArray
      * @param Closure(int, int, int, int): bool $matchesRatio
+     * @param Closure(array{0: int, 1: int}): int $maxWidth the widest candidate (max_srcset_image_width; 0 for no cap), asked before the folder is checked
      * @return array<int, array{url: string, descriptor: string, value: int}>
      */
-    public static function sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl): array
+    public static function sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl, Closure $maxWidth): array
     {
         if (empty($meta['sizes']) || !isset($meta['file']) || !str_contains((string) $meta['file'], '.')) {
-            return [];
-        }
-        // The source must name the image's folder and file (any host will do); the candidates
-        // are addressed from the uploads folder, not from the source (probe media-remaining).
-        $folder = dirname((string) $meta['file']);
-        $folder = $folder === '.' ? '' : $folder . '/';
-        if (!str_contains($src, $folder . basename($src))) {
             return [];
         }
         $width = (int) $sizeArray[0];
         $height = (int) $sizeArray[1];
         if (!$width || !$height) {
+            return [];
+        }
+        $cap = $maxWidth([$width, $height]);
+        // The source must name the image's folder and file (any host will do); the candidates
+        // are addressed from the uploads folder, not from the source (probe media-remaining).
+        $folder = dirname((string) $meta['file']);
+        $folder = $folder === '.' ? '' : $folder . '/';
+        if (!str_contains($src, $folder . basename($src))) {
             return [];
         }
         $sizes = $meta['sizes'];
@@ -179,6 +186,9 @@ final class Sizing
                 continue;
             }
             $isSrc = basename($src) === $image['file'];
+            if ($cap > 0 && (int) $image['width'] > $cap && !$isSrc) {
+                continue;
+            }
             if (!$matchesRatio($width, $height, (int) $image['width'], (int) $image['height'])) {
                 continue;
             }

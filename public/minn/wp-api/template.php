@@ -203,7 +203,11 @@ function get_sidebar($name = null, $args = [])
 
 function get_search_form($args = [])
 {
-    $args = wp_parse_args($args, ['echo' => true, 'aria_label' => '']);
+    // As the reference reads it (probe filter-inputs): pre_get_search_form with the arguments as given, then the
+    // arguments through search_form_args and the markup's format through search_form_format.
+    do_action('pre_get_search_form', $args);
+    $args = apply_filters('search_form_args', wp_parse_args($args, ['echo' => true, 'aria_label' => '']));
+    $format = apply_filters('search_form_format', current_theme_supports('html5', 'search-form') ? 'html5' : 'xhtml', $args);
     // A theme's own searchform.php wins over the default form, as the reference loads it.
     $template = locate_template(['searchform.php']);
     if ($template !== '') {
@@ -213,7 +217,7 @@ function get_search_form($args = [])
     } else {
         $ariaLabel = $args['aria_label'] !== '' ? ' aria-label="' . esc_attr($args['aria_label']) . '"' : '';
         $action = esc_url(home_url('/'));
-        $form = current_theme_supports('html5', 'search-form')
+        $form = $format === 'html5'
             ? '<form role="search"' . $ariaLabel . ' method="get" class="search-form" action="' . $action . '">'
                 . "\n\t\t\t\t<label>\n\t\t\t\t\t" . '<span class="screen-reader-text">Search for:</span>'
                 . "\n\t\t\t\t\t" . '<input type="search" class="search-field" placeholder="Search &hellip;" value="' . get_search_query() . '" name="s" />'
@@ -449,6 +453,11 @@ function get_super_admins()
 
 function get_blogs_of_user($user_id, $all = false)
 {
+    // A plugin may answer for the list (probe hook-inputs).
+    $pre = apply_filters('pre_get_blogs_of_user', null, (int) $user_id, $all);
+    if ($pre !== null) {
+        return $pre;
+    }
     $user = get_userdata((int) $user_id);
     if (!$user) {
         return [];
@@ -671,7 +680,7 @@ function feed_links($args = [])
 
 function feed_links_extra($args = [])
 {
-    $args = wp_parse_args($args, ['separator' => _x('&raquo;', 'feed link'), 'singletitle' => __('%1$s %2$s %3$s Comments Feed'), 'cattitle' => __('%1$s %2$s %3$s Category Feed'), 'tagtitle' => __('%1$s %2$s %3$s Tag Feed'), 'taxtitle' => __('%1$s %2$s %3$s %4$s Feed'), 'authortitle' => __('%1$s %2$s Posts by %3$s Feed'), 'searchtitle' => __('%1$s %2$s Search Results for &#8220;%3$s&#8221; Feed'), 'posttypetitle' => __('%1$s %2$s %3$s Feed')]);
+    $args = apply_filters('feed_links_extra_args', wp_parse_args($args, ['separator' => _x('&raquo;', 'feed link'), 'singletitle' => __('%1$s %2$s %3$s Comments Feed'), 'cattitle' => __('%1$s %2$s %3$s Category Feed'), 'tagtitle' => __('%1$s %2$s %3$s Tag Feed'), 'taxtitle' => __('%1$s %2$s %3$s %4$s Feed'), 'authortitle' => __('%1$s %2$s Posts by %3$s Feed'), 'searchtitle' => __('%1$s %2$s Search Results for &#8220;%3$s&#8221; Feed'), 'posttypetitle' => __('%1$s %2$s %3$s Feed')]));
     [$title, $href] = _minn_extra_feed($args, get_bloginfo('name'), $args['separator']);
     if ($href !== '') {
         echo '<link rel="alternate" type="' . feed_content_type() . '" title="' . esc_attr($title) . '" href="' . esc_url($href) . '" />' . "\n";
@@ -788,7 +797,7 @@ function rsd_link()
 
 function wp_generator()
 {
-    the_generator('xhtml');
+    the_generator(apply_filters('wp_generator_type', 'xhtml'));
 }
 
 function the_generator($type)
@@ -831,7 +840,7 @@ function get_calendar($args = [])
         $legacy = func_get_args();
         $args = ['initial' => (bool) $legacy[0], 'display' => $legacy[1] ?? true];
     }
-    $args = wp_parse_args($args, ['initial' => true, 'display' => true, 'post_type' => 'post']);
+    $args = apply_filters('get_calendar_args', wp_parse_args($args, ['initial' => true, 'display' => true, 'post_type' => 'post']));
     [$year, $month] = _minn_calendar_month();
     $output = apply_filters('get_calendar', _minn_calendar($year, $month, (bool) $args['initial'], (string) $args['post_type']), $args);
     if ($args['display']) {
@@ -940,10 +949,19 @@ function wp_dropdown_pages($args = '')
 
 function wp_get_archives($args = '')
 {
+    global $wpdb;
+    // As the reference reads them (probe filter-inputs): the arguments through wp_get_archives_args, the limit
+    // written as its clause, then the query's WHERE and JOIN through getarchives_where and getarchives_join,
+    // which the rows are read with.
+    $args = apply_filters('wp_get_archives_args', $args);
     $r = wp_parse_args($args, ['type' => 'monthly', 'limit' => '', 'format' => 'html', 'before' => '', 'after' => '', 'show_post_count' => false, 'echo' => 1, 'order' => 'DESC', 'post_type' => 'post', 'year' => get_query_var('year'), 'monthnum' => get_query_var('monthnum'), 'day' => get_query_var('day'), 'w' => get_query_var('w')]);
     $type = $r['type'] === '' ? 'monthly' : (string) $r['type'];
+    $limit = absint($r['limit']);
+    $r['limit'] = $limit > 0 ? ' LIMIT ' . $limit : '';
+    $where = (string) apply_filters('getarchives_where', $wpdb->prepare("WHERE post_type = %s AND post_status = 'publish'", $r['post_type']), $r);
+    $join = (string) apply_filters('getarchives_join', '', $r);
     $output = '';
-    foreach (_minn_archive_rows($type, (string) $r['post_type'], (string) $r['order'], (int) $r['limit']) as $row) {
+    foreach (_minn_archive_rows($type, (string) $r['post_type'], (string) $r['order'], $limit, $where, $join) as $row) {
         $after = $r['show_post_count'] && $row['count'] > 0 ? '&nbsp;(' . $row['count'] . ')' : $r['after'];
         $output .= get_archives_link($row['url'], $row['text'], $r['format'], $r['before'], $after, _minn_archive_is_current($type, $row, $r));
     }
@@ -969,7 +987,7 @@ function _minn_archive_is_current(string $type, array $row, array $r): bool
 }
 
 /** @internal the rows wp_get_archives lists for one type */
-function _minn_archive_rows(string $type, string $postType, string $order, int $limit): array
+function _minn_archive_rows(string $type, string $postType, string $order, int $limit, string $where = '', string $join = ''): array
 {
     $archives = new Archives(
         new Posts(Runtime::current()->db),
@@ -979,10 +997,10 @@ function _minn_archive_rows(string $type, string $postType, string $order, int $
     );
     if ($type === 'postbypost' || $type === 'alpha') {
         $title = static fn (int $id, string $title): string => $title !== '' ? strip_tags(apply_filters('the_title', $title, $id)) : (string) $id;
-        return $archives->posts($postType, $type === 'alpha' ? 'title' : 'date', $type === 'alpha' ? 'ASC' : $order, $limit, $title, static fn (int $id): string => (string) get_permalink($id));
+        return $archives->posts($postType, $type === 'alpha' ? 'title' : 'date', $type === 'alpha' ? 'ASC' : $order, $limit, $title, static fn (int $id): string => (string) get_permalink($id), $where, $join);
     }
     $weekLink = static fn (int $year, int $week): string => add_query_arg(['m' => $year, 'w' => $week], home_url('/'));
-    return $archives->periods($type, $postType, $order, $limit, $weekLink);
+    return $archives->periods($type, $postType, $order, $limit, $weekLink, $where, $join);
 }
 
 function wp_login_form($args = [])

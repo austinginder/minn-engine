@@ -392,10 +392,18 @@ function delete_metadata_by_mid($meta_type, $meta_id)
     [$column] = _minn_meta()->columns((string) $meta_type);
     $object_id = (int) $meta->{$column};
     $args = [[(int) $meta_id], $object_id, $meta->meta_key, $meta->meta_value];
-    _minn_meta_action('delete', (string) $meta_type, $args, [(int) $meta_id]);
+    // Posts and comments are also told by their older names, with the row id alone (probe hook-inputs).
+    $older = in_array($meta_type, ['post', 'comment'], true);
+    do_action("delete_{$meta_type}_meta", ...$args);
+    if ($older) {
+        do_action("delete_{$meta_type}meta", (int) $meta_id);
+    }
     _minn_meta()->deleteRows((string) $meta_type, [(int) $meta_id]);
     wp_cache_delete($object_id, $meta_type . '_meta');
-    _minn_meta_action('deleted', (string) $meta_type, $args, [(int) $meta_id]);
+    do_action("deleted_{$meta_type}_meta", ...$args);
+    if ($older) {
+        do_action("deleted_{$meta_type}meta", (int) $meta_id);
+    }
     return true;
 }
 

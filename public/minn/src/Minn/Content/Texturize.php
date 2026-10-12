@@ -14,19 +14,59 @@ use Minn\Runtime\Runtime;
  */
 final class Texturize
 {
-    private const SKIP = 'pre|code|kbd|style|script|tt|textarea';
+    private const SKIP = ['pre', 'code', 'kbd', 'style', 'script', 'tt'];
+
+    /** Whether text is texturized at all (run_wptexturize), once asked; null until then. */
+    private static ?bool $run = null;
+
+    /**
+     * Whether text is texturized at all (run_wptexturize): asked on the first
+     * text of a request and again after askAgain(); once the answer is no, it
+     * holds for the rest of the request (probe filter-inputs-3).
+     */
+    public static function enabled(): bool
+    {
+        self::$run ??= (bool) Runtime::hooks()->filter('run_wptexturize', [true]);
+        return self::$run;
+    }
+
+    /** Has the next text ask run_wptexturize again (wptexturize's reset), unless the answer was already no. */
+    public static function askAgain(): void
+    {
+        if (self::$run === true) {
+            self::$run = null;
+        }
+    }
+
+    /**
+     * The elements whose text stays as written (no_texturize_tags: pre, code,
+     * kbd, style, script and tt), read on every text, as a pattern alternation.
+     */
+    public static function skipPattern(): string
+    {
+        $tags = array_filter((array) Runtime::hooks()->filter('no_texturize_tags', [self::SKIP]), static fn ($tag) => is_string($tag) && $tag !== '');
+        return $tags === [] ? '(?!)' : implode('|', array_map(static fn (string $tag) => preg_quote($tag, '#'), $tags));
+    }
 
     /**
      * Curly quotes, dashes, and ellipses in the text of HTML, leaving tags
-     * and pre, code, kbd, style, and script alone; registered shortcodes
-     * stay as written (probe shortcode-run), and so does the text inside
-     * the ones no_texturize_shortcodes names ([code] by default).
+     * and the skipped elements alone; registered shortcodes stay as written
+     * (probe shortcode-run), and so does the text inside the ones
+     * no_texturize_shortcodes names ([code] by default). Nothing changes once
+     * texturizing is off. A caller that already read the skip pattern hands
+     * it over, so each text asks the filters once.
      */
-    public static function html(string $html): string
+    public static function html(string $html, ?string $skip = null): string
     {
+        if ($skip === null) {
+            if ($html === '' || !self::enabled()) {
+                return $html;
+            }
+            $skip = self::skipPattern();
+        }
         $shortcode = self::shortcodePattern($html);
         $parts = preg_split(self::splitPattern($shortcode), $html, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$html];
-        $quiet = $shortcode === '' ? [] : (array) Runtime::hooks()->filter('no_texturize_shortcodes', [['code']]);
+        $quiet = (array) Runtime::hooks()->filter('no_texturize_shortcodes', [['code']]);
         $depth = 0;
         $quieted = [];
         foreach ($parts as $index => $part) {
@@ -34,9 +74,9 @@ final class Texturize
                 continue;
             }
             if ($part[0] === '<') {
-                if (preg_match('#^</(?:' . self::SKIP . ')\b#i', $part)) {
+                if (preg_match('#^</(?:' . $skip . ')\b#i', $part)) {
                     $depth = max(0, $depth - 1);
-                } elseif (preg_match('#^<(?:' . self::SKIP . ')\b#i', $part) && !str_ends_with($part, '/>')) {
+                } elseif (preg_match('#^<(?:' . $skip . ')\b#i', $part) && !str_ends_with($part, '/>')) {
                     $depth++;
                 }
                 continue;
@@ -49,6 +89,25 @@ final class Texturize
             }
             if ($depth === 0 && $quieted === []) {
                 $parts[$index] = self::text($part);
+            }
+        }
+        return implode('', $parts);
+    }
+
+    /** Bare ampersands made entities outside the skipped elements, as wptexturize leaves them after the rest. */
+    public static function entities(string $html, string $skip): string
+    {
+        $parts = preg_split('/(<[^>]*>)/', $html, -1, PREG_SPLIT_DELIM_CAPTURE) ?: [$html];
+        $depth = 0;
+        foreach ($parts as $index => $part) {
+            if ($index % 2 === 1) {
+                if (preg_match('#^<(/?)(?:' . $skip . ')\b#i', $part, $m)) {
+                    $depth += $m[1] === '/' ? -1 : 1;
+                }
+                continue;
+            }
+            if ($depth <= 0) {
+                $parts[$index] = (string) preg_replace('/&(?!#?\w+;)/', '&#038;', $part);
             }
         }
         return implode('', $parts);

@@ -26,8 +26,9 @@ declare(strict_types=1);
  *   php tests/tools/compat-status.php --check   print the summary as JSON; exit 1 when the file is stale
  *   php tests/tools/compat-status.php --list=missing|placeholder|unproven [--kind=functions|classes|methods]
  *   php tests/tools/compat-status.php --site    write the marketing site's content/compat.json: the
- *       summary at the last commit, dead ends by area, and the areas still owed (refuses an
- *       uncommitted facade, so the figures always describe a commit)
+ *       summary at the last commit, dead ends by area, the areas still owed, and the 0.1.0
+ *       scorecard the commit holds (refuses an uncommitted facade, so the figures always
+ *       describe a commit)
  */
 
 $root = dirname(__DIR__, 2);
@@ -213,6 +214,11 @@ if (isset($options['site'])) {
         'deadEnds' => $areas,
         'owed' => array_map(static fn ($file, $count) => ['file' => $file, 'symbols' => $count], array_keys(array_slice($owed, 0, 10, true)), array_slice($owed, 0, 10, true)),
     ];
+    // The 0.1.0 scorecard as the commit holds it (tests/tools/scorecard.php).
+    $scorecard = json_decode((string) shell_exec('git -C ' . escapeshellarg($root) . ' show HEAD:contracts/scorecard.json 2>/dev/null'), true);
+    if (is_array($scorecard)) {
+        $site['scorecard'] = $scorecard;
+    }
     $target = "{$root}/site/minn-site/content/compat.json";
     file_put_contents($target, json_encode($site, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     echo "wrote site/minn-site/content/compat.json at {$commit}\n";

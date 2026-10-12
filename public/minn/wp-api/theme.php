@@ -82,9 +82,22 @@ function get_theme_support($feature, ...$args)
     return $supports[$feature][0][$args[0]] ?? false;
 }
 
+/**
+ * Whether the theme supports a feature: never one it did not add; a type
+ * asked of a feature that lists its own (formats, thumbnails, html5, the
+ * custom header and background) answered from the list; anything else the
+ * filter's, handed true (probe hook-inputs-2).
+ */
 function current_theme_supports($feature, ...$args)
 {
-    return apply_filters("current_theme_supports-{$feature}", get_theme_support($feature, ...$args) !== false, $args, get_theme_support($feature));
+    $support = get_theme_support($feature);
+    if ($support === false) {
+        return false;
+    }
+    if ($args !== [] && in_array($feature, ['post-formats', 'post-thumbnails', 'html5', 'custom-header', 'custom-background'], true)) {
+        return get_theme_support($feature, ...$args) !== false;
+    }
+    return apply_filters("current_theme_supports-{$feature}", true, $args, $support);
 }
 
 /** Declares a feature (Runtime\ThemeSupports): bare it is on, otherwise its arguments, merged as WordPress merges each. */
@@ -205,9 +218,28 @@ function wp_map_nav_menu_locations($new_nav_menu_locations, $old_nav_menu_locati
     return Minn\Runtime\ThemeSwitch::mapLocations((array) $new_nav_menu_locations, $old_nav_menu_locations);
 }
 
+/**
+ * Whether the active theme has what it needs (an index template, a child
+ * its stylesheet); one that does not gives way to the default theme, and
+ * false says so. validate_current_theme returning false skips the check.
+ */
 function validate_current_theme()
 {
-    return true;
+    if (wp_installing() || !apply_filters('validate_current_theme', true)) {
+        return true;
+    }
+    $template = get_template_directory();
+    $whole = is_file("{$template}/templates/index.html") || is_file("{$template}/block-templates/index.html") || is_file("{$template}/index.php");
+    if ($whole && is_file(get_stylesheet_directory() . '/style.css')) {
+        return true;
+    }
+    $fallback = wp_get_theme(WP_DEFAULT_THEME);
+    $fallback = $fallback->exists() ? $fallback : WP_Theme::get_core_default_theme();
+    if (!$fallback || get_stylesheet() === $fallback->get_stylesheet()) {
+        return true;
+    }
+    switch_theme($fallback->get_stylesheet());
+    return false;
 }
 
 function has_custom_logo($blog_id = 0)
@@ -671,6 +703,7 @@ function validate_theme_requirements($stylesheet)
         !$wp && !$php => new WP_Error('theme_wp_php_incompatible', sprintf(__('<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for %s.'), $name)),
         !$php => new WP_Error('theme_php_incompatible', sprintf(__('<strong>Error:</strong> Current PHP version does not meet minimum requirements for %s.'), $name)),
         !$wp => new WP_Error('theme_wp_incompatible', sprintf(__('<strong>Error:</strong> Current WordPress version does not meet minimum requirements for %s.'), $name)),
-        default => true,
+        // A theme that meets them is the plugins' to judge further (probe hook-inputs).
+        default => apply_filters('validate_theme_requirements', true, $stylesheet),
     };
 }

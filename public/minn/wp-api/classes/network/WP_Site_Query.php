@@ -101,7 +101,7 @@ class WP_Site_Query
         global $wpdb;
         $sql = new NetworkSql($wpdb);
         $qv = $this->query_vars;
-        $where = $sql->siteWhere($qv);
+        $where = $sql->siteWhere($qv, fn (array $columns): array => array_values((array) apply_filters('site_search_columns', $columns, $qv['search'], $this)));
         if (!empty($qv['date_query']) && is_array($qv['date_query'])) {
             $this->date_query = new WP_Date_Query($qv['date_query']);
             $where[] = (string) preg_replace('/^\s*AND\s*/', '', (string) $this->date_query->get_sql());

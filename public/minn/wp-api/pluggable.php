@@ -21,7 +21,7 @@ function wp_create_nonce($action = -1)
 {
     $user = wp_get_current_user();
     $uid = (int) apply_filters('nonce_user_logged_out', $user->ID, $action);
-    return Nonce::create($uid, wp_get_session_token(), (string) $action);
+    return Nonce::create($uid, wp_get_session_token(), is_int($action) ? $action : (string) $action);
 }
 endif;
 
@@ -35,7 +35,7 @@ function wp_verify_nonce($nonce, $action = -1)
         return false;
     }
     $token = wp_get_session_token();
-    $tick = Nonce::tick();
+    $tick = wp_nonce_tick($action);
     if (hash_equals(Nonce::at($tick, $uid, $token, (string) $action), $nonce)) {
         return 1;
     }
@@ -50,7 +50,7 @@ endif;
 if (!function_exists('wp_nonce_tick')) :
 function wp_nonce_tick($action = -1)
 {
-    return Nonce::tick();
+    return Nonce::tick(is_int($action) ? $action : (string) $action);
 }
 endif;
 

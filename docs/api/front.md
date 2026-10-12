@@ -6,7 +6,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 |---|---|---|---|
 | [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 97 | The archives an address may stand for, as the reference answers them: |
-| [`Archives`](#archives) | final readonly class | 62 | The archive periods wp_get_archives lists: months, years, days and weeks |
+| [`Archives`](#archives) | final readonly class | 63 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
 | [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 80 | The addresses an attachment's page answers to besides those its rules |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
@@ -44,7 +44,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`SitemapRequest`](#sitemaprequest) | final class | 71 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
 | [`Sitemaps`](#sitemaps) | final class | 34 | What the sitemaps share with WP_Sitemaps, which serves them: the two |
-| [`TermLists`](#termlists) | final class | 97 | A term's parent chain and the tag cloud, built from term rows the caller |
+| [`TermLists`](#termlists) | final class | 134 | A term's parent chain and the tag cloud, built from term rows the caller |
 | [`ToolbarMarkup`](#toolbarmarkup) | final class | 57 | WP_Admin_Bar's markup, piece by piece, as the reference prints it (probe |
 | [`ToolbarMenus`](#toolbarmenus) | final class | 339 | The nodes WordPress puts on the toolbar itself, as the reference adds |
 | [`ToolbarTree`](#toolbartree) | final class | 90 | WP_Admin_Bar's nodes bound into the tree they print as, as the reference |
@@ -157,13 +157,14 @@ __construct(Minn\Content\Posts $posts, Closure $date, Closure $dateLink, Closure
 - `@param Closure(string): array{start: int, end: int} $week the week's first and last second around a datetime`
 
 
-### `periods(string $granularity, string $type, string $order, int $limit, Closure $weekLink): array`
+### `periods(string $granularity, string $type, string $order, int $limit, Closure $weekLink, string $where = '', string $join = ''): array`
 
-The periods of one granularity: monthly, yearly, daily, or weekly.
+The periods of one granularity: monthly, yearly, daily, or weekly; a
+WHERE and JOIN given are the query's (Posts::archiveBuckets).
 
 - `@return list<array{period: array{year: int, month: int, day: int, week: int}, url: string, text: string, count: int}>`
 
-### `posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link): array`
+### `posts(string $type, string $orderBy, string $order, int $limit, Closure $title, Closure $link, string $where = '', string $join = ''): array`
 
 The posts themselves, by date or by title.
 
@@ -171,7 +172,7 @@ The posts themselves, by date or by title.
 - `@param Closure(int): string $link`
 - `@return list<array{url: string, text: string, count: int, id: int}>`
 
-Internals: `weekPeriod()` (private, line 56)
+Internals: `weekPeriod()` (private, line 57)
 
 
 ## AssetsController
@@ -1482,16 +1483,45 @@ trails the last name too, so a breadcrumb reads "Root/Mid/Leaf/".
 
 ### static `tagCloud(array $tags, array $args): ?string`
 
-The tag cloud the reference prints, or null for none. Each row brings
-its "id" (for the tag-link class; its key when it has none), "scaled"
-(its count through the scale callback), "text" (the count in words, for
-the label), and its link already escaped. Keys survive the sort; taking
-the first N renumbers the numeric ones before they name the tags.
+The tag cloud the reference prints, or null for none: the tags sorted
+and cut to the number asked for (cloudTags), each one's entry
+(cloudData), and the links (cloudMarkup). Each row brings its "id"
+(for the tag-link class; its key when it has none), "scaled" (its count
+through the scale callback), "text" (the count in words, for the
+label), and its link already escaped.
 
 - `@param array<array-key, array<string, mixed>> $tags`
 - `@param array<string, mixed> $args wp_generate_tag_cloud arguments`
 
-Internals: `cloudLinks()` (private, line 68), `cloudLink()` (private, line 86), `sorted()` (private, line 99)
+### static `cloudTags(array $tags, array $args): array`
+
+The tags in the cloud's order (by name, or by count; random shuffles)
+and cut to the number asked for. Keys survive the sort; taking the
+first N renumbers the numeric ones before they name the tags.
+
+- `@param array<array-key, array<string, mixed>> $tags`
+- `@return array<array-key, array<string, mixed>>`
+
+### static `cloudData(array $tags, array $args): array`
+
+Each tag's entry, as wp_generate_tag_cloud_data is handed them (probe
+filter-inputs): id, url, role, name, the count in words and as a
+number, the link class, the font size, the label attribute and the
+shown count. Sizes step from smallest to largest across the scaled
+counts; a reversed range steps by one unit; an empty one leaves every
+tag the same size and drops the label, unless the counts are shown.
+
+- `@param array<array-key, array<string, mixed>> $tags in the cloud's order`
+- `@return list<array<string, mixed>>`
+
+### static `cloudMarkup(array $data, array $args): ?string`
+
+The cloud from its entries (whatever wp_generate_tag_cloud_data made
+of them), in the format asked for, or null for none.
+
+- `@param list<array<string, mixed>> $data`
+
+Internals: `sorted()` (private, line 136)
 
 
 ## ToolbarMarkup

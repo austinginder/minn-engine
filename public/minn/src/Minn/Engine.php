@@ -151,6 +151,7 @@ final readonly class Engine
             $runtime->set('application_password_auth', ['user' => $session->id(), 'item' => $session->applicationPassword, 'password' => Authenticator::basicCredentials($context->request)[1] ?? '']);
         }
         Plugins::load($runtime);
+        self::recheckNonce($api, $runtime);
         self::adoptSettledUser($api, $runtime);
         // As the reference's request parsing leaves things for rest_api_loaded:
         // the route among the query vars, and REST_REQUEST (hook-trace).
@@ -161,6 +162,28 @@ final readonly class Engine
         }
         // Creating the server fires rest_api_init once; the plugins' routes register there.
         \rest_get_server();
+    }
+
+    /**
+     * A plugin's nonce lifetime (nonce_life) is heard only once plugins
+     * load: a cookie caller's nonce is checked again under it, as the
+     * reference checks it. A caller the default lifetime refused was nobody
+     * while plugins loaded; when the plugin's lifetime proves the nonce, that
+     * user reads the request from here (unless plugin code named someone).
+     */
+    private static function recheckNonce(Api $api, Runtime $runtime): void
+    {
+        $caller = $api->caller();
+        if (Runtime::hooks()->has('nonce_life') === false || !$caller->cookieBound()) {
+            return;
+        }
+        $refused = $caller->id() === 0;
+        $caller->recheck();
+        $session = $caller->session();
+        if ($refused && $session !== null && $runtime->reader->userId === 0) {
+            $runtime->identify(Reader::forUser($session->id(), $runtime->capabilities, $runtime->reader->postPassword, $session->token));
+            $runtime->set('current_user', null);
+        }
     }
 
     /**

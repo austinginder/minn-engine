@@ -6,6 +6,8 @@ namespace Minn\Login;
 
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
+use Minn\Html;
+use Minn\I18n\Gettext;
 
 /**
  * The sign-in as plugins see it, when they are loaded. The credentials go
@@ -113,5 +115,46 @@ final readonly class LoginHooks
     public function signedOut(int $userId): void
     {
         \do_action('wp_logout', $userId);
+    }
+
+    /**
+     * What the sign-in page asks plugins about its own furniture, as the
+     * reference's page asks: the word beside Remember Me
+     * (login_remember_me_help_text), the lost-password link
+     * (lost_password_html_link), what stands between the page's links
+     * (login_link_separator), and whether the name field takes the focus
+     * (enable_login_autofocus).
+     *
+     * @return array{rememberHelp: string, lostLink: string, separator: string, autofocus: bool}
+     */
+    public function signInFurniture(string $lostPasswordUrl): array
+    {
+        $separator = (string) \apply_filters('login_link_separator', ' | ');
+        return [
+            'rememberHelp' => (string) \apply_filters('login_remember_me_help_text', Gettext::text('Selecting "Remember Me" increases the length of time until you&#8217;re asked to log in again on this device. To keep your account secure, use this option only on your personal devices.')),
+            'lostLink' => (string) \apply_filters('lost_password_html_link', '<a class="wp-login-lost-password" href="' . Html::attr($lostPasswordUrl) . '">' . Gettext::text('Lost your password?') . '</a>'),
+            'separator' => $separator,
+            'autofocus' => (bool) \apply_filters('enable_login_autofocus', true),
+        ];
+    }
+
+    /**
+     * The lost-password page's questions, as the reference's page asks them:
+     * what stands between its links, where the form sends a reader once the
+     * mail is out (lostpassword_redirect, kept in the form), and lost_password
+     * with the page's errors. Returns the address the form keeps.
+     */
+    public function lostPasswordPage(string $requested, \WP_Error $errors): string
+    {
+        \apply_filters('login_link_separator', ' | ');
+        $redirect = (string) \apply_filters('lostpassword_redirect', $requested);
+        \do_action('lost_password', $errors);
+        return $redirect;
+    }
+
+    /** When a post password's cookie runs out (post_password_expires; 0 is when the browser closes). */
+    public function postPasswordExpiry(int $expires): int
+    {
+        return (int) \apply_filters('post_password_expires', $expires);
     }
 }

@@ -269,6 +269,22 @@ function term_exists($term, $taxonomy = '', $parent_term = null)
         return null;
     }
     $tax = $taxonomy === '' || $taxonomy === null ? null : (string) $taxonomy;
+    // The lookup's arguments through term_exists_default_query_args (probe filter-inputs-2): as they come back
+    // unchanged the engine's own lookup answers; changed, get_terms() runs them, by slug, then by name.
+    $defaults = ['get' => 'all', 'fields' => 'all', 'number' => 1, 'update_term_meta_cache' => false, 'order' => 'ASC', 'orderby' => 'term_id', 'suppress_filter' => true]
+        + ($tax === null ? [] : ['taxonomy' => $tax] + ($parent_term === null ? [] : ['parent' => (int) $parent_term]));
+    $query = (array) apply_filters('term_exists_default_query_args', $defaults, $term, $taxonomy, $parent_term);
+    if ($query !== $defaults) {
+        $terms = is_int($term) ? get_terms(['include' => [$term]] + $query) : get_terms(['slug' => sanitize_title((string) $term)] + $query);
+        if (!is_int($term) && (empty($terms) || is_wp_error($terms))) {
+            $terms = get_terms(['name' => trim(wp_unslash((string) $term))] + $query);
+        }
+        $first = is_array($terms) ? (array_values($terms)[0] ?? null) : null;
+        if (!$first instanceof WP_Term) {
+            return null;
+        }
+        return $tax === null ? (string) $first->term_id : ['term_id' => (string) $first->term_id, 'term_taxonomy_id' => (string) $first->term_taxonomy_id];
+    }
     if (is_int($term)) {
         $found = _minn_term_query()->exists($term, $tax, null);
     } else {
@@ -423,6 +439,20 @@ function get_term_link($term, $taxonomy = '')
     $permalinks = Runtime::current()->get('permalinks');
     $row = Minn\Content\TermRecord::fromRow(_minn_term_row($term->term_id, $term->taxonomy) ?? $term->to_array());
     $link = $permalinks === null ? home_url('/?' . $term->taxonomy . '=' . $term->slug) : $permalinks->forTerm($row);
+    // The taxonomy's link structure through pre_term_link (probe filter-inputs-2); one a plugin changed is filled
+    // with the term's slug, its ancestors' first when the taxonomy nests.
+    $structure = isset($GLOBALS['wp_rewrite']) ? (string) $GLOBALS['wp_rewrite']->get_extra_permastruct($term->taxonomy) : '';
+    $changed = (string) apply_filters('pre_term_link', $structure, $term);
+    if ($changed !== $structure && $changed !== '') {
+        $slug = $term->slug;
+        if (is_taxonomy_hierarchical($term->taxonomy)) {
+            foreach (get_ancestors($term->term_id, $term->taxonomy, 'taxonomy') as $ancestor) {
+                $parent = get_term($ancestor, $term->taxonomy);
+                $slug = $parent instanceof WP_Term ? $parent->slug . '/' . $slug : $slug;
+            }
+        }
+        $link = home_url(user_trailingslashit(str_replace("%{$term->taxonomy}%", $slug, $changed), 'category'));
+    }
     if ($term->taxonomy === 'post_tag') {
         $link = apply_filters('tag_link', $link, $term->term_id);
     } elseif ($term->taxonomy === 'category') {
@@ -871,11 +901,30 @@ function wp_cache_set_terms_last_changed()
     wp_cache_set('last_changed', microtime(), 'terms');
 }
 
+/**
+ * A term two taxonomies share, split (probe hook-inputs): the taxonomy row
+ * named gets a term of its own, its children follow, split_shared_term
+ * says so, and the split is recorded for wp_get_split_term(); a term held
+ * by one taxonomy keeps its id.
+ */
 function _split_shared_term($term_id, $term_taxonomy_id, $record = true)
 {
-    // A term row belongs to one taxonomy row on every site the engine can meet,
-    // so there is nothing to split and the term keeps its id.
-    return (int) $term_id;
+    $term_id = (int) (is_object($term_id) ? $term_id->term_id : $term_id);
+    $term_taxonomy_id = (int) (is_object($term_taxonomy_id) ? $term_taxonomy_id->term_taxonomy_id : $term_taxonomy_id);
+    $split = _minn_term_writer()->split($term_id, $term_taxonomy_id);
+    if ($split === null) {
+        return $term_id;
+    }
+    [$new_term_id, $taxonomy, $children] = $split;
+    clean_term_cache([$term_id, $new_term_id, ...$children], $taxonomy);
+    do_action('split_shared_term', $term_id, $new_term_id, $term_taxonomy_id, $taxonomy);
+    if ($record) {
+        $splits = get_option('_split_terms', []);
+        $splits = is_array($splits) ? $splits : [];
+        $splits[$term_id][$taxonomy] = $new_term_id;
+        update_option('_split_terms', $splits);
+    }
+    return $new_term_id;
 }
 
 /** A term made ready for an edit form, '' for none (probe taxonomy-remaining). */
@@ -911,14 +960,15 @@ function wp_get_nav_menus($args = [])
 
 function wp_get_nav_menu_object($menu)
 {
-    if (!$menu) {
-        return false;
-    }
+    $object = false;
     if ($menu instanceof WP_Term) {
-        return $menu;
+        $object = $menu;
+    } elseif ($menu) {
+        $found = is_numeric($menu) ? get_term((int) $menu, 'nav_menu') : (get_term_by('slug', (string) $menu, 'nav_menu') ?: get_term_by('name', (string) $menu, 'nav_menu'));
+        $object = $found instanceof WP_Term ? $found : false;
     }
-    $object = is_numeric($menu) ? get_term((int) $menu, 'nav_menu') : (get_term_by('slug', (string) $menu, 'nav_menu') ?: get_term_by('name', (string) $menu, 'nav_menu'));
-    return $object instanceof WP_Term ? $object : false;
+    // Asked whether a menu was found or not (probe hook-inputs).
+    return apply_filters('wp_get_nav_menu_object', $object, $menu);
 }
 
 function is_nav_menu($menu)
@@ -942,7 +992,8 @@ function is_nav_menu_item($menu_item_id = 0)
 /** A menu item, post or term dressed with the fields walkers read (Runtime\NavMenuItems). */
 function wp_setup_nav_menu_item($menu_item)
 {
-    return Minn\Runtime\NavMenuItems::setUp($menu_item);
+    $pre = apply_filters('pre_wp_setup_nav_menu_item', null, $menu_item);
+    return $pre !== null ? $pre : Minn\Runtime\NavMenuItems::setUp($menu_item);
 }
 
 function is_object_in_taxonomy($object_type, $taxonomy)
@@ -1016,12 +1067,15 @@ function wp_check_term_hierarchy_for_loops($parent_term, $term_id, $taxonomy)
 /** Recounts the published objects behind each term_taxonomy id. */
 function _update_post_term_count($terms, $taxonomy)
 {
-    $name = is_object($taxonomy) ? (string) $taxonomy->name : (string) $taxonomy;
+    $taxonomy = is_object($taxonomy) ? $taxonomy : get_taxonomy((string) $taxonomy);
+    $name = $taxonomy ? (string) $taxonomy->name : '';
     if ($name === '') {
         return null;
     }
+    // Which statuses count is the plugins' to widen (probe hook-inputs).
+    $statuses = array_values(array_map('strval', (array) apply_filters('update_post_term_count_statuses', ['publish'], $taxonomy)));
     foreach (array_map('intval', (array) $terms) as $tt_id) {
-        $count = _minn_term_writer()->publishedCount($tt_id);
+        $count = _minn_term_writer()->publishedCount($tt_id, $statuses);
         do_action('update_term_count', $tt_id, $name, $count);
         do_action('edit_term_taxonomy', $tt_id, $name, []);
         _minn_term_writer()->storeCount($tt_id, $count);
@@ -1043,16 +1097,24 @@ function _update_generic_term_count($terms, $taxonomy)
 }
 
 /** The default on transition_post_status: a post that changes status changes its terms' published counts. */
+/**
+ * The default on transition_post_status: each of the type's taxonomies is
+ * asked which statuses it counts (update_post_term_count_statuses), and a
+ * move into or out of one recounts the post's terms there (probe hook-inputs).
+ */
 function _update_term_count_on_transition_post_status($new_status, $old_status, $post)
 {
-    // Only a move into or out of publish changes a published count.
-    if ($new_status === $old_status || ($new_status !== 'publish' && $old_status !== 'publish')) {
+    if ($new_status === $old_status) {
         return;
     }
-    foreach ((array) get_object_taxonomies($post->post_type) as $taxonomy) {
-        $tt_ids = wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'tt_ids']);
+    foreach ((array) get_object_taxonomies($post->post_type, 'objects') as $taxonomy) {
+        $counted = (array) apply_filters('update_post_term_count_statuses', ['publish'], $taxonomy);
+        if (!in_array($new_status, $counted, true) && !in_array($old_status, $counted, true)) {
+            continue;
+        }
+        $tt_ids = wp_get_object_terms($post->ID, $taxonomy->name, ['fields' => 'tt_ids']);
         if (!is_wp_error($tt_ids)) {
-            wp_update_term_count($tt_ids, $taxonomy);
+            wp_update_term_count($tt_ids, $taxonomy->name);
         }
     }
 }
@@ -1192,11 +1254,15 @@ function wp_tag_cloud($args = '')
 function wp_generate_tag_cloud($tags, $args = '')
 {
     $args = wp_parse_args($args, ['smallest' => 8, 'largest' => 22, 'unit' => 'pt', 'number' => 0, 'format' => 'flat', 'separator' => "\n", 'orderby' => 'name', 'order' => 'ASC', 'topic_count_text' => null, 'topic_count_text_callback' => null, 'topic_count_scale_callback' => 'default_topic_count_scale', 'filter' => 1, 'show_count' => 0]);
+    // As the reference makes it (probe filter-inputs): the tags through tag_cloud_sort first, a plugin's order kept as
+    // it comes back (else the cloud's own sort), then each tag's entry through wp_generate_tag_cloud_data.
+    $sorted = apply_filters('tag_cloud_sort', $tags, $args);
     $rows = [];
-    foreach ((array) $tags as $key => $tag) {
+    foreach ((array) $sorted as $key => $tag) {
         $rows[$key] = _minn_tag_cloud_row($tag, $args);
     }
-    $out = TermLists::tagCloud($rows, $args);
+    $rows = $sorted !== $tags ? ((int) $args['number'] > 0 ? array_slice($rows, 0, (int) $args['number']) : $rows) : TermLists::cloudTags($rows, $args);
+    $out = $rows === [] ? null : TermLists::cloudMarkup((array) apply_filters('wp_generate_tag_cloud_data', TermLists::cloudData($rows, $args)), $args);
     if ($args['format'] === 'array') {
         $out = $out === null ? [] : explode("\n", $out);
     }
@@ -1423,7 +1489,7 @@ function get_the_tag_list($before = '', $sep = '', $after = '', $post_id = 0)
  */
 function get_the_category_list($separator = '', $parents = '', $post_id = false)
 {
-    $categories = get_the_category($post_id);
+    $categories = apply_filters('the_category_list', get_the_category($post_id), $post_id);
     if (empty($categories)) {
         return apply_filters('the_category', '', $separator, $parents);
     }

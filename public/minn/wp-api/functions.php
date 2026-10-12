@@ -216,6 +216,11 @@ function wp_upload_bits($name, $deprecated, $bits, $time = null)
     if (!$wp_filetype['ext'] && !current_user_can('unfiltered_upload')) {
         return ['error' => 'Sorry, you are not allowed to upload this file type.'];
     }
+    // A filter answering anything but the file's own details refuses the upload with it (probe filter-inputs-3).
+    $refused = apply_filters('wp_upload_bits', ['name' => $name, 'bits' => $bits, 'time' => $time]);
+    if (!is_array($refused)) {
+        return ['error' => $refused];
+    }
     $upload = wp_upload_dir($time);
     if ($upload['error'] !== false) {
         return ['error' => $upload['error']];
@@ -293,9 +298,13 @@ function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
     $name = $dot === false ? $filename : substr($filename, 0, $dot);
     // The reference looks at the type and the uploads folder here, for an image's sub-size names.
     wp_check_filetype($filename);
-    wp_upload_dir();
+    $uploads = rtrim((string) (wp_upload_dir()['path'] ?? ''), '/');
     $dir = rtrim((string) $dir, '/');
     $number = '';
+    // The uploads folder's files through pre_wp_unique_filename_file_list (probe filter-inputs-3); a list given is checked
+    // instead of the folder. Another folder is only looked at (probe functions-remaining).
+    $listed = $dir === $uploads ? apply_filters('pre_wp_unique_filename_file_list', null, $dir, $filename) : null;
+    $taken = is_array($listed) ? static fn (string $candidate): bool => in_array($candidate, $listed, true) : static fn (string $candidate): bool => file_exists($dir . '/' . $candidate);
     if ($unique_filename_callback !== null && is_callable($unique_filename_callback)) {
         // The callback is handed the whole file name and the extension (probe functions-remaining).
         $candidate = (string) call_user_func($unique_filename_callback, $dir, $filename, $ext);
@@ -303,7 +312,7 @@ function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
         // A name that reads like a size of an image (-150x150, -scaled, -rotated) takes a number even when it is free (probe rest-attachments-sideload).
         $number = preg_match('/-(?:\d+x\d+|scaled|rotated)$/', $name) === 1 ? 1 : '';
         $candidate = $name . ($number === '' ? '' : '-' . $number) . strtolower($ext);
-        while (file_exists($dir . '/' . $candidate)) {
+        while ($taken($candidate)) {
             $number = $number === '' ? 1 : $number + 1;
             $candidate = $name . '-' . $number . strtolower($ext);
         }
@@ -450,8 +459,10 @@ function _doing_it_wrong($function_name, $message, $version)
 
 function wp_trigger_error($function_name, $message, $error_level = E_USER_NOTICE)
 {
+    // Heard whether or not debugging is on (probe hook-inputs).
+    do_action('wp_trigger_error_always_run', $function_name, $message, $error_level);
     // wp_trigger_error_trigger_error silences the notice before anyone hears of it (probe theme-json-css).
-    if (!defined('WP_DEBUG') || !WP_DEBUG || !apply_filters('wp_trigger_error_trigger_error', true)) {
+    if (!defined('WP_DEBUG') || !WP_DEBUG || !apply_filters('wp_trigger_error_trigger_error', true, $function_name, $message, $error_level)) {
         return;
     }
     do_action('wp_trigger_error_run', $function_name, $message, $error_level);

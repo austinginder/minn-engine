@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Query;
 
+use Closure;
+
 /**
  * The WHERE fragment of a date query in the reference's shape: before and
  * after bounds as full datetimes (inclusive bounds close the day), the
@@ -12,6 +14,9 @@ namespace Minn\Query;
  */
 final class DateSql
 {
+    /** @var (Closure(list<string>): array)|null */
+    private ?Closure $validColumns = null;
+
     private const COLUMNS = [
         'posts' => ['post_date', 'post_date_gmt', 'post_modified', 'post_modified_gmt'],
         'comments' => ['comment_date', 'comment_date_gmt'],
@@ -131,12 +136,25 @@ final class DateSql
         if (str_contains($column, '.')) {
             return $column;
         }
+        // The columns a date may name on a single site, as the caller's filter leaves them (date_query_valid_columns).
+        $valid = [...self::COLUMNS['posts'], ...self::COLUMNS['comments'], ...self::COLUMNS['users']];
+        $valid = $this->validColumns === null ? $valid : (array) ($this->validColumns)($valid);
+        if (!in_array($column, $valid, true)) {
+            $column = $this->defaultColumn;
+        }
         foreach (self::COLUMNS as $table => $columns) {
             if (in_array($column, $columns, true)) {
                 return $this->tables[$table] . '.' . $column;
             }
         }
-        return $this->tables['posts'] . '.' . $this->defaultColumn;
+        return $column;
+    }
+
+    /** Has the valid columns pass through a filter (WP_Date_Query hands it date_query_valid_columns). */
+    public function checkColumnsWith(Closure $validColumns): self
+    {
+        $this->validColumns = $validColumns;
+        return $this;
     }
 
     /** The WHERE fragment for a date query. */

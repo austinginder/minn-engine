@@ -31,42 +31,51 @@ final class TermLists
     }
 
     /**
-     * The tag cloud the reference prints, or null for none. Each row brings
-     * its "id" (for the tag-link class; its key when it has none), "scaled"
-     * (its count through the scale callback), "text" (the count in words, for
-     * the label), and its link already escaped. Keys survive the sort; taking
-     * the first N renumbers the numeric ones before they name the tags.
+     * The tag cloud the reference prints, or null for none: the tags sorted
+     * and cut to the number asked for (cloudTags), each one's entry
+     * (cloudData), and the links (cloudMarkup). Each row brings its "id"
+     * (for the tag-link class; its key when it has none), "scaled" (its count
+     * through the scale callback), "text" (the count in words, for the
+     * label), and its link already escaped.
      *
      * @param array<array-key, array<string, mixed>> $tags
      * @param array<string, mixed> $args wp_generate_tag_cloud arguments
      */
     public static function tagCloud(array $tags, array $args): ?string
     {
-        if ($tags === []) {
-            return null;
-        }
-        $tags = self::sorted($tags, (string) ($args['orderby'] ?? 'name'), (string) ($args['order'] ?? 'ASC'));
-        if ((int) ($args['number'] ?? 0) > 0) {
-            $tags = array_slice($tags, 0, (int) $args['number']);
-        }
-        $links = self::cloudLinks($tags, $args);
-        return match ($args['format'] ?? 'flat') {
-            'list' => "<ul class='wp-tag-cloud' role='list'>\n\t<li>" . implode("</li>\n\t<li>", $links) . "</li>\n</ul>\n",
-            'array' => implode("\n", $links),
-            default => implode((string) ($args['separator'] ?? "\n"), $links),
-        };
+        return $tags === [] ? null : self::cloudMarkup(self::cloudData(self::cloudTags($tags, $args), $args), $args);
     }
 
     /**
-     * Sizes step from smallest to largest across the scaled counts. A
-     * reversed range steps by one unit; an empty one leaves every tag the
-     * same size and drops the label, unless the counts are shown.
+     * The tags in the cloud's order (by name, or by count; random shuffles)
+     * and cut to the number asked for. Keys survive the sort; taking the
+     * first N renumbers the numeric ones before they name the tags.
      *
      * @param array<array-key, array<string, mixed>> $tags
-     * @return list<string>
+     * @return array<array-key, array<string, mixed>>
      */
-    private static function cloudLinks(array $tags, array $args): array
+    public static function cloudTags(array $tags, array $args): array
     {
+        $tags = self::sorted($tags, (string) ($args['orderby'] ?? 'name'), (string) ($args['order'] ?? 'ASC'));
+        return (int) ($args['number'] ?? 0) > 0 ? array_slice($tags, 0, (int) $args['number']) : $tags;
+    }
+
+    /**
+     * Each tag's entry, as wp_generate_tag_cloud_data is handed them (probe
+     * filter-inputs): id, url, role, name, the count in words and as a
+     * number, the link class, the font size, the label attribute and the
+     * shown count. Sizes step from smallest to largest across the scaled
+     * counts; a reversed range steps by one unit; an empty one leaves every
+     * tag the same size and drops the label, unless the counts are shown.
+     *
+     * @param array<array-key, array<string, mixed>> $tags in the cloud's order
+     * @return list<array<string, mixed>>
+     */
+    public static function cloudData(array $tags, array $args): array
+    {
+        if ($tags === []) {
+            return [];
+        }
         $scaled = array_map(static fn (array $tag): float => (float) $tag['scaled'], $tags);
         $min = min($scaled);
         $spread = max(1, max($scaled) - $min);
@@ -74,20 +83,48 @@ final class TermLists
         $range = (float) ($args['largest'] ?? 22) - $smallest;
         $range = $range < 0 ? 1.0 : $range;
         $labelled = $range != 0 || !empty($args['show_count']);
-        $links = [];
+        $data = [];
         foreach ($tags as $key => $tag) {
-            $size = str_replace(',', '.', (string) ($smallest + (($scaled[$key] - $min) * ($range / $spread)))) . ($args['unit'] ?? 'pt');
-            $links[] = self::cloudLink(['id' => $tag['id'] ?? $key] + $tag, $size, $labelled ? $tag['name'] . ' (' . $tag['text'] . ')' : null, !empty($args['show_count']) ? (int) $tag['count'] : null, count($links) + 1);
+            $id = $tag['id'] ?? $key;
+            $data[] = [
+                'id' => $id,
+                'url' => $tag['link'],
+                'role' => '',
+                'name' => (string) $tag['name'],
+                'formatted_count' => (string) $tag['text'],
+                'slug' => (string) ($tag['slug'] ?? ''),
+                'real_count' => (int) ($tag['count'] ?? 0),
+                'class' => 'tag-cloud-link tag-link-' . $id,
+                'font_size' => $smallest + (($scaled[$key] - $min) * ($range / $spread)),
+                'aria_label' => $labelled ? ' aria-label="' . Html::attr($tag['name'] . ' (' . $tag['text'] . ')') . '"' : '',
+                'show_count' => !empty($args['show_count']) ? '<span class="tag-link-count"> (' . (int) ($tag['count'] ?? 0) . ')</span>' : '',
+            ];
         }
-        return $links;
+        return $data;
     }
 
-    /** @param array<string, mixed> $tag */
-    private static function cloudLink(array $tag, string $size, ?string $label, ?int $count, int $position): string
+    /**
+     * The cloud from its entries (whatever wp_generate_tag_cloud_data made
+     * of them), in the format asked for, or null for none.
+     *
+     * @param list<array<string, mixed>> $data
+     */
+    public static function cloudMarkup(array $data, array $args): ?string
     {
-        return '<a href="' . $tag['link'] . '" class="tag-cloud-link tag-link-' . Html::attr((string) $tag['id']) . ' tag-link-position-' . $position . '" style="font-size: ' . $size . ';"'
-            . ($label === null ? '' : ' aria-label="' . Html::attr($label) . '"') . '>' . Html::esc((string) $tag['name'])
-            . ($count === null ? '' : '<span class="tag-link-count"> (' . $count . ')</span>') . '</a>';
+        if ($data === []) {
+            return null;
+        }
+        $links = [];
+        foreach (array_values($data) as $index => $entry) {
+            $size = str_replace(',', '.', (string) ($entry['font_size'] ?? '')) . ($args['unit'] ?? 'pt');
+            $links[] = '<a href="' . ($entry['url'] ?? '') . '"' . ($entry['role'] ?? '') . ' class="' . Html::attr((string) ($entry['class'] ?? '')) . ' tag-link-position-' . ($index + 1) . '" style="font-size: ' . $size . ';"'
+                . ($entry['aria_label'] ?? '') . '>' . Html::esc((string) ($entry['name'] ?? '')) . ($entry['show_count'] ?? '') . '</a>';
+        }
+        return match ($args['format'] ?? 'flat') {
+            'list' => "<ul class='wp-tag-cloud' role='list'>\n\t<li>" . implode("</li>\n\t<li>", $links) . "</li>\n</ul>\n",
+            'array' => implode("\n", $links),
+            default => implode((string) ($args['separator'] ?? "\n"), $links),
+        };
     }
 
     /**

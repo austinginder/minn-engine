@@ -210,7 +210,8 @@ function wp_get_scheduled_event($hook, $args = [], $timestamp = null)
 function wp_next_scheduled($hook, $args = [])
 {
     $event = wp_get_scheduled_event($hook, $args);
-    return $event ? $event->timestamp : false;
+    // An event's time is the plugins' to change; no event, nothing to ask (probe hook-inputs).
+    return $event ? apply_filters('wp_next_scheduled', $event->timestamp, $event, $hook, $args) : false;
 }
 
 function wp_get_schedule($hook, $args = [])

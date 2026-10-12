@@ -1,0 +1,98 @@
+{
+    "wordpress": "7.1.3",
+    "security": {
+        "found": 8,
+        "fixed": 8
+    },
+    "sql": {
+        "measured": "2026-10-12",
+        "pages": {
+            "/": [
+                30,
+                38
+            ],
+            "/hello-world/": [
+                39,
+                44
+            ],
+            "/category/uncategorized/": [
+                34,
+                43
+            ],
+            "/wp-json/wp/v2/posts": [
+                26,
+                41
+            ],
+            "/?s=hello": [
+                30,
+                40
+            ]
+        },
+        "atOrUnder": 5
+    },
+    "hooks": {
+        "total": 2559,
+        "proven": 1558,
+        "fired": 1644,
+        "deadend": 719,
+        "different": 0,
+        "missing": 196,
+        "outside": 132,
+        "accounted": 92.3,
+        "provenOfLive": 84.6,
+        "provenWeighted": 95.2
+    },
+    "coverage": null,
+    "leanness": {
+        "deadNameCeiling": {
+            "label": "Dead-name methods",
+            "ceiling": 0
+        },
+        "liveCeiling": {
+            "label": "Lifecycle branches (->live())",
+            "ceiling": 20
+        },
+        "optionReadCeiling": {
+            "label": "Option reads beside the store",
+            "ceiling": 159
+        },
+        "rawOptionWriteCeiling": {
+            "label": "Raw option writes",
+            "ceiling": 7
+        },
+        "rawMetaWriteCeiling": {
+            "label": "Raw meta writes",
+            "ceiling": 10
+        },
+        "postRowCeiling": {
+            "label": "Hand-built post rows",
+            "ceiling": 8
+        },
+        "linkHrefCeiling": {
+            "label": "Hand-built REST links",
+            "ceiling": 77
+        },
+        "htmlspecialcharsCeiling": {
+            "label": "htmlspecialchars outside Html",
+            "ceiling": 14
+        },
+        "permalinkCallerCeiling": {
+            "label": "Unfiltered permalink callers",
+            "ceiling": 31
+        },
+        "bootedCeiling": {
+            "label": "Runtime::booted() branches",
+            "ceiling": 75
+        },
+        "wordpressCallCeiling": {
+            "label": "Calls into WordPress-named functions",
+            "ceiling": 1020
+        }
+    },
+    "open": {
+        "done": 29,
+        "accepted": 11,
+        "open": 9,
+        "austin": 2
+    }
+}

@@ -111,6 +111,9 @@ final class Options
             $this->db->execute("UPDATE {$this->db->table('options')} SET autoload = 'off' WHERE option_name IN (" . implode(', ', array_fill(0, count($names), '?')) . ')', $names);
             $list = array_diff_key($list, $stray);
         }
+        // What is kept is the plugins' to change, as it leaves the database (probe hook-inputs); the
+        // first load comes before the facade, so through the engine's own registry.
+        $list = (array) Runtime::hooks()->filter('pre_cache_alloptions', [$list]);
         $this->group->set(self::ALL, $list);
         return $list;
     }

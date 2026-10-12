@@ -419,22 +419,15 @@ function wp_trim_words($text, $num_words = 55, $more = null)
 
 function wptexturize($text, $reset = false)
 {
-    $text = Texturize::html((string) $text);
-    // A bare ampersand outside the skipped elements becomes its entity.
-    $parts = preg_split('/(<[^>]*>)/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
-    $skip = 0;
-    foreach ($parts as $i => $part) {
-        if ($i % 2 === 1) {
-            if (preg_match('#^<(/?)(pre|code|kbd|style|script|tt|textarea)\b#i', $part, $m)) {
-                $skip += $m[1] === '/' ? -1 : 1;
-            }
-            continue;
-        }
-        if ($skip <= 0) {
-            $parts[$i] = preg_replace('/&(?!#?\w+;)/', '&#038;', $part);
-        }
+    if ($reset) {
+        Texturize::askAgain();
     }
-    return implode('', $parts);
+    // Empty text ("0" and null too) comes back as given and asks nothing; texturizing off leaves the text as written (probe filter-inputs-3).
+    if (empty($text) || !Texturize::enabled()) {
+        return $text;
+    }
+    $skip = Texturize::skipPattern();
+    return Texturize::entities(Texturize::html((string) $text, $skip), $skip);
 }
 
 function wpautop($text, $br = true)
@@ -646,6 +639,10 @@ function human_time_diff($from, $to = 0)
 
 function ent2ncr($text)
 {
+    $filtered = apply_filters('pre_ent2ncr', null, $text);
+    if ($filtered !== null) {
+        return $filtered;
+    }
     return preg_replace_callback('/&([a-zA-Z0-9]+);/', static function (array $m): string {
         $decoded = html_entity_decode($m[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
         return $decoded === $m[0] ? $m[0] : '&#' . mb_ord($decoded, 'UTF-8') . ';';
@@ -725,15 +722,55 @@ function balanceTags($text, $force = false)
 
 function format_to_edit($content, $rich_text = false)
 {
+    $content = apply_filters('format_to_edit', $content);
     return $rich_text ? $content : esc_textarea($content);
 }
 
+/**
+ * sprintf() a fragment at a time, as the reference formats (probe
+ * filter-inputs-3): the text before the first % as it is, %% as a %, and
+ * each fragment from one % to the next handed to wp_sprintf with its
+ * argument (by position with %1$s, else the next one); a fragment the
+ * filter changed is used as it came back (wp_sprintf_l makes %l a list),
+ * one it left alone is formatted with its argument.
+ */
 function wp_sprintf($pattern, ...$args)
 {
-    if (str_starts_with((string) $pattern, '%l') && isset($args[0]) && is_array($args[0])) {
-        return wp_sprintf_l($pattern, $args[0]);
+    $pattern = (string) $pattern;
+    $at = strpos($pattern, '%');
+    if ($at === false) {
+        return $pattern;
     }
-    return sprintf($pattern, ...$args);
+    $out = substr($pattern, 0, $at);
+    $length = strlen($pattern);
+    $next = 0;
+    while ($at < $length) {
+        if (substr($pattern, $at, 2) === '%%') {
+            $out .= '%';
+            $at += 2;
+            continue;
+        }
+        $end = strpos($pattern, '%', $at + 1);
+        $fragment = $end === false ? substr($pattern, $at) : substr($pattern, $at, $end - $at);
+        $at = $end === false ? $length : $end;
+        if (preg_match('/^%(\d+)\$/', $fragment, $position) === 1) {
+            $value = $args[(int) $position[1] - 1] ?? '';
+            $fragment = '%' . substr($fragment, strlen($position[0]));
+        } else {
+            $value = $args[$next++] ?? '';
+        }
+        $filtered = apply_filters('wp_sprintf', $fragment, $value);
+        if ($filtered !== $fragment) {
+            $out .= $filtered;
+            continue;
+        }
+        try {
+            $out .= sprintf($fragment, is_array($value) ? '' : $value);
+        } catch (\ValueError) {
+            $out .= $fragment;
+        }
+    }
+    return $out;
 }
 
 /** A mail subject's quoted-printable encoded word decoded to its bytes (underscores as spaces), in the subject's own charset. */

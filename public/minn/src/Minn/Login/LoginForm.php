@@ -13,9 +13,11 @@ final class LoginForm
      * The sign-in page's HTML. With plugins loaded, $parts carries what they
      * put on the page (LoginHooks::page()): the title, head, body classes,
      * the header's link and words, a message above the form, fields inside
-     * it, and the footer, each where the reference's page puts it.
+     * it, and the footer, each where the reference's page puts it; and its
+     * answers about the page's own furniture (LoginHooks::signInFurniture()):
+     * the word on Remember Me, the lost-password link, the focus.
      *
-     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string} $parts
+     * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string, rememberHelp?: string, lostLink?: string, separator?: string, autofocus?: bool} $parts
      */
     public static function render(string $siteName, string $action, string $redirectTo, string $error, string $message = '', string $lostPasswordUrl = '', array $parts = []): string
     {
@@ -36,14 +38,14 @@ final class LoginForm
             . '<form method="post" action="' . Html::attr($action) . '">'
             . $header . $errorHtml
             . '<label for="log">Username or Email</label>'
-            . '<input type="text" name="log" id="log" autocapitalize="none" autocomplete="username" autofocus>'
+            . '<input type="text" name="log" id="log" autocapitalize="none" autocomplete="username"' . (($parts['autofocus'] ?? true) ? ' autofocus' : '') . '>'
             . '<label for="pwd">Password</label>'
             . '<input type="password" name="pwd" id="pwd" autocomplete="current-password">'
             . ($parts['form'] ?? '')
-            . '<label class="switch"><input type="checkbox" name="rememberme" value="forever" role="switch"><span class="knob" aria-hidden="true"></span><span>Remember me</span></label>'
+            . '<label class="switch"' . (($parts['rememberHelp'] ?? '') === '' ? '' : ' title="' . Html::attr(html_entity_decode(strip_tags((string) $parts['rememberHelp']), ENT_QUOTES | ENT_HTML5, 'UTF-8')) . '"') . '><input type="checkbox" name="rememberme" value="forever" role="switch"><span class="knob" aria-hidden="true"></span><span>Remember me</span></label>'
             . $redirectField
             . '<button type="submit" name="wp-submit">Log In</button>'
-            . '<p class="hint"><a href="' . Html::attr($lostPasswordUrl !== '' ? $lostPasswordUrl : $action . '?action=lostpassword') . '">Lost your password?</a></p>'
+            . '<p class="hint">' . ($parts['lostLink'] ?? '<a class="wp-login-lost-password" href="' . Html::attr($lostPasswordUrl !== '' ? $lostPasswordUrl : $action . '?action=lostpassword') . '">Lost your password?</a>') . '</p>'
             . '</form>' . ($parts['footer'] ?? '') . '</body></html>';
     }
 
@@ -82,13 +84,13 @@ final class LoginForm
             . $top . $username . $password . $middle . $remember . $submit . $bottom . '</form>';
     }
 
-    /** The "forgot password" form: one field, posts to itself. */
     /**
-     * The lost-password form.
+     * The lost-password form: one field, posts to itself, keeping where the
+     * reader goes once the mail is out ($redirect, LoginHooks::lostPasswordPage()).
      *
      * @param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts what plugins put on the page (LoginHooks::page())
      */
-    public static function lostPassword(string $siteName, string $action, string $error, string $message, array $parts = []): string
+    public static function lostPassword(string $siteName, string $action, string $error, string $message, array $parts = [], string $redirect = ''): string
     {
         return self::page($siteName, 'Lost Password', $error, $message,
             '<form method="post" action="' . Html::attr($action) . '">'
@@ -97,6 +99,7 @@ final class LoginForm
             . '<label for="user_login">Username or Email Address</label>'
             . '<input type="text" name="user_login" id="user_login" autocapitalize="none" autocomplete="username" autofocus required>'
             . ($parts['form'] ?? '')
+            . ($redirect === '' ? '' : '<input type="hidden" name="redirect_to" value="' . Html::attr($redirect) . '">')
             . '<button type="submit" name="wp-submit">Get New Password</button>'
             . '</form>', $parts);
     }
@@ -156,6 +159,33 @@ final class LoginForm
     {
         return self::page($siteName, 'User action confirmed.', '', '',
             '<form><h1>' . Html::esc($siteName) . '</h1><div class="msg">' . $message . '</div><p class="hint"><a href="' . Html::attr($homeUrl) . '">&larr; Go to ' . Html::esc($siteName) . '</a></p></form>', $parts);
+    }
+
+    /**
+     * The administration email check an administrator's sign-in may stop at:
+     * the site's address, to confirm (posting the nonce field) or change, and
+     * a later reminder when one is offered. $screen is what
+     * _minn_admin_email_screen() handed over.
+     *
+     * @param array<string, string> $screen
+     * @param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts
+     */
+    public static function adminEmail(string $siteName, string $action, string $redirect, string $remindUrl, array $screen, array $parts = []): string
+    {
+        return self::page($siteName, 'Confirm your administration email', '', '',
+            ($screen['confirm'] ?? '')
+            . '<form method="post" action="' . Html::attr($action) . '">'
+            . ($screen['nonceField'] ?? '')
+            . '<input type="hidden" name="redirect_to" value="' . Html::attr($redirect) . '">'
+            . '<h1>Administration email verification</h1>'
+            . '<p class="hint">Please verify that the <strong>administration email</strong> for this website is still correct.</p>'
+            . '<p class="hint">Current administration email: <strong>' . Html::esc($screen['email'] ?? '') . '</strong></p>'
+            . '<p class="hint">This email may be different from your personal email address.</p>'
+            . ($screen['form'] ?? '')
+            . '<button type="submit" name="correct-admin-email" value="1">The email is correct</button>'
+            . '<p class="hint"><a href="' . Html::attr($screen['updateUrl'] ?? '') . '">Update</a>'
+            . ($remindUrl === '' ? '' : ' &middot; <a href="' . Html::attr($remindUrl) . '">Remind me later</a>') . '</p>'
+            . '</form>', $parts);
     }
 
     /** The plain page a refused link gets: the reason, nothing else to do. */

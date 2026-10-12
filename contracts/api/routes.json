@@ -1810,7 +1810,7 @@
         },
         {
             "method": "GET",
-            "pattern": "/minn-admin/login/{segment:lost-password|reset|logout|register}",
+            "pattern": "/minn-admin/login/{segment:lost-password|reset|logout|register|confirm-email}",
             "name": "Minn\\Login\\LoginController::form",
             "handler": "Minn\\Login\\LoginController::form",
             "summary": "The sign-in, lost-password, reset, and logout pages.",
@@ -1846,7 +1846,7 @@
         },
         {
             "method": "POST",
-            "pattern": "/minn-admin/login/{segment:lost-password|reset|logout}",
+            "pattern": "/minn-admin/login/{segment:lost-password|reset|logout|confirm-email}",
             "name": "Minn\\Login\\LoginController::signIn",
             "handler": "Minn\\Login\\LoginController::signIn",
             "summary": "Handles the posted form for each of those pages.",

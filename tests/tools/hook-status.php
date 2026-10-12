@@ -14,7 +14,11 @@
  *   answers it its own way, by design (Austin decides what goes there);
  * - outside: fired only from code a single site never loads (multisite,
  *   the screens' list tables, signup and activation), which the function
- *   and class inventory leaves out too; not counted;
+ *   and class inventory leaves out too; or listed in contracts/api/
+ *   hooks-single-site.json (a function a single site loads fires it only
+ *   on a network), while the reference fired it in no scenario of the
+ *   battery (probe single-site-inert calls those functions; every request
+ *   boots wp-settings.php); not counted;
  * - missing: none of these.
  *
  * Accounted for = (fired + deadend + different) / (total - outside). Proven = the hooks
@@ -41,6 +45,7 @@ $deadClasses = array_change_key_case((array) ($deadEnds['classes'] ?? []));
 $omitted = (array) ($json('contracts/api/omitted.json')['hooks'] ?? []);
 $different = (array) ($json('contracts/api/different.json')['hooks'] ?? []);
 $weights = (array) ($json('contracts/api/hook-weights.json')['hooks'] ?? []);
+$singleSite = (array) ($json('contracts/api/hooks-single-site.json')['hooks'] ?? []);
 
 // ---- what the engine fires by name -------------------------------------------------------
 /** A firing call's name as the inventory writes it: interpolations and a joined variable as {*}. */
@@ -104,6 +109,20 @@ foreach ($differs as $hook => $where) {
     }
 }
 
+// A hook listed as firing only on a network counts as outside while the reference fired it in no scenario of
+// the battery: not in probe single-site-inert, which calls the functions that fire them, nor in any request,
+// each of which boots wp-settings.php.
+$referenceFired = [];
+foreach ($battery as $hooks) {
+    $referenceFired += array_fill_keys(array_keys((array) $hooks), true);
+}
+$inert = [];
+foreach (array_keys($singleSite) as $hook) {
+    if (isset($battery['probe:single-site-inert']) && !isset($referenceFired[$hook]) && !isset($fired[$hook]) && !isset($proven[$hook])) {
+        $inert[(string) $hook] = true;
+    }
+}
+
 // ---- each hook's status ------------------------------------------------------------------
 /** What a firing site is: 'outside' the single-site API, 'dead' (left behind on purpose), or 'live'. */
 $siteKind = static function (string $site) use ($deadFunctions, $deadClasses, $knownFunctions, $knownClasses): string {
@@ -136,6 +155,7 @@ foreach ($inventory as $name => $row) {
         $kinds = array_unique(array_map($siteKind, $sites));
         $status[$name] = match (true) {
             isset($omitted[$name]) => 'deadend',
+            isset($inert[$name]) => 'outside',
             in_array('live', $kinds, true) || $kinds === [] => isset($named[$name]) ? 'fired' : 'missing',
             in_array('dead', $kinds, true) => 'deadend',
             default => 'outside',

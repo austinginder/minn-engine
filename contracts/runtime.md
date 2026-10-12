@@ -15446,6 +15446,113 @@ the way `compat-status.php` counts its functions, and proven by a suite.
   reference's filters: adjacent posts, the tag cloud, the archives list,
   `wp_theme_json_data_*`, the register and reset-password forms.
 
+## Hooks heard as the reference hears them (2026-10-12)
+
+Probes `hook-inputs` (61 rows) and `image-resize-boxes` (42), suite
+`login-hooks` and the hook-parity battery hold these. Each was read off
+the reference by what its filters are handed, never from its source.
+
+- **Resizing.** `image_resize_dimensions` answers false without asking
+  `wp_image_resize_identical_dimensions` when every side asked for is
+  larger than the image (a side of 0 counts as larger). A box within one
+  pixel of the image on both sides asks it, 99×99 from 100×100 included;
+  1598×999 from 1600×1000 does not. Yes hands back the box worked out.
+- **Term counts.** `_update_post_term_count` asks
+  `update_post_term_count_statuses` (publish, and the taxonomy object)
+  and counts posts in those statuses. On any status change each of the
+  post type's taxonomies is asked, and only a move into or out of a
+  counted status recounts the post's terms there.
+- **Shared terms.** `_split_shared_term` really splits: the taxonomy row
+  named gets a term of its own (name, slug, group copied), its children
+  follow, `split_shared_term` says so, and `_split_terms` records it for
+  `wp_get_split_term`. A term held by one taxonomy keeps its id.
+- **Old meta names.** The deprecated `update_usermeta` and
+  `delete_usermeta` fire their own actions and none of the meta API's:
+  `update_usermeta` for a key the user has (then `updated_usermeta` when
+  the value changed; false when it did not), `added_usermeta` for a new
+  one, `delete_usermeta` and `deleted_usermeta` naming the first row.
+  `delete_metadata_by_mid` tells posts and comments by their older names
+  too (`delete_postmeta`, `delete_commentmeta`, with the row id alone).
+  `auth_{type}_{subtype}_meta_{key}` is still heard after the current
+  name, with a notice.
+- **Saves.** A post saved with no categories is handed the default first,
+  so `wp_set_post_categories` asks `default_category_post_types` only of a
+  caller that passes an empty list. `add_trashed_suffix_to_trashed_posts`
+  is asked on every save with a slug that is not a trash, a revision's
+  included.
+- **Deprecation.** Every notice goes through `wp_trigger_error`, which
+  fires `wp_trigger_error_always_run` whether or not debugging is on, and
+  hands `wp_trigger_error_trigger_error` the function, message and level.
+  `retreive_password` and `wp_blacklist_check` are heard before their
+  current names.
+- **Smaller ones.** `wp_next_scheduled` is asked only of an event that
+  exists. `wp_raise_memory_limit` asks `admin_memory_limit`,
+  `image_memory_limit` and `cron_memory_limit` by name.
+  `wp_get_nav_menu_object` is asked whether a menu was found or not. A
+  pingback, with previous approval on, is approved when its address is
+  one of the site's own posts (`url_to_postid`), as
+  `wp_auto_approve_ping` may decide otherwise; a trackback never is.
+  `validate_theme_requirements` filters only the passing answer.
+  `validate_current_theme` returning false skips the check.
+- **Theme support.** `current_theme_supports` answers false for a feature
+  the theme never added, asking nothing. Post formats, thumbnails, html5,
+  the custom header and the custom background answer a type from their
+  own list. Any other feature asked with arguments is the filter's,
+  handed true.
+- **Kses.** The URI attributes (`wp_kses_uri_attributes`) are asked only
+  when an opening tag of an allowed element that may carry attributes is
+  in the text, as the reference asks them of each such tag.
+- **The password form.** It shows "Invalid password." (the
+  `password-form-error` class, a role="alert" message, and the field
+  described by it) when a password cookie is set and the referer is
+  exactly the post's address, whatever the password;
+  `the_password_form_incorrect_password` words it, handed the post.
+- **Options.** `pre_cache_alloptions` is asked whenever the autoloaded
+  options are read from the database. The first read comes before the
+  facade loads, so the engine asks it through its own registry.
+- **apiFetch.** The nonce apiFetch is told is made on the script
+  registry's first use after boot, as the reference makes it when its
+  registry is first made, so a request that never touches scripts makes
+  no nonce.
+- **REST `_fields`.** A post's rendered title, content and excerpt are
+  built only when `_fields` asks for them; with none of them asked, the
+  post is still set up as each item is.
+- **Sign-in.** The sign-in page asks `login_remember_me_help_text`,
+  `lost_password_html_link`, `login_link_separator` and
+  `enable_login_autofocus`. The lost-password page asks
+  `lostpassword_redirect` for where its form sends the reader (kept in
+  the form) and fires `lost_password` with its errors. A post password's
+  cookie lives as `post_password_expires` says.
+- **The administration email check.** An administrator signing in once
+  `admin_email_lifespan` has passed is sent to the confirmation screen
+  first (`admin_email_check_interval`, 180 days; `redirect_to`, then
+  `action=confirm_admin_email`, then `wp_lang`). "The email is correct"
+  (nonce `confirm_admin_email`) moves the lifespan on by the interval;
+  "Remind me later" (nonce `remind_me_later_nonce`) by
+  `admin_email_remind_interval` (three days) and adds
+  `admin_email_remind_later=1` to the landing. Minn draws the screen in
+  its own sign-in design.
+- **Unique file names.** Only the current uploads folder's file list goes
+  through `pre_wp_unique_filename_file_list`; another folder is only
+  looked at.
+
+The battery's canonical scenario now records the redirect alone
+(`http:canonical-move`): the reference's answer points at the site's own
+address, which is the engine's, so following it recorded the engine's
+page on one side only. A few differences the earlier engine hid by
+coincidence are in the snapshot now: blocks render through the engine's
+own renderer rather than the HTML tag processor (so
+`wp_kses_uri_attributes` is not asked as classes are added), post terms
+are primed by the engine's own query rather than a term query, and the
+block path prints its head links itself (the register's 8514 row).
+
+**SQL counts.** `tests/tools/query-count.php` counts each page's
+statements from the server's general log for the site's database alone.
+The server's counters missed SELECTs the query cache answered and took in
+other databases' traffic. `update_post_caches` keeps the whole posts it
+is handed, and a theme's saved templates, parts and global styles are
+read in one query.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

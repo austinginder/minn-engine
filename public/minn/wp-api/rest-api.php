@@ -494,7 +494,7 @@ function rest_get_allowed_schema_keywords()
 /** The JSON schema keywords a profile keeps for a client: draft-04's whole set, the REST API's for any other (probe json-schema). */
 function wp_get_json_schema_allowed_keywords(string $schema_profile = 'rest-api'): array
 {
-    return Minn\Rest\ClientSchema::keywords($schema_profile);
+    return (array) apply_filters('wp_json_schema_allowed_keywords', Minn\Rest\ClientSchema::keywords($schema_profile), $schema_profile);
 }
 
 /** A schema trimmed to a profile's keywords for a client (Rest\ClientSchema). */

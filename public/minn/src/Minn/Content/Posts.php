@@ -43,6 +43,22 @@ final readonly class Posts
         $this->primeTerms($ids, $taxonomies);
     }
 
+    /**
+     * Keeps rows a query already read (WP_Query's whole posts), so priming
+     * those posts reads them no second time.
+     *
+     * @param list<array<string, mixed>> $rows
+     */
+    public function rememberRows(array $rows): void
+    {
+        foreach ($rows as $row) {
+            $id = (int) ($row['ID'] ?? 0);
+            if ($id > 0 && !RowCache::has('posts', $id)) {
+                RowCache::put('posts', $id, self::record($row));
+            }
+        }
+    }
+
     /** Reads the rows of the posts not read yet, in one query. @param list<int> $ids */
     public function primeRows(array $ids): void
     {
@@ -376,50 +392,6 @@ final readonly class Posts
         ) !== null;
     }
 
-    /** The post of the same type after this one, by date then id, among those the scope allows (published only by default), or null. */
-    public function next(PostRecord $post, AdjacentScope $scope = new AdjacentScope()): ?PostRecord
-    {
-        return $this->neighbour($post, '>', 'ASC', $scope);
-    }
-
-    /** The post of the same type before this one, by date then id, among those the scope allows, or null. */
-    public function previous(PostRecord $post, AdjacentScope $scope = new AdjacentScope()): ?PostRecord
-    {
-        return $this->neighbour($post, '<', 'DESC', $scope);
-    }
-
-    private function neighbour(PostRecord $post, string $operator, string $order, AdjacentScope $scope): ?PostRecord
-    {
-        $where = '';
-        $params = [$post->type, $post->date, $post->date, $post->id];
-        $where .= match ($scope->private) {
-            'all' => " AND p.post_status IN ('publish', 'private')",
-            'own' => " AND (p.post_status = 'publish' OR (p.post_status = 'private' AND p.post_author = ?))",
-            default => " AND p.post_status = 'publish'",
-        };
-        if ($scope->private === 'own') {
-            $params[] = $scope->reader;
-        }
-        $inTerms = "SELECT tr.object_id FROM {$this->db->table('term_relationships')} tr
-            JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
-            WHERE tt.taxonomy = ? AND tt.term_id IN (?)";
-        if ($scope->sameTerms !== []) {
-            $where .= " AND p.ID IN ({$inTerms})";
-            array_push($params, $scope->taxonomy, $scope->sameTerms);
-        }
-        if ($scope->excludedTerms !== []) {
-            $where .= " AND p.ID NOT IN ({$inTerms})";
-            array_push($params, $scope->taxonomy, $scope->excludedTerms);
-        }
-        return self::record($this->db->row(
-            "SELECT p.* FROM {$this->db->table('posts')} p
-             WHERE p.post_type = ?
-               AND (p.post_date {$operator} ? OR (p.post_date = ? AND p.ID {$operator} ?)){$where}
-             ORDER BY p.post_date {$order}, p.ID {$order} LIMIT 1",
-            $params,
-        ));
-    }
-
     /**
      * The newest value of a date column (post_date, post_modified, or their
      * GMT twins) among published posts of the types given, for
@@ -454,12 +426,15 @@ final readonly class Posts
     /**
      * The periods holding a published post of a type, newest first by
      * default: one row per month, year, day, or week, with the count and the
-     * earliest post date inside it.
+     * earliest post date inside it. A WHERE and JOIN given (what
+     * wp_get_archives' getarchives_where and getarchives_join answered) are
+     * used as they are.
      *
      * @return list<array{year: int, month: int, day: int, week: int, count: int, first: string}>
      */
-    public function archiveBuckets(string $granularity, string $type, string $order, int $limit): array
+    public function archiveBuckets(string $granularity, string $type, string $order, int $limit, string $where = '', string $join = ''): array
     {
+        [$where, $params] = $where === '' ? ['WHERE post_type = ? AND post_status = \'publish\'', [$type]] : [$where, []];
         $direction = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
         $group = match ($granularity) {
             'yearly' => 'YEAR(post_date)',
@@ -469,9 +444,9 @@ final readonly class Posts
         };
         $rows = $this->db->rows(
             "SELECT YEAR(post_date) AS y, MONTH(post_date) AS m, DAYOFMONTH(post_date) AS d, WEEK(post_date, " . $this->weekMode() . ") AS w, COUNT(ID) AS c, MIN(post_date) AS first
-             FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish'
+             FROM {$this->db->table('posts')} {$join} {$where}
              GROUP BY {$group} ORDER BY MIN(post_date) {$direction}" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
-            [$type],
+            $params,
         );
         return array_map(static fn (array $row): array => ['year' => (int) $row['y'], 'month' => (int) $row['m'], 'day' => (int) $row['d'], 'week' => (int) $row['w'], 'count' => (int) $row['c'], 'first' => (string) $row['first']], $rows);
     }
@@ -483,17 +458,59 @@ final readonly class Posts
     }
 
     /**
-     * Published posts of a type for a post-by-post archive, by date or by title.
+     * The JOIN, WHERE and ORDER BY of the post before ($direction "previous")
+     * or after a post, written as the reference writes them for
+     * get_adjacent_post (probe filter-inputs), for its filters to edit: kept
+     * to $sameTerms in $taxonomy when there are some, out of the $excluded
+     * terms, and published, or private too ($private "all"), or the
+     * reader's own private ones too ($private "own").
+     *
+     * @param list<int> $sameTerms
+     * @param list<int> $excluded
+     * @return array{0: string, 1: string, 2: string}
+     */
+    public function adjacentClauses(PostRecord $post, string $direction, string $taxonomy, array $sameTerms, array $excluded, string $private, int $reader): array
+    {
+        [$op, $order] = $direction === 'previous' ? ['<', 'DESC'] : ['>', 'ASC'];
+        $relationships = $this->db->table('term_relationships');
+        $taxonomies = $this->db->table('term_taxonomy');
+        $join = '';
+        $same = '';
+        if ($sameTerms !== []) {
+            $join = " INNER JOIN {$relationships} AS tr ON p.ID = tr.object_id INNER JOIN {$taxonomies} AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id";
+            $same = "AND tt.taxonomy = '" . $this->db->escape($taxonomy) . "' AND tt.term_id IN (" . implode(',', array_map('intval', $sameTerms)) . ')';
+        }
+        $outside = $excluded === [] ? '' : " AND p.ID NOT IN ( SELECT tr.object_id FROM {$relationships} tr LEFT JOIN {$taxonomies} tt ON (tr.term_taxonomy_id = tt.term_taxonomy_id) WHERE tt.term_id IN (" . implode(',', array_map('intval', $excluded)) . ') )';
+        $status = match ($private) {
+            'all' => " AND ( p.post_status = 'publish' OR p.post_status = 'private' )",
+            'own' => " AND ( p.post_status = 'publish' OR (p.post_author = {$reader} AND p.post_status = 'private') )",
+            default => " AND p.post_status = 'publish'",
+        };
+        $date = "'" . $this->db->escape($post->date) . "'";
+        $where = "WHERE (p.post_date {$op} {$date} OR (p.post_date = {$date} AND p.ID {$op} {$post->id})) AND p.post_type = '" . $this->db->escape($post->type) . "' " . $same . $outside . $status;
+        return [$join, $where, "ORDER BY p.post_date {$order}, p.ID {$order} LIMIT 1"];
+    }
+
+    /** The post the clauses find (as their filters left them), or 0. */
+    public function adjacentId(string $join, string $where, string $sort): int
+    {
+        return (int) $this->db->value("SELECT p.ID FROM {$this->db->table('posts')} AS p {$join} {$where} {$sort}");
+    }
+
+    /**
+     * Published posts of a type for a post-by-post archive, by date or by
+     * title; a WHERE and JOIN given are used as they are (archiveBuckets).
      *
      * @return list<PostRecord>
      */
-    public function archiveList(string $type, string $orderBy, string $order, int $limit): array
+    public function archiveList(string $type, string $orderBy, string $order, int $limit, string $where = '', string $join = ''): array
     {
         $direction = strtoupper($order) === 'ASC' ? 'ASC' : 'DESC';
         $column = $orderBy === 'title' ? 'post_title' : 'post_date';
+        [$where, $params] = $where === '' ? ['WHERE post_type = ? AND post_status = \'publish\'', [$type]] : [$where, []];
         return PostRecord::fromRows($this->db->rows(
-            "SELECT * FROM {$this->db->table('posts')} WHERE post_type = ? AND post_status = 'publish' ORDER BY {$column} {$direction}" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
-            [$type],
+            "SELECT * FROM {$this->db->table('posts')} {$join} {$where} ORDER BY {$column} {$direction}" . ($limit > 0 ? ' LIMIT ' . $limit : ''),
+            $params,
         ));
     }
 

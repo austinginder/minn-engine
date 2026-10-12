@@ -1,0 +1,430 @@
+[
+    [
+        "post template tags",
+        [
+            [
+                "post_thumbnail_id",
+                [
+                    0,
+                    "post:post:zz-fi2-one"
+                ]
+            ],
+            [
+                "has_post_thumbnail",
+                [
+                    false,
+                    "{zz-fi2-one}",
+                    0
+                ]
+            ],
+            [
+                "post_thumbnail_id",
+                [
+                    0,
+                    "post:post:zz-fi2-one"
+                ]
+            ],
+            [
+                "is_sticky",
+                [
+                    false,
+                    "{zz-fi2-one}"
+                ]
+            ],
+            [
+                "post_thumbnail_id",
+                [
+                    0,
+                    "post:post:zz-fi2-one"
+                ]
+            ],
+            [
+                "has_post_thumbnail",
+                [
+                    false,
+                    "{zz-fi2-one}",
+                    0
+                ]
+            ],
+            [
+                "is_sticky",
+                [
+                    false,
+                    "{zz-fi2-one}"
+                ]
+            ],
+            [
+                "post_class_taxonomies",
+                [
+                    {
+                        "category": "category",
+                        "post_tag": "post_tag",
+                        "post_format": "post_format"
+                    },
+                    "{zz-fi2-one}",
+                    [
+                        "post-{zz-fi2-one}",
+                        "post",
+                        "type-post",
+                        "status-publish",
+                        "format-standard",
+                        "hentry"
+                    ],
+                    []
+                ]
+            ],
+            [
+                "the_time",
+                [
+                    "2002",
+                    "Y"
+                ]
+            ],
+            [
+                "the_category_list",
+                [
+                    [
+                        "term:category:uncategorized"
+                    ],
+                    "{zz-fi2-one}"
+                ]
+            ],
+            [
+                "wp_generator_type",
+                [
+                    "xhtml"
+                ]
+            ],
+            [
+                "wp_get_attachment_link_attributes",
+                [
+                    {
+                        "href": "{home}/wp-content/uploads/zz-fi2.png"
+                    },
+                    "{zz-fi2-file}"
+                ]
+            ]
+        ]
+    ],
+    [
+        "posts pagination",
+        [
+            [
+                "the_posts_pagination_args",
+                [
+                    {
+                        "mid_size": 1,
+                        "prev_text": "Previous",
+                        "next_text": "Next",
+                        "screen_reader_text": "Posts pagination",
+                        "aria_label": "Posts pagination",
+                        "class": "pagination"
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "users list",
+        [
+            [
+                "wp_list_users_args",
+                [
+                    {
+                        "orderby": "name",
+                        "order": "ASC",
+                        "number": "",
+                        "exclude": "",
+                        "include": "",
+                        "fields": "ids"
+                    },
+                    {
+                        "orderby": "name",
+                        "order": "ASC",
+                        "number": "",
+                        "exclude_admin": true,
+                        "show_fullname": false,
+                        "feed": "",
+                        "feed_image": "",
+                        "feed_type": "",
+                        "echo": false,
+                        "style": "list",
+                        "html": true,
+                        "exclude": "",
+                        "include": ""
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "comment template tags",
+        [
+            [
+                "comment_reply_link_args",
+                [
+                    {
+                        "add_below": "comment",
+                        "respond_id": "respond",
+                        "reply_text": "Reply",
+                        "reply_to_text": "Reply to %s",
+                        "login_text": "Log in to Reply",
+                        "max_depth": 3,
+                        "depth": 1,
+                        "before": "",
+                        "after": "",
+                        "show_reply_to_text": false
+                    },
+                    "comment:zz-fi2-comment",
+                    "post:post:zz-fi2-one"
+                ]
+            ],
+            [
+                "comment_author_link_rel",
+                [
+                    [
+                        "ugc",
+                        "external",
+                        "nofollow"
+                    ],
+                    "comment:zz-fi2-comment"
+                ]
+            ],
+            [
+                "respond_link",
+                [
+                    "{home}/zz-fi2-two/#respond",
+                    "{zz-fi2-two}"
+                ]
+            ],
+            [
+                "comments_popup_link_attributes",
+                [
+                    ""
+                ]
+            ],
+            [
+                "comments_popup_link_attributes",
+                [
+                    ""
+                ]
+            ]
+        ]
+    ],
+    [
+        "page queries",
+        [
+            [
+                "get_pages_query_args",
+                [
+                    {
+                        "orderby": {
+                            "menu_order": "ASC",
+                            "post_title": "ASC"
+                        },
+                        "order": "ASC",
+                        "posts_per_page": -1,
+                        "offset": 0,
+                        "post_type": "page",
+                        "post_status": [
+                            "publish"
+                        ],
+                        "update_post_term_cache": false,
+                        "update_post_meta_cache": false,
+                        "ignore_sticky_posts": true,
+                        "no_found_rows": true,
+                        "post__in": [
+                            2
+                        ]
+                    },
+                    {
+                        "child_of": 0,
+                        "sort_order": "ASC",
+                        "sort_column": "menu_order, post_title",
+                        "hierarchical": 1,
+                        "exclude": [],
+                        "include": [
+                            2
+                        ],
+                        "meta_key": "",
+                        "meta_value": "",
+                        "authors": "",
+                        "parent": -1,
+                        "exclude_tree": [],
+                        "number": "",
+                        "offset": 0,
+                        "post_type": "page",
+                        "post_status": "publish"
+                    }
+                ]
+            ],
+            [
+                "get_pages_query_args",
+                [
+                    {
+                        "orderby": {
+                            "post_title": "DESC"
+                        },
+                        "order": "DESC",
+                        "post__not_in": [
+                            2
+                        ],
+                        "meta_key": "zz",
+                        "meta_value": "v",
+                        "posts_per_page": 3,
+                        "offset": 1,
+                        "post_type": "page",
+                        "post_status": [
+                            "publish",
+                            "private"
+                        ],
+                        "update_post_term_cache": false,
+                        "update_post_meta_cache": false,
+                        "ignore_sticky_posts": true,
+                        "no_found_rows": true,
+                        "author__in": [
+                            1
+                        ],
+                        "post_parent": 0
+                    },
+                    {
+                        "child_of": 0,
+                        "sort_order": "DESC",
+                        "sort_column": "post_title",
+                        "hierarchical": 1,
+                        "exclude": "2",
+                        "include": [],
+                        "meta_key": "zz",
+                        "meta_value": "v",
+                        "authors": "1",
+                        "parent": 0,
+                        "exclude_tree": [],
+                        "number": 3,
+                        "offset": 1,
+                        "post_type": "page",
+                        "post_status": "publish,private"
+                    }
+                ]
+            ],
+            [
+                "get_pages_query_args",
+                [
+                    {
+                        "orderby": {
+                            "post_title": "ASC"
+                        },
+                        "order": "ASC",
+                        "post__not_in": [],
+                        "meta_key": "",
+                        "meta_value": "",
+                        "posts_per_page": -1,
+                        "offset": 0,
+                        "post_type": "page",
+                        "post_status": [
+                            "publish"
+                        ],
+                        "update_post_term_cache": false,
+                        "update_post_meta_cache": false,
+                        "ignore_sticky_posts": true,
+                        "no_found_rows": true
+                    },
+                    {
+                        "child_of": 2,
+                        "sort_order": "ASC",
+                        "sort_column": "post_title",
+                        "hierarchical": 0,
+                        "exclude": [],
+                        "include": [],
+                        "meta_key": "",
+                        "meta_value": "",
+                        "authors": "",
+                        "parent": -1,
+                        "exclude_tree": "9",
+                        "number": "",
+                        "offset": 0,
+                        "post_type": "page",
+                        "post_status": "publish"
+                    }
+                ]
+            ]
+        ]
+    ],
+    [
+        "queries and links",
+        [
+            [
+                "get_pages_query_args",
+                [
+                    {
+                        "orderby": {
+                            "post_title": "ASC"
+                        },
+                        "order": "ASC",
+                        "post__not_in": [],
+                        "meta_key": "",
+                        "meta_value": "",
+                        "posts_per_page": 2,
+                        "offset": 0,
+                        "post_type": "page",
+                        "post_status": [
+                            "publish"
+                        ],
+                        "update_post_term_cache": false,
+                        "update_post_meta_cache": false,
+                        "ignore_sticky_posts": true,
+                        "no_found_rows": true
+                    },
+                    {
+                        "child_of": 0,
+                        "sort_order": "ASC",
+                        "sort_column": "post_title",
+                        "hierarchical": 1,
+                        "exclude": [],
+                        "include": [],
+                        "meta_key": "",
+                        "meta_value": "",
+                        "authors": "",
+                        "parent": -1,
+                        "exclude_tree": [],
+                        "number": 2,
+                        "offset": 0,
+                        "post_type": "page",
+                        "post_status": "publish"
+                    }
+                ]
+            ],
+            [
+                "term_exists_default_query_args",
+                [
+                    {
+                        "get": "all",
+                        "fields": "all",
+                        "number": 1,
+                        "update_term_meta_cache": false,
+                        "order": "ASC",
+                        "orderby": "term_id",
+                        "suppress_filter": true,
+                        "taxonomy": "category"
+                    },
+                    "zz-fi2-nothing",
+                    "category",
+                    null
+                ]
+            ],
+            [
+                "pre_term_link",
+                [
+                    "/category/%category%",
+                    "term:category:uncategorized"
+                ]
+            ],
+            [
+                "wp_count_attachments",
+                [
+                    "object:stdClass",
+                    ""
+                ]
+            ]
+        ]
+    ]
+]

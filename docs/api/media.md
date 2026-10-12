@@ -6,12 +6,12 @@ uploads, image sizes and attachment metadata
 |---|---|---|---|
 | [`AvifInfo`](#avifinfo) | final class | 142 | An AVIF file's primary image as wp_get_avif_info reports it (probe |
 | [`Canvas`](#canvas) | final readonly class | 168 | One GD bitmap and the operations the media layer needs on it. Every |
-| [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
+| [`Gallery`](#gallery) | final class | 73 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
-| [`Sizing`](#sizing) | final class | 239 | The image size arithmetic the media functions share: the crop or scale a |
+| [`Sizing`](#sizing) | final class | 249 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 89 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 135 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
@@ -124,14 +124,25 @@ The single quotes around the wrapper attributes and the tab-indented item
 body are the reference's, and themes have styled against them for long
 enough that they are contract rather than formatting.
 
-### static `render(array $items, array $args, int $instance, int $postId): string`
+### static `render(array $items, array $args, int $instance, int $postId, ?string $opening = NULL): string`
 
 The gallery shortcode's HTML for these attachments.
 
 - `@param list<array{icon: string, orientation: string, caption: string, caption_id: string}> $items`
 - `@param array{itemtag: string, icontag: string, captiontag: string, columns: int, size: string} $args`
 
-Internals: `caption()` (private, line 49), `tag()` (private, line 59), `token()` (private, line 66)
+### static `opening(array $args, int $instance, int $postId): string`
+
+The gallery's opening element: its instance id, its post, columns and size as classes.
+
+### static `defaultStyle(int $instance, int $columns): string`
+
+The style block printed before a gallery when use_default_gallery_style
+asks for it (themes without HTML5 galleries), as the reference prints
+it (probe filter-inputs-3): the items floated in equal whole-percent
+columns, a border on the images, the caption flush left.
+
+Internals: `caption()` (private, line 68), `tag()` (private, line 78), `token()` (private, line 85)
 
 
 ## Icons
@@ -263,10 +274,17 @@ of a limit it was constrained by snaps to that limit.
 ### static `resize(int $origW, int $origH, int $destW, int $destH, bool $crop, Closure $constrain): ?array`
 
 The GD-style resize box (dst x, dst y, src x, src y, dst w, dst h, src w, src h),
-or null when the image would only grow or nothing changes.
+or null when every asked dimension is larger than the image (nothing to make).
 
 - `@param Closure(int, int, int, int): array{0: int, 1: int} $constrain scales a box into a maximum`
 - `@return array{0: int, 1: int, 2: int, 3: int, 4: int, 5: int, 6: int, 7: int}|null`
+
+### static `sameSize(array $box, int $origW, int $origH): bool`
+
+Whether a resize box makes the image's own size again, a pixel either
+way counting as rounding.
+
+- `@param array{0: int, 1: int, 2: int, 3: int, 4: int, 5: int, 6: int, 7: int} $box`
 
 ### static `intermediate(array $meta, array|string $size, ?string $fileUrl, Closure $editorConstrain, Closure $matchesRatio): ?array`
 
@@ -282,14 +300,15 @@ file's.
 - `@param Closure(int, int, int, int): bool $matchesRatio`
 - `@return array<string, mixed>|null`
 
-### static `sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl): array`
+### static `sources(array $sizeArray, string $src, array $meta, Closure $matchesRatio, string $uploadsUrl, Closure $maxWidth): array`
 
 The srcset candidates by width: every size on the image's ratio (and
-the same edit, when the file was edited), the source itself winning a
-width clash.
+the same edit, when the file was edited) no wider than the cap, the
+source itself winning a width clash and passing the cap.
 
 - `@param array{0: int, 1: int} $sizeArray`
 - `@param Closure(int, int, int, int): bool $matchesRatio`
+- `@param Closure(array{0: int, 1: int}): int $maxWidth the widest candidate (max_srcset_image_width; 0 for no cap), asked before the folder is checked`
 - `@return array<int, array{url: string, descriptor: string, value: int}>`
 
 ### static `srcset(array $sources): ?string`
@@ -310,7 +329,7 @@ image-downsize).
 
 - `@return array{0: string, 1: int, 2: int}|null the file's name, width and height`
 
-Internals: `join()` (private, line 231)
+Internals: `join()` (private, line 241)
 
 
 ## Upload

@@ -6,10 +6,10 @@ shared SQL fragments
 |---|---|---|---|
 | [`AuthorPostsSql`](#authorpostssql) | final class | 30 | get_posts_by_author_sql as the reference writes it: for each type, its |
 | [`CommentOrder`](#commentorder) | final class | 100 | WP_Comment_Query's ORDER BY and LIMIT as the reference writes them |
-| [`DateSql`](#datesql) | final class | 285 | The WHERE fragment of a date query in the reference's shape: before and |
-| [`MetaSql`](#metasql) | final class | 278 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
+| [`DateSql`](#datesql) | final class | 301 | The WHERE fragment of a date query in the reference's shape: before and |
+| [`MetaSql`](#metasql) | final class | 291 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
-| [`NetworkSql`](#networksql) | final class | 255 | The SQL WP_Site_Query and WP_Network_Query build from their variables |
+| [`NetworkSql`](#networksql) | final class | 257 | The SQL WP_Site_Query and WP_Network_Query build from their variables |
 | [`PostOrder`](#postorder) | final class | 118 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
@@ -122,6 +122,10 @@ Whether a date query is one clause rather than a group of them.
 
 A column name as "table.column", the default for anything unknown.
 
+### `checkColumnsWith(Closure $validColumns): self`
+
+Has the valid columns pass through a filter (WP_Date_Query hands it date_query_valid_columns).
+
 ### `build(array $queries): string`
 
 The WHERE fragment for a date query.
@@ -164,7 +168,7 @@ in the site's zone. Missing parts start (or end) the unit.
 
 A comparison upper-cased, = for anything the reference does not know.
 
-Internals: `validDate()` (private, line 77), `partExpressions()` (private, line 233), `group()` (private, line 241), `clause()` (private, line 255)
+Internals: `validDate()` (private, line 82), `partExpressions()` (private, line 251), `group()` (private, line 259), `clause()` (private, line 273)
 
 
 ## MetaSql
@@ -223,6 +227,10 @@ alias shared with a compatible sibling or a new join.
 
 - `@return array{where: list<string>, join: list<string>}`
 
+### `filterAliasesWith(Closure $filter): self`
+
+Has every clause's shared alias (or false) pass through a filter (WP_Meta_Query hands it meta_query_find_compatible_table_alias).
+
 ### `compatibleAlias(array $clause, array $parent): string|false`
 
 The alias of a sibling the clause can share (find_compatible_table_alias):
@@ -243,7 +251,7 @@ Whether any level of the query relates two or more clauses by OR.
 
 The CAST target for a clause type; CHAR means no cast.
 
-Internals: `normalized()` (private, line 75), `hasOrWithNotExists()` (private, line 184), `clause()` (private, line 217), `keyClause()` (private, line 235), `valueClause()` (private, line 247), `values()` (private, line 259), `newAlias()` (private, line 268)
+Internals: `normalized()` (private, line 80), `hasOrWithNotExists()` (private, line 199), `clause()` (private, line 232), `keyClause()` (private, line 250), `valueClause()` (private, line 262), `values()` (private, line 274), `newAlias()` (private, line 283)
 
 
 ## MimeWhere
@@ -284,12 +292,14 @@ __construct(object $wpdb)
 ```
 
 
-### `siteWhere(array $qv): array`
+### `siteWhere(array $qv, ?Closure $columns = NULL): array`
 
 A site query's conditions, in the reference's order: the ids, the
-networks, domains, paths, the flags, the languages, then the search.
+networks, domains, paths, the flags, the languages, then the search
+(across the columns asked for, as $columns lets plugins change them).
 
 - `@param array<string, mixed> $qv`
+- `@param (\Closure(list<string>): list<string>)|null $columns`
 - `@return list<string>`
 
 ### `networkWhere(array $qv): array`
@@ -371,7 +381,7 @@ A table's row by its id, or null when there is none.
 
 The rows a counted request found.
 
-Internals: `likeAny()` (private, line 108), `orderby()` (private, line 211), `field()` (private, line 234), `ints()` (private, line 240), `strings()` (private, line 252), `list()` (private, line 264)
+Internals: `likeAny()` (private, line 110), `orderby()` (private, line 213), `field()` (private, line 236), `ints()` (private, line 242), `strings()` (private, line 254), `list()` (private, line 266)
 
 
 ## PostOrder

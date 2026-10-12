@@ -44,6 +44,12 @@ final class RenderedFields
      *
      * @param Closure(\WP_Post): mixed $render
      */
+    /** The post made current and set up for a response that renders none of its text, as the reference sets up every item it prepares. */
+    public static function setUp(PostRecord $p): void
+    {
+        self::withPost($p, static fn (): null => null);
+    }
+
     private static function withPost(PostRecord $p, Closure $render): mixed
     {
         $post = \get_post($p->id);

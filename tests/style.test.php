@@ -209,7 +209,7 @@ foreach ($missingCeiling as $group => $ceiling) {
 // attribute, judged by the router before the handler runs. Routes that still
 // decide inside their body are counted here, and the count only falls: lower
 // it when a controller loses its last bare route, never raise it.
-$bareRouteCeiling = 7;
+$bareRouteCeiling = 6;
 $bareRoutes = 0;
 $routesTotal = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -255,11 +255,11 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 // array|PostRecord unions that bridge callers still holding rows, and the
 // bracket reads of post columns that the record's properties replace.
 $unionCeiling = 4;
-$commentBracketCeiling = 78;
+$commentBracketCeiling = 59;
 $commentBrackets = 0;
-$userBracketCeiling = 73;
+$userBracketCeiling = 70;
 $userBrackets = 0;
-$bracketCeiling = 211;
+$bracketCeiling = 210;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -387,8 +387,8 @@ $check('api docs: docs/api/ is current', is_array($docs) && ($docs['stale'] ?? t
 // or more (take the two or three the class calls; Services makes the rest
 // cheap). Lower a ceiling when a class loses its last offender.
 $undocumentedCeiling = 0;
-$boolParamCeiling = 79;
-$wideConstructorCeiling = 24;
+$boolParamCeiling = 77;
+$wideConstructorCeiling = 21;
 $model = json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/minn.json'), true);
 $undocumented = 0;
 $boolParams = 0;
@@ -425,9 +425,9 @@ $check("engine: constructors with six or more parameters stay at or under {$wide
 // ceiling only falls.
 $deadNameCeiling = 0;
 $liveCeiling = 20;
-$optionReadCeiling = 159;
+$optionReadCeiling = 154;
 $rawOptionWriteCeiling = 7;
-$rawMetaWriteCeiling = 10;
+$rawMetaWriteCeiling = 9;
 $postRowCeiling = 8;
 $linkHrefCeiling = 77;
 $htmlspecialcharsCeiling = 14;

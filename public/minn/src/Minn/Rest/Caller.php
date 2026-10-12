@@ -53,6 +53,12 @@ final class Caller
         return $resolved instanceof Authenticated ? $resolved->applicationPassword === null : $resolved->code === 'rest_cookie_invalid_nonce';
     }
 
+    /** Has the cookie and nonce checked again on the next question: a plugin's nonce lifetime (nonce_life) is heard only once plugins load. */
+    public function recheck(): void
+    {
+        $this->resolved = null;
+    }
+
     /** Settles the caller as one whose cookie's nonce does not vouch for the user plugin code named. */
     public function resolveInvalidNonce(): void
     {

@@ -25,12 +25,14 @@ final class NetworkSql
 
     /**
      * A site query's conditions, in the reference's order: the ids, the
-     * networks, domains, paths, the flags, the languages, then the search.
+     * networks, domains, paths, the flags, the languages, then the search
+     * (across the columns asked for, as $columns lets plugins change them).
      *
      * @param array<string, mixed> $qv
+     * @param (\Closure(list<string>): list<string>)|null $columns
      * @return list<string>
      */
-    public function siteWhere(array $qv): array
+    public function siteWhere(array $qv, ?\Closure $columns = null): array
     {
         $id = (string) $this->wpdb->blogs . '.blog_id';
         $where = [];
@@ -55,8 +57,8 @@ final class NetworkSql
         }
         $where = [...$where, ...$this->ints('lang_id', $qv['lang__in'] ?? '', $qv['lang__not_in'] ?? '')];
         if ((string) ($qv['search'] ?? '') !== '') {
-            $columns = array_values(array_intersect((array) ($qv['search_columns'] ?? []), ['domain', 'path'])) ?: ['domain', 'path'];
-            $where[] = $this->siteSearch((string) $qv['search'], $columns);
+            $searched = array_values(array_intersect((array) ($qv['search_columns'] ?? []), ['domain', 'path'])) ?: ['domain', 'path'];
+            $where[] = $this->siteSearch((string) $qv['search'], $columns === null ? $searched : $columns($searched));
         }
         return $where;
     }

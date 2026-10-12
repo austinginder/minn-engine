@@ -1,0 +1,2136 @@
+[
+    [
+        "gallery",
+        [
+            [
+                "use_default_gallery_style",
+                [
+                    false
+                ]
+            ],
+            [
+                "gallery_style",
+                [
+                    "<div id='gallery-1' class='gallery galleryid-{zz-fi3} gallery-columns-3 gallery-size-thumbnail'>"
+                ]
+            ]
+        ]
+    ],
+    [
+        "image helpers",
+        [
+            [
+                "editor_max_image_size",
+                [
+                    [
+                        1024,
+                        1024
+                    ],
+                    "large",
+                    "display"
+                ]
+            ],
+            [
+                "wp_image_resize_identical_dimensions",
+                [
+                    false,
+                    100,
+                    100
+                ]
+            ],
+            [
+                "max_srcset_image_width",
+                [
+                    2048,
+                    [
+                        1200,
+                        600
+                    ]
+                ]
+            ],
+            [
+                "pre_wp_get_loading_optimization_attributes",
+                [
+                    false,
+                    "img",
+                    {
+                        "width": 100,
+                        "height": 100
+                    },
+                    "the_content"
+                ]
+            ],
+            [
+                "wp_loading_optimization_force_header_contexts",
+                [
+                    {
+                        "template_part_header": true,
+                        "get_header_image_tag": true
+                    }
+                ]
+            ],
+            [
+                "pre_attachment_url_to_postid",
+                [
+                    null,
+                    "{home}/wp-content/uploads/zz-nothing.png"
+                ]
+            ]
+        ]
+    ],
+    [
+        "formatting",
+        [
+            [
+                "run_wptexturize",
+                [
+                    true
+                ]
+            ],
+            [
+                "no_texturize_tags",
+                [
+                    [
+                        "pre",
+                        "code",
+                        "kbd",
+                        "style",
+                        "script",
+                        "tt"
+                    ]
+                ]
+            ],
+            [
+                "format_to_edit",
+                [
+                    "zz <b>x</b>"
+                ]
+            ],
+            [
+                "pre_ent2ncr",
+                [
+                    null,
+                    "&hellip; &amp;"
+                ]
+            ],
+            [
+                "wp_sprintf",
+                [
+                    "%s and ",
+                    "zz"
+                ]
+            ],
+            [
+                "wp_sprintf",
+                [
+                    "a and b",
+                    [
+                        "a",
+                        "b"
+                    ]
+                ]
+            ],
+            [
+                "nonce_life",
+                [
+                    86400,
+                    "zz-fi3"
+                ]
+            ]
+        ]
+    ],
+    [
+        "helpers",
+        [
+            [
+                "pre_wp_unique_filename_file_list",
+                [
+                    null,
+                    "{uploads}/2026/10",
+                    "zz-fi3-unique.txt"
+                ]
+            ],
+            [
+                "wp_json_schema_allowed_keywords",
+                [
+                    [
+                        "title",
+                        "description",
+                        "default",
+                        "type",
+                        "format",
+                        "enum",
+                        "items",
+                        "properties",
+                        "additionalProperties",
+                        "patternProperties",
+                        "minProperties",
+                        "maxProperties",
+                        "minimum",
+                        "maximum",
+                        "exclusiveMinimum",
+                        "exclusiveMaximum",
+                        "multipleOf",
+                        "minLength",
+                        "maxLength",
+                        "pattern",
+                        "minItems",
+                        "maxItems",
+                        "uniqueItems",
+                        "anyOf",
+                        "oneOf"
+                    ],
+                    "rest-api"
+                ]
+            ],
+            [
+                "pre_count_many_users_posts",
+                [
+                    null,
+                    [
+                        1
+                    ],
+                    "post",
+                    false
+                ]
+            ],
+            [
+                "date_query_valid_columns",
+                [
+                    [
+                        "post_date",
+                        "post_date_gmt",
+                        "post_modified",
+                        "post_modified_gmt",
+                        "comment_date",
+                        "comment_date_gmt",
+                        "user_registered"
+                    ]
+                ]
+            ],
+            [
+                "meta_query_find_compatible_table_alias",
+                [
+                    false,
+                    {
+                        "key": "zz_a",
+                        "value": "1",
+                        "compare": "=",
+                        "compare_key": "="
+                    },
+                    {
+                        "0": {
+                            "key": "zz_a",
+                            "value": "1",
+                            "compare": "=",
+                            "compare_key": "="
+                        },
+                        "1": {
+                            "key": "zz_b",
+                            "value": "2",
+                            "compare": "!="
+                        },
+                        "relation": "AND"
+                    },
+                    "object:WP_Meta_Query"
+                ]
+            ],
+            [
+                "meta_query_find_compatible_table_alias",
+                [
+                    false,
+                    {
+                        "key": "zz_b",
+                        "value": "2",
+                        "compare": "!=",
+                        "compare_key": "="
+                    },
+                    {
+                        "0": {
+                            "key": "zz_a",
+                            "value": "1",
+                            "compare": "=",
+                            "compare_key": "=",
+                            "alias": "wp_postmeta",
+                            "cast": "CHAR"
+                        },
+                        "1": {
+                            "key": "zz_b",
+                            "value": "2",
+                            "compare": "!=",
+                            "compare_key": "="
+                        },
+                        "relation": "AND"
+                    },
+                    "object:WP_Meta_Query"
+                ]
+            ]
+        ]
+    ],
+    [
+        "transients",
+        [
+            [
+                "pre_set_transient_zz_fi3",
+                [
+                    "x",
+                    60,
+                    "zz_fi3"
+                ]
+            ],
+            [
+                "set_transient",
+                [
+                    "zz_fi3",
+                    "x",
+                    60
+                ]
+            ],
+            [
+                "setted_transient",
+                [
+                    "zz_fi3",
+                    "x",
+                    60
+                ]
+            ],
+            [
+                "pre_set_site_transient_zz_fi3",
+                [
+                    "y",
+                    "zz_fi3"
+                ]
+            ],
+            [
+                "set_site_transient",
+                [
+                    "zz_fi3",
+                    "y",
+                    60
+                ]
+            ],
+            [
+                "setted_site_transient",
+                [
+                    "zz_fi3",
+                    "y",
+                    60
+                ]
+            ]
+        ]
+    ],
+    [
+        "upload bits",
+        [
+            [
+                "wp_upload_bits",
+                [
+                    {
+                        "name": "zz-fi3-bits.txt",
+                        "bits": "zz",
+                        "time": null
+                    }
+                ]
+            ],
+            [
+                "pre_wp_unique_filename_file_list",
+                [
+                    null,
+                    "{uploads}/2026/10",
+                    "zz-fi3-bits.txt"
+                ]
+            ]
+        ]
+    ],
+    [
+        "srcset cap",
+        [
+            [
+                "no sizes",
+                false,
+                []
+            ],
+            [
+                "no width",
+                false,
+                []
+            ],
+            [
+                "another folder",
+                false,
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                1200,
+                                600
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "wide sizes",
+                "{home}/wp-content/uploads/zz.png 3000w, {home}/wp-content/uploads/zz-300.png 300w, {home}/wp-content/uploads/zz-2048.png 2048w",
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                1200,
+                                600
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a wide source",
+                "{home}/wp-content/uploads/zz-2560.png 2560w, {home}/wp-content/uploads/zz-300.png 300w, {home}/wp-content/uploads/zz-2048.png 2048w",
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                2560,
+                                1280
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "cap 0",
+                "{home}/wp-content/uploads/zz.png 3000w, {home}/wp-content/uploads/zz-300.png 300w, {home}/wp-content/uploads/zz-2048.png 2048w, {home}/wp-content/uploads/zz-2560.png 2560w",
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                1200,
+                                600
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "cap 500",
+                "{home}/wp-content/uploads/zz.png 3000w, {home}/wp-content/uploads/zz-300.png 300w",
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                1200,
+                                600
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "cap as a string",
+                "{home}/wp-content/uploads/zz.png 3000w, {home}/wp-content/uploads/zz-300.png 300w, {home}/wp-content/uploads/zz-900.png 900w",
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                1200,
+                                600
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "cap false",
+                "{home}/wp-content/uploads/zz.png 3000w, {home}/wp-content/uploads/zz-300.png 300w, {home}/wp-content/uploads/zz-2048.png 2048w, {home}/wp-content/uploads/zz-2560.png 2560w",
+                [
+                    [
+                        "max_srcset_image_width",
+                        [
+                            2048,
+                            [
+                                1200,
+                                600
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "loading optimization",
+        [
+            [
+                "an image in the content",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe",
+                [
+                    {
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a div",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "div",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "the template",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": "eager"
+                            },
+                            "template"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a header part",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "template_part_header"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a small header image",
+                [
+                    {
+                        "decoding": "async"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "get_header_image_tag"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a header part, no size",
+                [
+                    {
+                        "decoding": "async"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            [],
+                            "template_part_header"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe in the header",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "template_part_header"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a widget",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "widget_text_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "eager",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": "eager"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "lazy",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": "lazy"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "loading false",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": false
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "loading null",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": null
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "loading LAZY",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": "LAZY"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority high",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "high"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority low",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "low"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "low"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority auto",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "auto",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "auto"
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority HIGH",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "HIGH"
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority empty",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": ""
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority high, eager",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "high",
+                                "loading": "eager"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority low, lazy",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "low"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "low",
+                                "loading": "lazy"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority low, eager",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "low"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "low",
+                                "loading": "eager"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority auto, eager",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "auto"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "auto",
+                                "loading": "eager"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority auto, lazy",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "auto",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "auto",
+                                "loading": "lazy"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "fetchpriority high, no size",
+                [
+                    {
+                        "decoding": "async"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "fetchpriority": "high"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "lazy, no size",
+                [
+                    {
+                        "decoding": "async"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "loading": "lazy"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "width only",
+                [
+                    {
+                        "decoding": "async"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "width zero",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 0,
+                                "height": 800
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "sizes as strings",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": "800",
+                                "height": "800"
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "decoding sync",
+                [
+                    {
+                        "decoding": "sync",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "decoding": "sync"
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "decoding empty",
+                [
+                    {
+                        "decoding": "",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "decoding": ""
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe with decoding",
+                [
+                    {
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "decoding": "sync"
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe, eager",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "loading": "eager"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe, fetchpriority high",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "high"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe, fetchpriority low",
+                [
+                    {
+                        "fetchpriority": "low"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            {
+                                "width": 800,
+                                "height": 800,
+                                "fetchpriority": "low"
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an iframe, no size",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "iframe",
+                            [],
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "the content as a header",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a small image as a header",
+                [
+                    {
+                        "decoding": "async"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "no header contexts",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "template_part_header"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a header context set false",
+                [
+                    {
+                        "decoding": "async",
+                        "fetchpriority": "high"
+                    },
+                    false
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "template_part_header"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "header contexts as a string",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 800,
+                                "height": 800
+                            },
+                            "template_part_header"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a plugin answers",
+                [
+                    {
+                        "loading": "zz"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a plugin answers empty",
+                [
+                    [],
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a plugin answers a string",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "a plugin answers true",
+                [
+                    {
+                        "decoding": "async",
+                        "loading": "lazy"
+                    },
+                    true
+                ],
+                [
+                    [
+                        "pre_wp_get_loading_optimization_attributes",
+                        [
+                            false,
+                            "img",
+                            {
+                                "width": 100,
+                                "height": 100
+                            },
+                            "the_content"
+                        ]
+                    ],
+                    [
+                        "wp_loading_optimization_force_header_contexts",
+                        [
+                            {
+                                "template_part_header": true,
+                                "get_header_image_tag": true
+                            }
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "nonce lifetime",
+        [
+            [
+                "made, no action",
+                10,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            -1
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "made",
+                10,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "checked",
+                1,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ],
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "the tick",
+                true,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            -1
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "the tick, an int action",
+                true,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            5
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "the tick, an hour",
+                true,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "checked, an hour",
+                1,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ],
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "the tick, a lifetime as a string",
+                true,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3"
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "an hour makes another nonce",
+                true,
+                [
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3-b"
+                        ]
+                    ],
+                    [
+                        "nonce_life",
+                        [
+                            86400,
+                            "zz-fi3-b"
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    [
+        "texturize",
+        [
+            [
+                "reset",
+                "&#8220;a&#8221; &#8212; b &#038; c <pre>\"p\" -- &</pre> <textarea>&#8220;t&#8221; &#8212; &#038;</textarea> <b>&#8220;b&#8221; &#8212; &#038;</b> [code]&#8221;s&#8221;[/code]",
+                [
+                    [
+                        "run_wptexturize",
+                        [
+                            true
+                        ]
+                    ],
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "again",
+                "&#8220;a&#8221; &#8212; b &#038; c <pre>\"p\" -- &</pre> <textarea>&#8220;t&#8221; &#8212; &#038;</textarea> <b>&#8220;b&#8221; &#8212; &#038;</b> [code]&#8221;s&#8221;[/code]",
+                [
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "empty",
+                "",
+                []
+            ],
+            [
+                "zero",
+                "0",
+                []
+            ],
+            [
+                "null",
+                null,
+                []
+            ],
+            [
+                "spaces",
+                "   ",
+                [
+                    [
+                        "run_wptexturize",
+                        [
+                            true
+                        ]
+                    ],
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "b skipped",
+                "&#8220;a&#8221; &#8212; b &#038; c <pre>&#8220;p&#8221; &#8212; &#038;</pre> <textarea>&#8220;t&#8221; &#8212; &#038;</textarea> <b>\"b\" -- &</b> [code]&#8221;s&#8221;[/code]",
+                [
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "b skipped, reset",
+                "&#8220;a&#8221; &#8212; b &#038; c <pre>&#8220;p&#8221; &#8212; &#038;</pre> <textarea>&#8220;t&#8221; &#8212; &#038;</textarea> <b>\"b\" -- &</b> [code]&#8221;s&#8221;[/code]",
+                [
+                    [
+                        "run_wptexturize",
+                        [
+                            true
+                        ]
+                    ],
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "nothing skipped",
+                "&#8220;a&#8221; &#8212; b &#038; c <pre>&#8220;p&#8221; &#8212; &#038;</pre> <textarea>&#8220;t&#8221; &#8212; &#038;</textarea> <b>&#8220;b&#8221; &#8212; &#038;</b> [code]&#8221;s&#8221;[/code]",
+                [
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "off, no reset",
+                "&#8220;a&#8221; &#8212; b &#038; c <pre>\"p\" -- &</pre> <textarea>&#8220;t&#8221; &#8212; &#038;</textarea> <b>&#8220;b&#8221; &#8212; &#038;</b> [code]&#8221;s&#8221;[/code]",
+                [
+                    [
+                        "no_texturize_tags",
+                        [
+                            [
+                                "pre",
+                                "code",
+                                "kbd",
+                                "style",
+                                "script",
+                                "tt"
+                            ]
+                        ]
+                    ],
+                    [
+                        "no_texturize_shortcodes",
+                        [
+                            [
+                                "code"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "off, reset",
+                "\"a\" -- b & c <pre>\"p\" -- &</pre> <textarea>\"t\" -- &</textarea> <b>\"b\" -- &</b> [code]\"s\"[/code]",
+                [
+                    [
+                        "run_wptexturize",
+                        [
+                            true
+                        ]
+                    ]
+                ]
+            ],
+            [
+                "off, after",
+                "\"a\" -- b & c <pre>\"p\" -- &</pre> <textarea>\"t\" -- &</textarea> <b>\"b\" -- &</b> [code]\"s\"[/code]",
+                []
+            ],
+            [
+                "back on, reset",
+                "\"a\" -- b & c <pre>\"p\" -- &</pre> <textarea>\"t\" -- &</textarea> <b>\"b\" -- &</b> [code]\"s\"[/code]",
+                []
+            ]
+        ]
+    ]
+]

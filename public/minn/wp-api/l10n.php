@@ -398,7 +398,7 @@ function get_available_languages($dir = null)
             $out[] = $name;
         }
     }
-    return $out;
+    return apply_filters('get_available_languages', $out, $dir);
 }
 
 function is_locale_switched()

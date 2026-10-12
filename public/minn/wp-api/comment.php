@@ -915,11 +915,9 @@ function get_comment_author_link($comment_id = 0)
     if ($url === '' || $url === 'http://') {
         $link = $author;
     } else {
-        $rel = 'ugc';
-        if (!str_starts_with($url, home_url())) {
-            $rel .= ' external nofollow';
-        }
-        $link = '<a href="' . $url . '" class="url" rel="' . $rel . '">' . $author . '</a>';
+        // The rel words through comment_author_link_rel, outside links external and nofollow too (probe filter-inputs-2).
+        $rel = esc_attr(implode(' ', (array) apply_filters('comment_author_link_rel', str_starts_with($url, home_url()) ? ['ugc'] : ['ugc', 'external', 'nofollow'], $comment)));
+        $link = '<a href="' . $url . '" class="url"' . ($rel !== '' ? ' rel="' . $rel . '"' : '') . '>' . $author . '</a>';
     }
     return apply_filters('get_comment_author_link', $link, $author, (string) ($comment->comment_ID ?? ''));
 }
@@ -967,7 +965,7 @@ function get_comments_pagenum_link($pagenum = 1, $max_page = 0)
 /** The reply link for a comment, within the depth allowed and while comments stay open. */
 function get_comment_reply_link($args = [], $comment = null, $post = null)
 {
-    $args = wp_parse_args($args, ['add_below' => 'comment', 'respond_id' => 'respond', 'reply_text' => 'Reply', 'reply_to_text' => 'Reply to %s', 'login_text' => 'Log in to Reply', 'max_depth' => 0, 'depth' => 0, 'before' => '', 'after' => '']);
+    $args = wp_parse_args($args, ['add_below' => 'comment', 'respond_id' => 'respond', 'reply_text' => 'Reply', 'reply_to_text' => 'Reply to %s', 'login_text' => 'Log in to Reply', 'max_depth' => 0, 'depth' => 0, 'before' => '', 'after' => '', 'show_reply_to_text' => false]);
     if ((int) $args['depth'] === 0 || (int) $args['max_depth'] <= (int) $args['depth']) {
         return null;
     }
@@ -976,6 +974,7 @@ function get_comment_reply_link($args = [], $comment = null, $post = null)
     if (!$comment || !$post || !comments_open($post->ID)) {
         return false;
     }
+    $args = apply_filters('comment_reply_link_args', $args, $comment, $post);
     if (get_option('comment_registration') && !is_user_logged_in()) {
         $link = sprintf('<a rel="nofollow" class="comment-reply-login" href="%s">%s</a>', esc_url(wp_login_url(get_permalink())), $args['login_text']);
     } else {
@@ -983,7 +982,7 @@ function get_comment_reply_link($args = [], $comment = null, $post = null)
         $label = sprintf($args['reply_to_text'], $author);
         $page = Minn\Runtime\CommentPages::link((string) get_permalink($post->ID), Minn\Runtime\CommentPages::shown(get_query_var('cpage')));
         $href = esc_url(add_query_arg(['replytocom' => $comment->comment_ID, 'unapproved' => false, 'moderation-hash' => false], $page)) . '#' . $args['respond_id'];
-        $link = sprintf('<a rel="nofollow" class="comment-reply-link" href="%s" data-commentid="%d" data-postid="%d" data-belowelement="%s" data-respondelement="%s" data-replyto="%s" aria-label="%s">%s</a>', $href, $comment->comment_ID, $post->ID, $args['add_below'] . '-' . $comment->comment_ID, $args['respond_id'], esc_attr($label), esc_attr($label), $args['reply_text']);
+        $link = sprintf('<a rel="nofollow" class="comment-reply-link" href="%s" data-commentid="%d" data-postid="%d" data-belowelement="%s" data-respondelement="%s" data-replyto="%s" aria-label="%s">%s</a>', $href, $comment->comment_ID, $post->ID, $args['add_below'] . '-' . $comment->comment_ID, $args['respond_id'], esc_attr($label), esc_attr($label), $args['show_reply_to_text'] ? $label : $args['reply_text']);
     }
     return apply_filters('comment_reply_link', $args['before'] . $link . $args['after'], $args, $comment, $post);
 }
@@ -1412,6 +1411,8 @@ function wp_blacklist_check($author, $email, $url, $comment, $user_ip, $user_age
 /** True when any line of the disallowed_keys option appears in the comment's fields (a word match, or an IP prefix). */
 function wp_check_comment_disallowed_list($author, $email, $url, $comment, $user_ip, $user_agent)
 {
+    // The old name is still heard, with a notice (probe hook-inputs).
+    do_action_deprecated('wp_blacklist_check', [$author, $email, $url, $comment, $user_ip, $user_agent], '5.5.0', 'wp_check_comment_disallowed_list', __('Please consider writing more inclusive code.'));
     do_action('wp_check_comment_disallowed_list', $author, $email, $url, $comment, $user_ip, $user_agent);
     $keys = trim((string) get_option('disallowed_keys'));
     if ($keys === '') {
@@ -1464,9 +1465,14 @@ function check_comment($author, $email, $url, $comment, $user_ip, $user_agent, $
             return false;
         }
     }
-    // A ping is never previously approved (probe comment-remaining).
     if ((string) get_option('comment_previously_approved') === '1') {
-        return !in_array($comment_type, ['trackback', 'pingback'], true) && (string) $author !== '' && (string) $email !== '' && _minn_comments()->previouslyApproved((string) $author, (string) $email);
+        // A pingback is approved when it comes from one of the site's own posts, as plugins may decide otherwise; a trackback never is (probe hook-inputs).
+        if ($comment_type === 'pingback') {
+            $linked = url_to_postid((string) $url);
+            return (bool) apply_filters('wp_auto_approve_ping', $linked > 0, $linked, $url);
+        }
+        // A ping is never previously approved (probe comment-remaining).
+        return $comment_type !== 'trackback' && (string) $author !== '' && (string) $email !== '' && _minn_comments()->previouslyApproved((string) $author, (string) $email);
     }
     return true;
 }
@@ -1535,15 +1541,19 @@ function comments_popup_link($zero = false, $one = false, $more = false, $css_cl
     }
     // Only the defaults carry the screen-reader title; a theme that supplies
     // its own wording is left alone.
+    // With no comments yet the link goes to the form, through respond_link; the anchor's own attributes come
+    // through comments_popup_link_attributes (probe filter-inputs-2).
+    $href = (int) $number === 0 ? (string) apply_filters('respond_link', get_permalink() . '#respond', get_the_ID()) : get_comments_link();
+    $attributes = (string) apply_filters('comments_popup_link_attributes', '');
     if ($zero === false && $one === false && $more === false) {
         $text = get_comments_number_text();
         $text .= '<span class="screen-reader-text"> on ' . get_the_title() . '</span>';
-        echo '<a href="' . esc_url(get_comments_link()) . '">' . $text . '</a>';
+        echo '<a href="' . esc_url($href) . '"' . ($attributes !== '' ? ' ' . $attributes : '') . '>' . $text . '</a>';
         return;
     }
     echo Minn\Front\ListingLinks::anchor(
-        esc_url(get_comments_link()),
-        $css_class !== '' ? 'class="' . esc_attr($css_class) . '" ' : '',
+        esc_url($href),
+        ($css_class !== '' ? 'class="' . esc_attr($css_class) . '" ' : '') . $attributes,
         get_comments_number_text($zero === false ? '' : $zero, $one === false ? '' : $one, $more === false ? '' : $more),
     );
 }

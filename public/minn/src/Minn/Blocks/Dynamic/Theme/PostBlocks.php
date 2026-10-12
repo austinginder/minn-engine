@@ -75,7 +75,7 @@ final readonly class PostBlocks
         }
         $raw = (string) ($this->previewSource($post, $context->resolution) ?? $post)['post_content'];
         if (PasswordGate::is($post)) {
-            $raw = PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
+            $raw = PasswordGate::formForReader($post, $this->permalinks->url(''), $this->permalinks->forPost($post));
         }
         // An attachment's page shows the attachment even with nothing written (prepend_attachment, through the_content).
         if (trim($raw) === '' && !($post->type === 'attachment' && Runtime::booted())) {
@@ -227,7 +227,8 @@ final readonly class PostBlocks
             $post === null => null,
             // An attachment's page goes back to the post it belongs to (a loose one to itself), and nowhere forward, as on the reference.
             $post->type === 'attachment' => $next ? null : ($post->parentId > 0 ? $this->posts->find($post->parentId) : $post),
-            default => $next ? $this->posts->next($post) : $this->posts->previous($post),
+            // The neighbour get_adjacent_post() finds, through its filters, as the reference's block asks for it.
+            default => ($found = \_minn_adjacent_post($post->id, !$next, (string) $block->attr('taxonomy', ''))) === null ? null : $this->posts->find($found->ID),
         };
         $inner = '';
         if ($target !== null) {

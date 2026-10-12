@@ -12,7 +12,7 @@ the wp/v2 surface: shapes and controllers
 | [`BlockRendererController`](#blockrenderercontroller) | final readonly class | 89 | wp/v2/block-renderer as the reference answers it (probe |
 | [`BlockTypesController`](#blocktypescontroller) | final readonly class | 133 | wp/v2/block-types as the reference answers it (probe rest-block-types): |
 | [`BlocksController`](#blockscontroller) | final readonly class | 69 | wp/v2/blocks: synced patterns and reusable blocks, stored as wp_block |
-| [`Caller`](#caller) | final class | 143 | Who is making this REST call. Resolved once from the cookie and nonce; |
+| [`Caller`](#caller) | final class | 149 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
@@ -24,7 +24,7 @@ the wp/v2 surface: shapes and controllers
 | [`Embed`](#embed) | final class | 218 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
-| [`Fields`](#fields) | final readonly class | 92 | The _fields response filter. Dot paths descend ("title.rendered"); the |
+| [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
 | [`GlobalStylesController`](#globalstylescontroller) | final readonly class | 159 | wp/v2/global-styles: the site editor's saved styles (one post per |
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
@@ -42,13 +42,13 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 167 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 196 | wp/v2 posts and pages, read side. |
+| [`PostObject`](#postobject) | final readonly class | 525 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 451 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
-| [`RenderedFields`](#renderedfields) | final class | 62 | A post's rendered title, content and excerpt as a REST response carries |
+| [`RenderedFields`](#renderedfields) | final class | 68 | A post's rendered title, content and excerpt as a REST response carries |
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
@@ -570,6 +570,10 @@ Settles the caller as nobody: plugin code (determine_current_user) signed the re
 Whether a sign-in cookie vouches for this caller (or failed to, for
 want of its nonce): a cookie's nonce vouches for its own user only.
 
+### `recheck(): void`
+
+Has the cookie and nonce checked again on the next question: a plugin's nonce lifetime (nonce_life) is heard only once plugins load.
+
 ### `resolveInvalidNonce(): void`
 
 Settles the caller as one whose cookie's nonce does not vouch for the user plugin code named.
@@ -618,7 +622,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 157)
+Internals: `resolve()` (private, line 163)
 
 
 ## Catalogue
@@ -1025,7 +1029,7 @@ the whole payload otherwise, which is why _fields on the associative
 types response strips every key and yields [] over HTTP, a reference
 quirk the engine reproduces by construction.
 
-Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Admin\SessionsController`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\IndexController`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Reply`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`
 
 - readonly `array $paths`
 - readonly `bool $deferred`
@@ -1040,6 +1044,11 @@ The _fields selection a query carries, or null for everything.
 
 The same paths plus _links whenever _embedded is among them: the reference's single-object rule under _embed.
 
+### `wants(string $field): bool`
+
+Whether a top-level field is among the selection: named whole, below
+one of its paths (title.rendered), or above one (a path into it).
+
 ### `apply(array $object): array`
 
 The object with only the selected fields.
@@ -1053,7 +1062,7 @@ given, dotted paths whose root is known, and `id` whenever it exists.
 - `@param list<string> $requested the parsed `_fields` list`
 - `@return list<string>`
 
-Internals: `filter()` (private, line 58)
+Internals: `filter()` (private, line 72)
 
 
 ## GlobalStylesController
@@ -1818,9 +1827,12 @@ __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Users $users, M
 ```
 
 
-### `view(Minn\Content\PostRecord $p): array`
+### `view(Minn\Content\PostRecord $p, ?Minn\Rest\Fields $fields = NULL): array`
 
-The view-context object, through rest_prepare_{type} when a plugin hooks it.
+The view-context object, through rest_prepare_{type} when a plugin
+hooks it; with a _fields selection, the rendered title, content and
+excerpt only when it asks for them, as the reference renders only
+what is asked.
 
 ### `edit(Minn\Content\PostRecord $p, int $userId): array`
 
@@ -1854,7 +1866,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 74), `navigationView()` (private, line 85), `blockView()` (private, line 115), `viewFields()` (private, line 142), `viewTerms()` (private, line 185), `typeFields()` (private, line 201), `classList()` (private, line 230), `format()` (private, line 252), `termLinks()` (private, line 296), `editFields()` (private, line 315), `allow()` (private, line 494), `gmt()` (private, line 513)
+Internals: `meta()` (private, line 79), `navigationView()` (private, line 90), `blockView()` (private, line 120), `viewFields()` (private, line 147), `viewTerms()` (private, line 202), `typeFields()` (private, line 218), `classList()` (private, line 247), `format()` (private, line 269), `termLinks()` (private, line 313), `editFields()` (private, line 332), `allow()` (private, line 511), `gmt()` (private, line 530)
 
 
 ## PostsController
@@ -1906,7 +1918,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 105), `readable()` (private, line 124), `visibleStatuses()` (private, line 147)
+Internals: `totals()` (private, line 106), `readable()` (private, line 125), `visibleStatuses()` (private, line 148)
 
 
 ## PostsWriteController
@@ -2105,6 +2117,10 @@ The rendered content.
 
 The rendered excerpt.
 
+### static `setUp(Minn\Content\PostRecord $p): void`
+
+The post made current and set up for a response that renders none of its text, as the reference sets up every item it prepares.
+
 ### static `classes(array $classes, int $postId): array`
 
 A post's class list as get_post_class hands it back once plugin code
@@ -2114,7 +2130,7 @@ stock and type): the filter's answer without repeats, in order.
 - `@param list<string> $classes`
 - `@return list<string>`
 
-Internals: `withPost()` (private, line 47)
+Internals: `withPost()` (private, line 53)
 
 
 ## Reply

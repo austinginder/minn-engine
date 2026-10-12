@@ -4,9 +4,9 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 458 | Signing in. The page people see is /minn-admin/login: the form, the |
-| [`LoginForm`](#loginform) | final class | 233 | The sign-in page markup. |
-| [`LoginHooks`](#loginhooks) | final readonly class | 99 | The sign-in as plugins see it, when they are loaded. The credentials go |
+| [`LoginController`](#logincontroller) | final readonly class | 501 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginForm`](#loginform) | final class | 263 | The sign-in page markup. |
+| [`LoginHooks`](#loginhooks) | final readonly class | 140 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
 | [`ServeLogin`](#servelogin) | final class | 3 | Thrown by the wp-login.php shape file when plugin code require's it |
 
@@ -23,7 +23,7 @@ and cookies validate on the engine AND on WordPress either way.
 
 - const `DAY` = `86400`
 - const `PATH` = `'/minn-admin/login'`
-- const `SEGMENTS` = `array (   'lost-password' => 'lostpassword',   'reset' => 'rp',   'logout' => 'logout',   'register' => 'register', )` — Clean path segment => the action wp-login.php spells with ?action=.
+- const `SEGMENTS` = `array (   'lost-password' => 'lostpassword',   'reset' => 'rp',   'logout' => 'logout',   'register' => 'register',   'confirm-email' => 'confirm_admin_email', )` — Clean path segment => the action wp-login.php spells with ?action=.
 
 Used by: `Minn\Engine`
 
@@ -36,7 +36,7 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Aut
 
 Route: `GET /minn-admin/login`
 
-Route: `GET /minn-admin/login/{segment:lost-password|reset|logout|register}`
+Route: `GET /minn-admin/login/{segment:lost-password|reset|logout|register|confirm-email}`
 
 Route: `GET /wp-login.php (public)`
 
@@ -46,13 +46,13 @@ The sign-in, lost-password, reset, and logout pages.
 
 Route: `POST /minn-admin/login`
 
-Route: `POST /minn-admin/login/{segment:lost-password|reset|logout}`
+Route: `POST /minn-admin/login/{segment:lost-password|reset|logout|confirm-email}`
 
 Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `landingFor()` (private, line 117), `asked()` (private, line 124), `checkEmail()` (private, line 131), `signInNotices()` (private, line 142), `lostPassword()` (private, line 148), `retrieve()` (private, line 178), `openResetLink()` (private, line 195), `resetSession()` (private, line 212), `savePassword()` (private, line 227), `register()` (private, line 262), `validateReset()` (private, line 287), `parts()` (private, line 302), `tokenLogin()` (private, line 314), `safeRedirect()` (private, line 392), `logout()` (private, line 413), `action()` (private, line 443), `actionUrl()` (private, line 455), `base()` (private, line 465), `tooManyAttempts()` (private, line 471), `render()` (private, line 479)
+Internals: `landingFor()` (private, line 120), `asked()` (private, line 127), `checkEmail()` (private, line 134), `signInNotices()` (private, line 145), `lostPassword()` (private, line 151), `retrieve()` (private, line 182), `openResetLink()` (private, line 202), `resetSession()` (private, line 219), `savePassword()` (private, line 234), `register()` (private, line 269), `validateReset()` (private, line 294), `parts()` (private, line 309), `tokenLogin()` (private, line 321), `adminEmail()` (private, line 406), `safeRedirect()` (private, line 428), `logout()` (private, line 449), `action()` (private, line 479), `actionUrl()` (private, line 491), `siteName()` (private, line 501), `base()` (private, line 507), `tooManyAttempts()` (private, line 513), `render()` (private, line 521)
 
 
 ## LoginForm
@@ -70,9 +70,11 @@ Used by: `Minn\Login\LoginController`
 The sign-in page's HTML. With plugins loaded, $parts carries what they
 put on the page (LoginHooks::page()): the title, head, body classes,
 the header's link and words, a message above the form, fields inside
-it, and the footer, each where the reference's page puts it.
+it, and the footer, each where the reference's page puts it; and its
+answers about the page's own furniture (LoginHooks::signInFurniture()):
+the word on Remember Me, the lost-password link, the focus.
 
-- `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string} $parts`
+- `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, errors?: string, messages?: string, form?: string, footer?: string, rememberHelp?: string, lostLink?: string, separator?: string, autofocus?: bool} $parts`
 
 ### static `embedded(array $args, string $top, string $middle, string $bottom): string`
 
@@ -82,9 +84,10 @@ plugins style against, so the shape is fixed.
 
 - `@param array<string, mixed> $args the parsed wp_login_form arguments`
 
-### static `lostPassword(string $siteName, string $action, string $error, string $message, array $parts = array ( )): string`
+### static `lostPassword(string $siteName, string $action, string $error, string $message, array $parts = array ( ), string $redirect = ''): string`
 
-The lost-password form.
+The lost-password form: one field, posts to itself, keeping where the
+reader goes once the mail is out ($redirect, LoginHooks::lostPasswordPage()).
 
 - `@param array{title?: string, head?: string, bodyClass?: string, headerUrl?: string, headerText?: string, message?: string, form?: string, footer?: string} $parts what plugins put on the page (LoginHooks::page())`
 
@@ -109,6 +112,16 @@ confirmation message, which comes as markup) and the way to the site.
 
 - `@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts`
 
+### static `adminEmail(string $siteName, string $action, string $redirect, string $remindUrl, array $screen, array $parts = array ( )): string`
+
+The administration email check an administrator's sign-in may stop at:
+the site's address, to confirm (posting the nonce field) or change, and
+a later reminder when one is offered. $screen is what
+_minn_admin_email_screen() handed over.
+
+- `@param array<string, string> $screen`
+- `@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts`
+
 ### static `failure(string $siteName, string $message): string`
 
 The plain page a refused link gets: the reason, nothing else to do.
@@ -124,7 +137,7 @@ area) and the way back to sign in.
 
 - `@param array{title?: string, head?: string, bodyClass?: string, message?: string, errors?: string, messages?: string, footer?: string} $parts`
 
-Internals: `notices()` (private, line 194), `page()` (private, line 202)
+Internals: `notices()` (private, line 224), `page()` (private, line 232)
 
 
 ## LoginHooks
@@ -187,6 +200,28 @@ Where a sign-out lands, as logout_redirect says.
 ### `signedOut(int $userId): void`
 
 After a sign-out ended the session.
+
+### `signInFurniture(string $lostPasswordUrl): array`
+
+What the sign-in page asks plugins about its own furniture, as the
+reference's page asks: the word beside Remember Me
+(login_remember_me_help_text), the lost-password link
+(lost_password_html_link), what stands between the page's links
+(login_link_separator), and whether the name field takes the focus
+(enable_login_autofocus).
+
+- `@return array{rememberHelp: string, lostLink: string, separator: string, autofocus: bool}`
+
+### `lostPasswordPage(string $requested, WP_Error $errors): string`
+
+The lost-password page's questions, as the reference's page asks them:
+what stands between its links, where the form sends a reader once the
+mail is out (lostpassword_redirect, kept in the form), and lost_password
+with the page's errors. Returns the address the form keeps.
+
+### `postPasswordExpiry(int $expires): int`
+
+When a post password's cookie runs out (post_password_expires; 0 is when the browser closes).
 
 
 ## LoginNotices

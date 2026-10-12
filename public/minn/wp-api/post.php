@@ -280,17 +280,25 @@ function post_password_required($post = null)
  * sends the visitor back to the post, and under a block theme its button
  * wears the button block's classes.
  */
+/**
+ * The password form, as the content shows it before its paragraphs are made;
+ * a reader the post's own page sent back with a password cookie set reads
+ * why above the field (Content\PasswordGate::invalid).
+ */
 function get_the_password_form($post = 0)
 {
     $post = get_post($post);
     $label = 'pwbox-' . ($post === null ? mt_rand() : $post->ID);
+    $permalink = $post === null ? '' : (string) get_permalink($post);
+    $invalid = $post === null ? '' : Minn\Content\PasswordGate::invalid($permalink, (string) wp_get_raw_referer(), (string) ($_COOKIE['wp-postpass_' . COOKIEHASH] ?? ''), static fn (): WP_Post => $post);
     $button = '<input type="submit" name="Submit"' . (wp_is_block_theme() ? ' class="wp-block-button__link wp-element-button"' : '') . ' value="' . esc_attr_x('Enter', 'post password form') . '" />';
     $button = wp_is_block_theme() ? '<span class="wp-block-button">' . $button . '</span>' : $button;
-    $form = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" class="post-password-form" method="post">'
-        . '<input type="hidden" name="redirect_to" value="' . esc_attr($post === null ? '' : get_permalink($post)) . '" />' . "\n\t"
+    $form = '<form action="' . esc_url(site_url('wp-login.php?action=postpass', 'login_post')) . '" class="post-password-form' . ($invalid === '' ? '' : ' password-form-error') . '" method="post">'
+        . '<input type="hidden" name="redirect_to" value="' . esc_attr($permalink) . '" />'
+        . ($invalid === '' ? '' : '<div class="post-password-form-invalid-password" role="alert"><p id="error-' . $label . '">' . $invalid . '</p></div>') . "\n\t"
         . '<p>This content is password-protected. To view it, please enter the password below.</p>' . "\n\t"
-        . '<p><label for="' . $label . '">Password: <input name="post_password" id="' . $label . '" type="password" spellcheck="false" required size="20" /></label> ' . $button . '</p></form>' . "\n\t";
-    return apply_filters('the_password_form', $form, $post, '');
+        . '<p><label for="' . $label . '">Password: <input name="post_password" id="' . $label . '" type="password" spellcheck="false" required size="20"' . ($invalid === '' ? '' : ' aria-describedby="error-' . $label . '"') . ' /></label> ' . $button . '</p></form>' . "\n\t";
+    return apply_filters('the_password_form', $form, $post, $invalid);
 }
 
 function get_the_date($format = '', $post = null)
@@ -388,7 +396,7 @@ function the_date($format = '', $before = '', $after = '', $display = true)
 
 function the_time($format = '')
 {
-    echo get_the_time($format);
+    echo apply_filters('the_time', get_the_time($format), $format);
 }
 
 function get_post_ancestors($post)
@@ -710,13 +718,16 @@ function wp_shortlink_header()
 }
 
 /**
- * The post before (or after) the current one, by date (probe
- * link-template-tags): published posts, and private ones a signed-in reader
- * may read (every one with read_private_posts, else their own); kept to the
- * current post's terms in $taxonomy when asked, and out of the excluded
- * terms (get_{previous|next}_post_excluded_terms). Null with no current post
- * or no such taxonomy, an empty string when no post qualifies (probe
- * link-template-remaining).
+ * The post before or after the current one (probe filter-inputs), as the
+ * reference finds it: its JOIN, WHERE and ORDER BY written as the reference
+ * writes them, each handed to its filter (get_{previous|next}_post_join,
+ * _where and _sort; the excluded terms through _excluded_terms first) and
+ * the query run as they come back, so a plugin can narrow it (a
+ * translation plugin to its language). Published posts, and private ones a
+ * signed-in reader may read (every one with read_private_posts, else their
+ * own); kept to the current post's terms in $taxonomy when asked, and out of
+ * the excluded terms. Null with no current post or no such taxonomy, an
+ * empty string when no post qualifies (probe link-template-remaining).
  */
 function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previous = true, $taxonomy = 'category')
 {
@@ -724,19 +735,20 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
     if ($post === null) {
         return null;
     }
+    if ($in_same_term && !taxonomy_exists($taxonomy)) {
+        return null;
+    }
     $adjacent = $previous ? 'previous' : 'next';
-    $excluded = is_array($excluded_terms) ? $excluded_terms : (empty($excluded_terms) ? [] : explode(',', (string) $excluded_terms));
-    $excluded = array_values(array_filter(array_map('intval', (array) apply_filters("get_{$adjacent}_post_excluded_terms", $excluded))));
-    $same = [];
+    $excluded_terms = !empty($excluded_terms) && !is_array($excluded_terms) ? explode(',', (string) $excluded_terms) : $excluded_terms;
+    $excluded_terms = apply_filters("get_{$adjacent}_post_excluded_terms", $excluded_terms);
+    $excluded = array_values(array_filter(array_map('intval', (array) $excluded_terms)));
+    $terms = [];
     if ($in_same_term) {
-        if (!taxonomy_exists($taxonomy)) {
-            return null;
-        }
         if (!is_object_in_taxonomy($post->post_type, $taxonomy)) {
             return '';
         }
-        $same = array_values(array_diff(array_map('intval', (array) wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids'])), $excluded));
-        if ($same === []) {
+        $terms = array_values(array_diff(array_map('intval', (array) wp_get_object_terms($post->ID, $taxonomy, ['fields' => 'ids'])), $excluded));
+        if ($terms === []) {
             return '';
         }
     }
@@ -745,10 +757,26 @@ function get_adjacent_post($in_same_term = false, $excluded_terms = '', $previou
         $type = get_post_type_object($post->post_type);
         $private = $type && current_user_can($type->cap->read_private_posts) ? 'all' : 'own';
     }
-    $scope = new Minn\Content\AdjacentScope($private, get_current_user_id(), $same, $excluded, (string) $taxonomy);
-    $record = Minn\Content\PostRecord::fromRow($post->to_array());
-    $row = $previous ? _minn_posts()->previous($record, $scope) : _minn_posts()->next($record, $scope);
-    return $row === null ? '' : get_post((int) $row['ID']);
+    [$join, $where, $sort] = _minn_posts()->adjacentClauses(Minn\Content\PostRecord::fromRow($post->to_array()), $adjacent, (string) $taxonomy, $terms, $excluded, $private, get_current_user_id());
+    $join = apply_filters("get_{$adjacent}_post_join", $join, $in_same_term, $excluded_terms, $taxonomy, $post);
+    $where = apply_filters("get_{$adjacent}_post_where", $where, $in_same_term, $excluded_terms, $taxonomy, $post);
+    $sort = apply_filters("get_{$adjacent}_post_sort", $sort, $post, $previous ? 'DESC' : 'ASC');
+    $found = _minn_posts()->adjacentId((string) $join, (string) $where, (string) $sort);
+    return $found > 0 ? get_post($found) : '';
+}
+
+/**
+ * @internal The post before or after another, as get_adjacent_post() finds
+ * it with that one current (the post-navigation-link block's neighbour),
+ * kept to its terms in $taxonomy when one is named.
+ */
+function _minn_adjacent_post(int $postId, bool $previous, string $taxonomy = ''): ?WP_Post
+{
+    $current = $GLOBALS['post'] ?? null;
+    $GLOBALS['post'] = get_post($postId);
+    $found = get_adjacent_post($taxonomy !== '', '', $previous, $taxonomy !== '' ? $taxonomy : 'category');
+    $GLOBALS['post'] = $current;
+    return $found instanceof WP_Post ? $found : null;
 }
 
 /**
@@ -960,11 +988,12 @@ function wp_revisions_to_keep($post)
     return (int) apply_filters("wp_{$post?->post_type}_revisions_to_keep", $num, $post);
 }
 
+/** Whether a post is sticky, through is_sticky (handed the post's id). */
 function is_sticky($post_id = 0)
 {
-    $post_id = $post_id ?: get_the_ID();
+    $post_id = absint($post_id) ?: get_the_ID();
     $stickies = get_option('sticky_posts');
-    return is_array($stickies) && in_array((int) $post_id, array_map('intval', $stickies), true);
+    return (bool) apply_filters('is_sticky', is_array($stickies) && in_array((int) $post_id, array_map('intval', $stickies), true), $post_id);
 }
 
 /** Adds the post to sticky_posts, then post_stuck with its id; nothing when it already is sticky (probe rest-sticky). */
@@ -1001,7 +1030,7 @@ function get_post_thumbnail_id($post = null)
         return false;
     }
     $id = get_post_meta($post->ID, '_thumbnail_id', true);
-    return $id === '' ? 0 : (int) $id;
+    return (int) apply_filters('post_thumbnail_id', $id === '' ? 0 : (int) $id, $post);
 }
 
 /** @internal a live post left without a slug (no title to make one from) takes its id, made free (probe editor-styles) */
@@ -1043,9 +1072,11 @@ function _wp_link_page($i)
     return '<a href="' . esc_url($url) . '" class="post-page-numbers">';
 }
 
+/** Whether a post has a featured image, through has_post_thumbnail (handed the post as given and the image's id). */
 function has_post_thumbnail($post = null)
 {
-    return (bool) get_post_thumbnail_id($post);
+    $thumbnail_id = get_post_thumbnail_id($post);
+    return (bool) apply_filters('has_post_thumbnail', (bool) $thumbnail_id, $post, $thumbnail_id);
 }
 
 function setup_postdata($post)
@@ -1178,7 +1209,7 @@ function wp_count_posts($type = 'post', $perm = '')
 
 function wp_count_attachments($mime_type = '')
 {
-    return (object) array_map('strval', _minn_post_lookup()->countAttachments());
+    return apply_filters('wp_count_attachments', (object) array_map('strval', _minn_post_lookup()->countAttachments()), $mime_type);
 }
 
 /** @internal the columns the posts table takes, filled from a postarr */
@@ -1207,6 +1238,7 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
     }
     $postId = (int) ($existing?->ID ?? 0);
     $columns['post_parent'] = (string) PostSave::parent($sanitized, $postId);
+    _minn_post_free_slug($columns, $postId);
     $columns = PostSave::guidAndSlug($insert->resolve($columns, $before), $postId, $type, _minn_post_writer()->slugs());
     $columns = array_replace($columns, PostSave::data($columns, $sanitized, $given, $postId));
     _minn_post_before_save($columns, $postId);
@@ -1228,6 +1260,15 @@ function wp_insert_post($postarr, $wp_error = false, $fire_after_hooks = true)
         wp_after_insert_post($post, $update, $existing);
     }
     return $id;
+}
+
+/** @internal A trashed post still holding the slug a save wants gives it up first, unless a plugin says no (probe hook-inputs). */
+function _minn_post_free_slug(array $columns, int $postId): void
+{
+    $wanted = (string) ($columns['post_name'] ?? '');
+    if ($wanted !== '' && ($columns['post_status'] ?? '') !== 'trash' && apply_filters('add_trashed_suffix_to_trashed_posts', true, $wanted, $postId)) {
+        wp_add_trashed_suffix_to_post_name_for_trashed_posts($wanted, $postId);
+    }
 }
 
 /**
@@ -1256,7 +1297,10 @@ function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before):
 function _minn_post_keep_categories(WP_Post $post): void
 {
     if (is_object_in_taxonomy($post->post_type, 'category')) {
-        wp_set_post_categories($post->ID, wp_get_post_categories($post->ID));
+        // A post (not an auto-draft) with none is handed the default first, as the reference's insert hands it on.
+        $categories = wp_get_post_categories($post->ID);
+        $default = $categories === [] && $post->post_type === 'post' && $post->post_status !== 'auto-draft';
+        wp_set_post_categories($post->ID, $default ? [(int) get_option('default_category')] : $categories);
     }
 }
 
@@ -1867,7 +1911,8 @@ function wp_set_post_categories($post_id = 0, $post_categories = [], $append = f
     $post_id = (int) $post_id;
     $type = get_post_type($post_id);
     $categories = array_values(array_filter(array_map('intval', (array) $post_categories)));
-    if ($categories === [] && $type === 'post' && !$append) {
+    // Posts, and the types plugins add here, fall back to the default category (probe hook-inputs).
+    if ($categories === [] && !$append && in_array($type, ['post', ...(array) apply_filters('default_category_post_types', [])], true)) {
         $categories = [(int) get_option('default_category')];
     }
     return wp_set_post_terms($post_id, $categories, 'category', $append);
@@ -2150,7 +2195,10 @@ function get_the_author_posts_link()
     if (!$author instanceof WP_User) {
         return '';
     }
-    return sprintf('<a href="%1$s" rel="author">%2$s</a>', esc_url(get_author_posts_url($author->ID)), get_the_author());
+    $name = get_the_author();
+    $link = sprintf('<a href="%1$s" rel="author">%2$s</a>', esc_url(get_author_posts_url($author->ID)), $name);
+    // The link, the author's name and the title it once carried (probe hook-inputs).
+    return apply_filters('the_author_posts_link', $link, $name, sprintf(__('Posts by %s'), $name));
 }
 
 /** How many posts of its type the current post's author has published; 0 with no post (probe theme-symbols). */
@@ -2370,26 +2418,33 @@ function get_post_class($css_class = '', $post = null)
         return [];
     }
     $extra = is_array($css_class) ? $css_class : preg_split('/\s+/', trim((string) $css_class), -1, PREG_SPLIT_NO_EMPTY);
-    $terms = [];
-    foreach (get_object_taxonomies($post->post_type, 'objects') as $taxonomy) {
-        if (empty($taxonomy->public)) {
-            continue;
-        }
-        foreach ((array) (get_the_terms($post->ID, $taxonomy->name) ?: []) as $term) {
-            $terms[] = ['taxonomy' => $term->taxonomy, 'slug' => (string) $term->slug, 'term_id' => (int) $term->term_id];
-        }
-    }
-    $classes = PostClasses::build(
+    // In the reference's order (probe filter-inputs-2): the featured image (while the theme supports them), then
+    // sticky, then the public taxonomies through post_class_taxonomies (handed the classes so far), whose terms
+    // add their own classes.
+    $required = post_password_required($post);
+    $format = post_type_supports($post->post_type, 'post-formats') ? (string) (get_post_format($post) ?: '') : null;
+    $thumbnail = $post->post_type !== 'attachment' && current_theme_supports('post-thumbnails') && has_post_thumbnail($post->ID);
+    $sticky = is_sticky($post->ID) && is_home() && !is_paged();
+    $build = static fn (array $terms): array => PostClasses::build(
         (array) $post,
         array_map(static fn ($c) => PostClasses::htmlClass((string) $c), $extra),
-        post_type_supports($post->post_type, 'post-formats') ? (string) (get_post_format($post) ?: '') : null,
-        $post->post_type !== 'attachment' && has_post_thumbnail($post),
-        is_sticky($post->ID) && is_home() && !is_paged(),
-        post_password_required($post),
+        $format,
+        $thumbnail,
+        $sticky,
+        $required,
         $post->post_password !== '',
         $terms,
     );
-    return array_unique(apply_filters('post_class', $classes, $extra, $post->ID));
+    $terms = [];
+    foreach ((array) apply_filters('post_class_taxonomies', get_taxonomies(['public' => true]), $post->ID, $build([]), $extra) as $taxonomy) {
+        if (!is_object_in_taxonomy($post->post_type, (string) $taxonomy)) {
+            continue;
+        }
+        foreach ((array) (get_the_terms($post->ID, (string) $taxonomy) ?: []) as $term) {
+            $terms[] = ['taxonomy' => $term->taxonomy, 'slug' => (string) $term->slug, 'term_id' => (int) $term->term_id];
+        }
+    }
+    return array_unique(apply_filters('post_class', $build($terms), $extra, $post->ID));
 }
 
 /** The body's class list: the tokens the classic renderer stood for this page, the caller's extras, then the body_class filter. */
@@ -2476,6 +2531,8 @@ function update_post_caches(&$posts, $post_type = 'post', $update_term_cache = t
     if (!$posts) {
         return;
     }
+    // Whole posts in hand are kept, not read again.
+    _minn_posts()->rememberRows(array_map(static fn ($post) => get_object_vars($post), array_values(array_filter((array) $posts, static fn ($post) => $post instanceof WP_Post))));
     _prime_post_caches(array_map(static fn ($post) => is_object($post) ? (int) ($post->ID ?? 0) : (int) $post, (array) $posts), $update_term_cache, $update_meta_cache);
 }
 

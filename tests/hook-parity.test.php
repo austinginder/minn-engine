@@ -33,7 +33,7 @@ declare(strict_types=1);
  * the probe that compares it.
  *
  *   php tests/hook-parity.test.php [--only=probe:x,http:y] [--show]
- *   php tests/hook-parity.test.php --snapshot     (after a full comparison)
+ *   php tests/hook-parity.test.php --snapshot [--only=...]   (--only replaces those scenarios' entries)
  *   php tests/hook-parity.test.php --capture [--only=...]
  */
 
@@ -115,11 +115,14 @@ $pages = [
     'login' => '/wp-login.php',
     'login-lost' => '/wp-login.php?action=lostpassword',
     'ajax' => '/wp-admin/admin-ajax.php?action=minn_hook_parity',
-    'canonical' => '/?p=1',
+    'canonical-move' => '/?p=1',
 ];
 foreach ($pages as $name => $path) {
     $scenarios["http:{$name}"] = ['path' => $path];
 }
+// The canonical move is the scenario: the reference's answer points at the site's own address, which is
+// the engine's, so following it would record the engine's page on one side only.
+$scenarios['http:canonical-move']['follow'] = false;
 foreach (['front-home' => '/', 'front-single' => '/hello-world/', 'rest-me' => '/?rest_route=/wp/v2/users/me', 'rest-settings' => '/?rest_route=/wp/v2/settings', 'rest-posts-edit' => '/?rest_route=/wp/v2/posts&context=edit', 'ajax' => '/wp-admin/admin-ajax.php?action=minn_hook_parity'] as $name => $path) {
     $scenarios["http:admin-{$name}"] = ['path' => $path, 'signedIn' => true];
 }
@@ -181,7 +184,7 @@ $record = static function (string $name, array $scenario, array $listen = [], ?a
         $headers = ['X-Minn-Hooks: ' . $run, ...(!empty($scenario['signedIn']) ? [$cookie, 'X-WP-Nonce: ' . $mint['nonce']] : [])];
         $ch = curl_init($base . $scenario['path']);
         // A redirect is followed: the hooks of every request the scenario makes are one record.
-        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HTTPHEADER => $headers, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_FOLLOWLOCATION => !isset($scenario['post']), CURLOPT_MAXREDIRS => 3]);
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HTTPHEADER => $headers, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_TIMEOUT => 60, CURLOPT_FOLLOWLOCATION => !isset($scenario['post']) && ($scenario['follow'] ?? true), CURLOPT_MAXREDIRS => 3]);
         if (isset($scenario['post'])) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($scenario['post']));
         }
@@ -295,19 +298,28 @@ if ($snapshot) {
             }
         }
     }
-    if ($grown !== [] && $only === []) {
+    if ($grown !== []) {
         echo "refused: the snapshot would grow:\n  " . implode("\n  ", array_slice($grown, 0, 40)) . "\n";
         exit(1);
     }
-    if ($only !== []) {
-        echo "refused: write the snapshot after a full comparison\n";
-        exit(1);
+    // With --only, the scenarios compared replace their own entries and the rest are kept.
+    $hooks = [];
+    foreach ($knownHooks as $hook => $where) {
+        $kept = array_diff_key((array) $where, $scenarios);
+        if ($kept !== []) {
+            $hooks[$hook] = $kept;
+        }
     }
-    $hooks = array_map(static function (array $where): array {
+    foreach ($divergent as $hook => $where) {
+        $hooks[$hook] = array_merge($hooks[$hook] ?? [], $where);
+    }
+    foreach ($hooks as &$where) {
         ksort($where);
-        return $where;
-    }, $divergent);
-    file_put_contents($SNAPSHOT, json_encode(['scenarios' => array_keys($scenarios), 'hooks' => $hooks], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+    }
+    unset($where);
+    ksort($hooks);
+    $covered = array_values(array_unique([...array_keys($knownScenarios), ...array_keys($scenarios)]));
+    file_put_contents($SNAPSHOT, json_encode(['scenarios' => $covered, 'hooks' => $hooks], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
     echo 'wrote the snapshot: ' . count($hooks) . " hooks differ somewhere\n";
     exit(0);
 }

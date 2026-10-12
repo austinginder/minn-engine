@@ -1704,6 +1704,10 @@ function unregister_block_template($template_name)
 /** Theme files (and registered plugin templates, unless a post_type query without slugs) matching the query. */
 function get_block_templates($query = [], $template_type = 'wp_template')
 {
+    $pre = apply_filters('pre_get_block_templates', null, $query, $template_type);
+    if ($pre !== null) {
+        return $pre;
+    }
     $templates = [];
     $index = _minn_template_index();
     foreach ($index === null ? [] : $index->all($template_type) as $record) {
@@ -1750,6 +1754,10 @@ function _minn_block_template_matches(WP_Block_Template $template, array $query)
 /** A template by "theme//slug": the theme's file, else a plugin's registration under the active theme. */
 function get_block_template($id, $template_type = 'wp_template')
 {
+    $pre = apply_filters('pre_get_block_template', null, $id, $template_type);
+    if ($pre !== null) {
+        return $pre;
+    }
     $parts = explode('//', (string) $id, 2);
     if (count($parts) < 2) {
         return null;

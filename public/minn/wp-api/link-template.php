@@ -585,7 +585,7 @@ function get_the_posts_pagination($args = [])
     if (isset($args['screen_reader_text']) && !isset($args['aria_label'])) {
         $args['aria_label'] = $args['screen_reader_text'];
     }
-    $args = wp_parse_args($args, ['mid_size' => 1, 'prev_text' => 'Previous', 'next_text' => 'Next', 'screen_reader_text' => 'Posts pagination', 'aria_label' => 'Posts pagination', 'class' => 'pagination']);
+    $args = apply_filters('the_posts_pagination_args', wp_parse_args($args, ['mid_size' => 1, 'prev_text' => 'Previous', 'next_text' => 'Next', 'screen_reader_text' => 'Posts pagination', 'aria_label' => 'Posts pagination', 'class' => 'pagination']));
     if (isset($args['type']) && $args['type'] === 'array') {
         $args['type'] = 'plain';
     }

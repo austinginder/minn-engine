@@ -71,10 +71,11 @@ class WP_Network
         };
     }
 
-    /** The network's main site: the one its row names. */
+    /** The network's main site: what pre_get_main_site_id answers, else the one its row names. */
     private function get_main_site_id()
     {
-        return (int) $this->blog_id;
+        $pre = apply_filters('pre_get_main_site_id', null, $this);
+        return $pre !== null && (int) $pre > 0 ? (int) $pre : (int) $this->blog_id;
     }
 
     private function _set_site_name()

@@ -27,46 +27,53 @@ final class Pages
     public static function get(array $args): array
     {
         $parsed = array_merge(self::DEFAULTS, $args);
-        $query = self::queryArgs($parsed, Lists::ids($parsed['include']), Lists::ids($parsed['exclude']));
+        $query = (array) \apply_filters('get_pages_query_args', self::queryArgs($parsed, Lists::ids($parsed['include']), Lists::ids($parsed['exclude'])), $parsed);
         return (array) \apply_filters('get_pages', self::arrange((new \WP_Query())->query($query), $parsed), $parsed);
     }
 
-    /** The post query arguments the get_pages() arguments amount to. @param list<int> $include @param list<int> $exclude */
+    /**
+     * The post query the get_pages() arguments amount to, shaped as the
+     * reference hands it to get_pages_query_args (probe filter-inputs-2): the
+     * order by the columns as named, then (unless pages are picked by id)
+     * the excluded ones and the meta pair, the number or -1 and the offset,
+     * the type, the statuses as a list and the cache flags; then the picked
+     * pages, the authors and the parent, each when given.
+     *
+     * @param list<int> $include
+     * @param list<int> $exclude
+     */
     public static function queryArgs(array $parsed, array $include, array $exclude): array
     {
-        $query = ['post_type' => $parsed['post_type'], 'post_status' => $parsed['post_status'], 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC', 'ignore_sticky_posts' => true, 'no_found_rows' => true];
+        $order = strtoupper((string) $parsed['sort_order']) === 'DESC' ? 'DESC' : 'ASC';
         $orderby = [];
         foreach (preg_split('/[\s,]+/', trim((string) $parsed['sort_column']), -1, PREG_SPLIT_NO_EMPTY) ?: [] as $column) {
-            $key = self::COLUMNS[$column] ?? self::COLUMNS['post_' . $column] ?? null;
+            $key = isset(self::COLUMNS[$column]) ? $column : (isset(self::COLUMNS['post_' . $column]) ? 'post_' . $column : null);
             if ($key !== null) {
-                $orderby[$key] = strtoupper((string) $parsed['sort_order']) === 'DESC' ? 'DESC' : 'ASC';
+                $orderby[$key] = $order;
             }
         }
-        if ($orderby !== []) {
-            $query['orderby'] = $orderby;
+        $query = ['orderby' => $orderby, 'order' => $order];
+        if ($include === []) {
+            $query += ['post__not_in' => $exclude, 'meta_key' => $parsed['meta_key'], 'meta_value' => $parsed['meta_value']];
         }
-        if ((int) $parsed['parent'] >= 0) {
-            $query['post_parent'] = (int) $parsed['parent'];
-        }
+        $query += [
+            'posts_per_page' => (int) $parsed['number'] > 0 ? (int) $parsed['number'] : -1,
+            'offset' => (int) $parsed['offset'],
+            'post_type' => $parsed['post_type'],
+            'post_status' => array_values(array_filter(array_map('trim', explode(',', (string) $parsed['post_status'])), static fn (string $s): bool => $s !== '')),
+            'update_post_term_cache' => false,
+            'update_post_meta_cache' => false,
+            'ignore_sticky_posts' => true,
+            'no_found_rows' => true,
+        ];
         if ($include !== []) {
             $query['post__in'] = $include;
         }
-        if ($exclude !== []) {
-            $query['post__not_in'] = $exclude;
+        if ((string) $parsed['authors'] !== '') {
+            $query['author__in'] = Lists::ids($parsed['authors']);
         }
-        if ($parsed['meta_key'] !== '') {
-            $query['meta_key'] = $parsed['meta_key'];
-            $query['meta_value'] = $parsed['meta_value'];
-        }
-        if ($parsed['authors'] !== '') {
-            $query['author'] = $parsed['authors'];
-        }
-        // A number (and an offset into it) limits the query itself; the hierarchy is worked out from what it returns.
-        if (!empty($parsed['number'])) {
-            $query['posts_per_page'] = (int) $parsed['number'];
-            if (!empty($parsed['offset'])) {
-                $query['offset'] = (int) $parsed['offset'];
-            }
+        if ((int) $parsed['parent'] >= 0) {
+            $query['post_parent'] = (int) $parsed['parent'];
         }
         return $query;
     }

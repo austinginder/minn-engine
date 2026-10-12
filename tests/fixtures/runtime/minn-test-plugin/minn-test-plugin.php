@@ -150,6 +150,11 @@ add_filter('rest_menu_read_access', static function ($open, $request, $controlle
     return isset($_GET['minn-test-menus-open']) && $request instanceof WP_REST_Request && is_object($controller) ? true : $open;
 }, 10, 3);
 
+// A nonce lifetime of the caller's choosing (?minn-test-nonce-life=), through nonce_life: the auth suite signs in under it.
+if (isset($_GET['minn-test-nonce-life'])) {
+    add_filter('nonce_life', static fn () => (int) $_GET['minn-test-nonce-life']);
+}
+
 // A search handler of the plugin's own: /wp/v2/search?type=minn-test.
 add_filter('wp_rest_search_handlers', static function (array $handlers): array {
     require_once __DIR__ . '/search-handler.php';

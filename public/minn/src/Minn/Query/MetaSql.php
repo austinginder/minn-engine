@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Query;
 
+use Closure;
+
 /**
  * The JOIN and WHERE fragments of a meta query in the reference's shape:
  * one meta-table join per clause (the first under the table's own name,
@@ -21,6 +23,9 @@ final class MetaSql
     private array $clauses = [];
 
     private int $aliasCount = 0;
+
+    /** @var (Closure(string|false, array, array): (string|false))|null */
+    private ?Closure $aliasFilter = null;
 
 
     /** @param array<string, array{0: string, 1: string}> $tables meta type to [table, object column] */
@@ -141,6 +146,9 @@ final class MetaSql
     {
         $clause = self::normalized($clause);
         $alias = $this->compatibleAlias($clause, $parent);
+        if ($this->aliasFilter !== null) {
+            $alias = ($this->aliasFilter)($alias, $clause, $parent);
+        }
         $join = [];
         if ($alias === false) {
             [$alias, $join] = $this->newAlias($clause);
@@ -150,6 +158,13 @@ final class MetaSql
         $this->clauses[$key !== '' ? $key : $alias] = $clause;
         $where = $this->clause($clause);
         return ['where' => $where === '' ? [] : [$where], 'join' => $join];
+    }
+
+    /** Has every clause's shared alias (or false) pass through a filter (WP_Meta_Query hands it meta_query_find_compatible_table_alias). */
+    public function filterAliasesWith(Closure $filter): self
+    {
+        $this->aliasFilter = $filter;
+        return $this;
     }
 
     /**

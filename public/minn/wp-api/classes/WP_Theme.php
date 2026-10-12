@@ -322,22 +322,24 @@ class WP_Theme implements ArrayAccess
     }
 
     /** The themes allowed for a site: the network's list, then the site's (probe wp-theme). */
+    /** The themes allowed for a site: the network's (network_allowed_themes), then the site's own. */
     public static function get_allowed($blog_id = null)
     {
-        return array_merge(self::get_allowed_on_network(), self::get_allowed_on_site($blog_id));
+        $network = (array) apply_filters('network_allowed_themes', self::get_allowed_on_network(), (int) ($blog_id ?? get_current_blog_id()));
+        return array_merge($network, self::get_allowed_on_site($blog_id));
     }
 
-    /** The network's allowedthemes site option, as a list (false read as [false], as the reference reads it). */
+    /** The network's allowedthemes site option, as a list (false read as [false], as the reference reads it), through allowed_themes. */
     public static function get_allowed_on_network()
     {
-        return (array) get_site_option('allowedthemes');
+        return (array) apply_filters('allowed_themes', (array) get_site_option('allowedthemes'));
     }
 
-    /** The site's allowedthemes option when it is a list; [] otherwise. */
+    /** The site's allowedthemes option when it is a list, [] otherwise, through site_allowed_themes. */
     public static function get_allowed_on_site($blog_id = null)
     {
         $allowed = get_option('allowedthemes');
-        return is_array($allowed) ? $allowed : [];
+        return (array) apply_filters('site_allowed_themes', is_array($allowed) ? $allowed : [], (int) ($blog_id ?? get_current_blog_id()));
     }
 
     /** Themes allowed across the network: the stylesheets added to the allowedthemes site option. */

@@ -49,6 +49,20 @@ final readonly class Fields
         return new self([...$this->paths, '_links'], $this->deferred);
     }
 
+    /**
+     * Whether a top-level field is among the selection: named whole, below
+     * one of its paths (title.rendered), or above one (a path into it).
+     */
+    public function wants(string $field): bool
+    {
+        foreach ($this->paths as $path) {
+            if ($path === $field || str_starts_with($path, $field . '.') || str_starts_with($field, $path . '.')) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** The object with only the selected fields. */
     public function apply(array $object): array
     {

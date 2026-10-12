@@ -60,8 +60,8 @@ class WP_Meta_Query
         $this->meta_id_column = $column;
         $this->primary_table = $primary_table;
         $this->primary_id_column = $primary_id_column;
-        $this->builder = new MetaSql($this->meta_table, $column, (string) $primary_table, (string) $primary_id_column);
-        $sql = $this->builder->build($this->queries);
+        $this->builder = null;
+        $sql = $this->builder()->build($this->queries);
         $this->remember();
         $this->has_or_relation = MetaSql::hasOr($this->queries);
         return apply_filters_ref_array('get_meta_sql', [$sql, $this->queries, $type, $primary_table, $primary_id_column, $context]);
@@ -96,13 +96,14 @@ class WP_Meta_Query
 
     protected function find_compatible_table_alias($clause, $parent_query)
     {
-        return $this->builder()->compatibleAlias((array) $clause, (array) $parent_query);
+        return apply_filters('meta_query_find_compatible_table_alias', $this->builder()->compatibleAlias((array) $clause, (array) $parent_query), $clause, $parent_query, $this);
     }
 
     /** The builder for the tables this query reads, made once. */
     private function builder(): MetaSql
     {
-        return $this->builder ??= new MetaSql((string) $this->meta_table, (string) $this->meta_id_column, (string) $this->primary_table, (string) $this->primary_id_column);
+        return $this->builder ??= (new MetaSql((string) $this->meta_table, (string) $this->meta_id_column, (string) $this->primary_table, (string) $this->primary_id_column))
+            ->filterAliasesWith(fn ($alias, array $clause, array $parent) => apply_filters('meta_query_find_compatible_table_alias', $alias, $clause, $parent, $this));
     }
 
     /** The clauses and aliases the builder has settled so far. */

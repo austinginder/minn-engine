@@ -1,0 +1,19 @@
+{
+    "note": "Hooks fired only on a network, inside code a single site loads. tests/tools/hook-status.php counts one as outside a single site only while the reference fires it in no scenario of the hook-parity battery: probe single-site-inert calls the functions named here, and every request boots wp-settings.php.",
+    "hooks": {
+        "grant_super_admin": "grant_super_admin() refuses on a single site before announcing anything",
+        "granted_super_admin": "grant_super_admin() refuses on a single site before announcing anything",
+        "revoke_super_admin": "revoke_super_admin() refuses on a single site before announcing anything",
+        "revoked_super_admin": "revoke_super_admin() refuses on a single site before announcing anything",
+        "network_site_url": "network_site_url() is site_url() on a single site",
+        "network_home_url": "network_home_url() is home_url() on a single site",
+        "network_admin_url": "network_admin_url() is admin_url() on a single site",
+        "get_main_network_id": "get_main_network_id() is 1 on a single site",
+        "blog_details": "a network site's details",
+        "check_is_user_spammed": "wp_authenticate_spam_check() checks spam only on a network",
+        "ms_loaded": "wp-settings.php loads ms-settings.php only on a network",
+        "network_plugin_loaded": "wp-settings.php loads network plugins only on a network",
+        "wp_signup_location": "signup is a network's",
+        "is_user_member_of_blog": "is_user_member_of_blog() answers from the user alone on a single site"
+    }
+}

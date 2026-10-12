@@ -4,62 +4,62 @@
     "pages": {
         "/": {
             "engine": {
-                "Com_select": 30,
-                "Com_stmt_execute": 27,
-                "Questions": 33
+                "Com_select": 27,
+                "Com_stmt_execute": 24,
+                "Questions": 29
             },
             "reference": {
                 "Com_select": 38,
                 "Com_stmt_execute": 0,
-                "Questions": 43
+                "Questions": 41
             }
         },
         "/hello-world/": {
             "engine": {
-                "Com_select": 39,
-                "Com_stmt_execute": 32,
-                "Questions": 42
+                "Com_select": 41,
+                "Com_stmt_execute": 30,
+                "Questions": 43
             },
             "reference": {
                 "Com_select": 44,
                 "Com_stmt_execute": 0,
-                "Questions": 49
+                "Questions": 47
             }
         },
         "/category/uncategorized/": {
             "engine": {
-                "Com_select": 34,
-                "Com_stmt_execute": 30,
-                "Questions": 37
+                "Com_select": 32,
+                "Com_stmt_execute": 28,
+                "Questions": 34
             },
             "reference": {
                 "Com_select": 43,
                 "Com_stmt_execute": 0,
-                "Questions": 48
+                "Questions": 46
             }
         },
         "/wp-json/wp/v2/posts": {
             "engine": {
                 "Com_select": 26,
                 "Com_stmt_execute": 24,
-                "Questions": 30
+                "Questions": 29
             },
             "reference": {
                 "Com_select": 41,
                 "Com_stmt_execute": 0,
-                "Questions": 47
+                "Questions": 45
             }
         },
         "/?s=hello": {
             "engine": {
-                "Com_select": 30,
-                "Com_stmt_execute": 25,
-                "Questions": 33
+                "Com_select": 28,
+                "Com_stmt_execute": 23,
+                "Questions": 30
             },
             "reference": {
                 "Com_select": 40,
                 "Com_stmt_execute": 0,
-                "Questions": 45
+                "Questions": 43
             }
         }
     }

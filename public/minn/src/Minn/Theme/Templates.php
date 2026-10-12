@@ -164,6 +164,31 @@ final readonly class Templates
         return array_filter($decoded, static fn ($node) => !is_array($node) || !array_is_list($node));
     }
 
+    /**
+     * Every published template, part and global styles post saved for the
+     * theme, newest first by type: read in one query once a request.
+     *
+     * @return array<string, list<array<string, mixed>>>
+     */
+    private function savedOfTheme(): array
+    {
+        return RowCache::remember('theme_templates', $this->theme->slug, function (): array {
+            $byType = [];
+            foreach ($this->db->rows(
+                "SELECT p.ID, p.post_type AS kind, p.post_name, p.post_content FROM {$this->db->table('posts')} p
+                 JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
+                 JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+                 JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
+                 WHERE p.post_type IN ('wp_template', 'wp_template_part', 'wp_global_styles') AND p.post_status = 'publish'
+                   AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC",
+                [$this->theme->slug],
+            ) as $row) {
+                $byType[(string) $row['kind']][] = $row;
+            }
+            return $byType;
+        });
+    }
+
     /** A page's chosen custom template, from _wp_page_template meta. */
     public function customTemplate(int $pageId): ?string
     {
@@ -189,15 +214,7 @@ final readonly class Templates
      */
     private function savedRow(string $type, ?string $slug): ?array
     {
-        $rows = RowCache::remember('theme_templates', "{$type}:{$this->theme->slug}", fn (): array => $this->db->rows(
-            "SELECT p.ID, p.post_name, p.post_content FROM {$this->db->table('posts')} p
-             JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
-             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
-             JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
-             WHERE p.post_type = ? AND p.post_status = 'publish'
-               AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC",
-            [$type, $this->theme->slug],
-        ));
+        $rows = $this->savedOfTheme()[$type] ?? [];
         foreach ($rows as $row) {
             if ($slug === null || (string) $row['post_name'] === $slug) {
                 return ['ID' => $row['ID'], 'post_content' => (string) $row['post_content']];

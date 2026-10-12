@@ -15,16 +15,16 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib.php';
 
-// Each page's count when this suite was written, plus two: the server's
-// counters are shared by every connection, and a request elsewhere can land
-// inside a run's window (the general log counts these pages exactly; see
-// contracts/query-count.json for the last kept figures).
+// Each page's count when this suite was last tightened, plus two. The figures come from the server's
+// general log, counted for the test site's database alone (tests/tools/query-count.php), so another
+// database's traffic no longer lands in a run's window; the two cover a request of this site's own that
+// does. A ceiling only falls.
 $selectCeilings = [
-    '/' => 31,
+    '/' => 29,
     '/hello-world/' => 41,
-    '/category/uncategorized/' => 36,
+    '/category/uncategorized/' => 34,
     '/wp-json/wp/v2/posts' => 28,
-    '/?s=hello' => 32,
+    '/?s=hello' => 30,
 ];
 
 [$probe] = minn_test_fetch(minn_test_reference_url() . '/?rest_route=/wp/v2/posts', 3);

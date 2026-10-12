@@ -3,13 +3,17 @@
  * Oracle tool: mint a real WordPress session for the auth suites.
  * Runs under the REFERENCE WordPress only (never engine code):
  *
- *   wp --path=wp-reference eval-file tests/tools/mint-session.php [user_id]
+ *   wp --path=wp-reference eval-file tests/tools/mint-session.php [user_id] [nonce_life]
  *
  * Prints JSON: the session token, the logged_in auth cookie value, a
- * wp_rest nonce bound to that token, and the CLI-computed cookie name.
+ * wp_rest nonce bound to that token (under the nonce lifetime given, when
+ * one is), and the CLI-computed cookie name.
  */
 
 $uid     = isset( $args[0] ) ? (int) $args[0] : 1;
+if ( isset( $args[1] ) ) {
+	add_filter( 'nonce_life', static fn () => (int) $args[1] );
+}
 $exp     = time() + 2 * 86400;
 $manager = WP_Session_Tokens::get_instance( $uid );
 $token   = $manager->create( $exp );

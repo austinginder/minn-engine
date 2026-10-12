@@ -464,6 +464,10 @@ function clean_user_cache($user)
 /** The default on user_register and deleted_user: the site's user count is kept current. */
 function wp_maybe_update_user_counts($network_id = null)
 {
+    // A large site counts on its own schedule unless a plugin says otherwise (probe hook-inputs).
+    if (!apply_filters('enable_live_network_counts', !wp_is_large_user_count($network_id), 'users')) {
+        return;
+    }
     return wp_update_user_counts($network_id);
 }
 

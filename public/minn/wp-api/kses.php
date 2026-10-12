@@ -38,13 +38,26 @@ function wp_allowed_protocols()
     return $protocols;
 }
 
-/** @internal a caller's allowed_html in any of its shapes, with the protocols and URI attributes in force */
-function _minn_kses_policy(array|string $allowed_html, array $allowed_protocols): KsesPolicy
+/**
+ * @internal a caller's allowed_html in any of its shapes, with the protocols and URI attributes in force. For
+ * $content, the URI attributes are asked only when an opening tag of an allowed element that may carry attributes
+ * is there, as the reference asks them of each such tag (probe hook-inputs-2); otherwise none are consulted.
+ */
+function _minn_kses_policy(array|string $allowed_html, array $allowed_protocols, ?string $content = null): KsesPolicy
 {
     if (is_string($allowed_html)) {
         $allowed_html = wp_kses_allowed_html($allowed_html);
     }
-    return KsesPolicy::fromAllowlist((array) $allowed_html, array_values($allowed_protocols), (array) wp_kses_uri_attributes());
+    $asked = $content === null;
+    if (!$asked && preg_match_all('/<([a-zA-Z][a-zA-Z0-9:-]*)/', $content, $tags) > 0) {
+        foreach (array_unique(array_map('strtolower', $tags[1])) as $tag) {
+            if (!empty($allowed_html[$tag])) {
+                $asked = true;
+                break;
+            }
+        }
+    }
+    return KsesPolicy::fromAllowlist((array) $allowed_html, array_values($allowed_protocols), $asked ? (array) wp_kses_uri_attributes() : []);
 }
 
 function wp_kses($content, $allowed_html, $allowed_protocols = [])
@@ -56,7 +69,7 @@ function wp_kses($content, $allowed_html, $allowed_protocols = [])
     $content = wp_kses_no_null($content, ['slash_zero' => 'keep']);
     $content = wp_kses_normalize_entities($content);
     $content = wp_kses_hook($content, $allowed_html, $allowed_protocols);
-    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols));
+    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols, (string) $content));
 }
 
 function wp_kses_hook($content, $allowed_html, $allowed_protocols)
@@ -156,7 +169,7 @@ function wp_kses_decode_entities($content)
 
 function wp_kses_split($content, $allowed_html, $allowed_protocols)
 {
-    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols));
+    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols, (string) $content));
 }
 
 /** Block delimiters written back with every attribute key and string value run through the same kses pass. */

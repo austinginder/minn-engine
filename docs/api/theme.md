@@ -18,7 +18,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 516 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 107 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 108 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 132 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
@@ -37,7 +37,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 187 | Which template renders a resolution, and where its markup comes from: |
+| [`Templates`](#templates) | final readonly class | 204 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 54 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -579,7 +579,8 @@ The site and comments feed links.
 
 The site's two feed links as feed_links prints them: the posts feed
 and the comments feed (each unless its feed_links_show_* filter says
-no), titled with the caller's separator and words.
+no), titled with the caller's separator and words, through
+feed_links_args.
 
 - `@param array<string, mixed> $args`
 
@@ -1294,7 +1295,7 @@ reference reads it; a list where a map belongs is dropped the same way.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 95), `hierarchy()` (private, line 119), `saved()` (private, line 177), `savedRow()` (private, line 190)
+Internals: `filtered()` (private, line 95), `hierarchy()` (private, line 119), `savedOfTheme()` (private, line 173), `saved()` (private, line 202), `savedRow()` (private, line 215)
 
 
 ## Theme

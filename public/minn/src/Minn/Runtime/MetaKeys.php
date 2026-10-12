@@ -168,7 +168,10 @@ final class MetaKeys
         if ($key) {
             $allowed = !\is_protected_meta($key, $objectType);
             $filter = Runtime::hooks()->has("auth_{$objectType}_meta_{$key}_for_{$subtype}") ? "auth_{$objectType}_meta_{$key}_for_{$subtype}" : "auth_{$objectType}_meta_{$key}";
-            if (!\apply_filters($filter, $allowed, $key, $objectId, $userId, $capability, $caps)) {
+            $allowed = \apply_filters($filter, $allowed, $key, $objectId, $userId, $capability, $caps);
+            // The name before _for_ existed is still heard, with a notice (probe hook-inputs).
+            $allowed = \apply_filters_deprecated("auth_{$objectType}_{$subtype}_meta_{$key}", [$allowed, $key, $objectId, $userId, $capability, $caps], '4.9.8', "auth_{$objectType}_meta_{$key}_for_{$subtype}");
+            if (!$allowed) {
                 $caps[] = $capability;
             }
         }

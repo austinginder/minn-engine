@@ -17,7 +17,13 @@
  * without it refused in the plugin's words and one with it sent on; and
  * registration (switched on for the run): the form's own field, a sign-up
  * refused without it and one landing where registration_redirect says,
- * and the form closed when registration is off. The fixture, the run and the suite's user live only while it runs.
+ * and the form closed when registration is off; the lost-password form
+ * keeping where its reader goes (lostpassword_redirect); a post password's
+ * cookie living as post_password_expires says; and the administration
+ * email check: an administrator signing in once admin_email_lifespan has
+ * passed stops at the confirmation screen, "Remind me later" puts it off
+ * three days and confirming it six months, while an editor goes straight
+ * on. The fixture, the run and the suite's users live only while it runs.
  *
  *   php tests/login-hooks.test.php
  */
@@ -68,7 +74,11 @@ register_shutdown_function(static function () use ($stacks, $WP, $jars): void {
         @rmdir("{$content}/minn-login");
     }
     array_map('unlink', array_filter($jars, 'is_file'));
-    shell_exec("{$WP} user delete \$({$WP} user list --field=ID --login__in=login-hooks-reader 2>/dev/null) --reassign=1 --yes >/dev/null 2>&1");
+    shell_exec("{$WP} user delete \$({$WP} user list --field=ID --login__in=login-hooks-reader,login-hooks-admin 2>/dev/null) --reassign=1 --yes >/dev/null 2>&1");
+});
+$lifespan = trim((string) shell_exec("{$WP} option get admin_email_lifespan 2>/dev/null"));
+register_shutdown_function(static function () use ($WP, $lifespan): void {
+    shell_exec($lifespan === '' ? "{$WP} option delete admin_email_lifespan >/dev/null 2>&1" : "{$WP} option update admin_email_lifespan " . escapeshellarg($lifespan) . ' >/dev/null 2>&1');
 });
 $password = 'Zz-' . bin2hex(random_bytes(8));
 shell_exec("{$WP} user create login-hooks-reader login-hooks-reader@minn-engine.localhost --role=editor --user_pass=" . escapeshellarg($password) . ' >/dev/null 2>&1');
@@ -234,6 +244,56 @@ $closed = $both(static function (string $stack) use ($ask): array {
 $same('registration switched off: sent back saying so', $closed);
 $heard('reference');
 $heard('engine');
+
+// The lost-password form keeps where its reader goes once the mail is out (lostpassword_redirect).
+$keeps = $both(static function (string $stack) use ($ask, $stacks): string {
+    preg_match('/name="redirect_to" value="([^"]*)"/', $ask($stack, '/wp-login.php?action=lostpassword&redirect_to=' . rawurlencode(minn_test_url() . '/zz-landing/'))[2], $kept);
+    return str_replace([$stacks[$stack][0], minn_test_url()], '{site}', html_entity_decode($kept[1] ?? ''));
+});
+$same('the lost-password form: where its reader goes, kept', $keeps);
+$heard('reference');
+$heard('engine');
+
+// A post password's cookie lives ten days (post_password_expires).
+$expires = $both(static function (string $stack) use ($stacks, $run): array {
+    $ch = curl_init($stacks[$stack][0] . '/wp-login.php?action=postpass');
+    curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => 0, CURLOPT_POST => true, CURLOPT_POSTFIELDS => 'post_password=zz', CURLOPT_HTTPHEADER => ["X-Minn-Login: {$run}"]]);
+    $raw = (string) curl_exec($ch);
+    curl_close($ch);
+    preg_match('/^set-cookie:\s*wp-postpass_[^;]*;.*?expires=([^;]+)/mi', $raw, $m);
+    $days = isset($m[1]) ? (int) round((strtotime($m[1]) - time()) / 86400) : null;
+    return [$days];
+});
+$same('a post password\'s cookie: how long it lives', $expires);
+
+// The administration email check, on an administrator's sign-in once its time has come.
+$adminPassword = 'Zz-' . bin2hex(random_bytes(8));
+shell_exec("{$WP} user create login-hooks-admin login-hooks-admin@minn-engine.localhost --role=administrator --user_pass=" . escapeshellarg($adminPassword) . ' >/dev/null 2>&1');
+$local = static fn (string $url): string => (string) preg_replace('#^https?://[^/]+#', '', html_entity_decode($url));
+$checked = $both(static function (string $stack) use ($ask, $stacks, $WP, $adminPassword, $password, $local): array {
+    $site = static fn (string $url): string => str_replace([$stacks[$stack][0], minn_test_url()], '{site}', $url);
+    $daysAhead = static fn (): int => (int) round(((int) trim((string) shell_exec("{$WP} option get admin_email_lifespan 2>/dev/null")) - time()) / 86400);
+    shell_exec("{$WP} option update admin_email_lifespan 1000 >/dev/null 2>&1");
+    [, $editorTo] = $ask($stack, '/wp-login.php', ['log' => 'login-hooks-reader', 'pwd' => $password, 'zz_human' => 'yes', 'testcookie' => '1', 'redirect_to' => minn_test_url() . '/zz-landing/']);
+    [$status, $location] = $ask($stack, '/wp-login.php', ['log' => 'login-hooks-admin', 'pwd' => $adminPassword, 'zz_human' => 'yes', 'testcookie' => '1', 'redirect_to' => minn_test_url() . '/zz-landing/']);
+    parse_str((string) parse_url(html_entity_decode($location), PHP_URL_QUERY), $query);
+    [, , $screen] = $ask($stack, $local($location));
+    preg_match('/href="([^"]*remind_me_later=[^"]*)"/', $screen, $remind);
+    [$laterStatus, $laterTo] = $ask($stack, $local($remind[1] ?? '/wp-login.php?action=confirm_admin_email'));
+    $later = $daysAhead();
+    shell_exec("{$WP} option update admin_email_lifespan 1000 >/dev/null 2>&1");
+    [, , $screen] = $ask($stack, $local($location));
+    preg_match('/name="confirm_admin_email_nonce" value="([^"]*)"/', $screen, $nonce);
+    [$confirmedStatus, $confirmedTo] = $ask($stack, '/wp-login.php?action=confirm_admin_email', ['confirm_admin_email_nonce' => $nonce[1] ?? '', 'correct-admin-email' => '1', 'redirect_to' => minn_test_url() . '/zz-landing/']);
+    return [
+        'an editor' => $site($editorTo),
+        'an administrator' => [$status, $query['action'] ?? '', $site((string) ($query['redirect_to'] ?? '')), $query['wp_lang'] ?? ''],
+        'the screen shows the address' => str_contains($screen, 'admin@minn-engine.localhost'),
+        'remind me later' => [$laterStatus, $site($laterTo), $later],
+        'the email is correct' => [$confirmedStatus, $site($confirmedTo), $daysAhead()],
+    ];
+});
+$same('the administration email check: who stops there, and where each answer goes', $checked);
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

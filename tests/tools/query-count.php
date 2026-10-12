@@ -1,9 +1,12 @@
 <?php
 /**
  * SQL statements per page on both stacks: the benchmark pages fetched over
- * HTTP, the server's own counters read before and after each through a
- * connection of this script's own, the fewest of several runs kept (other
- * connections only ever add). Prints a table; --json prints the figures.
+ * HTTP with the server's general log on, and the statements counted from
+ * it for the connections on the test site's database alone (a crawl or a
+ * suite on another database shares the server's counters, never this),
+ * the fewest of several runs kept. Prepared statements count as they run
+ * (Execute), as the server's Com_select counts them. Prints a table;
+ * --json prints the figures, --write keeps them in contracts/query-count.json.
  *
  * php tests/tools/query-count.php [--runs=5] [--json]
  */
@@ -11,7 +14,6 @@
 require __DIR__ . '/../lib.php';
 
 const PAGES = ['/', '/hello-world/', '/category/uncategorized/', '/wp-json/wp/v2/posts', '/?s=hello'];
-const COUNTERS = ['Com_select', 'Com_stmt_execute', 'Questions'];
 
 $options = getopt('', ['runs:', 'json', 'write']);
 $runs = max(1, (int) ($options['runs'] ?? 5));
@@ -20,17 +22,52 @@ $config = str_replace("require_once ABSPATH . 'wp-settings.php';", '', (string) 
 define('ABSPATH', minn_test_site_root() . '/public/');
 eval('?>' . $config);
 $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-$counters = static function () use ($db): array {
-    $out = [];
-    foreach ($db->query("SHOW GLOBAL STATUS WHERE Variable_name IN ('" . implode("','", COUNTERS) . "')")->fetch_all() as [$name, $value]) {
-        $out[$name] = (int) $value;
+// The server's general log, pointed at a file of this run's own while a page is fetched; put back as it was after.
+$was = $db->query('SELECT @@general_log, @@general_log_file, @@log_output')->fetch_row();
+$log = sys_get_temp_dir() . '/minn-query-count-' . getmypid() . '.log';
+register_shutdown_function(static function () use ($db, $was, $log): void {
+    $db->query('SET GLOBAL general_log = 0');
+    $db->query("SET GLOBAL general_log_file = '" . $db->real_escape_string((string) $was[1]) . "'");
+    $db->query("SET GLOBAL log_output = '" . $db->real_escape_string((string) $was[2]) . "'");
+    $db->query('SET GLOBAL general_log = ' . (int) $was[0]);
+    @unlink($log);
+});
+$own = (int) $db->thread_id;
+/** The statements one fetch ran on the site's database: SELECTs, prepared runs, all statements. */
+$measure = static function (string $url) use ($db, $log, $own): array {
+    @unlink($log);
+    $db->query("SET GLOBAL log_output = 'FILE'");
+    $db->query("SET GLOBAL general_log_file = '" . $db->real_escape_string($log) . "'");
+    $db->query('SET GLOBAL general_log = 1');
+    minn_test_fetch($url);
+    $db->query('SET GLOBAL general_log = 0');
+    $onSite = [];
+    $counts = ['Com_select' => 0, 'Com_stmt_execute' => 0, 'Questions' => 0];
+    $statements = [];
+    foreach (file($log, FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+        // "[date time]\t<thread> <Command>\t<argument>"; a statement may run over several lines.
+        if (preg_match('/^(?:\S+\s+\S+)?\s+(\d+)\s+(Connect|Init DB|Query|Execute|Prepare|Quit|Close stmt)\t(.*)$/', $line, $m) !== 1) {
+            continue;
+        }
+        [, $thread, $command, $argument] = $m;
+        if ($command === 'Connect' && preg_match('/ on (\S+) using /', $argument, $named) === 1) {
+            $onSite[$thread] = $named[1] === DB_NAME;
+        } elseif ($command === 'Init DB') {
+            $onSite[$thread] = trim($argument) === DB_NAME;
+        } elseif (($command === 'Query' || $command === 'Execute') && (int) $thread !== $own) {
+            $statements[] = [$thread, $command, $argument];
+        }
     }
-    return $out;
+    foreach ($statements as [$thread, $command, $argument]) {
+        if (empty($onSite[$thread])) {
+            continue;
+        }
+        $counts['Questions']++;
+        $counts['Com_stmt_execute'] += $command === 'Execute' ? 1 : 0;
+        $counts['Com_select'] += preg_match('/^\s*(\(\s*)?SELECT\b/i', $argument) === 1 ? 1 : 0;
+    }
+    return $counts;
 };
-// What reading the counters costs by itself, taken off every figure.
-$a = $counters();
-$b = $counters();
-$overhead = array_map(static fn (string $name): int => $b[$name] - $a[$name], array_combine(COUNTERS, COUNTERS));
 
 $stacks = ['engine' => minn_test_url(), 'reference' => minn_test_reference_url()];
 $figures = [];
@@ -38,13 +75,7 @@ foreach (PAGES as $page) {
     foreach ($stacks as $stack => $base) {
         $best = null;
         for ($i = 0; $i < $runs; $i++) {
-            $before = $counters();
-            minn_test_fetch($base . $page);
-            $after = $counters();
-            $delta = [];
-            foreach (COUNTERS as $name) {
-                $delta[$name] = max(0, $after[$name] - $before[$name] - $overhead[$name]);
-            }
+            $delta = $measure($base . $page);
             $best = $best === null || $delta['Com_select'] < $best['Com_select'] ? $delta : $best;
         }
         $figures[$page][$stack] = $best;

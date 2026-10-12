@@ -35,10 +35,15 @@ final readonly class PostObject
     }
 
 
-    /** The view-context object, through rest_prepare_{type} when a plugin hooks it. */
-    public function view(PostRecord $p): array
+    /**
+     * The view-context object, through rest_prepare_{type} when a plugin
+     * hooks it; with a _fields selection, the rendered title, content and
+     * excerpt only when it asks for them, as the reference renders only
+     * what is asked.
+     */
+    public function view(PostRecord $p, ?Fields $fields = null): array
     {
-        return RuntimePrepare::item('rest_prepare_' . $p->type, $this->viewFields($p), static fn () => \get_post($p->id));
+        return RuntimePrepare::item('rest_prepare_' . $p->type, $this->viewFields($p, $fields), static fn () => \get_post($p->id));
     }
 
     /** The edit-context object, through rest_prepare_{type} when a plugin hooks it. */
@@ -139,7 +144,7 @@ final readonly class PostObject
     }
 
     /** The view-context object: the shared fields, then the type's own, then class_list and _links. */
-    private function viewFields(PostRecord $p): array
+    private function viewFields(PostRecord $p, ?Fields $fields = null): array
     {
         if ($p->type === self::NAVIGATION) {
             return $this->navigationView($p);
@@ -163,9 +168,21 @@ final readonly class PostObject
             'status' => $p->status,
             'type' => $p->type,
             'link' => $this->permalinks->link($p),
-            'title' => ['rendered' => RenderedFields::title($p)],
-            'content' => ['rendered' => $protected ? '' : RenderedFields::content($p), 'protected' => $protected],
-            'excerpt' => ['rendered' => $protected ? '' : RenderedFields::excerpt($p), 'protected' => $protected],
+        ];
+        $wants = static fn (string $field): bool => $fields === null || $fields->wants($field);
+        if ($wants('title')) {
+            $object['title'] = ['rendered' => RenderedFields::title($p)];
+        }
+        if ($wants('content')) {
+            $object['content'] = ['rendered' => $protected ? '' : RenderedFields::content($p), 'protected' => $protected];
+        }
+        if ($wants('excerpt')) {
+            $object['excerpt'] = ['rendered' => $protected ? '' : RenderedFields::excerpt($p), 'protected' => $protected];
+        }
+        if (!$wants('title') && !$wants('content') && !$wants('excerpt')) {
+            RenderedFields::setUp($p);
+        }
+        $object += [
             'author' => $p->authorId,
             'featured_media' => (int) ($this->posts->meta($p->id, '_thumbnail_id') ?? 0),
         ];

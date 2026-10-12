@@ -58,13 +58,14 @@ final readonly class HeadLinks
     /**
      * The site's two feed links as feed_links prints them: the posts feed
      * and the comments feed (each unless its feed_links_show_* filter says
-     * no), titled with the caller's separator and words.
+     * no), titled with the caller's separator and words, through
+     * feed_links_args.
      *
      * @param array<string, mixed> $args
      */
     public static function siteFeeds(array $args): string
     {
-        $args = Lists::args($args, ['separator' => Gettext::inContext('&raquo;', 'feed link'), 'feedtitle' => Gettext::text('%1$s %2$s Feed'), 'comstitle' => Gettext::text('%1$s %2$s Comments Feed')]);
+        $args = (array) \apply_filters('feed_links_args', Lists::args($args, ['separator' => Gettext::inContext('&raquo;', 'feed link'), 'feedtitle' => Gettext::text('%1$s %2$s Feed'), 'comstitle' => Gettext::text('%1$s %2$s Comments Feed')]));
         $name = (string) \get_bloginfo('name');
         $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), Escape::attr(sprintf($title, $name, $args['separator'])), \esc_url($href));
         $out = \apply_filters('feed_links_show_posts_feed', true) ? $link((string) $args['feedtitle'], (string) \get_feed_link()) : '';

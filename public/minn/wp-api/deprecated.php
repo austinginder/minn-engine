@@ -206,7 +206,12 @@ function get_usermeta($user_id, $meta_key = '')
     };
 }
 
-/** Stores a user's meta (an empty value deletes it); true when stored, false when the value was already there. */
+/**
+ * Stores a user's meta (an empty value deletes it); true when stored, false
+ * when the value was already there. Its own actions, not the meta API's
+ * (probe hook-inputs): update_usermeta for a key the user has, then
+ * updated_usermeta when the value changed; added_usermeta for a new one.
+ */
 function update_usermeta($user_id, $meta_key, $meta_value)
 {
     _deprecated_function(__FUNCTION__, '3.0.0', 'update_user_meta()');
@@ -216,13 +221,33 @@ function update_usermeta($user_id, $meta_key, $meta_value)
     }
     $key = (string) preg_replace('|[^a-z0-9_]|i', '', (string) $meta_key);
     $value = is_string($meta_value) ? stripslashes($meta_value) : $meta_value;
-    if (empty(maybe_serialize($value))) {
+    $stored = (string) maybe_serialize($value);
+    if (empty($stored)) {
         return delete_usermeta($user_id, $key);
     }
-    return (bool) update_user_meta($user_id, $key, $value);
+    $meta = _minn_meta();
+    $current = $meta->matching('user', $user_id, $key)[0] ?? null;
+    if ($current === null) {
+        $id = $meta->add('user', $user_id, $key, $stored);
+        do_action('added_usermeta', $id, $user_id, $key, $value);
+    } else {
+        do_action('update_usermeta', (string) $current['meta_id'], $user_id, $key, $value);
+        if ($current['meta_value'] === $stored) {
+            return false;
+        }
+        $meta->updateRows('user', [$current['meta_id']], $stored);
+        do_action('updated_usermeta', (string) $current['meta_id'], $user_id, $key, $value);
+    }
+    clean_user_cache($user_id);
+    wp_cache_delete($user_id, 'user_meta');
+    return true;
 }
 
-/** Deletes a user's meta under a key (only the matching value when one is given); true for any user. */
+/**
+ * Deletes a user's meta under a key (only the matching value when one is
+ * given); true for any user. delete_usermeta and deleted_usermeta name the
+ * first row it takes (probe hook-inputs).
+ */
 function delete_usermeta($user_id, $meta_key, $meta_value = '')
 {
     _deprecated_function(__FUNCTION__, '3.0.0', 'delete_user_meta()');
@@ -230,8 +255,18 @@ function delete_usermeta($user_id, $meta_key, $meta_value = '')
     if (!$user_id) {
         return false;
     }
+    $key = (string) preg_replace('|[^a-z0-9_]|i', '', (string) $meta_key);
     $value = is_array($meta_value) || is_object($meta_value) ? serialize($meta_value) : trim((string) $meta_value);
-    delete_user_meta($user_id, (string) preg_replace('|[^a-z0-9_]|i', '', (string) $meta_key), $value);
+    $meta = _minn_meta();
+    $rows = $meta->find('user', $user_id, $key, $value === '' ? null : $value);
+    if ($rows !== []) {
+        $first = (string) $rows[0]['meta_id'];
+        do_action('delete_usermeta', $first, $user_id, $key, $meta_value);
+        $meta->deleteRows('user', array_column($rows, 'meta_id'));
+        clean_user_cache($user_id);
+        wp_cache_delete($user_id, 'user_meta');
+        do_action('deleted_usermeta', $first, $user_id, $key, $meta_value);
+    }
     return true;
 }
 
@@ -1458,5 +1493,11 @@ function wp_simplepie_autoload($class)
 function wp_update_https_detection_errors()
 {
     _deprecated_function(__FUNCTION__, '6.4.0');
+    // A plugin may answer for the check (probe hook-inputs): its errors are stored, nothing is asked.
+    $pre = apply_filters('pre_wp_update_https_detection_errors', null);
+    if (is_wp_error($pre)) {
+        update_option('https_detection_errors', $pre->errors);
+        return;
+    }
     update_option('https_detection_errors', wp_get_https_detection_errors());
 }

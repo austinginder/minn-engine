@@ -63,7 +63,7 @@ final readonly class Renderer
     private function article(PostRecord $post): string
     {
         $body = PasswordGate::is($post)
-            ? PasswordGate::form($post, $this->permalinks->url(''), $this->permalinks->forPost($post))
+            ? PasswordGate::formForReader($post, $this->permalinks->url(''), $this->permalinks->forPost($post))
             : Blocks::render($post->content);
         return '<article class="entry"><h1 class="entry-title">' . Html::esc(PasswordGate::title($post)) . '</h1>'
             . '<div class="entry-content">' . $body . '</div></article>';

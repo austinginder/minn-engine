@@ -294,7 +294,12 @@ function wp_raise_memory_limit($context = 'admin')
         return false;
     }
     $max = WP_MAX_MEMORY_LIMIT;
-    $wanted = apply_filters("{$context}_memory_limit", $max);
+    $wanted = match ((string) $context) {
+        'admin' => apply_filters('admin_memory_limit', $max),
+        'image' => apply_filters('image_memory_limit', $max),
+        'cron' => apply_filters('cron_memory_limit', $max),
+        default => apply_filters("{$context}_memory_limit", $max),
+    };
     $wantedBytes = wp_convert_hr_to_bytes($wanted);
     $maxBytes = wp_convert_hr_to_bytes($max);
     $limit = match (true) {

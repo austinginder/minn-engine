@@ -276,19 +276,28 @@ function _wp_footer_scripts()
     print_footer_scripts();
 }
 
+/** The footer's scripts, then print_footer_scripts, as print_head_scripts does. */
 function print_footer_scripts()
 {
-    return wp_scripts()->do_footer_items();
+    $done = wp_scripts()->do_footer_items();
+    apply_filters('print_footer_scripts', true);
+    return $done;
 }
 
+/** The styles queued too late for the head, then print_late_styles, as print_head_scripts does. */
 function print_late_styles()
 {
-    return wp_print_styles();
+    $done = wp_print_styles();
+    apply_filters('print_late_styles', true);
+    return $done;
 }
 
+/** The head's scripts, then print_head_scripts, as print_admin_styles asks (the engine joins no scripts, so its answer changes nothing). */
 function print_head_scripts()
 {
-    return wp_print_head_scripts();
+    $done = wp_print_head_scripts();
+    apply_filters('print_head_scripts', true);
+    return $done;
 }
 
 /**
@@ -405,7 +414,31 @@ function wp_scripts()
         $GLOBALS['wp_scripts'] = new WP_Scripts(_minn_assets('script'));
         _minn_default_dependencies('wp_default_scripts', $GLOBALS['wp_scripts']);
     }
+    if (Runtime::booted() && Runtime::current()->get('api_fetch_told') === false) {
+        Runtime::current()->set('api_fetch_told', true);
+        _minn_tell_api_fetch();
+    }
     return $GLOBALS['wp_scripts'];
+}
+
+/**
+ * @internal apiFetch told where the REST API is and which nonce to send.
+ * Without the root middleware a caller resolves its own path against the
+ * site root, so a namespace like /wc/store/v1/cart is requested with no
+ * /wp-json/ in front of it.
+ */
+function _minn_tell_api_fetch(): void
+{
+    // Added on the registry itself, as the reference's registry adds it as it is made: no "too early" notice.
+    $GLOBALS['wp_scripts']->add_inline_script(
+        'wp-api-fetch',
+        sprintf('wp.apiFetch.use( wp.apiFetch.createRootURLMiddleware( "%s" ) );', esc_url_raw(get_rest_url())) . "\n"
+        . sprintf('wp.apiFetch.nonceMiddleware = wp.apiFetch.createNonceMiddleware( "%s" );', wp_create_nonce('wp_rest')) . "\n"
+        . 'wp.apiFetch.use( wp.apiFetch.nonceMiddleware );' . "\n"
+        . 'wp.apiFetch.use( wp.apiFetch.mediaUploadMiddleware );' . "\n"
+        . sprintf('wp.apiFetch.nonceEndpoint = "%s";', admin_url('admin-ajax.php?action=rest-nonce')),
+        'after'
+    );
 }
 
 /** The styles registry; made, it tells wp_default_styles (again on init). */

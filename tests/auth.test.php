@@ -37,8 +37,8 @@ function check( bool $ok, string $label, string $detail = '' ): void {
 	}
 }
 
-/** Fetch with an optional cookie and nonce. */
-function auth_get( string $base, string $route, ?string $cookie = null, ?string $nonce = null, ?string $cookie_name = null ): array {
+/** Fetch with an optional cookie and nonce, and any query string of the request's own. */
+function auth_get( string $base, string $route, ?string $cookie = null, ?string $nonce = null, ?string $cookie_name = null, string $query = '' ): array {
 	global $REF;
 	$headers = array();
 	if ( null !== $cookie ) {
@@ -56,7 +56,7 @@ function auth_get( string $base, string $route, ?string $cookie = null, ?string 
 			'http' => array( 'ignore_errors' => true, 'timeout' => 10, 'header' => implode( "\r\n", $headers ) ),
 		)
 	);
-	$body   = @file_get_contents( $base . '/?rest_route=' . rawurlencode( $route ), false, $ctx );
+	$body   = @file_get_contents( $base . '/?rest_route=' . rawurlencode( $route ) . $query, false, $ctx );
 	$status = 0;
 	foreach ( $http_response_header ?? array() as $h ) {
 		if ( preg_match( '#^HTTP/\S+\s+(\d+)#', $h, $m ) ) {
@@ -143,7 +143,38 @@ check(
 	"got $xst " . ( $xbody['code'] ?? '?' )
 );
 
-// 6. Public user routes stay public, and reveal nothing extra.
+// 6. A plugin's nonce lifetime (nonce_life) holds where the nonce is checked, on both stacks: the
+//    fixture plugin sets it on request (?minn-test-nonce-life=), and only a nonce minted under the
+//    same lifetime signs in. The engine hears the filter once plugins load and checks the nonce again.
+$wp_ref  = 'wp --path=' . escapeshellarg( minn_test_site_root() . '/wp-reference' );
+$plugins = (string) shell_exec( "$wp_ref option get active_plugins --format=json 2>/dev/null" );
+if ( is_array( json_decode( $plugins, true ) ) ) {
+	register_shutdown_function(
+		static function () use ( $wp_ref, $plugins ): void {
+			shell_exec( "$wp_ref option update active_plugins " . escapeshellarg( $plugins ) . ' --format=json 2>/dev/null' );
+		}
+	);
+	$active = array_values( array_unique( array_merge( json_decode( $plugins, true ), array( 'minn-test-plugin/minn-test-plugin.php' ) ) ) );
+	shell_exec( "$wp_ref option update active_plugins " . escapeshellarg( json_encode( $active ) ) . ' --format=json 2>/dev/null' );
+	$short = json_decode( (string) shell_exec( "$wp_ref eval-file " . escapeshellarg( "$ROOT/tests/tools/mint-session.php" ) . ' 1 7200 2>/dev/null' ), true );
+	foreach ( array(
+		'a nonce minted under a plugin\'s nonce lifetime signs in under it' => array( $short['cookie'] ?? '', $short['nonce'] ?? '', '&minn-test-nonce-life=7200', 200 ),
+		'the same nonce is refused without the plugin\'s lifetime'         => array( $short['cookie'] ?? '', $short['nonce'] ?? '', '', 403 ),
+		'a nonce minted under the default is refused under a shorter one'  => array( $mint['cookie'], $mint['nonce'], '&minn-test-nonce-life=7200', 403 ),
+	) as $label => [ $ck, $nc, $query, $want ] ) {
+		[ $st, $body ] = auth_get( $ENGINE, '/wp/v2/users/me', $ck, $nc, $cn, $query );
+		[ $ref_st, $ref_body ] = auth_get( $REF, '/wp/v2/users/me', $ck, $nc, $cn, $query );
+		check(
+			$st === $want && $ref_st === $want && ( $body['code'] ?? null ) === ( $ref_body['code'] ?? null ),
+			"me: $label, as on the reference",
+			"engine $st " . ( $body['code'] ?? '' ) . ", reference $ref_st " . ( $ref_body['code'] ?? '' )
+		);
+	}
+} else {
+	check( false, 'the reference lists its active plugins' );
+}
+
+// 7. Public user routes stay public, and reveal nothing extra.
 [ $ust, $users ] = auth_get( $ENGINE, '/wp/v2/users' );
 check( 200 === $ust && is_array( $users ), 'users list is public' );
 check(

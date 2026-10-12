@@ -1,0 +1,1136 @@
+[
+    [
+        "a category recount",
+        {
+            "heard": [
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:category"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "a shared term split",
+        {
+            "heard": [
+                [
+                    "split_shared_term",
+                    [
+                        "{term}",
+                        "{new_term}",
+                        "{shared_tt}",
+                        "post_tag"
+                    ]
+                ]
+            ],
+            "result": [
+                "new id",
+                [
+                    "zz-hi-term",
+                    "zz-hi-term",
+                    true
+                ],
+                true,
+                true,
+                true
+            ]
+        }
+    ],
+    [
+        "update_usermeta, new",
+        {
+            "heard": [
+                [
+                    "added_usermeta",
+                    [
+                        "{n}",
+                        1,
+                        "zz_hi_meta",
+                        "one"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "update_usermeta, changed",
+        {
+            "heard": [
+                [
+                    "update_usermeta",
+                    [
+                        "{n}",
+                        1,
+                        "zz_hi_meta",
+                        "two"
+                    ]
+                ],
+                [
+                    "updated_usermeta",
+                    [
+                        "{n}",
+                        1,
+                        "zz_hi_meta",
+                        "two"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "update_usermeta, same",
+        {
+            "heard": [
+                [
+                    "update_usermeta",
+                    [
+                        "{n}",
+                        1,
+                        "zz_hi_meta",
+                        "two"
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "delete_usermeta",
+        {
+            "heard": [
+                [
+                    "delete_usermeta",
+                    [
+                        "{n}",
+                        1,
+                        "zz_hi_meta",
+                        ""
+                    ]
+                ],
+                [
+                    "deleted_usermeta",
+                    [
+                        "{n}",
+                        1,
+                        "zz_hi_meta",
+                        ""
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "delete_metadata_by_mid",
+        {
+            "heard": [
+                [
+                    "delete_post_meta",
+                    [
+                        [
+                            "{n}"
+                        ],
+                        "{post}",
+                        "zz_hi_key",
+                        "v"
+                    ]
+                ],
+                [
+                    "delete_postmeta",
+                    [
+                        "{n}"
+                    ]
+                ],
+                [
+                    "deleted_post_meta",
+                    [
+                        [
+                            "{n}"
+                        ],
+                        "{post}",
+                        "zz_hi_key",
+                        "v"
+                    ]
+                ],
+                [
+                    "deleted_postmeta",
+                    [
+                        "{n}"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "delete_metadata_by_mid, a comment",
+        {
+            "heard": [
+                [
+                    "delete_comment_meta",
+                    [
+                        [
+                            "{comment_meta}"
+                        ],
+                        "{comment}",
+                        "zz_hi_key",
+                        "v"
+                    ]
+                ],
+                [
+                    "delete_commentmeta",
+                    [
+                        "{comment_meta}"
+                    ]
+                ],
+                [
+                    "deleted_comment_meta",
+                    [
+                        [
+                            "{comment_meta}"
+                        ],
+                        "{comment}",
+                        "zz_hi_key",
+                        "v"
+                    ]
+                ],
+                [
+                    "deleted_commentmeta",
+                    [
+                        "{comment_meta}"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "edit_post_meta for a post",
+        {
+            "heard": [
+                [
+                    "auth_post_meta_zz_hi_key",
+                    [
+                        true,
+                        "zz_hi_key",
+                        "{post}",
+                        1,
+                        "edit_post_meta",
+                        [
+                            "edit_others_posts",
+                            "edit_published_posts"
+                        ]
+                    ]
+                ],
+                [
+                    "auth_post_post_meta_zz_hi_key",
+                    [
+                        true,
+                        "zz_hi_key",
+                        "{post}",
+                        1,
+                        "edit_post_meta",
+                        [
+                            "edit_others_posts",
+                            "edit_published_posts"
+                        ]
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "wp_set_post_categories, none",
+        {
+            "heard": [
+                [
+                    "default_category_post_types",
+                    [
+                        []
+                    ]
+                ]
+            ],
+            "result": [
+                "1"
+            ]
+        }
+    ],
+    [
+        "a post saved",
+        {
+            "heard": [
+                [
+                    "add_trashed_suffix_to_trashed_posts",
+                    [
+                        true,
+                        "zz-hi",
+                        "{post}"
+                    ]
+                ],
+                [
+                    "add_trashed_suffix_to_trashed_posts",
+                    [
+                        true,
+                        "{post}-revision-v1",
+                        0
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "a post saved under a trashed one's slug",
+        {
+            "heard": [
+                [
+                    "add_trashed_suffix_to_trashed_posts",
+                    [
+                        true,
+                        "zz-hi",
+                        0
+                    ]
+                ],
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:category"
+                    ]
+                ],
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:post_tag"
+                    ]
+                ],
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:post_format"
+                    ]
+                ]
+            ],
+            "result": "zz-hi"
+        }
+    ],
+    [
+        "a post titled, no slug given",
+        {
+            "heard": [
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:category"
+                    ]
+                ],
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:post_tag"
+                    ]
+                ],
+                [
+                    "update_post_term_count_statuses",
+                    [
+                        [
+                            "publish"
+                        ],
+                        "taxonomy:post_format"
+                    ]
+                ]
+            ],
+            "result": ""
+        }
+    ],
+    [
+        "is_user_member_of_blog",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "get_blogs_of_user",
+        {
+            "heard": [
+                [
+                    "pre_get_blogs_of_user",
+                    [
+                        null,
+                        1,
+                        false
+                    ]
+                ]
+            ],
+            "result": [
+                1
+            ]
+        }
+    ],
+    [
+        "get_the_author_posts_link",
+        {
+            "heard": [
+                [
+                    "the_author_posts_link",
+                    [
+                        "<a href=\"{home}/author/admin/\" rel=\"author\">admin</a>",
+                        "admin",
+                        "Posts by admin"
+                    ]
+                ]
+            ],
+            "result": "<a href=\"{home}/author/admin/\" rel=\"author\">admin</a>"
+        }
+    ],
+    [
+        "get_password_reset_key",
+        {
+            "heard": [
+                [
+                    "retreive_password",
+                    [
+                        "admin"
+                    ]
+                ]
+            ],
+            "result": "a key"
+        }
+    ],
+    [
+        "check_password_reset_key, expired",
+        {
+            "heard": [
+                [
+                    "password_reset_expiration",
+                    [
+                        -10
+                    ]
+                ]
+            ],
+            "result": "error:expired_key"
+        }
+    ],
+    [
+        "wp_next_scheduled, none",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "wp_next_scheduled, one",
+        {
+            "heard": [
+                [
+                    "wp_next_scheduled",
+                    [
+                        "{n}",
+                        "object:stdClass",
+                        "zz_hi_event",
+                        [
+                            "a"
+                        ]
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "wp_raise_memory_limit cron",
+        {
+            "heard": [
+                [
+                    "cron_memory_limit",
+                    [
+                        "8G"
+                    ]
+                ]
+            ],
+            "result": "8G"
+        }
+    ],
+    [
+        "wp_raise_memory_limit image",
+        {
+            "heard": [],
+            "result": "8G"
+        }
+    ],
+    [
+        "wp_raise_memory_limit admin",
+        {
+            "heard": [],
+            "result": "8G"
+        }
+    ],
+    [
+        "get_available_languages",
+        {
+            "heard": [
+                [
+                    "get_available_languages",
+                    [
+                        [],
+                        null
+                    ]
+                ]
+            ],
+            "result": []
+        }
+    ],
+    [
+        "wp_get_nav_menu_object by id",
+        {
+            "heard": [
+                [
+                    "wp_get_nav_menu_object",
+                    [
+                        "term:nav_menu:zz-hi-menu",
+                        "{menu}"
+                    ]
+                ]
+            ],
+            "result": "term:nav_menu:zz-hi-menu"
+        }
+    ],
+    [
+        "wp_get_nav_menu_object by slug",
+        {
+            "heard": [
+                [
+                    "wp_get_nav_menu_object",
+                    [
+                        "term:nav_menu:zz-hi-menu",
+                        "zz-hi-menu"
+                    ]
+                ]
+            ],
+            "result": "term:nav_menu:zz-hi-menu"
+        }
+    ],
+    [
+        "wp_get_nav_menu_object, none",
+        {
+            "heard": [
+                [
+                    "wp_get_nav_menu_object",
+                    [
+                        false,
+                        "zz-hi-no-such-menu"
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "wp_get_nav_menu_object, nothing asked",
+        {
+            "heard": [
+                [
+                    "wp_get_nav_menu_object",
+                    [
+                        false,
+                        0
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "wp_setup_nav_menu_item",
+        {
+            "heard": [
+                [
+                    "pre_wp_setup_nav_menu_item",
+                    [
+                        null,
+                        "post:nav_menu_item:zz-hi-item"
+                    ]
+                ]
+            ],
+            "result": "zz-hi-item"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_url display",
+        {
+            "heard": [
+                [
+                    "link_url",
+                    [
+                        "https://example.org/a%20b",
+                        0,
+                        "display"
+                    ]
+                ]
+            ],
+            "result": "https://example.org/a%20b"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_url raw",
+        {
+            "heard": [],
+            "result": "https://example.org/a b"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_url db",
+        {
+            "heard": [
+                [
+                    "pre_link_url",
+                    [
+                        "https://example.org/a%20b"
+                    ]
+                ]
+            ],
+            "result": "https://example.org/a%20b"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_url edit",
+        {
+            "heard": [
+                [
+                    "edit_link_url",
+                    [
+                        "https://example.org/a b",
+                        0
+                    ]
+                ]
+            ],
+            "result": "https://example.org/a b"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_url attribute",
+        {
+            "heard": [
+                [
+                    "link_url",
+                    [
+                        "https://example.org/a%20b",
+                        0,
+                        "attribute"
+                    ]
+                ]
+            ],
+            "result": "https://example.org/a%20b"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_url js",
+        {
+            "heard": [
+                [
+                    "link_url",
+                    [
+                        "https://example.org/a%20b",
+                        0,
+                        "js"
+                    ]
+                ]
+            ],
+            "result": "https://example.org/a%20b"
+        }
+    ],
+    [
+        "sanitize_bookmark_field link_name display",
+        {
+            "heard": [
+                [
+                    "link_name",
+                    [
+                        "zz &lt;b&gt;name&lt;/b&gt;",
+                        0,
+                        "display"
+                    ]
+                ]
+            ],
+            "result": "zz &lt;b&gt;name&lt;/b&gt;"
+        }
+    ],
+    [
+        "wp_check_comment_disallowed_list",
+        {
+            "heard": [
+                [
+                    "wp_trigger_error_always_run",
+                    [
+                        "",
+                        "Hook wp_blacklist_check is <strong>deprecated</strong> since version 5.5.0! Use wp_check_comment_disallowed_list instead. Please consider writing more inclusive code.",
+                        "{n}"
+                    ]
+                ],
+                [
+                    "wp_trigger_error_trigger_error",
+                    [
+                        true,
+                        "",
+                        "Hook wp_blacklist_check is <strong>deprecated</strong> since version 5.5.0! Use wp_check_comment_disallowed_list instead. Please consider writing more inclusive code.",
+                        "{n}"
+                    ]
+                ],
+                [
+                    "wp_trigger_error_run",
+                    [
+                        "",
+                        "Hook wp_blacklist_check is <strong>deprecated</strong> since version 5.5.0! Use wp_check_comment_disallowed_list instead. Please consider writing more inclusive code.",
+                        "{n}"
+                    ]
+                ],
+                [
+                    "wp_blacklist_check",
+                    [
+                        "zz",
+                        "zz@example.org",
+                        "https://example.org",
+                        "zz text",
+                        "127.0.0.1",
+                        "zz-agent"
+                    ]
+                ],
+                [
+                    "wp_check_comment_disallowed_list",
+                    [
+                        "zz",
+                        "zz@example.org",
+                        "https://example.org",
+                        "zz text",
+                        "127.0.0.1",
+                        "zz-agent"
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "check_comment, a pingback",
+        {
+            "heard": [
+                [
+                    "wp_auto_approve_ping",
+                    [
+                        false,
+                        0,
+                        "https://example.org"
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "check_comment, a pingback from the site",
+        {
+            "heard": [
+                [
+                    "wp_auto_approve_ping",
+                    [
+                        true,
+                        1,
+                        "{home}/hello-world/"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "check_comment, a pingback, nothing previously approved",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "check_comment, a trackback",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "check_comment, a comment",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "wp_trigger_error",
+        {
+            "heard": [
+                [
+                    "wp_trigger_error_always_run",
+                    [
+                        "zz_hi",
+                        "zz message",
+                        1024
+                    ]
+                ],
+                [
+                    "wp_trigger_error_trigger_error",
+                    [
+                        true,
+                        "zz_hi",
+                        "zz message",
+                        1024
+                    ]
+                ],
+                [
+                    "wp_trigger_error_run",
+                    [
+                        "zz_hi",
+                        "zz message",
+                        1024
+                    ]
+                ]
+            ],
+            "result": null
+        }
+    ],
+    [
+        "print_head_scripts",
+        {
+            "heard": [
+                [
+                    "print_head_scripts",
+                    [
+                        true
+                    ]
+                ]
+            ],
+            "result": null
+        }
+    ],
+    [
+        "print_footer_scripts",
+        {
+            "heard": [
+                [
+                    "print_footer_scripts",
+                    [
+                        true
+                    ]
+                ]
+            ],
+            "result": null
+        }
+    ],
+    [
+        "print_late_styles",
+        {
+            "heard": [
+                [
+                    "print_late_styles",
+                    [
+                        true
+                    ]
+                ]
+            ],
+            "result": null
+        }
+    ],
+    [
+        "validate_current_theme",
+        {
+            "heard": [
+                [
+                    "validate_current_theme",
+                    [
+                        true
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "validate_theme_requirements",
+        {
+            "heard": [
+                [
+                    "validate_theme_requirements",
+                    [
+                        true,
+                        "twentytwentyfive"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "validate_theme_requirements, refused",
+        {
+            "heard": [
+                [
+                    "validate_theme_requirements",
+                    [
+                        true,
+                        "twentytwentyfive"
+                    ]
+                ]
+            ],
+            "result": "error:zz_hi"
+        }
+    ],
+    [
+        "validate_current_theme, skipped",
+        {
+            "heard": [
+                [
+                    "validate_current_theme",
+                    [
+                        true
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "get_block_template",
+        {
+            "heard": [
+                [
+                    "pre_get_block_template",
+                    [
+                        null,
+                        "twentytwentyfive//index",
+                        "wp_template"
+                    ]
+                ]
+            ],
+            "result": "index"
+        }
+    ],
+    [
+        "get_block_templates",
+        {
+            "heard": [
+                [
+                    "pre_get_block_templates",
+                    [
+                        null,
+                        {
+                            "slug__in": [
+                                "index"
+                            ]
+                        },
+                        "wp_template"
+                    ]
+                ]
+            ],
+            "result": 1
+        }
+    ],
+    [
+        "wp_update_https_detection_errors",
+        {
+            "heard": [
+                [
+                    "wp_trigger_error_always_run",
+                    [
+                        "",
+                        "Function wp_update_https_detection_errors is <strong>deprecated</strong> since version 6.4.0 with no alternative available.",
+                        "{n}"
+                    ]
+                ],
+                [
+                    "wp_trigger_error_trigger_error",
+                    [
+                        true,
+                        "",
+                        "Function wp_update_https_detection_errors is <strong>deprecated</strong> since version 6.4.0 with no alternative available.",
+                        "{n}"
+                    ]
+                ],
+                [
+                    "wp_trigger_error_run",
+                    [
+                        "",
+                        "Function wp_update_https_detection_errors is <strong>deprecated</strong> since version 6.4.0 with no alternative available.",
+                        "{n}"
+                    ]
+                ],
+                [
+                    "pre_wp_update_https_detection_errors",
+                    [
+                        null
+                    ]
+                ]
+            ],
+            "result": [
+                null,
+                {
+                    "zz_hi": [
+                        "zz"
+                    ]
+                }
+            ]
+        }
+    ],
+    [
+        "get_the_password_form",
+        {
+            "heard": [
+                [
+                    "the_password_form",
+                    [
+                        "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+                        "post:post:zz-hi-2",
+                        ""
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "get_the_password_form, a wrong password",
+        {
+            "heard": [
+                [
+                    "the_password_form",
+                    [
+                        "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+                        "post:post:zz-hi-2",
+                        ""
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "get_the_password_form, a wrong password from its page",
+        {
+            "heard": [
+                [
+                    "the_password_form_incorrect_password",
+                    [
+                        "Invalid password.",
+                        "post:post:zz-hi-2"
+                    ]
+                ],
+                [
+                    "the_password_form",
+                    [
+                        "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form password-form-error\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" /><div class=\"post-password-form-invalid-password\" role=\"alert\"><p id=\"error-pwbox-{protected}\">Invalid password.</p></div>\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" aria-describedby=\"error-pwbox-{protected}\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+                        "post:post:zz-hi-2",
+                        "Invalid password."
+                    ]
+                ]
+            ],
+            "result": "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form password-form-error\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" /><div class=\"post-password-form-invalid-password\" role=\"alert\"><p id=\"error-pwbox-{protected}\">Invalid password.</p></div>\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" aria-describedby=\"error-pwbox-{protected}\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t"
+        }
+    ],
+    [
+        "get_the_password_form, the message reworded",
+        {
+            "heard": [
+                [
+                    "the_password_form_incorrect_password",
+                    [
+                        "Invalid password.",
+                        "post:post:zz-hi-2"
+                    ]
+                ],
+                [
+                    "the_password_form",
+                    [
+                        "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form password-form-error\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" /><div class=\"post-password-form-invalid-password\" role=\"alert\"><p id=\"error-pwbox-{protected}\"><b>zz</b> wrong</p></div>\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" aria-describedby=\"error-pwbox-{protected}\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+                        "post:post:zz-hi-2",
+                        "<b>zz</b> wrong"
+                    ]
+                ]
+            ],
+            "result": "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form password-form-error\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" /><div class=\"post-password-form-invalid-password\" role=\"alert\"><p id=\"error-pwbox-{protected}\"><b>zz</b> wrong</p></div>\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" aria-describedby=\"error-pwbox-{protected}\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t"
+        }
+    ],
+    [
+        "get_the_password_form, a page sent nobody back",
+        {
+            "heard": [
+                [
+                    "the_password_form",
+                    [
+                        "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t",
+                        "post:post:zz-hi-2",
+                        ""
+                    ]
+                ]
+            ],
+            "result": "<form action=\"{home}/wp-login.php?action=postpass\" class=\"post-password-form\" method=\"post\"><input type=\"hidden\" name=\"redirect_to\" value=\"{home}/zz-hi-2/\" />\n\t<p>This content is password-protected. To view it, please enter the password below.</p>\n\t<p><label for=\"pwbox-{protected}\">Password: <input name=\"post_password\" id=\"pwbox-{protected}\" type=\"password\" spellcheck=\"false\" required size=\"20\" /></label> <span class=\"wp-block-button\"><input type=\"submit\" name=\"Submit\" class=\"wp-block-button__link wp-element-button\" value=\"Enter\" /></span></p></form>\n\t"
+        }
+    ],
+    [
+        "wp_load_alloptions, cached",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "wp_load_alloptions, the cache emptied",
+        {
+            "heard": [
+                [
+                    "pre_cache_alloptions",
+                    [
+                        "options:with siteurl"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "wp_maybe_update_user_counts",
+        {
+            "heard": [
+                [
+                    "enable_live_network_counts",
+                    [
+                        true,
+                        "users"
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ]
+]
