@@ -269,11 +269,10 @@ final readonly class PostWriter
         $this->announceSticky('post_unstuck', $id);
     }
 
-    /** Inside a request: drops the request's copy of sticky_posts (the row was written directly) and fires post_stuck or post_unstuck. */
+    /** Inside a request: fires post_stuck or post_unstuck. */
     private function announceSticky(string $hook, int $id): void
     {
         if (Runtime::booted()) {
-            Runtime::options()->forget('sticky_posts');
             \do_action($hook, $id);
         }
     }

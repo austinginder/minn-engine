@@ -6662,9 +6662,8 @@ placeholder made real (`set_user_setting`), one admin dead end.
   `auto-off`, not `auto`.
 - **Site options on a single site.** `wp_prime_site_option_caches` and
   `wp_prime_network_option_caches` (any network id) prime the options;
-  `wp_load_core_site_options` has nothing to load. The engine keeps option
-  reads in its own store, not in `wp_cache`'s `options` group, so a plugin that
-  reads that group directly still finds nothing (a known difference).
+  `wp_load_core_site_options` has nothing to load. Option reads are kept in
+  `wp_cache`'s `options` group since "The option cache" (2026-10-11).
 - **User settings** (the `user-settings` user option and `user-settings-time`):
   `wp_set_all_user_settings` writes the pairs as `name=value&…`, each kept to
   letters, digits, `_` and `-`, a nameless pair dropped, and refreshes the
@@ -13538,9 +13537,8 @@ leaves that case out. Owed:
 
 - the site meta query, which a single site does not support;
 - multisite itself (`is_multisite()` is false);
-- `get_option()` here fires neither `pre_wp_load_alloptions` nor
-  `alloptions`. The reference fires both on every read. That is option-layer
-  work for its own batch.
+- `get_option()` fired neither `pre_wp_load_alloptions` nor `alloptions`.
+  Settled in "The option cache" (2026-10-11).
 
 ## The icon block and the term template (2026-10-11)
 
@@ -14845,3 +14843,71 @@ Suite config-constants points both stacks at a closed port, with
 `WP_CONTENT_DIR` set to a temporary folder, and compares three cases: no
 drop-in (the engine's own page), a drop-in that only prints, and one that sets
 503 and its own `Retry-After`.
+
+## The option cache (2026-10-11)
+
+Found in the runtime.md audit. On the reference, `get_option()` reads every
+option through the autoloaded list, and every read fires
+`pre_wp_load_alloptions` and `alloptions`. It keeps what it read in
+`wp_cache`'s `options` group:
+
+- the list under `alloptions`;
+- the names it found unset under `notoptions`;
+- one key per option not autoloaded.
+
+Object-cache drop-ins and caching plugins work with those keys. A plugin that
+writes a row with SQL drops the key, and the next read finds the new value.
+The engine kept a private per-request store and fired neither filter.
+
+Probe `option-cache` (`tests/tools/option-cache-probe.php`) shows:
+
+- the hooks heard on each read, in order: `pre_option_{name}`, then
+  `pre_wp_load_alloptions` (null, and whether the cache was forced), then
+  `alloptions` (the list alone), then `option_{name}` or
+  `default_option_{name}`. A pre filter that answers stops before the list.
+  An empty name hears nothing;
+- `alloptions` rewriting the list: a key it adds is an option, a value it
+  changes is read (a serialized one unserialized), and the group keeps the
+  list as stored;
+- `pre_wp_load_alloptions` answering with a list: that list stands in, and
+  `alloptions` is not heard. An option the answer leaves out is read from its
+  row;
+- what reads leave in the group, and the group written by hand: a key set is
+  read back, a name put in `notoptions` reads as its default, and a dropped
+  list is read again;
+- a write made with SQL, seen once its key (the list, the option's own key or
+  `notoptions`) is dropped;
+- the group kept in step by the writes:
+  - add and update put the value in the list or under the option's own key,
+    as written (true stays true, a list serialized);
+  - delete takes it out and notes it in `notoptions`;
+  - autoload turned on drops the list and the option's key;
+  - autoload turned off takes the option out of the list.
+
+`Runtime\Options` now keeps its state in the group (`Runtime\OptionsGroup`).
+`get_option()` and `wp_load_alloptions()` read the list through both filters.
+The engine's own reads use the same list unfiltered, as they skipped
+`option_{name}` before. Each stored text is still decoded once while it stays
+the same, so the change costs no speed. The autoloaded options now come in
+one query instead of one per name; the front page timed no slower.
+
+The engine's own writes that bypass the store now tell it, so the group stays
+true within a request: `Site::setOption`, `Site::deleteOption`, the
+`user_count` refresh, and a taxonomy's children (`Runtime::optionWritten`).
+
+With an `object-cache.php` drop-in, the facade hands the group to the
+drop-in's functions. Suite dropins runs the probe through the fixture drop-in
+on both stacks and compares it with the fixture.
+
+**Kept on purpose:** a drop-in's cache outlives the request, and the engine
+writes some of its own rows behind the store: the cron lock, the sign-in
+throttle, and the CLI's option commands. So a key left by an earlier request
+is never trusted. Each is read from the database the first time a request
+asks for it, written back only when the drop-in holds something else, and
+kept in step for the rest of the request. The reference trusts a persistent
+cache across requests. The engine gives up that saving so a stale lock or
+throttle row can never stick.
+
+`Db::option()`, which the engine's classes call directly in about 160 places,
+still reads one row per call. Routing those reads through the list is a speed
+item for later.

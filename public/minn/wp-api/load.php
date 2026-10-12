@@ -509,6 +509,16 @@ function _minn_start_object_cache(): void
     wp_cache_add_non_persistent_groups(['counts', 'plugins', 'theme_json']);
     // The reference declares theme lookups request-only as soon as it builds a theme, which every boot does.
     wp_cache_add_non_persistent_groups('themes');
+    // A drop-in holds the options group too, where option reads are kept.
+    if (wp_using_ext_object_cache()) {
+        Minn\Runtime\OptionsGroup::useExternal(
+            static function (string $key, ?bool &$found = null) {
+                return wp_cache_get($key, 'options', false, $found);
+            },
+            static fn (string $key, $value) => wp_cache_set($key, $value, 'options'),
+            static fn (string $key) => wp_cache_delete($key, 'options'),
+        );
+    }
 }
 
 /**

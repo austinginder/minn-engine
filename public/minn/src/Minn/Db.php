@@ -275,12 +275,23 @@ final class Db
     /** One option's stored value, or null when it is unset; home and siteurl answer to WP_HOME and WP_SITEURL. */
     public function option(string $name): ?string
     {
-        // WP_HOME and WP_SITEURL, when wp-config.php defines them, stand for
-        // their options on every read, as on the reference (_config_wp_home).
+        return self::configured($name) ?? $this->storedOption($name);
+    }
+
+    /**
+     * What wp-config.php sets for an option, or null: WP_HOME and WP_SITEURL,
+     * when defined, stand for home and siteurl on every read, as on the
+     * reference (_config_wp_home), without a trailing slash.
+     */
+    public static function configured(string $name): ?string
+    {
         $constant = ['home' => 'WP_HOME', 'siteurl' => 'WP_SITEURL'][$name] ?? null;
-        if ($constant !== null && defined($constant)) {
-            return rtrim((string) constant($constant), '/\\');
-        }
+        return $constant !== null && defined($constant) ? rtrim((string) constant($constant), '/\\') : null;
+    }
+
+    /** One option's row as stored, whatever wp-config.php says, or null when it is unset. */
+    public function storedOption(string $name): ?string
+    {
         $value = $this->value(
             "SELECT option_value FROM {$this->table('options')} WHERE option_name = ? LIMIT 1",
             [$name],

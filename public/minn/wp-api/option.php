@@ -184,7 +184,7 @@ function delete_option($option)
 
 function wp_load_alloptions($force_cache = false)
 {
-    return Runtime::options()->autoloaded();
+    return Runtime::options()->autoloaded((bool) $force_cache);
 }
 
 // The object cache. An object-cache.php drop-in defines its own functions before

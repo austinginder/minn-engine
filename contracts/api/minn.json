@@ -32183,7 +32183,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/PostWriter.php",
-            "lines": 498,
+            "lines": 497,
             "doc": "Every write to the posts table and its satellites: rows, meta, term\nlinks with the published counts the reference trusts on read, sticky\nand format side effects, and revision snapshots.",
             "implements": [],
             "extends": null,
@@ -32827,8 +32827,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 292,
-                    "end": 314
+                    "line": 291,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -32861,8 +32861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 333
+                    "line": 316,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -32895,8 +32895,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 344
+                    "line": 335,
+                    "end": 343
                 },
                 {
                     "routes": [],
@@ -32922,8 +32922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 352
+                    "line": 346,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -32953,8 +32953,8 @@
                             "doc": "REST field => taxonomy; the core taxonomies when null"
                         }
                     ],
-                    "line": 362,
-                    "end": 371
+                    "line": 361,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -32980,8 +32980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 379,
-                    "end": 387
+                    "line": 378,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -33009,8 +33009,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 423,
-                    "end": 465
+                    "line": 422,
+                    "end": 464
                 },
                 {
                     "routes": [],
@@ -33031,8 +33031,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 473
+                    "line": 467,
+                    "end": 472
                 },
                 {
                     "routes": [],
@@ -33067,8 +33067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 477,
-                    "end": 482
+                    "line": 476,
+                    "end": 481
                 },
                 {
                     "routes": [],
@@ -33094,8 +33094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 485,
-                    "end": 488
+                    "line": 484,
+                    "end": 487
                 },
                 {
                     "routes": [],
@@ -33106,8 +33106,8 @@
                     "doc": "The database door this writer writes through, for a caller wrapping several of its verbs in one transaction.",
                     "shapes": [],
                     "params": [],
-                    "line": 491,
-                    "end": 494
+                    "line": 490,
+                    "end": 493
                 },
                 {
                     "routes": [],
@@ -33126,8 +33126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 497,
-                    "end": 512
+                    "line": 496,
+                    "end": 511
                 },
                 {
                     "routes": [],
@@ -33157,7 +33157,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "announceSticky(string $hook, int $id): void",
-                    "doc": "Inside a request: drops the request's copy of sticky_posts (the row was written directly) and fires post_stuck or post_unstuck.",
+                    "doc": "Inside a request: fires post_stuck or post_unstuck.",
                     "shapes": [],
                     "params": [
                         {
@@ -33176,7 +33176,7 @@
                         }
                     ],
                     "line": 273,
-                    "end": 279
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -33197,8 +33197,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 289
+                    "line": 281,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -33209,8 +33209,8 @@
                     "doc": "How many revisions a post keeps without plugins: WP_POST_REVISIONS, all (-1) when unset or true.",
                     "shapes": [],
                     "params": [],
-                    "line": 390,
-                    "end": 394
+                    "line": 389,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -33236,8 +33236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 397,
-                    "end": 414
+                    "line": 396,
+                    "end": 413
                 }
             ]
         },
@@ -34737,7 +34737,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Site.php",
-            "lines": 93,
+            "lines": 95,
             "doc": "Site-wide options and the site's clock.",
             "implements": [],
             "extends": null,
@@ -34831,8 +34831,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 15,
-                "end": 17
+                "line": 16,
+                "end": 18
             },
             "cases": [],
             "constants": [],
@@ -34865,8 +34865,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 23
+                    "line": 21,
+                    "end": 24
                 },
                 {
                     "routes": [],
@@ -34874,7 +34874,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "setOption(string $name, string $value): void",
-                    "doc": "Writes an option, inserting it as autoloaded when it does not exist.",
+                    "doc": "Writes an option, inserting it as autoloaded when it does not exist; the option store hears of it.",
                     "shapes": [],
                     "params": [
                         {
@@ -34892,8 +34892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 34
+                    "line": 27,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -34901,7 +34901,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "deleteOption(string $name): void",
-                    "doc": "Removes an option row.",
+                    "doc": "Removes an option row; the option store hears of it.",
                     "shapes": [],
                     "params": [
                         {
@@ -34912,8 +34912,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 39,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -34939,8 +34939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 59
+                    "line": 53,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -34951,8 +34951,8 @@
                     "doc": "The site's timezone (wp_timezone): the zone timezone_string names, else\ngmt_offset as a fixed offset. With a zone set, the stored gmt_offset is\nnot read at all, as the reference does not read it.",
                     "shapes": [],
                     "params": [],
-                    "line": 66,
-                    "end": 78
+                    "line": 69,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -34963,8 +34963,8 @@
                     "doc": "The site's offset from UTC in seconds now: the zone's, daylight saving included, or gmt_offset's.",
                     "shapes": [],
                     "params": [],
-                    "line": 81,
-                    "end": 84
+                    "line": 84,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -34975,8 +34975,8 @@
                     "doc": "Now in the site's local time, MySQL format.",
                     "shapes": [],
                     "params": [],
-                    "line": 87,
-                    "end": 90
+                    "line": 90,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -34997,8 +34997,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 98,
-                    "end": 104
+                    "line": 101,
+                    "end": 107
                 }
             ]
         },
@@ -35964,7 +35964,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Terms.php",
-            "lines": 221,
+            "lines": 219,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -36452,8 +36452,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 216,
-                    "end": 229
+                    "line": 214,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -36495,7 +36495,7 @@
                         }
                     ],
                     "line": 194,
-                    "end": 207
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -36514,8 +36514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 213
+                    "line": 208,
+                    "end": 211
                 }
             ]
         },
@@ -37572,7 +37572,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Users.php",
-            "lines": 291,
+            "lines": 292,
             "doc": "",
             "implements": [],
             "extends": null,
@@ -37582,6 +37582,7 @@
                 "Minn\\Content\\Slug",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -37827,8 +37828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 142
+                    "line": 129,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -37850,8 +37851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 167
+                    "line": 152,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -37862,8 +37863,8 @@
                     "doc": "Recounts the accounts into user_count, quietly.",
                     "shapes": [],
                     "params": [],
-                    "line": 170,
-                    "end": 173
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -37882,8 +37883,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 176,
-                    "end": 179
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -37904,8 +37905,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 191
+                    "line": 187,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -37933,8 +37934,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 203
+                    "line": 199,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -37953,8 +37954,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 211
+                    "line": 207,
+                    "end": 212
                 },
                 {
                     "routes": [],
@@ -37975,8 +37976,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 217
+                    "line": 215,
+                    "end": 218
                 },
                 {
                     "routes": [],
@@ -37995,8 +37996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 220,
-                    "end": 223
+                    "line": 221,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -38022,8 +38023,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 229
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -38034,8 +38035,8 @@
                     "doc": "How many users the site has.",
                     "shapes": [],
                     "params": [],
-                    "line": 232,
-                    "end": 235
+                    "line": 233,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -38063,8 +38064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 249
+                    "line": 243,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -38090,8 +38091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 253,
+                    "end": 256
                 },
                 {
                     "routes": [],
@@ -38112,8 +38113,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 270
+                    "line": 265,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -38141,8 +38142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 273,
-                    "end": 279
+                    "line": 274,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -38168,8 +38169,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 289
+                    "line": 283,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -38202,8 +38203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 296,
-                    "end": 301
+                    "line": 297,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -38237,7 +38238,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 101,
-                    "end": 104
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -38258,8 +38259,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 125
+                    "line": 113,
+                    "end": 126
                 }
             ]
         },
@@ -38797,7 +38798,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 293,
+            "lines": 304,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
@@ -39306,7 +39307,47 @@
                         }
                     ],
                     "line": 276,
-                    "end": 289
+                    "end": 279
+                },
+                {
+                    "routes": [],
+                    "name": "configured",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "configured(string $name): ?string",
+                    "doc": "What wp-config.php sets for an option, or null: WP_HOME and WP_SITEURL,\nwhen defined, stand for home and siteurl on every read, as on the\nreference (_config_wp_home), without a trailing slash.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 286,
+                    "end": 290
+                },
+                {
+                    "routes": [],
+                    "name": "storedOption",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "storedOption(string $name): ?string",
+                    "doc": "One option's row as stored, whatever wp-config.php says, or null when it is unset.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 293,
+                    "end": 300
                 },
                 {
                     "routes": [],
@@ -39354,8 +39395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 308
+                    "line": 302,
+                    "end": 319
                 }
             ]
         },
@@ -123658,12 +123699,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 266,
-            "doc": "Options as plugin code sees them: PHP values, decoded from the stored\nblob by the engine's own reader, cached for the request so a value written\nand read again in one request keeps its PHP type (an int stays an int,\nfalse stays false) exactly as the reference shows. A value holding an\nobject is kept as its stored text and decoded afresh on every read, as\nthe reference does: a plugin that changes the object it was handed and\nsaves it must find the stored copy still different, or its change is\nnever written.",
+            "lines": 398,
+            "doc": "Options as plugin code sees them, kept where the reference keeps them:\nwp_cache's options group (OptionsGroup) holds the autoloaded list, the\nnames known unset, and a key per option not autoloaded, so a plugin that\nreads, writes or drops those keys is heard. get_option() and\nwp_load_alloptions() pass the list through pre_wp_load_alloptions and\nalloptions. A value written this request is held as it was written (an\nint stays an int, true stays true), arrays and objects as stored. Each\nstored text is decoded once while it stays the same, except one holding\nan object, decoded afresh on every read as the reference does: a plugin\nthat changes the object it was handed and saves it must find the stored\ncopy still different, or its change is never written.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Db",
+                "Minn\\Runtime\\OptionsGroup",
                 "Minn\\Runtime\\StoredObjects",
                 "Minn\\Support\\Serialized"
             ],
@@ -123687,11 +123729,23 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 43,
-                "end": 45
+                "line": 44,
+                "end": 47
             },
             "cases": [],
             "constants": [
+                {
+                    "name": "ALL",
+                    "value": "'alloptions'",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "MISSING",
+                    "value": "'notoptions'",
+                    "doc": "",
+                    "visibility": "private"
+                },
                 {
                     "name": "GUARDED",
                     "value": "array (   0 => 'minn_runtime_symbols',   1 => 'minn_recovery_strikes',   2 => 'minn_cron_lock', )",
@@ -123713,34 +123767,16 @@
             ],
             "properties": [
                 {
-                    "name": "cache",
-                    "type": "array",
-                    "readonly": false,
+                    "name": "group",
+                    "type": "Minn\\Runtime\\OptionsGroup",
+                    "readonly": true,
                     "static": false,
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
                 },
                 {
-                    "name": "missing",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "stored",
-                    "type": "array",
-                    "readonly": false,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": false
-                },
-                {
-                    "name": "written",
+                    "name": "decoded",
                     "type": "array",
                     "readonly": false,
                     "static": false,
@@ -123776,22 +123812,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
                     "name": "autoloaded",
                     "static": false,
                     "visibility": "public",
-                    "signature": "autoloaded(): array",
-                    "doc": "Every autoloaded option as stored, except one written this request,\nwhich the reference's list holds as it was written (true stays true,\nnot \"1\"). @return array<string, mixed>",
-                    "shapes": [
-                        "@return array<string, mixed>"
+                    "signature": "autoloaded(bool $force = false): mixed",
+                    "doc": "The autoloaded list as wp_load_alloptions() gives it:\npre_wp_load_alloptions may answer first (told whether the cache was\nforced), and then alloptions is not heard; otherwise the list the\ngroup holds, through alloptions, which may add or change entries\nwithout the group keeping them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "force",
+                            "type": "bool",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
                     ],
-                    "params": [],
-                    "line": 58,
-                    "end": 67
+                    "line": 62,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -123799,7 +123841,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "filtered(string $name, mixed ...$default): mixed",
-                    "doc": "An option as get_option() reads it, through the filters plugins hook:\npre_option_{name}, then pre_option, may answer first; an unset option\nis its default (false when none is given) through\ndefault_option_{name}, which is told whether one was given; a set one\ngoes through option_{name}.",
+                    "doc": "An option as get_option() reads it, through the filters plugins hook:\npre_option_{name}, then pre_option, may answer first; then the\nautoloaded list is read through its filters on every read; an unset\noption is its default (false when none is given) through\ndefault_option_{name}, which is told whether one was given; a set one\ngoes through option_{name}.",
                     "shapes": [],
                     "params": [
                         {
@@ -123817,8 +123859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 93
+                    "line": 157,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -123826,7 +123868,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "get(string $name): mixed",
-                    "doc": "An option's value, decoded, or null when unset.",
+                    "doc": "An option's value, decoded, or null when unset; home and siteurl answer to wp-config.php's constants.",
                     "shapes": [],
                     "params": [
                         {
@@ -123837,8 +123879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 117
+                    "line": 178,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -123857,8 +123899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 123
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -123877,8 +123919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -123886,7 +123928,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "add(string $name, mixed $value, string $autoload = 'auto'): bool",
-                    "doc": "Writes a new option. add_option has already decided it is new (its\nvalue is still the default); a row that is there anyway is written\nover, as the reference's add does, and false comes back when it\nalready held this value.",
+                    "doc": "Writes a new option. add_option has already decided it is new (its\nvalue is still the default); a row that is there anyway is written\nover, as the reference's add does, and false comes back when it\nalready held this value. An autoloaded one joins the list.",
                     "shapes": [],
                     "params": [
                         {
@@ -123911,8 +123953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 144
+                    "line": 206,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -123945,8 +123987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 161
+                    "line": 229,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -123979,8 +124021,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 177
+                    "line": 240,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -123988,7 +124030,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "markAutoload(string $name): bool",
-                    "doc": "Flips the autoload column; false when the option is missing or already so.",
+                    "doc": "Flips the autoload column; false when the option is missing or already so. The list is read again, the option's own key dropped.",
                     "shapes": [],
                     "params": [
                         {
@@ -123999,8 +124041,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 203
+                    "line": 295,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -124008,7 +124050,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "unmarkAutoload(string $name): bool",
-                    "doc": "Stops an option loading on every request; false when it already did not, or is unset.",
+                    "doc": "Stops an option loading on every request; false when it already did not, or is unset. It leaves the list.",
                     "shapes": [],
                     "params": [
                         {
@@ -124019,8 +124061,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 209
+                    "line": 306,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -124028,7 +124070,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "delete(string $name): bool",
-                    "doc": "Removes an option.",
+                    "doc": "Removes an option: out of the list or its own key, and known unset.",
                     "shapes": [],
                     "params": [
                         {
@@ -124039,8 +124081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 233
+                    "line": 331,
+                    "end": 349
                 },
                 {
                     "routes": [],
@@ -124068,8 +124110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 254
+                    "line": 357,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -124077,7 +124119,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "forget(string $name): void",
-                    "doc": "Drops an option from the cache.",
+                    "doc": "Brings the group back in step with an option the engine wrote behind\nthe store (its own rows, the CLI): the row is read again, into the list\nwhen it autoloads, and nothing else written this request is lost.",
                     "shapes": [],
                     "params": [
                         {
@@ -124088,8 +124130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 257,
-                    "end": 260
+                    "line": 377,
+                    "end": 395
                 },
                 {
                     "routes": [],
@@ -124108,8 +124150,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 263,
-                    "end": 272
+                    "line": 398,
+                    "end": 407
                 },
                 {
                     "routes": [],
@@ -124128,16 +124170,100 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 284
+                    "line": 410,
+                    "end": 419
+                },
+                {
+                    "routes": [],
+                    "name": "listed",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "listed(): array",
+                    "doc": "The autoloaded options, kept in the group under alloptions: read in one\nquery when the group has no list, each as stored except one written\nsince. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 76,
+                    "end": 89
+                },
+                {
+                    "routes": [],
+                    "name": "missing",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "missing(): array",
+                    "doc": "",
+                    "shapes": [
+                        "@return array<string, true> the names a read found unset, kept in the group under notoptions"
+                    ],
+                    "params": [],
+                    "line": 92,
+                    "end": 100
+                },
+                {
+                    "routes": [],
+                    "name": "lookup",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "lookup(string $name, array $list): mixed",
+                    "doc": "An option's held value, or null when it is unset: from the list given,\nelse not at all when it is known unset, else its own key, else its row\n(kept under its own key, or noted unset).",
+                    "shapes": [
+                        "@param array<string, mixed> $list"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "list",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 131
+                },
+                {
+                    "routes": [],
+                    "name": "decode",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "decode(string $name, mixed $held): mixed",
+                    "doc": "A held value decoded the way the reference reads it, once while it stays the same (never one holding an object).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "held",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 147
                 },
                 {
                     "routes": [],
                     "name": "remember",
                     "static": false,
                     "visibility": "private",
-                    "signature": "remember(string $name, mixed $value): void",
-                    "doc": "Caches a value just written: as given, or as stored when it holds an object.",
+                    "signature": "remember(string $name, mixed $value): mixed",
+                    "doc": "What the group holds for a value just written: scalars as given,\narrays and objects as stored. Its decoded form is the value itself,\nso a string that only looks serialized reads back as that string.",
                     "shapes": [],
                     "params": [
                         {
@@ -124155,8 +124281,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 191
+                    "line": 268,
+                    "end": 276
+                },
+                {
+                    "routes": [],
+                    "name": "found",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "found(string $name): void",
+                    "doc": "Takes a name off the list of those known unset.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 279,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -124175,8 +124321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 194,
-                    "end": 197
+                    "line": 289,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -124211,8 +124357,165 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 212,
-                    "end": 220
+                    "line": 320,
+                    "end": 328
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\OptionsGroup",
+            "short": "OptionsGroup",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/OptionsGroup.php",
+            "lines": 57,
+            "doc": "wp_cache's options group, where option reads are kept as the reference\nkeeps them: the autoloaded list under alloptions, the names a read found\nunset under notoptions, and one key per option not autoloaded. The\nengine's own object cache holds it, or an object-cache.php drop-in once\nthe facade hands over its functions.\n\nA drop-in's cache outlives the request, and the engine writes some\noptions behind the store (its own state, the CLI), so a key left by an\nearlier request is never trusted: each is read from the database the\nfirst time a request asks for it, then kept in step for the rest of it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Options"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "GROUP",
+                    "value": "'options'",
+                    "doc": "",
+                    "visibility": "public"
+                }
+            ],
+            "properties": [
+                {
+                    "name": "external",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "fresh",
+                    "type": "array",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "useExternal",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "useExternal(Closure $get, Closure $set, Closure $delete): void",
+                    "doc": "Hands the group to an object-cache.php drop-in's functions.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "get",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "set",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "delete",
+                            "type": "Closure",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "get(string $key, ?bool $found = NULL): mixed",
+                    "doc": "A key's value, found only when this request may trust it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "found",
+                            "type": "?bool",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 38,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "set",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "set(string $key, mixed $value): void",
+                    "doc": "Stores a key; a drop-in is written only when it holds something else.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 66
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "delete(string $key): void",
+                    "doc": "Removes a key.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "key",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 76
                 }
             ]
         },
@@ -132154,7 +132457,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Runtime.php",
-            "lines": 376,
+            "lines": 382,
             "doc": "The WordPress runtime the engine offers plugin code: the procedural\nfacade under minn/wp-api/ plus the services it delegates to. One per\nrequest; the facade reaches it through these statics.",
             "implements": [],
             "extends": null,
@@ -132211,6 +132514,7 @@
                 "Minn\\Content\\Site",
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\Texturize",
+                "Minn\\Content\\Users",
                 "Minn\\Cron\\Cron",
                 "Minn\\Db",
                 "Minn\\Engine",
@@ -132282,6 +132586,7 @@
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\OptionsGroup",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PlaceholderTrace",
                 "Minn\\Runtime\\PluginActivation",
@@ -132758,6 +133063,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "optionWritten",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "optionWritten(string $name): void",
+                    "doc": "Tells the option store about a row the engine wrote behind it; nothing to do when no store was made.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 192,
+                    "end": 195
+                },
+                {
+                    "routes": [],
                     "name": "capture",
                     "static": true,
                     "visibility": "public",
@@ -132780,8 +133105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 215
+                    "line": 206,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -132800,8 +133125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 239
+                    "line": 242,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -132812,8 +133137,8 @@
                     "doc": "The object cache.",
                     "shapes": [],
                     "params": [],
-                    "line": 242,
-                    "end": 245
+                    "line": 248,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -132824,8 +133149,8 @@
                     "doc": "The text domains loaded for this request.",
                     "shapes": [],
                     "params": [],
-                    "line": 248,
-                    "end": 251
+                    "line": 254,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -132836,8 +133161,8 @@
                     "doc": "The locales this request switched into.",
                     "shapes": [],
                     "params": [],
-                    "line": 254,
-                    "end": 257
+                    "line": 260,
+                    "end": 263
                 },
                 {
                     "routes": [],
@@ -132848,8 +133173,8 @@
                     "doc": "The shortcode registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 260,
-                    "end": 263
+                    "line": 266,
+                    "end": 269
                 },
                 {
                     "routes": [],
@@ -132860,8 +133185,8 @@
                     "doc": "The script modules registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 266,
-                    "end": 272
+                    "line": 272,
+                    "end": 278
                 },
                 {
                     "routes": [],
@@ -132872,8 +133197,8 @@
                     "doc": "The interactivity API.",
                     "shapes": [],
                     "params": [],
-                    "line": 275,
-                    "end": 278
+                    "line": 281,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -132884,8 +133209,8 @@
                     "doc": "The registered block templates.",
                     "shapes": [],
                     "params": [],
-                    "line": 281,
-                    "end": 284
+                    "line": 287,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -132896,8 +133221,8 @@
                     "doc": "The post types, taxonomies, and statuses.",
                     "shapes": [],
                     "params": [],
-                    "line": 287,
-                    "end": 290
+                    "line": 293,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -132908,8 +133233,8 @@
                     "doc": "A fresh post query over the runtime's registry.",
                     "shapes": [],
                     "params": [],
-                    "line": 293,
-                    "end": 296
+                    "line": 299,
+                    "end": 302
                 },
                 {
                     "routes": [],
@@ -132935,8 +133260,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 302
+                    "line": 305,
+                    "end": 308
                 },
                 {
                     "routes": [],
@@ -132962,8 +133287,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 308
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -132974,8 +133299,8 @@
                     "doc": "Whether the request is over HTTPS.",
                     "shapes": [],
                     "params": [],
-                    "line": 311,
-                    "end": 314
+                    "line": 317,
+                    "end": 320
                 },
                 {
                     "routes": [],
@@ -132986,8 +133311,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 317,
-                    "end": 320
+                    "line": 323,
+                    "end": 326
                 },
                 {
                     "routes": [],
@@ -133006,8 +133331,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 323,
-                    "end": 350
+                    "line": 329,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -133018,8 +133343,8 @@
                     "doc": "The pluggable functions, once the plugins have had their chance to\ndefine their own: each is defined only where no plugin did. The plugin\nloader calls this before plugins_loaded; a boot that loads no plugins\ncalls it straight away.",
                     "shapes": [],
                     "params": [],
-                    "line": 376,
-                    "end": 379
+                    "line": 382,
+                    "end": 385
                 },
                 {
                     "routes": [],
@@ -133030,8 +133355,8 @@
                     "doc": "Fresh per-request state, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 382,
-                    "end": 398
+                    "line": 388,
+                    "end": 404
                 },
                 {
                     "routes": [],
@@ -133050,8 +133375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 368
+                    "line": 363,
+                    "end": 374
                 }
             ]
         },

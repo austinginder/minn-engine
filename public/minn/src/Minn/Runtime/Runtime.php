@@ -188,6 +188,12 @@ final class Runtime
         return self::$options ??= new Options(self::current()->db);
     }
 
+    /** Tells the option store about a row the engine wrote behind it; nothing to do when no store was made. */
+    public static function optionWritten(string $name): void
+    {
+        self::$options?->forget($name);
+    }
+
     /** Output an action's callbacks print, as a string. */
     /**
      * Runs an action and returns what it printed. Plugin callbacks may open

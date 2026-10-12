@@ -53,7 +53,8 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`Options`](#options) | final class | 266 | Options as plugin code sees them: PHP values, decoded from the stored |
+| [`Options`](#options) | final class | 398 | Options as plugin code sees them, kept where the reference keeps them: |
+| [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
 | [`PlaceholderTrace`](#placeholdertrace) | final class | 37 | Records every call into a generated placeholder while a site opts in by |
@@ -83,7 +84,7 @@ the WordPress runtime plugins load against
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 467 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 376 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 382 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
 | [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
@@ -2315,15 +2316,20 @@ Internals: `rule()` (private, line 51), `lists()` (private, line 71), `email()` 
 
 `final class Minn\Runtime\Options` · `public/minn/src/Minn/Runtime/Options.php`
 
-Options as plugin code sees them: PHP values, decoded from the stored
-blob by the engine's own reader, cached for the request so a value written
-and read again in one request keeps its PHP type (an int stays an int,
-false stays false) exactly as the reference shows. A value holding an
-object is kept as its stored text and decoded afresh on every read, as
-the reference does: a plugin that changes the object it was handed and
-saves it must find the stored copy still different, or its change is
-never written.
+Options as plugin code sees them, kept where the reference keeps them:
+wp_cache's options group (OptionsGroup) holds the autoloaded list, the
+names known unset, and a key per option not autoloaded, so a plugin that
+reads, writes or drops those keys is heard. get_option() and
+wp_load_alloptions() pass the list through pre_wp_load_alloptions and
+alloptions. A value written this request is held as it was written (an
+int stays an int, true stays true), arrays and objects as stored. Each
+stored text is decoded once while it stays the same, except one holding
+an object, decoded afresh on every read as the reference does: a plugin
+that changes the object it was handed and saves it must find the stored
+copy still different, or its change is never written.
 
+- const `ALL` = `'alloptions'`
+- const `MISSING` = `'notoptions'`
 - const `GUARDED` = `array (   0 => 'minn_runtime_symbols',   1 => 'minn_recovery_strikes',   2 => 'minn_cron_lock', )` — The options the engine keeps for itself: the symbol-gate cache a plugin
 could otherwise rewrite to pass its own gate, the recovery strikes, the
 cron lock, and the sign-in throttle rows. The facade refuses to write
@@ -2342,25 +2348,26 @@ __construct(Minn\Db $db)
 
 Whether plugin code is refused a write to this option.
 
-### `autoloaded(): array`
+### `autoloaded(bool $force = false): mixed`
 
-Every autoloaded option as stored, except one written this request,
-which the reference's list holds as it was written (true stays true,
-not "1"). @return array<string, mixed>
-
-- `@return array<string, mixed>`
+The autoloaded list as wp_load_alloptions() gives it:
+pre_wp_load_alloptions may answer first (told whether the cache was
+forced), and then alloptions is not heard; otherwise the list the
+group holds, through alloptions, which may add or change entries
+without the group keeping them.
 
 ### `filtered(string $name, mixed ...$default): mixed`
 
 An option as get_option() reads it, through the filters plugins hook:
-pre_option_{name}, then pre_option, may answer first; an unset option
-is its default (false when none is given) through
+pre_option_{name}, then pre_option, may answer first; then the
+autoloaded list is read through its filters on every read; an unset
+option is its default (false when none is given) through
 default_option_{name}, which is told whether one was given; a set one
 goes through option_{name}.
 
 ### `get(string $name): mixed`
 
-An option's value, decoded, or null when unset.
+An option's value, decoded, or null when unset; home and siteurl answer to wp-config.php's constants.
 
 ### `exists(string $name): bool`
 
@@ -2375,7 +2382,7 @@ Whether a read this request already found the option unset (the reference's noto
 Writes a new option. add_option has already decided it is new (its
 value is still the default); a row that is there anyway is written
 over, as the reference's add does, and false comes back when it
-already held this value.
+already held this value. An autoloaded one joins the list.
 
 ### `upsert(string $name, string $stored, string $autoload): bool`
 
@@ -2391,15 +2398,15 @@ False when the value is unchanged, as the reference reports.
 
 ### `markAutoload(string $name): bool`
 
-Flips the autoload column; false when the option is missing or already so.
+Flips the autoload column; false when the option is missing or already so. The list is read again, the option's own key dropped.
 
 ### `unmarkAutoload(string $name): bool`
 
-Stops an option loading on every request; false when it already did not, or is unset.
+Stops an option loading on every request; false when it already did not, or is unset. It leaves the list.
 
 ### `delete(string $name): bool`
 
-Removes an option.
+Removes an option: out of the list or its own key, and known unset.
 
 ### `expiredTransientNames(int $now, string $prefix = '_transient_timeout_'): array`
 
@@ -2410,7 +2417,9 @@ one that knows, so the sweep reads those and hands back the bare names.
 
 ### `forget(string $name): void`
 
-Drops an option from the cache.
+Brings the group back in step with an option the engine wrote behind
+the store (its own rows, the CLI): the row is read again, into the list
+when it autoloads, and nothing else written this request is lost.
 
 ### static `toStorage(mixed $value): string`
 
@@ -2420,7 +2429,44 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `remember()` (private, line 180), `holdsObject()` (private, line 194), `switchAutoload()` (private, line 212)
+Internals: `listed()` (private, line 76), `missing()` (private, line 92), `lookup()` (private, line 109), `decode()` (private, line 134), `remember()` (private, line 268), `found()` (private, line 279), `holdsObject()` (private, line 289), `switchAutoload()` (private, line 320)
+
+
+## OptionsGroup
+
+`final class Minn\Runtime\OptionsGroup` · `public/minn/src/Minn/Runtime/OptionsGroup.php`
+
+wp_cache's options group, where option reads are kept as the reference
+keeps them: the autoloaded list under alloptions, the names a read found
+unset under notoptions, and one key per option not autoloaded. The
+engine's own object cache holds it, or an object-cache.php drop-in once
+the facade hands over its functions.
+
+A drop-in's cache outlives the request, and the engine writes some
+options behind the store (its own state, the CLI), so a key left by an
+earlier request is never trusted: each is read from the database the
+first time a request asks for it, then kept in step for the rest of it.
+
+- const `GROUP` = `'options'`
+
+Used by: `Minn\Runtime\Options`
+
+
+### static `useExternal(Closure $get, Closure $set, Closure $delete): void`
+
+Hands the group to an object-cache.php drop-in's functions.
+
+### `get(string $key, ?bool $found = NULL): mixed`
+
+A key's value, found only when this request may trust it.
+
+### `set(string $key, mixed $value): void`
+
+Stores a key; a drop-in is written only when it holds something else.
+
+### `delete(string $key): void`
+
+Removes a key.
 
 
 ## Pages
@@ -3974,7 +4020,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Ops\UpgraderRun`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Media\Images`, `Minn\Ops\UpgraderRun`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -4046,6 +4092,10 @@ The hook registry.
 ### static `options(): Minn\Runtime\Options`
 
 The options store.
+
+### static `optionWritten(string $name): void`
+
+Tells the option store about a row the engine wrote behind it; nothing to do when no store was made.
 
 ### static `capture(string $action, array $args = array ( )): string`
 
@@ -4127,7 +4177,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 357)
+Internals: `loadObjectCacheDropin()` (private, line 363)
 
 
 ## ScriptLoading

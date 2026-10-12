@@ -32,21 +32,21 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostRecord`](#postrecord) | final readonly class | 156 | One row of the posts table, read by name. The columns keep their |
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
-| [`PostWriter`](#postwriter) | final readonly class | 498 | Every write to the posts table and its satellites: rows, meta, term |
+| [`PostWriter`](#postwriter) | final readonly class | 497 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 406 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
-| [`Site`](#site) | final readonly class | 93 | Site-wide options and the site's clock. |
+| [`Site`](#site) | final readonly class | 95 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
 | [`TermLinks`](#termlinks) | final class | 37 | A post's terms rendered as links, in the two shapes the reference |
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
-| [`Terms`](#terms) | final readonly class | 221 |  |
+| [`Terms`](#terms) | final readonly class | 219 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 182 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 291 |  |
+| [`Users`](#users) | final readonly class | 292 |  |
 
 ## AdjacentScope
 
@@ -1424,7 +1424,7 @@ The database door this writer writes through, for a caller wrapping several of i
 
 Hard-deletes a post with its revisions and its meta.
 
-Internals: `fit()` (private, line 172), `announceSticky()` (private, line 273), `saveSticky()` (private, line 282), `revisionsToKeep()` (private, line 390), `pruneRevisions()` (private, line 397)
+Internals: `fit()` (private, line 172), `announceSticky()` (private, line 273), `saveSticky()` (private, line 281), `revisionsToKeep()` (private, line 389), `pruneRevisions()` (private, line 396)
 
 
 ## Posts
@@ -1700,11 +1700,11 @@ One option's raw value, or null when it is unset.
 
 ### `setOption(string $name, string $value): void`
 
-Writes an option, inserting it as autoloaded when it does not exist.
+Writes an option, inserting it as autoloaded when it does not exist; the option store hears of it.
 
 ### `deleteOption(string $name): void`
 
-Removes an option row.
+Removes an option row; the option store hears of it.
 
 ### `defaultDiscussion(string $type, string $kind): string`
 
@@ -1994,7 +1994,7 @@ Reparents children to the grandparent, detaches relationships, drops the rows.
 
 "parent/child" for hierarchical taxonomies, the bare slug otherwise.
 
-Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 194), `keepsHierarchy()` (private, line 210)
+Internals: `record()` (private, line 17), `refreshHierarchy()` (private, line 194), `keepsHierarchy()` (private, line 208)
 
 
 ## TextFilters
@@ -2337,5 +2337,5 @@ Replaces one usermeta row. The (user_id, meta_key) pair carries no
 unique index on the stock schema, so this is a delete plus insert
 rather than an upsert.
 
-Internals: `record()` (private, line 19), `refreshCount()` (private, line 101), `writeAccount()` (private, line 112)
+Internals: `record()` (private, line 19), `refreshCount()` (private, line 101), `writeAccount()` (private, line 113)
 

@@ -101,6 +101,7 @@ final readonly class Users
     private function refreshCount(): void
     {
         $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ? WHERE option_name = 'user_count'", [(string) $this->count()]);
+        \Minn\Runtime\Runtime::optionWritten('user_count');
     }
 
     /**

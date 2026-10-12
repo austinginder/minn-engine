@@ -101,6 +101,18 @@ foreach ($stacks as $name => $dir) {
 $unstage();
 $check('a page request loads advanced-cache.php as the reference does', $front['engine'] === $front['reference'] && str_contains($front['reference'], '"top-level variable is global":true'), json_encode($front));
 
+// 2c. Option reads kept in a drop-in's options group, as the api probe
+// option-cache sees them without one.
+foreach ($stacks as $dir) {
+    $stage("{$fixtures}/object-cache.php", "{$dir}/wp-content/object-cache.php");
+}
+$options = [];
+foreach ($stacks as $name => $dir) {
+    $options[$name] = $wp($dir, 'eval-file ' . escapeshellarg("{$root}/tests/tools/option-cache-probe.php"));
+}
+$unstage();
+$check('option reads through an object-cache.php drop-in answer as the reference\'s', json_decode($options['engine'], true) === json_decode($options['reference'], true) && json_decode($options['reference'], true) === json_decode((string) file_get_contents("{$root}/contracts/fixtures/api/option-cache.json"), true), substr($options['engine'], 0, 300));
+
 // 3. Maintenance mode over HTTP: the default page, then the site's own.
 $fetch = static function (string $url): array {
     $context = stream_context_create(['http' => ['ignore_errors' => true, 'follow_location' => 0], 'ssl' => ['verify_peer' => false, 'verify_peer_name' => false]]);

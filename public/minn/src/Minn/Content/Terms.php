@@ -201,9 +201,7 @@ final readonly class Terms
         }
         $this->db->execute("DELETE FROM {$options} WHERE option_name = ?", [$name]);
         $this->db->execute("INSERT INTO {$options} (option_name, option_value, autoload) VALUES (?, ?, 'auto')", [$name, Serialized::encode($children)]);
-        if (\Minn\Runtime\Runtime::booted()) {
-            \Minn\Runtime\Runtime::options()->forget($name);
-        }
+        \Minn\Runtime\Runtime::optionWritten($name);
     }
 
     /** Whether the taxonomy already has its children option, the mark of a hierarchical one. */

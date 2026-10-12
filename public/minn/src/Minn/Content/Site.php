@@ -8,6 +8,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Exception;
 use Minn\Db;
+use Minn\Runtime\Runtime;
 
 /** Site-wide options and the site's clock. */
 final readonly class Site
@@ -22,21 +23,23 @@ final readonly class Site
         return $this->db->option($name);
     }
 
-    /** Writes an option, inserting it as autoloaded when it does not exist. */
+    /** Writes an option, inserting it as autoloaded when it does not exist; the option store hears of it. */
     public function setOption(string $name, string $value): void
     {
         $table = $this->db->table('options');
-        if ($this->db->option($name) === null) {
+        if ($this->db->storedOption($name) === null) {
             $this->db->execute("INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'auto')", [$name, $value]);
-            return;
+        } else {
+            $this->db->execute("UPDATE {$table} SET option_value = ? WHERE option_name = ?", [$value, $name]);
         }
-        $this->db->execute("UPDATE {$table} SET option_value = ? WHERE option_name = ?", [$value, $name]);
+        Runtime::optionWritten($name);
     }
 
-    /** Removes an option row. */
+    /** Removes an option row; the option store hears of it. */
     public function deleteOption(string $name): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$name]);
+        Runtime::optionWritten($name);
     }
 
     /**

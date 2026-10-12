@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 293 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 304 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 288 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 109 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
@@ -191,7 +191,17 @@ The id the last INSERT produced.
 
 One option's stored value, or null when it is unset; home and siteurl answer to WP_HOME and WP_SITEURL.
 
-Internals: `placeholders()` (private, line 203), `run()` (private, line 291)
+### static `configured(string $name): ?string`
+
+What wp-config.php sets for an option, or null: WP_HOME and WP_SITEURL,
+when defined, stand for home and siteurl on every read, as on the
+reference (_config_wp_home), without a trailing slash.
+
+### `storedOption(string $name): ?string`
+
+One option's row as stored, whatever wp-config.php says, or null when it is unset.
+
+Internals: `placeholders()` (private, line 203), `run()` (private, line 302)
 
 
 ## Engine
