@@ -8,15 +8,15 @@
         "measured": "2026-10-12",
         "pages": {
             "/": [
-                30,
+                27,
                 38
             ],
             "/hello-world/": [
-                39,
+                41,
                 44
             ],
             "/category/uncategorized/": [
-                34,
+                32,
                 43
             ],
             "/wp-json/wp/v2/posts": [
@@ -24,25 +24,35 @@
                 41
             ],
             "/?s=hello": [
-                30,
+                28,
                 40
             ]
         },
         "atOrUnder": 5
     },
     "hooks": {
-        "total": 2559,
-        "proven": 1558,
-        "fired": 1644,
+        "total": 2545,
+        "proven": 1659,
+        "fired": 1753,
         "deadend": 719,
         "different": 0,
-        "missing": 196,
-        "outside": 132,
-        "accounted": 92.3,
-        "provenOfLive": 84.6,
-        "provenWeighted": 95.2
+        "missing": 73,
+        "outside": 146,
+        "accounted": 97.1,
+        "provenOfLive": 90.8,
+        "provenWeighted": 95.8
     },
-    "coverage": null,
+    "coverage": {
+        "measured": "2026-10-12",
+        "percent": 73.1,
+        "lines": 31124,
+        "covered": 22761,
+        "parts": [
+            "unit",
+            "probes",
+            "http"
+        ]
+    },
     "leanness": {
         "deadNameCeiling": {
             "label": "Dead-name methods",
@@ -54,7 +64,7 @@
         },
         "optionReadCeiling": {
             "label": "Option reads beside the store",
-            "ceiling": 159
+            "ceiling": 154
         },
         "rawOptionWriteCeiling": {
             "label": "Raw option writes",
@@ -62,7 +72,7 @@
         },
         "rawMetaWriteCeiling": {
             "label": "Raw meta writes",
-            "ceiling": 10
+            "ceiling": 9
         },
         "postRowCeiling": {
             "label": "Hand-built post rows",
