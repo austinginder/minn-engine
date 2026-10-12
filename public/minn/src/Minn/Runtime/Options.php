@@ -48,9 +48,23 @@ final class Options
     /** The autoload column values that load an option with every request, in the reference's order. */
     public const AUTOLOAD_VALUES = ['yes', 'on', 'auto-on', 'auto'];
 
+    /**
+     * Options not autoloaded that the engine itself reads on every request
+     * (the symbol survey, recovery's paused plugins, the site language, the
+     * HTTPS migration flag): read together as a request begins, as one read
+     * rather than one each.
+     */
+    public const EVERY_REQUEST = ['minn_runtime_symbols', Recovery::PLUGINS_OPTION, 'WPLANG', 'https_migration_required'];
+
     public function __construct(private readonly Db $db)
     {
         $this->group = new OptionsGroup();
+    }
+
+    /** Whether this store reads through the given connection. */
+    public function isFor(Db $db): bool
+    {
+        return $this->db === $db;
     }
 
     /** Whether plugin code is refused a write to this option. */
@@ -192,6 +206,17 @@ final class Options
         return \apply_filters("option_{$name}", $this->decode($name, $held), $name);
     }
 
+    /**
+     * An option's stored text, as Db::option() gives it, or null when it is
+     * unset: from the list or the group, a value written this request in
+     * its stored form (true as "1", a list serialized).
+     */
+    public function raw(string $name): ?string
+    {
+        $held = Runtime::installing() ? $this->db->storedOption($name) : $this->lookup($name, $this->listed());
+        return $held === null ? null : (is_string($held) ? $held : self::toStorage($held));
+    }
+
     /** An option's value, decoded, or null when unset; home and siteurl answer to wp-config.php's constants. */
     public function get(string $name): mixed
     {
@@ -201,6 +226,45 @@ final class Options
         }
         $held = Runtime::installing() ? $this->db->storedOption($name) : $this->lookup($name, $this->listed());
         return $held === null ? null : $this->decode($name, $held);
+    }
+
+    /**
+     * Reads several options at once (wp_prime_option_caches): the ones not
+     * held yet in one query, each kept under its own key or noted unset, as
+     * a read of each one alone would leave them.
+     *
+     * @param list<string> $names
+     */
+    public function prime(array $names): void
+    {
+        if (Runtime::installing()) {
+            return;
+        }
+        $list = $this->listed();
+        $missing = $this->missing();
+        $wanted = [];
+        foreach (array_unique(array_map('strval', $names)) as $name) {
+            if ($name === '' || isset($list[$name]) || isset($missing[$name])) {
+                continue;
+            }
+            $held = $this->group->get($name, $found);
+            if (!$found || $held === false) {
+                $wanted[] = $name;
+            }
+        }
+        if ($wanted === []) {
+            return;
+        }
+        $rows = $this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE option_name IN (" . implode(', ', array_fill(0, count($wanted), '?')) . ')', $wanted);
+        $read = array_column($rows, 'option_value', 'option_name');
+        foreach ($wanted as $name) {
+            if (isset($read[$name])) {
+                $this->group->set($name, (string) $read[$name]);
+            } else {
+                $missing[$name] = true;
+            }
+        }
+        $this->group->set(self::MISSING, $missing);
     }
 
     /** Whether an option exists. */

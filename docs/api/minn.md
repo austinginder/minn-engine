@@ -6,8 +6,8 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 315 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 288 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Db`](#db) | final class | 365 | The one door to the database. Every query is a prepared statement; the |
+| [`Engine`](#engine) | final readonly class | 290 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 109 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 134 | JSON in and out, for the engine and for code written for Minn: |
@@ -81,7 +81,7 @@ long, so "post_type IN (?)" takes the types themselves.
 
 - const `INCOMPATIBLE_MODES` = `array (   0 => 'NO_ZERO_DATE',   1 => 'ONLY_FULL_GROUP_BY',   2 => 'STRICT_TRANS_TABLES',   3 => 'STRICT_ALL_TABLES',   4 => 'TRADITIONAL',   5 => 'ANSI', )` — The SQL modes WordPress turns off for its session (wpdb's incompatible modes): strictness and the modes that change what queries mean.
 
-Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Roles`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Comments`, `Minn\Content\Links`, `Minn\Content\Menus`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Content\Revisions`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Mail\Mailer`, `Minn\Ops\Diagnostics`, `Minn\Rest\Api`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentQuery`, `Minn\Runtime\DbDelta`, `Minn\Runtime\Meta`, `Minn\Runtime\Options`, `Minn\Runtime\PostLookup`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermWriter`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\ActivityChart`, `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Admin\StructureController`, `Minn\Admin\V1Controller`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\Cookie`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Roles`, `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\Comments`, `Minn\Content\Links`, `Minn\Content\Menus`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Content\Revisions`, `Minn\Content\RowCache`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Context`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Extension\Seams`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Renderer`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Mail\Mailer`, `Minn\Ops\Diagnostics`, `Minn\Rest\Api`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\SearchController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\UserObject`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentQuery`, `Minn\Runtime\DbDelta`, `Minn\Runtime\Meta`, `Minn\Runtime\Options`, `Minn\Runtime\PostLookup`, `Minn\Runtime\PostQuery`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermQuery`, `Minn\Runtime\TermWriter`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\TemplateIndex`, `Minn\Theme\TemplateWriter`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(mysqli $connection, string $prefix)
@@ -167,6 +167,16 @@ The first column of the first row, or null when there is no row.
 
 Runs a write and returns the affected row count.
 
+### static `onWrite(string $table, Closure $listener): void`
+
+Asks to be told whenever a write statement names a table (Content\RowCache drops what it kept from it).
+
+### static `wrote(string $sql): void`
+
+Tells the listeners of every table a write statement names, whichever
+door ran it (this one, or the facade's wpdb for plugin code). A name
+that merely contains another (wp_postmeta for posts) is not it.
+
 ### static `expand(string $sql, array $params): array`
 
 Rewrites every "?" whose parameter is a list into that many
@@ -196,7 +206,14 @@ The id the last INSERT produced.
 
 ### `option(string $name): ?string`
 
-One option's stored value, or null when it is unset; home and siteurl answer to WP_HOME and WP_SITEURL.
+One option's stored value, or null when it is unset; home and siteurl
+answer to WP_HOME and WP_SITEURL. Once the runtime boots, the read is
+its option store's (the autoloaded list, wp_cache's options group),
+so the engine's own reads cost no query each, as get_option()'s don't.
+
+### static `readOptionsThrough(?Closure $source): void`
+
+Where option reads come from from now on: the runtime's option store, or null for the row itself.
 
 ### static `configured(string $name): ?string`
 
@@ -208,7 +225,7 @@ reference (_config_wp_home), without a trailing slash.
 
 One option's row as stored, whatever wp-config.php says, or null when it is unset.
 
-Internals: `placeholders()` (private, line 214), `run()` (private, line 313)
+Internals: `placeholders()` (private, line 244), `run()` (private, line 363)
 
 
 ## Engine
@@ -241,7 +258,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 116), `bootRuntimeForRest()` (private, line 130), `adoptSettledUser()` (private, line 170), `markThemedRequest()` (private, line 194), `handle()` (private, line 202), `frontPipeline()` (private, line 284)
+Internals: `restRoute()` (private, line 119), `bootRuntimeForRest()` (private, line 133), `adoptSettledUser()` (private, line 173), `markThemedRequest()` (private, line 197), `handle()` (private, line 205), `frontPipeline()` (private, line 287)
 
 
 ## Html

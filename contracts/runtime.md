@@ -15224,3 +15224,70 @@ Not taken in this batch:
   type outside `wp/v2`. It stays on the open list.
 - The audit's Lows are listed on the Open Items page and are still to be
   verified one by one.
+
+## SQL per page at or under the reference (2026-10-12)
+
+The audit of 2026-10-12 counted the SELECTs each stack runs on five pages
+of the test site: the front page, a post, a category, the REST post list
+and a search. The engine ran 157 to 227 on each, three to five times the
+reference. `tests/tools/query-count.php` counts them on the database server
+itself, the fewest of several runs per page. Suite `perf` holds every page
+at or under the reference and under a ceiling of its own that only falls.
+
+| page | engine | reference |
+|---|---|---|
+| `/` | 29 | 38 |
+| `/hello-world/` | 39 | 44 |
+| `/category/uncategorized/` | 34 | 43 |
+| `/wp-json/wp/v2/posts` | 26 | 41 |
+| `/?s=hello` | 30 | 40 |
+
+- **Options.**
+  - `Db::option()` reads through the runtime's option store once it exists,
+    meaning the autoloaded list and wp_cache's options group. The engine's
+    own reads cost no query each, as `get_option()`'s don't.
+  - Two guards race other processes, and they read the row itself: the
+    sign-in throttle and the cron lock. The engine's writes behind the
+    store tell it (`Runtime::optionWritten`).
+  - `Options::prime` reads several options in one query, and
+    `wp_prime_option_caches()` uses it. A request begins by priming the
+    options the engine reads on every request and that are not autoloaded
+    (`Options::EVERY_REQUEST`). Only requests over HTTP do this, so the
+    probes' option cache is as it was.
+- **Rows read once a request** (`Content\RowCache`). This covers:
+  - posts, their terms and revisions;
+  - a theme's saved templates;
+  - users, comments and term rows;
+  - every object type's meta.
+
+  A write to a table drops everything kept from it, whether it goes
+  through the engine's door or the facade's wpdb (`Db::wrote`), as does a
+  rolled-back transaction. A plugin's meta type, such as WooCommerce's
+  order items, is dropped by writes to the table its registration names
+  (`RowCache::watch`). Without that, an order item read before its meta was
+  written kept no product, and checkout reduced no stock (suite `woo`; unit
+  file `row-cache`). The `clean_*_cache()` functions and `wp_cache_flush()`
+  drop entries too. Nothing outlives the request.
+- **Lists read once.**
+  - A REST post list reads its posts, their meta, their terms in the
+    type's taxonomies and their revision counts in one query each.
+  - `_prime_post_caches()` and `update_post_caches()` are real, and
+    `get_the_terms()` finds primed terms.
+- **The comment template's query** runs once a request
+  (`Comments::query`). The template and its pagination links ask for the
+  same one, and the reference answers the repeat from its cache. A comment
+  write drops it.
+- **Smaller reads.**
+  - The capability map takes a comment's post from a row a query already
+    read.
+  - `_close_comments_for_old_post()` no longer builds the post's array
+    form, which read its terms.
+
+Kept on purpose:
+- A front request still asks whether a scheduled post is due. Suite
+  `cron-mail` pins that a front request publishes a due post on its own.
+- The resolver still looks a slug up on its own before the main query
+  does.
+- `WP_Comment_Query` keeps no cache of its own. Probes `wp-comment-query-sql`
+  and `rest-comment-lists` pin a fresh request and fresh clauses on every
+  query, so only the block renderers share one.

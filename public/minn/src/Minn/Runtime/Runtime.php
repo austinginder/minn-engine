@@ -132,7 +132,7 @@ final class Runtime
     public static function boot(self $runtime): self
     {
         self::$current = $runtime;
-        self::$options = new Options($runtime->db);
+        self::storeOptions($runtime->db);
         self::loadObjectCacheDropin($runtime);
         self::loadFacade($runtime->engineDir);
         _minn_bind_hook_globals();
@@ -186,6 +186,20 @@ final class Runtime
     public static function options(): Options
     {
         return self::$options ??= new Options(self::current()->db);
+    }
+
+    /**
+     * The options store for a connection, made as soon as the request has
+     * one (Engine::answer) and kept by the boot that follows: the reads made
+     * while routing come from the same autoloaded list as everything after,
+     * and Db::option() reads through it from then on.
+     */
+    public static function storeOptions(Db $db): void
+    {
+        if (!self::$options instanceof Options || !self::$options->isFor($db)) {
+            self::$options = new Options($db);
+        }
+        Db::readOptionsThrough(static fn (string $name): ?string => self::options()->raw($name));
     }
 
     /** Whether this request is installing (wp_installing()); false before a runtime boots. */
@@ -398,6 +412,7 @@ final class Runtime
             _minn_bind_hook_globals();
         }
         self::$cache = new ObjectCache();
+        \Minn\Content\RowCache::flush();
         self::$shortcodes = new Shortcodes();
         self::$registry = null;
         self::$interactivity = new Interactivity();

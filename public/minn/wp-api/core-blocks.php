@@ -281,7 +281,7 @@ function _minn_comments_pagination_link(string $which, array $attributes, array 
     // The page is the comment query's own (the newest page when none is asked for and the newest comes first).
     $vars = build_comment_query_vars_from_block((object) ['context' => $context]);
     $page = $vars['paged'] ?? null;
-    $link = $previous ? get_previous_comments_link($label, $page) : get_next_comments_link($label, (new WP_Comment_Query($vars))->max_num_pages, $page);
+    $link = $previous ? get_previous_comments_link($label, $page) : get_next_comments_link($label, \Minn\Blocks\Dynamic\Theme\Comments::query($vars)->max_num_pages, $page);
     remove_filter($hook, $attributes_filter);
     return (string) $link;
 }
@@ -290,7 +290,7 @@ function _minn_comments_pagination_link(string $which, array $attributes, array 
 function _minn_comments_pagination_numbers(array $context, string $wrapper): string
 {
     $vars = build_comment_query_vars_from_block((object) ['context' => $context]);
-    $links = paginate_comments_links(['total' => (new WP_Comment_Query($vars))->max_num_pages, 'current' => !empty($vars['paged']) ? $vars['paged'] : null, 'prev_next' => false, 'echo' => false]);
+    $links = paginate_comments_links(['total' => \Minn\Blocks\Dynamic\Theme\Comments::query($vars)->max_num_pages, 'current' => !empty($vars['paged']) ? $vars['paged'] : null, 'prev_next' => false, 'echo' => false]);
     return empty($links) ? '' : '<div ' . $wrapper . '>' . $links . '</div>';
 }
 

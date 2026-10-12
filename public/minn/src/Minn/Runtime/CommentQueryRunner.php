@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\RowCache;
+
 use Minn\Query\CommentOrder;
 
 /**
@@ -121,14 +123,22 @@ final class CommentQueryRunner
         if ($ids === []) {
             return [];
         }
-        $table = $this->wpdb->comments;
-        $rows = [];
-        foreach ((array) $this->wpdb->get_results("SELECT {$table}.* FROM {$table} WHERE comment_ID IN (" . implode(',', $ids) . ')') as $row) {
-            $rows[(int) $row->comment_ID] = $row;
+        // Each row read once a request: only the ones not read yet are asked for.
+        $missing = array_values(array_filter($ids, static fn (int $id): bool => !RowCache::has('comments', $id)));
+        if ($missing !== []) {
+            $table = $this->wpdb->comments;
+            $read = [];
+            foreach ((array) $this->wpdb->get_results("SELECT {$table}.* FROM {$table} WHERE comment_ID IN (" . implode(',', $missing) . ')') as $row) {
+                $read[(int) $row->comment_ID] = $row;
+            }
+            foreach ($missing as $id) {
+                RowCache::put('comments', $id, $read[$id] ?? null);
+            }
         }
         $comments = [];
         foreach ($ids as $id) {
-            $comment = isset($rows[$id]) ? \get_comment(new \WP_Comment($rows[$id])) : null;
+            $row = RowCache::remember('comments', $id, static fn () => null);
+            $comment = $row !== null ? \get_comment(new \WP_Comment($row)) : null;
             if ($comment instanceof \WP_Comment) {
                 $comments[] = $comment;
             }

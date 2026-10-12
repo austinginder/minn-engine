@@ -233,6 +233,7 @@ endif;
 if (!function_exists('wp_cache_flush')) :
 function wp_cache_flush()
 {
+    Minn\Content\RowCache::flush();
     return Runtime::cache()->flush();
 }
 endif;
@@ -612,9 +613,7 @@ function sanitize_option($option, $value)
 /** Reads the options once so later gets are cache hits; the engine caches per name already. */
 function wp_prime_option_caches($options)
 {
-    foreach ((array) $options as $name) {
-        Runtime::options()->get((string) $name);
-    }
+    Runtime::options()->prime(array_values(array_map('strval', (array) $options)));
     return null;
 }
 

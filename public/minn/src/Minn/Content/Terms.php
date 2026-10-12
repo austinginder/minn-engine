@@ -34,13 +34,13 @@ final readonly class Terms
     /** One term in a taxonomy, or null. */
     public function find(string $taxonomy, int $termId): ?TermRecord
     {
-        return self::record($this->db->row(
+        return RowCache::remember('term_rows', "find:{$termId}:{$taxonomy}", fn (): ?TermRecord => self::record($this->db->row(
             "SELECT t.term_id, t.name, t.slug, tt.term_taxonomy_id, tt.taxonomy, tt.description, tt.parent, tt.count
              FROM {$this->db->table('terms')} t
              INNER JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id
              WHERE tt.taxonomy = ? AND t.term_id = ? LIMIT 1",
             [$taxonomy, $termId],
-        ));
+        )));
     }
 
     /** The row shape the term controllers work with, including term_taxonomy_id. */

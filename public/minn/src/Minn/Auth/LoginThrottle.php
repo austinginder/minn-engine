@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Auth;
 
 use Minn\Db;
+use Minn\Runtime\Runtime;
 
 /**
  * Failed sign-ins per address, so a password guesser meets a wall: twenty
@@ -51,12 +52,14 @@ final readonly class LoginThrottle
     public function clear(string $address): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [self::key($address)]);
+        Runtime::optionWritten(self::key($address));
     }
 
     /** @return array{0: int, 1: int} window start and failure count */
     private function read(string $address): array
     {
-        $value = $this->db->option(self::key($address));
+        // The row itself: another request may have written it a moment ago.
+        $value = $this->db->storedOption(self::key($address));
         if ($value === null || !preg_match('/^(\d+):(\d+)$/', $value, $m)) {
             return [0, 0];
         }
@@ -72,6 +75,7 @@ final readonly class LoginThrottle
             "INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'off') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
             [self::key($address), $value],
         );
+        Runtime::optionWritten(self::key($address));
     }
 
     /** Rows whose window has passed are dead weight; drop them now and then. */
@@ -81,6 +85,7 @@ final readonly class LoginThrottle
         foreach ($rows as $row) {
             if (preg_match('/^(\d+):/', (string) $row['option_value'], $m) && (int) $m[1] + self::WINDOW <= $now) {
                 $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$row['option_name']]);
+                Runtime::optionWritten((string) $row['option_name']);
             }
         }
     }

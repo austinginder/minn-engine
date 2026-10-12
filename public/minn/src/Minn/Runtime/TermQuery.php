@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Closure;
+use Minn\Content\RowCache;
 use Minn\Db;
 
 /**
@@ -25,6 +26,12 @@ final readonly class TermQuery
 
     /** A term row joined with its taxonomy row, by id (and taxonomy when known). @return array<string, mixed>|null */
     public function row(int $termId, ?string $taxonomy): ?array
+    {
+        return RowCache::remember('term_rows', "row:{$termId}:" . ($taxonomy ?? ''), fn (): ?array => $this->readRow($termId, $taxonomy));
+    }
+
+    /** @return array<string, mixed>|null */
+    private function readRow(int $termId, ?string $taxonomy): ?array
     {
         $sql = 'SELECT ' . self::COLUMNS . " FROM {$this->db->table('terms')} t JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id WHERE t.term_id = ?";
         $params = [$termId];

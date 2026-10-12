@@ -166,7 +166,37 @@ final class Db
     /** Runs a write and returns the affected row count. */
     public function execute(string $sql, array $params = []): int
     {
-        return (int) $this->run($sql, $params)->affected_rows;
+        $affected = (int) $this->run($sql, $params)->affected_rows;
+        self::wrote($sql);
+        return $affected;
+    }
+
+    /** @var array<string, list<\Closure>> listeners told when a write names a table, by its name without the prefix */
+    private static array $writeListeners = [];
+
+    /** Asks to be told whenever a write statement names a table (Content\RowCache drops what it kept from it). */
+    public static function onWrite(string $table, \Closure $listener): void
+    {
+        self::$writeListeners[$table][] = $listener;
+    }
+
+    /**
+     * Tells the listeners of every table a write statement names, whichever
+     * door ran it (this one, or the facade's wpdb for plugin code). A name
+     * that merely contains another (wp_postmeta for posts) is not it.
+     */
+    public static function wrote(string $sql): void
+    {
+        if (self::$writeListeners === [] || preg_match('/^\s*(?:insert|update|delete|replace)\b/i', $sql) !== 1) {
+            return;
+        }
+        foreach (self::$writeListeners as $table => $listeners) {
+            if (preg_match('/\w*' . preg_quote($table, '/') . '\b/i', $sql) === 1) {
+                foreach ($listeners as $listener) {
+                    $listener();
+                }
+            }
+        }
     }
 
     /**
@@ -269,6 +299,12 @@ final class Db
             $result = $work();
         } catch (\Throwable $failure) {
             $this->connection->rollback();
+            // What was kept from the rolled-back writes' tables is no longer so.
+            foreach (self::$writeListeners as $listeners) {
+                foreach ($listeners as $listener) {
+                    $listener();
+                }
+            }
             $this->inTransaction = false;
             throw $failure;
         }
@@ -283,10 +319,24 @@ final class Db
         return (int) $this->connection->insert_id;
     }
 
-    /** One option's stored value, or null when it is unset; home and siteurl answer to WP_HOME and WP_SITEURL. */
+    /** @var (\Closure(string): ?string)|null the runtime's option store, once it exists (Runtime::boot) */
+    private static ?\Closure $optionSource = null;
+
+    /**
+     * One option's stored value, or null when it is unset; home and siteurl
+     * answer to WP_HOME and WP_SITEURL. Once the runtime boots, the read is
+     * its option store's (the autoloaded list, wp_cache's options group),
+     * so the engine's own reads cost no query each, as get_option()'s don't.
+     */
     public function option(string $name): ?string
     {
-        return self::configured($name) ?? $this->storedOption($name);
+        return self::configured($name) ?? (self::$optionSource !== null ? (self::$optionSource)($name) : $this->storedOption($name));
+    }
+
+    /** Where option reads come from from now on: the runtime's option store, or null for the row itself. */
+    public static function readOptionsThrough(?\Closure $source): void
+    {
+        self::$optionSource = $source;
     }
 
     /**

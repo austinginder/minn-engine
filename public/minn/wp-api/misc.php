@@ -444,6 +444,11 @@ function wp_delete_user($id, $reassign = null)
 /** Lets go of a user's cached rows and meta, telling plugins. */
 function clean_user_cache($user)
 {
+    $cleaned = is_object($user) ? (int) ($user->ID ?? 0) : (int) $user;
+    if ($cleaned > 0) {
+        Minn\Content\RowCache::forget('users', $cleaned);
+        Minn\Content\RowCache::forget('user_meta', $cleaned);
+    }
     $user = is_numeric($user) ? new WP_User((int) $user) : $user;
     if (!$user instanceof WP_User || !$user->exists()) {
         return;

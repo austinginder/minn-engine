@@ -4,7 +4,7 @@ scheduled publishing
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Cron`](#cron) | final readonly class | 172 | The engine's scheduled work: scheduled posts go live when their time |
+| [`Cron`](#cron) | final readonly class | 174 | The engine's scheduled work: scheduled posts go live when their time |
 
 ## Cron
 
@@ -50,5 +50,5 @@ Runs every due job; the report lists what happened. @return list<string>
 
 True when a scheduled post's time has come or the cron option holds a due event.
 
-Internals: `fireEvents()` (private, line 89), `applyAutoUpdates()` (private, line 107), `postDue()` (private, line 118), `publishDue()` (private, line 133), `sweepTransients()` (private, line 155), `sweepThrottle()` (private, line 169), `lock()` (private, line 183), `unlock()` (private, line 197)
+Internals: `fireEvents()` (private, line 89), `applyAutoUpdates()` (private, line 107), `postDue()` (private, line 118), `publishDue()` (private, line 133), `sweepTransients()` (private, line 155), `sweepThrottle()` (private, line 169), `lock()` (private, line 183), `unlock()` (private, line 198)
 

@@ -249,6 +249,8 @@ function wp_transition_comment_status($new_status, $old_status, $comment)
 /** Lets go of comments' cached rows and meta, telling plugins about each. */
 function clean_comment_cache($ids)
 {
+    Minn\Content\RowCache::forget('comments');
+    Minn\Content\RowCache::forget('comment_queries');
     foreach ((array) $ids as $id) {
         wp_cache_delete((int) $id, 'comment');
         wp_cache_delete((int) $id, 'comment_meta');
@@ -1436,7 +1438,8 @@ function _close_comments_for_old_post($open, $post_id)
 {
     $post = get_post($post_id ?: null);
     $closer = new Minn\Runtime\CommentCloser((bool) get_option('close_comments_for_old_posts'), (int) get_option('close_comments_days_old'));
-    return $closer->open((bool) $open, $post instanceof WP_Post ? $post->to_array() : null, time());
+    // The post's own columns: its type and date are all the rule reads (to_array would fetch its terms besides).
+    return $closer->open((bool) $open, $post instanceof WP_Post ? get_object_vars($post) : null, time());
 }
 
 /**

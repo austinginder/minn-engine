@@ -74,6 +74,11 @@ final readonly class PostsController
         if ($request->method === Method::Head) {
             return Reply::list([], $total, $pages, null);
         }
+        // The list's rows, meta, terms and revisions read in one query each, as update_post_caches does.
+        $taxonomies = array_keys(array_filter(Runtime::registry()->taxonomies(), static fn (array $row): bool => in_array($type, (array) ($row['object_type'] ?? []), true)));
+        $ids = array_map(static fn ($post): int => $post instanceof \WP_Post ? $post->ID : 0, (array) $posts);
+        $this->posts->prime($ids, array_map('strval', $taxonomies));
+        $this->posts->primeRevisions($ids);
         $objects = [];
         foreach ((array) $posts as $post) {
             if (!$post instanceof \WP_Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : $this->readable($post))) {

@@ -25,7 +25,98 @@ final readonly class Posts
     /** The post with this id, or null. */
     public function find(int $id): ?PostRecord
     {
-        return self::record($this->db->row("SELECT * FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [$id]));
+        return RowCache::remember('posts', $id, fn (): ?PostRecord => self::record($this->db->row("SELECT * FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [$id])));
+    }
+
+    /**
+     * Reads a list's posts, their meta and their terms in the given
+     * taxonomies in one query each, as update_post_caches does, so the
+     * list's rendering reads none of them again.
+     *
+     * @param list<int> $ids
+     * @param list<string> $taxonomies
+     */
+    public function prime(array $ids, array $taxonomies = []): void
+    {
+        $this->primeRows($ids);
+        $this->primeMeta($ids);
+        $this->primeTerms($ids, $taxonomies);
+    }
+
+    /** Reads the rows of the posts not read yet, in one query. @param list<int> $ids */
+    public function primeRows(array $ids): void
+    {
+        $unread = array_values(array_filter(self::ids($ids), static fn (int $id): bool => !RowCache::has('posts', $id)));
+        if ($unread === []) {
+            return;
+        }
+        $found = [];
+        foreach ($this->db->rows("SELECT * FROM {$this->db->table('posts')} WHERE ID IN (?)", [$unread]) as $row) {
+            $found[(int) $row['ID']] = self::record($row);
+        }
+        foreach ($unread as $id) {
+            RowCache::put('posts', $id, $found[$id] ?? null);
+        }
+    }
+
+    /** Reads the meta of the posts whose meta is not read yet, in one query (update_post_meta_cache). @param list<int> $ids */
+    public function primeMeta(array $ids): void
+    {
+        $unread = array_values(array_filter(self::ids($ids), static fn (int $id): bool => !RowCache::has('post_meta', $id)));
+        if ($unread === []) {
+            return;
+        }
+        $grouped = array_fill_keys($unread, []);
+        foreach ($this->db->rows("SELECT post_id, meta_key, meta_value FROM {$this->db->table('postmeta')} WHERE post_id IN (?) ORDER BY meta_id ASC", [$unread]) as $row) {
+            $grouped[(int) $row['post_id']][(string) $row['meta_key']][] = (string) $row['meta_value'];
+        }
+        foreach ($grouped as $id => $values) {
+            RowCache::put('post_meta', $id, $values);
+        }
+    }
+
+    /**
+     * Reads the posts' terms in the given taxonomies, in one query, for the
+     * posts some of whose taxonomies are not read yet.
+     *
+     * @param list<int> $ids
+     * @param list<string> $taxonomies
+     */
+    public function primeTerms(array $ids, array $taxonomies): void
+    {
+        $ids = array_values(array_filter(self::ids($ids), static function (int $id) use ($taxonomies): bool {
+            foreach ($taxonomies as $taxonomy) {
+                if (!RowCache::has('post_terms', "{$id}:{$taxonomy}")) {
+                    return true;
+                }
+            }
+            return false;
+        }));
+        if ($ids === []) {
+            return;
+        }
+        $terms = [];
+        foreach ($this->db->rows(
+            "SELECT tr.object_id, tt.taxonomy, t.term_id, t.slug FROM {$this->db->table('term_relationships')} tr
+             JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+             JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
+             WHERE tr.object_id IN (?) AND tt.taxonomy IN (?)
+             ORDER BY t.name ASC",
+            [$ids, array_values($taxonomies)],
+        ) as $row) {
+            $terms[(int) $row['object_id']][(string) $row['taxonomy']][] = [(int) $row['term_id'], (string) $row['slug']];
+        }
+        foreach ($ids as $id) {
+            foreach ($taxonomies as $taxonomy) {
+                RowCache::put('post_terms', "{$id}:{$taxonomy}", $terms[$id][$taxonomy] ?? []);
+            }
+        }
+    }
+
+    /** @param list<int> $ids @return list<int> the positive ids, once each */
+    private static function ids(array $ids): array
+    {
+        return array_values(array_unique(array_filter(array_map('intval', $ids), static fn (int $id): bool => $id > 0)));
     }
 
     /**
@@ -144,15 +235,12 @@ final readonly class Posts
         $parts = [$page->slug];
         $parentId = $page->parentId;
         while ($parentId > 0) {
-            $parent = $this->db->row(
-                "SELECT ID, post_name, post_parent FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1",
-                [$parentId],
-            );
+            $parent = $this->find($parentId);
             if ($parent === null) {
                 break;
             }
-            array_unshift($parts, $parent['post_name']);
-            $parentId = (int) $parent['post_parent'];
+            array_unshift($parts, $parent->slug);
+            $parentId = $parent->parentId;
         }
         return implode('/', $parts);
     }
@@ -191,11 +279,14 @@ final readonly class Posts
     /** One meta value of a post, or null when it has none. */
     public function meta(int $postId, string $key): ?string
     {
-        $value = $this->db->value(
-            "SELECT meta_value FROM {$this->db->table('postmeta')} WHERE post_id = ? AND meta_key = ? LIMIT 1",
-            [$postId, $key],
-        );
-        return $value === null ? null : (string) $value;
+        $all = RowCache::remember('post_meta', $postId, function () use ($postId): array {
+            $grouped = [];
+            foreach ($this->db->rows("SELECT meta_key, meta_value FROM {$this->db->table('postmeta')} WHERE post_id = ? ORDER BY meta_id ASC", [$postId]) as $row) {
+                $grouped[(string) $row['meta_key']][] = (string) $row['meta_value'];
+            }
+            return $grouped;
+        });
+        return isset($all[$key][0]) ? $all[$key][0] : null;
     }
 
     /**
@@ -204,6 +295,12 @@ final readonly class Posts
      * @return list<array{0: int, 1: string}> term id and slug pairs, by name
      */
     public function terms(int $postId, string $taxonomy): array
+    {
+        return RowCache::remember('post_terms', "{$postId}:{$taxonomy}", fn (): array => $this->readTerms($postId, $taxonomy));
+    }
+
+    /** @return list<array{0: int, 1: string}> */
+    private function readTerms(int $postId, string $taxonomy): array
     {
         $rows = $this->db->rows(
             "SELECT t.term_id, t.slug FROM {$this->db->table('term_relationships')} tr
@@ -219,21 +316,54 @@ final readonly class Posts
     /** How many revisions the post has. */
     public function revisionCount(int $postId): int
     {
-        return (int) $this->db->value(
-            "SELECT COUNT(*) FROM {$this->db->table('posts')} WHERE post_type = 'revision' AND post_parent = ?",
-            [$postId],
-        );
+        return $this->revisions($postId)[0];
+    }
+
+    /**
+     * Reads many posts' revision counts and latest revisions in one query,
+     * for a list that links to each post's history (a REST list).
+     *
+     * @param list<int> $ids
+     */
+    public function primeRevisions(array $ids): void
+    {
+        $unread = array_values(array_filter(array_unique(array_map('intval', $ids)), static fn (int $id): bool => $id > 0 && !RowCache::has('revisions', $id)));
+        if ($unread !== []) {
+            foreach ($this->readRevisions($unread) as $id => $pair) {
+                RowCache::put('revisions', $id, $pair);
+            }
+        }
+    }
+
+    /** @return array{0: int, 1: int} how many revisions a post has, and the latest one's id (newest by date then id), or 0 */
+    private function revisions(int $postId): array
+    {
+        return RowCache::remember('revisions', $postId, fn (): array => $this->readRevisions([$postId])[$postId] ?? [0, 0]);
+    }
+
+    /**
+     * Revision counts and latest ids for many posts in one query.
+     *
+     * @param list<int> $postIds
+     * @return array<int, array{0: int, 1: int}>
+     */
+    private function readRevisions(array $postIds): array
+    {
+        $out = array_fill_keys($postIds, [0, 0]);
+        foreach ($this->db->rows(
+            "SELECT ID, post_parent FROM {$this->db->table('posts')} WHERE post_type = 'revision' AND post_parent IN (?) ORDER BY post_date DESC, ID DESC",
+            [$postIds],
+        ) as $row) {
+            $parent = (int) $row['post_parent'];
+            $out[$parent] = [$out[$parent][0] + 1, $out[$parent][1] === 0 ? (int) $row['ID'] : $out[$parent][1]];
+        }
+        return $out;
     }
 
     /** The latest revision id, an autosave counting as one, newest by date then id (probe rest-latest-revision), or 0. */
     public function latestRevisionId(int $postId): int
     {
-        return (int) ($this->db->value(
-            "SELECT ID FROM {$this->db->table('posts')}
-             WHERE post_type = 'revision' AND post_parent = ?
-             ORDER BY post_date DESC, ID DESC LIMIT 1",
-            [$postId],
-        ) ?? 0);
+        return $this->revisions($postId)[1];
     }
 
     /** Whether a live post carries an autosave newer than its saved state. */

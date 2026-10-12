@@ -51,6 +51,7 @@ use Minn\Runtime\AjaxController;
 use Minn\Runtime\DebugMode;
 use Minn\Runtime\Plugins;
 use Minn\Runtime\Recovery;
+use Minn\Runtime\Options;
 use Minn\Runtime\Runtime;
 use Minn\Extension\Loader;
 use Minn\Extension\Seams;
@@ -103,6 +104,8 @@ final readonly class Engine
             error_log('Minn Engine: wp-config.php is missing its unique keys and salts (AUTH_KEY … NONCE_SALT); refusing to sign anything.');
             return Failure::internal();
         }
+        Runtime::storeOptions($db);
+        Runtime::options()->prime(Options::EVERY_REQUEST);
         try {
             $response = $this->handle($db, $request);
             // A HEAD answer goes out without its body; inside the process (rest_do_request) the body stays, as on the reference.

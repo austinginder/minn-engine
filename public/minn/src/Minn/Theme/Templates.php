@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Content\Posts;
+use Minn\Content\RowCache;
 use Minn\Db;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
@@ -179,17 +180,29 @@ final readonly class Templates
         return $row === null ? null : (string) $row['post_content'];
     }
 
-    /** @return array{ID: int|string, post_content: string}|null the newest published template of a type (and slug) saved for the theme */
+    /**
+     * The newest published template of a type (and slug) saved for the
+     * theme. Every saved one of the type is read once a request, newest
+     * first, so a template's candidates and its parts cost one query.
+     *
+     * @return array{ID: int|string, post_content: string}|null
+     */
     private function savedRow(string $type, ?string $slug): ?array
     {
-        return $this->db->row(
-            "SELECT p.ID, p.post_content FROM {$this->db->table('posts')} p
+        $rows = RowCache::remember('theme_templates', "{$type}:{$this->theme->slug}", fn (): array => $this->db->rows(
+            "SELECT p.ID, p.post_name, p.post_content FROM {$this->db->table('posts')} p
              JOIN {$this->db->table('term_relationships')} tr ON tr.object_id = p.ID
              JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
              JOIN {$this->db->table('terms')} t ON t.term_id = tt.term_id
-             WHERE p.post_type = ? AND (? IS NULL OR p.post_name = ?) AND p.post_status = 'publish'
-               AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC LIMIT 1",
-            [$type, $slug, $slug, $this->theme->slug],
-        );
+             WHERE p.post_type = ? AND p.post_status = 'publish'
+               AND tt.taxonomy = 'wp_theme' AND t.slug = ? ORDER BY p.ID DESC",
+            [$type, $this->theme->slug],
+        ));
+        foreach ($rows as $row) {
+            if ($slug === null || (string) $row['post_name'] === $slug) {
+                return ['ID' => $row['ID'], 'post_content' => (string) $row['post_content']];
+            }
+        }
+        return null;
     }
 }

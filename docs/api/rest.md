@@ -43,7 +43,7 @@ the wp/v2 surface: shapes and controllers
 | [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
-| [`PostsController`](#postscontroller) | final readonly class | 191 | wp/v2 posts and pages, read side. |
+| [`PostsController`](#postscontroller) | final readonly class | 196 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 451 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
@@ -1904,7 +1904,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 100), `readable()` (private, line 119), `visibleStatuses()` (private, line 142)
+Internals: `totals()` (private, line 105), `readable()` (private, line 124), `visibleStatuses()` (private, line 147)
 
 
 ## PostsWriteController

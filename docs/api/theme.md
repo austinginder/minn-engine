@@ -26,7 +26,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`PatternHeaders`](#patternheaders) | final class | 52 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
-| [`QueryClasses`](#queryclasses) | final readonly class | 131 | The body-class tokens the main query stands for, in the reference's |
+| [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
 | [`StylePresets`](#stylepresets) | final class | 148 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
@@ -37,7 +37,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
-| [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
+| [`Templates`](#templates) | final readonly class | 187 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 54 | The theme's theme.json as plugins and the theme's own functions may |
 | [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
@@ -853,7 +853,7 @@ The tokens for a main query.
 
 - `@return list<string>`
 
-Internals: `format()` (private, line 61), `singular()` (private, line 71), `archive()` (private, line 100), `paging()` (private, line 127), `named()` (private, line 148)
+Internals: `format()` (private, line 61), `singular()` (private, line 68), `archive()` (private, line 97), `paging()` (private, line 124), `named()` (private, line 145)
 
 
 ## SpacingScale
@@ -1298,7 +1298,7 @@ reference reads it; a list where a map belongs is dropped the same way.
 
 A page's chosen custom template, from _wp_page_template meta.
 
-Internals: `filtered()` (private, line 94), `hierarchy()` (private, line 118), `saved()` (private, line 176), `savedRow()` (private, line 183)
+Internals: `filtered()` (private, line 95), `hierarchy()` (private, line 119), `saved()` (private, line 177), `savedRow()` (private, line 190)
 
 
 ## Theme

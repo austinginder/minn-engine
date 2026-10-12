@@ -282,6 +282,8 @@ class wpdb
         }
         if (preg_match('/^\s*(insert|delete|update|replace)\s/i', $query)) {
             $this->rows_affected = (int) $this->dbh->affected_rows;
+            // The engine's request-long row reads hear plugin writes too.
+            \Minn\Db::wrote($query);
             if (preg_match('/^\s*(insert|replace)\s/i', $query)) {
                 $this->insert_id = (int) $this->dbh->insert_id;
             }

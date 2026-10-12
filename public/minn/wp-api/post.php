@@ -95,6 +95,12 @@ function clean_post_cache($post)
     if (!empty($GLOBALS['_wp_suspend_cache_invalidation'])) {
         return;
     }
+    $cleaned = is_object($post) ? (int) ($post->ID ?? 0) : (int) $post;
+    if ($cleaned > 0) {
+        Minn\Content\RowCache::forget('posts', $cleaned);
+        Minn\Content\RowCache::forget('post_meta', $cleaned);
+        Minn\Content\RowCache::forget('post_terms');
+    }
     $post = get_post($post);
     if ($post === null) {
         return;
@@ -2440,15 +2446,37 @@ function is_page_template($template = '')
     return false;
 }
 
-/** The engine reads rows on demand; the reference's cache primers have nothing to fill here. */
+/** The posts, their meta and their terms read in one query each for a list (rows the engine already holds are not read again). */
 function _prime_post_caches($ids, $update_term_cache = true, $update_meta_cache = true)
 {
-    return null;
+    $ids = array_values(array_filter(array_map('intval', (array) $ids), static fn (int $id): bool => $id > 0));
+    if ($ids === []) {
+        return;
+    }
+    $store = _minn_posts();
+    $store->primeRows($ids);
+    if ($update_meta_cache) {
+        $store->primeMeta($ids);
+    }
+    if ($update_term_cache) {
+        $types = [];
+        foreach ($ids as $id) {
+            $types[(string) ($store->find($id)?->type ?? '')] = true;
+        }
+        $taxonomies = [];
+        foreach (array_keys(array_filter($types, static fn ($on, $type) => $type !== '', ARRAY_FILTER_USE_BOTH)) as $type) {
+            $taxonomies = [...$taxonomies, ...get_object_taxonomies((string) $type)];
+        }
+        $store->primeTerms($ids, array_values(array_unique($taxonomies)));
+    }
 }
 
 function update_post_caches(&$posts, $post_type = 'post', $update_term_cache = true, $update_meta_cache = true)
 {
-    return null;
+    if (!$posts) {
+        return;
+    }
+    _prime_post_caches(array_map(static fn ($post) => is_object($post) ? (int) ($post->ID ?? 0) : (int) $post, (array) $posts), $update_term_cache, $update_meta_cache);
 }
 
 function update_post_thumbnail_cache($wp_query = null)

@@ -1,0 +1,66 @@
+{
+    "measured": "2026-10-12",
+    "runs": 5,
+    "pages": {
+        "/": {
+            "engine": {
+                "Com_select": 30,
+                "Com_stmt_execute": 27,
+                "Questions": 33
+            },
+            "reference": {
+                "Com_select": 38,
+                "Com_stmt_execute": 0,
+                "Questions": 43
+            }
+        },
+        "/hello-world/": {
+            "engine": {
+                "Com_select": 39,
+                "Com_stmt_execute": 32,
+                "Questions": 42
+            },
+            "reference": {
+                "Com_select": 44,
+                "Com_stmt_execute": 0,
+                "Questions": 49
+            }
+        },
+        "/category/uncategorized/": {
+            "engine": {
+                "Com_select": 34,
+                "Com_stmt_execute": 30,
+                "Questions": 37
+            },
+            "reference": {
+                "Com_select": 43,
+                "Com_stmt_execute": 0,
+                "Questions": 48
+            }
+        },
+        "/wp-json/wp/v2/posts": {
+            "engine": {
+                "Com_select": 26,
+                "Com_stmt_execute": 24,
+                "Questions": 30
+            },
+            "reference": {
+                "Com_select": 41,
+                "Com_stmt_execute": 0,
+                "Questions": 47
+            }
+        },
+        "/?s=hello": {
+            "engine": {
+                "Com_select": 30,
+                "Com_stmt_execute": 25,
+                "Questions": 33
+            },
+            "reference": {
+                "Com_select": 40,
+                "Com_stmt_execute": 0,
+                "Questions": 45
+            }
+        }
+    }
+}

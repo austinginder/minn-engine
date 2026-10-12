@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
-use Minn\Content\PostRecord;
+use Minn\Content\RowCache;
+use Minn\Content\Posts;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Runtime\Runtime;
@@ -177,11 +178,13 @@ final readonly class Capabilities
     /** A comment is edited as its post is (as editing posts, when the post is gone); a comment that does not exist, by no one. @return list<string> */
     private function mapCommentCapability(int $userId, int $commentId): array
     {
-        $postId = $this->db->value("SELECT comment_post_ID FROM {$this->db->table('comments')} WHERE comment_ID = ? LIMIT 1", [$commentId]);
+        // A comment a query already read this request is not read again.
+        $postId = RowCache::peek('comments', $commentId)?->comment_post_ID
+            ?? $this->db->value("SELECT comment_post_ID FROM {$this->db->table('comments')} WHERE comment_ID = ? LIMIT 1", [$commentId]);
         if ($postId === null) {
             return ['do_not_allow'];
         }
-        $exists = $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1", [(int) $postId]) !== null;
+        $exists = (new Posts($this->db))->find((int) $postId) !== null;
         return $exists ? $this->mapPostCapability('edit_post', $userId, (int) $postId) : ['edit_posts'];
     }
 
@@ -200,14 +203,10 @@ final readonly class Capabilities
      */
     private function mapPostCapability(string $capability, int $userId, int $postId): array
     {
-        $post = $this->db->row(
-            "SELECT post_author, post_status, post_type, post_parent FROM {$this->db->table('posts')} WHERE ID = ? LIMIT 1",
-            [$postId],
-        );
-        if ($post === null) {
+        $record = (new Posts($this->db))->find($postId);
+        if ($record === null) {
             return ['do_not_allow'];
         }
-        $record = PostRecord::fromRow($post + ['ID' => $postId]);
         // A revision is never deleted this way; editing or reading one is editing or reading its post (probe rest-revisions).
         if ($record->type === 'revision') {
             return $capability === 'delete_post' || $record->parentId <= 0 ? ['do_not_allow'] : $this->mapPostCapability($capability, $userId, $record->parentId);

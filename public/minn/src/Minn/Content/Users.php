@@ -24,7 +24,7 @@ final readonly class Users
     /** The user with this id, or null. */
     public function find(int $id): ?UserRecord
     {
-        return self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [$id]));
+        return RowCache::remember('users', $id, fn (): ?UserRecord => self::record($this->db->row("SELECT * FROM {$this->db->table('users')} WHERE ID = ? LIMIT 1", [$id])));
     }
 
     /** The user with this login, or null. */

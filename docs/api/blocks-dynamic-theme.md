@@ -4,7 +4,7 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 255 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Comments`](#comments) | final readonly class | 268 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 374 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 259 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
@@ -28,7 +28,16 @@ __construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, Minn\Con
 
 Registers this family's blocks with the renderer.
 
-Internals: `comments()` (private, line 52), `title()` (private, line 66), `template()` (private, line 88), `records()` (private, line 112), `count()` (private, line 125), `list()` (private, line 131), `avatar()` (private, line 162), `authorAvatar()` (private, line 174), `date()` (private, line 190), `commentPost()` (private, line 206), `authorName()` (private, line 212), `content()` (private, line 226), `replyLink()` (private, line 237), `form()` (private, line 250), `commentForm()` (private, line 265)
+### static `query(array $vars): WP_Comment_Query`
+
+The comment query a comment template's vars ask for, run once a
+request: the template and its pagination links ask for the same one,
+and the reference answers the repeat from its cache. A comment write
+drops it (RowCache).
+
+- `@param array<string, mixed> $vars`
+
+Internals: `comments()` (private, line 53), `title()` (private, line 67), `template()` (private, line 102), `records()` (private, line 126), `count()` (private, line 139), `list()` (private, line 145), `avatar()` (private, line 176), `authorAvatar()` (private, line 188), `date()` (private, line 204), `commentPost()` (private, line 220), `authorName()` (private, line 226), `content()` (private, line 240), `replyLink()` (private, line 251), `form()` (private, line 264), `commentForm()` (private, line 279)
 
 
 ## Navigation

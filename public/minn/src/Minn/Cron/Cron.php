@@ -184,7 +184,8 @@ final readonly class Cron
     {
         $table = $this->db->table('options');
         $now = time();
-        $held = $this->db->option(self::LOCK);
+        // The row itself: another process may hold the lock this instant.
+        $held = $this->db->storedOption(self::LOCK);
         if ($held !== null && (int) $held + self::LOCK_TTL > $now) {
             return false;
         }
@@ -197,5 +198,6 @@ final readonly class Cron
     private function unlock(): void
     {
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [self::LOCK]);
+        Runtime::optionWritten(self::LOCK);
     }
 }

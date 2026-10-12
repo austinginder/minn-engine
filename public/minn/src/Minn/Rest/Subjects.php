@@ -59,7 +59,7 @@ final readonly class Subjects
 
     private function post(int $id, string $type): bool
     {
-        return $id > 0 && $this->db->value("SELECT ID FROM {$this->db->table('posts')} WHERE ID = ? AND post_type = ?", [$id, $type]) !== null;
+        return $id > 0 && (new \Minn\Content\Posts($this->db))->find($id)?->type === $type;
     }
 
     private function term(int $id, string $taxonomy): bool

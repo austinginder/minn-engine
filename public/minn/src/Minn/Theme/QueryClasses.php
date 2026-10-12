@@ -60,10 +60,7 @@ final readonly class QueryClasses
     /** A post's format by its post_format term, standard without one (probe post-template-remaining). */
     private function format(int $id): string
     {
-        $slug = $this->db->value(
-            "SELECT t.slug FROM {$this->db->table('terms')} t JOIN {$this->db->table('term_taxonomy')} tt ON tt.term_id = t.term_id JOIN {$this->db->table('term_relationships')} tr ON tr.term_taxonomy_id = tt.term_taxonomy_id WHERE tr.object_id = ? AND tt.taxonomy = 'post_format' LIMIT 1",
-            [$id],
-        );
+        $slug = (new \Minn\Content\Posts($this->db))->terms($id, 'post_format')[0][1] ?? null;
         return is_string($slug) && str_starts_with($slug, 'post-format-') && strlen($slug) > 12 ? substr($slug, 12) : 'standard';
     }
 

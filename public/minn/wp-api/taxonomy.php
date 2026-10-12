@@ -521,7 +521,11 @@ function get_the_terms($post, $taxonomy)
     if ($post === null) {
         return false;
     }
-    $terms = wp_get_object_terms($post->ID, $taxonomy);
+    // The object's terms as a list primed them, else read, as the reference reads them.
+    $terms = get_object_term_cache($post->ID, $taxonomy);
+    if ($terms === false) {
+        $terms = wp_get_object_terms($post->ID, $taxonomy);
+    }
     if (is_wp_error($terms)) {
         return $terms;
     }
@@ -775,6 +779,7 @@ function get_post_taxonomies($post = 0)
 
 function clean_term_cache($ids, $taxonomy = '', $clean_taxonomy = true)
 {
+    Minn\Content\RowCache::forget('post_terms');
     $ids = (array) $ids;
     foreach ($ids as $id) {
         wp_cache_delete((int) $id, 'terms');
@@ -794,6 +799,7 @@ function clean_term_cache($ids, $taxonomy = '', $clean_taxonomy = true)
 
 function clean_object_term_cache($object_ids, $object_type)
 {
+    Minn\Content\RowCache::forget('post_terms');
     foreach ((array) $object_ids as $id) {
         wp_cache_delete((int) $id, 'post_meta');
     }
@@ -1570,10 +1576,22 @@ function _prime_term_caches($term_ids, $update_meta_cache = true)
 function get_object_term_cache($id, $taxonomy)
 {
     $cached = wp_cache_get((int) $id, 'minn_object_terms');
-    if (!is_array($cached) || !array_key_exists((string) $taxonomy, $cached)) {
+    if (is_array($cached) && array_key_exists((string) $taxonomy, $cached)) {
+        return $cached[(string) $taxonomy];
+    }
+    // A list the engine primed (update_post_caches) answers too, each term through get_term, as the reference's primed relationships do.
+    $primed = Minn\Content\RowCache::peek('post_terms', (int) $id . ':' . $taxonomy);
+    if (!is_array($primed)) {
         return false;
     }
-    return $cached[(string) $taxonomy];
+    $terms = [];
+    foreach ($primed as [$termId]) {
+        $term = get_term((int) $termId, (string) $taxonomy);
+        if ($term instanceof WP_Term) {
+            $terms[] = $term;
+        }
+    }
+    return $terms;
 }
 
 function update_object_term_cache($object_ids, $object_type)

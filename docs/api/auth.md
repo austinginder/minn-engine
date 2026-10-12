@@ -9,10 +9,10 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
-| [`Capabilities`](#capabilities) | final readonly class | 275 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
+| [`Capabilities`](#capabilities) | final readonly class | 273 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
-| [`LoginThrottle`](#loginthrottle) | final readonly class | 78 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
+| [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 34 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 59 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
@@ -327,7 +327,7 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
-Internals: `fileModsAllowed()` (private, line 92), `mapMore()` (private, line 146), `mapCommentCapability()` (private, line 178), `mapPostCapability()` (private, line 201), `mapTermCapability()` (private, line 258), `fold()` (private, line 279), `trashedFrom()` (private, line 284)
+Internals: `fileModsAllowed()` (private, line 93), `mapMore()` (private, line 147), `mapCommentCapability()` (private, line 179), `mapPostCapability()` (private, line 204), `mapTermCapability()` (private, line 257), `fold()` (private, line 278), `trashedFrom()` (private, line 283)
 
 
 ## Cookie
@@ -444,7 +444,7 @@ Counts one failed sign-in from an address within the current window.
 
 Forgets an address's failures.
 
-Internals: `read()` (private, line 57), `write()` (private, line 66), `prune()` (private, line 78), `key()` (private, line 88)
+Internals: `read()` (private, line 59), `write()` (private, line 69), `prune()` (private, line 82), `key()` (private, line 93)
 
 
 ## Nonce

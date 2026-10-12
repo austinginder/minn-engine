@@ -13,6 +13,7 @@ use Minn\Blocks\Styles;
 use Minn\Blocks\Wrapper;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
+use Minn\Content\RowCache;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Content\Texturize;
@@ -85,6 +86,19 @@ final readonly class Comments
         return '<h' . $level . ' id="comments" class="' . Html::attr($classes) . '">' . $text . '</h' . $level . '>';
     }
 
+    /**
+     * The comment query a comment template's vars ask for, run once a
+     * request: the template and its pagination links ask for the same one,
+     * and the reference answers the repeat from its cache. A comment write
+     * drops it (RowCache).
+     *
+     * @param array<string, mixed> $vars
+     */
+    public static function query(array $vars): \WP_Comment_Query
+    {
+        return RowCache::remember('comment_queries', md5(serialize($vars)), static fn (): \WP_Comment_Query => new \WP_Comment_Query($vars));
+    }
+
     private function template(Block $block, Renderer $renderer): string
     {
         $context = $renderer->context();
@@ -95,7 +109,7 @@ final readonly class Comments
         // The reference's comment query for a template (build_comment_query_vars_from_block): approved ones and
         // the reader's own held ones, oldest first, threaded and paged as the site says.
         $vars = \build_comment_query_vars_from_block((object) ['context' => ['postId' => $post->id]]);
-        $comments = (array) (new \WP_Comment_Query())->query($vars);
+        $comments = (array) self::query($vars)->comments;
         // Newest first, when the site lists them so, is the top level reversed; replies keep their order.
         $comments = $this->site->option('comment_order') === 'desc' ? array_reverse($comments) : $comments;
         $all = self::records($comments, ($vars['hierarchical'] ?? false) === 'threaded');

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\RowCache;
 use Minn\Db;
 
 /** The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. */
@@ -65,11 +66,14 @@ final readonly class Meta
     public function all(string $type, int $objectId): array
     {
         [$table, $column, $id] = $this->spec($type);
-        $out = [];
-        foreach ($this->db->rows("SELECT meta_key, meta_value FROM {$table} WHERE {$column} = ? ORDER BY {$id} ASC", [$objectId]) as $row) {
-            $out[(string) $row['meta_key']][] = (string) $row['meta_value'];
-        }
-        return $out;
+        RowCache::watch("{$type}_meta", $table);
+        return RowCache::remember("{$type}_meta", $objectId, function () use ($table, $column, $id, $objectId): array {
+            $out = [];
+            foreach ($this->db->rows("SELECT meta_key, meta_value FROM {$table} WHERE {$column} = ? ORDER BY {$id} ASC", [$objectId]) as $row) {
+                $out[(string) $row['meta_key']][] = (string) $row['meta_value'];
+            }
+            return $out;
+        });
     }
 
     /**
@@ -94,12 +98,14 @@ final readonly class Meta
         }
         if ($missing !== []) {
             [$table, $column, $id] = $this->spec($type);
+            RowCache::watch("{$type}_meta", $table);
             $in = implode(', ', array_fill(0, count($missing), '?'));
             foreach ($this->db->rows("SELECT {$column} AS object_id, meta_key, meta_value FROM {$table} WHERE {$column} IN ({$in}) ORDER BY {$id} ASC", array_keys($missing)) as $row) {
                 $missing[(int) $row['object_id']][(string) $row['meta_key']][] = (string) $row['meta_value'];
             }
             foreach ($missing as $objectId => $meta) {
                 \wp_cache_set($objectId, $meta, "{$type}_meta");
+                RowCache::put("{$type}_meta", $objectId, $meta);
                 $cache[$objectId] = $meta;
             }
         }

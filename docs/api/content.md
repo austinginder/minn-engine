@@ -33,9 +33,10 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostSlugs`](#postslugs) | final readonly class | 75 | Which slug a live post may take beside the others, as the reference |
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 497 | Every write to the posts table and its satellites: rows, meta, term |
-| [`Posts`](#posts) | final readonly class | 406 | Reads over the posts table. A post comes back as a PostRecord; a listing |
+| [`Posts`](#posts) | final readonly class | 536 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
+| [`RowCache`](#rowcache) | final class | 100 | Rows read once a request: posts, their terms, users, and every object's |
 | [`Site`](#site) | final readonly class | 102 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
@@ -1098,7 +1099,7 @@ Array access is the migration bridge: code that still reads
 $post['post_title'] keeps working while it is moved over. New code
 reads the properties. The style suite counts the bracket reads down.
 
-Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\Api`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Context`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Content\Excerpt`, `Minn\Content\Page`, `Minn\Content\PasswordGate`, `Minn\Content\PostStatus`, `Minn\Content\PostWriter`, `Minn\Content\Posts`, `Minn\Engine`, `Minn\Extension\SeamRunner`, `Minn\Front\ArchiveAddresses`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Canonical`, `Minn\Front\Permalinks`, `Minn\Front\Renderer`, `Minn\Front\Resolution`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\Api`, `Minn\Rest\CommentsController`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\GlobalStylesObject`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RenderedFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\SearchController`, `Minn\Runtime\CommentCloser`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Theme\ClassicContent`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\UserStyles`
 
 - readonly `int $id`
 - readonly `int $authorId`
@@ -1441,7 +1442,7 @@ Internals: `fit()` (private, line 172), `announceSticky()` (private, line 273), 
 Reads over the posts table. A post comes back as a PostRecord; a listing
 is the main query's (WP_Query); rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\MenuEvents`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1451,6 +1452,35 @@ __construct(Minn\Db $db)
 ### `find(int $id): ?Minn\Content\PostRecord`
 
 The post with this id, or null.
+
+### `prime(array $ids, array $taxonomies = array ( )): void`
+
+Reads a list's posts, their meta and their terms in the given
+taxonomies in one query each, as update_post_caches does, so the
+list's rendering reads none of them again.
+
+- `@param list<int> $ids`
+- `@param list<string> $taxonomies`
+
+### `primeRows(array $ids): void`
+
+Reads the rows of the posts not read yet, in one query. @param list<int> $ids
+
+- `@param list<int> $ids`
+
+### `primeMeta(array $ids): void`
+
+Reads the meta of the posts whose meta is not read yet, in one query (update_post_meta_cache). @param list<int> $ids
+
+- `@param list<int> $ids`
+
+### `primeTerms(array $ids, array $taxonomies): void`
+
+Reads the posts' terms in the given taxonomies, in one query, for the
+posts some of whose taxonomies are not read yet.
+
+- `@param list<int> $ids`
+- `@param list<string> $taxonomies`
 
 ### `findByName(string $name, array $types): ?Minn\Content\PostRecord`
 
@@ -1535,6 +1565,13 @@ The post's terms in one taxonomy, as [term_id, slug] pairs.
 
 How many revisions the post has.
 
+### `primeRevisions(array $ids): void`
+
+Reads many posts' revision counts and latest revisions in one query,
+for a list that links to each post's history (a REST list).
+
+- `@param list<int> $ids`
+
 ### `latestRevisionId(int $postId): int`
 
 The latest revision id, an autosave counting as one, newest by date then id (probe rest-latest-revision), or 0.
@@ -1595,7 +1632,7 @@ The newest autosave of a post (by date, then id), by one author or, given 0, any
 
 The slug of the post's first category, or null.
 
-Internals: `record()` (private, line 20), `byName()` (private, line 48), `byPath()` (private, line 123), `neighbour()` (private, line 261), `weekMode()` (private, line 350), `monthBeside()` (private, line 385)
+Internals: `record()` (private, line 20), `ids()` (private, line 117), `byName()` (private, line 139), `byPath()` (private, line 214), `readTerms()` (private, line 303), `revisions()` (private, line 339), `readRevisions()` (private, line 350), `neighbour()` (private, line 391), `weekMode()` (private, line 480), `monthBeside()` (private, line 515)
 
 
 ## Reader
@@ -1686,6 +1723,55 @@ The autosaves of a post, newest first, as rows.
 One autosave slot per author: updated in place when it exists.
 
 Internals: `named()` (private, line 44)
+
+
+## RowCache
+
+`final class Minn\Content\RowCache` · `public/minn/src/Minn/Content/RowCache.php`
+
+Rows read once a request: posts, their terms, users, and every object's
+meta, as the reference keeps them in its object cache, so a loop or a
+REST list does not read the same row once per use. A write to a table
+drops everything kept from it (Db::wrote, through the engine's own door
+or the facade's wpdb), as does a rolled-back transaction, so a read after
+a write finds the row as it now is. Nothing outlives the request.
+
+- const `SOURCES` = `array (   'posts' =>    array (     0 => 'posts',   ),   'post_terms' =>    array (     0 => 'term_relationships',     1 => 'term_taxonomy',     2 => 'terms',   ),   'revisions' =>    array (     0 => 'posts',   ),   'theme_templates' =>    array (     0 => 'posts',     1 => 'term_relationships',     2 => 'term_taxonomy',     3 => 'terms',   ),   'users' =>    array (     0 => 'users',   ),   'comments' =>    array (     0 => 'comments',   ),   'comment_queries' =>    array (     0 => 'comments',     1 => 'commentmeta',   ),   'term_rows' =>    array (     0 => 'terms',     1 => 'term_taxonomy',   ),   'post_meta' =>    array (     0 => 'postmeta',   ),   'user_meta' =>    array (     0 => 'usermeta',   ),   'term_meta' =>    array (     0 => 'termmeta',   ),   'comment_meta' =>    array (     0 => 'commentmeta',   ), )` — The tables each kind of entry is read from.
+
+Used by: `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Content\Posts`, `Minn\Content\Terms`, `Minn\Content\Users`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\Meta`, `Minn\Runtime\Runtime`, `Minn\Runtime\TermQuery`, `Minn\Theme\Templates`
+
+
+### static `remember(string $kind, string|int $key, Closure $load): mixed`
+
+The kept value of a kind for a key, read through $load the first time.
+
+### static `has(string $kind, string|int $key): bool`
+
+Whether a value is kept.
+
+### static `peek(string $kind, string|int $key): mixed`
+
+A kept value, or null when there is none.
+
+### static `put(string $kind, string|int $key, mixed $value): void`
+
+Keeps a value read elsewhere (a batch read for a whole list).
+
+### static `watch(string $kind, string $table): void`
+
+Has a kind named at run time (a plugin's meta type, whose table only
+the registration knows) dropped whenever that table is written, as
+the kinds above are by theirs.
+
+### static `forget(string $kind, string|int|null $key = NULL): void`
+
+Drops one kept value, or every one of a kind.
+
+### static `flush(): void`
+
+Drops everything kept.
+
+Internals: `listen()` (private, line 103)
 
 
 ## Site

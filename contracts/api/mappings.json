@@ -2,14 +2,14 @@
     "generated": "2026-10-12",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 803,
-        "composes": 2380,
+        "minn": 814,
+        "composes": 2372,
         "leaf": 1040,
-        "noop": 2759,
+        "noop": 2756,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8676,
-        "minnMethods": 1003,
+        "minnMethods": 1011,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -34419,7 +34419,7 @@
         },
         "_close_comments_for_old_post": {
             "file": "comment.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\CommentCloser::__construct",
@@ -36548,8 +36548,10 @@
         "_minn_comments_pagination_link": {
             "file": "core-blocks.php",
             "lines": 17,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments::query"
+            ],
             "composes": [
                 "__",
                 "add_filter",
@@ -36562,8 +36564,10 @@
         "_minn_comments_pagination_numbers": {
             "file": "core-blocks.php",
             "lines": 3,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\Blocks\\Dynamic\\Theme\\Comments::query"
+            ],
             "composes": [
                 "build_comment_query_vars_from_block",
                 "paginate_comments_links"
@@ -39183,10 +39187,18 @@
         },
         "_prime_post_caches": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": []
+            "lines": 20,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\Posts::find",
+                "Minn\\Content\\Posts::primeMeta",
+                "Minn\\Content\\Posts::primeRows",
+                "Minn\\Content\\Posts::primeTerms"
+            ],
+            "composes": [
+                "_minn_posts",
+                "get_object_taxonomies"
+            ]
         },
         "_prime_post_parent_id_caches": {
             "file": "post.php",
@@ -43681,9 +43693,11 @@
         },
         "clean_comment_cache": {
             "file": "comment.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\RowCache::forget"
+            ],
             "composes": [
                 "do_action",
                 "wp_cache_delete"
@@ -43703,9 +43717,11 @@
         },
         "clean_object_term_cache": {
             "file": "taxonomy.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
+            "lines": 5,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\RowCache::forget"
+            ],
             "composes": [
                 "do_action",
                 "wp_cache_delete"
@@ -43723,9 +43739,11 @@
         },
         "clean_post_cache": {
             "file": "post.php",
-            "lines": 14,
-            "kind": "composes",
-            "minn": [],
+            "lines": 20,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\RowCache::forget"
+            ],
             "composes": [
                 "do_action",
                 "get_post",
@@ -43756,9 +43774,11 @@
         },
         "clean_term_cache": {
             "file": "taxonomy.php",
-            "lines": 15,
-            "kind": "composes",
-            "minn": [],
+            "lines": 16,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\RowCache::forget"
+            ],
             "composes": [
                 "clean_taxonomy_cache",
                 "do_action",
@@ -43779,9 +43799,11 @@
         },
         "clean_user_cache": {
             "file": "misc.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
+            "lines": 15,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\RowCache::forget"
+            ],
             "composes": [
                 "do_action",
                 "wp_cache_delete"
@@ -49561,10 +49583,13 @@
         },
         "get_object_term_cache": {
             "file": "taxonomy.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
+            "lines": 17,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Content\\RowCache::peek"
+            ],
             "composes": [
+                "get_term",
                 "wp_cache_get"
             ]
         },
@@ -52103,11 +52128,12 @@
         },
         "get_the_terms": {
             "file": "taxonomy.php",
-            "lines": 10,
+            "lines": 14,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
+                "get_object_term_cache",
                 "get_post",
                 "is_wp_error",
                 "wp_get_object_terms"
@@ -62872,10 +62898,12 @@
         },
         "update_post_caches": {
             "file": "post.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 4,
+            "kind": "composes",
             "minn": [],
-            "composes": []
+            "composes": [
+                "_prime_post_caches"
+            ]
         },
         "update_post_meta": {
             "file": "meta.php",
@@ -65587,9 +65615,10 @@
         },
         "wp_cache_flush": {
             "file": "option.php",
-            "lines": 1,
-            "kind": "noop",
+            "lines": 2,
+            "kind": "minn",
             "minn": [
+                "Minn\\Content\\RowCache::flush",
                 "Minn\\Runtime\\Runtime::cache"
             ],
             "composes": []
@@ -73401,7 +73430,7 @@
         },
         "wp_prime_option_caches": {
             "file": "option.php",
-            "lines": 4,
+            "lines": 2,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::options"
@@ -78884,9 +78913,11 @@
         },
         "wpdb::query": {
             "file": "classes/wpdb.php",
-            "lines": 37,
-            "kind": "composes",
-            "minn": [],
+            "lines": 39,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Db::wrote"
+            ],
             "composes": [
                 "apply_filters"
             ]
