@@ -14702,3 +14702,17 @@ With that, every function, class and method in the reference's PHP API is
 accounted for (real or a dead end) and every real one is proven: 2,962
 functions, 239 classes and 2,387 methods. That is the coverage half of
 v0.1.0's definition of done.
+
+## robots.txt, proven by a probe of its own (2026-10-11)
+
+`do_robots()` had counted as proven only through a stray, untracked probe
+that no suite compares. The site's figures count only tracked probes, so
+they read 2,961 verified functions against 2,962 locally. Probe robots now
+compares it:
+
+- A public site prints the admin rules and the sitemap line.
+- A site hidden from search engines prints the admin rules without the
+  sitemap line.
+- A `robots_txt` filter's own text replaces the rest.
+- The hooks fire in order: `do_robotstxt`, then `robots_txt` with whether
+  the site is public.
