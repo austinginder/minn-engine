@@ -6,7 +6,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 |---|---|---|---|
 | [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 153 | Application passwords as the reference stores them: a serialized list in |
 | [`AuthCookies`](#authcookies) | final readonly class | 107 | The three cookies a sign-in sets: the auth cookie on the admin and |
-| [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
+| [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
 | [`Capabilities`](#capabilities) | final readonly class | 273 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
@@ -20,7 +20,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |
-| [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
+| [`Sessions`](#sessions) | final readonly class | 173 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
 | [`SignIn`](#signin) | final readonly class | 65 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
@@ -161,15 +161,24 @@ A cookie value under any scheme's salt (auth, secure_auth, logged_in).
 Why a request is not authenticated, as the reference's error code: a
 missing or invalid cookie, or a good one sent without a nonce, is
 rest_not_logged_in (the request is simply anonymous); a good cookie with
-a nonce that does not verify is rest_cookie_invalid_nonce.
+a nonce that does not verify is rest_cookie_invalid_nonce. The reason
+tells a good cookie sent without its nonce apart: that request is
+nobody, whoever plugin code then names.
+
+- const `COOKIE_WITHOUT_NONCE` = `'a sign-in cookie without its nonce'`
 
 Used by: `Minn\Auth\Authenticator`, `Minn\Rest\Caller`
 
 ```php
-__construct(string $code)
+__construct(string $code, string $reason = '')
 ```
 
 - readonly `string $code`
+- readonly `string $reason`
+
+### static `cookieWithoutNonce(): self`
+
+A good sign-in cookie sent without the nonce that would let it vouch for its user.
 
 ### static `notLoggedIn(): self`
 
@@ -559,7 +568,7 @@ hash), for a caller that saves it itself.
 
 ### `verify(Minn\Content\UserRecord $user, string $key): bool`
 
-True when the key matches the stored hash and has not expired.
+True when the key matches the stored hash and has not expired: a day, or what password_reset_expiration makes it.
 
 ### `status(Minn\Content\UserRecord $user, string $key, int $lifetime = self::LIFETIME): string`
 
@@ -572,7 +581,7 @@ reference counts expired after asking password_reset_key_expired), or
 
 Forgets a user's reset key.
 
-Internals: `hash()` (private, line 83), `matches()` (private, line 88)
+Internals: `hash()` (private, line 84), `matches()` (private, line 89)
 
 
 ## PortableHash
@@ -738,6 +747,12 @@ Whether a session token is still stored and unexpired for a user.
 
 Creates a session, pruning expired ones, and returns the raw token.
 
+### static `plain(string $value): string`
+
+A request-supplied field (the address, the user agent) as the store
+keeps it: the store is read back by shape, so it carries nothing that
+looks like the shape, and no more than 255 characters.
+
 ### `destroyAll(int $userId): void`
 
 Ends every session of the user (a password change).
@@ -767,7 +782,7 @@ plugin attached to them.
 
 The map in PHP's serialized form: stored entries as they were read, new ones key by key in the order given.
 
-Internals: `parseEntry()` (private, line 126), `prune()` (private, line 144), `write()` (private, line 150), `entry()` (private, line 166), `string()` (private, line 175)
+Internals: `parseEntry()` (private, line 133), `prune()` (private, line 151), `write()` (private, line 157), `entry()` (private, line 173), `string()` (private, line 182)
 
 
 ## SignIn

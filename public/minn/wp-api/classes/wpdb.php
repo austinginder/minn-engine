@@ -164,9 +164,10 @@ class wpdb
         return $this->prefix;
     }
 
+    /** A value escaped for a query, its literal % as the placeholder escape that query() takes back out (probe audit-lows). */
     public function _real_escape($data)
     {
-        return $this->dbh->real_escape_string((string) $data);
+        return $this->add_placeholder_escape($this->dbh->real_escape_string((string) $data));
     }
 
     public function _escape($data)

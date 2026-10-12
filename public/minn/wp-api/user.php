@@ -585,6 +585,8 @@ function wp_authenticate_username_password($user, $username, $password)
     }
     $found = get_user_by('login', $username);
     if (!$found) {
+        // A password is still checked, against nothing, so the answer takes as long as a wrong password's (audit Low).
+        Minn\Auth\Password::verify((string) $password, '$2y$10$' . str_repeat('a', 53));
         return new WP_Error('invalid_username', '<strong>Error:</strong> The username <strong>' . esc_html($username) . '</strong> is not registered on this site. If you are unsure of your username, try your email address instead.');
     }
     $found = apply_filters('wp_authenticate_user', $found, $password);

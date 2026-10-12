@@ -64,6 +64,7 @@ final readonly class PostsWriteController
         if ($given !== null) {
             throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 404);
         }
+        $this->checkAssignTerms($request->json(), $type);
 
         $body = $request->json();
         self::checkMeta($body);
@@ -213,6 +214,25 @@ final readonly class PostsWriteController
         return $this->serveUpdate($request, $base === 'pages' ? 'page' : 'post', $id);
     }
 
+    /**
+     * Every existing term the body names must be one the caller may assign
+     * (assign_term, through map_meta_cap), as the reference's permission
+     * check asks before anything is written (audit Low); an id that names no
+     * term is left to the save to report.
+     *
+     * @param array<string, mixed> $body
+     */
+    private function checkAssignTerms(array $body, string $type): void
+    {
+        foreach (PostWriter::requestedTerms($body, RegisteredType::of($type)?->taxonomies()) as $taxonomy => $termIds) {
+            foreach ($termIds as $termId) {
+                if ($this->writer->hasTerm($taxonomy, $termId) && !$this->caller->can('assign_term', $termId)) {
+                    throw new RestError('rest_cannot_assign_term', 'Sorry, you are not allowed to assign the provided terms.', 403);
+                }
+            }
+        }
+    }
+
     /** Updates a post of any type from the body. */
     public function serveUpdate(Request $request, string $type, string $id): Response
     {
@@ -225,6 +245,7 @@ final readonly class PostsWriteController
         if (!$this->caller->can('edit_post', $postId)) {
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to edit this post.', 403);
         }
+        $this->checkAssignTerms($request->json(), $type);
 
         $body = $this->scheduledIfFuture($request->json(), $post);
         self::checkMeta($body);

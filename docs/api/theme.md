@@ -18,11 +18,11 @@ the block-theme reader, templates, global styles and the page renderer
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
 | [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
-| [`HeadLinks`](#headlinks) | final readonly class | 108 | The links the reference puts in every head: the site and comments |
+| [`HeadLinks`](#headlinks) | final readonly class | 51 | The engine's own pieces of a page's head: its block stylesheet link, |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 136 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 180 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 185 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 78 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
@@ -170,7 +170,7 @@ The body-class tokens before plugins filter them (get_body_class filters them). 
 
 - `@return list<string>`
 
-Internals: `template()` (private, line 79), `bodyClasses()` (private, line 118), `registerHead()` (private, line 135), `registerStyles()` (private, line 141)
+Internals: `template()` (private, line 78), `bodyClasses()` (private, line 117), `registerHead()` (private, line 134), `registerStyles()` (private, line 140)
 
 
 ## ClassicTheme
@@ -551,30 +551,22 @@ Internals: `json()` (private, line 74), `parts()` (private, line 153), `fontUrl(
 
 `final readonly class Minn\Theme\HeadLinks` · `public/minn/src/Minn/Theme/HeadLinks.php`
 
-The links the reference puts in every head: the site and comments
-feeds (plus the archive's own feed), the REST discovery link, the
-JSON alternate for the queried object, and the site icon set. The
-block path prints them as one run; the classic path prints the same
-pieces from the reference's wp_head hooks.
+The engine's own pieces of a page's head: its block stylesheet link,
+and for rest_output_link_wp_head the REST discovery link and the JSON
+alternate for the queried object; the site's feed links as feed_links
+prints them. Every theme's head prints them from the reference's
+wp_head hooks.
 
 Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Content\SiteIcon $icon, Minn\Front\Permalinks $permalinks)
+__construct(Minn\Front\Permalinks $permalinks)
 ```
 
 
 ### `engineStylesheet(): string`
 
 The link to the engine's own block stylesheet.
-
-### `all(Minn\Front\Resolution $resolution): string`
-
-Every head link for a resolution.
-
-### `feedLinks(): string`
-
-The site and comments feed links.
 
 ### static `siteFeeds(array $args): string`
 
@@ -585,10 +577,6 @@ feed_links_args.
 
 - `@param array<string, mixed> $args`
 
-### `extraFeedLink(Minn\Front\Resolution $resolution): string`
-
-The feed link a single or an archive adds.
-
 ### `restLink(): string`
 
 No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line.
@@ -596,10 +584,6 @@ No trailing newline: the reference prints the JSON alternate and the RSD link on
 ### `jsonAlternate(Minn\Front\Resolution $resolution): string`
 
 The wp/v2 alternate link for the resolution.
-
-### `icons(): string`
-
-The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image.
 
 
 ## Hierarchy
@@ -761,7 +745,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `document()` (private, line 141), `skipLinkTarget()` (private, line 180), `head()` (private, line 194)
+Internals: `document()` (private, line 140), `skipLinkTarget()` (private, line 178), `head()` (private, line 193)
 
 
 ## PatternHeaders

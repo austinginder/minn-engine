@@ -44,11 +44,12 @@ abstract class WP_Session_Tokens
     {
         $session = apply_filters('attach_session_information', [], $this->user_id);
         $session['expiration'] = $expiration;
+        // The address and user agent as the engine's store keeps them (Auth\Sessions::plain; audit Low).
         if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $session['ip'] = $_SERVER['REMOTE_ADDR'];
+            $session['ip'] = Minn\Auth\Sessions::plain((string) $_SERVER['REMOTE_ADDR']);
         }
         if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-            $session['ua'] = wp_unslash($_SERVER['HTTP_USER_AGENT']);
+            $session['ua'] = Minn\Auth\Sessions::plain((string) wp_unslash($_SERVER['HTTP_USER_AGENT']));
         }
         $session['login'] = time();
         $token = wp_generate_password(43, false, false);

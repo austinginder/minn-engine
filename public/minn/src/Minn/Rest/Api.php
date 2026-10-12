@@ -82,7 +82,7 @@ final readonly class Api
             new EditorController($s->writer(), $caller),
             new SiteController($s->db(), $s->site(), $s->posts(), $s->permalinks(), $caller),
             $terms,
-            new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles()),
+            new UsersController($s->db(), $s->users(), $s->site(), $s->userObject(), $s->url(), $caller, $s->capabilities()->roles(), $s->schema()),
             new ApplicationPasswordsController($s->users(), $s->site(), $s->applicationPasswords(), $s->url(), $caller, $s->schema()),
             new StatusesController($s->url(), $caller),
             new InstalledThemesController($s->url(), $caller),
@@ -338,6 +338,31 @@ final readonly class Api
     }
 
     /**
+     * A post of a REST type the engine has no route for (one under a
+     * namespace of its own, probe namespaced-type) created, updated or
+     * deleted by the engine's own writer, for the type's controller, whose
+     * permission checks have already run.
+     */
+    public function writePost(string $verb, string $route, string $type, string $base, string $id = '', ?\WP_REST_Request $as = null): Response
+    {
+        $s = $this->services;
+        $request = $this->request->withPath('/' . trim($route, '/'));
+        if ($as !== null) {
+            RuntimeRoutes::adopt($request, $as);
+        }
+        $writes = new PostsWriteController($s->posts(), $s->writer(), $s->site(), $s->postObject(), $s->url(), $s->caller());
+        try {
+            return match ($verb) {
+                'create' => $writes->serveCreate($request, $type, $base),
+                'update' => $writes->serveUpdate($request, $type, $id),
+                default => $writes->serveDelete($request, $type, $id),
+            };
+        } catch (RestError $error) {
+            return Reply::error($error);
+        }
+    }
+
+    /**
      * The engine's own answer to a route, or null when no engine route
      * takes it; the runtime's table is never consulted. This is what the
      * runtime's server calls for a core route, so a route the engine
@@ -424,7 +449,32 @@ final readonly class Api
             return null;
         }
         $entry = (new RouteCatalogue($this->router, $this->services->types(), $this->services->url()))->describing($request->path);
-        return $entry === null ? null : Reply::item($entry, null);
+        return $entry === null ? null : Reply::item($this->withSchema($entry, $request->path), null);
+    }
+
+    /**
+     * A route's description as the reference's OPTIONS answer gives it: the
+     * schema its controller describes it by, and for a route with no
+     * parameters a self link.
+     *
+     * @param array<string, mixed> $entry
+     * @return array<string, mixed>
+     */
+    private function withSchema(array $entry, string $path): array
+    {
+        foreach (RuntimeRoutes::server()->get_routes() as $route => $handlers) {
+            if (@preg_match('@^' . $route . '$@i', $path) !== 1) {
+                continue;
+            }
+            if (is_array($handlers) && isset($handlers['schema']) && is_callable($handlers['schema'])) {
+                $entry['schema'] = call_user_func($handlers['schema']);
+                if (!str_contains((string) $route, '(?P<')) {
+                    $entry['_links'] = ['self' => [Links::item('self', $this->services->url()->to((string) $route), [])]];
+                }
+            }
+            break;
+        }
+        return $entry;
     }
 
     /**

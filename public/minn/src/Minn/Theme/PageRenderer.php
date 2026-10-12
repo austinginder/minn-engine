@@ -14,7 +14,6 @@ use Minn\Content\Page;
 use Minn\Content\Posts;
 use Minn\Content\Reader;
 use Minn\Content\Site;
-use Minn\Content\SiteIcon;
 use Minn\Content\Texturize;
 use Minn\Db;
 use Minn\Extension\Extensions;
@@ -53,7 +52,7 @@ final readonly class PageRenderer
         $renderer = Blocks::renderer();
         // The other core blocks render wherever block content does (Renderer::forDb); the template parts are this theme's.
         (new Structure($theme, $templates, $site, $permalinks))->register($renderer);
-        return new self($site, $theme, $templates, $renderer, new MainQueryBridge($perPage), new HeadLinks($site, new SiteIcon($site, $posts, $permalinks), $permalinks), $bar);
+        return new self($site, $theme, $templates, $renderer, new MainQueryBridge($perPage), new HeadLinks($permalinks), $bar);
     }
 
     /**
@@ -157,10 +156,9 @@ final readonly class PageRenderer
         // The stylesheet comes after the body: it lists the containers and
         // variations that rendering discovered.
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
-        $title = \wp_get_document_title();
         $bar = $resolution->preview ? null : $this->bar;
         $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n"
-            . $this->head($resolution, $title, $styles, $bar)
+            . $this->head($resolution, $styles, $bar)
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
             . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
@@ -186,12 +184,13 @@ final readonly class PageRenderer
     }
 
     /**
-     * The head: title, the discovery links, wp_head (the engine's
-     * stylesheets inside it, where the reference prints a theme's, after
-     * plugin styles), then the extension head (after the stylesheets, as
-     * the seam contract says), the fonts, the bar's own.
+     * The head: the charset, then wp_head (the viewport, robots, title and
+     * discovery links from the reference's defaults, which a plugin may
+     * remove; the engine's stylesheets inside it, where the reference
+     * prints a theme's, after plugin styles), then the extension head (after
+     * the stylesheets, as the seam contract says), the bar's own.
      */
-    private function head(Resolution $resolution, string $title, GlobalStyles $styles, ?AdminBar $bar): string
+    private function head(Resolution $resolution, GlobalStyles $styles, ?AdminBar $bar): string
     {
         // The theme's own style.css is the theme's to enqueue from its
         // functions.php, which the runtime loads; the reference links it no other way.
@@ -199,12 +198,17 @@ final readonly class PageRenderer
         Runtime::current()->set('engine_head_styles', $this->headLinks->engineStylesheet()
             . '<style id="global-styles-inline-css">' . "\n" . $styles->css() . "\n" . '</style>' . "\n");
         // The theme's @font-face rules print on wp_head, through wp_print_font_faces at 50, as the reference's do.
+        // The page's head links and view, for the head hooks that print them (rest_output_link_wp_head's JSON alternate).
+        Runtime::current()->set('head_links', $this->headLinks);
+        Runtime::current()->set('head_resolution', $resolution);
+        // A block template prints its own title and viewport, as the reference's template loader swaps them in,
+        // whatever a plugin did with the default title before.
+        Runtime::hooks()->remove('wp_head', '_wp_render_title_tag', 1);
+        Runtime::hooks()->add('wp_head', '_block_template_render_title_tag', 1, 0);
+        Runtime::hooks()->add('wp_head', '_block_template_viewport_meta_tag', 0, 0);
         $runtimeHead = Runtime::capture('wp_head');
         return '<head>' . "\n"
             . '<meta charset="UTF-8" />' . "\n"
-            . '<meta name="viewport" content="width=device-width, initial-scale=1" />' . "\n"
-            . '<title>' . htmlspecialchars($title, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '</title>' . "\n"
-            . $this->headLinks->all($resolution)
             . $runtimeHead
             . (Extensions::runner()?->head() ?? '')
             . ($bar === null ? '' : $bar->head())

@@ -601,10 +601,18 @@ function get_post_type_archive_template()
     return get_archive_template();
 }
 
-/** @internal the reference's wp_head defaults, registered ahead of the classic theme's own hooks; a plugin's remove_action() finds them by name */
+/**
+ * @internal the reference's wp_head defaults, registered ahead of the
+ * theme's own hooks, so a plugin's remove_action() finds them by name: a
+ * block theme's head as the reference's block template canvas prints it
+ * (the viewport meta, the robots meta, the title, the feed, oEmbed, REST,
+ * RSD, generator, canonical and short links, the site icon), a classic
+ * theme's as its wp_head() does
+ */
 function _minn_classic_head_defaults()
 {
     if (!Runtime::current()->get('classic_theme')) {
+        _minn_block_head_defaults();
         return;
     }
     add_action('wp_head', '_wp_render_title_tag', 1, 0);
@@ -626,6 +634,32 @@ function _minn_classic_head_defaults()
     add_action('wp_footer', '_minn_classic_bar_footer', 200, 0);
 }
 
+/**
+ * @internal a block theme's wp_head defaults, as the reference registers
+ * them for every theme (contracts/front/classic.md "The block head"); the
+ * page swaps the title for the block template's own as it renders
+ */
+function _minn_block_head_defaults(): void
+{
+    add_action('wp_head', '_wp_render_title_tag', 1, 0);
+    add_action('wp_head', 'wp_robots', 1, 0);
+    add_action('wp_head', 'wp_preload_resources', 1, 0);
+    add_action('wp_head', 'wp_resource_hints', 2, 0);
+    add_action('wp_head', 'feed_links', 2, 1);
+    add_action('wp_head', 'feed_links_extra', 3, 1);
+    // Registered at 4 AND 10 like the reference; the function prints once.
+    add_action('wp_head', 'wp_oembed_add_discovery_links', 4, 0);
+    add_action('wp_head', 'rest_output_link_wp_head', 10, 0);
+    add_action('wp_head', 'rsd_link', 10, 0);
+    add_action('wp_head', 'locale_stylesheet', 10, 0);
+    add_action('wp_head', 'wp_generator', 10, 0);
+    add_action('wp_head', 'rel_canonical', 10, 0);
+    add_action('wp_head', 'wp_shortlink_wp_head', 10, 0);
+    add_action('wp_head', 'wp_oembed_add_discovery_links', 10, 0);
+    add_action('wp_head', 'wp_site_icon', 99, 0);
+    add_action('wp_head', 'wp_enqueue_img_auto_sizes_contain_css_fix', 0);
+}
+
 /** @internal the Minn front bar's head assets on a classic theme's page */
 function _minn_classic_bar_head()
 {
@@ -639,7 +673,7 @@ function _minn_classic_bar_head()
 function _minn_classic_bar_footer()
 {
     $bar = Runtime::current()->get('classic_bar');
-    $resolution = Runtime::current()->get('classic_resolution');
+    $resolution = Runtime::current()->get('head_resolution');
     if ($bar instanceof \Minn\Front\AdminBar && $resolution instanceof \Minn\Front\Resolution) {
         echo $bar->render($resolution);
     }

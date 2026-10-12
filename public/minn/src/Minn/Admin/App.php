@@ -102,8 +102,10 @@ final readonly class App
         if (!$this->installed()) {
             return null;
         }
+        // Only the assets folder is served, and nothing hidden in it (audit Low: ../ once reached the whole app).
+        $root = realpath($this->dir . '/assets');
         $full = realpath($this->dir . '/' . ltrim($relative, '/'));
-        if ($full === false || !str_starts_with($full, realpath($this->dir) . '/') || !is_file($full)) {
+        if ($root === false || $full === false || !str_starts_with($full, $root . '/') || !is_file($full) || str_contains($full, '/.')) {
             return null;
         }
         $ext = strtolower(pathinfo($full, PATHINFO_EXTENSION));

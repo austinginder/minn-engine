@@ -1,9 +1,9 @@
 {
     "figures": {
         "total": 2543,
-        "proven": 1715,
-        "fired": 1819,
-        "deadend": 724,
+        "proven": 1717,
+        "fired": 1821,
+        "deadend": 722,
         "different": 0,
         "missing": 0,
         "outside": 148,
@@ -1682,8 +1682,8 @@
         "rest_url_prefix": "proven",
         "rest_user_collection_params": "proven",
         "rest_user_query": "proven",
-        "rest_wp_font_face_collection_params": "deadend",
-        "rest_wp_font_family_collection_params": "deadend",
+        "rest_wp_font_face_collection_params": "proven",
+        "rest_wp_font_family_collection_params": "proven",
         "rest_{*}_collection_params": "proven",
         "rest_{*}_item_schema": "proven",
         "rest_{*}_query": "proven",

@@ -26,6 +26,26 @@ final class TranslationFiles
         return [$php, $mofile];
     }
 
+    /**
+     * The languages a folder holds core translations for (each .mo but the
+     * time zone names, the network admin's and the admin's), as
+     * get_available_languages lists them, through its filter ($asked: the
+     * folder as the caller named it, null for the site's own).
+     *
+     * @return list<string>
+     */
+    public static function languages(string $dir, ?string $asked = null): array
+    {
+        $out = [];
+        foreach (glob($dir . '/*.mo') ?: [] as $file) {
+            $name = basename($file, '.mo');
+            if (!str_starts_with($name, 'continents-cities') && !str_starts_with($name, 'ms-') && !str_starts_with($name, 'admin-')) {
+                $out[] = $name;
+            }
+        }
+        return array_values((array) \Minn\Runtime\Runtime::hooks()->filter('get_available_languages', [$out, $asked]));
+    }
+
     /** A translation file's catalog by its extension, or null when it cannot be read as one. */
     public static function read(string $file): ?Catalog
     {

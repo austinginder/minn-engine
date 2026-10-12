@@ -255,11 +255,11 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 // array|PostRecord unions that bridge callers still holding rows, and the
 // bracket reads of post columns that the record's properties replace.
 $unionCeiling = 4;
-$commentBracketCeiling = 59;
+$commentBracketCeiling = 57;
 $commentBrackets = 0;
 $userBracketCeiling = 70;
 $userBrackets = 0;
-$bracketCeiling = 210;
+$bracketCeiling = 205;
 $unions = 0;
 $brackets = 0;
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -289,8 +289,8 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // WordPress-named function (the hook API aside) is the facade reached from
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
-$bootedCeiling = 75;
-$wordpressCallCeiling = 1020;
+$bootedCeiling = 73;
+$wordpressCallCeiling = 1018;
 $apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
 $wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);
 $hookApi = ['apply_filters' => true, 'apply_filters_ref_array' => true, 'apply_filters_deprecated' => true, 'do_action' => true, 'do_action_ref_array' => true, 'do_action_deprecated' => true];
@@ -425,13 +425,13 @@ $check("engine: constructors with six or more parameters stay at or under {$wide
 // ceiling only falls.
 $deadNameCeiling = 0;
 $liveCeiling = 20;
-$optionReadCeiling = 154;
+$optionReadCeiling = 151;
 $rawOptionWriteCeiling = 7;
 $rawMetaWriteCeiling = 9;
 $postRowCeiling = 8;
 $linkHrefCeiling = 77;
-$htmlspecialcharsCeiling = 14;
-$permalinkCallerCeiling = 31;
+$htmlspecialcharsCeiling = 13;
+$permalinkCallerCeiling = 30;
 $interfaceMethods = ['jsonserialize', 'offsetget', 'offsetset', 'offsetexists', 'offsetunset', 'getiterator', 'count', 'current', 'key', 'next', 'rewind', 'valid'];
 $names = [];
 $declared = [];

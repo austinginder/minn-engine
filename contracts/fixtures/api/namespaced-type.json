@@ -1,0 +1,109 @@
+[
+    [
+        "create",
+        [
+            201,
+            {
+                "id": true,
+                "slug": "zz-ns-one",
+                "status": "publish",
+                "type": "zz_ns_type",
+                "link": "https://{host}/zz_ns_type/zz-ns-one/",
+                "title": {
+                    "raw": "zz-ns-one",
+                    "rendered": "zz-ns-one"
+                }
+            },
+            []
+        ]
+    ],
+    [
+        "list",
+        [
+            200,
+            [
+                {
+                    "id": true,
+                    "slug": "zz-ns-one",
+                    "status": "publish",
+                    "type": "zz_ns_type",
+                    "link": "https://{host}/zz_ns_type/zz-ns-one/",
+                    "title": {
+                        "rendered": "zz-ns-one"
+                    }
+                }
+            ],
+            {
+                "X-WP-Total": 1,
+                "X-WP-TotalPages": 1
+            }
+        ]
+    ],
+    [
+        "one",
+        [
+            404,
+            {
+                "id": null,
+                "code": "rest_post_invalid_id",
+                "message": "Invalid post ID."
+            },
+            []
+        ]
+    ],
+    [
+        "edit context",
+        [
+            404,
+            {
+                "id": null,
+                "code": "rest_post_invalid_id",
+                "message": "Invalid post ID."
+            },
+            []
+        ]
+    ],
+    [
+        "update",
+        [
+            404,
+            {
+                "id": null,
+                "code": "rest_post_invalid_id",
+                "message": "Invalid post ID."
+            },
+            []
+        ]
+    ],
+    [
+        "wp/v2 route",
+        [
+            404,
+            {
+                "id": null,
+                "code": "rest_no_route",
+                "message": "No route was found matching the URL and request method."
+            },
+            []
+        ]
+    ],
+    [
+        "type object",
+        {
+            "rest_base": "things",
+            "rest_namespace": "zz-ns/v1"
+        }
+    ],
+    [
+        "delete",
+        [
+            404,
+            {
+                "id": null,
+                "code": "rest_post_invalid_id",
+                "message": "Invalid post ID."
+            },
+            []
+        ]
+    ]
+]

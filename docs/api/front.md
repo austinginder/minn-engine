@@ -39,7 +39,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`RuleRoutes`](#ruleroutes) | final readonly class | 151 | What a matched rewrite rule's query vars name, as the reference's main |
 | [`RuleTable`](#ruletable) | final class | 100 | An address read as WordPress's request parse reads it (suites |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
-| [`SingleQueries`](#singlequeries) | final readonly class | 100 | The single a query string asks for, as the reference's request parse and |
+| [`SingleQueries`](#singlequeries) | final readonly class | 109 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 71 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
@@ -1337,7 +1337,7 @@ __construct(Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\F
 
 The resolution the query's single vars amount to; null when it has none of them.
 
-Internals: `byId()` (private, line 60), `byPath()` (private, line 98), `singleOrRedirect()` (private, line 113)
+Internals: `byId()` (private, line 60), `byPath()` (private, line 107), `singleOrRedirect()` (private, line 122)
 
 
 ## SitemapController

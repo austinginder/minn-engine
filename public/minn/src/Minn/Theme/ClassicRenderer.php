@@ -7,7 +7,6 @@ namespace Minn\Theme;
 use Minn\Content\Posts;
 use Minn\Content\Reader;
 use Minn\Content\Site;
-use Minn\Content\SiteIcon;
 use Minn\Front\AdminBar;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
@@ -55,8 +54,8 @@ final readonly class ClassicRenderer
         if (!Runtime::booted() || array_key_exists('theme:' . $this->theme->stylesheet, Plugins::skipped())) {
             return null;
         }
-        Runtime::current()->set('classic_resolution', $resolution);
-        Runtime::current()->set('classic_head', new HeadLinks($this->site, new SiteIcon($this->site, $this->posts, $this->permalinks), $this->permalinks));
+        Runtime::current()->set('head_resolution', $resolution);
+        Runtime::current()->set('head_links', new HeadLinks($this->permalinks));
         if ($this->bar !== null && !$resolution->preview) {
             Runtime::current()->set('classic_bar', $this->bar);
         }

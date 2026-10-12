@@ -42,6 +42,17 @@ final class RuntimeRoutes
         if ($error instanceof \WP_Error) {
             return self::toResponse(\rest_convert_error_to_response($error));
         }
+        return self::predispatch($request);
+    }
+
+    /**
+     * What plugin code decides before a route runs, for a request inside
+     * another (an embedded link) as for the first: rest_pre_dispatch may
+     * answer it outright, and a route a rest_endpoints filter removed is no
+     * route at all. Null lets the router proceed.
+     */
+    public static function predispatch(Request $request): ?Response
+    {
         $server = self::server();
         $wpRequest = self::wpRequest($request);
         $early = \apply_filters('rest_pre_dispatch', null, $server, $wpRequest);

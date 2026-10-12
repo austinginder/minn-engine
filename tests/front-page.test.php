@@ -7,9 +7,10 @@ declare(strict_types=1);
  * the oracle. The suite switches the shared database to show_on_front=page
  * with the Sample Page in front and Docs as the posts page, compares every
  * URL shape the settings touch (status, redirect target, body classes,
- * title, normalised body), and restores the options on shutdown. Also the
- * canonical redirect for doubled slashes, which is unrelated to the
- * settings but lives in the same resolver.
+ * title, the head's identity tags, normalised body), and restores the
+ * options on shutdown. Also the canonical redirect for doubled slashes,
+ * which is unrelated to the settings but lives in the same resolver, and
+ * the head of the posts, archives and search with posts on the front.
  *
  *   MINN_TEST_URL=https://minn.localhost php tests/front-page.test.php
  */
@@ -67,14 +68,16 @@ $shape = static function (string $base, string $path) use ($REF, $ENGINE): array
     preg_match('/<body class="([^"]*)"/', $body, $bm);
     $classes = preg_replace('/\s*wp-theme-\S+|\s*wp-child-theme-\S+/', '', $bm[1] ?? '');
     preg_match('/<title>([^<]*)<\/title>/', $body, $tm);
-    // oEmbed discovery links are a known gap: the engine has no oembed endpoint to point at.
-    preg_match_all('/<link rel="alternate"(?![^>]*oembed)[^>]*>/', $body, $links);
+    // The head's identity tags, in order: the title, every meta tag, and the links that name the page (canonical,
+    // short link, RSD, the feed, oEmbed and JSON alternates, the API), as the reference's wp_head defaults print them.
+    preg_match('/<head>(.*?)<\/head>/s', $body, $hm);
+    preg_match_all('/<title>.*?<\/title>|<meta\b[^>]*>|<link\b[^>]*\brel=["\'](?:canonical|shortlink|EditURI|alternate|https:\/\/api\.w\.org\/)["\'][^>]*>/s', $hm[1] ?? '', $tags);
     return [
         'status' => (int) $headers['status'],
         'location' => $location,
         'classes' => trim((string) $classes),
         'title' => trim($tm[1] ?? ''),
-        'alternates' => array_map(static fn (string $l) => str_replace([$REF, str_replace('https://', 'http://', $ENGINE), $ENGINE], '{site}', $l), $links[0]),
+        'head' => array_map(static fn (string $tag) => (string) preg_replace('/\s+/', ' ', str_replace([$REF, str_replace('https://', 'http://', $ENGINE), $ENGINE, urlencode($ENGINE), urlencode($REF)], '{site}', $tag)), $tags[0]),
         'body' => (int) $headers['status'] === 200 ? theme_body($body, $REF, $ENGINE) : '',
     ];
 };
@@ -85,7 +88,7 @@ $compare = static function (string $path, string $label) use ($shape, $check, $R
     foreach (['status', 'location', 'classes', 'title'] as $key) {
         $check($a[$key] === $b[$key], "$label $path $key", "engine=" . json_encode($a[$key]) . " reference=" . json_encode($b[$key]));
     }
-    $check($a['alternates'] === $b['alternates'], "$label $path alternate links", json_encode($a['alternates']) . ' vs ' . json_encode($b['alternates']));
+    $check($a['head'] === $b['head'], "$label $path head", json_encode(array_values(array_diff($a['head'], $b['head'])), JSON_UNESCAPED_SLASHES) . ' here, ' . json_encode(array_values(array_diff($b['head'], $a['head'])), JSON_UNESCAPED_SLASHES) . ' on the reference (or the order)');
     if ($b['status'] === 200) {
         $verdict = theme_first_diff($a['body'], $b['body']);
         $check($verdict === 'identical', "$label $path body", $verdict);
@@ -93,6 +96,11 @@ $compare = static function (string $path, string $label) use ($shape, $check, $R
 };
 
 echo "front-page suite: $ENGINE (engine) vs $REF (reference)\n";
+
+echo "-- the head with posts on the front\n";
+foreach (['/', '/hello-world/', '/sample-page/', '/category/uncategorized/', '/tag/engine/', '/author/admin/', '/?s=hello', '/2026/'] as $path) {
+    $compare($path, 'posts on front');
+}
 
 echo "-- doubled slashes (posts on front)\n";
 foreach (['//', '/hello-world//', '//hello-world/', '/category//uncategorized/'] as $path) {

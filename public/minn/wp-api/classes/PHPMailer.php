@@ -1514,7 +1514,7 @@ class PHPMailer
         }
     }
 
-    /** The engine's own development transport: the message as one JSON line in wp-content/minn-mail.log. */
+    /** The engine's own development transport: the message as one JSON line in wp-content/minn-mail.log.php. */
     protected function minnlogSend($header, $body)
     {
         $to = array_map(static fn ($pair) => $pair[0], $this->to);

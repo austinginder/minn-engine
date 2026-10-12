@@ -125,7 +125,8 @@ final class UserCommand
     {
         $runtime = Runtime::boot();
         $user = self::find($args[0]) ?? WP_CLI::error("User not found: {$args[0]}");
-        $token = substr(sha1(random_bytes(24)), 0, 7);
+        // 128 bits: the helper compares the stored value to the link verbatim, whatever its length (audit Low: 28 bits before).
+        $token = bin2hex(random_bytes(16));
         // Stored raw, the captaincore-helper mu-plugin's own format: with a
         // hide-login plugin standing $pagenow the helper validates this token
         // itself, and it compares the stored value to the link verbatim. The

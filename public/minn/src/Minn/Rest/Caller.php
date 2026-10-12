@@ -50,7 +50,7 @@ final class Caller
     public function cookieBound(): bool
     {
         $resolved = $this->resolve();
-        return $resolved instanceof Authenticated ? $resolved->applicationPassword === null : $resolved->code === 'rest_cookie_invalid_nonce';
+        return $resolved instanceof Authenticated ? $resolved->applicationPassword === null : $resolved->code === 'rest_cookie_invalid_nonce' || $resolved->reason === AuthFailure::COOKIE_WITHOUT_NONCE;
     }
 
     /** Has the cookie and nonce checked again on the next question: a plugin's nonce lifetime (nonce_life) is heard only once plugins load. */

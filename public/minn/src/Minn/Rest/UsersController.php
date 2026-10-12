@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\I18n\TranslationFiles;
+use Minn\Runtime\Refusal;
+use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -33,6 +36,7 @@ final readonly class UsersController
         private RestUrl $url,
         private Caller $caller,
         private Roles $roles,
+        private Schema $schema,
     ) {
     }
 
@@ -177,6 +181,34 @@ final readonly class UsersController
         return $role;
     }
 
+    /**
+     * A locale asked for is one the site can show: none, en_US, or an
+     * installed language, as the reference's schema lists them (audit Low:
+     * any string was stored, and pasted into the reset link).
+     *
+     * @param array<string, mixed> $body
+     */
+    private function validLocale(array $body): void
+    {
+        if (!array_key_exists('locale', $body)) {
+            return;
+        }
+        $verdict = $this->schema->validate($body['locale'], ['type' => 'string', 'enum' => array_merge(['', 'en_US'], TranslationFiles::languages(\WP_LANG_DIR))], 'locale');
+        if ($verdict instanceof Refusal) {
+            throw new RestError('rest_invalid_param', 'Invalid parameter(s): locale', 400, ['params' => ['locale' => $verdict->message], 'details' => ['locale' => ['code' => $verdict->code, 'message' => $verdict->message, 'data' => $verdict->data]]]);
+        }
+    }
+
+    /** A role asked for: registered, and one editable_roles lets this caller give (audit Low). */
+    private function assignableRole(string $role): string
+    {
+        $role = $this->validRole($role);
+        if (!isset(((array) Runtime::hooks()->filter('editable_roles', [$this->roles->all()]))[$role])) {
+            throw new RestError('rest_user_invalid_role', 'Sorry, you are not allowed to give users that role.', 403);
+        }
+        return $role;
+    }
+
     private static function validEmail(string $email): bool
     {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
@@ -192,6 +224,7 @@ final readonly class UsersController
             throw new RestError('rest_cannot_create_user', $refusal, 403);
         }
         $body = $request->json();
+        $this->validLocale($body);
         $missing = array_values(array_filter(['username', 'email', 'password'], static fn (string $key) => (string) ($body[$key] ?? '') === ''));
         if ($missing !== []) {
             throw RestError::missingParams($missing);
@@ -210,7 +243,7 @@ final readonly class UsersController
         if ($this->users->findByEmail($email) !== null) {
             throw RestError::bare('existing_user_email', 'Sorry, that email address is already used!');
         }
-        $role = $this->validRole((string) ($body['roles'][0] ?? ($this->site->option('default_role') ?? 'subscriber')));
+        $role = isset($body['roles'][0]) ? $this->assignableRole((string) $body['roles'][0]) : $this->validRole((string) ($this->site->option('default_role') ?? 'subscriber'));
         if (!self::validEmail($email)) {
             throw new RestError('rest_user_invalid_email', 'Invalid email address.', 400);
         }
@@ -250,12 +283,13 @@ final readonly class UsersController
             throw $this->caller->refuse('rest_cannot_edit', 'Sorry, you are not allowed to edit this user.');
         }
         $body = $request->json();
+        $this->validLocale($body);
         // The role refusal is decided before anything is written, so a caller
         // without promote_users cannot land the other edits on the way to a 403.
         if (isset($body['roles'][0]) && !$this->caller->can('promote_users')) {
             throw $this->caller->refuse('rest_cannot_edit_roles', 'Sorry, you are not allowed to edit roles of this user.');
         }
-        $role = isset($body['roles'][0]) ? $this->validRole((string) $body['roles'][0]) : null;
+        $role = isset($body['roles'][0]) ? $this->assignableRole((string) $body['roles'][0]) : null;
         $columns = [];
         if (isset($body['name'])) {
             $columns['display_name'] = Kses::text((string) $body['name']);

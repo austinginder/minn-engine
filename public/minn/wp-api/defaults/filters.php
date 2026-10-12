@@ -129,6 +129,8 @@ add_filter('comment_text_rss', 'ent2ncr', 8);
 add_filter('comment_text_rss', 'esc_html');
 add_filter('comment_text_rss', 'wp_staticize_emoji');
 add_filter('wp_mail', 'wp_staticize_emoji_for_email');
+// The commenter's cookies are cleaned before anything reads them (audit Low).
+add_action('sanitize_comment_cookies', 'sanitize_comment_cookies');
 add_filter('bloginfo_rss', 'ent2ncr', 8);
 add_filter('the_author', 'ent2ncr', 8);
 add_filter('the_guid', 'esc_url');

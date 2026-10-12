@@ -6,6 +6,7 @@ namespace Minn\Auth;
 
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
+use Minn\Runtime\Runtime;
 
 /**
  * Password reset keys in the reference's storage shape: user_activation_key
@@ -44,10 +45,10 @@ final readonly class PasswordReset
         return [$key, time() . ':' . self::hash($key)];
     }
 
-    /** True when the key matches the stored hash and has not expired. */
+    /** True when the key matches the stored hash and has not expired: a day, or what password_reset_expiration makes it. */
     public function verify(UserRecord $user, string $key): bool
     {
-        return $this->status($user, $key) === 'valid';
+        return $this->status($user, $key, (int) Runtime::hooks()->filter('password_reset_expiration', [self::LIFETIME])) === 'valid';
     }
 
     /**

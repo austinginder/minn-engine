@@ -15672,6 +15672,87 @@ omitted.json leaves behind) is a dead end like XML-RPC, and
 `wp-includes/rss.php` is outside, loaded by no WordPress code.
 `make_spam_user` is listed as a network's.
 
+## The audit's Lows, route schemas, namespaced types and the block head (2026-10-12)
+
+Probes `audit-lows` (34 rows), `rest-options-schema`, `namespaced-type`,
+`term-query-links` and `tabs-render`; unit file `audit-lows`; suites
+`security`, `identity`, `cli`, `cron-mail` and `front-page` (heads).
+
+- **The audit's Lows, each checked against the reference.**
+  - A media item whose parent is a draft, private or trashed post the
+    caller may not read is refused (`rest_forbidden`), as the list already
+    left it out.
+  - `wp_rand()` with no maximum draws up to 4294967295 (it answered 0);
+    bounds the wrong way round are swapped, and the answer is never
+    negative.
+  - An embedded link (`_embed`) goes through `rest_pre_dispatch` and the
+    `rest_endpoints` removals, as the first request does.
+  - The app's asset route serves its `assets/` folder only, nothing hidden
+    in it. A server that serves `/minn/` itself needs the rule in
+    `docs/hardening.md`, which also keeps class files and a development
+    checkout's `.git` out of reach.
+  - The `log` mail transport writes `wp-content/minn-mail.log.php`, whose
+    first line returns before the rest is sent.
+  - An unknown username at sign-in still checks a password, so the answer
+    takes as long as a wrong password's. A session keeps the request's
+    address and user agent to the shape its store is read back by
+    (`Auth\Sessions::plain`, the facade's `WP_Session_Tokens` too). The
+    one-time sign-in link carries 128 bits.
+  - `nonce_life` was already honoured; `password_reset_expiration` now
+    holds for the engine's own reset page too.
+  - A role `editable_roles` leaves out is refused (`rest_user_invalid_role`,
+    403). A user's locale must be none, en_US or an installed language
+    (`rest_not_in_enum`, through `Rest\Schema`), and the reset link
+    encodes it.
+  - A term the caller may not assign (`assign_term`) is refused before a
+    post is created or updated (`rest_cannot_assign_term`).
+  - `sanitize_comment_cookies` is hooked. The playlist's JSON hex-escapes
+    tags. `esc_sql()` turns `%` into the placeholder escape that
+    `$wpdb->query()` takes back out. `wp_kses_bad_protocol()` reads `&#58`
+    without its semicolon as a colon unless a digit follows (a hex colon
+    still needs its semicolon), as the reference does.
+  - Suspected, and confirmed: a private post's comment feed printed its
+    comments signed out. Its post is dropped and its comments go with it,
+    at its pretty address and by id. A feed asked of an id that does not
+    exist moves to the site's feed, as the reference's does (suite
+    `security`).
+  - Suspected, and confirmed: a sign-in cookie sent without its nonce,
+    with plugin code naming a user by token, left the engine acting as that
+    user. The cookie now makes the request nobody, as on the reference
+    (`Auth\AuthFailure::cookieWithoutNonce`, suite `identity`).
+  - Accepted, with reasons. The reference also resolves a host again after
+    `wp_http_validate_url`, so there is no DNS pinning to match. A meta or
+    tax query's `alias` is used as given there too. `limit_response_size`
+    cuts the answer as the reference cuts it (the probe's row); the engine
+    may still read the whole body first, which costs memory, not
+    correctness. The Info items: version strings appear where the
+    reference shows its own (asset `ver=`, the generator meta), and the
+    no-theme fallback page names Minn's.
+- **OPTIONS on the engine's own routes** answers with the schema the
+  route's controller describes it by (and a self link for a route with no
+  parameters), as the reference does: the core controllers' routes are
+  registered on a server of their own for their schema callbacks alone.
+- **A post type under a namespace of its own** gets its routes: its
+  controller registers them as on the reference, its list takes the same
+  parameters as a wp/v2 type's (`PostCollectionParams` by name), and its
+  writes go to the engine's writer (`Api::writePost`). An argument whose
+  validate or sanitize callback is null is not checked, as the reference's
+  `title` and `content` are not.
+- **Term links by query.** A taxonomy whose permastruct is gone (removed
+  at runtime) links by query: a category by `?cat=`, other terms by their
+  query var, `?taxonomy=&term=` without one; a post format then reads
+  `?post_format=aside`.
+- **The tabs block.** One tabs id per block, rendered through do_blocks
+  too: the engine's renderer reads the context `render_block_context` gave
+  the block (`Renderer::handContext`) instead of asking again. A panel
+  keeps an id its markup carries; an anchor in its comment alone is not
+  used.
+- **The block head.** A block theme's pages print the reference's wp_head
+  defaults (contracts/front/classic.md "The block head"): robots, the
+  block template's title and viewport, feeds, oEmbed discovery, the REST
+  and JSON links with RSD, generator, canonical, short link and site icon,
+  each removable by name.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -15692,18 +15773,18 @@ rows that are `open` or `austin`.
 | 3295 | Writes tell plugins (10-06) | `apply_filters('the_content')` without core's defaults | done | the defaults fill `the_content` as the reference's do |
 | 3295 | Writes tell plugins (10-06) | `wp_new_comment`, `wp_check_comment_flood` | done | real in the facade |
 | 4951 | Shortcodes (10-07) | cookies read from the request, not `$_COOKIE` | done | `wp_parse_auth_cookie` reads `$_COOKIE` first |
-| 8514 | HTTPS detection (10-09) | block themes print head links themselves, so `remove_action('wp_head', …)` cleanups have nothing to remove | open | the EditURI link itself follows the XML-RPC dead end |
+| 8514 | HTTPS detection (10-09) | block themes print head links themselves, so `remove_action('wp_head', …)` cleanups have nothing to remove | done | 2026-10-12: block themes print the reference's wp_head defaults ("The block head"; suite `front-page`) |
 | 8514 | HTTPS detection (10-09) | `get_option()` while installing | done | "Options while installing (2026-10-12)" |
 | 8644 | Small output helpers (10-09) | `wp_filter_global_styles_post` waits for `remove_insecure_properties` | done | both real ("What WP_Theme_JSON keeps when it removes what is not safe") |
 | 8644 | Small output helpers (10-09) | `_print_emoji_detection_script` | accepted | omitted by Austin's D12 |
-| 8644 | Small output helpers (10-09) | format links ignore a post_format permastruct removed at runtime | open | |
-| 8752 | Tabs helpers (10-09) | no tabs renderer of the engine's own | open | |
+| 8644 | Small output helpers (10-09) | format links ignore a post_format permastruct removed at runtime | done | 2026-10-12: term links by query once a permastruct is gone (probe `term-query-links`) |
+| 8752 | Tabs helpers (10-09) | no tabs renderer of the engine's own | done | the engine's own (`_minn_block_tabs`) uses the context the helpers provide, once per block (probe `tabs-render`) |
 | 8834 | Template loading (10-09) | WordPress's skip-link stylesheet text | accepted | Austin's D3: the engine keeps its own CSS |
 | 8834 | Template loading (10-09) | duotone SVG filters | done | `wp_get_global_styles_svg_filters` is real |
 | 8834 | Template loading (10-09) | `wp_map_sidebars_widgets` | done | real in the facade |
 | 9284 | WordPress 7.1.3 (10-09) | `make_absolute_url` resolves some paths differently | done | 2026-10-12, probe `http-absolute-url` |
 | 9284 | WordPress 7.1.3 (10-09) | Minn Admin's comment screen and the stored XSS 7.1.3 fixed | austin | a Minn Admin task, outside this repository |
-| 9341 | rest-api.php's helpers (10-09) | the engine's own routes answer OPTIONS without a schema | open | |
+| 9341 | rest-api.php's helpers (10-09) | the engine's own routes answer OPTIONS without a schema | done | 2026-10-12: with their controllers' schemas (probe `rest-options-schema`) |
 | 9496 | The rest of post.php (10-09) | built-in types' labels never filtered | done | 2026-10-12: core types register again on `init` (suite `hook-parity`) |
 | 9569 | The rest of media.php (10-09) | `wp_enqueue_media` | accepted | an editor dead end (Austin's D7) |
 | 9569 | The rest of media.php (10-09) | the Imagick editor | done | Austin's D10; probe `imagick-editor` |
@@ -15724,13 +15805,13 @@ rows that are `open` or `austin`.
 | 11536 | Block patterns (10-10) | pattern headers read on every request | accepted | the engine reads theme files from disk ("Theme caches") |
 | 11962 | WP_Theme_JSON safety (10-10) | global styles saved past the save filters | done | "Global styles saved without unfiltered_html (2026-10-11)" |
 | 12037 | Posts controller, read (10-10) | the write side | done | "WP_REST_Posts_Controller, write side (2026-10-11)" |
-| 12037 | Posts controller, read (10-10) | `OPTIONS /wp/v2/posts` without the schema | open | as 9341 |
+| 12037 | Posts controller, read (10-10) | `OPTIONS /wp/v2/posts` without the schema | done | as 9341 |
 | 12449 | Attachments controller (10-11) | sideload, finalize and post-process | done | real, routes listed; probe `rest-attachments-sideload` |
 | 12449 | Attachments controller (10-11) | a network's upload space check | accepted | multisite, which a single site never loads |
 | 13590 | Icon block, term template (10-11) | the playlist block | done | "The playlist block (2026-10-11)" |
-| 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module | open | |
+| 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module (and, found 2026-10-12, so are the tabs, accordion and image lightbox ones, whose blocks render their directives) | open | |
 | 14006 | Imagick editor (10-11) | what `image_strip_meta` removes from a JPEG | accepted | profiles ImageMagick can write survive; the engine strips only names outside that set |
 | 14984 | An outside audit (10-11) | dead ends as a `__call` table, the DKIM key name, splitting this file | accepted | reasons given there |
 | 14984 | An outside audit (10-11) | release key rotation; the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
-| 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | open | |
-| 15221 | Security fixes (10-12) | the audit's Lows | open | listed on the Open Items page, to verify one by one |
+| 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | done | 2026-10-12: routes, list and writes (probe `namespaced-type`) |
+| 15221 | Security fixes (10-12) | the audit's Lows | done | each verified and fixed or accepted with its reason ("The audit's Lows, route schemas, namespaced types and the block head") |

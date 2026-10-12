@@ -618,8 +618,8 @@ function rest_output_link_header()
  */
 function rest_output_link_wp_head()
 {
-    $head = Runtime::current()->get('classic_head');
-    $resolution = Runtime::current()->get('classic_resolution');
+    $head = Runtime::current()->get('head_links');
+    $resolution = Runtime::current()->get('head_resolution');
     if ($head instanceof \Minn\Theme\HeadLinks && $resolution instanceof \Minn\Front\Resolution) {
         echo $head->restLink() . $head->jsonAlternate($resolution);
         return;
@@ -824,10 +824,12 @@ function create_initial_rest_routes()
     }
     // The media actions are the controller class's; the media routes themselves are the engine's own (Rest\MediaController).
     (new WP_REST_Attachments_Controller('attachment'))->minn_register_actions();
-    // A type plugin code gave a REST controller of its own is served by that controller, as the reference serves it; the engine's {base} routes serve the rest.
+    // A type plugin code gave a REST controller of its own is served by that controller, as the reference serves it,
+    // and so is a type under a namespace of its own; the engine's wp/v2 {base} routes serve the rest.
     foreach (get_post_types(['show_in_rest' => true, '_builtin' => false], 'objects') as $type) {
         $own = (string) $type->rest_controller_class !== '' && $type->rest_controller_class !== WP_REST_Posts_Controller::class;
-        if ($own && (string) $type->rest_namespace === 'wp/v2' && ($controller = $type->get_rest_controller()) instanceof WP_REST_Controller) {
+        $elsewhere = (string) ($type->rest_namespace ?: 'wp/v2') !== 'wp/v2';
+        if (($own || $elsewhere) && ($controller = $type->get_rest_controller()) instanceof WP_REST_Controller) {
             $controller->register_routes();
         }
     }
@@ -838,6 +840,40 @@ function create_initial_rest_routes()
     register_rest_route('wp/v2', '/widget-types/(?P<id>[a-zA-Z0-9_-]+)/render', [
         ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$widgets, 'get_item_permissions_check'], 'callback' => [$widgets, 'render'], 'args' => ['id' => ['description' => __('The widget type id.'), 'type' => 'string'], 'instance' => ['description' => __('Current instance settings of the widget.'), 'type' => 'object']]],
     ]);
+}
+
+/**
+ * @internal the reference's core controllers for the routes the engine
+ * answers itself, so each route can describe itself by its schema: every
+ * REST type's (posts, revisions, autosaves), every REST taxonomy's, and
+ * the rest of core's
+ */
+function _minn_core_rest_controllers(): array
+{
+    $controllers = [];
+    foreach (get_post_types(['show_in_rest' => true], 'objects') as $type) {
+        foreach (['get_rest_controller', 'get_revisions_rest_controller', 'get_autosave_rest_controller'] as $method) {
+            $controller = method_exists($type, $method) ? $type->$method() : null;
+            if ($controller instanceof WP_REST_Controller) {
+                $controllers[] = $controller;
+            }
+        }
+    }
+    foreach (get_taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
+        $controller = $taxonomy->get_rest_controller();
+        if ($controller instanceof WP_REST_Controller) {
+            $controllers[] = $controller;
+        }
+    }
+    $classes = ['WP_REST_Users_Controller', 'WP_REST_Comments_Controller', 'WP_REST_Settings_Controller', 'WP_REST_Block_Types_Controller', 'WP_REST_Block_Renderer_Controller', 'WP_REST_Application_Passwords_Controller', 'WP_REST_Sidebars_Controller', 'WP_REST_Widgets_Controller', 'WP_REST_Widget_Types_Controller', 'WP_REST_Menu_Locations_Controller', 'WP_REST_Themes_Controller', 'WP_REST_Plugins_Controller', 'WP_REST_Font_Collections_Controller'];
+    foreach ($classes as $class) {
+        // A controller the facade keeps without routes of its own (font collections) describes nothing.
+        if (class_exists($class) && (new ReflectionMethod($class, 'register_routes'))->getDeclaringClass()->getName() !== 'WP_REST_Controller') {
+            $controllers[] = new $class();
+        }
+    }
+    $controllers[] = new WP_REST_Search_Controller(_minn_rest_search_handlers());
+    return $controllers;
 }
 
 /**

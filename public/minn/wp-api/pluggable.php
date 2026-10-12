@@ -613,14 +613,16 @@ function get_user_by($field, $value)
 endif;
 
 if (!function_exists('wp_rand')) :
+/**
+ * A random whole number between the two bounds as the reference draws one:
+ * no maximum means 4294967295, bounds given the wrong way round are
+ * swapped, and the answer is never negative (its absolute value).
+ */
 function wp_rand($min = null, $max = null)
 {
     $min = (int) ($min ?? 0);
-    $max = (int) ($max ?? 0);
-    if ($max <= $min) {
-        return $min === $max ? $min : random_int(min($min, $max), max($min, $max));
-    }
-    return random_int($min, $max);
+    $max = $max === null ? 4294967295 : (int) $max;
+    return abs(random_int(min($min, $max), max($min, $max)));
 }
 endif;
 

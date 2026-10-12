@@ -340,6 +340,11 @@ final class PostQuery
             CommentFeedQuery::single($query, $this->wpdb);
         }
         (new PostQueryResults($query, $this->parts))->settle($q);
+        // A post the reader may not see takes its comments with it: a private post's comment feed lists none (audit Low).
+        if ($query->is_comment_feed && $query->is_singular && empty($query->posts)) {
+            $query->comments = [];
+            $query->comment_count = 0;
+        }
         return $query->posts;
     }
 

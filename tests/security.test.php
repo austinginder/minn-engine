@@ -270,6 +270,25 @@ $multipart = static fn (string $name, string $content): string => "--$boundary\r
 $ctx = stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false], 'http' => ['ignore_errors' => true, 'method' => 'POST', 'header' => "Content-Type: multipart/form-data; boundary=$boundary\r\nCookie: {$admin['cookie_name']}={$admin['cookie']}\r\nX-WP-Nonce: {$admin['nonce']}", 'content' => $multipart('x.svg', '<svg onload="alert(1)"/>')]]);
 @file_get_contents("$ENGINE/?rest_route=" . rawurlencode('/wp/v2/media'), false, $ctx);
 check(str_contains($http_response_header[0] ?? '', '500') || str_contains($http_response_header[0] ?? '', '400'), 'an SVG upload is refused', $http_response_header[0] ?? '');
+// A private post's comment feed lists none of its comments, signed out (audit Low, 2026-10-12): at its pretty
+// address and by id, as the reference's does, and a feed asked of a post id that does not exist moves to the site's.
+$private = (int) wp("post create --post_status=private --post_title='zz security private' --post_name=zz-security-private --porcelain");
+$secret = $private > 1 ? (int) wp("comment create --comment_post_ID={$private} --comment_content='zz security secret' --comment_approved=1 --porcelain") : 0;
+if ($private > 1) {
+    $dated = static fn (string $body): string => (string) preg_replace(['/\d{2} [A-Z][a-z]{2} \d{4} [\d:]+/', '/\d{4}-\d{2}-\d{2}T[\d:+]+/'], 'DATE', $body);
+    foreach (["/zz-security-private/feed/", "/zz-security-private/feed/atom/", "/?p={$private}&feed=rss2", "/?p={$private}&feed=atom"] as $path) {
+        $engine = page("$ENGINE$path");
+        $reference = page("$REF$path");
+        check(!str_contains($engine['body'], 'zz security secret') && $engine['status'] === $reference['status'] && $dated($engine['body']) === $dated($reference['body']), "a private post's comment feed lists none of its comments ({$path})", $engine['status'] . ' ' . substr($engine['body'], 0, 300));
+    }
+    $missing = page("$ENGINE/?p=999999999&feed=rss2");
+    check($missing['status'] === '301' && ($missing['headers']['location'] ?? '') === "$ENGINE/feed/?p=999999999", "a feed asked of a post that does not exist moves to the site's, as the reference's does", json_encode([$missing['status'], $missing['headers']['location'] ?? null]));
+    if ($secret > 1) {
+        wp("comment delete {$secret} --force");
+    }
+    wp("post delete {$private} --force");
+}
+
 require_once "$ROOT/public/minn/src/Minn/Autoloader.php";
 Minn\Autoloader::register();
 check(Minn\Media\Uploads::sanitizeName('shell.php.png') === 'shell_php.png' && Minn\Media\Uploads::sanitizeName('a.b.jpg.png') === 'a_b.jpg.png', 'intermediate extensions are neutralised');

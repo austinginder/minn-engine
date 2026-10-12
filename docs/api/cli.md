@@ -21,7 +21,7 @@ the wp verbs the engine answers itself
 | [`Runtime`](#runtime) | final class | 80 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
 | [`ThemeCommand`](#themecommand) | final class | 332 | `wp theme list\|install\|update\|activate\|delete`: the inventory CaptainCore |
-| [`UserCommand`](#usercommand) | final class | 366 | Users: the list and get views, and the one-time login link. |
+| [`UserCommand`](#usercommand) | final class | 367 | Users: the list and get views, and the one-time login link. |
 
 ## AssetUpdate
 
@@ -1304,5 +1304,5 @@ Deletes a user.
 [--yes]
 : Answer yes to the confirmation.
 
-Internals: `randomPassword()` (private, line 347), `find()` (private, line 358), `item()` (private, line 369)
+Internals: `randomPassword()` (private, line 348), `find()` (private, line 359), `item()` (private, line 370)
 

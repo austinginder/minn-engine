@@ -2,14 +2,14 @@
     "generated": "2026-10-12",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 830,
+        "minn": 832,
         "composes": 2404,
-        "leaf": 1029,
-        "noop": 2739,
+        "leaf": 1030,
+        "noop": 2740,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8696,
-        "minnMethods": 1024,
+        "functions": 8700,
+        "minnMethods": 1026,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -7751,7 +7751,7 @@
         },
         "WP_Block::render": {
             "file": "classes/WP_Block.php",
-            "lines": 34,
+            "lines": 38,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Bindings::html",
@@ -22113,7 +22113,7 @@
         },
         "WP_REST_Posts_Controller::minn_engine_write": {
             "file": "classes/WP_REST_Posts_Controller.php",
-            "lines": 13,
+            "lines": 20,
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\RuntimePrepare::during"
@@ -22327,7 +22327,7 @@
         },
         "WP_REST_Request::checked_args": {
             "file": "classes/WP_REST_Request.php",
-            "lines": 7,
+            "lines": 4,
             "kind": "leaf",
             "minn": [],
             "composes": []
@@ -23122,7 +23122,7 @@
         },
         "WP_REST_Server::engine_endpoints": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 19,
+            "lines": 21,
             "kind": "minn",
             "minn": [
                 "Minn\\Http\\Request::__construct",
@@ -23372,6 +23372,15 @@
             "kind": "noop",
             "minn": [],
             "composes": []
+        },
+        "WP_REST_Server::minn_engine_schemas": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 21,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_core_rest_controllers"
+            ]
         },
         "WP_REST_Server::query_text": {
             "file": "classes/WP_REST_Server.php",
@@ -26871,9 +26880,11 @@
         },
         "WP_Session_Tokens::create": {
             "file": "classes/WP_Session_Tokens.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
+            "lines": 13,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Auth\\Sessions::plain"
+            ],
             "composes": [
                 "apply_filters",
                 "wp_generate_password",
@@ -36025,6 +36036,15 @@
                 "wp_list_pluck"
             ]
         },
+        "_minn_block_head_defaults": {
+            "file": "template.php",
+            "lines": 17,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "add_action"
+            ]
+        },
         "_minn_block_home_link": {
             "file": "core-blocks.php",
             "lines": 2,
@@ -36222,7 +36242,7 @@
         },
         "_minn_block_tabs": {
             "file": "core-blocks.php",
-            "lines": 3,
+            "lines": 6,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -36505,13 +36525,14 @@
         },
         "_minn_classic_head_defaults": {
             "file": "template.php",
-            "lines": 20,
+            "lines": 21,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::get"
             ],
             "composes": [
+                "_minn_block_head_defaults",
                 "add_action"
             ]
         },
@@ -36786,6 +36807,17 @@
             "minn": [],
             "composes": [
                 "_minn_core_block_rows"
+            ]
+        },
+        "_minn_core_rest_controllers": {
+            "file": "rest-api.php",
+            "lines": 24,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_rest_search_handlers",
+                "get_post_types",
+                "get_taxonomies"
             ]
         },
         "_minn_cron_failed": {
@@ -38700,12 +38732,10 @@
         },
         "_minn_tab_panel": {
             "file": "core-blocks.php",
-            "lines": 7,
-            "kind": "composes",
+            "lines": 14,
+            "kind": "leaf",
             "minn": [],
-            "composes": [
-                "_minn_set_attributes"
-            ]
+            "composes": []
         },
         "_minn_tabs": {
             "file": "core-blocks.php",
@@ -38817,6 +38847,16 @@
             ],
             "composes": [
                 "sanitize_title"
+            ]
+        },
+        "_minn_term_query_link": {
+            "file": "taxonomy.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "get_taxonomy",
+                "home_url"
             ]
         },
         "_minn_term_row": {
@@ -44673,7 +44713,7 @@
         },
         "create_initial_rest_routes": {
             "file": "rest-api.php",
-            "lines": 20,
+            "lines": 22,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -46009,12 +46049,11 @@
         },
         "esc_sql": {
             "file": "formatting.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db",
-                "Minn\\Runtime\\Runtime::escape"
+                "Minn\\Runtime\\Runtime::db->escape"
             ],
             "composes": []
         },
@@ -47621,12 +47660,12 @@
         },
         "get_available_languages": {
             "file": "l10n.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\TranslationFiles::languages"
+            ],
+            "composes": []
         },
         "get_available_post_mime_types": {
             "file": "post.php",
@@ -48580,14 +48619,15 @@
         },
         "get_comments_link": {
             "file": "comment.php",
-            "lines": 3,
+            "lines": 4,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "apply_filters",
                 "get_comments_number",
                 "get_permalink",
-                "get_post"
+                "get_post",
+                "post"
             ]
         },
         "get_comments_number": {
@@ -51789,7 +51829,7 @@
         },
         "get_term_link": {
             "file": "taxonomy.php",
-            "lines": 33,
+            "lines": 36,
             "kind": "minn",
             "minn": [
                 "Minn\\Content\\TermRecord::fromRow",
@@ -51798,6 +51838,7 @@
                 "Minn\\Runtime\\Runtime::get"
             ],
             "composes": [
+                "_minn_term_query_link",
                 "_minn_term_row",
                 "apply_filters",
                 "get_ancestors",
@@ -65848,9 +65889,11 @@
         },
         "wp_authenticate_username_password": {
             "file": "user.php",
-            "lines": 26,
-            "kind": "composes",
-            "minn": [],
+            "lines": 28,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Auth\\Password::verify"
+            ],
             "composes": [
                 "__",
                 "_minn_rehash_password",
@@ -71963,7 +72006,7 @@
         },
         "wp_kses_bad_protocol_once": {
             "file": "kses.php",
-            "lines": 19,
+            "lines": 20,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -74214,7 +74257,7 @@
         },
         "wp_rand": {
             "file": "pluggable.php",
-            "lines": 6,
+            "lines": 3,
             "kind": "leaf",
             "minn": [],
             "composes": []

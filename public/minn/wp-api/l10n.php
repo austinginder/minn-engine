@@ -391,14 +391,7 @@ function load_script_translations($file, $handle, $domain)
 
 function get_available_languages($dir = null)
 {
-    $out = [];
-    foreach (glob(($dir ?? WP_LANG_DIR) . '/*.mo') ?: [] as $file) {
-        $name = basename($file, '.mo');
-        if (!str_starts_with($name, 'continents-cities') && !str_starts_with($name, 'ms-') && !str_starts_with($name, 'admin-')) {
-            $out[] = $name;
-        }
-    }
-    return apply_filters('get_available_languages', $out, $dir);
+    return Minn\I18n\TranslationFiles::languages((string) ($dir ?? WP_LANG_DIR), $dir === null ? null : (string) $dir);
 }
 
 function is_locale_switched()

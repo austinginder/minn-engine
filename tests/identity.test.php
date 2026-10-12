@@ -120,6 +120,10 @@ if (is_array($mint) && !empty($mint['cookie'])) {
     $compare('signed in with the nonce, a subscriber\'s token: who /users/me is', '/wp-json/wp/v2/users/me', $subscriber, $who, $session);
     $compare('signed in with the nonce, a token naming nobody: who /users/me is', '/wp-json/wp/v2/users/me', $token(0), $who, $session);
     $compare('signed in, a token naming nobody: the front page\'s signed-in state', '/', $token(0), $signedIn, [$session[0]]);
+    // A sign-in cookie without its nonce makes the request nobody, a user a plugin settles by token included (audit Low,
+    // Engine::adoptSettledUser): the cookie vouches for no one without its nonce.
+    $compare('signed in without the nonce, a subscriber\'s token: who /users/me is', '/wp-json/wp/v2/users/me', $subscriber, $who, [$session[0]]);
+    $compare('signed in without the nonce, an administrator\'s token: the drafts', '/wp-json/wp/v2/posts?status=draft&per_page=1&_fields=id', $token(1), $drafts, [$session[0]]);
 }
 
 // An administrator's application password, signing REST requests in by Basic auth.

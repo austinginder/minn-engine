@@ -15,7 +15,7 @@ sending mail and the notices the engine sends
 | [`HostEntry`](#hostentry) | final readonly class | 36 | One entry of a mailer's Host setting ("host", "host:port", |
 | [`HtmlMessage`](#htmlmessage) | final class | 55 | What a mailer reads out of an HTML message: the images it can carry |
 | [`MailHeaders`](#mailheaders) | final readonly class | 83 | The headers argument of wp_mail() read the way the reference reads it: |
-| [`MailLog`](#maillog) | final class | 25 | The engine's development transport: each message as one JSON line |
+| [`MailLog`](#maillog) | final class | 45 | The engine's development transport: each message as one JSON line |
 | [`MailSettings`](#mailsettings) | final readonly class | 71 | How mail leaves the site, from the minn_mail option (JSON or a serialized |
 | [`Mailer`](#mailer) | final readonly class | 88 | Sends a Message through the configured transport. Failures are logged |
 | [`MailerStrings`](#mailerstrings) | final class | 34 | The mailer's English messages, keyed as plugins look them up |
@@ -453,14 +453,24 @@ Internals: `from()` (private, line 71), `contentType()` (private, line 84)
 `final class Minn\Mail\MailLog` · `public/minn/src/Minn/Mail/MailLog.php`
 
 The engine's development transport: each message as one JSON line
-(time, from, to, subject, body) appended to wp-content/minn-mail.log,
-nothing sent.
+(time, from, to, subject, body) appended to wp-content/minn-mail.log.php,
+nothing sent. The file opens with a line that returns from any request
+for it, so a web server that runs PHP never serves the reset links it
+holds (audit Low: it was a plain .log under the webroot).
+
+- const `GUARD` = `'<?php return; ?> '` — The first line of the file: PHP that returns before the rest is sent.
 
 Used by: `Minn\Mail\Mailer`
 
 ### static `forSite(): string`
 
 The site's log file.
+
+### static `read(string $file): array`
+
+The messages a log file holds, oldest first (its guard line aside).
+
+- `@return list<array<string, mixed>>`
 
 ### static `write(string $file, string $from, string $fromName, array $to, string $subject, string $body): bool`
 

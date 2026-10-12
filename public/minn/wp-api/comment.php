@@ -942,7 +942,8 @@ function comment_id_fields($post = null)
 function get_comments_link($post = 0)
 {
     $post = get_post($post);
-    $link = $post ? get_permalink($post) . (get_comments_number($post) > 0 ? '#comments' : '#respond') : '';
+    // No post (one the reader may not see, in its comment feed) still gives the fragment alone, as the reference's does.
+    $link = ($post ? get_permalink($post) : '') . (get_comments_number($post) > 0 ? '#comments' : '#respond');
     return apply_filters('get_comments_link', $link, $post ? (int) $post->ID : 0);
 }
 

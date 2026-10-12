@@ -452,6 +452,9 @@ function get_term_link($term, $taxonomy = '')
             }
         }
         $link = home_url(user_trailingslashit(str_replace("%{$term->taxonomy}%", $slug, $changed), 'category'));
+    } elseif ($changed === '' && isset($GLOBALS['wp_rewrite']) && $GLOBALS['wp_rewrite']->using_permalinks()) {
+        // A taxonomy with no link structure (one removed at runtime, probe format-links) links by query, as under plain permalinks.
+        $link = _minn_term_query_link($term);
     }
     if ($term->taxonomy === 'post_tag') {
         $link = apply_filters('tag_link', $link, $term->term_id);
@@ -459,6 +462,20 @@ function get_term_link($term, $taxonomy = '')
         $link = apply_filters('category_link', $link, $term->term_id);
     }
     return apply_filters('term_link', $link, $term, $term->taxonomy);
+}
+
+/**
+ * @internal a term's link by query: a category by its id, any other term by
+ * its taxonomy's query var, or by taxonomy and term where it has none
+ */
+function _minn_term_query_link(WP_Term $term): string
+{
+    if ($term->taxonomy === 'category') {
+        return home_url('?cat=' . $term->term_id);
+    }
+    $object = get_taxonomy($term->taxonomy);
+    $var = $object instanceof WP_Taxonomy ? (string) $object->query_var : '';
+    return home_url($var !== '' ? "?{$var}={$term->slug}" : "?taxonomy={$term->taxonomy}&term={$term->slug}");
 }
 
 function get_category_link($category)

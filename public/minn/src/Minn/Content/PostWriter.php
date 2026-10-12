@@ -29,6 +29,12 @@ final readonly class PostWriter
     ) {
     }
 
+    /** Whether a term of the taxonomy has the id. */
+    public function hasTerm(string $taxonomy, int $termId): bool
+    {
+        return $this->db->value("SELECT 1 FROM {$this->db->table('term_taxonomy')} WHERE taxonomy = ? AND term_id = ? LIMIT 1", [$taxonomy, $termId]) !== null;
+    }
+
     /**
      * Inserts a posts row from column => value pairs and returns the new id.
      *

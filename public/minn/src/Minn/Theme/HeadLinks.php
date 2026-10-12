@@ -4,55 +4,31 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
-use Minn\Content\PostRecord;
-use Minn\Content\SiteIcon;
-use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
-use Minn\Runtime\Runtime;
 use Minn\Html;
 use Minn\I18n\Gettext;
 use Minn\Support\Escape;
 use Minn\Support\Lists;
 
 /**
- * The links the reference puts in every head: the site and comments
- * feeds (plus the archive's own feed), the REST discovery link, the
- * JSON alternate for the queried object, and the site icon set. The
- * block path prints them as one run; the classic path prints the same
- * pieces from the reference's wp_head hooks.
+ * The engine's own pieces of a page's head: its block stylesheet link,
+ * and for rest_output_link_wp_head the REST discovery link and the JSON
+ * alternate for the queried object; the site's feed links as feed_links
+ * prints them. Every theme's head prints them from the reference's
+ * wp_head hooks.
  */
 final readonly class HeadLinks
 {
-    public function __construct(
-        private Site $site,
-        private SiteIcon $icon,
-        private Permalinks $permalinks,
-    ) {
+    public function __construct(private Permalinks $permalinks)
+    {
     }
 
     /** The link to the engine's own block stylesheet. */
     public function engineStylesheet(): string
     {
         return '<link rel="stylesheet" id="minn-blocks-css" href="' . Html::attr($this->permalinks->url('/minn/assets/blocks.css')) . '" />' . "\n";
-    }
-
-    /** Every head link for a resolution. */
-    public function all(Resolution $resolution): string
-    {
-        return $this->feedLinks() . $this->extraFeedLink($resolution) . $this->restLink() . $this->jsonAlternate($resolution) . "\n" . $this->icons();
-    }
-
-    /** The site and comments feed links. */
-    public function feedLinks(): string
-    {
-        if (Runtime::booted()) {
-            return self::siteFeeds([]);
-        }
-        $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
-        return '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Feed" href="' . Html::attr($this->permalinks->url('/feed/')) . '" />' . "\n"
-            . '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Comments Feed" href="' . Html::attr($this->permalinks->url('/comments/feed/')) . '" />' . "\n";
     }
 
     /**
@@ -70,37 +46,6 @@ final readonly class HeadLinks
         $link = static fn (string $title, string $href): string => sprintf('<link rel="alternate" type="%s" title="%s" href="%s" />' . "\n", \feed_content_type(), Escape::attr(sprintf($title, $name, $args['separator'])), \esc_url($href));
         $out = \apply_filters('feed_links_show_posts_feed', true) ? $link((string) $args['feedtitle'], (string) \get_feed_link()) : '';
         return $out . (\apply_filters('feed_links_show_comments_feed', true) ? $link((string) $args['comstitle'], (string) \get_feed_link('comments_' . \get_default_feed())) : '');
-    }
-
-    /** The feed link a single or an archive adds. */
-    public function extraFeedLink(Resolution $resolution): string
-    {
-        $site = Html::esc((string) ($this->site->option('blogname') ?? ''));
-        $record = $resolution->record ?? [];
-        switch ($resolution->kind) {
-            case Kind::Category:
-            case Kind::Tag:
-                $label = $resolution->kind === Kind::Category ? 'Category' : 'Tag';
-                return '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['name']) . ' ' . $label . ' Feed" href="' . Html::attr($this->permalinks->forTerm($record) . 'feed/') . '" />' . "\n";
-            case Kind::Search:
-                return '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; Search Results for &#8220;' . Html::esc((string) $resolution->search) . '&#8221; Feed" href="' . Html::attr($this->permalinks->url('/search/' . rawurlencode((string) $resolution->search) . '/feed/rss2/')) . '" />' . "\n";
-            case Kind::Single:
-            case Kind::Page:
-                // A singular view announces its own comments feed while comments or
-                // pings are open on it (even with none yet), or once it has comments:
-                // the reference prints it for a page with closed comments, open pings,
-                // and a zero count.
-                if (!$record instanceof PostRecord) {
-                    return '';
-                }
-                $open = ($record['comment_status'] ?? '') === 'open' || ($record['ping_status'] ?? '') === 'open';
-                if ((int) ($record['comment_count'] ?? 0) > 0 || $open) {
-                    $own = $record['post_type'] === 'page' ? $this->permalinks->pagePath($record) : $this->permalinks->forPost($record);
-                    return '<link rel="alternate" type="application/rss+xml" title="' . $site . ' &raquo; ' . Html::esc((string) $record['post_title']) . ' Comments Feed" href="' . Html::attr($own . 'feed/') . '" />' . "\n";
-                }
-                return '';
-        }
-        return '';
     }
 
     /** No trailing newline: the reference prints the JSON alternate and the RSD link on the same physical line. */
@@ -123,11 +68,5 @@ final readonly class HeadLinks
             return '';
         }
         return '<link rel="alternate" title="JSON" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
-    }
-
-    /** The site icon links: the 32 and 192 pixel icons, the Apple touch icon, and the tile image. */
-    public function icons(): string
-    {
-        return $this->icon->links();
     }
 }

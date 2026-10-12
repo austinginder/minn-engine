@@ -1805,7 +1805,7 @@ function wp_playlist_shortcode($attr)
     $data = ['type' => $atts['type']] + array_map('wp_validate_boolean', array_intersect_key($atts, array_flip(['tracklist', 'tracknumbers', 'images', 'artists']))) + ['tracks' => $tracks];
     do_action('wp_playlist_scripts', $atts['type'], $atts['style']);
     $links = array_map(static fn ($id) => wp_get_attachment_link($id), array_keys($attachments));
-    return Minn\Content\Playlist::markup($atts['type'], esc_attr($atts['style']), $width, $height, $links, (string) wp_json_encode($data, JSON_UNESCAPED_SLASHES));
+    return Minn\Content\Playlist::markup($atts['type'], esc_attr($atts['style']), $width, $height, $links, (string) wp_json_encode($data, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG));
 }
 
 /** @internal the playlist's attachments by id: those listed, or the post's own when the visitor may read the post */

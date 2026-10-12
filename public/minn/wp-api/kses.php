@@ -140,8 +140,9 @@ function wp_kses_bad_protocol($content, $allowed_protocols)
 
 function wp_kses_bad_protocol_once($content, $allowed_protocols, $count = 1)
 {
-    $content = preg_replace('/(&colon;|&#0*58;|&#x0*3a;)/i', ':', (string) $content);
-    $parts = preg_split('/:|&#0*58;|&#x0*3a;|&colon;/i', $content, 2);
+    // A decimal colon needs no semicolon unless a digit follows; a hex one does (probe audit-lows).
+    $content = preg_replace('/(&colon;|&#0*58(?:;|(?!\d))|&#x0*3a;)/i', ':', (string) $content);
+    $parts = preg_split('/:|&#0*58(?:;|(?!\d))|&#x0*3a;|&colon;/i', $content, 2);
     if (isset($parts[1]) && !preg_match('%/\?%', $parts[0])) {
         $protocol = preg_replace('/[\s\x00-\x20]/', '', wp_kses_decode_entities($parts[0]));
         $protocol = preg_replace('/[^a-zA-Z0-9-+.]/', '', $protocol);

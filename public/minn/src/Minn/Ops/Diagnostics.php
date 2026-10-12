@@ -92,7 +92,7 @@ final readonly class Diagnostics
             ),
             self::check('mail', 'Mail', $mail->transport === 'log' ? 'warn' : 'pass', match ($mail->transport) {
                 'smtp' => 'Sent over SMTP via ' . $mail->host,
-                'log' => 'Mail is written to wp-content/minn-mail.log and never sent',
+                'log' => 'Mail is written to wp-content/minn-mail.log.php and never sent',
                 default => "Sent through PHP's mail()",
             }),
         ];

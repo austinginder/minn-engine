@@ -22,7 +22,7 @@ final readonly class Mailer
     /** A mailer using the site's own settings. */
     public static function forSite(Site $site): self
     {
-        return new self(MailSettings::fromSite($site), ABSPATH . 'wp-content/minn-mail.log');
+        return new self(MailSettings::fromSite($site), MailLog::forSite());
     }
 
     /**

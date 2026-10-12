@@ -182,12 +182,45 @@ class WP_REST_Server
                 continue;
             }
             $methods = in_array('*', $methods, true) ? ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] : $methods;
+            // Each core route keeps the schema its reference controller describes it by (OPTIONS answers with it).
+            $schemas ??= $this->minn_engine_schemas();
             $this->engine_endpoints[$route] = [
                 ['methods' => implode(',', $methods), 'callback' => [$this, 'engine_callback'], 'permission_callback' => '__return_true', 'args' => []],
                 'namespace' => RouteCatalogue::namespaceOf($route),
-            ];
+            ] + (isset($schemas[$route]) ? ['schema' => $schemas[$route]] : []);
         }
         return $this->engine_endpoints;
+    }
+
+    /**
+     * @internal the item schema each core route describes itself by, as its
+     * controller registers it on the reference: the core controllers' routes
+     * registered on a server of their own, kept for their schema callbacks
+     * alone (route => callable)
+     */
+    private function minn_engine_schemas(): array
+    {
+        $scratch = new self();
+        $previous = $GLOBALS['wp_rest_server'] ?? null;
+        $GLOBALS['wp_rest_server'] = $scratch;
+        try {
+            foreach (_minn_core_rest_controllers() as $controller) {
+                try {
+                    $controller->register_routes();
+                } catch (Throwable) {
+                    // A controller the engine keeps as a dead end describes nothing.
+                }
+            }
+        } finally {
+            $GLOBALS['wp_rest_server'] = $previous;
+        }
+        $schemas = [];
+        foreach ($scratch->endpoints as $route => $handlers) {
+            if (is_array($handlers) && isset($handlers['schema']) && is_callable($handlers['schema'])) {
+                $schemas[$route] = $handlers['schema'];
+            }
+        }
+        return $schemas;
     }
 
     /** Whether a rest_endpoints filter dropped the route that would answer this request, so the engine must not answer it either. */

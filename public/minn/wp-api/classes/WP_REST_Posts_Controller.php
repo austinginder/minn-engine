@@ -498,7 +498,14 @@ class WP_REST_Posts_Controller extends WP_REST_Controller
         $write->set_method($method);
         $write->set_route($route);
         $api = WP_REST_Server::minn_engine_api($write);
-        $engine = Minn\Rest\RuntimePrepare::during($write, static fn () => $api->handleEngineOnly($route, $write));
+        if ($this->namespace !== 'wp/v2') {
+            // A type under a namespace of its own has no engine route: its writes go to the engine's writer directly.
+            $id = preg_match('#/(\d+)$#', $route, $m) === 1 ? $m[1] : '';
+            $verb = $method === 'DELETE' ? 'delete' : ($id === '' ? 'create' : 'update');
+            $engine = Minn\Rest\RuntimePrepare::during($write, fn () => $api->writePost($verb, $route, $this->post_type, $this->rest_base, $id, $write));
+        } else {
+            $engine = Minn\Rest\RuntimePrepare::during($write, static fn () => $api->handleEngineOnly($route, $write));
+        }
         if ($engine === null) {
             return new WP_Error('rest_no_route', __('No route was found matching the URL and request method.'), ['status' => 404]);
         }

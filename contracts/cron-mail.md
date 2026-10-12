@@ -76,7 +76,7 @@ option (JSON, or a serialized array from `wp option update --format=json`) is th
 site's own transport, applied inside `wp_mail()` before `phpmailer_init`: `mail`
 (PHP's `mail()`, the default), `smtp` (`host`, `port`, `encryption` ssl, tls or
 none, `username`, `password`; PHPMailer's SMTP client), or `log` (appends JSON
-lines to `wp-content/minn-mail.log`, for development); `from_email` and
+lines to `wp-content/minn-mail.log.php`, behind a first line that returns, so a web server never serves the reset links in it; for development); `from_email` and
 `from_name`, when set, replace the default sender before the `wp_mail_from`
 filters. Without the runtime, `Mailer` composes the message itself
 (`Mail\Composer`) and delivers it over the same transports, defaulting to the

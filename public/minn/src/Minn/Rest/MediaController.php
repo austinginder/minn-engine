@@ -59,6 +59,12 @@ final readonly class MediaController
     public function single(Request $request, string $id): Response
     {
         $attachment = $this->attachment((int) $id);
+        // An attachment shows as its parent does: one of a draft, private or trashed post the caller may not read is
+        // refused, as the list leaves it out (audit Low).
+        $parent = $attachment->parentId > 0 ? $this->posts->find($attachment->parentId) : null;
+        if ($parent !== null && !$parent->isPublished() && !$this->caller->can('read_post', $parent->id)) {
+            throw $this->caller->refuse('rest_forbidden', 'Sorry, you are not allowed to do that.');
+        }
         $context = Context::of($request);
         $edit = $context->isEdit();
         if ($edit && !$this->caller->can('edit_post', (int) $id)) {

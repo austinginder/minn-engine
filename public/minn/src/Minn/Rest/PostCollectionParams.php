@@ -34,9 +34,7 @@ final class PostCollectionParams implements RouteParams
     /** The parameters of a post type's list, by the type's name. @return array<string, array<string, mixed>> */
     public static function ofType(string $name): array
     {
-        $object = Runtime::booted() ? \get_post_type_object($name) : null;
-        $base = $object instanceof \WP_Post_Type ? (string) ($object->rest_base ?: $name) : ['post' => 'posts', 'page' => 'pages'][$name] ?? '';
-        return self::forType(self::type($base));
+        return self::forType(self::named($name));
     }
 
     /**
@@ -48,10 +46,24 @@ final class PostCollectionParams implements RouteParams
      */
     public static function listed(string $name): array
     {
-        $object = Runtime::booted() ? \get_post_type_object($name) : null;
-        $base = $object instanceof \WP_Post_Type ? (string) ($object->rest_base ?: $name) : ['post' => 'posts', 'page' => 'pages'][$name] ?? '';
-        $type = self::type($base);
+        $type = self::named($name);
         return $type === null ? [] : self::filtered($type);
+    }
+
+    /**
+     * A REST post type by its name, in whatever namespace it lists itself
+     * (a plugin's type under a namespace of its own has the same list as one
+     * under wp/v2); posts and pages by name before plugins load.
+     *
+     * @return array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null
+     */
+    private static function named(string $name): ?array
+    {
+        if (!Runtime::booted()) {
+            return self::type(['post' => 'posts', 'page' => 'pages'][$name] ?? '');
+        }
+        $object = \get_post_type_object($name);
+        return $object instanceof \WP_Post_Type && !empty($object->show_in_rest) ? self::described($name, $object) : null;
     }
 
     /** @param array{name: string, object: ?\WP_Post_Type, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>}|null $type @return array<string, array<string, mixed>> */

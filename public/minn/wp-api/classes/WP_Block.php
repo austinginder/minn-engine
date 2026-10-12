@@ -90,7 +90,11 @@ class WP_Block
         if ($this->rendered_by_engine((bool) $options['dynamic'])) {
             // The engine's renderer renders a core block whole (its inner blocks, bindings and the supports it
             // applies itself); the block's own render_block filters run once, after it, as on the reference.
-            $block_content = MinnBlocks::renderer()->providing((array) $this->available_context, fn (): string => _minn_render_core_block($this, '', false));
+            // render_block_context has already given this block its context: the engine's renderer reads it rather than asking again.
+            $block_content = MinnBlocks::renderer()->providing((array) $this->available_context, function (): string {
+                MinnBlocks::renderer()->handContext((array) $this->available_context);
+                return _minn_render_core_block($this, '', false);
+            });
             if ($this->block_type->is_dynamic()) {
                 $this->enqueue_assets();
             }

@@ -87,6 +87,29 @@ registers the same names at the same priorities:
 | wp_footer | wp_print_speculation_rules | 10 | registered in defaults (before plugin hooks) so it prints first in its bucket; classic + signed-out + pretty permalinks only |
 | wp_head/wp_footer | _minn_classic_bar_head / _minn_classic_bar_footer | 200 | the Minn front bar |
 
+## The block head
+
+A block theme's pages print the same head from the same hooks
+(`_minn_block_head_defaults()`, registered by the same setup_theme
+callback, so a plugin's remove_action() finds them by name). Captured from
+the reference's hook table at each stage of a request (2026-10-12): every
+default above is registered at boot for any theme, `wp_preload_resources`
+at 1 and `locale_stylesheet` at 10 among them, and when a block template
+loads, the reference swaps `_wp_render_title_tag` for
+`_block_template_render_title_tag` (1) and adds
+`_block_template_viewport_meta_tag` (0). The swap is unconditional: a
+plugin that removed `_wp_render_title_tag` still gets the block template's
+title. The page prints `<meta charset>` and then wp_head, so the head reads
+viewport, robots, title, feeds, oEmbed discovery, the engine's stylesheets
+(at 8, where the reference prints a theme's; Austin's D3), the REST and
+JSON links with RSD on their line, generator, canonical, short link, site
+icon. `rest_output_link_wp_head` takes the page's view from the renderer
+(`head_resolution`) for the JSON alternate. Suite `front-page` compares
+each page's head identity tags (title, every meta tag, canonical, short
+link, RSD, the feed, oEmbed and JSON alternates, the API link) with the
+reference's, in order, on posts, pages, archives, search and the front
+page settings.
+
 ## The robots meta
 
 `wp_robots()` runs the `wp_robots` filter over an empty array; the directive
@@ -233,10 +256,6 @@ plain date order.
   never enqueues. Deliberate for now.
 - Speculation rules print on classic pages only; the block path's wp_footer
   capture does not include them yet (the reference prints them there too).
-- The block path prints no robots meta at all, and its head has no EditURI
-  or shortlink link (the reference prints all three under block themes
-  too). The block suites diff bodies, so nothing pins these yet; the
-  classic path is the one held to the head battery.
 - wp_page_menu renders the list shape without the reference's page-walker
   chrome (heading, container class variants); no fallback caller depends on
   it yet.

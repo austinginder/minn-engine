@@ -80,7 +80,7 @@ function _minn_tab_list(array $attributes, string $content, array $context): str
     return $tags->get_updated_html();
 }
 
-/** A tab panel (probe core-block-callbacks): {tabs id}-tab-{n} (tab-{n} outside tabs, its anchor when it has one), labelled by its tab, hidden unless active. */
+/** A tab panel (probes core-block-callbacks, tabs-render): {tabs id}-tab-{n} (tab-{n} outside tabs, the id its markup carries when it has one), labelled by its tab, hidden unless active. */
 function block_core_tab_panel_render($attributes, $content, $block)
 {
     return _minn_tab_panel((array) $attributes, (string) $content, (array) ($block->context ?? []));
@@ -92,9 +92,16 @@ function _minn_tab_panel(array $attributes, string $content, array $context): st
     static $counted = [];
     $tabs = (string) ($context['core/tabs-id'] ?? '');
     $counted[$tabs] = isset($counted[$tabs]) ? $counted[$tabs] + 1 : 0;
-    $id = (string) ($attributes['anchor'] ?? '') ?: ($tabs !== '' ? $tabs . '-' : '') . 'tab-' . $counted[$tabs];
     $tags = new WP_HTML_Tag_Processor($content);
-    _minn_set_attributes($tags, [], ['aria-labelledby' => 'tab__' . $id, 'data-wp-bind--hidden' => '!state.isActiveTab', 'id' => $id]);
+    if (!$tags->next_tag()) {
+        return $content;
+    }
+    // The id the panel's markup carries (an anchor the editor saved) stays; an anchor in the block's comment alone does not count (probe tabs-render).
+    $own = $tags->get_attribute('id');
+    $id = is_string($own) && $own !== '' ? $own : ($tabs !== '' ? $tabs . '-' : '') . 'tab-' . $counted[$tabs];
+    foreach (['aria-labelledby' => 'tab__' . $id, 'data-wp-bind--hidden' => '!state.isActiveTab', 'id' => $id] as $name => $value) {
+        $tags->set_attribute($name, $value);
+    }
     return $tags->get_updated_html();
 }
 
@@ -1539,10 +1546,18 @@ function _minn_block_term_template(MinnBlock $block, MinnRenderer $renderer): st
     return $items === '' ? '' : _minn_laid_out($block, Wrapper::open('ul', 'wp-block-term-template', $block) . $items . '</ul>');
 }
 
-/** @internal a tabs block in a page: its id and panel list provided to the blocks inside, as render_block_context gives them on the reference */
+/**
+ * @internal a tabs block in a page: its id and panel list provided to the
+ * blocks inside, as render_block_context gives them on the reference; the
+ * ones it already gave when render_block() renders the block (probe
+ * tabs-render: one tabs id per block)
+ */
 function _minn_block_tabs(MinnBlock $block, MinnRenderer $renderer): string
 {
-    $context = block_core_tabs_provide_context([], ['blockName' => 'core/tabs', 'attrs' => $block->attrs, 'innerBlocks' => array_map('_minn_block_to_array', $block->innerBlocks)]);
+    $given = $renderer->ownContext();
+    $context = $given !== null
+        ? array_intersect_key($given, ['core/tabs-id' => true, 'core/tabs-list' => true])
+        : block_core_tabs_provide_context([], ['blockName' => 'core/tabs', 'attrs' => $block->attrs, 'innerBlocks' => array_map('_minn_block_to_array', $block->innerBlocks)]);
     $inner = $renderer->providing($context, static fn (): string => _minn_inner_html($block, $renderer));
     return _minn_laid_out($block, _minn_tabs($block->attrs, $inner, $context));
 }

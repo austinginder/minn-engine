@@ -121,6 +121,34 @@ Apache (`wp-content/uploads/.htaccess`):
 </FilesMatch>
 ```
 
+The engine's own folder is code, not pages: **serve nothing under `/minn/` but its
+assets** (`/minn/assets/` and the app's `/minn/admin/assets/`). A class file
+requested directly only fails, but its error names paths, and a development
+checkout's `minn/admin` link would hand out the app repository's `.git`.
+
+Caddy:
+
+```
+@minn_code {
+	path /minn/*
+	not path /minn/assets/* /minn/admin/assets/*
+}
+respond @minn_code 404
+```
+
+nginx:
+
+```
+location ~ ^/minn/(?!assets/|admin/assets/) { return 404; }
+```
+
+Apache (`minn/.htaccess`):
+
+```
+RewriteEngine On
+RewriteRule ^(?!assets/|admin/assets/) - [R=404,L]
+```
+
 Also at the server: TLS with HSTS, `client_max_body_size` in line with the upload
 limit, and `X-Powered-By` stripped if the PHP version should not be advertised (the
 engine's own header names Minn).

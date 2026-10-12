@@ -7,7 +7,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
-| [`App`](#app) | final readonly class | 98 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
+| [`App`](#app) | final readonly class | 100 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
 | [`AppController`](#appcontroller) | final readonly class | 149 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 245 | The window.MINN boot payload, assembled from the engine: the keys app.js |

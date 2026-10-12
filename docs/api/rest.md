@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 404 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 454 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -21,7 +21,7 @@ the wp/v2 surface: shapes and controllers
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
-| [`Embed`](#embed) | final class | 218 | The _embed decoration and the embed context. Every embeddable link in an |
+| [`Embed`](#embed) | final class | 219 | The _embed decoration and the embed context. Every embeddable link in an |
 | [`EngineRoutes`](#engineroutes) | final class | 66 | The engine's own REST routes in the reference's regex form, for the |
 | [`ExistingPost`](#existingpost) | final class | 10 | A post created with an id names one that exists: refused with |
 | [`Fields`](#fields) | final readonly class | 106 | The _fields response filter. Dot paths descend ("title.rendered"); the |
@@ -31,7 +31,7 @@ the wp/v2 surface: shapes and controllers
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 141 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 83 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
-| [`MediaController`](#mediacontroller) | final readonly class | 288 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaController`](#mediacontroller) | final readonly class | 294 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 171 | The wp/v2 media object, view and edit context. |
 | [`MenuItemObject`](#menuitemobject) | final readonly class | 75 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
@@ -40,11 +40,11 @@ the wp/v2 surface: shapes and controllers
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 167 | Judges a route's policy against the caller, with the reference's |
-| [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
+| [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 533 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 497 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 518 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -60,7 +60,7 @@ the wp/v2 surface: shapes and controllers
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
-| [`RuntimeRoutes`](#runtimeroutes) | final class | 468 | Routes plugin code registered with register_rest_route(), answered |
+| [`RuntimeRoutes`](#runtimeroutes) | final class | 479 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 502 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
@@ -85,7 +85,7 @@ the wp/v2 surface: shapes and controllers
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
 | [`UserObject`](#userobject) | final readonly class | 103 | The wp/v2 user objects: the public view shape and the edit-context shape. |
-| [`UsersController`](#userscontroller) | final readonly class | 348 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
+| [`UsersController`](#userscontroller) | final readonly class | 379 | wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Users view drives. |
 | [`ViewConfigPatch`](#viewconfigpatch) | final class | 151 | A patch to a view configuration (WP_View_Config_Data; probe |
 | [`WidgetObject`](#widgetobject) | final readonly class | 55 | A widget as wp/v2/widgets shows it (probe rest-widgets): its id and base, |
 | [`WidgetsController`](#widgetscontroller) | final readonly class | 169 | wp/v2/widgets as the reference answers it (probe rest-widgets), for |
@@ -224,6 +224,13 @@ route's request.
 
 A REST answer as it leaves over HTTP: pointing at the API's root, unless it carries a Link header of its own (a batch's parts do not).
 
+### `writePost(string $verb, string $route, string $type, string $base, string $id = '', ?WP_REST_Request $as = NULL): Minn\Http\Response`
+
+A post of a REST type the engine has no route for (one under a
+namespace of its own, probe namespaced-type) created, updated or
+deleted by the engine's own writer, for the type's controller, whose
+permission checks have already run.
+
 ### `handleEngineOnly(string $route, ?WP_REST_Request $as = NULL): ?Minn\Http\Response`
 
 The engine's own answer to a route, or null when no engine route
@@ -239,7 +246,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 376), `withPageLinks()` (private, line 390), `options()` (private, line 421), `withAllow()` (private, line 434)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 401), `withPageLinks()` (private, line 415), `options()` (private, line 446), `withSchema()` (private, line 463), `withAllow()` (private, line 484)
 
 
 ## ApplicationPasswordsController
@@ -967,7 +974,7 @@ An item cut to the embed shape of its object type (a post type, a taxonomy, atta
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-Internals: `decorateItem()` (private, line 97), `answer()` (private, line 141), `target()` (private, line 176), `kind()` (private, line 194), `taxonomyBase()` (private, line 210), `context()` (private, line 234)
+Internals: `decorateItem()` (private, line 97), `answer()` (private, line 141), `target()` (private, line 177), `kind()` (private, line 195), `taxonomyBase()` (private, line 211), `context()` (private, line 235)
 
 
 ## EngineRoutes
@@ -1242,6 +1249,8 @@ Internals: `item()` (private, line 77), `links()` (private, line 124), `viewsThe
 
 Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along.
 
+Used by: `Minn\Rest\Api`
+
 ### static `item(string $rel, string $href, array $attributes): array`
 
 One link as a response serves it: its attributes, then its href; a
@@ -1360,7 +1369,7 @@ Attachments go to the trash only when MEDIA_TRASH (or
 rest_attachment_trashable) says so; force removes the row, its meta,
 and its files.
 
-Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 118), `insertedWithPlugins()` (private, line 145), `preparedAttachment()` (private, line 186), `finishedWithPlugins()` (private, line 210), `params()` (private, line 226), `attachment()` (private, line 307)
+Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 124), `insertedWithPlugins()` (private, line 151), `preparedAttachment()` (private, line 192), `finishedWithPlugins()` (private, line 216), `params()` (private, line 232), `attachment()` (private, line 313)
 
 
 ## MediaObject
@@ -1771,7 +1780,7 @@ the order the site allows them, each once.
 
 - `@return array<string, list<string>>`
 
-Internals: `forType()` (private, line 58), `filtered()` (private, line 76), `type()` (private, line 95), `described()` (private, line 126), `build()` (private, line 138), `statuses()` (private, line 213), `taxonomies()` (private, line 224), `termFilter()` (private, line 240)
+Internals: `named()` (private, line 60), `forType()` (private, line 70), `filtered()` (private, line 88), `type()` (private, line 107), `described()` (private, line 138), `build()` (private, line 150), `statuses()` (private, line 225), `taxonomies()` (private, line 236), `termFilter()` (private, line 252)
 
 
 ## PostListArgs
@@ -1990,7 +1999,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 138), `hasOrder()` (private, line 144), `events()` (private, line 150), `newColumns()` (private, line 161), `writeNewPost()` (private, line 195), `rememberOld()` (private, line 312), `floatingDate()` (private, line 326), `scheduledIfFuture()` (private, line 340), `askedDate()` (private, line 362), `updatedDate()` (private, line 380), `fieldColumns()` (private, line 393), `statusColumns()` (private, line 437), `checkStickyChange()` (private, line 473), `checkStickyPasswordConflict()` (private, line 485), `validStatus()` (private, line 505), `clean()` (private, line 514)
+Internals: `hasParent()` (private, line 139), `hasOrder()` (private, line 145), `events()` (private, line 151), `newColumns()` (private, line 162), `writeNewPost()` (private, line 196), `checkAssignTerms()` (private, line 225), `rememberOld()` (private, line 333), `floatingDate()` (private, line 347), `scheduledIfFuture()` (private, line 361), `askedDate()` (private, line 383), `updatedDate()` (private, line 401), `fieldColumns()` (private, line 414), `statusColumns()` (private, line 458), `checkStickyChange()` (private, line 494), `checkStickyPasswordConflict()` (private, line 506), `validStatus()` (private, line 526), `clean()` (private, line 535)
 
 
 ## RegisteredFields
@@ -2595,6 +2604,13 @@ refuse the request, rest_pre_dispatch may answer it outright, and a
 route a rest_endpoints filter removed is no route at all. Null lets
 the engine's router proceed.
 
+### static `predispatch(Minn\Http\Request $request): ?Minn\Http\Response`
+
+What plugin code decides before a route runs, for a request inside
+another (an embedded link) as for the first: rest_pre_dispatch may
+answer it outright, and a route a rest_endpoints filter removed is no
+route at all. Null lets the router proceed.
+
 ### static `dispatch(Minn\Http\Request $request): ?Minn\Http\Response`
 
 Null when the runtime has no route for the request either.
@@ -2692,7 +2708,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 87), `dispatchDone()` (private, line 293), `asksForXml()` (private, line 368), `oembedXml()` (private, line 379), `look()` (private, line 393), `remember()` (private, line 398), `decode()` (private, line 405), `expand()` (private, line 425), `newWpRequest()` (private, line 450), `toResponse()` (private, line 479)
+Internals: `allow()` (private, line 98), `dispatchDone()` (private, line 304), `asksForXml()` (private, line 379), `oembedXml()` (private, line 390), `look()` (private, line 404), `remember()` (private, line 409), `decode()` (private, line 416), `expand()` (private, line 436), `newWpRequest()` (private, line 461), `toResponse()` (private, line 490)
 
 
 ## Schema
@@ -2708,7 +2724,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -3887,7 +3903,7 @@ wp/v2 users: me, list, single, and the create/update/delete-with-reassign the Us
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Db $db, Minn\Content\Users $users, Minn\Content\Site $site, Minn\Rest\UserObject $object, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, Minn\Auth\Roles $roles)
+__construct(Minn\Db $db, Minn\Content\Users $users, Minn\Content\Site $site, Minn\Rest\UserObject $object, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, Minn\Auth\Roles $roles, Minn\Rest\Schema $schema)
 ```
 
 
@@ -3950,7 +3966,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 104), `totals()` (private, line 128), `hasPublishedContent()` (private, line 163), `validRole()` (private, line 172), `validEmail()` (private, line 180), `loginRefusal()` (private, line 364)
+Internals: `listAllowed()` (private, line 108), `totals()` (private, line 132), `hasPublishedContent()` (private, line 167), `validRole()` (private, line 176), `validLocale()` (private, line 191), `assignableRole()` (private, line 203), `validEmail()` (private, line 212), `loginRefusal()` (private, line 398)
 
 
 ## ViewConfigPatch

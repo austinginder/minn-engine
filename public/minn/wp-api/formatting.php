@@ -111,8 +111,9 @@ function esc_sql($data)
         }
         return $data;
     }
-    $db = Runtime::current()->db;
-    return $db->escape((string) $data);
+    // Through the database object plugins query with, so a literal % comes back as its placeholder escape.
+    global $wpdb;
+    return $wpdb instanceof wpdb ? $wpdb->_escape((string) $data) : Runtime::current()->db->escape((string) $data);
 }
 
 function wp_pre_kses_less_than($content)

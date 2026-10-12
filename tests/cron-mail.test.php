@@ -173,11 +173,14 @@ wp("db query \"UPDATE wp_users SET user_activation_key='' WHERE user_login='admi
 // 3. The mail transport switch and the test command.
 check(str_contains(engineWp('minn mail cron-mail-suite@example.com'), 'Sent through the mail transport'), 'wp minn mail sends through the default transport');
 engineWp("option update minn_mail '{\"transport\":\"log\"}' --format=json");
-$log = minn_test_site_root() . '/public/wp-content/minn-mail.log';
+$log = minn_test_site_root() . '/public/wp-content/minn-mail.log.php';
 @unlink($log);
 engineWp('minn mail log-transport@example.com');
 $line = trim((string) @file_get_contents($log));
-check(str_contains($line, '"log-transport@example.com"') && str_contains($line, 'Test email'), 'the log transport writes the message to wp-content/minn-mail.log', $line);
+check(str_contains($line, '"log-transport@example.com"') && str_contains($line, 'Test email'), 'the log transport writes the message to wp-content/minn-mail.log.php', $line);
+check(str_starts_with($line, '<?php return; ?>'), 'the mail log opens with a line that returns from a request for it, so the web server never serves it');
+$served = page("$ENGINE/wp-content/minn-mail.log.php");
+check(!str_contains((string) ($served['body'] ?? ''), 'log-transport@example.com'), 'a request for the mail log gets none of its messages', (string) ($served['status'] ?? ''));
 engineWp('option delete minn_mail');
 @unlink($log);
 

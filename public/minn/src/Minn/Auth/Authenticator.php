@@ -58,7 +58,7 @@ final readonly class Authenticator
             return $session;
         }
         if ($nonce === null) {
-            return AuthFailure::notLoggedIn();
+            return AuthFailure::cookieWithoutNonce();
         }
         if (!Nonce::verify($nonce, $session->id(), $session->token)) {
             return AuthFailure::invalidNonce();

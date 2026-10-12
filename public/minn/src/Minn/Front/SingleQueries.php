@@ -66,6 +66,15 @@ final readonly class SingleQueries
             return $attachment;
         }
         $viewable = $post !== null && (in_array($post->type, ['post', 'page'], true) || !empty(Runtime::registry()->postType($post->type)['publicly_queryable']));
+        if ((!$viewable || !($this->readable)($post)) && $request->has('feed')) {
+            // A feed asked of a post the reader cannot see, as the reference answers it: one that exists but may not be
+            // read is its comment feed, served from the query vars as a pretty address's is, whose query drops the post
+            // and its comments (an empty channel); no such post moves the feed onto the site's (?p=9&feed=rss2 to /feed/?p=9).
+            if ($post !== null) {
+                return Resolution::notFound()->withVars([$key => (string) $post->id, 'feed' => (string) $request->query('feed')]);
+            }
+            return $canonical && $pretty ? Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/', (string) $request->query('feed'))) . $request->queryStringWithout('feed')) : Resolution::notFound();
+        }
         if (!$viewable || !($this->readable)($post)) {
             return Resolution::notFound();
         }

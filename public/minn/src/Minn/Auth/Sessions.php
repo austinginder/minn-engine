@@ -58,15 +58,22 @@ final readonly class Sessions
     {
         $token = self::generateToken();
         $sessions = $this->prune($this->read($userId));
-        // The store is read back by shape, so the request-supplied fields carry
-        // nothing that looks like the shape.
-        $plain = static fn (string $v): string => substr((string) preg_replace('/[^\x20-\x7e]|["{};]/', '', $v), 0, 255);
         // A request without a User-Agent stores no ua key, as the reference does.
-        $sessions[hash('sha256', $token)] = ['expiration' => $expiration, 'ip' => $plain($ip)]
-            + ($userAgent === '' ? [] : ['ua' => $plain($userAgent)])
+        $sessions[hash('sha256', $token)] = ['expiration' => $expiration, 'ip' => self::plain($ip)]
+            + ($userAgent === '' ? [] : ['ua' => self::plain($userAgent)])
             + ['login' => time()];
         $this->write($userId, $sessions);
         return $token;
+    }
+
+    /**
+     * A request-supplied field (the address, the user agent) as the store
+     * keeps it: the store is read back by shape, so it carries nothing that
+     * looks like the shape, and no more than 255 characters.
+     */
+    public static function plain(string $value): string
+    {
+        return substr((string) preg_replace('/[^\x20-\x7e]|["{};]/', '', $value), 0, 255);
     }
 
     /** Ends every session of the user (a password change). */

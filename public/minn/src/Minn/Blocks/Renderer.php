@@ -75,6 +75,10 @@ final class Renderer
     private bool $unfiltered = false;
     /** Whether the next block renders as its render callback called alone would (renderNativeAsCallback()). */
     private bool $asCallback = false;
+    /** @var array<string, mixed>|null the context render_block_context gave the next block (handContext()) */
+    private ?array $handed = null;
+    /** @var array<string, mixed>|null that context, for the block that has just started to render (ownContext()) */
+    private ?array $own = null;
     /** @var list<array<string, mixed>> context enclosing blocks provide to those inside */
     private array $provided = [];
     private Context $context;
@@ -265,6 +269,31 @@ final class Renderer
         }
     }
 
+    /**
+     * The context render_block_context already gave the next block, when
+     * render_block() or a WP_Block renders it: a block that provides its
+     * own context (a tabs block's id) reads it with ownContext() rather
+     * than asking again.
+     *
+     * @param array<string, mixed> $context
+     */
+    public function handContext(array $context): void
+    {
+        $this->handed = $context;
+    }
+
+    /**
+     * The context render_block_context gave the block that has just begun
+     * to render; null when nothing did. A block's renderer reads it first,
+     * before its inner blocks begin.
+     *
+     * @return array<string, mixed>|null
+     */
+    public function ownContext(): ?array
+    {
+        return $this->own;
+    }
+
     /** One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without). */
     public function renderBlock(Block $block): string
     {
@@ -272,6 +301,8 @@ final class Renderer
         $this->unfiltered = false;
         $asCallback = $this->asCallback;
         $this->asCallback = false;
+        $this->own = $this->handed;
+        $this->handed = null;
         // Every block, freeform text too, is asked whether its directives are processed (probe hook-inputs-2).
         $this->state->processesDirectives((bool) Runtime::hooks()->filter('interactivity_process_directives', [true]));
         if ($block->name === null) {

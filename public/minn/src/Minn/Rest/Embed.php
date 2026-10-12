@@ -149,7 +149,8 @@ final class Embed
         $inner = new Request(Method::Get, $path, $query, $request->headers, $request->cookies, '', $request->secure, $request->host, [], [], $request->remoteAddress, $request->server);
         try {
             // Plugins preparing the linked object see its own request, in embed context.
-            $response = Runtime::booted() ? RuntimePrepare::during(RuntimeRoutes::wpRequest($inner), fn () => $this->router->dispatch($inner)) : $this->router->dispatch($inner);
+            // rest_pre_dispatch and the rest_endpoints removals hold for it too (audit Low).
+            $response = Runtime::booted() ? RuntimePrepare::during(RuntimeRoutes::wpRequest($inner), fn () => RuntimeRoutes::predispatch($inner) ?? $this->router->dispatch($inner)) : $this->router->dispatch($inner);
         } catch (RestError $error) {
             $response = Reply::error($error);
         }
