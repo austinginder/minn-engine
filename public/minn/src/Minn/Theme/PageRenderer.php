@@ -10,6 +10,7 @@ use Minn\Blocks\Parser;
 use Minn\Blocks\Renderer;
 use Minn\Blocks\RenderState;
 use Minn\Content\Blocks;
+use Minn\Content\Page;
 use Minn\Content\Posts;
 use Minn\Content\Reader;
 use Minn\Content\Site;
@@ -116,10 +117,29 @@ final readonly class PageRenderer
             return null;
         }
         $query = $this->bridge->stand($resolution);
-        $takeover = $this->pluginTemplate();
-        if ($takeover !== null) {
-            return $takeover;
+        // The reference filters template_include under block themes too (the
+        // canvas is the incoming value); a plugin swapping in its own PHP file
+        // takes the whole response over, the CaptainCore Manager shape.
+        $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
+        $swapped = (string) \apply_filters('template_include', $canvas);
+        if ($swapped !== $canvas && $swapped !== '' && is_file($swapped)) {
+            return TemplateBuffer::around($swapped, static function () use ($swapped): string {
+                ob_start();
+                \load_template($swapped, false);
+                return (string) ob_get_clean();
+            });
         }
+        return TemplateBuffer::around($canvas, fn (): string => $this->document($resolution, $coreClasses, $template, $query));
+    }
+
+    /**
+     * The block template's document: the blocks rendered, the head, the body
+     * classes, the footer.
+     *
+     * @param array<string, mixed> $template
+     */
+    private function document(Resolution $resolution, array $coreClasses, array $template, Page $query): string
+    {
         RenderState::current()->reset();
         $this->renderer->withContext(new Context($resolution, $query->posts, $query->total, $this->bridge->perPage(), true));
         // The reference texturizes the rendered template as a whole, after the
@@ -149,23 +169,6 @@ final readonly class PageRenderer
             . ($bar === null ? '' : $bar->render($resolution))
             . '</body>' . "\n" . '</html>' . "\n";
         return Extensions::runner()?->filterDocument($document) ?? $document;
-    }
-
-    /**
-     * The reference filters template_include under block themes too (the
-     * canvas is the incoming value); a plugin swapping in its own PHP file
-     * takes the whole response over, the CaptainCore Manager shape.
-     */
-    private function pluginTemplate(): ?string
-    {
-        $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
-        $swapped = (string) \apply_filters('template_include', $canvas);
-        if ($swapped === $canvas || $swapped === '' || !is_file($swapped)) {
-            return null;
-        }
-        ob_start();
-        \load_template($swapped, false);
-        return (string) ob_get_clean();
     }
 
     /**

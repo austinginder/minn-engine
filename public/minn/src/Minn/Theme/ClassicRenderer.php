@@ -67,18 +67,12 @@ final readonly class ClassicRenderer
         if ($template === '' || !is_file($template)) {
             return null;
         }
-        // A template that fails half-way must not leave its half in the buffer for the error page to follow.
-        $level = ob_get_level();
-        ob_start();
-        try {
+        // A template that fails half-way leaves nothing in the buffer for the error page to follow.
+        return TemplateBuffer::around($template, static function () use ($template): string {
+            ob_start();
             \load_template($template, false);
-        } catch (\Throwable $failure) {
-            while (ob_get_level() > $level) {
-                ob_end_clean();
-            }
-            throw $failure;
-        }
-        return (string) ob_get_clean();
+            return (string) ob_get_clean();
+        });
     }
 
     /** The reference's loader order: the first true conditional whose template exists wins, index.php last. */

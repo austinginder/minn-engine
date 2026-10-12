@@ -98,6 +98,16 @@ final readonly class Response
     }
 
     /**
+     * Bytes written to PHP's output now, so into whatever buffers are open:
+     * for a page passed through buffers plugin code opened before it
+     * (Theme\TemplateBuffer), whose handlers then see it.
+     */
+    public static function write(string $bytes): void
+    {
+        echo $bytes;
+    }
+
+    /**
      * Writes the status, the headers, and the cookies now, and nothing else:
      * for an answer that code outside the engine may finish on its own (an
      * ajax handler that ends the request), which must find them already said.
