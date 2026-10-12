@@ -37,15 +37,18 @@ class WP_Widget_RSS extends WP_Widget
         }
         $title = apply_filters('widget_title', $title, $instance, $this->id_base);
         if ($title) {
-            $icon = '<img class="rss-widget-icon" style="border:0" width="14" height="14" src="' . esc_url(includes_url('images/rss.png')) . '" alt="' . esc_attr($title === 'Unknown Feed' ? 'RSS feed' : 'RSS feed: ' . $title) . '" loading="lazy" />';
-            $title = '<a class="rsswidget rss-widget-feed" href="' . esc_url(strip_tags($url)) . '">' . $icon . '</a> <a class="rsswidget rss-widget-title" href="' . esc_url($link) . '">' . esc_html($title) . '</a>';
+            $icon = '<img class="rss-widget-icon" style="border:0" width="14" height="14" src="' . esc_url(includes_url('images/rss.png')) . '" alt="' . esc_attr('RSS feed: ' . $title) . '" loading="lazy" />';
+            $feedLink = apply_filters('rss_widget_feed_link', '<a class="rsswidget rss-widget-feed" href="' . esc_url(strip_tags($url)) . '">' . $icon . '</a> ', $instance);
+            $title = $feedLink . '<a class="rsswidget rss-widget-title" href="' . esc_url($link) . '">' . esc_html($title) . '</a>';
         }
+        [$open, $close] = _minn_widget_nav((string) $title, 'RSS Feed');
         echo $args['before_widget'];
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
+        echo $open;
         wp_widget_rss_output($rss, $instance);
-        echo $args['after_widget'];
+        echo $close . $args['after_widget'];
     }
 
     public function update($new_instance, $old_instance)

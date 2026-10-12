@@ -34,6 +34,9 @@ use Minn\Support\Kses;
  */
 final readonly class Navigation
 {
+    /** The other blocks a navigation lists, each in an li (block_core_navigation_listable_blocks). */
+    private const LISTABLE = ['core/site-title', 'core/site-logo', 'core/social-links'];
+
     /** A submenu's interactivity context. */
     private const SUBMENU_CONTEXT = '{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null, "previousFocus": null }';
     private const SUBMENU_TOGGLE = 'data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick"';
@@ -109,6 +112,12 @@ final readonly class Navigation
         $label = $ariaLabel !== '' ? $ariaLabel : $label;
         // Only blocks are items; the whitespace between them is not rendered.
         $items = array_values(array_filter($items, static fn (Block $item) => $item->name !== null));
+        $this->posts->primeRows(self::linkedPosts($items));
+        // The reference weighs each link to a post once before it hands the items to plugins, then again as it renders.
+        if (Runtime::hooks()->has('render_block_core_navigation_link_allowed_post_status')) {
+            $this->weighLinks($items);
+        }
+        $items = self::filteredItems($items);
         $label = $renderer->state()->uniqueLabel($label);
         $id = $renderer->state()->nextId();
         $layout = (array) $block->attr('layout', []);
@@ -134,9 +143,10 @@ final readonly class Navigation
         ])));
         $renderer->state()->enterNavigation();
         // Submenus read how they open from the navigation, as block context.
-        $settings = ['showSubmenuIcon' => (bool) $block->attr('showSubmenuIcon', true), 'openSubmenusOnClick' => (bool) $block->attr('openSubmenusOnClick', false)];
+        $settings = ['showSubmenuIcon' => (bool) $block->attr('showSubmenuIcon', true), 'openSubmenusOnClick' => (bool) $block->attr('openSubmenusOnClick', false)]
+            + array_intersect_key($block->attrs, array_flip(['overlayTextColor', 'customOverlayTextColor', 'overlayBackgroundColor', 'customOverlayBackgroundColor']));
         $listLabel = $ariaLabel === '' ? '' : ' aria-label="' . Html::attr($ariaLabel) . '"';
-        $list = $items === [] ? '' : '<ul ' . $style . 'class="' . Html::attr($listClasses) . '"' . $listLabel . '>' . $renderer->providing($settings, fn (): string => $this->items($items, $renderer)) . '</ul>';
+        $list = $renderer->providing($settings, fn (): string => $this->groups($items, $renderer, '<ul ' . $style . 'class="' . Html::attr($listClasses) . '"' . $listLabel . '>'));
         $renderer->state()->leaveNavigation();
         if ($menuKey !== null) {
             $renderer->state()->leave($menuKey);
@@ -211,6 +221,102 @@ final readonly class Navigation
         return $out;
     }
 
+    /**
+     * The navigation's items as the reference lays them out (probe
+     * hook-inputs-2): the blocks block_core_navigation_listable_blocks names
+     * are wrapped in an li; each run of items whose markup holds an li
+     * (links, submenus, a page list, a plugin's own list items) is a list of
+     * its own; any other block stands between the runs as it renders, and
+     * an item that renders nothing ends a run.
+     *
+     * @param list<Block> $items
+     */
+    private function groups(array $items, Renderer $renderer, string $open): string
+    {
+        $out = '';
+        $run = '';
+        foreach ($items as $item) {
+            $html = $renderer->renderBlock($item);
+            if ($html !== '' && in_array($item->name, (array) Runtime::hooks()->filter('block_core_navigation_listable_blocks', [self::LISTABLE]), true)) {
+                $html = '<li class="wp-block-navigation-item">' . $html . '</li>';
+            }
+            if (preg_match('/<li(?=[\s\/>])/i', $html) === 1) {
+                $run .= $html;
+                continue;
+            }
+            $out .= ($run === '' ? '' : $open . $run . '</ul>') . $html;
+            $run = '';
+        }
+        return $out . ($run === '' ? '' : $open . $run . '</ul>');
+    }
+
+    /**
+     * The items as block_core_navigation_render_inner_blocks leaves them,
+     * handed to a plugin as the WP_Block_List the reference renders.
+     *
+     * @param list<Block> $items
+     * @return list<Block>
+     */
+    private static function filteredItems(array $items): array
+    {
+        if (!Runtime::hooks()->has('block_core_navigation_render_inner_blocks')) {
+            return $items;
+        }
+        $list = Runtime::hooks()->filter('block_core_navigation_render_inner_blocks', [new \WP_Block_List(array_map(static fn (Block $item): array => $item->toArray(), $items))]);
+        $kept = [];
+        foreach (is_iterable($list) ? $list : [] as $block) {
+            if ($block instanceof \WP_Block) {
+                $kept[] = Block::fromArray($block->parsed_block);
+            }
+        }
+        return $kept;
+    }
+
+    /**
+     * The posts the items link to, submenus' too, read in one query before
+     * each link asks for its own.
+     *
+     * @param list<Block> $items
+     * @return list<int>
+     */
+    private static function linkedPosts(array $items): array
+    {
+        $ids = [];
+        foreach ($items as $item) {
+            if ($item->attr('kind') === 'post-type' && (int) $item->attr('id', 0) > 0) {
+                $ids[] = (int) $item->attr('id', 0);
+            }
+            array_push($ids, ...self::linkedPosts($item->innerBlocks));
+        }
+        return $ids;
+    }
+
+    /** @param list<Block> $items each link to a post among them, submenus' too, through linkable() */
+    private function weighLinks(array $items): void
+    {
+        foreach ($items as $item) {
+            if ($item->name === 'core/navigation-link' && $item->attr('kind') === 'post-type' && (int) $item->attr('id', 0) > 0) {
+                $this->linkable($item, (int) $item->attr('id', 0));
+            }
+            $this->weighLinks($item->innerBlocks);
+        }
+    }
+
+    /**
+     * Whether a link to a post renders: the post is there with a status
+     * render_block_core_navigation_link_allowed_post_status allows
+     * (publish), asked with the link's attributes and its block.
+     */
+    private function linkable(Block $block, int $id): bool
+    {
+        $allowed = ['publish'];
+        if (Runtime::hooks()->has('render_block_core_navigation_link_allowed_post_status')) {
+            $allowed = (array) Runtime::hooks()->filter('render_block_core_navigation_link_allowed_post_status', [$allowed, $block->attrs + ['opensInNewTab' => false], new \WP_Block($block->toArray())]);
+        }
+        $status = $this->posts->find($id)?->status;
+        return $status !== null && in_array($status, $allowed, true);
+    }
+
     /** @return list<string> the colour and font-size preset classes the block's attributes declare */
     private static function presetClasses(Block $block): array
     {
@@ -249,11 +355,18 @@ final readonly class Navigation
     private function link(Block $block, Renderer $renderer): string
     {
         $label = (string) $block->attr('label', '');
+        // A link without a label is not shown (probe hook-inputs-2).
+        if ($label === '') {
+            return '';
+        }
         $url = Kses::url((string) $block->attr('url', ''));
         $resolution = $renderer->context()->resolution;
         $kind = (string) $block->attr('kind', '');
         $type = (string) $block->attr('type', '');
         $id = (int) $block->attr('id', 0);
+        if ($kind === 'post-type' && $id > 0 && !$this->linkable($block, $id)) {
+            return '';
+        }
         $current = ($kind === 'post-type'
             && $id === $resolution->id()
             && $resolution->kind === ($type === 'page' ? Kind::Page : Kind::Single))
@@ -263,7 +376,9 @@ final readonly class Navigation
         $target = (bool) $block->attr('opensInNewTab', false) ? ' target="_blank"  ' : '';
         // A link made from a menu item carries its attribute title, even an empty one.
         $title = isset($block->attrs['title']) ? ' title="' . Html::attr((string) $block->attrs['title']) . '"' : '';
-        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content"  href="' . Html::attr($url) . '"' . $target . $title . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
+        // A link with no address at all has no href.
+        $href = isset($block->attrs['url']) ? ' href="' . Html::attr($url) . '"' : '';
+        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content" ' . $href . $target . $title . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
     }
 
     /**
@@ -278,11 +393,14 @@ final readonly class Navigation
         $onClick = !empty($settings['openSubmenusOnClick']);
         $icon = !empty($settings['showSubmenuIcon']);
         $label = (string) $block->attr('label', '');
+        if ($label === '') {
+            return '';
+        }
         $toggle = self::SUBMENU_TOGGLE . ' aria-label="' . Html::attr(strip_tags($label) . ' submenu') . '"';
         $text = '<span class="wp-block-navigation-item__label">' . $label . '</span>';
         $head = $onClick
             ? '<button ' . $toggle . ' class="wp-block-navigation-item__content wp-block-navigation-submenu__toggle" >' . $text . '</button><span class="wp-block-navigation__submenu-icon">' . self::CHEVRON . '</span>'
-            : '<a class="wp-block-navigation-item__content" href="' . Html::attr(Kses::url((string) $block->attr('url', ''))) . '">' . $text . '</a>'
+            : '<a class="wp-block-navigation-item__content"' . (isset($block->attrs['url']) ? ' href="' . Html::attr(Kses::url((string) $block->attrs['url'])) . '"' : '') . '>' . $text . '</a>'
                 . ($icon ? '<button ' . $toggle . ' class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" >' . self::CHEVRON . '</button>' : '');
         $wired = $onClick || $icon;
         if ($wired) {
@@ -321,7 +439,29 @@ final readonly class Navigation
         // The reference compares the queried object's id to page ids without
         // regard to type, so a term or author archive can light up a page too.
         $currentId = $renderer->context()->resolution->id();
-        return '<ul class="wp-block-page-list">' . $this->pageItems($tree, 0, $currentId, $this->ancestorsOf($tree, $currentId)) . '</ul>';
+        return '<ul class="wp-block-page-list">' . $this->pageItems($tree, 0, $currentId, $this->ancestorsOf($tree, $currentId), self::submenuColours($renderer->blockContext())) . '</ul>';
+    }
+
+    /**
+     * A page list's submenu items wear the navigation's overlay colours: a
+     * named one as its classes, a custom one as has-* and an inline style.
+     *
+     * @param array<string, mixed> $nav the navigation's context
+     * @return array{0: string, 1: string} the classes, each led by a space, and the style attribute
+     */
+    private static function submenuColours(array $nav): array
+    {
+        $classes = '';
+        $style = '';
+        foreach (['Text' => ['color', 'has-text-color', '-color'], 'Background' => ['background-color', 'has-background', '-background-color']] as $kind => [$property, $has, $suffix]) {
+            if (!empty($nav["overlay{$kind}Color"])) {
+                $classes .= " {$has} has-" . Styles::slug((string) $nav["overlay{$kind}Color"]) . $suffix;
+            } elseif (!empty($nav["customOverlay{$kind}Color"])) {
+                $classes .= " {$has}";
+                $style .= "{$property}: " . $nav["customOverlay{$kind}Color"] . ';';
+            }
+        }
+        return [$classes, $style === '' ? '' : ' style="' . Html::attr($style) . '"'];
     }
 
     /** @return list<int> the ids of the current page's ancestors */
@@ -347,9 +487,12 @@ final readonly class Navigation
      * rendering inside a navigation block: submenu toggles, the item
      * classes, and the interactivity directives all belong to the nav. On
      * its own (wp/v2/navigation serves one that way) the reference emits
-     * plain list items and a bare submenu list.
+     * plain list items and a bare submenu list. Submenu items wear the
+     * navigation's overlay colours (submenuColours()).
+     *
+     * @param array{0: string, 1: string} $submenuColors
      */
-    private function pageItems(array $tree, int $parent, int $currentId, array $ancestors, string $submenuColors = ' has-text-color has-contrast-color has-background has-base-background-color'): string
+    private function pageItems(array $tree, int $parent, int $currentId, array $ancestors, array $submenuColors): string
     {
         $inNav = RenderState::current()->inNavigation();
         $out = '';
@@ -372,9 +515,9 @@ final readonly class Navigation
             // reference joins the item class to a nav-class list that is
             // empty outside a navigation and colourless above a submenu.
             $navClasses = $inNav ? ' wp-block-navigation-item open-on-hover-click' : '';
-            $colours = $inNav && $parent > 0 ? $submenuColors : '';
+            [$colours, $style] = $inNav && $parent > 0 ? $submenuColors : ['', ''];
             $itemClasses = 'wp-block-pages-list__item' . $marker . $navClasses . ' ' . ltrim($colours . $home);
-            $out .= '<li class="' . $itemClasses . '">' . $link . '</li>';
+            $out .= '<li class="' . $itemClasses . '"' . $style . '>' . $link . '</li>';
         }
         return $out;
     }

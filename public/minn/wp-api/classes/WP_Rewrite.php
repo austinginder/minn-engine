@@ -288,9 +288,19 @@ class WP_Rewrite
         return apply_filters_deprecated('rewrite_rules', [$rules], '1.5.0', 'mod_rewrite_rules');
     }
 
+    /** The web.config rule IIS rewrites with, inside its parent tags when asked; none without pretty permalinks. */
     public function iis7_url_rewrite_rules($add_parent_tag = false)
     {
-        return '';
+        if (!$this->using_permalinks()) {
+            return '';
+        }
+        $rule = "\n\t\t\t<rule name=\"WordPress: " . esc_attr(get_option('home')) . "\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n"
+            . "\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />\n"
+            . "\t\t\t\t\t</conditions>\n\t\t\t\t<action type=\"Rewrite\" url=\"index.php\" />\n\t\t\t</rule>";
+        if ($add_parent_tag) {
+            $rule = "<configuration>\n\t<system.webServer>\n\t\t<rewrite>\n\t\t\t<rules>" . $rule . "\n\t\t\t</rules>\n\t\t</rewrite>\n\t</system.webServer>\n</configuration>";
+        }
+        return apply_filters('iis7_url_rewrite_rules', $rule);
     }
 
     public function add_rule($regex, $query, $after = 'bottom')

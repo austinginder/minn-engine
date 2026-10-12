@@ -870,6 +870,8 @@ function wp_clean_themes_cache($clear_update_cache = true)
     if ($clear_update_cache) {
         delete_site_transient('update_themes');
     }
+    // The themes on disk are searched again, as the reference searches them (probe hook-inputs-2).
+    search_theme_directories(true);
 }
 
 /** Every queued style printed (the sign-in page's head prints them so), then print_admin_styles; the handles printed. */

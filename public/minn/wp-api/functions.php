@@ -191,10 +191,10 @@ function wp_check_filetype_and_ext($file, $filename, $mimes = null)
     return apply_filters('wp_check_filetype_and_ext', $result, $file, $filename, $mimes, $checked['real_mime']);
 }
 
+/** An image's real type from its header (Media\ImageMime), or false. */
 function wp_get_image_mime($file)
 {
-    $info = @getimagesize((string) $file);
-    return $info['mime'] ?? false;
+    return Minn\Media\ImageMime::of((string) $file) ?? false;
 }
 
 function get_attached_file($attachment_id, $unfiltered = false)
@@ -830,10 +830,18 @@ function wp_widget_description($id)
 }
 
 
+/**
+ * The expired-session dialog: the sign-in form in a frame when it is on
+ * this request's host and scheme (wp_auth_check_same_domain), always the
+ * link to sign in again in a new tab (probe hook-inputs-2).
+ */
 function wp_auth_check_html()
 {
     $login_url = wp_login_url();
-    echo "\t<div id=\"wp-auth-check-wrap\" class=\"hidden fallback\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\t" . esc_html__('Close dialog') . "\t</span></button>\n\t\t<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">" . esc_html__('Session expired') . "</b></p>\n\t\t<p><a href=\"" . esc_url($login_url) . "\" target=\"_blank\">" . esc_html__('Please log in again.') . "</a>\n\t\t" . esc_html__('The login page will open in a new tab. After logging in you can close it and return to this page.') . "</p>\n\t</div>\n\t</div>\n\t</div>\n\t";
+    $same_domain = parse_url($login_url, PHP_URL_HOST) === ($_SERVER['HTTP_HOST'] ?? null) && parse_url($login_url, PHP_URL_SCHEME) === (is_ssl() ? 'https' : 'http');
+    $same_domain = apply_filters('wp_auth_check_same_domain', $same_domain);
+    $form = $same_domain ? "\t<div id=\"wp-auth-check-form\" class=\"loading\" data-src=\"" . esc_url(add_query_arg(['interim-login' => '1', 'wp_lang' => get_user_locale()], $login_url)) . "\"></div>\n\t\t\t" : '';
+    echo "\t<div id=\"wp-auth-check-wrap\" class=\"" . ($same_domain ? 'hidden' : 'hidden fallback') . "\">\n\t<div id=\"wp-auth-check-bg\"></div>\n\t<div id=\"wp-auth-check\">\n\t<button type=\"button\" class=\"wp-auth-check-close button-link\"><span class=\"screen-reader-text\">\n\t\t" . esc_html__('Close dialog') . "\t</span></button>\n\t\t" . $form . "<div class=\"wp-auth-fallback\">\n\t\t<p><b class=\"wp-auth-fallback-expired\" tabindex=\"0\">" . esc_html__('Session expired') . "</b></p>\n\t\t<p><a href=\"" . esc_url($login_url) . "\" target=\"_blank\">" . esc_html__('Please log in again.') . "</a>\n\t\t" . esc_html__('The login page will open in a new tab. After logging in you can close it and return to this page.') . "</p>\n\t</div>\n\t</div>\n\t</div>\n\t";
 }
 
 function wp_auth_check($response)

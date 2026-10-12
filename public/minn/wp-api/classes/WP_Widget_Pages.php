@@ -24,7 +24,8 @@ class WP_Widget_Pages extends WP_Widget
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
-        echo "\n\t\t\t<ul>\n\t\t\t\t" . $out . "\t\t\t</ul>\n\n\t\t\t";
+        [$open, $close] = _minn_widget_nav((string) $title, 'Pages');
+        echo $open . "\n\t\t\t<ul>\n\t\t\t\t" . $out . "\t\t\t</ul>\n\n\t\t\t" . $close;
         echo $args['after_widget'];
     }
 

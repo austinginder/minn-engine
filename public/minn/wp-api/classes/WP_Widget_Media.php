@@ -58,6 +58,7 @@ abstract class WP_Widget_Media extends WP_Widget
     public function widget($args, $instance)
     {
         $instance = wp_parse_args($instance, wp_list_pluck($this->get_instance_schema(), 'default'));
+        $instance = apply_filters("widget_{$this->id_base}_instance", $instance, $args, $this);
         if (!$this->has_content($instance)) {
             return;
         }

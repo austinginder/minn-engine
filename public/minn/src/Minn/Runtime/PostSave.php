@@ -32,6 +32,9 @@ final class PostSave
     /** A REST field and the column it fills in the prepared post. */
     private const FIELDS = ['title' => 'post_title', 'content' => 'post_content', 'excerpt' => 'post_excerpt', 'status' => 'post_status', 'date' => 'post_date', 'date_gmt' => 'post_date_gmt', 'slug' => 'post_name', 'password' => 'post_password', 'author' => 'post_author', 'parent' => 'post_parent', 'menu_order' => 'menu_order', 'comment_status' => 'comment_status', 'ping_status' => 'ping_status'];
 
+    /** The prepared post's columns in the reference's order, each with the REST field that sends it (null: always there). */
+    private const PREPARED = ['post_title' => 'title', 'post_content' => 'content', 'post_excerpt' => 'excerpt', 'post_type' => null, 'post_status' => 'status', 'post_date' => 'date', 'post_date_gmt' => 'date', 'edit_date' => 'date', 'post_name' => 'slug', 'post_author' => 'author', 'post_password' => 'password', 'post_parent' => 'parent', 'menu_order' => 'menu_order', 'comment_status' => 'comment_status', 'ping_status' => 'ping_status'];
+
     private const UNSLUGGED = ['draft', 'pending', 'auto-draft'];
 
     private const PARENT = 'post_parent';
@@ -206,9 +209,12 @@ final class PostSave
     }
 
     /**
-     * rest_pre_insert_{type} over the prepared post: the columns the request
-     * named, its id when it edits, its type when it creates. What the filter
-     * changes or adds is kept; an error refuses the save.
+     * rest_pre_insert_{type} over the prepared post, built as the
+     * reference's controller builds it: its id when it edits, the fields
+     * the request named in the reference's order, the type always, both
+     * dates and edit_date when either date was sent, page_template null.
+     * rest_block_hooks_post_types sees it first. What
+     * the filter changes or adds is kept; an error refuses the save.
      *
      * @param array<string, mixed> $columns
      * @param array<string, mixed> $body
@@ -220,14 +226,22 @@ final class PostSave
         if ($before !== null) {
             $prepared->ID = $before->id;
         }
-        foreach (self::FIELDS as $field => $column) {
-            if (array_key_exists($field, $body) && array_key_exists($column, $columns)) {
-                $prepared->{$column} = $columns[$column];
+        // Each column the request sent, in the reference's order: the type always, both dates and edit_date for either date.
+        $dated = isset($body['date']) || isset($body['date_gmt']);
+        $values = $columns + ['post_type' => $type, 'edit_date' => true];
+        foreach (self::PREPARED as $column => $field) {
+            $sent = match ($field) {
+                null => true,
+                'date' => $dated,
+                default => array_key_exists($field, $body),
+            };
+            if ($sent && array_key_exists($column, $values)) {
+                $prepared->{$column} = $values[$column];
             }
         }
-        if ($before === null) {
-            $prepared->post_type = $type;
-        }
+        // The template is set after the save; the prepared post names it null, sent or not.
+        $prepared->page_template = null;
+        \Minn\Rest\RuntimePrepare::savedWithHookedBlocks($prepared, $type);
         $filtered = \apply_filters("rest_pre_insert_{$type}", $prepared, RuntimeRoutes::wpRequest($request));
         if ($filtered instanceof \WP_Error) {
             $status = $filtered->get_error_data();

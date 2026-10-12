@@ -50,10 +50,16 @@ class WP_HTTP_Proxy
 
     public function send_through_proxy($uri)
     {
+        $check = parse_url((string) $uri);
+        $site = parse_url((string) get_option('siteurl'));
+        $answer = apply_filters('pre_http_send_through_proxy', null, $uri, $check, $site);
+        if ($answer !== null) {
+            return $answer;
+        }
         // Only the name localhost and the site's own host skip the proxy; a
         // loopback address written out in full does not.
-        $host = parse_url((string) $uri, PHP_URL_HOST);
-        $home = parse_url(get_option('home'), PHP_URL_HOST);
+        $host = $check['host'] ?? null;
+        $home = $site['host'] ?? null;
         if ($host === 'localhost' || ($home !== null && $host === $home)) {
             return false;
         }

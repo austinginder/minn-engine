@@ -8,6 +8,7 @@ uploads, image sizes and attachment metadata
 | [`Canvas`](#canvas) | final readonly class | 168 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 73 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
+| [`ImageMime`](#imagemime) | final class | 34 | An image file's real type from its first bytes, as the reference sniffs |
 | [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
@@ -165,6 +166,25 @@ a type that is empty) is the default icon.
 The icon's address for a type or an attachment id.
 
 Internals: `map()` (private, line 52), `files()` (private, line 71)
+
+
+## ImageMime
+
+`final class Minn\Media\ImageMime` · `public/minn/src/Minn/Media/ImageMime.php`
+
+An image file's real type from its first bytes, as the reference sniffs
+it before trusting an upload's extension (probe hook-inputs-2): PHP's own
+header check for the classic formats (JPEG, PNG, GIF, WebP, BMP, ICO,
+TIFF, AVIF), then an ISO media file's major brand for the HEIF family
+PHP does not know. A file too short or of another kind has no image type.
+
+- const `BRANDS` = `array (   'heic' => 'image/heic',   'heix' => 'image/heic',   'hevc' => 'image/heic-sequence',   'hevx' => 'image/heic-sequence',   'mif1' => 'image/heif',   'heim' => 'image/heif',   'heis' => 'image/heif',   'msf1' => 'image/heif-sequence',   'avif' => 'image/avif',   'avis' => 'image/avif', )` — An ISO base media file's major brand and the image type it declares.
+
+Used by: `Minn\Runtime\FileTypeCheck`
+
+### static `of(string $file): ?string`
+
+The image type the file's header declares, or null.
 
 
 ## Kind
@@ -393,7 +413,7 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 
 - const `MIMES` = `array (   'png' => 'image/png',   'jpg' => 'image/jpeg',   'jpeg' => 'image/jpeg',   'gif' => 'image/gif',   'webp' => 'image/webp',   'pdf' => 'application/pdf',   'txt' => 'text/plain',   'mp4' => 'video/mp4',   'mp3' => 'audio/mpeg',   'zip' => 'application/zip', )` — extension => canonical mime
 
-Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`
+Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`
 
 ```php
 __construct(Minn\Front\Permalinks $permalinks, string $baseDir)

@@ -14,6 +14,7 @@
         "ms_loaded": "wp-settings.php loads ms-settings.php only on a network",
         "network_plugin_loaded": "wp-settings.php loads network plugins only on a network",
         "wp_signup_location": "signup is a network's",
-        "is_user_member_of_blog": "is_user_member_of_blog() answers from the user alone on a single site"
+        "is_user_member_of_blog": "is_user_member_of_blog() answers from the user alone on a single site",
+        "make_spam_user": "a single site refuses to mark an account spam (wp_insert_user answers no_spam) and update_user_status() is a network's"
     }
 }

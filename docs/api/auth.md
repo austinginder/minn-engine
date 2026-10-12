@@ -15,7 +15,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 59 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
-| [`PasswordReset`](#passwordreset) | final readonly class | 69 | Password reset keys in the reference's storage shape: user_activation_key |
+| [`PasswordReset`](#passwordreset) | final readonly class | 78 | Password reset keys in the reference's storage shape: user_activation_key |
 | [`PortableHash`](#portablehash) | final class | 90 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
@@ -534,8 +534,8 @@ holds "time:hash", the key itself travels in the email link and is good
 for a day. The hash is the reference's own ($generic$, FastHash), so a
 link either stack sent works on the other. Older shapes still verify: a
 phpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.
-A matching key stored without its time is expired, as the reference
-treats it.
+A matching key stored without its time (or, older still, stored as
+itself) is expired, as the reference treats it.
 
 - const `LIFETIME` = `86400`
 
@@ -563,13 +563,16 @@ True when the key matches the stored hash and has not expired.
 
 ### `status(Minn\Content\UserRecord $user, string $key, int $lifetime = self::LIFETIME): string`
 
-"valid", "expired" (a matching key past its lifetime, a day unless given, or stored without a time), or "invalid".
+"valid", "expired" (a matching key past its lifetime, a day unless
+given), "unstamped" (a matching key stored without a time, which the
+reference counts expired after asking password_reset_key_expired), or
+"invalid".
 
 ### `clear(Minn\Content\UserRecord $user): void`
 
 Forgets a user's reset key.
 
-Internals: `hash()` (private, line 74), `matches()` (private, line 79)
+Internals: `hash()` (private, line 83), `matches()` (private, line 88)
 
 
 ## PortableHash

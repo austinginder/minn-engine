@@ -49,12 +49,13 @@ final class Options
     public const AUTOLOAD_VALUES = ['yes', 'on', 'auto-on', 'auto'];
 
     /**
-     * Options not autoloaded that the engine itself reads on every request
-     * (the symbol survey, recovery's paused plugins, the site language, the
-     * HTTPS migration flag): read together as a request begins, as one read
-     * rather than one each.
+     * Options not autoloaded that are read on every request (the symbol
+     * survey, recovery's paused plugins, the site language, the HTTPS
+     * migration flag, and the post types and taxonomies Minn Admin keeps
+     * and registers as it loads): read together as a request begins, as one
+     * read rather than one each.
      */
-    public const EVERY_REQUEST = ['minn_runtime_symbols', Recovery::PLUGINS_OPTION, 'WPLANG', 'https_migration_required'];
+    public const EVERY_REQUEST = ['minn_runtime_symbols', Recovery::PLUGINS_OPTION, 'WPLANG', 'https_migration_required', 'minn_admin_post_types', 'minn_admin_taxonomies'];
 
     public function __construct(private readonly Db $db)
     {

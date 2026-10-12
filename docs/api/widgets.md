@@ -55,7 +55,7 @@ The block widget: its block markup in a textarea.
 
 ### static `text(WP_Widget $widget, array $instance): string`
 
-The text widget in its visual mode: hidden fields the editor syncs.
+The text widget in its visual mode: hidden fields the editor syncs (after the indent WP_Widget_Text::form prints first).
 
 ### static `tagCloud(WP_Widget $widget, array $instance): string`
 

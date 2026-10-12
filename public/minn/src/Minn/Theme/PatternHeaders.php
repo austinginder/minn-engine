@@ -24,11 +24,37 @@ final class PatternHeaders
      */
     public static function all(string $themeDir): array
     {
-        $found = [];
+        return self::of(self::files($themeDir));
+    }
+
+    /**
+     * The pattern files a theme ships, file name => path, in name order.
+     *
+     * @return array<string, string>
+     */
+    public static function files(string $themeDir): array
+    {
+        $files = [];
         foreach (glob($themeDir . '/patterns/*.php') ?: [] as $file) {
-            $record = self::read((string) file_get_contents($file, false, null, 0, 8192));
+            $files[basename($file)] = $file;
+        }
+        return $files;
+    }
+
+    /**
+     * The records of a list of pattern files, file name => path (a list a
+     * plugin may have changed); a file that is not a pattern is left out.
+     *
+     * @param array<string, string> $files
+     * @return array<string, array<string, mixed>>
+     */
+    public static function of(array $files): array
+    {
+        $found = [];
+        foreach ($files as $name => $file) {
+            $record = is_file((string) $file) ? self::read((string) file_get_contents((string) $file, false, null, 0, 8192)) : null;
             if ($record !== null) {
-                $found[basename($file)] = $record;
+                $found[(string) $name] = $record;
             }
         }
         return $found;

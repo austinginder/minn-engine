@@ -1,0 +1,2030 @@
+[
+    [
+        "a column's charset",
+        {
+            "heard": [
+                [
+                    "pre_get_col_charset",
+                    [
+                        null,
+                        "wp_posts",
+                        "post_title"
+                    ]
+                ],
+                [
+                    "pre_get_table_charset",
+                    [
+                        null,
+                        "wp_posts"
+                    ]
+                ]
+            ],
+            "result": "utf8mb4"
+        }
+    ],
+    [
+        "a column the table lacks",
+        {
+            "heard": [
+                [
+                    "pre_get_col_charset",
+                    [
+                        null,
+                        "wp_posts",
+                        "zz_no_column"
+                    ]
+                ]
+            ],
+            "result": "utf8mb4"
+        }
+    ],
+    [
+        "the registry, a domain",
+        {
+            "heard": [
+                [
+                    "pre_get_language_files_from_path",
+                    [
+                        null,
+                        "{content}/languages/plugins/"
+                    ]
+                ],
+                [
+                    "pre_get_language_files_from_path",
+                    [
+                        null,
+                        "{content}/languages/themes/"
+                    ]
+                ],
+                [
+                    "lang_dir_for_domain",
+                    [
+                        false,
+                        "zz-hi2",
+                        "en_US"
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "the registry, a folder's files",
+        {
+            "heard": [
+                [
+                    "pre_get_language_files_from_path",
+                    [
+                        null,
+                        "{content}/languages/zz-none/"
+                    ]
+                ]
+            ],
+            "result": 0
+        }
+    ],
+    [
+        "a theme made",
+        {
+            "heard": [],
+            "result": "Twenty Twenty-Five"
+        }
+    ],
+    [
+        "the themes searched for again",
+        {
+            "heard": [
+                [
+                    "wp_cache_themes_persistently",
+                    [
+                        false,
+                        "search_theme_directories"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "a theme's patterns",
+        {
+            "heard": [
+                [
+                    "theme_block_pattern_files",
+                    [
+                        {
+                            "banner-about-book.php": "{content}/themes/twentytwentyfive/patterns/banner-about-book.php",
+                            "banner-cover-big-heading.php": "{content}/themes/twentytwentyfive/patterns/banner-cover-big-heading.php",
+                            "banner-intro-image.php": "{content}/themes/twentytwentyfive/patterns/banner-intro-image.php",
+                            "banner-intro.php": "{content}/themes/twentytwentyfive/patterns/banner-intro.php",
+                            "banner-poster.php": "{content}/themes/twentytwentyfive/patterns/banner-poster.php",
+                            "banner-with-description-and-images-grid.php": "{content}/themes/twentytwentyfive/patterns/banner-with-description-and-images-grid.php",
+                            "binding-format.php": "{content}/themes/twentytwentyfive/patterns/binding-format.php",
+                            "comments.php": "{content}/themes/twentytwentyfive/patterns/comments.php",
+                            "contact-centered-social-link.php": "{content}/themes/twentytwentyfive/patterns/contact-centered-social-link.php",
+                            "contact-info-locations.php": "{content}/themes/twentytwentyfive/patterns/contact-info-locations.php",
+                            "contact-location-and-link.php": "{content}/themes/twentytwentyfive/patterns/contact-location-and-link.php",
+                            "cta-book-links.php": "{content}/themes/twentytwentyfive/patterns/cta-book-links.php",
+                            "cta-book-locations.php": "{content}/themes/twentytwentyfive/patterns/cta-book-locations.php",
+                            "cta-centered-heading.php": "{content}/themes/twentytwentyfive/patterns/cta-centered-heading.php",
+                            "cta-events-list.php": "{content}/themes/twentytwentyfive/patterns/cta-events-list.php",
+                            "cta-grid-products-link.php": "{content}/themes/twentytwentyfive/patterns/cta-grid-products-link.php",
+                            "cta-heading-search.php": "{content}/themes/twentytwentyfive/patterns/cta-heading-search.php",
+                            "cta-newsletter.php": "{content}/themes/twentytwentyfive/patterns/cta-newsletter.php",
+                            "event-3-col.php": "{content}/themes/twentytwentyfive/patterns/event-3-col.php",
+                            "event-rsvp.php": "{content}/themes/twentytwentyfive/patterns/event-rsvp.php",
+                            "event-schedule.php": "{content}/themes/twentytwentyfive/patterns/event-schedule.php",
+                            "footer-centered.php": "{content}/themes/twentytwentyfive/patterns/footer-centered.php",
+                            "footer-columns.php": "{content}/themes/twentytwentyfive/patterns/footer-columns.php",
+                            "footer-newsletter.php": "{content}/themes/twentytwentyfive/patterns/footer-newsletter.php",
+                            "footer-social.php": "{content}/themes/twentytwentyfive/patterns/footer-social.php",
+                            "footer.php": "{content}/themes/twentytwentyfive/patterns/footer.php",
+                            "format-audio.php": "{content}/themes/twentytwentyfive/patterns/format-audio.php",
+                            "format-link.php": "{content}/themes/twentytwentyfive/patterns/format-link.php",
+                            "grid-videos.php": "{content}/themes/twentytwentyfive/patterns/grid-videos.php",
+                            "grid-with-categories.php": "{content}/themes/twentytwentyfive/patterns/grid-with-categories.php",
+                            "header-centered.php": "{content}/themes/twentytwentyfive/patterns/header-centered.php",
+                            "header-columns.php": "{content}/themes/twentytwentyfive/patterns/header-columns.php",
+                            "header-large-title.php": "{content}/themes/twentytwentyfive/patterns/header-large-title.php",
+                            "header.php": "{content}/themes/twentytwentyfive/patterns/header.php",
+                            "heading-and-paragraph-with-image.php": "{content}/themes/twentytwentyfive/patterns/heading-and-paragraph-with-image.php",
+                            "hero-book.php": "{content}/themes/twentytwentyfive/patterns/hero-book.php",
+                            "hero-full-width-image.php": "{content}/themes/twentytwentyfive/patterns/hero-full-width-image.php",
+                            "hero-overlapped-book-cover-with-links.php": "{content}/themes/twentytwentyfive/patterns/hero-overlapped-book-cover-with-links.php",
+                            "hero-podcast.php": "{content}/themes/twentytwentyfive/patterns/hero-podcast.php",
+                            "hidden-404.php": "{content}/themes/twentytwentyfive/patterns/hidden-404.php",
+                            "hidden-blog-heading.php": "{content}/themes/twentytwentyfive/patterns/hidden-blog-heading.php",
+                            "hidden-search.php": "{content}/themes/twentytwentyfive/patterns/hidden-search.php",
+                            "hidden-sidebar.php": "{content}/themes/twentytwentyfive/patterns/hidden-sidebar.php",
+                            "hidden-written-by.php": "{content}/themes/twentytwentyfive/patterns/hidden-written-by.php",
+                            "logos.php": "{content}/themes/twentytwentyfive/patterns/logos.php",
+                            "media-instagram-grid.php": "{content}/themes/twentytwentyfive/patterns/media-instagram-grid.php",
+                            "more-posts.php": "{content}/themes/twentytwentyfive/patterns/more-posts.php",
+                            "overlapped-images.php": "{content}/themes/twentytwentyfive/patterns/overlapped-images.php",
+                            "page-business-home.php": "{content}/themes/twentytwentyfive/patterns/page-business-home.php",
+                            "page-coming-soon.php": "{content}/themes/twentytwentyfive/patterns/page-coming-soon.php",
+                            "page-cv-bio.php": "{content}/themes/twentytwentyfive/patterns/page-cv-bio.php",
+                            "page-landing-book.php": "{content}/themes/twentytwentyfive/patterns/page-landing-book.php",
+                            "page-landing-event.php": "{content}/themes/twentytwentyfive/patterns/page-landing-event.php",
+                            "page-landing-podcast.php": "{content}/themes/twentytwentyfive/patterns/page-landing-podcast.php",
+                            "page-link-in-bio-heading-paragraph-links-image.php": "{content}/themes/twentytwentyfive/patterns/page-link-in-bio-heading-paragraph-links-image.php",
+                            "page-link-in-bio-wide-margins.php": "{content}/themes/twentytwentyfive/patterns/page-link-in-bio-wide-margins.php",
+                            "page-link-in-bio-with-tight-margins.php": "{content}/themes/twentytwentyfive/patterns/page-link-in-bio-with-tight-margins.php",
+                            "page-portfolio-home.php": "{content}/themes/twentytwentyfive/patterns/page-portfolio-home.php",
+                            "page-shop-home.php": "{content}/themes/twentytwentyfive/patterns/page-shop-home.php",
+                            "post-navigation.php": "{content}/themes/twentytwentyfive/patterns/post-navigation.php",
+                            "pricing-2-col.php": "{content}/themes/twentytwentyfive/patterns/pricing-2-col.php",
+                            "pricing-3-col.php": "{content}/themes/twentytwentyfive/patterns/pricing-3-col.php",
+                            "services-3-col.php": "{content}/themes/twentytwentyfive/patterns/services-3-col.php",
+                            "services-subscriber-only-section.php": "{content}/themes/twentytwentyfive/patterns/services-subscriber-only-section.php",
+                            "services-team-photos.php": "{content}/themes/twentytwentyfive/patterns/services-team-photos.php",
+                            "template-404-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-404-vertical-header-blog.php",
+                            "template-archive-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-archive-news-blog.php",
+                            "template-archive-photo-blog.php": "{content}/themes/twentytwentyfive/patterns/template-archive-photo-blog.php",
+                            "template-archive-text-blog.php": "{content}/themes/twentytwentyfive/patterns/template-archive-text-blog.php",
+                            "template-archive-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-archive-vertical-header-blog.php",
+                            "template-home-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-home-news-blog.php",
+                            "template-home-photo-blog.php": "{content}/themes/twentytwentyfive/patterns/template-home-photo-blog.php",
+                            "template-home-posts-grid-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-home-posts-grid-news-blog.php",
+                            "template-home-text-blog.php": "{content}/themes/twentytwentyfive/patterns/template-home-text-blog.php",
+                            "template-home-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-home-vertical-header-blog.php",
+                            "template-home-with-sidebar-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-home-with-sidebar-news-blog.php",
+                            "template-page-photo-blog.php": "{content}/themes/twentytwentyfive/patterns/template-page-photo-blog.php",
+                            "template-page-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-page-vertical-header-blog.php",
+                            "template-query-loop-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-query-loop-news-blog.php",
+                            "template-query-loop-photo-blog.php": "{content}/themes/twentytwentyfive/patterns/template-query-loop-photo-blog.php",
+                            "template-query-loop-text-blog.php": "{content}/themes/twentytwentyfive/patterns/template-query-loop-text-blog.php",
+                            "template-query-loop-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-query-loop-vertical-header-blog.php",
+                            "template-query-loop.php": "{content}/themes/twentytwentyfive/patterns/template-query-loop.php",
+                            "template-search-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-search-news-blog.php",
+                            "template-search-photo-blog.php": "{content}/themes/twentytwentyfive/patterns/template-search-photo-blog.php",
+                            "template-search-text-blog.php": "{content}/themes/twentytwentyfive/patterns/template-search-text-blog.php",
+                            "template-search-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-search-vertical-header-blog.php",
+                            "template-single-left-aligned-content.php": "{content}/themes/twentytwentyfive/patterns/template-single-left-aligned-content.php",
+                            "template-single-news-blog.php": "{content}/themes/twentytwentyfive/patterns/template-single-news-blog.php",
+                            "template-single-offset.php": "{content}/themes/twentytwentyfive/patterns/template-single-offset.php",
+                            "template-single-photo-blog.php": "{content}/themes/twentytwentyfive/patterns/template-single-photo-blog.php",
+                            "template-single-text-blog.php": "{content}/themes/twentytwentyfive/patterns/template-single-text-blog.php",
+                            "template-single-vertical-header-blog.php": "{content}/themes/twentytwentyfive/patterns/template-single-vertical-header-blog.php",
+                            "testimonials-2-col.php": "{content}/themes/twentytwentyfive/patterns/testimonials-2-col.php",
+                            "testimonials-6-col.php": "{content}/themes/twentytwentyfive/patterns/testimonials-6-col.php",
+                            "testimonials-large.php": "{content}/themes/twentytwentyfive/patterns/testimonials-large.php",
+                            "text-faqs.php": "{content}/themes/twentytwentyfive/patterns/text-faqs.php",
+                            "vertical-header.php": "{content}/themes/twentytwentyfive/patterns/vertical-header.php"
+                        },
+                        "{content}/themes/twentytwentyfive/patterns"
+                    ]
+                ],
+                [
+                    "wp_theme_files_cache_ttl",
+                    [
+                        1800,
+                        "theme_block_patterns"
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "a menu with a child",
+        {
+            "heard": [
+                [
+                    "nav_menu_item_attributes",
+                    [
+                        {
+                            "id": "menu-item-{parent}",
+                            "class": "menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-{parent}"
+                        },
+                        "post:nav_menu_item:zz-hi2-parent",
+                        "object:stdClass",
+                        0
+                    ]
+                ],
+                [
+                    "nav_menu_submenu_attributes",
+                    [
+                        {
+                            "class": "sub-menu"
+                        },
+                        "object:stdClass",
+                        0
+                    ]
+                ],
+                [
+                    "nav_menu_item_attributes",
+                    [
+                        {
+                            "id": "menu-item-{child}",
+                            "class": "menu-item menu-item-type-custom menu-item-object-custom menu-item-{child}"
+                        },
+                        "post:nav_menu_item:zz-hi2-child",
+                        "object:stdClass",
+                        1
+                    ]
+                ]
+            ],
+            "result": "<ul id=\"menu-zz-hi2-menu\" class=\"menu\"><li id=\"menu-item-{parent}\" class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-{parent}\"><a href=\"https://example.org/\">zz-hi2-parent</a>\n<ul class=\"sub-menu\">\n\t<li id=\"menu-item-{child}\" class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{child}\"><a href=\"https://example.org/c\">zz-hi2-child</a></li>\n</ul>\n</li>\n</ul>"
+        }
+    ],
+    [
+        "an image widget",
+        {
+            "heard": [
+                [
+                    "widget_media_image_instance",
+                    [
+                        {
+                            "size": "medium",
+                            "width": 0,
+                            "height": 0,
+                            "caption": "",
+                            "alt": "",
+                            "link_type": "custom",
+                            "link_url": "",
+                            "image_classes": "",
+                            "link_classes": "",
+                            "link_rel": "",
+                            "link_target_blank": false,
+                            "image_title": "",
+                            "attachment_id": 0,
+                            "url": "https://example.org/i.png",
+                            "title": "zz"
+                        },
+                        {
+                            "before_widget": "<section class=\"widget widget_media_image\">",
+                            "after_widget": "</section>",
+                            "before_title": "<h2 class=\"widgettitle\">",
+                            "after_title": "</h2>"
+                        },
+                        "object:WP_Widget_Media_Image"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_media_image\"><h2 class=\"widgettitle\">zz</h2><img class=\"image \" src=\"https://example.org/i.png\" alt=\"\" width=\"\" height=\"\" decoding=\"async\" loading=\"lazy\" /></section>"
+        }
+    ],
+    [
+        "a block widget",
+        {
+            "heard": [
+                [
+                    "widget_block_dynamic_classname",
+                    [
+                        "widget_block widget_search",
+                        "core/search"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_block widget_search\"><form role=\"search\" method=\"get\" action=\"{home}/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-1\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-1\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form></section>"
+        }
+    ],
+    [
+        "a block widget, nothing in it",
+        {
+            "heard": [
+                [
+                    "widget_block_dynamic_classname",
+                    [
+                        "widget_block",
+                        null
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_block\"></section>"
+        }
+    ],
+    [
+        "the archives widget",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "xhtml"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_archive\"><h2 class=\"widgettitle\">Archives</h2>\n\t\t\t<ul>\n\t\t\t\t\t<li><a href='{home}/2026/08/'>August 2026</a></li>\n\t\t\t</ul>\n\n\t\t\t</section>"
+        }
+    ],
+    [
+        "the archives widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_archive\"><h2 class=\"widgettitle\">Zz &lt;b&gt;Archives&lt;/b&gt;</h2><nav aria-label=\"Zz &lt;b&gt;Archives&lt;/b&gt;\">\n\t\t\t<ul>\n\t\t\t\t\t<li><a href='{home}/2026/08/'>August 2026</a></li>\n\t\t\t</ul>\n\n\t\t\t</nav></section>"
+        }
+    ],
+    [
+        "the meta widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_meta\"><h2 class=\"widgettitle\">Meta</h2><nav aria-label=\"Meta\">\n\t\t<ul>\n\t\t\t<li><a href=\"{home}/wp-admin/\">Site Admin</a></li>\t\t\t<li><a href=\"{home}/wp-login.php?action=logout&#038;_wpnonce=821ad40622\">Log out</a></li>\n\t\t\t<li><a href=\"{home}/feed/\">Entries feed</a></li>\n\t\t\t<li><a href=\"{home}/comments/feed/\">Comments feed</a></li>\n\n\t\t\t<li><a href=\"https://wordpress.org/\">WordPress.org</a></li>\n\t\t</ul>\n\n\t\t</nav></section>"
+        }
+    ],
+    [
+        "the categories widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_categories\"><h2 class=\"widgettitle\"> &lt;em&gt;Zz&lt;/em&gt; &#8220;Cats&#8221; &#038; co </h2><nav aria-label=\"&lt;em&gt;Zz&lt;/em&gt; &#8220;Cats&#8221; &#038; co\">\n\t\t\t<ul>\n\t\t\t\t\t<li class=\"cat-item cat-item-1\"><a href=\"{home}/category/uncategorized/\">Uncategorized</a>\n</li>\n\t\t\t</ul>\n\n\t\t\t</nav></section>"
+        }
+    ],
+    [
+        "the categories widget as a dropdown",
+        {
+            "heard": [],
+            "result": "<section class=\"widget widget_categories\"><h2 class=\"widgettitle\">Categories</h2><form action=\"{home}\" method=\"get\"><label class=\"screen-reader-text\" for=\"cat\">Categories</label><select  name='cat' id='cat' class='postform'>\n\t<option value='-1'>Select Category</option>\n\t<option class=\"level-0\" value=\"1\">Uncategorized</option>\n</select>\n</form><script>\n( ( dropdownId ) => {\n\tconst dropdown = document.getElementById( dropdownId );\n\tfunction onSelectChange() {\n\t\tsetTimeout( () => {\n\t\t\tif ( 'escape' === dropdown.dataset.lastkey ) {\n\t\t\t\treturn;\n\t\t\t}\n\t\t\tif ( dropdown.value && parseInt( dropdown.value ) > 0 && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\tdropdown.parentElement.submit();\n\t\t\t}\n\t\t}, 250 );\n\t}\n\tfunction onKeyUp( event ) {\n\t\tif ( 'Escape' === event.key ) {\n\t\t\tdropdown.dataset.lastkey = 'escape';\n\t\t} else {\n\t\t\tdelete dropdown.dataset.lastkey;\n\t\t}\n\t}\n\tfunction onClick() {\n\t\tdelete dropdown.dataset.lastkey;\n\t}\n\tdropdown.addEventListener( 'keyup', onKeyUp );\n\tdropdown.addEventListener( 'click', onClick );\n\tdropdown.addEventListener( 'change', onSelectChange );\n})( \"cat\" );\n\n//# sourceURL=WP_Widget_Categories%3A%3Awidget\n</script>\n</section>"
+        }
+    ],
+    [
+        "the pages widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_pages\"><h2 class=\"widgettitle\">Pages</h2><nav aria-label=\"Pages\">\n\t\t\t<ul>\n\t\t\t\t<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"{home}/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"{home}/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n\t\t\t</ul>\n\n\t\t\t</nav></section>"
+        }
+    ],
+    [
+        "the recent comments widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_recent_comments\"><h2 class=\"widgettitle\">Recent Comments</h2><nav aria-label=\"Recent Comments\"><ul id=\"recentcomments\"><li class=\"recentcomments\"><span class=\"comment-author-link\"><a href=\"https://wordpress.org/\" class=\"url\" rel=\"ugc external nofollow\">A WordPress Commenter</a></span> on <a href=\"{home}/hello-world/#comment-1\">Hello world!</a></li></ul></nav></section>"
+        }
+    ],
+    [
+        "the recent posts widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "\n\t\t<section class=\"widget widget_recent_entries\">\n\t\t<h2 class=\"widgettitle\">Recent Posts</h2><nav aria-label=\"Recent Posts\">\n\t\t<ul>\n\t\t\t\t\t\t\t\t\t\t\t<li>\n\t\t\t\t\t<a href=\"{home}/zz-block-battery-dynamic/\">Block battery: dynamic</a>\n\t\t\t\t\t\t\t\t\t</li>\n\t\t\t\t\t</ul>\n\n\t\t</nav></section>"
+        }
+    ],
+    [
+        "the tag cloud widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_tag_cloud\"><h2 class=\"widgettitle\">Tags</h2><nav aria-label=\"Tags\"><div class=\"tagcloud\"><a href=\"{home}/tag/engine/\" class=\"tag-cloud-link tag-link-2 tag-link-position-1\" style=\"font-size: 8pt;\" aria-label=\"engine (1 item)\">engine</a>\n<a href=\"{home}/tag/parity/\" class=\"tag-cloud-link tag-link-3 tag-link-position-2\" style=\"font-size: 8pt;\" aria-label=\"parity (1 item)\">parity</a></div>\n</nav></section>"
+        }
+    ],
+    [
+        "the menu widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_nav_menu\"><h2 class=\"widgettitle\"> &lt;b&gt;Zz&lt;/b&gt; &#038; &#8220;x&#8221; </h2><nav class=\"menu-zz-hi2-menu-container\" aria-label=\"&lt;b&gt;Zz&lt;/b&gt; &#038; &#8220;x&#8221;\"><ul id=\"menu-zz-hi2-menu-1\" class=\"menu\"><li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-{parent}\"><a href=\"https://example.org/\">zz-hi2-parent</a>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{child}\"><a href=\"https://example.org/c\">zz-hi2-child</a></li>\n</ul>\n</li>\n</ul></nav></section>"
+        }
+    ],
+    [
+        "the menu widget, html5 navigation, no title",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_nav_menu\"><nav class=\"menu-zz-hi2-menu-container\" aria-label=\"Menu\"><ul id=\"menu-zz-hi2-menu-2\" class=\"menu\"><li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-{parent}\"><a href=\"https://example.org/\">zz-hi2-parent</a>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{child}\"><a href=\"https://example.org/c\">zz-hi2-child</a></li>\n</ul>\n</li>\n</ul></nav></section>"
+        }
+    ],
+    [
+        "the RSS widget, html5 navigation",
+        {
+            "heard": [
+                [
+                    "rss_widget_feed_link",
+                    [
+                        "<a class=\"rsswidget rss-widget-feed\" href=\"http://127.0.0.1:1/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Unknown Feed\" loading=\"lazy\" /></a> ",
+                        {
+                            "url": "http://127.0.0.1:1/feed/",
+                            "items": 1
+                        }
+                    ]
+                ],
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_rss\"><h2 class=\"widgettitle\"><a class=\"rsswidget rss-widget-feed\" href=\"http://127.0.0.1:1/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Unknown Feed\" loading=\"lazy\" /></a> <a class=\"rsswidget rss-widget-title\" href=\"\">Unknown Feed</a></h2><nav aria-label=\"Unknown Feed\"><p><strong>RSS Error:</strong> WP HTTP Error: A valid URL was not provided.</p></nav></section>"
+        }
+    ],
+    [
+        "the RSS widget, no feed link",
+        {
+            "heard": [
+                [
+                    "rss_widget_feed_link",
+                    [
+                        "<a class=\"rsswidget rss-widget-feed\" href=\"http://127.0.0.1:1/feed/\"><img class=\"rss-widget-icon\" style=\"border:0\" width=\"14\" height=\"14\" src=\"{home}/wp-includes/images/rss.png\" alt=\"RSS feed: Unknown Feed\" loading=\"lazy\" /></a> ",
+                        {
+                            "url": "http://127.0.0.1:1/feed/",
+                            "items": 1
+                        }
+                    ]
+                ],
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_rss\"><h2 class=\"widgettitle\"><a class=\"rsswidget rss-widget-title\" href=\"\">Unknown Feed</a></h2><nav aria-label=\"Unknown Feed\"><p><strong>RSS Error:</strong> WP HTTP Error: A valid URL was not provided.</p></nav></section>"
+        }
+    ],
+    [
+        "the categories widget, html5 navigation, the title emptied",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_categories\"><nav aria-label=\"Categories\">\n\t\t\t<ul>\n\t\t\t\t\t<li class=\"cat-item cat-item-1\"><a href=\"{home}/category/uncategorized/\">Uncategorized</a>\n</li>\n\t\t\t</ul>\n\n\t\t\t</nav></section>"
+        }
+    ],
+    [
+        "the RSS widget, html5 navigation, the title emptied",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_rss\"><nav aria-label=\"RSS Feed\"><p><strong>RSS Error:</strong> WP HTTP Error: A valid URL was not provided.</p></nav></section>"
+        }
+    ],
+    [
+        "the pages widget, xhtml asked for",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "html5"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_pages\"><h2 class=\"widgettitle\">Pages</h2>\n\t\t\t<ul>\n\t\t\t\t<li class=\"page_item page-item-2 page_item_has_children\"><a href=\"{home}/sample-page/\">Sample Page</a>\n<ul class='children'>\n\t<li class=\"page_item page-item-6\"><a href=\"{home}/sample-page/docs/\">Docs</a></li>\n</ul>\n</li>\n\t\t\t</ul>\n\n\t\t\t</section>"
+        }
+    ],
+    [
+        "the menu widget, xhtml",
+        {
+            "heard": [
+                [
+                    "navigation_widgets_format",
+                    [
+                        "xhtml"
+                    ]
+                ]
+            ],
+            "result": "<section class=\"widget widget_nav_menu\"><div class=\"menu-zz-hi2-menu-container\"><ul id=\"menu-zz-hi2-menu-3\" class=\"menu\"><li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-{parent}\"><a href=\"https://example.org/\">zz-hi2-parent</a>\n<ul class=\"sub-menu\">\n\t<li class=\"menu-item menu-item-type-custom menu-item-object-custom menu-item-{child}\"><a href=\"https://example.org/c\">zz-hi2-child</a></li>\n</ul>\n</li>\n</ul></div></section>"
+        }
+    ],
+    [
+        "a module's address",
+        {
+            "heard": [
+                [
+                    "script_module_loader_src",
+                    [
+                        "https://example.org/zz.js?ver=1.2",
+                        "zz-hi2-module"
+                    ]
+                ]
+            ],
+            "result": "<script id=\"zz-hi2-module-js-module\" src=\"https://example.org/zz.js?ver=1.2\" type=\"module\"></script>"
+        }
+    ],
+    [
+        "the proxy, another host",
+        {
+            "heard": [
+                [
+                    "pre_http_send_through_proxy",
+                    [
+                        null,
+                        "https://example.org/x",
+                        {
+                            "scheme": "https",
+                            "host": "example.org",
+                            "path": "/x"
+                        },
+                        {
+                            "scheme": "https",
+                            "host": "minn.localhost"
+                        }
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "the proxy, the site",
+        {
+            "heard": [
+                [
+                    "pre_http_send_through_proxy",
+                    [
+                        null,
+                        "{home}/x",
+                        {
+                            "scheme": "https",
+                            "host": "minn.localhost",
+                            "path": "/x"
+                        },
+                        {
+                            "scheme": "https",
+                            "host": "minn.localhost"
+                        }
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "the proxy, localhost",
+        {
+            "heard": [
+                [
+                    "pre_http_send_through_proxy",
+                    [
+                        null,
+                        "http://localhost/x",
+                        {
+                            "scheme": "http",
+                            "host": "localhost",
+                            "path": "/x"
+                        },
+                        {
+                            "scheme": "https",
+                            "host": "minn.localhost"
+                        }
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "the proxy, a plugin answers",
+        {
+            "heard": [
+                [
+                    "pre_http_send_through_proxy",
+                    [
+                        null,
+                        "https://example.org/x",
+                        {
+                            "scheme": "https",
+                            "host": "example.org",
+                            "path": "/x"
+                        },
+                        {
+                            "scheme": "https",
+                            "host": "minn.localhost"
+                        }
+                    ]
+                ]
+            ],
+            "result": false
+        }
+    ],
+    [
+        "the request confirmed, the admin told",
+        {
+            "heard": [
+                [
+                    "user_request_confirmed_email_to",
+                    [
+                        "admin@minn-engine.localhost",
+                        "object:WP_User_Request"
+                    ]
+                ],
+                [
+                    "user_confirmed_action_email_content",
+                    [
+                        "Howdy,\n\nA user data privacy request has been confirmed on ###SITENAME###:\n\nUser: ###USER_EMAIL###\nRequest: ###DESCRIPTION###\n\nYou can view and manage these data privacy requests here:\n\n###MANAGE_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###",
+                        {
+                            "request": "object:WP_User_Request",
+                            "user_email": "zz-hi2-request@example.org",
+                            "description": "Erase Personal Data",
+                            "manage_url": "{home}/wp-admin/erase-personal-data.php",
+                            "sitename": "Minn",
+                            "siteurl": "{home}",
+                            "admin_email": "admin@minn-engine.localhost"
+                        }
+                    ]
+                ]
+            ],
+            "result": null
+        }
+    ],
+    [
+        "the erasure done, the person told",
+        {
+            "heard": [
+                [
+                    "user_erasure_fulfillment_email_to",
+                    [
+                        "zz-hi2-request@example.org",
+                        "object:WP_User_Request"
+                    ]
+                ],
+                [
+                    "user_erasure_complete_email_subject",
+                    [
+                        "[Minn] Erasure Request Fulfilled",
+                        "Minn",
+                        {
+                            "request": "object:WP_User_Request",
+                            "message_recipient": "zz-hi2-request@example.org",
+                            "privacy_policy_url": "",
+                            "sitename": "Minn",
+                            "siteurl": "{home}"
+                        }
+                    ]
+                ],
+                [
+                    "user_confirmed_action_email_content",
+                    [
+                        "Howdy,\n\nYour request to erase your personal data on ###SITENAME### has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###",
+                        {
+                            "request": "object:WP_User_Request",
+                            "message_recipient": "zz-hi2-request@example.org",
+                            "privacy_policy_url": "",
+                            "sitename": "Minn",
+                            "siteurl": "{home}"
+                        }
+                    ]
+                ],
+                [
+                    "user_erasure_complete_email_headers",
+                    [
+                        "",
+                        "[Minn] Erasure Request Fulfilled",
+                        "Howdy,\n\nYour request to erase your personal data on Minn has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at Minn\n{home}",
+                        "{request}",
+                        {
+                            "request": "object:WP_User_Request",
+                            "message_recipient": "zz-hi2-request@example.org",
+                            "privacy_policy_url": "",
+                            "sitename": "Minn",
+                            "siteurl": "{home}"
+                        }
+                    ]
+                ]
+            ],
+            "result": null
+        }
+    ],
+    [
+        "a user marked spam",
+        {
+            "heard": [],
+            "result": "error:no_spam:Sorry, marking a user as spam is only supported on Multisite."
+        }
+    ],
+    [
+        "a user marked ham",
+        {
+            "heard": [
+                [
+                    "make_ham_user",
+                    [
+                        "{user}"
+                    ]
+                ]
+            ],
+            "result": "saved"
+        }
+    ],
+    [
+        "a user saved, spam not named",
+        {
+            "heard": [],
+            "result": "saved"
+        }
+    ],
+    [
+        "an old-shape reset key",
+        {
+            "heard": [
+                [
+                    "password_reset_key_expired",
+                    [
+                        "error:expired_key:Invalid key.",
+                        "{user}"
+                    ]
+                ]
+            ],
+            "result": "error:expired_key:Invalid key."
+        }
+    ],
+    [
+        "an old-shape reset key, the wrong one",
+        {
+            "heard": [],
+            "result": "error:invalid_key:Invalid key."
+        }
+    ],
+    [
+        "a reset key stored as itself",
+        {
+            "heard": [
+                [
+                    "password_reset_key_expired",
+                    [
+                        "error:expired_key:Invalid key.",
+                        "{user}"
+                    ]
+                ]
+            ],
+            "result": [
+                "error:expired_key:Invalid key.",
+                "error:invalid_key:Invalid key."
+            ]
+        }
+    ],
+    [
+        "a reset key with its time",
+        {
+            "heard": [],
+            "result": "user:zz-hi2-user"
+        }
+    ],
+    [
+        "an autosave, the first",
+        {
+            "heard": [],
+            "result": [
+                200,
+                null
+            ]
+        }
+    ],
+    [
+        "an autosave, again",
+        {
+            "heard": [
+                [
+                    "wp_creating_autosave",
+                    [
+                        {
+                            "post_title": "zz-hi2 b",
+                            "post_content": "zz b",
+                            "post_parent": "{post}",
+                            "post_status": "inherit",
+                            "post_type": "revision",
+                            "post_name": "{post}-autosave-v1",
+                            "post_date": "",
+                            "post_date_gmt": "",
+                            "ID": "{n}",
+                            "post_author": 1
+                        },
+                        true
+                    ]
+                ]
+            ],
+            "result": [
+                200,
+                null
+            ]
+        }
+    ],
+    [
+        "a comment trashed over REST",
+        {
+            "heard": [
+                [
+                    "rest_comment_trashable",
+                    [
+                        true,
+                        "object:WP_Comment"
+                    ]
+                ]
+            ],
+            "result": [
+                200,
+                "trash"
+            ]
+        }
+    ],
+    [
+        "a post trashed over REST",
+        {
+            "heard": [
+                [
+                    "rest_post_trashable",
+                    [
+                        true,
+                        "post:post:zz-hi2"
+                    ]
+                ]
+            ],
+            "result": [
+                200,
+                "trash"
+            ]
+        }
+    ],
+    [
+        "IIS rules",
+        {
+            "heard": [
+                [
+                    "iis7_url_rewrite_rules",
+                    [
+                        "\n\t\t\t<rule name=\"WordPress: {home}\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />\n\t\t\t\t\t</conditions>\n\t\t\t\t<action type=\"Rewrite\" url=\"index.php\" />\n\t\t\t</rule>"
+                    ]
+                ]
+            ],
+            "result": "\n\t\t\t<rule name=\"WordPress: {home}\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />\n\t\t\t\t\t</conditions>\n\t\t\t\t<action type=\"Rewrite\" url=\"index.php\" />\n\t\t\t</rule>"
+        }
+    ],
+    [
+        "IIS rules, with their parent tags",
+        {
+            "heard": [
+                [
+                    "iis7_url_rewrite_rules",
+                    [
+                        "<configuration>\n\t<system.webServer>\n\t\t<rewrite>\n\t\t\t<rules>\n\t\t\t<rule name=\"WordPress: {home}\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />\n\t\t\t\t\t</conditions>\n\t\t\t\t<action type=\"Rewrite\" url=\"index.php\" />\n\t\t\t</rule>\n\t\t\t</rules>\n\t\t</rewrite>\n\t</system.webServer>\n</configuration>"
+                    ]
+                ]
+            ],
+            "result": "<configuration>\n\t<system.webServer>\n\t\t<rewrite>\n\t\t\t<rules>\n\t\t\t<rule name=\"WordPress: {home}\" patternSyntax=\"Wildcard\">\n\t\t\t\t<match url=\"*\" />\n\t\t\t\t\t<conditions>\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />\n\t\t\t\t\t\t<add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />\n\t\t\t\t\t</conditions>\n\t\t\t\t<action type=\"Rewrite\" url=\"index.php\" />\n\t\t\t</rule>\n\t\t\t</rules>\n\t\t</rewrite>\n\t</system.webServer>\n</configuration>"
+        }
+    ],
+    [
+        "a prompt, its support asked",
+        {
+            "heard": [
+                [
+                    "wp_ai_client_prevent_prompt",
+                    [
+                        false,
+                        "object:WP_AI_Client_Prompt_Builder"
+                    ]
+                ]
+            ],
+            "result": [
+                "WP_AI_Client_Prompt_Builder",
+                false
+            ]
+        }
+    ],
+    [
+        "a prompt a plugin prevents",
+        {
+            "heard": [
+                [
+                    "wp_ai_client_prevent_prompt",
+                    [
+                        false,
+                        "object:WP_AI_Client_Prompt_Builder"
+                    ]
+                ]
+            ],
+            "result": [
+                false,
+                "error:prompt_prevented:Prompt execution was prevented by a filter."
+            ]
+        }
+    ],
+    [
+        "a navigation, links around a paragraph",
+        {
+            "heard": [
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/a\"><span class=\"wp-block-navigation-item__label\">A</span></a></li></ul><p class=\"wp-block-paragraph\">P</p><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/b\"><span class=\"wp-block-navigation-item__label\">B</span></a></li></ul></nav>"
+        }
+    ],
+    [
+        "a navigation, a link to a draft between",
+        {
+            "heard": [
+                [
+                    "render_block_core_navigation_link_allowed_post_status",
+                    [
+                        [
+                            "publish"
+                        ],
+                        {
+                            "label": "D",
+                            "type": "post",
+                            "id": "{draft}",
+                            "url": "/?p={draft}",
+                            "kind": "post-type",
+                            "opensInNewTab": false
+                        },
+                        "object:WP_Block"
+                    ]
+                ],
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ],
+                [
+                    "render_block_core_navigation_link_allowed_post_status",
+                    [
+                        [
+                            "publish"
+                        ],
+                        {
+                            "label": "D",
+                            "type": "post",
+                            "id": "{draft}",
+                            "url": "/?p={draft}",
+                            "kind": "post-type",
+                            "opensInNewTab": false
+                        },
+                        "object:WP_Block"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/a\"><span class=\"wp-block-navigation-item__label\">A</span></a></li></ul><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/b\"><span class=\"wp-block-navigation-item__label\">B</span></a></li></ul></nav>"
+        }
+    ],
+    [
+        "a navigation, a link to a published post",
+        {
+            "heard": [
+                [
+                    "render_block_core_navigation_link_allowed_post_status",
+                    [
+                        [
+                            "publish"
+                        ],
+                        {
+                            "label": "Hello",
+                            "type": "post",
+                            "id": 1,
+                            "url": "/hello-world/",
+                            "kind": "post-type",
+                            "opensInNewTab": false
+                        },
+                        "object:WP_Block"
+                    ]
+                ],
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "render_block_core_navigation_link_allowed_post_status",
+                    [
+                        [
+                            "publish"
+                        ],
+                        {
+                            "label": "Hello",
+                            "type": "post",
+                            "id": 1,
+                            "url": "/hello-world/",
+                            "kind": "post-type",
+                            "opensInNewTab": false
+                        },
+                        "object:WP_Block"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"/hello-world/\"><span class=\"wp-block-navigation-item__label\">Hello</span></a></li></ul></nav>"
+        }
+    ],
+    [
+        "a navigation, the site title and a search",
+        {
+            "heard": [
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item\"><h1 class=\"wp-block-site-title\"><a href=\"{home}\" target=\"_self\" rel=\"home\">Minn</a></h1></li><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/a\"><span class=\"wp-block-navigation-item__label\">A</span></a></li></ul><form role=\"search\" method=\"get\" action=\"{home}/\" class=\"wp-block-search__button-outside wp-block-search__text-button wp-block-search\" ><label class=\"wp-block-search__label\" for=\"wp-block-search__input-{n}\" >Search</label><div class=\"wp-block-search__inside-wrapper\" ><input class=\"wp-block-search__input\" id=\"wp-block-search__input-{n}\" placeholder=\"\" value=\"\" type=\"search\" name=\"s\" required /><button aria-label=\"Search\" class=\"wp-block-search__button wp-element-button\" type=\"submit\" >Search</button></div></form></nav>"
+        }
+    ],
+    [
+        "a navigation, links without a label or an address",
+        {
+            "heard": [
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\" ><span class=\"wp-block-navigation-item__label\">L</span></a></li><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-navigation-item has-child open-on-hover-click wp-block-navigation-submenu\"><a class=\"wp-block-navigation-item__content\"><span class=\"wp-block-navigation-item__label\">S</span></a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"S submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg/></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container wp-block-navigation-submenu\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/c\"><span class=\"wp-block-navigation-item__label\">C</span></a></li></ul></li></ul></nav>"
+        }
+    ],
+    [
+        "a navigation, a page list under overlay colours",
+        {
+            "heard": [
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><ul class=\"wp-block-page-list\"><li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-pages-list__item has-child wp-block-navigation-item open-on-hover-click\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"{home}/sample-page/\">Sample Page</a><button data-wp-bind--aria-expanded=\"state.isSubmenuOpen\" data-wp-on--click=\"actions.toggleMenuOnClick\" aria-label=\"Sample Page submenu\" class=\"wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle\" ><svg/></button><ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container\"><li class=\"wp-block-pages-list__item wp-block-navigation-item open-on-hover-click has-text-color has-background has-base-background-color\" style=\"color: #ff0000;\"><a class=\"wp-block-pages-list__item__link wp-block-navigation-item__content\" href=\"{home}/sample-page/docs/\">Docs</a></li></ul></li></ul></ul></nav>"
+        }
+    ],
+    [
+        "a navigation, drafts and paragraphs let in by plugins",
+        {
+            "heard": [
+                [
+                    "render_block_core_navigation_link_allowed_post_status",
+                    [
+                        [
+                            "publish"
+                        ],
+                        {
+                            "label": "D",
+                            "type": "post",
+                            "id": "{draft}",
+                            "url": "/?p={draft}",
+                            "kind": "post-type",
+                            "opensInNewTab": false
+                        },
+                        "object:WP_Block"
+                    ]
+                ],
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ],
+                [
+                    "render_block_core_navigation_link_allowed_post_status",
+                    [
+                        [
+                            "publish"
+                        ],
+                        {
+                            "label": "D",
+                            "type": "post",
+                            "id": "{draft}",
+                            "url": "/?p={draft}",
+                            "kind": "post-type",
+                            "opensInNewTab": false
+                        },
+                        "object:WP_Block"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/a\"><span class=\"wp-block-navigation-item__label\">A</span></a></li><li class=\"wp-block-navigation-item\"><p class=\"wp-block-paragraph\">P</p></li><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"/?p={draft}\"><span class=\"wp-block-navigation-item__label\">D</span></a></li></ul></nav>"
+        }
+    ],
+    [
+        "a navigation, a plugin keeps only its first item",
+        {
+            "heard": [
+                [
+                    "block_core_navigation_render_inner_blocks",
+                    [
+                        "object:WP_Block_List"
+                    ]
+                ],
+                [
+                    "block_core_navigation_listable_blocks",
+                    [
+                        [
+                            "core/site-title",
+                            "core/site-logo",
+                            "core/social-links"
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav class=\"wp-block-navigation is-layout-flex wp-block-navigation-is-layout-flex\" aria-label=\" {n}\"><ul class=\"wp-block-navigation__container wp-block-navigation\"><li class=\"wp-block-navigation-item wp-block-navigation-link\"><a class=\"wp-block-navigation-item__content\"  href=\"https://example.org/a\"><span class=\"wp-block-navigation-item__label\">A</span></a></li></ul></nav>"
+        }
+    ],
+    [
+        "the breadcrumbs of a child page",
+        {
+            "heard": [
+                [
+                    "block_core_breadcrumbs_items",
+                    [
+                        [
+                            {
+                                "label": "Home",
+                                "url": "{home}/"
+                            },
+                            {
+                                "label": "Sample Page",
+                                "url": "{home}/sample-page/",
+                                "allow_html": true
+                            },
+                            {
+                                "label": "Docs",
+                                "allow_html": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"{home}/\">Home</a></li><li><a href=\"{home}/sample-page/\">Sample Page</a></li><li><span aria-current=\"page\">Docs</span></li></ol></nav>"
+        }
+    ],
+    [
+        "the breadcrumbs of a post",
+        {
+            "heard": [
+                [
+                    "block_core_breadcrumbs_items",
+                    [
+                        [
+                            {
+                                "label": "Home",
+                                "url": "{home}/"
+                            },
+                            {
+                                "label": "Uncategorized",
+                                "url": "{home}/category/uncategorized/"
+                            },
+                            {
+                                "label": "Hello world!",
+                                "allow_html": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><a href=\"{home}/\">Home</a></li><li><a href=\"{home}/category/uncategorized/\">Uncategorized</a></li><li><span aria-current=\"page\">Hello world!</span></li></ol></nav>"
+        }
+    ],
+    [
+        "the breadcrumbs a plugin cuts to the current item",
+        {
+            "heard": [
+                [
+                    "block_core_breadcrumbs_items",
+                    [
+                        [
+                            {
+                                "label": "Home",
+                                "url": "{home}/"
+                            },
+                            {
+                                "label": "Uncategorized",
+                                "url": "{home}/category/uncategorized/"
+                            },
+                            {
+                                "label": "Hello world!",
+                                "allow_html": true
+                            }
+                        ]
+                    ]
+                ]
+            ],
+            "result": "<nav style=\"--separator: &quot;/&quot;\" class=\"wp-block-breadcrumbs\" aria-label=\"Breadcrumbs\"><ol><li><span aria-current=\"page\">Hello world!</span></li></ol></nav>"
+        }
+    ],
+    [
+        "core's layer changed by a plugin",
+        {
+            "heard": [],
+            "result": {
+                "sheet": {
+                    "presets": [
+                        "--wp--preset--color--zz-red",
+                        "--wp--preset--color--base",
+                        "--wp--preset--color--contrast",
+                        "--wp--preset--color--accent-1",
+                        "--wp--preset--color--accent-2",
+                        "--wp--preset--color--accent-3",
+                        "--wp--preset--color--accent-4",
+                        "--wp--preset--color--accent-5",
+                        "--wp--preset--color--accent-6"
+                    ],
+                    "counts": {
+                        "a:where(:not(.wp-element-button))": 15,
+                        ".wp-block-site-title": 3,
+                        "#123456": 0
+                    },
+                    "palette": {
+                        "default": [
+                            "zz-red"
+                        ],
+                        "theme": [
+                            "base",
+                            "contrast",
+                            "accent-1",
+                            "accent-2",
+                            "accent-3",
+                            "accent-4",
+                            "accent-5",
+                            "accent-6"
+                        ]
+                    }
+                },
+                "asked": [
+                    [
+                        "default",
+                        [
+                            "version",
+                            "settings",
+                            "styles"
+                        ]
+                    ]
+                ]
+            }
+        }
+    ],
+    [
+        "the site editor's layer added to by a plugin",
+        {
+            "heard": [],
+            "result": {
+                "presets": [
+                    "--wp--preset--color--black",
+                    "--wp--preset--color--cyan-bluish-gray",
+                    "--wp--preset--color--white",
+                    "--wp--preset--color--pale-pink",
+                    "--wp--preset--color--vivid-red",
+                    "--wp--preset--color--luminous-vivid-orange",
+                    "--wp--preset--color--luminous-vivid-amber",
+                    "--wp--preset--color--light-green-cyan",
+                    "--wp--preset--color--vivid-green-cyan",
+                    "--wp--preset--color--pale-cyan-blue",
+                    "--wp--preset--color--vivid-cyan-blue",
+                    "--wp--preset--color--vivid-purple",
+                    "--wp--preset--color--base",
+                    "--wp--preset--color--contrast",
+                    "--wp--preset--color--accent-1",
+                    "--wp--preset--color--accent-2",
+                    "--wp--preset--color--accent-3",
+                    "--wp--preset--color--accent-4",
+                    "--wp--preset--color--accent-5",
+                    "--wp--preset--color--accent-6",
+                    "--wp--preset--color--zz-user",
+                    "--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple",
+                    "--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan",
+                    "--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange",
+                    "--wp--preset--gradient--luminous-vivid-orange-to-vivid-red",
+                    "--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray",
+                    "--wp--preset--gradient--cool-to-warm-spectrum",
+                    "--wp--preset--gradient--blush-light-purple",
+                    "--wp--preset--gradient--blush-bordeaux",
+                    "--wp--preset--gradient--luminous-dusk",
+                    "--wp--preset--gradient--pale-ocean",
+                    "--wp--preset--gradient--electric-grass",
+                    "--wp--preset--gradient--midnight"
+                ],
+                "counts": {
+                    "a:where(:not(.wp-element-button))": 15,
+                    ".wp-block-site-title": 3,
+                    "#123456": 1
+                },
+                "palette": {
+                    "default": [
+                        "black",
+                        "cyan-bluish-gray",
+                        "white",
+                        "pale-pink",
+                        "vivid-red",
+                        "luminous-vivid-orange",
+                        "luminous-vivid-amber",
+                        "light-green-cyan",
+                        "vivid-green-cyan",
+                        "pale-cyan-blue",
+                        "vivid-cyan-blue",
+                        "vivid-purple"
+                    ],
+                    "theme": [
+                        "base",
+                        "contrast",
+                        "accent-1",
+                        "accent-2",
+                        "accent-3",
+                        "accent-4",
+                        "accent-5",
+                        "accent-6"
+                    ],
+                    "custom": [
+                        "zz-user"
+                    ]
+                }
+            }
+        }
+    ],
+    [
+        "style nodes a plugin leaves out",
+        {
+            "heard": [],
+            "result": {
+                "a:where(:not(.wp-element-button))": 13,
+                ".wp-block-site-title": 2,
+                "#123456": 0
+            }
+        }
+    ],
+    [
+        "the stylesheet again, nothing filtered",
+        {
+            "heard": [],
+            "result": {
+                "a:where(:not(.wp-element-button))": 15,
+                ".wp-block-site-title": 3,
+                "#123456": 0
+            }
+        }
+    ],
+    [
+        "supports html5 gallery",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "supports html5",
+        {
+            "heard": [
+                [
+                    "current_theme_supports-html5",
+                    [
+                        true,
+                        [],
+                        [
+                            [
+                                "comment-list",
+                                "comment-form",
+                                "search-form",
+                                "gallery",
+                                "caption",
+                                "style",
+                                "script"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "supports zz-hi2-feature",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports title-tag",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports post-thumbnails",
+        {
+            "heard": [
+                [
+                    "current_theme_supports-post-thumbnails",
+                    [
+                        true,
+                        [],
+                        true
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "supports editor-styles",
+        {
+            "heard": [
+                [
+                    "current_theme_supports-editor-styles",
+                    [
+                        true,
+                        [],
+                        true
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "supports menus",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports post-formats aside",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "supports post-formats gallery",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports post-thumbnails post",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "supports html5 zz",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports custom-header uploads",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "supports custom-header video",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports custom-background default-color",
+        {
+            "heard": [],
+            "result": true
+        }
+    ],
+    [
+        "supports custom-background zz",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "supports zz-hi2-list a",
+        {
+            "heard": [
+                [
+                    "current_theme_supports-zz-hi2-list",
+                    [
+                        true,
+                        [
+                            "a"
+                        ],
+                        [
+                            [
+                                "a",
+                                "b"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "supports zz-hi2-list zz",
+        {
+            "heard": [
+                [
+                    "current_theme_supports-zz-hi2-list",
+                    [
+                        true,
+                        [
+                            "zz"
+                        ],
+                        [
+                            [
+                                "a",
+                                "b"
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "supports editor-styles x",
+        {
+            "heard": [
+                [
+                    "current_theme_supports-editor-styles",
+                    [
+                        true,
+                        [
+                            "x"
+                        ],
+                        true
+                    ]
+                ]
+            ],
+            "result": true
+        }
+    ],
+    [
+        "supports custom-logo x",
+        {
+            "heard": [],
+            "result": false
+        }
+    ],
+    [
+        "a request refused, not a URL",
+        {
+            "heard": [
+                [
+                    "http_api_debug",
+                    [
+                        "error:http_request_failed:A valid URL was not provided.",
+                        "response",
+                        "WpOrg\\Requests\\Requests",
+                        {
+                            "method": "GET",
+                            "timeout": 1,
+                            "redirection": 5,
+                            "httpversion": "1.0",
+                            "user-agent": "WordPress/7.1.3; {home}",
+                            "reject_unsafe_urls": false,
+                            "blocking": true,
+                            "headers": [],
+                            "cookies": [],
+                            "body": null,
+                            "compress": false,
+                            "decompress": true,
+                            "sslverify": true,
+                            "sslcertificates": "{abspath}/wp-includes/certificates/ca-bundle.crt",
+                            "stream": false,
+                            "filename": null,
+                            "limit_response_size": null,
+                            "_redirection": 5
+                        },
+                        "not a url"
+                    ]
+                ]
+            ],
+            "result": "error:http_request_failed:A valid URL was not provided."
+        }
+    ],
+    [
+        "a request refused, not http",
+        {
+            "heard": [
+                [
+                    "http_api_debug",
+                    [
+                        "error:http_request_failed:A valid URL was not provided.",
+                        "response",
+                        "WpOrg\\Requests\\Requests",
+                        {
+                            "method": "GET",
+                            "timeout": 1,
+                            "redirection": 5,
+                            "httpversion": "1.0",
+                            "user-agent": "WordPress/7.1.3; {home}",
+                            "reject_unsafe_urls": false,
+                            "blocking": true,
+                            "headers": [],
+                            "cookies": [],
+                            "body": null,
+                            "compress": false,
+                            "decompress": true,
+                            "sslverify": true,
+                            "sslcertificates": "{abspath}/wp-includes/certificates/ca-bundle.crt",
+                            "stream": false,
+                            "filename": null,
+                            "limit_response_size": null,
+                            "_redirection": 5
+                        },
+                        "//example.invalid/"
+                    ]
+                ]
+            ],
+            "result": "error:http_request_failed:A valid URL was not provided."
+        }
+    ],
+    [
+        "a request blocked",
+        {
+            "heard": [
+                [
+                    "http_api_debug",
+                    [
+                        "error:http_request_not_executed:User has blocked requests through HTTP to the URL: http://127.0.0.1:1/x.",
+                        "response",
+                        "WpOrg\\Requests\\Requests",
+                        {
+                            "method": "GET",
+                            "timeout": 1,
+                            "redirection": 5,
+                            "httpversion": "1.0",
+                            "user-agent": "WordPress/7.1.3; {home}",
+                            "reject_unsafe_urls": false,
+                            "blocking": true,
+                            "headers": [],
+                            "cookies": [],
+                            "body": null,
+                            "compress": false,
+                            "decompress": true,
+                            "sslverify": true,
+                            "sslcertificates": "{abspath}/wp-includes/certificates/ca-bundle.crt",
+                            "stream": false,
+                            "filename": null,
+                            "limit_response_size": null,
+                            "_redirection": 5
+                        },
+                        "http://127.0.0.1:1/x"
+                    ]
+                ]
+            ],
+            "result": "error:http_request_not_executed:User has blocked requests through HTTP to the URL: http://127.0.0.1:1/x."
+        }
+    ],
+    [
+        "a request blocked, streamed",
+        {
+            "heard": [
+                [
+                    "http_api_debug",
+                    [
+                        "error:http_request_not_executed:User has blocked requests through HTTP to the URL: http://127.0.0.1:1/.",
+                        "response",
+                        "WpOrg\\Requests\\Requests",
+                        {
+                            "method": "GET",
+                            "timeout": 1,
+                            "redirection": 5,
+                            "httpversion": "1.0",
+                            "user-agent": "WordPress/7.1.3; {home}",
+                            "reject_unsafe_urls": false,
+                            "blocking": true,
+                            "headers": [],
+                            "cookies": [],
+                            "body": null,
+                            "compress": false,
+                            "decompress": true,
+                            "sslverify": true,
+                            "sslcertificates": "{abspath}/wp-includes/certificates/ca-bundle.crt",
+                            "stream": true,
+                            "filename": null,
+                            "limit_response_size": null,
+                            "_redirection": 5
+                        },
+                        "http://127.0.0.1:1/"
+                    ]
+                ]
+            ],
+            "result": "error:http_request_not_executed:User has blocked requests through HTTP to the URL: http://127.0.0.1:1/."
+        }
+    ],
+    [
+        "a request unsafe and blocked",
+        {
+            "heard": [
+                [
+                    "http_api_debug",
+                    [
+                        "error:http_request_failed:A valid URL was not provided.",
+                        "response",
+                        "WpOrg\\Requests\\Requests",
+                        {
+                            "method": "GET",
+                            "timeout": 5,
+                            "redirection": 5,
+                            "httpversion": "1.0",
+                            "user-agent": "WordPress/7.1.3; {home}",
+                            "reject_unsafe_urls": true,
+                            "blocking": true,
+                            "headers": [],
+                            "cookies": [],
+                            "body": null,
+                            "compress": false,
+                            "decompress": true,
+                            "sslverify": true,
+                            "sslcertificates": "{abspath}/wp-includes/certificates/ca-bundle.crt",
+                            "stream": false,
+                            "filename": null,
+                            "limit_response_size": null,
+                            "_redirection": 5
+                        },
+                        false
+                    ]
+                ]
+            ],
+            "result": "error:http_request_failed:A valid URL was not provided."
+        }
+    ],
+    [
+        "blocked or not, by host",
+        {
+            "heard": [],
+            "result": [
+                false,
+                false,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false,
+                true,
+                true,
+                true
+            ]
+        }
+    ],
+    [
+        "blocked or not, the site and localhost",
+        {
+            "heard": [
+                [
+                    "block_local_requests",
+                    [
+                        false
+                    ]
+                ]
+            ],
+            "result": [
+                false,
+                false,
+                false
+            ]
+        }
+    ],
+    [
+        "blocked or not, local requests blocked too",
+        {
+            "heard": [
+                [
+                    "block_local_requests",
+                    [
+                        false
+                    ]
+                ],
+                [
+                    "http_api_debug",
+                    [
+                        "error:http_request_not_executed:User has blocked requests through HTTP to the URL: http://localhost:1/x.",
+                        "response",
+                        "WpOrg\\Requests\\Requests",
+                        {
+                            "method": "GET",
+                            "timeout": 1,
+                            "redirection": 5,
+                            "httpversion": "1.0",
+                            "user-agent": "WordPress/7.1.3; {home}",
+                            "reject_unsafe_urls": false,
+                            "blocking": true,
+                            "headers": [],
+                            "cookies": [],
+                            "body": null,
+                            "compress": false,
+                            "decompress": true,
+                            "sslverify": true,
+                            "sslcertificates": "{abspath}/wp-includes/certificates/ca-bundle.crt",
+                            "stream": false,
+                            "filename": null,
+                            "limit_response_size": null,
+                            "_redirection": 5
+                        },
+                        "http://localhost:1/x"
+                    ]
+                ]
+            ],
+            "result": [
+                true,
+                true,
+                "error:http_request_not_executed:User has blocked requests through HTTP to the URL: http://localhost:1/x."
+            ]
+        }
+    ]
+]

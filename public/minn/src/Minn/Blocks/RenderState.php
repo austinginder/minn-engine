@@ -32,6 +32,9 @@ final class RenderState
     private bool $rootPaddingAware = true;
     /** Whether the theme writes block gaps (settings.spacing.blockGap); render configuration too. */
     private bool $blockGap = true;
+
+    /** What interactivity_process_directives last answered, for the block rendering now. */
+    private bool $directives = true;
     /** The state for code that renders with no request behind it: the command line and the unit suite. */
     private static ?self $offRequest = null;
     /** the element class claimed for the dynamic block being rendered, until its wrapper takes it */
@@ -230,6 +233,18 @@ final class RenderState
     public function leaveNavigation(): void
     {
         $this->navigation = max(0, $this->navigation - 1);
+    }
+
+    /**
+     * Whether the block rendering now has its Interactivity API directives
+     * processed, as interactivity_process_directives answered for it.
+     */
+    public function processesDirectives(?bool $answer = null): bool
+    {
+        if ($answer !== null) {
+            $this->directives = $answer;
+        }
+        return $this->directives;
     }
 
     /** Whether rendering is inside a navigation block. */

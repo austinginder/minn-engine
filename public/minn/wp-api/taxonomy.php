@@ -1965,6 +1965,10 @@ function create_initial_taxonomies()
     $named = ['category', 'post_tag', 'nav_menu', 'link_category', 'post_format'];
     foreach (Minn\Runtime\Runtime::registry()->taxonomies() as $name => $row) {
         if (!empty($row['_builtin'])) {
+            // Once init has begun, a post format's address base is asked of plugins (probe hook-inputs-2).
+            if ($name === 'post_format' && did_action('init') && is_array($row['rewrite'] ?? null)) {
+                $row['rewrite']['slug'] = (string) apply_filters('post_format_rewrite_base', 'type');
+            }
             $types = (array) ($row['object_type'] ?? []);
             $object = register_taxonomy($name, in_array($name, $named, true) ? (string) ($types[0] ?? '') : $types, ['capabilities' => (array) ($row['cap'] ?? [])] + $row);
             // The captured labels are the merged ones; core's category and post tag name no archives label of their own, so none is derived for them.

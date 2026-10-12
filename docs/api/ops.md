@@ -20,7 +20,7 @@
 | [`Releases`](#releases) | final class | 87 | Whether a newer Minn is out, asked of the Minn update service at most |
 | [`ShapeFiles`](#shapefiles) | final class | 104 | The files an install lays at the webroot for tooling to find: the shape |
 | [`Unzip`](#unzip) | final readonly class | 112 | An archive unpacked as unzip_file() unpacks it (probe unzip-file): into |
-| [`Updates`](#updates) | final class | 436 | Update offers for the site's plugins and themes from the directory, asked |
+| [`Updates`](#updates) | final class | 456 | Update offers for the site's plugins and themes from the directory, asked |
 | [`UpgraderRun`](#upgraderrun) | final readonly class | 113 | The engine's own installs and updates, run through the reference's |
 
 ## Archive
@@ -878,7 +878,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `supplied()` (private, line 190), `saveAuto()` (private, line 325), `pluginHeaders()` (private, line 382), `apply()` (private, line 426), `consume()` (private, line 447), `map()` (private, line 460), `safeUrl()` (private, line 468)
+Internals: `locales()` (private, line 83), `supplied()` (private, line 211), `saveAuto()` (private, line 346), `pluginHeaders()` (private, line 403), `apply()` (private, line 447), `consume()` (private, line 468), `map()` (private, line 481), `safeUrl()` (private, line 489)
 
 
 ## UpgraderRun

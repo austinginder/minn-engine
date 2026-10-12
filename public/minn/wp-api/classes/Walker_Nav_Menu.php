@@ -32,7 +32,8 @@ class Walker_Nav_Menu extends Walker
         $indent = str_repeat($t, $depth);
         $classes = apply_filters('nav_menu_submenu_css_class', ['sub-menu'], $args, $depth);
         $class_names = implode(' ', array_filter(array_map('strval', (array) $classes)));
-        $output .= "{$n}{$indent}<ul class=\"" . esc_attr($class_names) . "\">{$n}";
+        $atts = apply_filters('nav_menu_submenu_attributes', ['class' => $class_names], $args, $depth);
+        $output .= "{$n}{$indent}<ul" . $this->build_atts((array) $atts) . ">{$n}";
     }
 
     public function end_lvl(&$output, $depth = 0, $args = null)
@@ -52,7 +53,8 @@ class Walker_Nav_Menu extends Walker
         $class_names = implode(' ', array_filter((array) apply_filters('nav_menu_css_class', $classes, $item, $args, $depth)));
         $id = (string) apply_filters('nav_menu_item_id', 'menu-item-' . $item->ID, $item, $args, $depth);
         $id = $id !== '' && $this->first_print_of($item->ID) ? $id : '';
-        $output .= $indent . '<li' . ($id !== '' ? ' id="' . esc_attr($id) . '"' : '') . ($class_names !== '' ? ' class="' . esc_attr($class_names) . '"' : '') . '>';
+        $li = apply_filters('nav_menu_item_attributes', ['id' => $id, 'class' => $class_names], $item, $args, $depth);
+        $output .= $indent . '<li' . $this->build_atts((array) $li) . '>';
         $rel = (string) ($item->xfn ?? '');
         if ((string) $this->privacy_policy_url !== '' && ($item->url ?? '') === $this->privacy_policy_url) {
             $rel = ltrim($rel . ' privacy-policy');

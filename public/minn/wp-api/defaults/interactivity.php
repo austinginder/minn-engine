@@ -14,7 +14,8 @@ function _minn_block_is_interactive(array $parsed_block): bool
 }
 
 add_filter('render_block_data', static function ($parsed_block) {
-    if (is_array($parsed_block) && _minn_block_is_interactive($parsed_block)) {
+    // interactivity_process_directives, asked as the block began rendering, can leave its directives as written.
+    if (is_array($parsed_block) && _minn_block_is_interactive($parsed_block) && Minn\Blocks\RenderState::current()->processesDirectives()) {
         $stack = Minn\Runtime\Runtime::current()->get('interactive_stack', 0);
         Minn\Runtime\Runtime::current()->set('interactive_stack', $stack + 1);
         $parsed_block['_minnInteractiveRoot'] = $stack === 0;

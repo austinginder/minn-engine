@@ -507,6 +507,26 @@ function _minn_require_wp_db(string $contentDir): void
 }
 
 /** @internal starts the object cache (a drop-in's or the engine's) with the groups the reference declares global and runtime-only */
+/**
+ * @internal the browser and server globals the reference sets at boot
+ * ($is_chrome, $is_IE, $is_apache, …; Runtime\BrowserGlobals). An Internet
+ * Explorer running Chrome Frame counts as Chrome where
+ * use_google_chrome_frame says so (in the admin by default).
+ */
+function _minn_browser_globals(): void
+{
+    $agent = (string) ($_SERVER['HTTP_USER_AGENT'] ?? '');
+    $flags = Minn\Runtime\BrowserGlobals::detect($agent, (string) ($_SERVER['SERVER_SOFTWARE'] ?? ''));
+    if ($flags['is_IE'] && str_contains($agent, 'chromeframe')) {
+        $flags['is_chrome'] = (bool) apply_filters('use_google_chrome_frame', is_admin());
+        $flags['is_winIE'] = !$flags['is_chrome'];
+        $flags['is_IE'] = $flags['is_macIE'] || $flags['is_winIE'];
+    }
+    foreach ($flags as $name => $value) {
+        $GLOBALS[$name] = $value;
+    }
+}
+
 function _minn_start_object_cache(): void
 {
     wp_cache_init();

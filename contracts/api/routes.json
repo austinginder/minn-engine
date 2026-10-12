@@ -3657,7 +3657,7 @@
             "pattern": "/wp/v2/media/{id:[\\d]+}",
             "name": "Minn\\Rest\\MediaController::delete",
             "handler": "Minn\\Rest\\MediaController::delete",
-            "summary": "Attachments cannot be trashed; force removes the row, its meta, and its files.",
+            "summary": "Attachments go to the trash only when MEDIA_TRASH (or rest_attachment_trashable) says so; force removes the row, its meta, and its files.",
             "policy": {
                 "access": "Own",
                 "describe": "cap delete_post on {id}; attachment {id} must exist",

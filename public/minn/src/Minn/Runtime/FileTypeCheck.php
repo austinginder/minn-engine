@@ -64,11 +64,10 @@ final class FileTypeCheck
         return ['ext' => $ext, 'type' => $type, 'proper_filename' => $proper, 'real_mime' => $real];
     }
 
-    /** What an image's bytes say it is, or false when they are not an image. */
+    /** What an image's header says it is (Media\ImageMime), or false when it is not an image. */
     private static function imageMime(string $file): string|false
     {
-        $size = @getimagesize($file);
-        return is_array($size) && isset($size['mime']) ? (string) $size['mime'] : false;
+        return \Minn\Media\ImageMime::of($file) ?? false;
     }
 
     /** Whether content of the real type may carry a name of the given type. */

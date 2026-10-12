@@ -239,7 +239,7 @@ namespace {
 
         public function request($url, $args = [])
         {
-            $defaults = ['method' => 'GET', 'timeout' => (float) apply_filters('http_request_timeout', 5, $url), 'redirection' => (int) apply_filters('http_request_redirection_count', 5, $url), 'httpversion' => apply_filters('http_request_version', '1.0', $url), 'user-agent' => apply_filters('http_headers_useragent', 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo('url'), $url), 'reject_unsafe_urls' => apply_filters('http_request_reject_unsafe_urls', false, $url), 'blocking' => true, 'headers' => [], 'cookies' => [], 'body' => null, 'compress' => false, 'decompress' => true, 'sslverify' => true, 'sslcertificates' => '', 'stream' => false, 'filename' => null, 'limit_response_size' => null];
+            $defaults = ['method' => 'GET', 'timeout' => (float) apply_filters('http_request_timeout', 5, $url), 'redirection' => (int) apply_filters('http_request_redirection_count', 5, $url), 'httpversion' => apply_filters('http_request_version', '1.0', $url), 'user-agent' => apply_filters('http_headers_useragent', 'WordPress/' . $GLOBALS['wp_version'] . '; ' . get_bloginfo('url'), $url), 'reject_unsafe_urls' => apply_filters('http_request_reject_unsafe_urls', false, $url), 'blocking' => true, 'headers' => [], 'cookies' => [], 'body' => null, 'compress' => false, 'decompress' => true, 'sslverify' => true, 'sslcertificates' => ABSPATH . WPINC . '/certificates/ca-bundle.crt', 'stream' => false, 'filename' => null, 'limit_response_size' => null];
             // A HEAD request follows no redirects unless it asks to (probe functions-remaining).
             if (($args['method'] ?? '') === 'HEAD') {
                 $defaults['redirection'] = 0;
@@ -251,9 +251,13 @@ namespace {
             if ($pre !== false) {
                 return $pre;
             }
-            $url = $this->validated_url($url, (bool) $parsed_args['reject_unsafe_urls']);
-            if ($url instanceof WP_Error) {
-                return $url;
+            // A URL refused, or one WP_HTTP_BLOCK_EXTERNAL blocks, is told to http_api_debug like a failed
+            // request, as the URL it became: false when unsafe, without a protocol other than http(s) (probe hook-inputs-2).
+            $url = $parsed_args['reject_unsafe_urls'] ? wp_http_validate_url($url) : wp_kses_bad_protocol((string) $url, ['http', 'https', 'ssl']);
+            $refused = $this->refusal($url);
+            if ($refused !== null) {
+                do_action('http_api_debug', $refused, 'response', 'WpOrg\\Requests\\Requests', $parsed_args, $url);
+                return $refused;
             }
             if ($parsed_args['stream'] && empty($parsed_args['filename'])) {
                 $parsed_args['filename'] = get_temp_dir() . wp_basename((string) parse_url($url, PHP_URL_PATH));
@@ -324,9 +328,10 @@ namespace {
             if (!empty($args['cookies'])) {
                 $options['cookies'] = self::normalize_cookies((array) $args['cookies']);
             }
-            // Verification as plugins leave it: off, the certificate bundle given, or on.
-            $verify = !$args['sslverify'] ? false : (!empty($args['sslcertificates']) ? (string) $args['sslcertificates'] : true);
-            $options['verify'] = apply_filters('https_ssl_verify', $verify, $url);
+            // https_ssl_verify hears the certificate bundle named (the reference's own path unless a
+            // plugin names another) or false; a bundle not on disk here verifies against the system's.
+            $verify = apply_filters('https_ssl_verify', $args['sslverify'] ? $args['sslcertificates'] : false, $url);
+            $options['verify'] = is_string($verify) ? ($verify !== '' && is_readable($verify) ? $verify : true) : (bool) $verify;
             if (!in_array(strtoupper((string) $args['method']), ['GET', 'HEAD'], true)) {
                 $options['data_format'] = 'body';
             }
@@ -351,22 +356,17 @@ namespace {
             return $jar;
         }
 
-        private function validated_url($url, bool $rejectUnsafe)
+        /** Why a URL is not requested: not an http(s) URL, or blocked; null to go ahead. */
+        private function refusal($url): ?WP_Error
         {
-            if (!is_string($url) || $url === '') {
+            $parsed = is_string($url) && $url !== '' ? parse_url($url) : false;
+            if ($parsed === false || empty($parsed['host']) || !in_array(strtolower((string) ($parsed['scheme'] ?? '')), ['http', 'https'], true)) {
                 return new WP_Error('http_request_failed', 'A valid URL was not provided.');
             }
-            $parsed = parse_url($url);
-            if ($parsed === false || empty($parsed['scheme']) || empty($parsed['host'])) {
-                return new WP_Error('http_request_failed', 'A valid URL was not provided.');
+            if ($this->block_request($url)) {
+                return new WP_Error('http_request_not_executed', sprintf('User has blocked requests through HTTP to the URL: %s.', $url));
             }
-            if (!in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
-                return new WP_Error('http_request_failed', 'Only HTTP requests are allowed.');
-            }
-            if ($rejectUnsafe) {
-                $url = wp_http_validate_url($url);
-            }
-            return $url ?: new WP_Error('http_request_failed', 'A valid URL was not provided.');
+            return null;
         }
         public function post($url, $args = [])
         {
@@ -526,9 +526,33 @@ namespace {
             return false;
         }
 
+        /**
+         * Whether WP_HTTP_BLOCK_EXTERNAL blocks a URL: one with no host always,
+         * localhost and the site's own host only when block_local_requests
+         * says so, any other host unless WP_ACCESSIBLE_HOSTS lists it (exactly,
+         * or ignoring case once any entry has a * wildcard).
+         */
         public function block_request($uri)
         {
-            return defined('WP_HTTP_BLOCK_EXTERNAL') && WP_HTTP_BLOCK_EXTERNAL;
+            if (!defined('WP_HTTP_BLOCK_EXTERNAL') || !WP_HTTP_BLOCK_EXTERNAL) {
+                return false;
+            }
+            $host = parse_url((string) $uri, PHP_URL_HOST);
+            if (!is_string($host) || $host === '') {
+                return true;
+            }
+            if ($host === 'localhost' || $host === parse_url((string) get_option('siteurl'), PHP_URL_HOST)) {
+                return (bool) apply_filters('block_local_requests', false);
+            }
+            if (!defined('WP_ACCESSIBLE_HOSTS')) {
+                return true;
+            }
+            $hosts = preg_split('|,\s*|', (string) WP_ACCESSIBLE_HOSTS);
+            if (!str_contains((string) WP_ACCESSIBLE_HOSTS, '*')) {
+                return !in_array($host, $hosts, true);
+            }
+            $patterns = array_map(static fn ($entry) => str_replace('\\*', '.+', preg_quote($entry, '/')), $hosts);
+            return !preg_match('/^(' . implode('|', $patterns) . ')$/i', $host);
         }
     }
 }

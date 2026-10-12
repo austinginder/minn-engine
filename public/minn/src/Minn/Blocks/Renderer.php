@@ -73,6 +73,8 @@ final class Renderer
     private array $native = [];
     /** Whether the next block renders without the block filters around it (renderNativeUnfiltered()). */
     private bool $unfiltered = false;
+    /** Whether the next block renders as its render callback called alone would (renderNativeAsCallback()). */
+    private bool $asCallback = false;
     /** @var list<array<string, mixed>> context enclosing blocks provide to those inside */
     private array $provided = [];
     private Context $context;
@@ -247,11 +249,31 @@ final class Renderer
         }
     }
 
+    /**
+     * A core block as its render callback called directly renders it: not a
+     * block being rendered, so enqueue_empty_block_content_assets is not
+     * asked for it (its inner blocks are), as the reference asks it only in
+     * a block's render (probe plugin-surface2).
+     */
+    public function renderNativeAsCallback(Block $block): string
+    {
+        $this->asCallback = true;
+        try {
+            return $this->renderNative($block);
+        } finally {
+            $this->asCallback = false;
+        }
+    }
+
     /** One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without). */
     public function renderBlock(Block $block): string
     {
         $unfiltered = $this->unfiltered;
         $this->unfiltered = false;
+        $asCallback = $this->asCallback;
+        $this->asCallback = false;
+        // Every block, freeform text too, is asked whether its directives are processed (probe hook-inputs-2).
+        $this->state->processesDirectives((bool) Runtime::hooks()->filter('interactivity_process_directives', [true]));
         if ($block->name === null) {
             return $block->innerHtml;
         }
@@ -275,7 +297,9 @@ final class Renderer
             }
             $bound = Bindings::values($block, $this->blockContext());
             $html = $this->renderNamed($bound === [] ? $block : $block->withAttrs(array_merge($block->attrs, $bound)), $bound);
-            if ($html !== '') {
+            // A block that renders nothing loads its assets only when enqueue_empty_block_content_assets asks
+            // for them, asked while they are not loaded yet.
+            if ($html !== '' || (!$asCallback && !isset($this->state->blocks()[$block->name]) && Runtime::hooks()->filter('enqueue_empty_block_content_assets', [false, $block->name]))) {
                 $this->state->recordBlock($block->name);
             }
             $html = $seams === null ? $html : $seams->filterBlock($block, $html);

@@ -35,11 +35,12 @@ class WP_Widget_Recent_Comments extends WP_Widget
             $output .= '<li class="recentcomments"><span class="comment-author-link">' . get_comment_author_link($comment) . '</span> on <a href="' . esc_url(get_comment_link($comment)) . '">' . get_the_title($comment->comment_post_ID) . '</a></li>';
         }
         $output .= '</ul>';
+        [$open, $close] = _minn_widget_nav((string) $title, 'Recent Comments');
         echo $args['before_widget'];
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
-        echo $output . $args['after_widget'];
+        echo $open . $output . $close . $args['after_widget'];
     }
 
     public function update($new_instance, $old_instance)

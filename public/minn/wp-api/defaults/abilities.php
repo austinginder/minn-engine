@@ -101,6 +101,8 @@ function wp_register_core_abilities()
             ],
             'additionalProperties' => false,
         ],
+        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_site_info((array) ($input ?? [])),
+        'permission_callback' => static fn (): bool => _minn_ability_may_get_site_info(),
         'meta' => [
             'annotations' => [
             'readonly' => true,
@@ -108,10 +110,7 @@ function wp_register_core_abilities()
             'idempotent' => true,
             ],
             'public' => true,
-            'show_in_rest' => true,
         ],
-        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_site_info((array) ($input ?? [])),
-        'permission_callback' => static fn (): bool => _minn_ability_may_get_site_info(),
     ]);
 
     wp_register_ability('core/get-user-info', [
@@ -209,6 +208,8 @@ function wp_register_core_abilities()
             ],
             'additionalProperties' => false,
         ],
+        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_user_info((array) ($input ?? [])),
+        'permission_callback' => static fn (): bool => _minn_ability_may_get_user_info(),
         'meta' => [
             'annotations' => [
             'readonly' => true,
@@ -216,10 +217,7 @@ function wp_register_core_abilities()
             'idempotent' => true,
             ],
             'public' => true,
-            'show_in_rest' => true,
         ],
-        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_user_info((array) ($input ?? [])),
-        'permission_callback' => static fn (): bool => _minn_ability_may_get_user_info(),
     ]);
 
     wp_register_ability('core/get-environment-info', [
@@ -278,6 +276,8 @@ function wp_register_core_abilities()
             ],
             'additionalProperties' => false,
         ],
+        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_environment_info((array) ($input ?? [])),
+        'permission_callback' => static fn (): bool => _minn_ability_may_get_environment_info(),
         'meta' => [
             'annotations' => [
             'readonly' => true,
@@ -285,10 +285,7 @@ function wp_register_core_abilities()
             'idempotent' => true,
             ],
             'public' => true,
-            'show_in_rest' => true,
         ],
-        'execute_callback' => static fn (mixed $input): mixed => _minn_ability_get_environment_info((array) ($input ?? [])),
-        'permission_callback' => static fn (): bool => _minn_ability_may_get_environment_info(),
     ]);
 }
 add_action('wp_abilities_api_init', 'wp_register_core_abilities');

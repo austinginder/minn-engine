@@ -25,10 +25,14 @@ final readonly class MediaObject
     }
 
 
-    /** An attachment in the context asked for, through rest_prepare_attachment when a plugin hooks it. */
+    /**
+     * An attachment in the context asked for, as rest_block_hooks_post_types
+     * has it (attachments only when a plugin lists them), through
+     * rest_prepare_attachment when a plugin hooks it.
+     */
     public function build(PostRecord $p, Context $context): array
     {
-        return RuntimePrepare::item('rest_prepare_attachment', $this->buildFields($p, $context), static fn () => \get_post($p->id));
+        return RuntimePrepare::postItem('rest_prepare_attachment', $this->buildFields($p, $context), $p->id, 'attachment');
     }
 
     /** The REST URL builder. */
@@ -84,8 +88,14 @@ final readonly class MediaObject
         $object['post'] = $p->parentId > 0 ? $p->parentId : null;
         $object['source_url'] = $fullUrl;
         if ($edit) {
-            // The registered sizes the image lacks, as the runtime counts them (wp_get_missing_image_subsizes).
-            $object['missing_image_sizes'] = $isImage && \function_exists('_minn_missing_image_size_names') ? \_minn_missing_image_size_names($id) : [];
+            // The registered sizes the image lacks, as the runtime counts them (wp_get_missing_image_subsizes);
+            // a PDF's, the preview sizes it was meant to have (fallback_intermediate_image_sizes).
+            $object['missing_image_sizes'] = match (true) {
+                !\function_exists('_minn_missing_image_size_names') => [],
+                $isImage => \_minn_missing_image_size_names($id),
+                $p->mimeType === 'application/pdf' => \_minn_missing_pdf_sizes((array) $object['media_details']),
+                default => [],
+            };
         }
         // The original image's name when the image keeps one beside it.
         $object['filename'] = (string) ($meta['original_image'] ?? '') !== '' ? basename((string) $meta['original_image']) : basename($file);
@@ -147,7 +157,7 @@ final readonly class MediaObject
     /**
      * media_details: the stored metadata as it is, its sizes each with its
      * MIME type and URL, and the full size after them when there are any
-     * (an attachment without sizes, audio among them, has an empty list).
+     * (an attachment without sizes, audio among them, has an empty object).
      *
      * @param array<string, mixed> $meta
      * @return array<string, mixed>
@@ -169,7 +179,7 @@ final readonly class MediaObject
                 ? ['file' => $full['file'] ?? '', 'width' => $full['width'] ?? 0, 'height' => $full['height'] ?? 0, 'mime_type' => $mime, 'source_url' => $baseUrl . '/' . ($full['file'] ?? '')]
                 : ['file' => basename($attached), 'width' => $meta['width'], 'height' => $meta['height'] ?? 0, 'mime_type' => $mime, 'source_url' => $this->uploads->urlFor($attached)];
         }
-        $meta['sizes'] = $sizes;
+        $meta['sizes'] = $sizes === [] ? new \stdClass() : $sizes;
         return $meta;
     }
 }

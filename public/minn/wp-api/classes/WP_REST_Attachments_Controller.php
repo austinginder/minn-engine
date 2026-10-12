@@ -121,6 +121,10 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
         if (!empty($request['post']) && !current_user_can('edit_post', (int) $request['post'])) {
             return new WP_Error('rest_cannot_edit', __('Sorry, you are not allowed to upload media to this post.'), ['status' => rest_authorization_required_code()]);
         }
+        $files = $request->get_file_params();
+        if (_minn_refuses_unsupported_image(isset($files['file']['type']) ? (string) $files['file']['type'] : null)) {
+            return new WP_Error('rest_upload_image_type_not_supported', __('The web server cannot generate responsive image sizes for this image. Convert it to JPEG or PNG before uploading.'), ['status' => 400]);
+        }
         return true;
     }
 

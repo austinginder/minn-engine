@@ -70,8 +70,13 @@ final class Abilities
         $refusal = match (true) {
             isset($state['categories'][$slug]) => sprintf('Ability category "%s" is already registered.', $slug),
             preg_match(self::SLUG, $slug) !== 1 => 'Ability category slug must contain only lowercase alphanumeric characters and dashes.',
-            default => self::categoryRefusal($args),
+            default => null,
         };
+        // A well-formed new slug's arguments are the plugins' to change before they are judged (probe ability-hooks).
+        if ($refusal === null) {
+            $args = (array) \apply_filters('wp_register_ability_category_args', $args, $slug);
+            $refusal = self::categoryRefusal($args);
+        }
         if ($refusal !== null) {
             \_doing_it_wrong(self::CATEGORIES . '::register', $refusal, '6.9.0');
             return null;
@@ -85,6 +90,10 @@ final class Abilities
     public static function register(string $name, array $args): ?array
     {
         $state = self::state();
+        // A well-formed new name's arguments are the plugins' to change before they are judged (probe ability-hooks).
+        if (preg_match(self::NAME, $name) === 1 && !isset($state['abilities'][$name])) {
+            $args = (array) \apply_filters('wp_register_ability_args', $args, $name);
+        }
         $category = $args['category'] ?? null;
         $refusal = match (true) {
             preg_match(self::NAME, $name) !== 1 => 'Ability name must be a string containing a namespace prefix, i.e. "my-plugin/my-ability". It can only contain lowercase alphanumeric characters, dashes and the forward slash.',

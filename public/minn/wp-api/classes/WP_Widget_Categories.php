@@ -27,8 +27,9 @@ class WP_Widget_Categories extends WP_Widget
             echo '</form>';
             wp_print_inline_script_tag(_minn_dropdown_script($id, "if ( dropdown.value && parseInt( dropdown.value ) > 0 && dropdown instanceof HTMLSelectElement ) {\n\t\t\t\tdropdown.parentElement.submit();\n\t\t\t}") . _minn_source_url(rawurlencode('WP_Widget_Categories::widget')));
         } else {
+            [$open, $close] = _minn_widget_nav((string) $title, 'Categories');
             $list = wp_list_categories(apply_filters('widget_categories_args', ['orderby' => 'name', 'show_count' => $count, 'hierarchical' => $hierarchical, 'title_li' => '', 'echo' => 0], $instance));
-            echo "\n\t\t\t<ul>\n\t\t\t\t" . $list . "\t\t\t</ul>\n\n\t\t\t";
+            echo $open . "\n\t\t\t<ul>\n\t\t\t\t" . $list . "\t\t\t</ul>\n\n\t\t\t" . $close;
         }
         echo $args['after_widget'];
     }

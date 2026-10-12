@@ -255,7 +255,13 @@ function wp_cron()
     return _minn_run_cron();
 }
 
-/** @internal runs every due event: single events are removed first, recurring ones rescheduled first, then the hook fires */
+/**
+ * @internal runs every due event: single events are removed first,
+ * recurring ones rescheduled first, then the hook fires. A reschedule or
+ * removal that fails is logged and told to cron_reschedule_event_error or
+ * cron_unschedule_event_error, as wp-cron.php tells them (probe
+ * hook-inputs-2), and the hook fires anyway.
+ */
 function _minn_run_cron()
 {
     if (!Runtime::booted()) {
@@ -271,9 +277,9 @@ function _minn_run_cron()
             foreach ($keys as $key => $v) {
                 $schedule = $v['schedule'];
                 if ($schedule) {
-                    wp_reschedule_event($timestamp, $schedule, $hook, $v['args'], true);
+                    _minn_cron_failed(wp_reschedule_event($timestamp, $schedule, $hook, $v['args'], true), 'cron_reschedule_event_error', $hook, $v);
                 }
-                wp_unschedule_event($timestamp, $hook, $v['args'], true);
+                _minn_cron_failed(wp_unschedule_event($timestamp, $hook, $v['args'], true), 'cron_unschedule_event_error', $hook, $v);
                 do_action_ref_array($hook, $v['args']);
                 $ran++;
             }
@@ -282,6 +288,16 @@ function _minn_run_cron()
     return $ran;
 }
 
+
+/** @internal a due event's reschedule or removal that failed, logged and told to its action (cron_reschedule_event_error, cron_unschedule_event_error) */
+function _minn_cron_failed($result, string $action, string $hook, array $event): void
+{
+    if (!is_wp_error($result)) {
+        return;
+    }
+    error_log(sprintf('Cron %1$s event error for hook: %2$s, Error code: %3$s, Error message: %4$s, Data: %5$s', explode('_', $action)[1], $hook, $result->get_error_code(), $result->get_error_message(), wp_json_encode($event)));
+    do_action($action, $result, $hook, $event);
+}
 
 /** The core, plugin and theme update checks forgotten, so the next check asks again (probe placeholder-helpers). */
 function wp_clean_update_cache()

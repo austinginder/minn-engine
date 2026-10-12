@@ -19,11 +19,12 @@ class WP_Widget_Recent_Posts extends WP_Widget
         if (!$query->have_posts()) {
             return;
         }
+        [$open, $close] = _minn_widget_nav((string) $title, 'Recent Posts');
         echo "\n\t\t" . $args['before_widget'] . "\n\t\t";
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
-        echo "\n\t\t<ul>\n";
+        echo $open . "\n\t\t<ul>\n";
         foreach ($query->posts as $post) {
             $current = get_queried_object_id() === $post->ID ? ' aria-current="page"' : '';
             $postTitle = get_the_title($post) ?: $post->ID;
@@ -33,7 +34,7 @@ class WP_Widget_Recent_Posts extends WP_Widget
             }
             echo "\t\t\t\t\t\t\t\t\t</li>\n";
         }
-        echo "\t\t\t\t\t</ul>\n\n\t\t" . $args['after_widget'];
+        echo "\t\t\t\t\t</ul>\n\n\t\t" . $close . $args['after_widget'];
     }
 
     public function update($new_instance, $old_instance)

@@ -1293,6 +1293,21 @@ function _minn_attachment_saved(int $id, array $postarr, ?WP_Post $post_before):
     return $id;
 }
 
+/**
+ * @internal A trash or its undoing ends as the save it is: an attachment's
+ * (edit_attachment, attachment_updated; probe hook-inputs-2), or a post's
+ * with its transition and wp_after_insert_post.
+ */
+function _minn_post_trash_saved(WP_Post $post): void
+{
+    _minn_post_keep_categories($post);
+    if ($post->post_type === 'attachment') {
+        _minn_attachment_saved($post->ID, [], $post);
+        return;
+    }
+    wp_after_insert_post(_minn_post_saved($post->ID, true, $post), true, $post);
+}
+
 /** @internal A save sets a post's categories again, as the reference's insert does, telling plugins even when nothing changes. */
 function _minn_post_keep_categories(WP_Post $post): void
 {
@@ -1796,9 +1811,7 @@ function wp_trash_post($post_id = 0)
     clean_post_cache($post->ID);
     _minn_post_before_save(['post_status' => 'trash', 'post_name' => $post->post_name . '__trashed'] + $post->to_array(), $post->ID);
     _minn_post_writer()->trash(_minn_posts()->find($post->ID));
-    _minn_post_keep_categories($post);
-    $trashed = _minn_post_saved($post->ID, true, $post);
-    wp_after_insert_post($trashed, true, $post);
+    _minn_post_trash_saved($post);
     wp_trash_post_comments($post->ID);
     do_action('trashed_post', $post->ID, $post->post_status);
     // The reference answers with the post as it was before the trash.
@@ -1817,7 +1830,11 @@ function wp_untrash_post($post_id = 0)
         return $check;
     }
     do_action('untrash_post', $post->ID, $previous);
-    $new = $previous === 'attachment' ? 'inherit' : apply_filters('wp_untrash_post_status', 'draft', $post->ID, $previous);
+    $new = apply_filters('wp_untrash_post_status', 'draft', $post->ID, $previous);
+    // An attachment comes back inherit unless it goes back private or an auto-draft (probe hook-inputs-2).
+    if ($post->post_type === 'attachment' && !in_array($new, ['inherit', 'private', 'trash', 'auto-draft'], true)) {
+        $new = 'inherit';
+    }
     delete_post_meta($post->ID, '_wp_trash_meta_status');
     delete_post_meta($post->ID, '_wp_trash_meta_time');
     // The slug it had comes back, whatever status it returns to.
@@ -1829,9 +1846,7 @@ function wp_untrash_post($post_id = 0)
     delete_post_meta($post->ID, '_wp_desired_post_slug');
     _minn_post_before_save($columns + $post->to_array(), $post->ID);
     _minn_post_writer()->update($post->ID, $columns);
-    _minn_post_keep_categories($post);
-    $restored = _minn_post_saved($post->ID, true, $post);
-    wp_after_insert_post($restored, true, $post);
+    _minn_post_trash_saved($post);
     wp_untrash_post_comments($post->ID);
     do_action('untrashed_post', $post->ID, $previous);
     return $post;

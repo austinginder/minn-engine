@@ -83,6 +83,8 @@ final readonly class ProbeController
     #[Route(Method::Get, '/favicon.ico', policy: new Policy(Access::Public))]
     public function favicon(Request $request): Response
     {
+        // Plugins hear do_favicon first and may answer it whole; the engine's answer is the default one.
+        Runtime::hooks()->action('do_favicon', []);
         $url = $this->icon->url();
         return $url === '' ? new Response(404) : Response::redirect($url, 302);
     }

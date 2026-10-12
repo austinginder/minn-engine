@@ -43,13 +43,17 @@ final readonly class PostObject
      */
     public function view(PostRecord $p, ?Fields $fields = null): array
     {
-        return RuntimePrepare::item('rest_prepare_' . $p->type, $this->viewFields($p, $fields), static fn () => \get_post($p->id));
+        return RuntimePrepare::postItem('rest_prepare_' . $p->type, $this->viewFields($p, $fields), $p->id, $p->type);
     }
 
-    /** The edit-context object, through rest_prepare_{type} when a plugin hooks it. */
-    public function edit(PostRecord $p, int $userId): array
+    /**
+     * The edit-context object, its raw content given its hooked blocks,
+     * through rest_prepare_{type} when a plugin hooks it; with a _fields
+     * selection, rendered only as far as it asks.
+     */
+    public function edit(PostRecord $p, int $userId, ?Fields $fields = null): array
     {
-        return RuntimePrepare::item('rest_prepare_' . $p->type, $this->editFields($p, $userId), static fn () => \get_post($p->id));
+        return RuntimePrepare::postItem('rest_prepare_' . $p->type, $this->editFields($p, $userId, $fields), $p->id, $p->type);
     }
 
     /** A post's permalink as of now: pretty once live with a slug, ?p= (or ?page_id=) before. */
@@ -329,11 +333,14 @@ final readonly class PostObject
      * password, permalink_template, generated_slug, block_version, Minn
      * Admin's registered list fields, and the cap-gated action links.
      */
-    private function editFields(PostRecord $p, int $userId): array
+    private function editFields(PostRecord $p, int $userId, ?Fields $fields = null): array
     {
         $id = $p->id;
-        $view = $this->viewFields($p);
+        $view = $this->viewFields($p, $fields);
         $protected = $p->isProtected();
+        // What the view rendered is kept: each field is rendered once, as the reference renders it,
+        // unless the view left it blank for a password the edit context does not ask for.
+        $rendered = static fn (string $field, \Closure $render): string => !$protected && isset($view[$field]['rendered']) ? (string) $view[$field]['rendered'] : $render();
 
         $view['guid'] = ['rendered' => $p->guid, 'raw' => $p->guid];
         if (isset($view['meta'])) {
@@ -345,13 +352,14 @@ final readonly class PostObject
         } else {
             // A plugin's type has only the fields it supports, so only those gain their raw halves.
             $registered = RegisteredType::of($p->type);
-            if ($registered === null || isset($view['title'])) {
-                $view['title'] = ['raw' => $p->title, 'rendered' => RenderedFields::title($p)];
+            $wants = static fn (string $field): bool => $fields === null || $fields->wants($field);
+            if (($registered === null || isset($view['title'])) && $wants('title')) {
+                $view['title'] = ['raw' => $p->title, 'rendered' => isset($view['title']['rendered']) ? (string) $view['title']['rendered'] : RenderedFields::title($p)];
             }
-            if ($registered === null || isset($view['content'])) {
+            if (($registered === null || isset($view['content'])) && $wants('content')) {
                 $view['content'] = [
                     'raw' => $p->content,
-                    'rendered' => RenderedFields::content($p),
+                    'rendered' => $rendered('content', static fn (): string => RenderedFields::content($p)),
                     'protected' => $protected,
                     'block_version' => str_contains($p->content, '<!-- wp:') ? 1 : 0,
                 ];
@@ -360,7 +368,7 @@ final readonly class PostObject
         if (isset($view['excerpt'])) {
             $view['excerpt'] = [
                 'raw' => $p->excerpt,
-                'rendered' => RenderedFields::excerpt($p),
+                'rendered' => $rendered('excerpt', static fn (): string => RenderedFields::excerpt($p)),
                 'protected' => $protected,
             ];
         }

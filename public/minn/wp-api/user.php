@@ -538,6 +538,10 @@ function check_password_reset_key($key, $login)
     if ($status === 'valid') {
         return new WP_User((int) $user['ID']);
     }
+    if ($status === 'unstamped') {
+        // A key stored without its time is expired unless a plugin says otherwise.
+        return apply_filters('password_reset_key_expired', new WP_Error('expired_key', 'Invalid key.'), (int) $user['ID']);
+    }
     return $status === 'expired' ? new WP_Error('expired_key', 'Invalid key.') : new WP_Error('invalid_key', 'Invalid key.');
 }
 
@@ -953,7 +957,9 @@ function _wp_privacy_send_request_confirmation_notification($request_id)
     $data = ['request' => $request, 'user_email' => $request->email, 'description' => wp_user_request_action_description($request->action_name), 'manage_url' => $manage, 'sitename' => wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), 'siteurl' => home_url(), 'admin_email' => apply_filters('user_request_confirmed_email_to', get_site_option('admin_email'), $request)];
     $subject = apply_filters('user_request_confirmed_email_subject', sprintf(__('[%1$s] Action Confirmed: %2$s'), $data['sitename'], $data['description']), $data['sitename'], $data);
     /* translators: Do not translate SITENAME, USER_EMAIL, DESCRIPTION, MANAGE_URL, SITEURL: those are placeholders. */
-    $content = apply_filters('user_request_confirmed_email_content', __("Howdy,\n\nA user data privacy request has been confirmed on ###SITENAME###:\n\nUser: ###USER_EMAIL###\nRequest: ###DESCRIPTION###\n\nYou can view and manage these data privacy requests here:\n\n###MANAGE_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###"), $data);
+    $content = __("Howdy,\n\nA user data privacy request has been confirmed on ###SITENAME###:\n\nUser: ###USER_EMAIL###\nRequest: ###DESCRIPTION###\n\nYou can view and manage these data privacy requests here:\n\n###MANAGE_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###");
+    $content = apply_filters_deprecated('user_confirmed_action_email_content', [$content, $data], '5.8.0', 'user_request_confirmed_email_content or user_erasure_fulfillment_email_content');
+    $content = apply_filters('user_request_confirmed_email_content', $content, $data);
     $content = strtr($content, ['###SITENAME###' => $data['sitename'], '###USER_EMAIL###' => $data['user_email'], '###DESCRIPTION###' => $data['description'], '###MANAGE_URL###' => sanitize_url($data['manage_url']), '###SITEURL###' => sanitize_url($data['siteurl'])]);
     $headers = apply_filters('user_request_confirmed_email_headers', '', $subject, $content, $request_id, $data);
     if (wp_mail($data['admin_email'], $subject, $content, $headers)) {
@@ -1201,15 +1207,18 @@ function _wp_privacy_send_erasure_fulfillment_notification($request_id)
     $switched = !empty($request->user_id) ? switch_to_user_locale($request->user_id) : switch_to_locale(get_locale());
     $to = apply_filters('user_erasure_fulfillment_email_to', $request->email, $request);
     $data = ['request' => $request, 'message_recipient' => $to, 'privacy_policy_url' => get_privacy_policy_url(), 'sitename' => wp_specialchars_decode(get_option('blogname'), ENT_QUOTES), 'siteurl' => home_url()];
-    $subject = apply_filters('user_erasure_fulfillment_email_subject', sprintf(__('[%s] Erasure Request Fulfilled'), $data['sitename']), $data['sitename'], $data);
+    $subject = apply_filters_deprecated('user_erasure_complete_email_subject', [sprintf(__('[%s] Erasure Request Fulfilled'), $data['sitename']), $data['sitename'], $data], '5.8.0', 'user_erasure_fulfillment_email_subject');
+    $subject = apply_filters('user_erasure_fulfillment_email_subject', $subject, $data['sitename'], $data);
     $content = $data['privacy_policy_url'] === ''
         /* translators: Do not translate SITENAME, SITEURL: those are placeholders. */
         ? __("Howdy,\n\nYour request to erase your personal data on ###SITENAME### has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###")
         /* translators: Do not translate SITENAME, SITEURL, PRIVACY_POLICY_URL: those are placeholders. */
         : __("Howdy,\n\nYour request to erase your personal data on ###SITENAME### has been completed.\n\nIf you have any follow-up questions or concerns, please contact the site administrator.\n\nFor more information, you can also read our privacy policy: ###PRIVACY_POLICY_URL###\n\nRegards,\nAll at ###SITENAME###\n###SITEURL###");
+    $content = apply_filters_deprecated('user_confirmed_action_email_content', [$content, $data], '5.8.0', 'user_erasure_fulfillment_email_content or user_request_confirmed_email_content');
     $content = apply_filters('user_erasure_fulfillment_email_content', $content, $data);
     $content = strtr($content, ['###SITENAME###' => $data['sitename'], '###PRIVACY_POLICY_URL###' => $data['privacy_policy_url'], '###SITEURL###' => sanitize_url($data['siteurl'])]);
-    $headers = apply_filters('user_erasure_fulfillment_email_headers', '', $subject, $content, $request_id, $data);
+    $headers = apply_filters_deprecated('user_erasure_complete_email_headers', ['', $subject, $content, $request_id, $data], '5.8.0', 'user_erasure_fulfillment_email_headers');
+    $headers = apply_filters('user_erasure_fulfillment_email_headers', $headers, $subject, $content, $request_id, $data);
     $sent = wp_mail($to, $subject, $content, $headers);
     if ($switched) {
         restore_previous_locale();

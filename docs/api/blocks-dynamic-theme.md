@@ -5,7 +5,7 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 266 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 374 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Navigation`](#navigation) | final readonly class | 517 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 260 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -53,6 +53,7 @@ emits. The nav is labelled by the block's aria label, or the menu's
 title, made unique in the request; the list carries the aria label as
 given (probe loose-classes).
 
+- const `LISTABLE` = `array (   0 => 'core/site-title',   1 => 'core/site-logo',   2 => 'core/social-links', )` — The other blocks a navigation lists, each in an li (block_core_navigation_listable_blocks).
 - const `SUBMENU_CONTEXT` = `'{ "submenuOpenedBy": { "click": false, "hover": false, "focus": false }, "type": "submenu", "modal": null, "previousFocus": null }'` — A submenu's interactivity context.
 - const `SUBMENU_TOGGLE` = `'data-wp-bind--aria-expanded="state.isSubmenuOpen" data-wp-on--click="actions.toggleMenuOnClick"'`
 - const `CHEVRON` = `'<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true" focusable="false"><path d="M1.50002 4L6.00002 8L10.5 4" stroke-width="1.5"></path></svg>'` — The submenu toggle's chevron (block_core_navigation_link_render_submenu_icon).
@@ -75,7 +76,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 65), `navigation()` (private, line 92), `responsive()` (private, line 166), `items()` (private, line 202), `presetClasses()` (private, line 215), `overlayColors()` (private, line 237), `link()` (private, line 249), `submenu()` (private, line 275), `overlayClose()` (private, line 297), `classicItems()` (private, line 308), `pageList()` (private, line 314), `ancestorsOf()` (private, line 328), `pageItems()` (private, line 352), `navParent()` (private, line 383), `menuPost()` (private, line 392), `enqueueView()` (private, line 402)
+Internals: `wiring()` (private, line 68), `navigation()` (private, line 95), `responsive()` (private, line 176), `items()` (private, line 212), `groups()` (private, line 234), `filteredItems()` (private, line 260), `linkedPosts()` (private, line 282), `weighLinks()` (private, line 295), `linkable()` (private, line 310), `presetClasses()` (private, line 321), `overlayColors()` (private, line 343), `link()` (private, line 355), `submenu()` (private, line 390), `overlayClose()` (private, line 415), `classicItems()` (private, line 426), `pageList()` (private, line 432), `submenuColours()` (private, line 452), `ancestorsOf()` (private, line 468), `pageItems()` (private, line 495), `navParent()` (private, line 526), `menuPost()` (private, line 535), `enqueueView()` (private, line 545)
 
 
 ## PostBlocks

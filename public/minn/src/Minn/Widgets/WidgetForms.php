@@ -87,10 +87,10 @@ final class WidgetForms
         return sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">\n\t\t\t\tBlock HTML:\t\t\t</label>\n\t\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" rows=\"6\" cols=\"50\" class=\"widefat code\">%3\$s</textarea>\n\t\t</p>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), \esc_textarea((string) ($instance['content'] ?? '')));
     }
 
-    /** The text widget in its visual mode: hidden fields the editor syncs. */
+    /** The text widget in its visual mode: hidden fields the editor syncs (after the indent WP_Widget_Text::form prints first). */
     public static function text(\WP_Widget $widget, array $instance): string
     {
-        return sprintf("\t\t\t\t\t\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\">\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
+        return sprintf("\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\">\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
             // The text goes into its hidden field as it is: the reference does not escape it here.
             . sprintf("\t\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" class=\"text sync-input\" hidden>%3\$s</textarea>\n", self::id($widget, 'text'), self::name($widget, 'text'), (string) ($instance['text'] ?? ''))
             . sprintf("\t\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"filter sync-input\" type=\"hidden\" value=\"on\">\n", self::id($widget, 'filter'), self::name($widget, 'filter'))

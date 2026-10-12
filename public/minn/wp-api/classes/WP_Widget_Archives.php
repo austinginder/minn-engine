@@ -20,9 +20,10 @@ class WP_Widget_Archives extends WP_Widget
         if (!empty($instance['dropdown'])) {
             $this->dropdown($instance, $title, $count);
         } else {
-            echo "\n\t\t\t<ul>\n\t\t\t\t";
+            [$open, $close] = _minn_widget_nav((string) $title, 'Archives');
+            echo $open . "\n\t\t\t<ul>\n\t\t\t\t";
             wp_get_archives(apply_filters('widget_archives_args', ['type' => 'monthly', 'show_post_count' => $count], $instance));
-            echo "\t\t\t</ul>\n\n\t\t\t";
+            echo "\t\t\t</ul>\n\n\t\t\t" . $close;
         }
         echo $args['after_widget'];
     }

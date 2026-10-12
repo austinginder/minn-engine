@@ -18,14 +18,13 @@ class WP_Textdomain_Registry
     {
     }
 
+    /** The folder a domain's files for a locale come from (false for none), as lang_dir_for_domain leaves it. */
     public function get($domain, $locale)
     {
-        if (isset($this->all[$domain][$locale])) {
-            return $this->all[$domain][$locale];
+        if (!isset($this->all[$domain][$locale]) && !array_key_exists($locale, $this->all[$domain] ?? [])) {
+            $this->all[$domain][$locale] = $this->find($domain, $locale);
         }
-        $path = $this->find($domain, $locale);
-        $this->all[$domain][$locale] = $path;
-        return $path;
+        return apply_filters('lang_dir_for_domain', $this->all[$domain][$locale], $domain, $locale);
     }
 
     /** Whether a domain may have translations: one never looked up yet, default, a custom path, or a lookup that found a folder. */
@@ -45,8 +44,13 @@ class WP_Textdomain_Registry
         $this->custom_paths[$domain] = rtrim((string) $path, '/');
     }
 
+    /** The translation files in a folder, unless pre_get_language_files_from_path answers for it. */
     public function get_language_files_from_path($path)
     {
+        $pre = apply_filters('pre_get_language_files_from_path', null, $path);
+        if ($pre !== null) {
+            return $pre;
+        }
         $path = rtrim((string) $path, '/');
         return array_values(array_filter(array_merge((array) glob($path . '/*.mo'), (array) glob($path . '/*.l10n.php'))));
     }
@@ -74,7 +78,7 @@ class WP_Textdomain_Registry
     /** The folder holding a domain's files for a locale; failing that, the domain's custom path; false for neither. */
     protected function find($domain, $locale)
     {
-        $found = \Minn\Support\Paths::translationDir((string) $domain, (string) $locale, defined('WP_LANG_DIR') ? WP_LANG_DIR : '', $this->custom_paths[$domain] ?? null);
+        $found = \Minn\Support\Paths::translationDir((string) $domain, (string) $locale, defined('WP_LANG_DIR') ? WP_LANG_DIR : '', $this->custom_paths[$domain] ?? null, fn (string $dir): array => $this->get_language_files_from_path($dir));
         return $found ?: (isset($this->custom_paths[$domain]) ? rtrim($this->custom_paths[$domain], '/') . '/' : false);
     }
 }

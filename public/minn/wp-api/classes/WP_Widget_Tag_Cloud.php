@@ -12,21 +12,18 @@ class WP_Widget_Tag_Cloud extends WP_Widget
     public function widget($args, $instance)
     {
         $taxonomy = $this->_get_current_taxonomy($instance);
-        if (!empty($instance['title'])) {
-            $title = $instance['title'];
-        } else {
-            $title = $taxonomy === 'post_tag' ? 'Tags' : (get_taxonomy($taxonomy)->labels->name ?? '');
-        }
-        $title = apply_filters('widget_title', $title, $instance, $this->id_base);
         $cloud = wp_tag_cloud(apply_filters('widget_tag_cloud_args', ['taxonomy' => $taxonomy, 'echo' => false, 'show_count' => !empty($instance['count'])], $instance));
         if (empty($cloud)) {
             return;
         }
+        $default = $taxonomy === 'post_tag' ? 'Tags' : (get_taxonomy($taxonomy)->labels->name ?? '');
+        $title = apply_filters('widget_title', empty($instance['title']) ? $default : $instance['title'], $instance, $this->id_base);
+        [$open, $close] = _minn_widget_nav((string) $title, $default);
         echo $args['before_widget'];
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
-        echo '<div class="tagcloud">' . $cloud . "</div>\n";
+        echo $open . '<div class="tagcloud">' . $cloud . "</div>\n" . $close;
         echo $args['after_widget'];
     }
 

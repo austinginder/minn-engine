@@ -100,6 +100,11 @@ class WP_Widget_Text extends WP_Widget
     /** The settings form (Widgets\WidgetForms::text). */
     public function form($instance)
     {
-        echo WidgetForms::text($this, (array) $instance);
+        // The text reaches its field through the_editor_content, as the HTML editor's, once the form's
+        // first indent is out (probe hook-inputs-2).
+        echo "\t\t\t\t\t";
+        $instance = (array) $instance;
+        $instance['text'] = apply_filters('the_editor_content', (string) ($instance['text'] ?? ''), 'html');
+        echo WidgetForms::text($this, $instance);
     }
 }

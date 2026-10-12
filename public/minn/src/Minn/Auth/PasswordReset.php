@@ -13,8 +13,8 @@ use Minn\Content\Users;
  * for a day. The hash is the reference's own ($generic$, FastHash), so a
  * link either stack sent works on the other. Older shapes still verify: a
  * phpass hash (WordPress before 6.8) and the engine's former $minn$ HMAC.
- * A matching key stored without its time is expired, as the reference
- * treats it.
+ * A matching key stored without its time (or, older still, stored as
+ * itself) is expired, as the reference treats it.
  */
 final readonly class PasswordReset
 {
@@ -50,7 +50,12 @@ final readonly class PasswordReset
         return $this->status($user, $key) === 'valid';
     }
 
-    /** "valid", "expired" (a matching key past its lifetime, a day unless given, or stored without a time), or "invalid". */
+    /**
+     * "valid", "expired" (a matching key past its lifetime, a day unless
+     * given), "unstamped" (a matching key stored without a time, which the
+     * reference counts expired after asking password_reset_key_expired), or
+     * "invalid".
+     */
     public function status(UserRecord $user, string $key, int $lifetime = self::LIFETIME): string
     {
         $stored = $user->activationKey;
@@ -58,10 +63,14 @@ final readonly class PasswordReset
             return 'invalid';
         }
         [$time, $hash] = preg_match('/^(\d+):(.+)$/', $stored, $m) ? [(int) $m[1], $m[2]] : [null, $stored];
-        if (!self::matches($key, $hash)) {
+        // A key stored as itself, from before keys were hashed, still matches (probe hook-inputs-2).
+        if (!self::matches($key, $hash) && !($time === null && hash_equals($stored, $key))) {
             return 'invalid';
         }
-        return $time === null || $time + $lifetime < time() ? 'expired' : 'valid';
+        if ($time === null) {
+            return 'unstamped';
+        }
+        return $time + $lifetime < time() ? 'expired' : 'valid';
     }
 
     /** Forgets a user's reset key. */

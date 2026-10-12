@@ -7,10 +7,15 @@ use Minn\Runtime\AbilityRun;
  * One registered ability (probes abilities-registry, abilities-classes).
  * Its properties are checked as it is made: a refusal throws
  * InvalidArgumentException naming the property, and the meta gains its
- * defaults. A run as the reference runs one: input left out takes the input
- * schema's default, the input is checked against the input schema, then
- * the permission, then the callback between wp_before_execute_ability and
- * wp_after_execute_ability, its output checked against the output schema.
+ * defaults. A run as the reference runs one (probe ability-hooks): wp_ability_invoked,
+ * then a plugin's chance to answer first (wp_pre_execute_ability, handed a
+ * WP_Filter_Sentinel), input left out taking the input schema's default
+ * (wp_ability_normalize_input), the input checked against the input schema
+ * (wp_ability_validate_input), then the permission
+ * (wp_ability_permission_result), then the callback between
+ * wp_before_execute_ability and wp_after_execute_ability, its result
+ * (wp_ability_execute_result) checked against the output schema
+ * (wp_ability_validate_output).
  * It refuses to be serialized or unserialized.
  */
 class WP_Ability
@@ -92,12 +97,14 @@ class WP_Ability
 
     public function normalize_input($input = null)
     {
-        return $input ?? ($this->get_input_schema()['default'] ?? null);
+        return apply_filters('wp_ability_normalize_input', $input ?? ($this->get_input_schema()['default'] ?? null), $this->name, $this);
     }
 
+    /** True or the reason the input does not fit; an ability with no input schema is not asked about. */
     public function validate_input($input = null)
     {
-        return AbilityRun::input($this->name, $this->get_input_schema(), $input);
+        $valid = AbilityRun::input($this->name, $this->get_input_schema(), $input);
+        return $this->get_input_schema() === [] ? $valid : apply_filters('wp_ability_validate_input', $valid, $input, $this->name);
     }
 
     protected function invoke_callback(callable $callback, $input = null)
@@ -108,7 +115,7 @@ class WP_Ability
     /** What the permission callback answers: true, false, or its error. */
     public function check_permissions($input = null)
     {
-        return $this->invoke_callback($this->permission_callback, $input);
+        return apply_filters('wp_ability_permission_result', $this->invoke_callback($this->permission_callback, $input), $this->name, $input, $this);
     }
 
     protected function do_execute($input = null)
@@ -118,24 +125,30 @@ class WP_Ability
 
     protected function validate_output($output)
     {
-        return AbilityRun::output($this->name, $this->get_output_schema(), $output);
+        return apply_filters('wp_ability_validate_output', AbilityRun::output($this->name, $this->get_output_schema(), $output), $output, $this->name);
     }
 
     public function execute($input = null)
     {
+        do_action('wp_ability_invoked', $this->name, $input, $this);
+        $sentinel = new WP_Filter_Sentinel();
+        $answer = apply_filters('wp_pre_execute_ability', $sentinel, $this->name, $input, $this);
+        if ($answer !== $sentinel) {
+            return $answer;
+        }
         $input = $this->normalize_input($input);
         $valid = $this->validate_input($input);
         $allowed = is_wp_error($valid) ? $valid : AbilityRun::allowed($this->name, $this->check_permissions($input));
         if (is_wp_error($allowed)) {
             return $allowed;
         }
-        do_action('wp_before_execute_ability', $this->name, $input);
-        $result = $this->do_execute($input);
+        do_action('wp_before_execute_ability', $this->name, $input, $this);
+        $result = apply_filters('wp_ability_execute_result', $this->do_execute($input), $this->name, $input, $this);
         $fits = is_wp_error($result) ? $result : $this->validate_output($result);
         if (is_wp_error($fits)) {
             return $fits;
         }
-        do_action('wp_after_execute_ability', $this->name, $input, $result);
+        do_action('wp_after_execute_ability', $this->name, $input, $result, $this);
         return $result;
     }
 

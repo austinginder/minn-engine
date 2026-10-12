@@ -24,7 +24,7 @@ class WP_AI_Client_Cache implements CacheInterface
 {
     private function get_cache_group()
     {
-        return 'wp_ai_client';
+        return apply_filters('wp_ai_client_cache_group', 'wp_ai_client');
     }
 
     public function get($key, $default_value = null)

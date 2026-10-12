@@ -16,12 +16,13 @@ class WP_Widget_Meta extends WP_Widget
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
-        echo "\n\t\t<ul>\n\t\t\t" . wp_register('<li>', '</li>', false)
+        [$open, $close] = _minn_widget_nav((string) $title, 'Meta');
+        echo $open . "\n\t\t<ul>\n\t\t\t" . wp_register('<li>', '</li>', false)
             . "\t\t\t<li>" . wp_loginout('', false) . "</li>\n"
             . "\t\t\t<li><a href=\"" . esc_url(get_bloginfo('rss2_url')) . "\">Entries feed</a></li>\n"
             . "\t\t\t<li><a href=\"" . esc_url(get_bloginfo('comments_rss2_url')) . "\">Comments feed</a></li>\n\n\t\t\t"
             . apply_filters('widget_meta_poweredby', '<li><a href="https://wordpress.org/">WordPress.org</a></li>' . "\n", $instance)
-            . "\t\t</ul>\n\n\t\t";
+            . "\t\t</ul>\n\n\t\t" . $close;
         echo $args['after_widget'];
     }
 

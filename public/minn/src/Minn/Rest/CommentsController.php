@@ -184,11 +184,16 @@ final readonly class CommentsController
         }
         $fields = Fields::fromQuery($request->query);
         $events = $this->events();
+        // Whether the comment may go to the trash is asked on every delete, forced or not (probe hook-inputs-2).
+        $trashable = (bool) \apply_filters('rest_comment_trashable', EMPTY_TRASH_DAYS > 0, \WP_Comment::get_instance($commentId));
         if ($request->flagged('force')) {
             $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($comment, Context::Edit), ['_links' => true])];
             $events->delete($comment);
             $events->restDeleted($comment, $data, $request);
             return Reply::item($data, $fields);
+        }
+        if (!$trashable) {
+            throw new RestError('rest_trash_not_supported', "The comment does not support trashing. Set 'force=true' to delete.", 501);
         }
         if ($comment->approved === 'trash') {
             throw new RestError('rest_already_trashed', 'The comment has already been trashed.', 410);

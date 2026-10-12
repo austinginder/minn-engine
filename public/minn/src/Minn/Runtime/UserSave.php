@@ -44,6 +44,10 @@ final class UserSave
         $nicename = (string) \apply_filters('pre_user_nicename', $nicename);
         $email = (string) \apply_filters('pre_user_email', $given('user_email'));
         $url = (string) \apply_filters('pre_user_url', $given('user_url'));
+        // Marking an account spam is a network's: the engine, a single site, refuses it here (probe hook-inputs-2).
+        if (!empty($userdata['spam'])) {
+            return new Refusal('no_spam', 'Sorry, marking a user as spam is only supported on Multisite.');
+        }
         $nickname = (string) \apply_filters('pre_user_nickname', $given('nickname') !== '' ? $given('nickname') : $login);
         $first = (string) \apply_filters('pre_user_first_name', $given('first_name'));
         $last = (string) \apply_filters('pre_user_last_name', $given('last_name'));

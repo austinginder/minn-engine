@@ -25,7 +25,7 @@ escaping, serialized readers, small helpers
 | [`Lists`](#lists) | final class | 190 | List shaping behind the facade's array utilities: arguments over their |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
-| [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
+| [`Paths`](#paths) | final class | 75 | File-system path and permission spellings. |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 356 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
@@ -762,11 +762,15 @@ keeps the empty line after its final newline.
 
 File-system path and permission spellings.
 
-### static `translationDir(string $domain, string $locale, string $langDir, ?string $customPath): string|false`
+### static `translationDir(string $domain, string $locale, string $langDir, ?string $customPath, ?Closure $listed = NULL): string|false`
 
 The trailing-slashed directory holding a text domain's {domain}-{locale}.mo:
 a custom path first, then the language dir's plugins and themes folders,
 then the dir itself for the default domain; false when none has the file.
+$listed, when given, lists a folder's files (the textdomain registry's
+own lister, which plugins may answer for) and is read instead of the disk.
+
+- `@param (\Closure(string): array<int, string>)|null $listed`
 
 ### static `normalize(string $path): string`
 

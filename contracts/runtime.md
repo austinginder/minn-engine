@@ -15553,6 +15553,125 @@ other databases' traffic. `update_post_caches` keeps the whole posts it
 is handed, and a theme's saved templates, parts and global styles are
 read in one query.
 
+## Every hook accounted for (2026-10-12)
+
+Probes `hook-inputs-2` (92 rows) and `ability-hooks` (12), the unit file
+`browser-globals` (33 captured user agents and servers) and the battery
+hold these. Each was read off the reference by what it does and hands
+its filters. `tests/tools/hook-status.php` now counts every hook: none
+missing, 96.2% of plugin weight proven.
+
+- **HTTP.** A URL is vetted before any request: the protocol checked
+  (`wp_kses_bad_protocol`, so an ftp address arrives as `//host`), or
+  `wp_http_validate_url` when unsafe addresses are refused; a refusal is
+  told to `http_api_debug` like a failure. `WP_HTTP_BLOCK_EXTERNAL` now
+  blocks: a URL with no host always; localhost and the site's own host
+  only when `block_local_requests` says so; any other host unless
+  `WP_ACCESSIBLE_HOSTS` lists it (split on a comma and any spaces after
+  it; exact and case-sensitive, or matched ignoring case as patterns once
+  an entry has a `*`). `sslcertificates` defaults to the reference's
+  bundle path, which `https_ssl_verify` is handed; a bundle not on disk
+  verifies against the system's. `send_through_proxy` asks
+  `pre_http_send_through_proxy` with the parsed URL and site address.
+- **Widgets.** The navigation widgets (archives, categories, meta, pages,
+  recent comments, recent posts, tag cloud, menu, RSS) ask
+  `navigation_widgets_format` (html5 when the theme supports html5
+  navigation-widgets) and in html5 wrap their list in a `<nav>` labelled
+  by the title stripped of tags, or the widget's own name; the menu
+  widget hands `wp_nav_menu` a nav container instead. The tag cloud's
+  arguments are asked before its title. The RSS widget's feed link goes
+  through `rss_widget_feed_link`, and its icon is "RSS feed: {title}".
+  The text widget's text reaches its field through `the_editor_content`.
+- **Mail.** `wp_mail` runs `wp_staticize_emoji_for_email` by default (so
+  `wp_mail_content_type` is asked before `pre_wp_mail`). Each embedded
+  image's details go through `wp_mail_embed_args`. The privacy mails ask
+  their deprecated names (`user_confirmed_action_email_content`,
+  `user_erasure_complete_email_subject`, `_headers`) before the current
+  ones.
+- **Users.** A single site refuses to mark an account spam (`no_spam`);
+  a spam flag sent that differs from the account's fires
+  `make_ham_user`. A reset key stored without its time, or stored as
+  itself, is expired after `password_reset_key_expired` is asked.
+- **REST posts.** Every post-shaped item (attachments too) asks
+  `rest_block_hooks_post_types`; a listed type's raw content gets its
+  hooked blocks and is rendered again from them, and a listed type's save
+  marks its ignored hooked blocks. The edit context renders each field
+  once (it used to render content and excerpt twice), and `_fields` holds
+  there too. `rest_pre_insert_{type}` is handed the reference's prepared
+  post: the type always, both dates and `edit_date` when either date was
+  sent, `page_template` null. Writes honour `date_gmt`, a date sent as
+  null resets the post to now, and a schedule given a past date is
+  published. Deletes ask `rest_{type}_trashable` (and
+  `rest_comment_trashable`), refusing with `rest_trash_not_supported`;
+  an attachment goes to the trash when `rest_attachment_trashable` lets
+  it. A repeat autosave fires `wp_creating_autosave`. Menu items pass
+  through `rest_prepare_nav_menu_item`.
+- **Attachments.** Trashing or restoring one ends as an attachment's
+  save (`edit_attachment`, `attachment_updated`), not a post's; it comes
+  back inherit unless it goes back private or an auto-draft. Every
+  upload's metadata records its file size; a PDF's first page becomes
+  `{name}-pdf.jpg` with uncropped sizes (`fallback_intermediate_image_sizes`),
+  saved to the metadata as they are made, and REST names the preview
+  sizes a PDF lacks. Empty `sizes` is an object. An image's type is read
+  from its header (PHP's check, then an ISO file's brand for HEIC and
+  HEIF), so a file `getimagesize` cannot measure is no longer refused.
+  REST refuses an image type no editor here can resize
+  (`rest_upload_image_type_not_supported`, SVG, HEIC and HEIF aside)
+  unless `wp_prevent_unsupported_mime_type_uploads` lets it through.
+  `wp_get_registered_image_subsizes` follows `intermediate_image_sizes`
+  and fires nothing of its own.
+- **Navigation.** A link to a post shows only while the post's status is
+  one `render_block_core_navigation_link_allowed_post_status` allows
+  (publish); a link or submenu without a label shows nothing; a link
+  without an address has no href. Items go through
+  `block_core_navigation_render_inner_blocks`, then render in runs: site
+  title, logo and social links (`block_core_navigation_listable_blocks`)
+  are wrapped in an li, every item whose markup holds an li (links,
+  submenus, a page list, a plugin's own list items) joins the run, each
+  run is a list of its own, any other block stands between runs, and an
+  item that renders nothing ends one. A page list's submenu items wear the
+  navigation's overlay colours. The breadcrumbs block's trail goes
+  through `block_core_breadcrumbs_items`.
+- **Blocks.** Every block asks `interactivity_process_directives`, whose
+  no leaves an interactive block's directives as written; a block that
+  renders nothing asks `enqueue_empty_block_content_assets` while its
+  assets are not loaded. A core block's render callback called directly
+  (`render_block_core_template_part()`, as a plugin may) is not a block
+  being rendered, so it does not ask that filter for its own block.
+- **theme.json.** Core's layer goes through `wp_theme_json_data_default`
+  where the reference reads it (the resolver's core and merged data, so
+  the stylesheet; not `get_theme_data()`, and not the REST block and
+  pattern routes) and the site editor's through `wp_theme_json_data_user` (a plugin may
+  add one where none was saved); the stylesheet, its presets and
+  `wp_get_global_settings` follow. The user's presets meet the theme's
+  keyed by origin, so a custom palette no longer replaces the theme's.
+  `wp_theme_json_get_style_nodes` decides which root, element and block
+  nodes the stylesheet prints (a block's elements are nodes of their own).
+- **Boot and smaller ones.** `$is_IE`, `$is_chrome`, `$is_safari`,
+  `$is_apache`, `$is_nginx`, `$is_caddy` and the rest are set at boot from
+  the user agent and server (Chrome Frame through
+  `use_google_chrome_frame`). The object cache drop-in is loaded only as
+  `enable_loading_object_cache_dropin` allows. The first theme made, and
+  each fresh theme search, ask `wp_cache_themes_persistently`; a theme
+  search answers from the last one unless forced, and cleaning the theme
+  cache searches again. Post formats' base is `post_format_rewrite_base`.
+  The expired-session dialog frames the sign-in form on the same host and
+  scheme (`wp_auth_check_same_domain`). Due cron events whose reschedule
+  or removal fails are logged and told to `cron_reschedule_event_error`
+  or `cron_unschedule_event_error`. The update check sends the installed
+  languages through `plugins_update_check_locales` and
+  `themes_update_check_locales`. IIS rewrite rules are written as the
+  reference writes them. The AI prompt builder offers each check and
+  generation to `wp_ai_client_prevent_prompt` and keeps a failed
+  generation like a failed setting. Abilities fire their full run of
+  hooks.
+
+`tests/tools/hook-status.php` counts `Runtime\EarlyFilters::apply` and
+`bootstrap.php`; `wp-mail.php` (post by email, which needs the POP3 client
+omitted.json leaves behind) is a dead end like XML-RPC, and
+`wp-includes/rss.php` is outside, loaded by no WordPress code.
+`make_spam_user` is listed as a network's.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

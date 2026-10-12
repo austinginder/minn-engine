@@ -11,6 +11,7 @@ use Minn\Json;
 use Minn\RestError;
 use Minn\Support\FileHeaders;
 use Minn\Runtime\PluginUpdates;
+use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
 /**
@@ -71,6 +72,27 @@ final class Updates
         }
     }
 
+    /**
+     * The locales a check asks about, as the reference asks: the languages
+     * installed (their .mo files, through get_available_languages), then
+     * the check's own filter (plugins_update_check_locales,
+     * themes_update_check_locales); none for an English-only site.
+     *
+     * @return list<string>
+     */
+    private function locales(string $filter): array
+    {
+        $installed = [];
+        foreach (glob($this->contentDir . '/languages/*.mo') ?: [] as $file) {
+            $name = basename($file, '.mo');
+            if (!str_starts_with($name, 'continents-cities') && !str_starts_with($name, 'ms-') && !str_starts_with($name, 'admin-')) {
+                $installed[] = $name;
+            }
+        }
+        $installed = (array) Runtime::hooks()->filter('get_available_languages', [$installed, null]);
+        return array_values(array_unique((array) Runtime::hooks()->filter($filter, [array_values($installed)])));
+    }
+
     /** The stored answer, refreshed when older than the TTL or absent. */
     public function state(): array
     {
@@ -113,18 +135,17 @@ final class Updates
             ];
         }
         $stylesheet = (string) ($this->site->option('stylesheet') ?? '');
-        $locale = (string) ($this->site->option('WPLANG') ?: 'en_US');
 
         $pluginAnswer = $plugins === [] ? [] : Directory::post($this->http, 'plugins/update-check/1.1/', [
             'plugins' => Json::encode(['plugins' => $plugins, 'active' => array_values($active)], Json::ESCAPED),
             'translations' => '{}',
-            'locale' => Json::encode([$locale], Json::ESCAPED),
+            'locale' => Json::encode($this->locales('plugins_update_check_locales'), Json::ESCAPED),
             'all' => 'true',
         ]);
         $themeAnswer = $themes === [] ? [] : Directory::post($this->http, 'themes/update-check/1.1/', [
             'themes' => Json::encode(['active' => $stylesheet, 'themes' => $themes], Json::ESCAPED),
             'translations' => '{}',
-            'locale' => Json::encode([$locale], Json::ESCAPED),
+            'locale' => Json::encode($this->locales('themes_update_check_locales'), Json::ESCAPED),
         ]);
         $stored = Json::decode((string) ($this->site->option(self::OPTION) ?? ''), or: null);
         $supplied = $this->supplied(is_array($stored) ? $stored : []);

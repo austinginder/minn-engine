@@ -35,7 +35,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`RowCache`](#rowcache) | final class | 100 | Rows read once a request: posts, their terms, users, and every object's |
-| [`Site`](#site) | final readonly class | 102 | Site-wide options and the site's clock. |
+| [`Site`](#site) | final readonly class | 114 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
@@ -1788,6 +1788,13 @@ Now in the site's local time, MySQL format.
 
 A site-local datetime from a write body ("2031-01-01T00:00:00") to
 the pair of columns it fills, plus its timestamp.
+
+- `@return array{0: string, 1: string, 2: int} local, gmt, timestamp`
+
+### `gmtDate(string $input): array`
+
+A GMT datetime from a write body (date_gmt) to the same pair of
+columns, its local half in the site's zone at that date.
 
 - `@return array{0: string, 1: string, 2: int} local, gmt, timestamp`
 

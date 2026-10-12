@@ -7,7 +7,6 @@ namespace Minn\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
 use Minn\Http\Request;
-use Minn\Media\Uploads;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RegisteredType;
 use Minn\Rest\RestMeta;
@@ -33,6 +32,12 @@ final readonly class PostEvents
     public function deleteForGood(int $id): mixed
     {
         return \wp_delete_post($id, true);
+    }
+
+    /** A post (an attachment too) sent to the trash through the reference's own trashing, as deleteForGood deletes. */
+    public function trash(int $id): mixed
+    {
+        return \wp_trash_post($id);
     }
 
     /** Whether plugins are loaded to be told anything. */
@@ -116,14 +121,11 @@ final readonly class PostEvents
      * REST upload makes it: wp_generate_attachment_metadata over the stored
      * file (the sizes cut with the attachment's id, the metadata stored as
      * each one lands, so an optimiser hooked there finds it), then
-     * wp_update_attachment_metadata. Only for the images the engine sizes,
-     * as without plugins.
+     * wp_update_attachment_metadata. Every upload has some: an image its
+     * sizes, a PDF its previews, any file its size (probe hook-inputs-2).
      */
-    public function attachmentGenerated(int $id, string $file, string $mime): void
+    public function attachmentGenerated(int $id, string $file): void
     {
-        if (!str_starts_with($mime, 'image/') || $mime === 'image/svg+xml' || !in_array($mime, Uploads::MIMES, true)) {
-            return;
-        }
         \wp_update_attachment_metadata($id, \wp_generate_attachment_metadata($id, $file));
     }
 

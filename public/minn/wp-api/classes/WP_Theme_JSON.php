@@ -657,7 +657,8 @@ class WP_Theme_JSON
                 $nodes = array_merge($nodes, self::minn_element_nodes(['styles', 'elements', $element], $selector, (array) $theme_json['styles']['elements'][$element], $element));
             }
         }
-        return array_merge($nodes, static::get_block_nodes($theme_json, empty($selectors) ? static::get_blocks_metadata() : $selectors, (array) $options));
+        // The list is the plugins' to change (probe hook-inputs-2).
+        return apply_filters('wp_theme_json_get_style_nodes', array_merge($nodes, static::get_block_nodes($theme_json, empty($selectors) ? static::get_blocks_metadata() : $selectors, (array) $options)));
     }
 
     public function get_styles_block_nodes()

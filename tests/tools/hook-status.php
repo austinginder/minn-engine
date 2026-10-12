@@ -8,12 +8,13 @@
  *   on the engine by the hook-parity battery;
  * - deadend: fired on the reference only from what Minn leaves behind (the
  *   dead-end functions and classes of public/minn/data/deadend-symbols.json,
- *   the wp-admin screens but admin-ajax.php, XML-RPC), or named under "hooks" in
+ *   the wp-admin screens but admin-ajax.php, XML-RPC, trackbacks, post by
+ *   email in wp-mail.php), or named under "hooks" in
  *   contracts/api/omitted.json with its reason;
  * - different: named under "hooks" in contracts/api/different.json: Minn
  *   answers it its own way, by design (Austin decides what goes there);
  * - outside: fired only from code a single site never loads (multisite,
- *   the screens' list tables, signup and activation), which the function
+ *   the screens' list tables, signup and activation, wp-includes/rss.php), which the function
  *   and class inventory leaves out too; or listed in contracts/api/
  *   hooks-single-site.json (a function a single site loads fires it only
  *   on a network), while the reference fired it in no scenario of the
@@ -56,15 +57,20 @@ $normalise = static function (string $quote, string $name, bool $joined): string
     return $joined ? $name . '{*}' : $name;
 };
 $fired = [];
-$firing = '/(?:\b(?:do_action|do_action_ref_array|do_action_deprecated|apply_filters|apply_filters_ref_array|apply_filters_deprecated)|->(?:action|actionRef|actionRefArray|filter|filterWithout|filterRefArray))\s*\(\s*(["\'])((?:[^"\'\\\\]|\\\\.)*)\1\s*(,|\)|\.\s*\$)/';
-foreach (['public/minn/src', 'public/minn/wp-api'] as $tree) {
-    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator("{$root}/{$tree}", FilesystemIterator::SKIP_DOTS)) as $file) {
-        if ($file->getExtension() !== 'php' || !preg_match_all($firing, (string) file_get_contents($file->getPathname()), $matches, PREG_SET_ORDER)) {
-            continue;
-        }
-        foreach ($matches as $match) {
-            $fired[$normalise($match[1], $match[2], str_starts_with($match[3], '.'))] = true;
-        }
+$firing = '/(?:\b(?:do_action|do_action_ref_array|do_action_deprecated|apply_filters|apply_filters_ref_array|apply_filters_deprecated)|->(?:action|actionRef|actionRefArray|filter|filterWithout|filterRefArray)|EarlyFilters::apply)\s*\(\s*(["\'])((?:[^"\'\\\\]|\\\\.)*)\1\s*(,|\)|\.\s*\$)/';
+// The engine's files, and bootstrap.php, which asks the hooks added before boot (Runtime\EarlyFilters) about advanced-cache.php.
+$engineFiles = static function () use ($root): Generator {
+    yield new SplFileInfo("{$root}/public/minn/bootstrap.php");
+    foreach (['public/minn/src', 'public/minn/wp-api'] as $tree) {
+        yield from new RecursiveIteratorIterator(new RecursiveDirectoryIterator("{$root}/{$tree}", FilesystemIterator::SKIP_DOTS));
+    }
+};
+foreach ($engineFiles() as $file) {
+    if ($file->getExtension() !== 'php' || !preg_match_all($firing, (string) file_get_contents($file->getPathname()), $matches, PREG_SET_ORDER)) {
+        continue;
+    }
+    foreach ($matches as $match) {
+        $fired[$normalise($match[1], $match[2], str_starts_with($match[3], '.'))] = true;
     }
 }
 
@@ -131,11 +137,14 @@ $siteKind = static function (string $site) use ($deadFunctions, $deadClasses, $k
         return !isset($knownClasses[$class]) ? 'outside' : (isset($deadClasses[$class]) ? 'dead' : 'live');
     }
     if (str_ends_with($site, '.php')) {
-        if (in_array($site, ['wp-signup.php', 'wp-activate.php'], true)) {
+        // wp-includes/rss.php is loaded by no WordPress code, only by a plugin that asks for it, so its functions
+        // are outside the inventory too.
+        if (in_array($site, ['wp-signup.php', 'wp-activate.php', 'wp-includes/rss.php'], true)) {
             return 'outside';
         }
         // The engine serves admin-ajax.php itself (Runtime\AjaxController); the rest of wp-admin is Minn Admin's.
-        return (str_starts_with($site, 'wp-admin/') && $site !== 'wp-admin/admin-ajax.php') || in_array($site, ['xmlrpc.php', 'wp-trackback.php'], true) ? 'dead' : 'live';
+        // wp-mail.php is the post-by-email script, which needs the POP3 client omitted.json leaves behind.
+        return (str_starts_with($site, 'wp-admin/') && $site !== 'wp-admin/admin-ajax.php') || in_array($site, ['xmlrpc.php', 'wp-trackback.php', 'wp-mail.php'], true) ? 'dead' : 'live';
     }
     $function = strtolower($site);
     return !isset($knownFunctions[$function]) ? 'outside' : (isset($deadFunctions[$function]) ? 'dead' : 'live');

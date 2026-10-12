@@ -17,19 +17,20 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Folder`](#folder) | final readonly class | 77 | A theme folder read from disk: its style.css headers, which folder its templates come from, its screenshot, whether it is a block theme. |
 | [`FontFaces`](#fontfaces) | final class | 119 | fonts a theme.json declares in the shape they are printed from. |
 | [`FrontLifecycle`](#frontlifecycle) | final class | 110 | WordPress's front-end request steps around the main query, as WP::main |
-| [`GlobalStyles`](#globalstyles) | final readonly class | 516 | theme.json to CSS. Presets become custom properties on :root and their |
+| [`GlobalStyles`](#globalstyles) | final readonly class | 547 | theme.json to CSS. Presets become custom properties on :root and their |
 | [`HeadLinks`](#headlinks) | final readonly class | 108 | The links the reference puts in every head: the site and comments |
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
-| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 132 | Stands the main query for a themed page and runs the front-end steps |
+| [`MainQueryBridge`](#mainquerybridge) | final readonly class | 136 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 180 | A whole page from the active block theme: the template the resolution |
-| [`PatternHeaders`](#patternheaders) | final class | 52 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
+| [`PatternHeaders`](#patternheaders) | final class | 78 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
+| [`StyleLayers`](#stylelayers) | final class | 67 | What plugins change about the global stylesheet's layers and nodes, for |
 | [`StylePresets`](#stylepresets) | final class | 148 | The preset side of theme.json: the colour, gradient, font-size, |
-| [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
+| [`StyleSettings`](#stylesettings) | final class | 88 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 304 | Every block template and template part the site offers, in the order the |
@@ -39,8 +40,8 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 204 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
-| [`ThemeJsonData`](#themejsondata) | final class | 54 | The theme's theme.json as plugins and the theme's own functions may |
-| [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
+| [`ThemeJsonData`](#themejsondata) | final class | 82 | The theme's theme.json as plugins and the theme's own functions may |
+| [`ThemeStyles`](#themestyles) | final readonly class | 142 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
 | [`UserStyles`](#userstyles) | final readonly class | 111 | The site editor's saved global styles: one wp_global_styles post per |
@@ -543,7 +544,7 @@ border, shadow, dimensions, outline.
 
 - `@return list<string>`
 
-Internals: `parts()` (private, line 130), `fontUrl()` (private, line 164), `rootStyles()` (private, line 228), `blockCustomProperties()` (private, line 277), `withoutEmpty()` (private, line 379), `containerStyles()` (private, line 423), `ordered()` (private, line 518)
+Internals: `json()` (private, line 74), `parts()` (private, line 153), `fontUrl()` (private, line 195), `rootStyles()` (private, line 259), `blockCustomProperties()` (private, line 308), `withoutEmpty()` (private, line 410), `containerStyles()` (private, line 454), `ordered()` (private, line 549)
 
 
 ## HeadLinks
@@ -706,7 +707,7 @@ vars it was asked under.
 
 Posts per page.
 
-Internals: `vars()` (private, line 107), `postVars()` (private, line 119), `queried()` (private, line 138), `seeded()` (private, line 151)
+Internals: `vars()` (private, line 112), `postVars()` (private, line 124), `queried()` (private, line 143), `seeded()` (private, line 156)
 
 
 ## NotModified
@@ -783,6 +784,20 @@ The patterns directory's files by file name, in name order.
 
 - `@return array<string, array<string, mixed>>`
 
+### static `files(string $themeDir): array`
+
+The pattern files a theme ships, file name => path, in name order.
+
+- `@return array<string, string>`
+
+### static `of(array $files): array`
+
+The records of a list of pattern files, file name => path (a list a
+plugin may have changed); a file that is not a pattern is left out.
+
+- `@param array<string, string> $files`
+- `@return array<string, array<string, mixed>>`
+
 ### static `read(string $head): ?array`
 
 One file's record from the start of its text, or null when it names no title or slug.
@@ -822,7 +837,7 @@ Raised once a WordPress handler has printed a whole response (a sitemap,
 a stylesheet) or sent a redirect, where the reference exits: the request
 ends there and the engine answers with what was printed.
 
-Used by: `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`
+Used by: `Minn\Front\FrontController`, `Minn\Front\PrintedResponse`, `Minn\Front\SitemapRequest`, `Minn\Theme\MainQueryBridge`
 
 
 ## QueryClasses
@@ -878,6 +893,44 @@ The sizes the scale makes, smallest first.
 Internals: `name()` (private, line 49), `format()` (private, line 58)
 
 
+## StyleLayers
+
+`final class Minn\Theme\StyleLayers` · `public/minn/src/Minn/Theme/StyleLayers.php`
+
+What plugins change about the global stylesheet's layers and nodes, for
+GlobalStyles: core's preset lists when wp_theme_json_data_default
+changed core's layer, and the style nodes wp_theme_json_get_style_nodes
+keeps (probe hook-inputs-2). Without those filters the stylesheet is the
+engine's own, byte for byte.
+
+Used by: `Minn\Theme\GlobalStyles`
+
+### static `corePresets(): array`
+
+Core's preset lists: as stored, unless a plugin changed core's layer
+(wp_theme_json_data_default), whose lists then stand in for them.
+
+- `@return array<string, list<array{slug: string, value: string}>>`
+
+### static `keptBlocks(array $blocks, array $kept): array`
+
+The blocks' styles as far as the kept nodes reach: a block's own
+declarations with its node, each of its elements with that element's
+node (the reference lists them apart); a block with neither goes.
+
+- `@param array<string, mixed> $blocks`
+- `@param list<string> $kept`
+- `@return array<string, mixed>`
+
+### static `keptNodes(array $styles): ?array`
+
+The style nodes a plugin keeps (wp_theme_json_get_style_nodes) as
+their paths, the root, element and block nodes printed only when
+kept; null when no plugin filters them.
+
+- `@return list<string>|null`
+
+
 ## StylePresets
 
 `final class Minn\Theme\StylePresets` · `public/minn/src/Minn/Theme/StylePresets.php`
@@ -889,9 +942,9 @@ the reference prints for them. Pure: settings in, CSS fragments out.
 
 Used by: `Minn\Theme\FontFaces`, `Minn\Theme\GlobalStyles`, `Minn\Theme\TreeStyles`
 
-### static `presets(array $settings): array`
+### static `presets(array $settings, ?array $core = NULL): array`
 
-Every preset list the theme declares, over core's own, keyed by kind.
+Every preset list the theme declares, over core's own (as given, else data/presets.json), keyed by kind.
 
 ### static `presetList(mixed $presets): array`
 
@@ -968,11 +1021,15 @@ A settings node as written (theme.json, a variation, or the site
 editor's post) with its presets keyed by origin and appearanceTools
 expanded.
 
+### static `presetsByOrigin(array $settings, string $origin): array`
+
+The preset lists, at the root and under each block, keyed by the origin given; nothing else changed.
+
 ### static `resolved(array $node): array`
 
 Every var:preset|kind|slug token replaced by the custom property it names.
 
-Internals: `presetsUnder()` (private, line 69), `withAppearanceTools()` (private, line 81)
+Internals: `presetsUnder()` (private, line 75), `withAppearanceTools()` (private, line 87)
 
 
 ## TemplateBuffer
@@ -1426,10 +1483,11 @@ Internals: `at()` (private, line 62), `rawJson()` (private, line 83), `withStyle
 The theme's theme.json as plugins and the theme's own functions may
 change it (wp_theme_json_data_theme, a WP_Theme_JSON_Data they update
 with presets and settings of their own), as the reference's resolver
-hands it to them. Worked out once a request for each set of callbacks,
-so a filter added late still counts.
+hands it to them, and the core and site editor layers likewise
+(wp_theme_json_data_default, wp_theme_json_data_user). Worked out once
+a request for each set of callbacks, so a filter added late still counts.
 
-Used by: `Minn\Theme\Theme`
+Used by: `Minn\Theme\GlobalStyles`, `Minn\Theme\StyleLayers`, `Minn\Theme\Theme`, `Minn\Theme\ThemeStyles`
 
 ### static `theme(array $json, string $dir): array`
 
@@ -1437,7 +1495,18 @@ The theme layer through wp_theme_json_data_theme; as written when nothing filter
 
 - `@param array<string, mixed> $json`
 
-Internals: `asWritten()` (private, line 44)
+### static `layer(string $origin, array $json): array`
+
+The core layer (wp_theme_json_data_default, origin default) or the
+site editor's (wp_theme_json_data_user, origin custom) as plugins
+leave it, each a WP_Theme_JSON_Data they update; as given when
+nothing filters it. Worked out once a request for each set of
+callbacks and layer.
+
+- `@param array<string, mixed> $json`
+- `@return array<string, mixed>`
+
+Internals: `asWritten()` (private, line 73)
 
 
 ## ThemeStyles
@@ -1452,10 +1521,17 @@ them, and the style variations the theme ships.
 Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\Services`
 
 ```php
-__construct(?Minn\Theme\Theme $theme, string $stylesheet)
+__construct(?Minn\Theme\Theme $theme, string $stylesheet, ?array $core = NULL)
 ```
+- `@param array{settings?: array, styles?: array}|null $core core's layer when not the stored one (a plugin changed it)`
 
 - readonly `string $stylesheet`
+
+### `withFilteredCore(): self`
+
+The same styling data over core's layer as wp_theme_json_data_default
+leaves it, for the places the reference reads core's layer through
+that filter (its resolver's core and merged data).
 
 ### static `forSite(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $themesDir): self`
 
@@ -1484,7 +1560,7 @@ way the theme's own are.
 
 - `@return list<array>`
 
-Internals: `withSectionStyles()` (private, line 99), `partials()` (private, line 121), `defaults()` (private, line 134)
+Internals: `withSectionStyles()` (private, line 113), `partials()` (private, line 135), `defaults()` (private, line 148), `storedCore()` (private, line 154)
 
 
 ## TreeStyles

@@ -23,7 +23,12 @@ class WP_Nav_Menu_Widget extends WP_Widget
         if ($title) {
             echo $args['before_title'] . $title . $args['after_title'];
         }
-        wp_nav_menu(apply_filters('widget_nav_menu_args', ['fallback_cb' => '', 'menu' => $menu], $menu, $args, $instance));
+        $menuArgs = ['fallback_cb' => '', 'menu' => $menu];
+        $label = _minn_widget_nav_label((string) $title, 'Menu');
+        if ($label !== null) {
+            $menuArgs += ['container' => 'nav', 'container_aria_label' => $label, 'items_wrap' => '<ul id="%1$s" class="%2$s">%3$s</ul>'];
+        }
+        wp_nav_menu(apply_filters('widget_nav_menu_args', $menuArgs, $menu, $args, $instance));
         echo $args['after_widget'];
     }
 

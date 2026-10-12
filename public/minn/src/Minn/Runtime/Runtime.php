@@ -141,6 +141,7 @@ final class Runtime
         if ($runtime->request !== null) {
             \_minn_script_globals($runtime->request->path);
         }
+        \_minn_browser_globals();
         _minn_main_query();
         _minn_rewrite();
         \_minn_require_wp_db($runtime->contentDir());
@@ -378,12 +379,18 @@ final class Runtime
     /**
      * A site's object-cache.php drop-in, before the facade defines its own
      * cache functions: the drop-in's functions and WP_Object_Cache win, and
-     * the facade fills in only what it left out. Loaded once per process.
+     * the facade fills in only what it left out. Loaded once per process,
+     * unless enable_loading_object_cache_dropin (asked of the hooks added
+     * before boot, as the reference asks it whether or not there is a file)
+     * says no.
      */
     private static function loadObjectCacheDropin(self $runtime): void
     {
+        if (self::$facadeLoaded || !EarlyFilters::apply('enable_loading_object_cache_dropin', true)) {
+            return;
+        }
         $file = $runtime->contentDir() . '/object-cache.php';
-        if (self::$facadeLoaded || !is_file($file)) {
+        if (!is_file($file)) {
             return;
         }
         if (!defined('WP_CONTENT_DIR')) {

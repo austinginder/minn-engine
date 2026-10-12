@@ -4,7 +4,7 @@ sending mail and the notices the engine sends
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AddressRules`](#addressrules) | final class | 111 | Email addresses: the checks a mailer can apply (PHP's filter, the |
+| [`AddressRules`](#addressrules) | final class | 91 | Email addresses: the checks a mailer can apply (PHP's filter, the |
 | [`ChangeNotices`](#changenotices) | final class | 30 | The notices the reference mails a user when their password or email |
 | [`Composer`](#composer) | final class | 253 | A message as the reference's mailer writes it: the header block (Date, |
 | [`DataLines`](#datalines) | final class | 28 | A message cut into the lines SMTP DATA sends. Any line break (CRLF, CR |
@@ -48,9 +48,10 @@ Whether the address passes the named check ("php", "pcre", "pcre8", "html5", "no
 
 ### static `parseList(string $list, string $charset): array`
 
-The addresses in a comma-separated list, each with its display name
-(encoded words decoded into $charset); entries that are not valid
-addresses are left out.
+The addresses in a comma-separated list, as the reference's simple
+parser reads one: split at every comma, quoted or not, each entry
+with its display name (encoded words decoded into $charset); entries
+that are not valid addresses are left out.
 
 - `@return list<array{name: string, address: string}>`
 
@@ -62,7 +63,7 @@ The address with its domain in ASCII (IDNA), the domain read from $charset first
 
 The text as an RFC 822 quoted string when it holds a character that needs one.
 
-Internals: `rfc5322()` (private, line 81), `splitList()` (private, line 104)
+Internals: `rfc5322()` (private, line 82)
 
 
 ## ChangeNotices

@@ -20,11 +20,11 @@ require_once __DIR__ . '/lib.php';
 // database's traffic no longer lands in a run's window; the two cover a request of this site's own that
 // does. A ceiling only falls.
 $selectCeilings = [
-    '/' => 29,
+    '/' => 28,
     '/hello-world/' => 41,
-    '/category/uncategorized/' => 34,
-    '/wp-json/wp/v2/posts' => 28,
-    '/?s=hello' => 30,
+    '/category/uncategorized/' => 33,
+    '/wp-json/wp/v2/posts' => 27,
+    '/?s=hello' => 29,
 ];
 
 [$probe] = minn_test_fetch(minn_test_reference_url() . '/?rest_route=/wp/v2/posts', 3);

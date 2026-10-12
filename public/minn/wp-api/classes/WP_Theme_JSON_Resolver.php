@@ -179,7 +179,13 @@ final class WP_Theme_JSON_Resolver
     /** Defaults, theme, and (for origin custom) the site editor's saved styles, merged. */
     public static function get_merged_data($origin = 'custom'): WP_Theme_JSON
     {
-        $theme = _minn_theme_styles();
+        // Core's layer as wp_theme_json_data_default leaves it, as the reference's resolver reads it.
+        return self::minn_merged(_minn_theme_styles()->withFilteredCore(), $origin);
+    }
+
+    /** @internal the layers merged over the core layer the theme's styles carry */
+    private static function minn_merged(Minn\Theme\ThemeStyles $theme, string $origin): WP_Theme_JSON
+    {
         $settings = $theme->settings();
         $styles = $theme->styles();
         if ($origin === 'custom') {
@@ -207,7 +213,8 @@ final class WP_Theme_JSON_Resolver
                 }
             }
         }
-        return self::get_merged_data('theme');
+        // The theme's own read never asks core's layer filter (probe theme-json-resolver).
+        return self::minn_merged(_minn_theme_styles(), 'theme');
     }
 
     /**
@@ -258,19 +265,19 @@ final class WP_Theme_JSON_Resolver
     /** The engine's defaults alone. */
     public static function get_core_data(): WP_Theme_JSON
     {
-        $core = new Minn\Theme\ThemeStyles(null, '');
+        $core = (new Minn\Theme\ThemeStyles(null, ''))->withFilteredCore();
         return _minn_theme_json_object(['version' => 3, 'settings' => $core->settings(), 'styles' => $core->styles()]);
     }
 
-    /** The site editor's saved styles for the active theme, normalized the way the REST item reports them. */
+    /**
+     * The site editor's saved styles for the active theme, normalized the
+     * way the REST item reports them, as wp_theme_json_data_user leaves them.
+     */
     public static function get_user_data(): WP_Theme_JSON
     {
         $saved = _minn_user_styles();
-        return _minn_theme_json_object([
-            'version' => 3,
-            'isGlobalStylesUserThemeJSON' => true,
-            'settings' => StyleSettings::normalize($saved['settings'], 'custom'),
-            'styles' => StyleSettings::resolved($saved['styles']),
-        ]);
+        $layer = ['settings' => StyleSettings::normalize($saved['settings'], 'custom'), 'styles' => StyleSettings::resolved($saved['styles'])];
+        $layer = Minn\Theme\ThemeJsonData::layer('custom', $layer);
+        return _minn_theme_json_object(['version' => 3, 'isGlobalStylesUserThemeJSON' => true] + $layer + ['settings' => [], 'styles' => []]);
     }
 }

@@ -300,9 +300,10 @@ final class ScriptModules
         return $found;
     }
 
+    /** A module's address with its version, as plugins may change it (script_module_loader_src). */
     private function urlOf(string $id): string
     {
-        return ($this->url)($this->registered[$id]['src'], $this->registered[$id]['version']);
+        return (string) Runtime::hooks()->filter('script_module_loader_src', [($this->url)($this->registered[$id]['src'], $this->registered[$id]['version']), $id]);
     }
 
     private function attr(string $value): string

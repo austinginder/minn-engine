@@ -107,7 +107,7 @@ function sanitize_bookmark_field($field, $value, $bookmark_id, $context)
     } elseif ($context === 'db') {
         $value = apply_filters("pre_{$field}", $value);
     } else {
-        $value = apply_filters($field, $value, $bookmark_id, $context);
+        $value = apply_filters("{$field}", $value, $bookmark_id, $context);
         $value = match ($context) {
             'attribute' => esc_attr($value),
             'js' => esc_js($value),

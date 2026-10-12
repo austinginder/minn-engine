@@ -1935,6 +1935,11 @@ function _minn_block_breadcrumbs(MinnBlock $block, MinnRenderer $renderer): stri
     if ($block->attr('showHomeItem', true)) {
         array_unshift($items, ['label' => __('Home'), 'url' => home_url('/')]);
     }
+    // The whole trail, Home and the current item included, is the plugins' to change (probe hook-inputs-2).
+    $items = array_values((array) apply_filters('block_core_breadcrumbs_items', $items));
+    if ($items === []) {
+        return '';
+    }
     $current = array_pop($items);
     $html = '';
     foreach ($items as $item) {

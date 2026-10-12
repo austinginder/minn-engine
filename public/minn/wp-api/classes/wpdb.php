@@ -22,6 +22,7 @@ class wpdb
     public $last_result;
     public $col_info;
     protected $col_meta = [];
+    protected $table_charset = [];
     public $queries;
     public $time_start = null;
     protected $last_fields = null;
@@ -648,23 +649,46 @@ class wpdb
         return in_array(strtolower((string) $db_cap), ['collation', 'group_concat', 'subqueries', 'set_charset', 'utf8mb4', 'utf8mb4_520', 'identifier_placeholders'], true);
     }
 
-    /** The charset a table's text columns share (the connection's when it has none or the table is unknown). */
+    /**
+     * The charset a table's text columns share (the connection's when it has
+     * none or the table is unknown), kept for the request once worked out;
+     * pre_get_table_charset may answer first (probe hook-inputs-2).
+     */
     protected function get_table_charset($table)
     {
+        $pre = apply_filters('pre_get_table_charset', null, $table);
+        if ($pre !== null) {
+            return $pre;
+        }
+        $key = strtolower((string) $table);
+        if (isset($this->table_charset[$key])) {
+            return $this->table_charset[$key];
+        }
+        $charset = $this->charset;
         foreach ($this->columns($table) as $column) {
             if ($column['collation'] !== '') {
-                return explode('_', $column['collation'])[0];
+                $charset = explode('_', $column['collation'])[0];
+                break;
             }
         }
-        return $this->charset;
+        return $this->table_charset[$key] = $charset;
     }
 
     /** A column's charset: false for one that holds no text, the table's for a column it does not have. */
     public function get_col_charset($table, $column)
     {
+        $pre = apply_filters('pre_get_col_charset', null, $table, $column);
+        if ($pre !== null) {
+            return $pre;
+        }
+        // The table's charset is asked the first time a table is looked at; a column it lacks answers with that, kept.
+        $key = strtolower((string) $table);
+        if (!isset($this->table_charset[$key])) {
+            $this->get_table_charset($table);
+        }
         $found = $this->columns($table)[strtolower((string) $column)] ?? null;
         if ($found === null) {
-            return $this->get_table_charset($table);
+            return $this->table_charset[$key] ?? $this->charset;
         }
         return $found['collation'] === '' ? false : explode('_', $found['collation'])[0];
     }

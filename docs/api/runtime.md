@@ -4,7 +4,7 @@ the WordPress runtime plugins load against
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Abilities`](#abilities) | final class | 217 | The abilities registry behind WP_Abilities_Registry, |
+| [`Abilities`](#abilities) | final class | 226 | The abilities registry behind WP_Abilities_Registry, |
 | [`AbilityRun`](#abilityrun) | final class | 28 | The checks of an ability's run, as the reference makes them (probes |
 | [`AccountFlows`](#accountflows) | final class | 140 | The account functions a sign-in page and plugins call, with the |
 | [`AjaxController`](#ajaxcontroller) | final readonly class | 80 | admin-ajax.php, the endpoint plugins post their front-end work to: a form |
@@ -20,6 +20,7 @@ the WordPress runtime plugins load against
 | [`BlockMetadata`](#blockmetadata) | final class | 95 | block.json to the settings a block type registers with: the property |
 | [`BlockTemplates`](#blocktemplates) | final class | 67 | Block templates plugins register at runtime, by their namespaced name |
 | [`BlockWidget`](#blockwidget) | final class | 30 | A block widget's legacy class name. Every widget the block editor saves |
+| [`BrowserGlobals`](#browserglobals) | final class | 45 | The browser and web server a request names, as the reference's globals |
 | [`CommentCloser`](#commentcloser) | final readonly class | 30 | The Discussion setting that closes comments on old posts. Observed on the |
 | [`CommentEvents`](#commentevents) | final readonly class | 254 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
@@ -37,7 +38,7 @@ the WordPress runtime plugins load against
 | [`DebugMode`](#debugmode) | final class | 104 | PHP's error settings from the debug constants, as the reference's boot |
 | [`Deferrals`](#deferrals) | final class | 66 | The switches an importer flips for the length of a request (probe |
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
-| [`FileTypeCheck`](#filetypecheck) | final class | 78 | A file's type from its content as much as its name, as the reference's |
+| [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 354 | The hook registry plugin code registers into and the engine fires. |
@@ -53,7 +54,7 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`Options`](#options) | final class | 497 | Options as plugin code sees them, kept where the reference keeps them: |
+| [`Options`](#options) | final class | 498 | Options as plugin code sees them, kept where the reference keeps them: |
 | [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
 | [`Pages`](#pages) | final class | 136 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
@@ -65,7 +66,7 @@ the WordPress runtime plugins load against
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
-| [`PostEvents`](#postevents) | final readonly class | 162 | What the reference's REST controllers tell plugins about a post they |
+| [`PostEvents`](#postevents) | final readonly class | 165 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
@@ -76,7 +77,7 @@ the WordPress runtime plugins load against
 | [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
 | [`PostQueryWhere`](#postquerywhere) | final class | 263 | The WHERE fragments WP_Query writes from its variables, in the reference's |
 | [`PostRevisions`](#postrevisions) | final class | 67 | A post's revisions as the reference's wp_save_post_revision keeps them |
-| [`PostSave`](#postsave) | final class | 239 | A REST save's columns through the filters the reference's save runs |
+| [`PostSave`](#postsave) | final class | 253 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 197 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 234 | Recovery from a fatal in someone else's code. When a plugin or theme |
@@ -84,9 +85,9 @@ the WordPress runtime plugins load against
 | [`RegisteredSettings`](#registeredsettings) | final class | 102 | Settings as register_setting keeps them (probe rest-settings): the |
 | [`Registry`](#registry) | final class | 467 | Post types, taxonomies, and statuses as plugin code registers and reads |
 | [`RewriteRules`](#rewriterules) | final class | 334 | The rewrite rules WordPress makes from its structures, as the reference |
-| [`Runtime`](#runtime) | final class | 403 | The WordPress runtime the engine offers plugin code: the procedural |
+| [`Runtime`](#runtime) | final class | 410 | The WordPress runtime the engine offers plugin code: the procedural |
 | [`ScriptLoading`](#scriptloading) | final class | 82 | How a script may load, as the reference decides it (probe |
-| [`ScriptModules`](#scriptmodules) | final class | 302 | The script modules registry: registrations with typed dependencies, the |
+| [`ScriptModules`](#scriptmodules) | final class | 303 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
@@ -113,7 +114,7 @@ the WordPress runtime plugins load against
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
 | [`UserQueryRunner`](#userqueryrunner) | final class | 218 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
-| [`UserSave`](#usersave) | final class | 70 | An account's fields through the filters the reference's wp_insert_user |
+| [`UserSave`](#usersave) | final class | 74 | An account's fields through the filters the reference's wp_insert_user |
 | [`WidgetAreas`](#widgetareas) | final class | 184 | The widgets helper functions as the reference answers them (probe |
 
 ## Abilities
@@ -226,7 +227,7 @@ first, show_in_rest (public's value when unset), then public.
 
 - `@return array<string, mixed>`
 
-Internals: `state()` (private, line 30), `save()` (private, line 36), `forget()` (private, line 223)
+Internals: `state()` (private, line 30), `save()` (private, line 36), `forget()` (private, line 232)
 
 
 ## AbilityRun
@@ -841,6 +842,29 @@ no legacy equivalent adds nothing.
 The legacy widget class a block widget maps to.
 
 - `@param list<array<string, mixed>> $blocks the parsed content`
+
+
+## BrowserGlobals
+
+`final class Minn\Runtime\BrowserGlobals` · `public/minn/src/Minn/Runtime/BrowserGlobals.php`
+
+The browser and web server a request names, as the reference's globals
+have them from boot ($is_chrome, $is_safari, $is_IE, $is_apache,
+$is_nginx, …; probe vars-matrix): one browser at most, read from the
+user agent in the reference's order (Lynx, Edge, Opera, Chrome, Safari,
+Internet Explorer on a Mac then elsewhere, Gecko, Netscape 4), an
+iPhone being a mobile Safari; the server from SERVER_SOFTWARE, IIS 7 and
+up apart. Chrome Frame's switch is the facade's (use_google_chrome_frame).
+
+- const `NAMES` = `array (   0 => 'is_lynx',   1 => 'is_gecko',   2 => 'is_winIE',   3 => 'is_macIE',   4 => 'is_opera',   5 => 'is_NS4',   6 => 'is_safari',   7 => 'is_chrome',   8 => 'is_iphone',   9 => 'is_IE',   10 => 'is_edge',   11 => 'is_apache',   12 => 'is_IIS',   13 => 'is_iis7',   14 => 'is_nginx',   15 => 'is_caddy', )` — The globals, in the order the reference sets them.
+
+### static `detect(string $agent, string $software): array`
+
+Each global's value for this user agent and server software.
+
+- `@return array<string, bool>`
+
+Internals: `browser()` (private, line 44)
 
 
 ## CommentCloser
@@ -1518,7 +1542,7 @@ early: WP-CLI's add_wp_hook writes them into $wp_filter as plain arrays
 (tag => priority => id => function and accepted_args). The reference has
 its hook API by then; the engine reads the same arrays directly.
 
-Used by: `Minn\Front\Maintenance`
+Used by: `Minn\Front\Maintenance`, `Minn\Runtime\Runtime`
 
 ### static `apply(string $tag, mixed $value, mixed ...$args): mixed`
 
@@ -1550,7 +1574,7 @@ ext, type, proper_filename, and the content's own type (real_mime).
 - `@param array<string, string> $images getimagesize_mimes_to_exts`
 - `@return array{ext: string|false, type: string|false, proper_filename: string|false, real_mime: string|false}`
 
-Internals: `imageMime()` (private, line 68), `contentFits()` (private, line 75)
+Internals: `imageMime()` (private, line 68), `contentFits()` (private, line 74)
 
 
 ## FileUpload
@@ -2339,10 +2363,11 @@ them; the engine writes them through this class directly.
 (Site::setOption). Rows an older engine wrote autoloaded are set right
 the first time a loaded list holds them.
 - const `AUTOLOAD_VALUES` = `array (   0 => 'yes',   1 => 'on',   2 => 'auto-on',   3 => 'auto', )` — The autoload column values that load an option with every request, in the reference's order.
-- const `EVERY_REQUEST` = `array (   0 => 'minn_runtime_symbols',   1 => 'paused_plugins',   2 => 'WPLANG',   3 => 'https_migration_required', )` — Options not autoloaded that the engine itself reads on every request
-(the symbol survey, recovery's paused plugins, the site language, the
-HTTPS migration flag): read together as a request begins, as one read
-rather than one each.
+- const `EVERY_REQUEST` = `array (   0 => 'minn_runtime_symbols',   1 => 'paused_plugins',   2 => 'WPLANG',   3 => 'https_migration_required',   4 => 'minn_admin_post_types',   5 => 'minn_admin_taxonomies', )` — Options not autoloaded that are read on every request (the symbol
+survey, recovery's paused plugins, the site language, the HTTPS
+migration flag, and the post types and taxonomies Minn Admin keeps
+and registers as it loads): read together as a request begins, as one
+read rather than one each.
 
 Used by: `Minn\Cli\OptionCommand`, `Minn\Engine`, `Minn\Runtime\AjaxController`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
@@ -2456,7 +2481,7 @@ reads back as that string, other scalars as their string form.
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `listed()` (private, line 97), `missing()` (private, line 122), `lookup()` (private, line 139), `decode()` (private, line 164), `remember()` (private, line 360), `found()` (private, line 371), `holdsObject()` (private, line 381), `switchAutoload()` (private, line 412)
+Internals: `listed()` (private, line 98), `missing()` (private, line 123), `lookup()` (private, line 140), `decode()` (private, line 165), `remember()` (private, line 361), `found()` (private, line 372), `holdsObject()` (private, line 382), `switchAutoload()` (private, line 413)
 
 
 ## OptionsGroup
@@ -2926,6 +2951,10 @@ one path every permanent delete takes. Deleting needs the facade, so
 unlike the events it runs only under a booted runtime, which the
 engine's write routes are. Answers what the deletion answered.
 
+### `trash(int $id): mixed`
+
+A post (an attachment too) sent to the trash through the reference's own trashing, as deleteForGood deletes.
+
 ### `live(): bool`
 
 Whether plugins are loaded to be told anything.
@@ -2962,14 +2991,14 @@ fields), core's own written directly without.
 
 - `@param array<string, mixed> $body`
 
-### `attachmentGenerated(int $id, string $file, string $mime): void`
+### `attachmentGenerated(int $id, string $file): void`
 
 A new attachment's metadata made by the runtime, as the reference's
 REST upload makes it: wp_generate_attachment_metadata over the stored
 file (the sizes cut with the attachment's id, the metadata stored as
 each one lands, so an optimiser hooked there finds it), then
-wp_update_attachment_metadata. Only for the images the engine sizes,
-as without plugins.
+wp_update_attachment_metadata. Every upload has some: an image its
+sizes, a PDF its previews, any file its size (probe hook-inputs-2).
 
 ### `restInserted(int $id, Minn\Http\Request $request, ?Minn\Content\PostRecord $before): void`
 
@@ -2989,7 +3018,7 @@ rest_delete_{type}, after a trash or a delete, with the post as it was answered 
 
 - `@param array<string, mixed> $data`
 
-Internals: `rest()` (private, line 159), `wpPost()` (private, line 181)
+Internals: `rest()` (private, line 161), `wpPost()` (private, line 183)
 
 
 ## PostInsert
@@ -3461,6 +3490,7 @@ changes is written. Without plugins loaded the columns are as given.
 
 - const `DATA` = `array (   0 => 'post_author',   1 => 'post_date',   2 => 'post_date_gmt',   3 => 'post_content',   4 => 'post_content_filtered',   5 => 'post_title',   6 => 'post_excerpt',   7 => 'post_status',   8 => 'post_type',   9 => 'comment_status',   10 => 'ping_status',   11 => 'post_password',   12 => 'post_name',   13 => 'to_ping',   14 => 'pinged',   15 => 'post_modified',   16 => 'post_modified_gmt',   17 => 'post_parent',   18 => 'menu_order',   19 => 'post_mime_type',   20 => 'guid', )` — The row wp_insert_post_data is handed, in its keys.
 - const `FIELDS` = `array (   'title' => 'post_title',   'content' => 'post_content',   'excerpt' => 'post_excerpt',   'status' => 'post_status',   'date' => 'post_date',   'date_gmt' => 'post_date_gmt',   'slug' => 'post_name',   'password' => 'post_password',   'author' => 'post_author',   'parent' => 'post_parent',   'menu_order' => 'menu_order',   'comment_status' => 'comment_status',   'ping_status' => 'ping_status', )` — A REST field and the column it fills in the prepared post.
+- const `PREPARED` = `array (   'post_title' => 'title',   'post_content' => 'content',   'post_excerpt' => 'excerpt',   'post_type' => NULL,   'post_status' => 'status',   'post_date' => 'date',   'post_date_gmt' => 'date',   'edit_date' => 'date',   'post_name' => 'slug',   'post_author' => 'author',   'post_password' => 'password',   'post_parent' => 'parent',   'menu_order' => 'menu_order',   'comment_status' => 'comment_status',   'ping_status' => 'ping_status', )` — The prepared post's columns in the reference's order, each with the REST field that sends it (null: always there).
 - const `UNSLUGGED` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft', )`
 - const `PARENT` = `'post_parent'`
 - const `NEW_POSTARR` = `array (   0 => 'ID',   1 => 'post_author',   2 => 'post_date',   3 => 'post_date_gmt',   4 => 'post_content',   5 => 'post_content_filtered',   6 => 'post_title',   7 => 'post_excerpt',   8 => 'post_status',   9 => 'post_type',   10 => 'comment_status',   11 => 'ping_status',   12 => 'post_password',   13 => 'to_ping',   14 => 'pinged',   15 => 'post_parent',   16 => 'menu_order',   17 => 'guid',   18 => 'import_id', )` — The new post array wp_insert_post_parent is handed beside the whole one.
@@ -3539,7 +3569,7 @@ back.
 - `@param array<string, mixed> $unsanitized`
 - `@return array<string, mixed>`
 
-Internals: `stored()` (private, line 110), `prepared()` (private, line 217), `changed()` (private, line 252)
+Internals: `stored()` (private, line 113), `prepared()` (private, line 223), `changed()` (private, line 266)
 
 
 ## QueriedObject
@@ -4037,7 +4067,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Nonce`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Ops\UpgraderRun`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\Options`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\Authenticator`, `Minn\Auth\Capabilities`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Nonce`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\I18n\Gettext`, `Minn\Login\LoginController`, `Minn\Mail\Mailer`, `Minn\Media\Icons`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\Constants`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Interactivity`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\Options`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\StyleLayers`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -4205,7 +4235,7 @@ calls it straight away.
 
 Fresh per-request state, for suites.
 
-Internals: `loadObjectCacheDropin()` (private, line 383)
+Internals: `loadObjectCacheDropin()` (private, line 387)
 
 
 ## ScriptLoading
@@ -4344,7 +4374,7 @@ The script-module-data tags.
 
 The a11y module's tag, once.
 
-Internals: `placeIn()` (private, line 128), `printTags()` (private, line 227), `marked()` (private, line 251), `complete()` (private, line 263), `dependencies()` (private, line 285), `urlOf()` (private, line 303), `attr()` (private, line 308), `wrong()` (private, line 313)
+Internals: `placeIn()` (private, line 128), `printTags()` (private, line 227), `marked()` (private, line 251), `complete()` (private, line 263), `dependencies()` (private, line 285), `urlOf()` (private, line 304), `attr()` (private, line 309), `wrong()` (private, line 314)
 
 
 ## ScriptPack

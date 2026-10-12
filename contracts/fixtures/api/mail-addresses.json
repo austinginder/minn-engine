@@ -1,0 +1,749 @@
+[
+    [
+        "valid: \"user@example.com\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"first.last@example.co.uk\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"user+tag@example.org\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"user@localhost\"",
+        {
+            "php": false,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@[192.168.0.1]\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": false,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"user@[IPv6:2001:db8::1]\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": false,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"\\\"quoted user\\\"@example.com\"",
+        {
+            "php": false,
+            "pcre": true,
+            "pcre8": true,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"\\\"a\\\\\\\"b\\\"@example.com\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": false,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"user.@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \".user@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"us..er@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@-example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@example-.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@example\"",
+        {
+            "php": false,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@ex_ample.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"\\u00fcser@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@ex\\u00e4mple.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user name@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@example.com.\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"a@b.c\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"user@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user(comment)@example.com\"",
+        {
+            "php": false,
+            "pcre": true,
+            "pcre8": true,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user\\n@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"Name <user@example.com>\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@example.com\\r\\nBcc: x@example.com\"",
+        {
+            "php": false,
+            "pcre": false,
+            "pcre8": false,
+            "html5": false,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: \"user@xn--exmple-cua.com\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"USER@EXAMPLE.COM\"",
+        {
+            "php": true,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": true,
+            "default": true
+        }
+    ],
+    [
+        "valid: \"user@123.123.123.123\"",
+        {
+            "php": false,
+            "pcre": true,
+            "pcre8": true,
+            "html5": true,
+            "noregex": false,
+            "default": false
+        }
+    ],
+    [
+        "valid: a callable decides",
+        [
+            true,
+            false
+        ]
+    ],
+    [
+        "parse: \"user@example.com\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "user@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "user@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"User Name <user@example.com>, other@example.org\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "User Name",
+                        "address": "user@example.com"
+                    },
+                    {
+                        "name": "",
+                        "address": "other@example.org"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "User Name",
+                        "address": "user@example.com"
+                    },
+                    {
+                        "name": "",
+                        "address": "other@example.org"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"\\\"Last, First\\\" <first@example.com>, =?UTF-8?B?w4lsaXNl?= <elise@example.com>\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "First",
+                        "address": "first@example.com"
+                    },
+                    {
+                        "name": "Élise",
+                        "address": "elise@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "First",
+                        "address": "first@example.com"
+                    },
+                    {
+                        "name": "�lise",
+                        "address": "elise@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"=?ISO-8859-1?Q?Andr=E9?= <andre@example.com>\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "André",
+                        "address": "andre@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "Andr�",
+                        "address": "andre@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"Group: a@example.com, b@example.com;, c@example.com\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "c@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "c@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"not an address, <also@not>, ok@example.com\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "ok@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "ok@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"(comment) user@example.com\"",
+        [
+            {
+                "result": [],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"\"",
+        [
+            {
+                "result": [],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"a@example.com,,b@example.com\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "a@example.com"
+                    },
+                    {
+                        "name": "",
+                        "address": "b@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "",
+                        "address": "a@example.com"
+                    },
+                    {
+                        "name": "",
+                        "address": "b@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "parse: \"\\\"quoted \\\\\\\"name\\\\\\\"\\\" <q@example.com>\"",
+        [
+            {
+                "result": [
+                    {
+                        "name": "quoted \\\"name\\",
+                        "address": "q@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            },
+            {
+                "result": [
+                    {
+                        "name": "quoted \\\"name\\",
+                        "address": "q@example.com"
+                    }
+                ],
+                "notices": [
+                    "Using simplified address parser is not recommended. Install the PHP IMAP extension for full RFC822 parsing."
+                ]
+            }
+        ]
+    ],
+    [
+        "puny: \"user@ex\\u00e4mple.com\"",
+        "user@xn--exmple-cua.com"
+    ],
+    [
+        "puny: \"user@example.com\"",
+        "user@example.com"
+    ],
+    [
+        "puny: \"\\u00fcser@ex\\u00e4mple.com\"",
+        "üser@xn--exmple-cua.com"
+    ],
+    [
+        "puny: \"user@\"",
+        "user@"
+    ],
+    [
+        "puny: \"user@xn--exmple-cua.com\"",
+        "user@xn--exmple-cua.com"
+    ],
+    [
+        "encode header: \"plain\"",
+        [
+            "plain",
+            "plain",
+            "plain"
+        ]
+    ],
+    [
+        "encode header: \"Andr\\u00e9e\"",
+        [
+            "=?utf-8?Q?Andr=C3=A9e?=",
+            "=?utf-8?Q?Andr=C3=A9e?=",
+            "=?utf-8?Q?Andr=C3=A9e?="
+        ]
+    ],
+    [
+        "encode header: \"a \\\"quoted\\\" word\"",
+        [
+            "a \"quoted\" word",
+            "\"a \\\"quoted\\\" word\"",
+            "=?us-ascii?Q?a_=22quoted=22_word?="
+        ]
+    ],
+    [
+        "encode header: \"long words long words long words long words long words long words long words long words long words long words long words long words \"",
+        [
+            "=?us-ascii?Q?long_words_long_words_long_words_long_words_lon?=\r\n =?us-ascii?Q?g_words_long_words_long_words_long_words_long_w?=\r\n =?us-ascii?Q?ords_long_words_long_words_long_words_?=",
+            "long words long words long words long words long words long words long words long words long words long words long words long words ",
+            "=?us-ascii?Q?long_words_long_words_long_words_long_words_lon?=\r\n =?us-ascii?Q?g_words_long_words_long_words_long_words_long_w?=\r\n =?us-ascii?Q?ords_long_words_long_words_long_words_?="
+        ]
+    ],
+    [
+        "encode header: \"tab\\there\"",
+        [
+            "tab\there",
+            "\"tab\\there\"",
+            "tab\there"
+        ]
+    ],
+    [
+        "encode header: \"ascii=equals?\"",
+        [
+            "ascii=equals?",
+            "ascii=equals?",
+            "ascii=equals?"
+        ]
+    ],
+    [
+        "decode header: \"=?UTF-8?B?w4lsaXNl?=\"",
+        [
+            "Élise"
+        ]
+    ],
+    [
+        "decode header: \"=?ISO-8859-1?Q?Andr=E9?= rest\"",
+        [
+            "André rest"
+        ]
+    ],
+    [
+        "decode header: \"no words\"",
+        [
+            "no words"
+        ]
+    ],
+    [
+        "decode header: \"=?UTF-8?Q?a_b?= =?UTF-8?Q?c?=\"",
+        [
+            "a bc"
+        ]
+    ]
+]

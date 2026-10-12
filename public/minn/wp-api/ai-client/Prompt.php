@@ -2,8 +2,9 @@
 /**
  * The WordPress prompt builder and ability resolver (probe ai-client-prompt).
  *
- * The builder speaks snake_case over the SDK's builder. A setting that fails
- * is kept, and every generation after it answers that failure: an invalid
+ * The builder speaks snake_case over the SDK's builder. A setting or a
+ * generation that fails is kept, and every generation after it answers that
+ * failure: an invalid
  * argument as prompt_invalid_argument (400), anything else as
  * prompt_builder_error (500), each naming the exception's class. A support
  * check then answers false; any other call hands back the builder. Abilities
@@ -58,20 +59,30 @@ class WP_AI_Client_Prompt_Builder
         return $declarations === [] ? $this : $this->__call('using_function_declarations', $declarations);
     }
 
-    /** A builder call by its snake_case name: the builder back for a setting, the answer for a check or a generation. */
+    /**
+     * A builder call by its snake_case name: the builder back for a setting,
+     * the answer for a check or a generation. A check or a generation is
+     * first offered to wp_ai_client_prevent_prompt: prevented, the builder
+     * answers as one that failed. A failed generation is kept like a failed
+     * setting; a failed check is only false (probe hook-inputs-2).
+     */
     public function __call(string $name, array $arguments)
     {
+        $runs = self::is_generating_method($name) || self::is_support_check_method($name);
+        if ($this->error === null && $runs && apply_filters('wp_ai_client_prevent_prompt', false, $this)) {
+            $this->error = new WP_Error('prompt_prevented', __('Prompt execution was prevented by a filter.'), ['status' => 503]);
+        }
         if ($this->error !== null) {
             return $this->answer_for_error($name);
         }
         try {
             $result = call_user_func_array($this->get_builder_callable($name), $arguments);
         } catch (Exception $e) {
-            if (!self::is_generating_method($name) && !self::is_support_check_method($name)) {
-                $this->error = $this->exception_to_wp_error($e);
-                return $this;
+            if (self::is_support_check_method($name)) {
+                return false;
             }
-            return self::is_support_check_method($name) ? false : $this->exception_to_wp_error($e);
+            $this->error = $this->exception_to_wp_error($e);
+            return self::is_generating_method($name) ? $this->error : $this;
         }
         return $result === $this->builder ? $this : $result;
     }

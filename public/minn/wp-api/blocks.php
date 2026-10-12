@@ -76,11 +76,11 @@ function _minn_core_renders_natively(string $name, $callback): bool
 function _minn_render_core_callback(string $name, $attributes, $content = '', $block = null): string
 {
     if ($block instanceof WP_Block && $attributes === $block->attributes) {
-        return _minn_render_core_block($block);
+        return _minn_render_core_block($block, '', true, true);
     }
     $parsed = $block instanceof WP_Block ? $block->parsed_block : ['blockName' => $name, 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => (string) $content, 'innerContent' => [(string) $content]];
     $parsed['attrs'] = (array) $attributes;
-    return _minn_render_core_block(new WP_Block($parsed, $block instanceof WP_Block ? (array) $block->context : []));
+    return _minn_render_core_block(new WP_Block($parsed, $block instanceof WP_Block ? (array) $block->context : []), '', true, true);
 }
 
 /** @internal registers a core block type again, as its register_block_core_* function does: refused while it is registered */
@@ -104,8 +104,12 @@ function register_core_block_types_from_metadata()
     }
 }
 
-/** @internal a core block rendered by the engine's own renderer, with the wrapper classes the engine gives it */
-function _minn_render_core_block(WP_Block $block, string $content = '', bool $filtered = true): string
+/**
+ * @internal a core block rendered by the engine's own renderer, with the
+ * wrapper classes the engine gives it ($callback: as its render callback
+ * called directly, not as a block being rendered)
+ */
+function _minn_render_core_block(WP_Block $block, string $content = '', bool $filtered = true, bool $callback = false): string
 {
     // A plugin's query loop hands the engine its per-item post (and a
     // comment loop its comment) through the block context; the engine's own
@@ -129,7 +133,11 @@ function _minn_render_core_block(WP_Block $block, string $content = '', bool $fi
     try {
         $provided = array_diff_key($context, ['postId' => true, 'postType' => true, 'commentId' => true]);
         $native = _minn_array_to_block($block->parsed_block);
-        return $renderer->providing($provided, static fn (): string => $filtered ? $renderer->renderNative($native) : $renderer->renderNativeUnfiltered($native));
+        return $renderer->providing($provided, static fn (): string => match (true) {
+            !$filtered => $renderer->renderNativeUnfiltered($native),
+            $callback => $renderer->renderNativeAsCallback($native),
+            default => $renderer->renderNative($native),
+        });
     } finally {
         $renderer->context()->withComment($outerComment);
         if ($contextPost !== null) {
@@ -1987,8 +1995,9 @@ function get_template_hierarchy($slug, $is_custom = false, $template_prefix = ''
  */
 function block_core_social_link_services($service = '', $field = '')
 {
-    static $services = null;
-    $services ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/social-link-services.json'), true);
+    static $known = null;
+    $known ??= (array) json_decode((string) file_get_contents(MINN_ENGINE_DIR . '/data/social-link-services.json'), true);
+    $services = (array) apply_filters('block_core_social_link_get_services', $known);
     if ($service !== '' && $field !== '' && isset($services[$service][$field])) {
         return $services[$service][$field];
     }

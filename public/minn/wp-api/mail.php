@@ -32,13 +32,14 @@ function _minn_wp_phpmailer()
 /**
  * Sets the message on the mailer: sender (wp_mail_from, wp_mail_from_name),
  * recipients, subject and body, transport, content type (wp_mail_content_type,
- * asked once before the sender and once with any boundary), charset
+ * with any boundary; wp_staticize_emoji_for_email asked it first), charset
  * (wp_mail_charset), custom headers and files. A refused sender throws.
  */
 function _minn_wp_mail_prepare($phpmailer, MailHeaders $parsed, array $args)
 {
     $stored = MailSettings::stored(Runtime::current()->site);
-    $type = apply_filters('wp_mail_content_type', $parsed->contentType ?? 'text/plain');
+    // The content type is asked once here, after the sender; the emoji filter on wp_mail asked it before.
+    $type = $parsed->contentType ?? 'text/plain';
     $fromEmail = apply_filters('wp_mail_from', $parsed->fromEmail ?? _minn_wp_mail_default_from($stored));
     $fromName = apply_filters('wp_mail_from_name', (string) $parsed->fromName !== '' ? $parsed->fromName : ((string) ($stored['from_name'] ?? '') ?: 'WordPress'));
     $phpmailer->setFrom($fromEmail, $fromName, false);
@@ -85,7 +86,11 @@ function _minn_wp_mail_recipients($phpmailer, array $to, MailHeaders $parsed)
     }
 }
 
-/** Attachments (a string key names the file) and inline images (the key is the content id); a file that cannot be read is skipped. */
+/**
+ * Attachments (a string key names the file) and inline images (the key is
+ * the content id), each image's details through wp_mail_embed_args first
+ * (probe hook-inputs-2); a file that cannot be read is skipped.
+ */
 function _minn_wp_mail_files($phpmailer, array $attachments, array $embeds)
 {
     foreach ($attachments as $key => $path) {
@@ -96,8 +101,9 @@ function _minn_wp_mail_files($phpmailer, array $attachments, array $embeds)
         }
     }
     foreach ($embeds as $key => $path) {
+        $embed = (array) apply_filters('wp_mail_embed_args', ['path' => $path, 'cid' => (string) $key, 'name' => basename((string) $path), 'encoding' => 'base64', 'type' => '', 'disposition' => 'inline']);
         try {
-            $phpmailer->addEmbeddedImage($path, (string) $key);
+            $phpmailer->addEmbeddedImage((string) ($embed['path'] ?? ''), (string) ($embed['cid'] ?? ''), (string) ($embed['name'] ?? ''), (string) ($embed['encoding'] ?? 'base64'), (string) ($embed['type'] ?? ''), (string) ($embed['disposition'] ?? 'inline'));
         } catch (PHPMailer\PHPMailer\Exception $e) {
             continue;
         }

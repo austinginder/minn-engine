@@ -10,8 +10,9 @@ use Minn\Runtime\Runtime;
  * The theme's theme.json as plugins and the theme's own functions may
  * change it (wp_theme_json_data_theme, a WP_Theme_JSON_Data they update
  * with presets and settings of their own), as the reference's resolver
- * hands it to them. Worked out once a request for each set of callbacks,
- * so a filter added late still counts.
+ * hands it to them, and the core and site editor layers likewise
+ * (wp_theme_json_data_default, wp_theme_json_data_user). Worked out once
+ * a request for each set of callbacks, so a filter added late still counts.
  */
 final class ThemeJsonData
 {
@@ -29,6 +30,34 @@ final class ThemeJsonData
         }
         $data = \apply_filters('wp_theme_json_data_theme', new \WP_Theme_JSON_Data($json, 'theme'));
         $filtered = $data instanceof \WP_Theme_JSON_Data ? self::asWritten((array) $data->get_theme_json()->get_raw_data()) : $json;
+        Runtime::current()->set($key, $filtered);
+        return $filtered;
+    }
+
+    /**
+     * The core layer (wp_theme_json_data_default, origin default) or the
+     * site editor's (wp_theme_json_data_user, origin custom) as plugins
+     * leave it, each a WP_Theme_JSON_Data they update; as given when
+     * nothing filters it. Worked out once a request for each set of
+     * callbacks and layer.
+     *
+     * @param array<string, mixed> $json
+     * @return array<string, mixed>
+     */
+    public static function layer(string $origin, array $json): array
+    {
+        $filter = $origin === 'default' ? 'wp_theme_json_data_default' : 'wp_theme_json_data_user';
+        $hook = $GLOBALS['wp_filter'][$filter] ?? null;
+        if (!Runtime::hooks()->has($filter) || !is_object($hook)) {
+            return $json;
+        }
+        $key = "theme_json_data_{$origin}:" . md5(serialize($json)) . ':' . md5(serialize(array_map('array_keys', (array) $hook->callbacks)));
+        $cached = Runtime::current()->get($key);
+        if (is_array($cached)) {
+            return $cached;
+        }
+        $data = \apply_filters($filter, new \WP_Theme_JSON_Data(['version' => 3] + $json, $origin));
+        $filtered = $data instanceof \WP_Theme_JSON_Data ? array_diff_key((array) $data->get_data(), ['version' => true]) : $json;
         Runtime::current()->set($key, $filtered);
         return $filtered;
     }

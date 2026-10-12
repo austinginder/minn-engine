@@ -87,7 +87,7 @@ class WP_REST_Abilities_V1_List_Controller extends WP_REST_Controller
 
     public function get_collection_params(): array
     {
-        return SchemaData::of('ability-collection');
+        return apply_filters('rest_abilities_collection_params', SchemaData::of('ability-collection'));
     }
 
     /** Whether the catalogue lists an ability: shown in REST, and matching the request's category, namespace and meta. */

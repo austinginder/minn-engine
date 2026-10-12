@@ -158,7 +158,7 @@ class WP_REST_Themes_Controller extends WP_REST_Controller
 
     public function get_collection_params()
     {
-        return ['status' => ['description' => __('Limit result set to themes assigned one or more statuses.'), 'type' => 'array', 'items' => ['enum' => ['active', 'inactive'], 'type' => 'string']]];
+        return apply_filters('rest_themes_collection_params', ['status' => ['description' => __('Limit result set to themes assigned one or more statuses.'), 'type' => 'array', 'items' => ['enum' => ['active', 'inactive'], 'type' => 'string']]]);
     }
 
     public function sanitize_theme_status($statuses, $request, $parameter)

@@ -44,13 +44,19 @@ final class StyleSettings
      */
     public static function normalize(array $settings, string $origin): array
     {
+        return self::withAppearanceTools(self::presetsByOrigin($settings, $origin));
+    }
+
+    /** The preset lists, at the root and under each block, keyed by the origin given; nothing else changed. */
+    public static function presetsByOrigin(array $settings, string $origin): array
+    {
         $settings = self::presetsUnder($settings, $origin);
         foreach ((array) ($settings['blocks'] ?? []) as $block => $node) {
             if (is_array($node)) {
                 $settings['blocks'][$block] = self::presetsUnder($node, $origin);
             }
         }
-        return self::withAppearanceTools($settings);
+        return $settings;
     }
 
     /** Every var:preset|kind|slug token replaced by the custom property it names. */

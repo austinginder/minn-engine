@@ -7,6 +7,7 @@ use Minn\Theme\Folder;
 class WP_Theme implements ArrayAccess
 {
     private static $headers = ['Name' => 'Theme Name', 'ThemeURI' => 'Theme URI', 'Description' => 'Description', 'Author' => 'Author', 'AuthorURI' => 'Author URI', 'Version' => 'Version', 'Template' => 'Template', 'Status' => 'Status', 'Tags' => 'Tags', 'TextDomain' => 'Text Domain', 'DomainPath' => 'Domain Path', 'RequiresWP' => 'Requires at least', 'RequiresPHP' => 'Requires PHP', 'UpdateURI' => 'Update URI'];
+    private static $persistently = null;
     public $update = false;
     private $theme_root;
     private $stylesheet;
@@ -17,6 +18,9 @@ class WP_Theme implements ArrayAccess
 
     public function __construct($theme_dir, $theme_root, $_child = null)
     {
+        // The first theme made asks whether themes are cached across requests (probe hook-inputs-2);
+        // the engine keeps them for the request either way (_minn_start_object_cache).
+        self::$persistently ??= apply_filters('wp_cache_themes_persistently', false, 'WP_Theme');
         $folder = Folder::read((string) $theme_root, (string) $theme_dir, self::$headers, static fn (string $file, array $labels) => get_file_data($file, $labels, 'theme'));
         $this->theme_root = $folder->root;
         $this->stylesheet = $folder->slug;
@@ -300,15 +304,38 @@ class WP_Theme implements ArrayAccess
         return Folder::filePath($this->get_stylesheet_directory(), $this->get_template_directory(), (string) $file);
     }
 
-    /** The theme's patterns by file name, read from their headers (Minn\Theme\PatternHeaders); [] for a theme that is not there. */
+    /**
+     * The theme's patterns by file name, read from their headers
+     * (Minn\Theme\PatternHeaders) out of the files theme_block_pattern_files
+     * leaves, and kept as the reference keeps them: in a site transient
+     * named by the theme's folder, or the object cache when one persists,
+     * for wp_theme_files_cache_ttl seconds, the theme's version ending it
+     * early (probe hook-inputs-2); [] for a theme that is not there.
+     */
     public function get_block_patterns()
     {
-        return $this->exists() ? \Minn\Theme\PatternHeaders::all($this->get_stylesheet_directory()) : [];
+        if (!$this->exists()) {
+            return [];
+        }
+        $key = 'wp_theme_files_patterns-' . md5($this->get_stylesheet_directory());
+        $cached = wp_using_ext_object_cache() ? wp_cache_get($key, 'theme_files') : get_site_transient($key);
+        if (is_array($cached) && ($cached['version'] ?? null) === $this->get('Version')) {
+            return (array) $cached['patterns'];
+        }
+        $dir = $this->get_stylesheet_directory() . '/patterns';
+        $files = (array) apply_filters('theme_block_pattern_files', \Minn\Theme\PatternHeaders::files($this->get_stylesheet_directory()), $dir);
+        $patterns = \Minn\Theme\PatternHeaders::of($files);
+        $ttl = (int) apply_filters('wp_theme_files_cache_ttl', 1800, 'theme_block_patterns');
+        $kept = ['version' => $this->get('Version'), 'patterns' => $patterns];
+        wp_using_ext_object_cache() ? wp_cache_set($key, $kept, 'theme_files', $ttl) : set_site_transient($key, $kept, $ttl);
+        return $patterns;
     }
 
-    /** Nothing is cached of a theme's patterns here. */
+    /** The theme's patterns, read again from their files on the next ask. */
     public function delete_pattern_cache()
     {
+        $key = 'wp_theme_files_patterns-' . md5($this->get_stylesheet_directory());
+        wp_using_ext_object_cache() ? wp_cache_delete($key, 'theme_files') : delete_site_transient($key);
     }
 
     /** Nothing is cached of a theme here. */

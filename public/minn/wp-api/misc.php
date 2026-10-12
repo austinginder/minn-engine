@@ -359,6 +359,11 @@ function _minn_update_user_profile(WP_User $existing, array $userdata, array $re
     }
     clean_user_cache($id);
     do_action('profile_update', $id, $existing, $userdata);
+    // A spam flag given that differs from the account's is heard as the account made ham (a
+    // single site refuses one set to spam before this; probe hook-inputs-2).
+    if (array_key_exists('spam', $userdata) && $userdata['spam'] !== null && $userdata['spam'] !== $existing->spam) {
+        do_action('make_ham_user', $id);
+    }
     return $id;
 }
 

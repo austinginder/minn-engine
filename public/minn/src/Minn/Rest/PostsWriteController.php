@@ -95,9 +95,10 @@ final readonly class PostsWriteController
         $dateGmt = ($status === 'publish' || $status === 'private') ? $nowGmt : '0000-00-00 00:00:00';
         $modified = $local;
         $modifiedGmt = $nowGmt;
-        if (isset($body['date']) && (string) $body['date'] !== '') {
-            // An explicit date is site-local; publishing into the future schedules.
-            [$date, $dateGmt, $stamp] = $this->site->localDate((string) $body['date']);
+        $asked = $this->askedDate($body);
+        if ($asked !== null) {
+            // An explicit date (site-local, or date_gmt); publishing into the future schedules.
+            [$date, $dateGmt, $stamp] = $asked;
             $modified = $date;
             $modifiedGmt = $dateGmt;
             if ($status === 'publish' && $stamp > time()) {
@@ -129,7 +130,7 @@ final readonly class PostsWriteController
         $events->restAfterInsert($id, $request, null);
         $events->afterInsert($id, null);
 
-        return Reply::item($this->object->edit($this->posts->find($id), $userId), Fields::fromQuery($request->query), 201)
+        return Reply::item($this->object->edit($this->posts->find($id), $userId, Fields::fromQuery($request->query)), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->url->to('/wp/v2/' . $base . '/' . $id));
     }
 
@@ -253,7 +254,8 @@ final readonly class PostsWriteController
         // The revision of the update is saved from wp_after_insert_post, as on the reference.
         $events->afterInsert($postId, $post);
 
-        return Reply::item($this->object->edit($this->posts->find($postId), $userId), Fields::fromQuery($request->query));
+        $fields = Fields::fromQuery($request->query);
+        return Reply::item($this->object->edit($this->posts->find($postId), $userId, $fields), $fields);
     }
 
     /** Trashes or deletes a post or page. */
@@ -278,11 +280,16 @@ final readonly class PostsWriteController
         $fields = Fields::fromQuery($request->query);
 
         $events = $this->events();
+        // Whether the post may go to the trash is asked on every delete, forced or not (probe hook-inputs-2).
+        $trashable = (bool) \apply_filters("rest_{$type}_trashable", EMPTY_TRASH_DAYS > 0, \WP_Post::get_instance($postId));
         if (!$request->flagged('force')) {
+            if (!$trashable) {
+                throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
+            }
             if ($post->isTrashed()) {
                 throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
             }
-            \wp_trash_post($post->id);
+            $events->trash($post->id);
             $trashed = $this->posts->find($postId);
             $data = $this->object->edit($trashed, $userId);
             $events->restDeleted($trashed, $data, $request);
@@ -318,24 +325,62 @@ final readonly class PostsWriteController
      */
     private function floatingDate(array $body, PostRecord $post): array
     {
-        if (isset($body['date']) || !PostWriter::floating($post)) {
+        if ($this->updatedDate($body) !== null || !PostWriter::floating($post)) {
             return [];
         }
         $status = (string) ($body['status'] ?? $post->status);
         return ['post_date' => $this->site->localNow(), 'post_date_gmt' => in_array($status, PostWriter::FLOATING, true) ? PostWriter::ZERO_DATE : gmdate('Y-m-d H:i:s')];
     }
 
-    /** A date in the future turns a publish into a schedule, whether the status was sent or kept. */
+    /**
+     * A date in the future turns a publish into a schedule, whether the
+     * status was sent or kept; a schedule given a date that has come
+     * (or reset to now) is published (probe hook-inputs-2).
+     */
     private function scheduledIfFuture(array $body, PostRecord $post): array
     {
-        if (!isset($body['date']) || (string) $body['date'] === '') {
+        $asked = $this->updatedDate($body);
+        if ($asked === null) {
             return $body;
         }
-        [, , $stamp] = $this->site->localDate((string) $body['date']);
-        if ($stamp > time() && (string) ($body['status'] ?? $post->status) === 'publish') {
+        $status = (string) ($body['status'] ?? $post->status);
+        if ($asked[2] > time() && $status === 'publish') {
             $body['status'] = 'future';
+        } elseif ($asked[2] <= time() && $status === 'future') {
+            $body['status'] = 'publish';
         }
         return $body;
+    }
+
+    /**
+     * The dates a write asks for, as [local, gmt, timestamp]: date (site
+     * local) before date_gmt; null when neither is sent.
+     *
+     * @param array<string, mixed> $body
+     * @return array{0: string, 1: string, 2: int}|null
+     */
+    private function askedDate(array $body): ?array
+    {
+        if (isset($body['date']) && (string) $body['date'] !== '') {
+            return $this->site->localDate((string) $body['date']);
+        }
+        if (isset($body['date_gmt']) && (string) $body['date_gmt'] !== '') {
+            return $this->site->gmtDate((string) $body['date_gmt']);
+        }
+        return null;
+    }
+
+    /**
+     * The dates an update asks for: as askedDate(), or now when either date
+     * is sent as null, which resets the post's date (probe hook-inputs-2).
+     *
+     * @param array<string, mixed> $body
+     * @return array{0: string, 1: string, 2: int}|null
+     */
+    private function updatedDate(array $body): ?array
+    {
+        $reset = (array_key_exists('date', $body) && $body['date'] === null) || (array_key_exists('date_gmt', $body) && $body['date_gmt'] === null);
+        return $this->askedDate($body) ?? ($reset ? [$this->site->localNow(), gmdate('Y-m-d H:i:s'), time()] : null);
     }
 
     /**
@@ -367,8 +412,9 @@ final readonly class PostsWriteController
                 $columns[$column] = (int) $body[$field];
             }
         }
-        if (isset($body['date']) && (string) $body['date'] !== '') {
-            [$columns['post_date'], $columns['post_date_gmt']] = $this->site->localDate((string) $body['date']);
+        $asked = $this->updatedDate($body);
+        if ($asked !== null) {
+            [$columns['post_date'], $columns['post_date_gmt']] = $asked;
         }
         foreach (['title' => 'post_title', 'content' => 'post_content', 'excerpt' => 'post_excerpt'] as $field => $column) {
             if (array_key_exists($field, $body)) {

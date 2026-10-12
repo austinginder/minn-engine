@@ -16,11 +16,25 @@ use Minn\Json;
  */
 final readonly class ThemeStyles
 {
-    /** @param Theme|null $theme null under a theme without theme.json: the defaults alone */
+    /**
+     * @param Theme|null $theme null under a theme without theme.json: the defaults alone
+     * @param array{settings?: array, styles?: array}|null $core core's layer when not the stored one (a plugin changed it)
+     */
     public function __construct(
         private ?Theme $theme,
         public string $stylesheet,
+        private ?array $core = null,
     ) {
+    }
+
+    /**
+     * The same styling data over core's layer as wp_theme_json_data_default
+     * leaves it, for the places the reference reads core's layer through
+     * that filter (its resolver's core and merged data).
+     */
+    public function withFilteredCore(): self
+    {
+        return new self($this->theme, $this->stylesheet, ThemeJsonData::layer('default', self::storedCore()));
     }
 
     /** The site's active theme as styling data, whether or not it is a block theme. */
@@ -32,7 +46,7 @@ final readonly class ThemeStyles
     /** Settings: presets by origin, appearanceTools expanded, the defaults underneath. */
     public function settings(): array
     {
-        $settings = self::defaults()['settings'];
+        $settings = (array) ($this->defaults()['settings'] ?? []);
         if ($this->theme === null) {
             return $settings;
         }
@@ -52,7 +66,7 @@ final readonly class ThemeStyles
     /** Styles: the theme's over the defaults, block style partials and section styles in, every var:preset token resolved. */
     public function styles(): array
     {
-        $styles = self::defaults()['styles'];
+        $styles = (array) ($this->defaults()['styles'] ?? []);
         if ($this->theme !== null) {
             $styles = Theme::merge($styles, $this->withSectionStyles((array) ($this->theme->json()['styles'] ?? []), $this->partials()));
         }
@@ -130,8 +144,14 @@ final readonly class ThemeStyles
         return $partials;
     }
 
-    /** @return array{settings: array, styles: array} */
-    private static function defaults(): array
+    /** @return array{settings?: array, styles?: array} core's layer: the one given, else the stored one */
+    private function defaults(): array
+    {
+        return $this->core ?? self::storedCore();
+    }
+
+    /** @return array{settings: array, styles: array} core's own layer as stored */
+    private static function storedCore(): array
     {
         return (array) Json::file(MINN_ENGINE_DIR . '/data/global-styles.json');
     }

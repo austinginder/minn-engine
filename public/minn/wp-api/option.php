@@ -424,6 +424,8 @@ function get_transient($transient)
     if ($pre !== false) {
         return $pre;
     }
+    // The timeout and the value are read together, one query rather than two.
+    Runtime::options()->prime(["_transient_timeout_{$transient}", "_transient_{$transient}"]);
     $timeout = get_option("_transient_timeout_{$transient}");
     if ($timeout !== false && (int) $timeout < time()) {
         delete_option("_transient_{$transient}");
@@ -496,6 +498,8 @@ function get_site_transient($transient)
     $name = "_site_transient_{$transient}";
     $expired = false;
     if (!in_array($transient, ['update_core', 'update_plugins', 'update_themes'], true)) {
+        // On a single site the timeout and the value are options, read together: one query rather than two.
+        Runtime::options()->prime(["_site_transient_timeout_{$transient}", $name]);
         $timeout = get_site_option("_site_transient_timeout_{$transient}");
         if ($timeout !== false && (int) $timeout < time()) {
             delete_site_option($name);

@@ -79,6 +79,10 @@ final readonly class MediaController
         if ($parent > 0 && !$this->caller->can('edit_post', $parent)) {
             throw new RestError('rest_cannot_edit', 'Sorry, you are not allowed to upload media to this post.', 403);
         }
+        // Judged on the type a multipart file declares, before anything is stored (probe hook-inputs-2).
+        if (\_minn_refuses_unsupported_image(isset($request->files['file']['type']) ? (string) $request->files['file']['type'] : null)) {
+            throw new RestError('rest_upload_image_type_not_supported', 'The web server cannot generate responsive image sizes for this image. Convert it to JPEG or PNG before uploading.', 400);
+        }
         $upload = Upload::fromRequest($request);
         if (empty($request->files['file']['tmp_name'])) {
             $headers = [];
@@ -166,20 +170,23 @@ final readonly class MediaController
         $this->finishedWithPlugins((int) $id, $params, $request, null);
         // A client that makes the sizes itself (generate_sub_sizes, convert_format false) has none made or converted here.
         $asked = static fn (string $name): bool => !isset($params[$name]) || filter_var($params[$name], FILTER_VALIDATE_BOOLEAN);
-        \_minn_attachment_sizes_as_asked($asked('generate_sub_sizes'), $asked('convert_format'), static fn () => (new PostEvents())->attachmentGenerated((int) $id, $file, $type));
+        \_minn_attachment_sizes_as_asked($asked('generate_sub_sizes'), $asked('convert_format'), static fn () => (new PostEvents())->attachmentGenerated((int) $id, $file));
         return Reply::item($this->object->build($this->posts->find((int) $id), Context::Edit), Fields::fromQuery($request->query), 201)
             ->withHeader('Location', $this->object->url()->to('/wp/v2/media/' . $id));
     }
 
     /**
-     * rest_pre_insert_attachment over the prepared attachment, then the
-     * caption and description the request sends.
+     * rest_block_hooks_post_types, then rest_pre_insert_attachment, over
+     * the prepared attachment, then the caption and description the
+     * request sends.
      *
      * @param array<string, mixed> $params
      * @return array<string, mixed>
      */
     private function preparedAttachment(\stdClass $attachment, array $params, Request $request): array
     {
+        // Asked of every prepared post: an attachment's description is marked only when a plugin lists the type.
+        RuntimePrepare::savedWithHookedBlocks($attachment, 'attachment');
         $attachment = \apply_filters('rest_pre_insert_attachment', $attachment, RuntimeRoutes::wpRequest($request));
         if ($attachment instanceof \WP_Error) {
             $data = $attachment->get_error_data();
@@ -262,7 +269,11 @@ final readonly class MediaController
         return Reply::answer($request, $this->object->build($this->posts->find($attachmentId), Context::Edit));
     }
 
-    /** Attachments cannot be trashed; force removes the row, its meta, and its files. */
+    /**
+     * Attachments go to the trash only when MEDIA_TRASH (or
+     * rest_attachment_trashable) says so; force removes the row, its meta,
+     * and its files.
+     */
     #[Route(Method::Delete, '/wp/v2/media/{id:[\d]+}', policy: new Policy(Access::Own, 'delete_post', param: 'id', subject: Subject::Attachment, signIn: 'rest_cannot_delete', signInMessage: 'Sorry, you are not allowed to delete this post.', refuse: 'rest_cannot_delete', message: 'Sorry, you are not allowed to delete this post.'))]
     public function delete(Request $request, string $id): Response
     {
@@ -271,8 +282,21 @@ final readonly class MediaController
         if (!$this->caller->can('delete_post', $attachmentId)) {
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this post.');
         }
+        // Asked on every delete, forced or not (probe hook-inputs-2).
+        $trashable = (bool) \apply_filters('rest_attachment_trashable', EMPTY_TRASH_DAYS > 0 && MEDIA_TRASH, \WP_Post::get_instance($attachmentId));
         if (!$request->flagged('force')) {
-            throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
+            if (!$trashable) {
+                throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);
+            }
+            if ($attachment->isTrashed()) {
+                throw new RestError('rest_already_trashed', 'The post has already been deleted.', 410);
+            }
+            $events = new PostEvents();
+            $events->trash($attachmentId);
+            $trashed = $this->posts->find($attachmentId);
+            $data = $this->object->build($trashed, Context::Edit);
+            $events->restDeleted($trashed, $data, $request);
+            return Reply::answer($request, $data);
         }
         $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($attachment, Context::Edit), ['_links' => true])];
         \wp_delete_attachment($attachmentId, true);

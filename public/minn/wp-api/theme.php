@@ -171,6 +171,12 @@ function register_theme_directory($directory)
 /** The themes in the registered theme folders, stylesheet => its style.css and root, in folder order. */
 function search_theme_directories($force = false)
 {
+    // A search answers from the last one unless forced; a fresh one asks whether themes are cached across requests.
+    static $last = null;
+    if (!$force && $last !== null) {
+        return $last;
+    }
+    apply_filters('wp_cache_themes_persistently', false, 'search_theme_directories');
     $found = [];
     foreach ((array) ($GLOBALS['wp_theme_directories'] ?? []) as $root) {
         foreach (is_dir($root) ? (scandir($root) ?: []) : [] as $entry) {
@@ -179,7 +185,7 @@ function search_theme_directories($force = false)
             }
         }
     }
-    return $found === [] ? false : $found;
+    return $last = $found === [] ? false : $found;
 }
 
 function get_raw_theme_root($stylesheet_or_template, $skip_cache = false)
@@ -428,6 +434,18 @@ function wp_clean_theme_json_cache()
 }
 
 /** The global stylesheet by type (variables, styles, presets; all three when none is named), as Theme\GlobalStyles writes it. */
+/**
+ * @internal the paths of the style nodes a stylesheet prints, as
+ * wp_theme_json_get_style_nodes leaves the reference's list for these
+ * styles (WP_Theme_JSON::get_style_nodes): "styles", "styles/elements/link",
+ * "styles/blocks/core/paragraph" and so on
+ */
+function _minn_style_node_paths(array $styles): array
+{
+    $nodes = Closure::bind(static fn (array $json): array => WP_Theme_JSON::get_style_nodes($json), null, WP_Theme_JSON::class)(['styles' => $styles]);
+    return array_values(array_unique(array_map(static fn ($node): string => implode('/', (array) ($node['path'] ?? [])), array_filter((array) $nodes, 'is_array'))));
+}
+
 function wp_get_global_stylesheet($types = [])
 {
     $types = (array) $types === [] ? ['variables', 'styles', 'presets'] : array_map('strval', (array) $types);

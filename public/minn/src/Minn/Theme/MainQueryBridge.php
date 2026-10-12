@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Http\Method;
 use Minn\Content\PostRecord;
 use Minn\Content\Page;
 use Minn\Front\Kind;
@@ -76,6 +77,10 @@ final readonly class MainQueryBridge
         Runtime::current()->set('main_query_page', $page);
         Runtime::hooks()->action('wp', [$wp]);
         Runtime::hooks()->action('template_redirect', []);
+        // A HEAD request ends once template_redirect has had its say, unless a plugin wants the page built (exit_on_http_head).
+        if (Runtime::current()->request?->method === Method::Head && Runtime::hooks()->filter('exit_on_http_head', [true])) {
+            throw new Printed();
+        }
         return $page;
     }
 

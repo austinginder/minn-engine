@@ -11,8 +11,12 @@ final class Paths
      * The trailing-slashed directory holding a text domain's {domain}-{locale}.mo:
      * a custom path first, then the language dir's plugins and themes folders,
      * then the dir itself for the default domain; false when none has the file.
+     * $listed, when given, lists a folder's files (the textdomain registry's
+     * own lister, which plugins may answer for) and is read instead of the disk.
+     *
+     * @param (\Closure(string): array<int, string>)|null $listed
      */
-    public static function translationDir(string $domain, string $locale, string $langDir, ?string $customPath): string|false
+    public static function translationDir(string $domain, string $locale, string $langDir, ?string $customPath, ?\Closure $listed = null): string|false
     {
         if ($customPath !== null && file_exists("{$customPath}/{$domain}-{$locale}.mo")) {
             return $customPath . '/';
@@ -20,9 +24,16 @@ final class Paths
         if ($langDir === '') {
             return false;
         }
-        foreach (["{$langDir}/plugins/{$domain}-{$locale}.mo", "{$langDir}/themes/{$domain}-{$locale}.mo"] as $candidate) {
-            if (file_exists($candidate)) {
-                return dirname($candidate) . '/';
+        // The plugins and themes folders are listed whole when a lister is given (both, as the reference lists them).
+        $lists = [];
+        foreach (["{$langDir}/plugins/", "{$langDir}/themes/"] as $dir) {
+            $lists[$dir] = $listed === null ? null : array_map('strval', (array) $listed($dir));
+        }
+        foreach ($lists as $dir => $files) {
+            $file = "{$dir}{$domain}-{$locale}";
+            $found = $files === null ? file_exists("{$file}.mo") : array_intersect(["{$file}.mo", "{$file}.l10n.php"], $files) !== [];
+            if ($found) {
+                return $dir;
             }
         }
         if ($domain === 'default' && file_exists("{$langDir}/{$locale}.mo")) {

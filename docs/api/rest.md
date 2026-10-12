@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 282 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 287 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -31,9 +31,9 @@ the wp/v2 surface: shapes and controllers
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 141 | wp/v2/themes as the reference answers it (probe rest-themes): the |
 | [`Links`](#links) | final class | 83 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
-| [`MediaController`](#mediacontroller) | final readonly class | 264 | wp/v2/media: list, single, upload on both transports (multipart field |
-| [`MediaObject`](#mediaobject) | final readonly class | 161 | The wp/v2 media object, view and edit context. |
-| [`MenuItemObject`](#menuitemobject) | final readonly class | 74 | The wp/v2/menu-items resource. |
+| [`MediaController`](#mediacontroller) | final readonly class | 288 | wp/v2/media: list, single, upload on both transports (multipart field |
+| [`MediaObject`](#mediaobject) | final readonly class | 171 | The wp/v2 media object, view and edit context. |
+| [`MenuItemObject`](#menuitemobject) | final readonly class | 75 | The wp/v2/menu-items resource. |
 | [`MenuObject`](#menuobject) | final readonly class | 41 | The wp/v2/menus resource: a nav_menu term plus locations and auto_add. |
 | [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
@@ -42,9 +42,9 @@ the wp/v2 surface: shapes and controllers
 | [`PolicyGate`](#policygate) | final readonly class | 167 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
-| [`PostObject`](#postobject) | final readonly class | 525 | Builds the wp/v2 post and page objects in the reference's shape: the |
+| [`PostObject`](#postobject) | final readonly class | 533 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
-| [`PostsWriteController`](#postswritecontroller) | final readonly class | 451 | wp/v2 posts and pages, write side: create, update, trash, and force |
+| [`PostsWriteController`](#postswritecontroller) | final readonly class | 497 | wp/v2 posts and pages, write side: create, update, trash, and force |
 | [`RegisteredFields`](#registeredfields) | final class | 105 | The fields plugin code adds to an object type with register_rest_field, |
 | [`RegisteredPostFields`](#registeredpostfields) | final readonly class | 89 | The REST object of a post whose type plugin code registered (probe rest-plugin-types), built by what the type supports. |
 | [`RegisteredType`](#registeredtype) | final readonly class | 46 | A post type plugin code registered, as its REST object follows it |
@@ -52,14 +52,14 @@ the wp/v2 surface: shapes and controllers
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 229 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 237 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 78 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
 | [`RouteMatch`](#routematch) | final class | 68 | Finds the registered handler for a method and path among the runtime's route table. |
 | [`RouteTable`](#routetable) | final class | 38 | The registered endpoints in dispatch shape: one handler list per route, methods as a set, non-numeric keys lifted into the route's options. |
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
-| [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
+| [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 468 | Routes plugin code registered with register_rest_route(), answered |
 | [`Schema`](#schema) | final readonly class | 502 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
@@ -791,7 +791,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 73), `events()` (private, line 147), `allowed()` (private, line 211), `readablePost()` (private, line 248), `readable()` (private, line 257), `plainComment()` (private, line 267), `prepared()` (private, line 289)
+Internals: `totals()` (private, line 73), `events()` (private, line 147), `allowed()` (private, line 216), `readablePost()` (private, line 253), `readable()` (private, line 262), `plainComment()` (private, line 272), `prepared()` (private, line 294)
 
 
 ## Context
@@ -1356,9 +1356,11 @@ The editable fields the app uses.
 
 Route: `DELETE /wp/v2/media/{id:[\d]+} (cap delete_post on {id}; attachment {id} must exist)`
 
-Attachments cannot be trashed; force removes the row, its meta, and its files.
+Attachments go to the trash only when MEDIA_TRASH (or
+rest_attachment_trashable) says so; force removes the row, its meta,
+and its files.
 
-Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 114), `insertedWithPlugins()` (private, line 141), `preparedAttachment()` (private, line 181), `finishedWithPlugins()` (private, line 203), `params()` (private, line 219), `attachment()` (private, line 283)
+Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 118), `insertedWithPlugins()` (private, line 145), `preparedAttachment()` (private, line 186), `finishedWithPlugins()` (private, line 210), `params()` (private, line 226), `attachment()` (private, line 307)
 
 
 ## MediaObject
@@ -1376,7 +1378,9 @@ __construct(Minn\Content\Posts $posts, Minn\Media\Uploads $uploads, Minn\Front\P
 
 ### `build(Minn\Content\PostRecord $p, Minn\Rest\Context $context): array`
 
-An attachment in the context asked for, through rest_prepare_attachment when a plugin hooks it.
+An attachment in the context asked for, as rest_block_hooks_post_types
+has it (attachments only when a plugin lists them), through
+rest_prepare_attachment when a plugin hooks it.
 
 ### `url(): Minn\Rest\RestUrl`
 
@@ -1391,7 +1395,7 @@ caller may take; curies when any rel is the API's own.
 
 - `@return array<string, list<array<string, mixed>>>`
 
-Internals: `buildFields()` (private, line 41), `details()` (private, line 155)
+Internals: `buildFields()` (private, line 45), `details()` (private, line 165)
 
 
 ## MenuItemObject
@@ -1411,7 +1415,7 @@ __construct(Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
 
 ### `view(Minn\Content\MenuItem $item, Minn\Rest\Context $context): array`
 
-The wp/v2 menu-item shape.
+The wp/v2 menu-item shape, through rest_prepare_nav_menu_item when a plugin hooks it.
 
 
 ## MenuObject
@@ -1834,9 +1838,11 @@ hooks it; with a _fields selection, the rendered title, content and
 excerpt only when it asks for them, as the reference renders only
 what is asked.
 
-### `edit(Minn\Content\PostRecord $p, int $userId): array`
+### `edit(Minn\Content\PostRecord $p, int $userId, ?Minn\Rest\Fields $fields = NULL): array`
 
-The edit-context object, through rest_prepare_{type} when a plugin hooks it.
+The edit-context object, its raw content given its hooked blocks,
+through rest_prepare_{type} when a plugin hooks it; with a _fields
+selection, rendered only as far as it asks.
 
 ### `permalink(Minn\Content\PostRecord $p): string`
 
@@ -1866,7 +1872,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 79), `navigationView()` (private, line 90), `blockView()` (private, line 120), `viewFields()` (private, line 147), `viewTerms()` (private, line 202), `typeFields()` (private, line 218), `classList()` (private, line 247), `format()` (private, line 269), `termLinks()` (private, line 313), `editFields()` (private, line 332), `allow()` (private, line 511), `gmt()` (private, line 530)
+Internals: `meta()` (private, line 83), `navigationView()` (private, line 94), `blockView()` (private, line 124), `viewFields()` (private, line 151), `viewTerms()` (private, line 206), `typeFields()` (private, line 222), `classList()` (private, line 251), `format()` (private, line 273), `termLinks()` (private, line 317), `editFields()` (private, line 336), `allow()` (private, line 519), `gmt()` (private, line 538)
 
 
 ## PostsController
@@ -1984,7 +1990,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 137), `hasOrder()` (private, line 143), `events()` (private, line 149), `newColumns()` (private, line 160), `writeNewPost()` (private, line 194), `rememberOld()` (private, line 305), `floatingDate()` (private, line 319), `scheduledIfFuture()` (private, line 329), `fieldColumns()` (private, line 348), `statusColumns()` (private, line 391), `checkStickyChange()` (private, line 427), `checkStickyPasswordConflict()` (private, line 439), `validStatus()` (private, line 459), `clean()` (private, line 468)
+Internals: `hasParent()` (private, line 138), `hasOrder()` (private, line 144), `events()` (private, line 150), `newColumns()` (private, line 161), `writeNewPost()` (private, line 195), `rememberOld()` (private, line 312), `floatingDate()` (private, line 326), `scheduledIfFuture()` (private, line 340), `askedDate()` (private, line 362), `updatedDate()` (private, line 380), `fieldColumns()` (private, line 393), `statusColumns()` (private, line 437), `checkStickyChange()` (private, line 473), `checkStickyPasswordConflict()` (private, line 485), `validStatus()` (private, line 505), `clean()` (private, line 514)
 
 
 ## RegisteredFields
@@ -2356,7 +2362,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 149), `withPreviewLink()` (private, line 191), `previewLink()` (private, line 207), `meta()` (private, line 224), `requireParent()` (private, line 240), `parentOf()` (private, line 252)
+Internals: `clean()` (private, line 157), `withPreviewLink()` (private, line 199), `previewLink()` (private, line 215), `meta()` (private, line 232), `requireParent()` (private, line 248), `parentOf()` (private, line 260)
 
 
 ## RouteArgs
@@ -2521,7 +2527,9 @@ untouched, the item is Minn's own, byte for byte. Fields plugin code
 registers for the type are added first, as the reference adds them
 before the filter runs.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`
+- const `BLOCK_HOOKS_TYPES` = `array (   0 => 'post',   1 => 'page',   2 => 'wp_block',   3 => 'wp_navigation', )` — The post types whose REST answers and saves get their hooked blocks, before plugins say.
+
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\CommentObject`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\MenuItemObject`, `Minn\Rest\MenusController`, `Minn\Rest\PostObject`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Runtime\PostSave`
 
 ### static `answering(WP_REST_Request $request): void`
 
@@ -2534,7 +2542,24 @@ hand plugins that one), then puts back the request it interrupted.
 
 - `@param \Closure(): T $run`
 
-### static `item(string $filter, array $item, Closure $described): array`
+### static `postItem(string $filter, array $item, int $postId, string $type): array`
+
+A post-shaped item (a post, a page, a pattern, a navigation, an
+attachment, any other type) through rest_prepare_{type}, given its
+hooked blocks first; the post it describes is looked up only when a
+hook needs it.
+
+- `@param array<string, mixed> $item`
+- `@return array<string, mixed>`
+
+### static `savedWithHookedBlocks(stdClass $prepared, string $type): void`
+
+A prepared post about to be saved, as rest_block_hooks_post_types has
+it: a type it lists has its content's ignored hooked blocks marked, a
+navigation's root list put in meta_input, as the reference's
+update_ignored_hooked_blocks_postmeta does; asked of every save.
+
+### static `item(string $filter, array $item, Closure $described, ?string $postType = NULL): array`
 
 One item through a rest_prepare filter.
 
@@ -2542,7 +2567,7 @@ One item through a rest_prepare filter.
 - `@param \Closure(): mixed $described the object the item describes, fetched only when a plugin listens`
 - `@return array<string, mixed>`
 
-Internals: `objectType()` (private, line 79)
+Internals: `hookedBlocks()` (private, line 76), `withHookedBlocks()` (private, line 113), `objectType()` (private, line 154)
 
 
 ## RuntimeRoutes

@@ -23,7 +23,7 @@ final readonly class MenuItemObject
     ) {
     }
 
-    /** The wp/v2 menu-item shape. */
+    /** The wp/v2 menu-item shape, through rest_prepare_nav_menu_item when a plugin hooks it. */
     public function view(MenuItem $item, Context $context): array
     {
         $edit = $context->isEdit();
@@ -78,6 +78,7 @@ final readonly class MenuItemObject
             $object['minn_lock'] = null;
         }
         $object['_links'] = $links;
-        return $object;
+        // The filter is handed the item as wp_setup_nav_menu_item dresses it (probe hook-inputs-2).
+        return RuntimePrepare::item('rest_prepare_nav_menu_item', $object, static fn () => \wp_setup_nav_menu_item(\WP_Post::get_instance($item->id)));
     }
 }

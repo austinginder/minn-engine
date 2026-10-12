@@ -392,6 +392,32 @@ function wp_widget_rss_form($args, $inputs = null)
     echo WidgetForms::rss((array) $args, (array) $inputs);
 }
 
+/**
+ * @internal a navigation widget's wrapper as [opening, closing]: a nav
+ * labelled by the title (or $default without one) when
+ * navigation_widgets_format says html5, nothing for xhtml
+ */
+function _minn_widget_nav(string $title, string $default): array
+{
+    $label = _minn_widget_nav_label($title, $default);
+    return $label === null ? ['', ''] : ['<nav aria-label="' . esc_attr($label) . '">', '</nav>'];
+}
+
+/**
+ * @internal the label a navigation widget's nav carries: the title stripped
+ * of tags, or $default; null when navigation_widgets_format (html5 when the
+ * theme supports html5 navigation-widgets, else xhtml) is not html5
+ */
+function _minn_widget_nav_label(string $title, string $default): ?string
+{
+    $format = apply_filters('navigation_widgets_format', current_theme_supports('html5', 'navigation-widgets') ? 'html5' : 'xhtml');
+    if ($format !== 'html5') {
+        return null;
+    }
+    $label = trim(strip_tags($title));
+    return $label !== '' ? $label : $default;
+}
+
 /** @internal the script a dropdown widget prints: navigate or submit on change, unless Escape closed the list */
 function _minn_dropdown_script(string $dropdownId, string $onChange): string
 {

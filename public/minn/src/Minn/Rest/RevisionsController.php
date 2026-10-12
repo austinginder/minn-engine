@@ -142,6 +142,14 @@ final readonly class RevisionsController
         // A field the parent's type lacks is saved blank; a menu item keeps no field of an autosave at all (probe rest-autosaves).
         $fields = self::TYPES[$base] === 'nav_menu_item' ? [] : self::FIELDS[self::TYPES[$base]] ?? ['title', 'content', 'excerpt'];
         $field = fn (string $key, string $kept) => !in_array($key, $fields, true) ? '' : (array_key_exists($key, $body) ? $this->clean(PostsWriteController::field($body[$key])) : $kept);
+        if ($earlier !== null) {
+            // A repeat autosave is heard before it is written: the fields the request gave, then the slot's own (probe hook-inputs-2).
+            $given = [];
+            foreach (array_intersect(['title', 'content', 'excerpt'], $fields, array_keys($body)) as $key) {
+                $given['post_' . $key] = $field($key, '');
+            }
+            \do_action('wp_creating_autosave', $given + ['post_parent' => (int) $id, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_name' => $id . '-autosave-v1', 'post_date' => '', 'post_date_gmt' => '', 'ID' => $earlier->id, 'post_author' => $userId], true);
+        }
         $revisionId = $this->revisions->saveAutosave((int) $id, $userId, $field('title', $earlier->title ?? ''), $field('content', $earlier->content ?? ''), $field('excerpt', $earlier->excerpt ?? ''));
         return Reply::item($this->withPreviewLink($this->object($this->posts->find($revisionId), Context::Edit), (int) $id), Fields::fromQuery($request->query));
     }

@@ -88,7 +88,7 @@ final readonly class PostsController
             $record = PostRecord::fromRow(get_object_vars($post));
             $objects[] = match (true) {
                 $shape !== null => $shape($record, $context),
-                $context->isEdit() => $this->object->edit($record, $this->caller->id()),
+                $context->isEdit() => $this->object->edit($record, $this->caller->id(), $fields),
                 default => $this->object->view($record, $fields),
             };
         }
@@ -199,7 +199,7 @@ final readonly class PostsController
             if (!$this->caller->can('edit_post', $postId)) {
                 throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit this post.');
             }
-            return self::withAlternate(Reply::item($this->object->edit($row, $this->caller->id()), $fields), $row);
+            return self::withAlternate(Reply::item($this->object->edit($row, $this->caller->id(), $fields), $fields), $row);
         }
         // A non-published post is visible only to a reader who can edit it.
         if ($row->status !== 'publish' && !$this->caller->can('read_post', $postId)) {

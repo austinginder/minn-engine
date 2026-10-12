@@ -64,10 +64,32 @@ final readonly class GlobalStyles
     {
     }
 
+    /**
+     * The theme's theme.json with the site editor's styles over it, those
+     * as wp_theme_json_data_user leaves them (a plugin may add a layer
+     * where the site editor saved none).
+     *
+     * @return array<string, mixed>
+     */
+    private function json(): array
+    {
+        $user = $this->user ?? [];
+        if (Runtime::hooks()->has('wp_theme_json_data_user')) {
+            $user = ThemeJsonData::layer('custom', $user);
+        }
+        if ($user === []) {
+            return $this->theme->json();
+        }
+        // The user's presets are keyed by origin (custom), so the theme's are too before the two meet.
+        $theme = $this->theme->json();
+        $theme['settings'] = StyleSettings::presetsByOrigin((array) ($theme['settings'] ?? []), 'theme');
+        return Theme::merge($theme, $user);
+    }
+
     /** The theme.json (plus site-editor) styles node, under the engine's own defaults. */
     public function styles(): array
     {
-        $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
+        $json = $this->json();
         $defaults = (array) Json::file(MINN_ENGINE_DIR . '/data/styles.json');
         return Theme::merge($defaults, (array) ($json['styles'] ?? []));
     }
@@ -119,7 +141,8 @@ final readonly class GlobalStyles
             // The blocks in the reference's merged order: its own theme.json and the blocks' defaults (data/global-styles.json), then the theme's.
             $core = (array) Json::file(MINN_ENGINE_DIR . '/data/global-styles.json');
             $blocks = Theme::merge((array) ($core['styles']['blocks'] ?? []), $blocks);
-            foreach ($blocks as $name => $blockStyles) {
+            $kept = StyleLayers::keptNodes(['blocks' => $blocks]);
+            foreach ($kept === null ? $blocks : StyleLayers::keptBlocks($blocks, $kept) as $name => $blockStyles) {
                 $out .= self::blockStyles((string) $name, (array) $blockStyles);
             }
         }
@@ -129,12 +152,12 @@ final readonly class GlobalStyles
     /** @return array{variables: string, base: string, presets: string, blocks: array<string, mixed>} */
     private function parts(): array
     {
-        $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
+        $json = $this->json();
         $settings = (array) ($json['settings'] ?? []);
         // Core's own theme.json sits under the theme's: the button element's inherit-everything
         // defaults print for every theme, each key replaceable by the theme.
         $styles = $this->styles();
-        $presets = StylePresets::presets($settings);
+        $presets = StylePresets::presets($settings, StyleLayers::corePresets());
         $variables = ':root{' . StylePresets::presetProperties($presets) . StylePresets::customProperties((array) ($settings['custom'] ?? [])) . '}';
         $variables .= $this->blockCustomProperties((array) ($settings['blocks'] ?? []));
         $variables .= '.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}';
@@ -144,10 +167,18 @@ final readonly class GlobalStyles
         $base .= self::rootRules((bool) ($this->theme->json()['settings']['useRootPaddingAwareAlignments'] ?? false))
             . self::blockGapRules((string) Styles::value((string) ($styles['spacing']['blockGap'] ?? '24px')))
             . self::layoutRules();
-        $base .= $this->rootStyles($styles);
-        $base .= self::elementStyles((array) ($styles['elements'] ?? []), '');
-        return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => (array) ($styles['blocks'] ?? [])];
+        $kept = StyleLayers::keptNodes($styles);
+        $base .= $kept === null || in_array('styles', $kept, true) ? $this->rootStyles($styles) : '';
+        $elements = (array) ($styles['elements'] ?? []);
+        $blocks = (array) ($styles['blocks'] ?? []);
+        if ($kept !== null) {
+            $elements = array_filter($elements, static fn ($key): bool => in_array("styles/elements/{$key}", $kept, true), ARRAY_FILTER_USE_KEY);
+            $blocks = StyleLayers::keptBlocks($blocks, $kept);
+        }
+        $base .= self::elementStyles($elements, '');
+        return ['variables' => $variables, 'base' => $base, 'presets' => StylePresets::presetClasses($presets), 'blocks' => $blocks];
     }
+
 
     /**
      * The @font-face rules for every family that declares font files
@@ -157,7 +188,7 @@ final readonly class GlobalStyles
      */
     public function fontFaces(): string
     {
-        $json = $this->user === null ? $this->theme->json() : Theme::merge($this->theme->json(), $this->user);
+        $json = $this->json();
         return FontFaces::css(FontFaces::fromSettings((array) ($json['settings'] ?? []), fn (string $path): string => $this->fontUrl('file:./' . $path) ?? ''));
     }
 

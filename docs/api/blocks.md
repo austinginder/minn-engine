@@ -18,8 +18,8 @@ the block parser and renderer
 | [`LayoutStyle`](#layoutstyle) | final class | 193 | The CSS rules a block's layout writes (wp_get_layout_style, probe |
 | [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
-| [`RenderState`](#renderstate) | final class | 335 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 350 | Renders a block tree the way the reference renders post_content: |
+| [`RenderState`](#renderstate) | final class | 350 | Per-request rendering state, owned by the renderer. The reference numbers |
+| [`Renderer`](#renderer) | final class | 374 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
@@ -786,6 +786,11 @@ inside one, so the navigation block marks the span it owns.
 
 Leaves a navigation block.
 
+### `processesDirectives(?bool $answer = NULL): bool`
+
+Whether the block rendering now has its Interactivity API directives
+processed, as interactivity_process_directives answered for it.
+
 ### `inNavigation(): bool`
 
 Whether rendering is inside a navigation block.
@@ -929,6 +934,13 @@ A core block as renderNative() renders it, without the block filters
 around this one block (its inner blocks keep theirs): its caller, the
 facade's WP_Block::render, applies them once.
 
+### `renderNativeAsCallback(Minn\Blocks\Block $block): string`
+
+A core block as its render callback called directly renders it: not a
+block being rendered, so enqueue_empty_block_content_assets is not
+asked for it (its inner blocks are), as the reference asks it only in
+a block's render (probe plugin-surface2).
+
 ### `renderBlock(Minn\Blocks\Block $block): string`
 
 One block as HTML, with the filters around it (unless renderNativeUnfiltered() asked for this one without).
@@ -954,7 +966,7 @@ plugin's callback took over. It applies the block supports it knows
 itself (layout, element styles); the facade's render_block filters do
 the rest, and all of them for any other block.
 
-Internals: `renderWith()` (private, line 206), `elementsClass()` (private, line 332), `renderNamed()` (private, line 338), `decorate()` (private, line 363), `gallery()` (private, line 385)
+Internals: `renderWith()` (private, line 208), `elementsClass()` (private, line 356), `renderNamed()` (private, line 362), `decorate()` (private, line 387), `gallery()` (private, line 409)
 
 
 ## Selector

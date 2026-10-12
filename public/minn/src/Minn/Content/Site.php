@@ -112,4 +112,16 @@ final readonly class Site
         $stamp = (new DateTimeImmutable($local, $this->timezone()))->getTimestamp();
         return [$local, gmdate('Y-m-d H:i:s', $stamp), $stamp];
     }
+
+    /**
+     * A GMT datetime from a write body (date_gmt) to the same pair of
+     * columns, its local half in the site's zone at that date.
+     *
+     * @return array{0: string, 1: string, 2: int} local, gmt, timestamp
+     */
+    public function gmtDate(string $input): array
+    {
+        $stamp = (new DateTimeImmutable(str_replace('T', ' ', $input), new DateTimeZone('UTC')))->getTimestamp();
+        return [(new DateTimeImmutable('@' . $stamp))->setTimezone($this->timezone())->format('Y-m-d H:i:s'), gmdate('Y-m-d H:i:s', $stamp), $stamp];
+    }
 }

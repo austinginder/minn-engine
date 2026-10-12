@@ -16,10 +16,10 @@ use Minn\Json;
 final class StylePresets
 {
     /** @return array<string, list<array{slug: string, value: string}>> */
-    /** Every preset list the theme declares, over core's own, keyed by kind. */
-    public static function presets(array $settings): array
+    /** Every preset list the theme declares, over core's own (as given, else data/presets.json), keyed by kind. */
+    public static function presets(array $settings, ?array $core = null): array
     {
-        $core = (array) Json::file(MINN_ENGINE_DIR . '/data/presets.json');
+        $core ??= (array) Json::file(MINN_ENGINE_DIR . '/data/presets.json');
         $merge = static fn (array $defaults, array $own, string $key) => [...$defaults, ...array_map(static fn (array $p) => ['slug' => (string) $p['slug'], 'value' => (string) $p[$key]], $own)];
         $fontSizes = self::presetList($settings['typography']['fontSizes'] ?? []);
         $spacing = self::presetList($settings['spacing']['spacingSizes'] ?? []);

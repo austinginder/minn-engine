@@ -28,16 +28,17 @@ final class AddressRules
     }
 
     /**
-     * The addresses in a comma-separated list, each with its display name
-     * (encoded words decoded into $charset); entries that are not valid
-     * addresses are left out.
+     * The addresses in a comma-separated list, as the reference's simple
+     * parser reads one: split at every comma, quoted or not, each entry
+     * with its display name (encoded words decoded into $charset); entries
+     * that are not valid addresses are left out.
      *
      * @return list<array{name: string, address: string}>
      */
     public static function parseList(string $list, string $charset): array
     {
         $out = [];
-        foreach (self::splitList($list) as $entry) {
+        foreach (explode(',', $list) as $entry) {
             $entry = trim($entry);
             $name = '';
             $address = $entry;
@@ -98,26 +99,5 @@ final class AddressRules
         return str_starts_with($literal, 'IPv6:')
             ? filter_var(substr($literal, 5), FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false
             : filter_var($literal, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false;
-    }
-
-    /** @return list<string> the list split at commas outside quotes and angle brackets */
-    private static function splitList(string $list): array
-    {
-        $parts = [];
-        $current = '';
-        $quoted = false;
-        foreach (str_split($list) as $char) {
-            if ($char === '"') {
-                $quoted = !$quoted;
-            }
-            if ($char === ',' && !$quoted) {
-                $parts[] = $current;
-                $current = '';
-                continue;
-            }
-            $current .= $char;
-        }
-        $parts[] = $current;
-        return array_values(array_filter($parts, static fn (string $part): bool => trim($part) !== ''));
     }
 }

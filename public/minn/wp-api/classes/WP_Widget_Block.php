@@ -59,6 +59,7 @@ class WP_Widget_Block extends WP_Widget
 
     private function dynamic_classname(string $content): string
     {
-        return BlockWidget::classNameFor(parse_blocks($content));
+        $blocks = parse_blocks($content);
+        return (string) apply_filters('widget_block_dynamic_classname', BlockWidget::classNameFor($blocks), $blocks[0]['blockName'] ?? null);
     }
 }

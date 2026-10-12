@@ -77,13 +77,16 @@ function get_intermediate_image_sizes()
     return apply_filters('intermediate_image_sizes', array_keys(_minn_image_sizes()));
 }
 
+/** The sizes get_intermediate_image_sizes names (its intermediate_image_sizes filter heard), each with its width, height and crop. */
 function wp_get_registered_image_subsizes()
 {
+    $sizes = _minn_image_sizes();
     $out = [];
-    foreach (_minn_image_sizes() as $name => $size) {
+    foreach (array_intersect(get_intermediate_image_sizes(), array_keys($sizes)) as $name) {
+        $size = $sizes[$name];
         $out[$name] = ['width' => (int) $size['width'], 'height' => (int) $size['height'], 'crop' => is_array($size['crop']) ? $size['crop'] : (bool) $size['crop']];
     }
-    return apply_filters('wp_get_registered_image_subsizes', $out);
+    return $out;
 }
 
 function wp_constrain_dimensions($current_width, $current_height, $max_width = 0, $max_height = 0)
@@ -738,6 +741,27 @@ function _minn_attachment_sizes_as_asked(bool $sizes, bool $convert, Closure $ru
 }
 
 /** @internal the names of the registered sizes an attachment is missing, for its REST edit view */
+/**
+ * @internal whether an upload declared as this type is an image no image
+ * editor here can resize (SVG, HEIC and HEIF aside), which REST refuses
+ * unless wp_prevent_unsupported_mime_type_uploads lets it through; the
+ * filter is asked of every upload, with the declared type or null
+ */
+function _minn_refuses_unsupported_image(?string $type): bool
+{
+    if (!apply_filters('wp_prevent_unsupported_mime_type_uploads', true, $type)) {
+        return false;
+    }
+    return $type !== null && str_starts_with($type, 'image/') && !in_array($type, ['image/svg+xml', 'image/heic', 'image/heif'], true) && !wp_image_editor_supports(['mime_type' => $type]);
+}
+
+/** @internal the preview sizes a PDF lacks, of those fallback_intermediate_image_sizes names, handed its media details */
+function _minn_missing_pdf_sizes(array $details): array
+{
+    $fallback = (array) apply_filters('fallback_intermediate_image_sizes', ['thumbnail', 'medium', 'large'], $details);
+    return array_values(array_diff($fallback, array_keys((array) ($details['sizes'] ?? []))));
+}
+
 function _minn_missing_image_size_names(int $attachment_id): array
 {
     return array_keys(wp_get_missing_image_subsizes($attachment_id));
@@ -1250,18 +1274,64 @@ function wp_maybe_generate_attachment_metadata($attachment)
     }
 }
 
+/**
+ * An attachment's metadata as the reference makes it: an image's sizes;
+ * audio and video as their readers find them; a PDF's previews when an
+ * editor here can draw one (fallback_intermediate_image_sizes names them);
+ * then every file's size, when nothing read it yet (probe hook-inputs-2).
+ */
 function wp_generate_attachment_metadata($attachment_id, $file)
 {
     $attachment_id = (int) $attachment_id;
-    $attachment = get_post($attachment_id);
-    $metadata = [];
-    if (preg_match('!^image/!', (string) get_post_mime_type($attachment)) && file_is_displayable_image($file)) {
-        $metadata = wp_create_image_subsizes($file, $attachment_id);
-    }
-    if (empty($metadata)) {
-        $metadata = [];
+    $mime = (string) get_post_mime_type(get_post($attachment_id));
+    $metadata = match (true) {
+        str_starts_with($mime, 'image/') && file_is_displayable_image($file) => wp_create_image_subsizes($file, $attachment_id),
+        str_starts_with($mime, 'video/') => (array) wp_read_video_metadata($file) ?: _minn_read_file_size((string) $file),
+        str_starts_with($mime, 'audio/') => (array) wp_read_audio_metadata($file) ?: _minn_read_file_size((string) $file),
+        $mime === 'application/pdf' => _minn_pdf_previews((string) $file, $attachment_id),
+        default => [],
+    };
+    $metadata = empty($metadata) ? [] : (array) $metadata;
+    if (!isset($metadata['filesize']) && file_exists((string) $file)) {
+        $metadata['filesize'] = wp_filesize($file);
     }
     return apply_filters('wp_generate_attachment_metadata', $metadata, $attachment_id, 'create');
+}
+
+/** @internal a media file's size as its reader records it, without the wp_filesize filters (the reference's audio and video readers read it themselves) */
+function _minn_read_file_size(string $file): array
+{
+    return is_file($file) ? ['filesize' => (int) filesize($file)] : [];
+}
+
+/**
+ * @internal a PDF's previews, as the reference draws them: its first page
+ * saved beside it as {name}-pdf.jpg (the "full" size, saved to the
+ * metadata at once), then the sizes fallback_intermediate_image_sizes
+ * names, uncropped, made from that page as an image's are; none when no
+ * image editor here opens the PDF.
+ */
+function _minn_pdf_previews(string $file, int $attachment_id): array
+{
+    $fallback = (array) apply_filters('fallback_intermediate_image_sizes', ['thumbnail', 'medium', 'large'], []);
+    $registered = wp_get_registered_image_subsizes();
+    $sizes = [];
+    foreach (array_intersect($fallback, array_keys($registered)) as $name) {
+        $sizes[$name] = ['crop' => false] + $registered[$name];
+    }
+    $editor = wp_get_image_editor($file);
+    if (is_wp_error($editor)) {
+        return [];
+    }
+    $info = pathinfo($file);
+    $saved = $editor->save($info['dirname'] . '/' . wp_unique_filename($info['dirname'], $info['filename'] . '-pdf.jpg'), 'image/jpeg');
+    if (is_wp_error($saved) || !is_array($saved)) {
+        return [];
+    }
+    $full = ['file' => wp_basename((string) ($saved['path'] ?? $saved['file']))] + array_intersect_key($saved, array_flip(['width', 'height', 'mime-type', 'filesize']));
+    $metadata = ['sizes' => ['full' => $full]];
+    wp_update_attachment_metadata($attachment_id, $metadata);
+    return $sizes === [] ? $metadata : _wp_make_subsizes($sizes, $info['dirname'] . '/' . $full['file'], $metadata, $attachment_id);
 }
 
 /**
