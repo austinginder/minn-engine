@@ -32,9 +32,18 @@ final readonly class Schema
     /** Whether a value satisfies a schema, or the reference's refusal. */
     public function validate(mixed $value, array $args, string $param = ''): true|Refusal
     {
-        $composite = $this->validateComposite($value, $args, $param);
-        if ($composite !== null) {
-            return $composite;
+        // anyOf, then oneOf: the value must match, and the schema's own keywords
+        // still apply after, under the matched schema's type when it names none.
+        foreach (['anyOf', 'oneOf'] as $combinator) {
+            if (isset($args[$combinator])) {
+                $matched = $combinator === 'anyOf' ? $this->choices()->matchAny($value, $args, $param) : $this->choices()->matchOne($value, $args, $param);
+                if ($matched instanceof Refusal) {
+                    return $matched;
+                }
+                if (!isset($args['type']) && isset($matched['type'])) {
+                    $args['type'] = $matched['type'];
+                }
+            }
         }
         if (!isset($args['type'])) {
             // An enum alone is still checked; nothing else is without a type.
@@ -57,6 +66,12 @@ final readonly class Schema
             $verdict = $this->validateFormat($value, (string) $args['format'], $param) ?? true;
         }
         return $verdict;
+    }
+
+    /** A schema's anyOf and oneOf: which of their schemas a value matches, and the refusal when not as wanted. */
+    public function choices(): SchemaChoices
+    {
+        return new SchemaChoices($this);
     }
 
     /**
@@ -88,19 +103,6 @@ final readonly class Schema
     }
 
     /**
-     * The refusal for a value that matched none of a combinator's schemas,
-     * worded from the one that came closest: its title when it has one (an
-     * empty title still reads as one), and that schema's own reason.
-     */
-    public function combiningFailure(string $param, ?string $title, string $reason, mixed $position): Refusal
-    {
-        $message = $title === null
-            ? sprintf('%1$s does not match the expected format. Reason: %2$s', $param, $reason)
-            : sprintf('%1$s is not a valid %2$s. Reason: %3$s', $param, $title, $reason);
-        return new Refusal('rest_no_matching_schema', $message, ['position' => $position]);
-    }
-
-    /**
      * Numeric, within bounds and a multiple, then whole; null when the integer passes.
      * A value that is not numeric names the schema's own type, empty when the
      * schema names none (the reference words it "p is not of type .").
@@ -111,32 +113,6 @@ final readonly class Schema
             return $this->wrongType($param, (string) ($args['type'] ?? ''));
         }
         return $this->validateNumber($value, $args, $param) ?? (SchemaValues::isInteger($value) ? null : $this->wrongType($param, 'integer'));
-    }
-
-    /** anyOf and oneOf: the verdict when the schema is a choice, null when it is not. */
-    private function validateComposite(mixed $value, array $args, string $param): true|Refusal|null
-    {
-        if (isset($args['anyOf'])) {
-            foreach ($args['anyOf'] as $schema) {
-                if ($this->validate($value, $schema, $param) === true) {
-                    return true;
-                }
-            }
-            return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
-        }
-        if (isset($args['oneOf'])) {
-            $matches = 0;
-            foreach ($args['oneOf'] as $schema) {
-                if ($this->validate($value, $schema, $param) === true) {
-                    $matches++;
-                }
-            }
-            if ($matches === 0) {
-                return new Refusal('rest_no_matching_schema', sprintf('%s does not match any of the expected formats.', $param));
-            }
-            return $matches === 1 ? true : new Refusal('rest_one_of_multiple_matches', sprintf('%s matches more than one of the expected formats.', $param));
-        }
-        return null;
     }
 
     /** Length and pattern; null when the string passes. */

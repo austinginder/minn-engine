@@ -522,18 +522,7 @@ function rest_filter_response_by_context($response_data, $schema, $context)
 /** The first anyOf schema the value satisfies, else one refusal made of what each said (probe rest-api-helpers). */
 function rest_find_any_matching_schema($value, $args, $param)
 {
-    $errors = [];
-    foreach ((array) ($args['anyOf'] ?? []) as $index => $schema) {
-        if (!isset($schema['type']) && isset($args['type'])) {
-            $schema['type'] = $args['type'];
-        }
-        $result = rest_validate_value_from_schema($value, $schema, $param);
-        if (!is_wp_error($result)) {
-            return $schema;
-        }
-        $errors[] = ['error_object' => $result, 'schema' => $schema, 'index' => $index];
-    }
-    return rest_get_combining_operation_error($value, $param, $errors);
+    return _minn_schema_match(_minn_schema()->choices()->matchAny($value, (array) $args, (string) $param));
 }
 
 /** Whether a field is asked for: named, or a parent or a child of it named (probe rest-api-helpers). */
@@ -666,52 +655,27 @@ function rest_is_ip_address($ip)
 /** The first (anyOf) or only (oneOf) schema the value satisfies, else the reference's refusal. */
 function rest_find_one_matching_schema($value, $args, $param, $stop_after_first_match = false)
 {
-    $found = SchemaValues::combining($value, (array) $args, (bool) $stop_after_first_match, static function ($value, array $schema) use ($param) {
-        $result = rest_validate_value_from_schema($value, $schema, $param);
-        return is_wp_error($result) ? new Refusal($result->get_error_code(), $result->get_error_message(), $result) : true;
-    });
-    if (isset($found['schema'])) {
-        return $found['schema'];
-    }
-    if (isset($found['errors'])) {
-        return rest_get_combining_operation_error($value, $param, array_map(static fn (array $e) => ['error_object' => $e['error']->data, 'schema' => $e['schema'], 'index' => $e['index']], $found['errors']));
-    }
-    $titles = array_filter(array_map(static fn ($s) => $s['title'] ?? '', $found['matches']));
-    $message = $titles !== []
-        ? sprintf('%s matches %s, but more than one of these is allowed.', $param, implode(', ', $titles))
-        : sprintf('%s matches more than one of the expected formats.', $param);
-    return new WP_Error('rest_one_of_multiple_matches', $message, ['positions' => array_keys($found['matches'])]);
+    return _minn_schema_match(_minn_schema()->choices()->matchOne($value, (array) $args, (string) $param, $stop_after_first_match ? 'first' : 'one'));
+}
+
+/** @internal A matched schema as itself, a refusal as the reference's error. */
+function _minn_schema_match(array|Refusal $matched): array|WP_Error
+{
+    return $matched instanceof Refusal ? _minn_schema_result($matched) : $matched;
 }
 
 /**
  * One refusal for a value that matched none of the combined schemas (probe
  * rest-api-helpers): with one schema, its refusal named; otherwise the
  * schemas whose refusal is only that the value is not their type are set
- * aside, and when one remains its refusal is named, else none is.
+ * aside and one left is named; of several object schemas, the one sharing
+ * the most keys with the value; else the titles listed when every schema has
+ * one, or the plain refusal (SchemaChoices::combiningError).
  */
 function rest_get_combining_operation_error($value, $param, $errors)
 {
-    if (count($errors) === 1) {
-        return _minn_combining_refusal((string) $param, $errors[0]);
-    }
-    $kept = array_values(array_filter($errors, static function (array $error) use ($param): bool {
-        $data = $error['error_object']->get_error_data();
-        return !($error['error_object']->get_error_code() === 'rest_invalid_type' && is_array($data) && ($data['param'] ?? null) === $param);
-    }));
-    if (count($kept) === 1) {
-        return _minn_combining_refusal((string) $param, $kept[0]);
-    }
-    return new WP_Error('rest_no_matching_schema', sprintf(__('%s does not match any of the expected formats.'), $param));
-}
-
-/** @internal One schema's refusal as the combined one: by its title when it has one, with its position. */
-function _minn_combining_refusal(string $param, array $error): WP_Error
-{
-    $reason = $error['error_object']->get_error_message();
-    $message = isset($error['schema']['title'])
-        ? sprintf(__('%1$s is not a valid %2$s. Reason: %3$s'), $param, $error['schema']['title'], $reason)
-        : sprintf(__('%1$s does not match the expected format. Reason: %2$s'), $param, $reason);
-    return new WP_Error('rest_no_matching_schema', $message, ['position' => $error['index']]);
+    $refusals = array_map(static fn (array $error) => [new Refusal($error['error_object']->get_error_code(), $error['error_object']->get_error_message(), $error['error_object']->get_error_data()), (array) ($error['schema'] ?? []), $error['index'] ?? null], (array) $errors);
+    return _minn_schema_result(_minn_schema()->choices()->combiningError($value, (string) $param, $refusals));
 }
 
 /** What an _embed value asks for: every link (true), or the named relations. */
@@ -808,7 +772,7 @@ function rest_format_combining_operation_error($param, $error)
 {
     $title = isset($error['schema']['title']) ? (string) $error['schema']['title'] : null;
     $reason = ($error['error_object'] ?? null) instanceof WP_Error ? $error['error_object']->get_error_message() : '';
-    return _minn_schema_result(_minn_schema()->combiningFailure((string) $param, $title, $reason, $error['index'] ?? null));
+    return _minn_schema_result(_minn_schema()->choices()->combiningFailure((string) $param, $title, $reason, $error['index'] ?? null));
 }
 
 /** Notes how an application password sign-in went (hooked on its success and failure actions), for rest_authentication_errors. */
@@ -858,6 +822,8 @@ function create_initial_rest_routes()
     foreach ([new WP_REST_Post_Types_Controller(), new WP_REST_Taxonomies_Controller(), new WP_REST_Icons_Controller(), new WP_REST_Icon_Collections_Controller(), new WP_REST_View_Config_Controller(), new WP_REST_URL_Details_Controller(), new WP_REST_Abilities_V1_Categories_Controller(), new WP_REST_Abilities_V1_Run_Controller(), new WP_REST_Abilities_V1_List_Controller(), new WP_REST_Block_Patterns_Controller(), new WP_REST_Block_Pattern_Categories_Controller()] as $controller) {
         $controller->register_routes();
     }
+    // The media actions are the controller class's; the media routes themselves are the engine's own (Rest\MediaController).
+    (new WP_REST_Attachments_Controller('attachment'))->minn_register_actions();
     // A legacy widget's preview page is the controller class's; the other widget-types routes are the engine's own (Rest\SidebarsController).
     $widgets = new WP_REST_Widget_Types_Controller();
     register_rest_route('wp/v2', '/widget-types/(?P<id>[a-zA-Z0-9_-]+)/render', [

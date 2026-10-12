@@ -23,8 +23,19 @@ class WP_REST_Attachments_Controller extends WP_REST_Posts_Controller
 
     public function register_routes()
     {
-        // The posts routes, then post-process and edit; sideload and finalize only where images are processed in the browser.
+        // The posts routes, then the media actions.
         parent::register_routes();
+        $this->minn_register_actions();
+    }
+
+    /**
+     * @internal The media actions alone: post-process and edit, and sideload
+     * and finalize only where images are processed in the browser. The
+     * engine registers just these (create_initial_rest_routes); it answers
+     * the media routes themselves on its own (Rest\MediaController).
+     */
+    public function minn_register_actions(): void
+    {
         $id = ['description' => __('Unique identifier for the attachment.'), 'type' => 'integer'];
         $route = '/' . $this->rest_base . '/(?P<id>[\d]+)';
         register_rest_route($this->namespace, $route . '/post-process', [

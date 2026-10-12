@@ -105358,12 +105358,13 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 526,
+            "lines": 502,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Json",
+                "Minn\\Rest\\SchemaChoices",
                 "Minn\\Rest\\SchemaValues",
                 "Minn\\Runtime\\Refusal"
             ],
@@ -105373,6 +105374,7 @@
                 "Minn\\Rest\\BlockRendererController",
                 "Minn\\Rest\\ClientSchema",
                 "Minn\\Rest\\LiveSettings",
+                "Minn\\Rest\\SchemaChoices",
                 "Minn\\Rest\\SchemaValues",
                 "Minn\\Rest\\Services"
             ],
@@ -105494,7 +105496,19 @@
                         }
                     ],
                     "line": 33,
-                    "end": 60
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "choices",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "choices(): Minn\\Rest\\SchemaChoices",
+                    "doc": "A schema's anyOf and oneOf: which of their schemas a value matches, and the refusal when not as wanted.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 72,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -105534,8 +105548,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 79
+                    "line": 81,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -105568,8 +105582,650 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 88
+                    "line": 97,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "sanitize",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "sanitize(mixed $value, array $args, string $param = ''): mixed",
+                    "doc": "A value coerced to its schema's types.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 290,
+                    "end": 358
+                },
+                {
+                    "routes": [],
+                    "name": "filterByContext",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "filterByContext(mixed $data, array $schema, string $context): mixed",
+                    "doc": "Drops the properties whose schema does not list the context; an array whose items do not is emptied.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 361,
+                    "end": 415
+                },
+                {
+                    "routes": [],
+                    "name": "anyMatching",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "anyMatching(mixed $value, array $args, string $param): ?array",
+                    "doc": "The first anyOf branch the value validates against.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 418,
+                    "end": 426
+                },
+                {
+                    "routes": [],
+                    "name": "endpointArgs",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "endpointArgs(array $schema, bool $creatable): array",
+                    "doc": "The argument map a route derives from an item schema: every writable\nproperty with the default validators, its keywords, defaults and\nrequired flags on the create route only, and any arg_options overrides.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "creatable",
+                            "type": "bool",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 439,
+                    "end": 474
+                },
+                {
+                    "routes": [],
+                    "name": "castEmptyObjects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "castEmptyObjects(mixed $value, array $schema): mixed",
+                    "doc": "A value with each empty array the schema calls an object made one\n(it encodes as {}), through properties, additional properties, list\nitems and the value as a whole (probe rest-view-config).",
+                    "shapes": [
+                        "@param array<string, mixed> $schema"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 483,
+                    "end": 501
+                },
+                {
+                    "routes": [],
+                    "name": "closeObjects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "closeObjects(array $schema): array",
+                    "doc": "The schema with additionalProperties closed on every object.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "schema",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 504,
+                    "end": 517
+                },
+                {
+                    "routes": [],
+                    "name": "validateInteger",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateInteger(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "Numeric, within bounds and a multiple, then whole; null when the integer passes.\nA value that is not numeric names the schema's own type, empty when the\nschema names none (the reference words it \"p is not of type .\").",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 116
+                },
+                {
+                    "routes": [],
+                    "name": "validateString",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateString(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "Length and pattern; null when the string passes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 119,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "validateNumber",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateNumber(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "Bounds and multipleOf; null when the number passes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 137,
+                    "end": 147
+                },
+                {
+                    "routes": [],
+                    "name": "validateArray",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateArray(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 149,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "validateObject",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateObject(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 175,
+                    "end": 216
+                },
+                {
+                    "routes": [],
+                    "name": "validateFormat",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateFormat(mixed $value, string $format, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "format",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 218,
+                    "end": 228
+                },
+                {
+                    "routes": [],
+                    "name": "validateBounds",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "validateBounds(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 230,
+                    "end": 265
+                },
+                {
+                    "routes": [],
+                    "name": "enum",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "enum(mixed $value, array $enum, string $param): Minn\\Runtime\\Refusal|true",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "enum",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 267,
+                    "end": 282
+                },
+                {
+                    "routes": [],
+                    "name": "wrongType",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "wrongType(string $param, string $type): Minn\\Runtime\\Refusal",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 284,
+                    "end": 287
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Rest\\SchemaChoices",
+            "short": "SchemaChoices",
+            "namespace": "Minn\\Rest",
+            "kind": "final readonly class",
+            "file": "public/minn/src/Minn/Rest/SchemaChoices.php",
+            "lines": 136,
+            "doc": "anyOf and oneOf the way the REST API's validation judges them (probe\nrest-schema-choices): a choice's schemas without a type take the\nchoice's own; the refusal for matching none is named from the closest\nschema, or lists the titles, or is plain; several matches are named by\ntheir titles. Schema::validate() asks here first, then applies the\nschema's own keywords.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Rest\\Schema",
+                "Minn\\Runtime\\Refusal"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\Schema"
+            ],
+            "constructor": {
+                "signature": "__construct(Minn\\Rest\\Schema $schema)",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "schema",
+                        "type": "Minn\\Rest\\Schema",
+                        "shape": "",
+                        "default": null,
+                        "doc": ""
+                    }
+                ],
+                "visibility": "public",
+                "line": 19,
+                "end": 21
+            },
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "schema",
+                    "type": "Minn\\Rest\\Schema",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "matchAny",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "matchAny(mixed $value, array $args, string $param): Minn\\Runtime\\Refusal|array",
+                    "doc": "The first of an anyOf's schemas the value matches, each without a type\ntaking the choice's own, or the refusal for matching none (probe\nrest-media-actions).",
+                    "shapes": [
+                        "@return array<string, mixed>|Refusal"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 30,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "matchOne",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "matchOne(mixed $value, array $args, string $param, string $settle = 'one'): Minn\\Runtime\\Refusal|array",
+                    "doc": "The one of a oneOf's schemas the value matches, each without a type\ntaking the choice's own; \"first\" settles for the first match. Matching\nnone is refused as matchAny() refuses it; matching several names them\nwhen every one has a title, with their positions.",
+                    "shapes": [
+                        "@return array<string, mixed>|Refusal"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "settle",
+                            "type": "string",
+                            "shape": "",
+                            "default": "'one'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 52,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "combiningError",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "combiningError(mixed $value, string $param, array $errors): Minn\\Runtime\\Refusal",
+                    "doc": "The refusal for a value no schema of a choice matched (probe\nrest-media-actions). With one schema, its refusal is named. Otherwise\nthe refusals that say only the value is not the schema's type are set\naside, and one left is named. Of several left, when the first is an\nobject's, the one whose properties share the most keys with the value\nis named (the first of a tie, none when none share). Then, when every\nschema has a title, they are listed; else the plain refusal.",
+                    "shapes": [
+                        "@param list<array{0: Refusal, 1: array<string, mixed>, 2: int|string}> $errors refusal, schema, position"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "param",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "errors",
+                            "type": "array",
+                            "shape": "list<array{0: Refusal, 1: array<string, mixed>, 2: int|string}>",
+                            "default": null,
+                            "doc": "refusal, schema, position"
+                        }
+                    ],
+                    "line": 92,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -105609,147 +106265,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 101
+                    "line": 111,
+                    "end": 117
                 },
                 {
                     "routes": [],
-                    "name": "sanitize",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "sanitize(mixed $value, array $args, string $param = ''): mixed",
-                    "doc": "A value coerced to its schema's types.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": "''",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 314,
-                    "end": 382
-                },
-                {
-                    "routes": [],
-                    "name": "filterByContext",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "filterByContext(mixed $data, array $schema, string $context): mixed",
-                    "doc": "Drops the properties whose schema does not list the context; an array whose items do not is emptied.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "data",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "schema",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "context",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 385,
-                    "end": 439
-                },
-                {
-                    "routes": [],
-                    "name": "anyMatching",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "anyMatching(mixed $value, array $args, string $param): ?array",
-                    "doc": "The first anyOf branch the value validates against.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 442,
-                    "end": 450
-                },
-                {
-                    "routes": [],
-                    "name": "endpointArgs",
+                    "name": "closestObject",
                     "static": true,
-                    "visibility": "public",
-                    "signature": "endpointArgs(array $schema, bool $creatable): array",
-                    "doc": "The argument map a route derives from an item schema: every writable\nproperty with the default validators, its keywords, defaults and\nrequired flags on the create route only, and any arg_options overrides.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "schema",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "creatable",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 463,
-                    "end": 498
-                },
-                {
-                    "routes": [],
-                    "name": "castEmptyObjects",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "castEmptyObjects(mixed $value, array $schema): mixed",
-                    "doc": "A value with each empty array the schema calls an object made one\n(it encodes as {}), through properties, additional properties, list\nitems and the value as a whole (probe rest-view-config).",
+                    "visibility": "private",
+                    "signature": "closestObject(mixed $value, array $errors): ?array",
+                    "doc": "Of several object schemas' refusals, the one whose properties share\nthe most keys with the value; null when the first is not an object's\nor none shares a key.",
                     "shapes": [
-                        "@param array<string, mixed> $schema"
+                        "@param list<array{0: Refusal, 1: array<string, mixed>, 2: int|string}> $errors",
+                        "@return array{0: Refusal, 1: array<string, mixed>, 2: int|string}|null"
                     ],
                     "params": [
                         {
@@ -105760,368 +106288,37 @@
                             "doc": ""
                         },
                         {
-                            "name": "schema",
+                            "name": "errors",
                             "type": "array",
-                            "shape": "array<string, mixed>",
+                            "shape": "list<array{0: Refusal, 1: array<string, mixed>, 2: int|string}>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 507,
-                    "end": 525
+                    "line": 127,
+                    "end": 141
                 },
                 {
                     "routes": [],
-                    "name": "closeObjects",
+                    "name": "listed",
                     "static": true,
-                    "visibility": "public",
-                    "signature": "closeObjects(array $schema): array",
-                    "doc": "The schema with additionalProperties closed on every object.",
-                    "shapes": [],
+                    "visibility": "private",
+                    "signature": "listed(array $names): string",
+                    "doc": "Names in a sentence: \"A and B\", \"A, B, and C\". @param list<string> $names",
+                    "shapes": [
+                        "@param list<string> $names"
+                    ],
                     "params": [
                         {
-                            "name": "schema",
+                            "name": "names",
                             "type": "array",
-                            "shape": "",
+                            "shape": "list<string>",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 528,
-                    "end": 541
-                },
-                {
-                    "routes": [],
-                    "name": "validateInteger",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateInteger(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "Numeric, within bounds and a multiple, then whole; null when the integer passes.\nA value that is not numeric names the schema's own type, empty when the\nschema names none (the reference words it \"p is not of type .\").",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 108,
-                    "end": 114
-                },
-                {
-                    "routes": [],
-                    "name": "validateComposite",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateComposite(mixed $value, array $args, string $param): Minn\\Runtime\\Refusal|true|null",
-                    "doc": "anyOf and oneOf: the verdict when the schema is a choice, null when it is not.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 117,
-                    "end": 140
-                },
-                {
-                    "routes": [],
-                    "name": "validateString",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateString(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "Length and pattern; null when the string passes.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 143,
-                    "end": 158
-                },
-                {
-                    "routes": [],
-                    "name": "validateNumber",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateNumber(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "Bounds and multipleOf; null when the number passes.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 161,
-                    "end": 171
-                },
-                {
-                    "routes": [],
-                    "name": "validateArray",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateArray(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 173,
-                    "end": 197
-                },
-                {
-                    "routes": [],
-                    "name": "validateObject",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateObject(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 199,
-                    "end": 240
-                },
-                {
-                    "routes": [],
-                    "name": "validateFormat",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateFormat(mixed $value, string $format, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "format",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 242,
-                    "end": 252
-                },
-                {
-                    "routes": [],
-                    "name": "validateBounds",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "validateBounds(mixed $value, array $args, string $param): ?Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 254,
-                    "end": 289
-                },
-                {
-                    "routes": [],
-                    "name": "enum",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "enum(mixed $value, array $enum, string $param): Minn\\Runtime\\Refusal|true",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "enum",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 291,
-                    "end": 306
-                },
-                {
-                    "routes": [],
-                    "name": "wrongType",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "wrongType(string $param, string $type): Minn\\Runtime\\Refusal",
-                    "doc": "",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "param",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "type",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 308,
-                    "end": 311
+                    "line": 144,
+                    "end": 151
                 }
             ]
         },
@@ -106184,7 +106381,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/SchemaValues.php",
-            "lines": 231,
+            "lines": 202,
             "doc": "The value side of JSON Schema, as the reference applies it: what counts\nas a boolean, integer, array, or object, the coercions to each, the\ncomparisons and date, colour, and uuid parsers the formats use, and the\ncombining walk anyOf and oneOf share. Schema holds the rules; this holds\nwhat they are applied to.",
             "implements": [],
             "extends": null,
@@ -106217,8 +106414,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 21,
-                    "end": 30
+                    "line": 20,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -106237,8 +106434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 42
+                    "line": 32,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -106257,8 +106454,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 48
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -106277,8 +106474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 57
+                    "line": 50,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -106297,8 +106494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 66
+                    "line": 59,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -106317,8 +106514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 78
+                    "line": 68,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -106337,8 +106534,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 93
+                    "line": 80,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -106364,8 +106561,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 114
+                    "line": 95,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -106391,8 +106588,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 134
+                    "line": 116,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -106418,8 +106615,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 145
+                    "line": 136,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -106445,8 +106642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 151
+                    "line": 147,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -106465,8 +106662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 158
+                    "line": 153,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -106492,8 +106689,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 170
+                    "line": 160,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -106512,8 +106709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 183
+                    "line": 172,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -106539,8 +106736,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 196
+                    "line": 185,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -106559,8 +106756,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -106579,8 +106776,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 208
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -106601,52 +106798,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 218
-                },
-                {
-                    "routes": [],
-                    "name": "combining",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "combining(mixed $value, array $args, bool $stopAfterFirst, Closure $validate): array",
-                    "doc": "Which of a combining schema's branches a value matches: the branch on\na single match (or the first, for anyOf or when asked to stop), else\nevery match with its index, else the errors the branches raised.",
-                    "shapes": [
-                        "@param Closure(mixed, array): (true|Refusal) $validate a branch validator",
-                        "@return array{schema?: array, matches?: array<int, array>, errors?: list<array{error: Refusal, schema: array, index: int}>}"
-                    ],
-                    "params": [
-                        {
-                            "name": "value",
-                            "type": "mixed",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "args",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "stopAfterFirst",
-                            "type": "bool",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "validate",
-                            "type": "Closure",
-                            "shape": "Closure(mixed, array): (true|Refusal)",
-                            "default": null,
-                            "doc": "a branch validator"
-                        }
-                    ],
-                    "line": 228,
-                    "end": 247
+                    "line": 214,
+                    "end": 217
                 }
             ]
         },
@@ -130155,6 +130308,7 @@
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\RouteMatch",
                 "Minn\\Rest\\Schema",
+                "Minn\\Rest\\SchemaChoices",
                 "Minn\\Runtime\\Connectors",
                 "Minn\\Runtime\\Patterns",
                 "Minn\\Runtime\\PluginActivation",

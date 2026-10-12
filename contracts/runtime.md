@@ -14613,3 +14613,54 @@ Seen along the way: rendering a post's content in an in-process REST call
 queues block styles before `wp_enqueue_scripts`, so the engine notices
 `wp_enqueue_style` "called incorrectly". The reference doesn't. To look into
 next.
+
+## The core REST routes, part three: the media actions, and anyOf and oneOf (2026-10-11)
+
+**The media actions** (probe rest-media-actions). `POST media/{id}/post-process`
+and `/edit` are now registered, plus `/sideload` and `/finalize` where images
+are processed in the browser. They're registered alone, on the facade's
+attachments controller (`minn_register_actions()`); the engine's
+`MediaController` answers the media routes themselves. The four actions were
+already real and proven at class level; now they can be reached.
+
+Notes from the reference:
+
+- Under WP-CLI it registers neither sideload nor finalize, since browser
+  processing is off there. Over HTTP it registers both. The engine matches in
+  both places.
+- An edit stores the source attachment's id as a string in the new
+  attachment's `parent_image`.
+
+**anyOf and oneOf** (probe rest-schema-choices, 32 cases). Reaching the edit
+route showed that the engine's `rest_validate_value_from_schema()` judged
+choices differently from the reference: an image edit's rotate modifier
+"matched more than one" of rotate, crop and flip. Now in
+`Minn\Rest\SchemaChoices`, one path for the validator and for
+`rest_find_one_matching_schema()`, `rest_find_any_matching_schema()` and
+`rest_get_combining_operation_error()`:
+
+- **Typeless schemas.** A choice's schemas without a type take the choice's
+  own, in anyOf and oneOf alike. The schema found carries that type.
+- **After a match.** The schema's own keywords still apply (`minLength`,
+  `enum`, `minimum`), under the matched schema's type when the schema names
+  none. anyOf is judged before oneOf.
+- **Several oneOf matches.** When every match has a title (an empty one
+  counts), the refusal names them: "p matches One, Two, and Three, but should
+  match only one." Otherwise it is the plain refusal. Either way it carries
+  the matches' `positions`.
+- **Matching none:**
+  - With one schema, its refusal is named.
+  - Otherwise the refusals that say only the value is not the schema's type
+    (at the value's own level) are set aside, and one left is named.
+  - Of several left, when the first is a plain `object` schema's, the one
+    whose properties share the most keys with the value is named, the first
+    of a tie.
+  - Then, when every schema has a title, counted over all of them, they are
+    listed: "p is not a valid Short and Long." Else "p does not match any of
+    the expected formats."
+  - A named refusal reads "p is not a valid T. Reason: …" or "p does not
+    match the expected format. Reason: …", with its `position`.
+
+`SchemaValues::combining()` is gone.
+
+Left before the route-table proof: POST on templates and template parts.

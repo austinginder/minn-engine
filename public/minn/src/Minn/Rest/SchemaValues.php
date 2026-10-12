@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
-use Closure;
 use JsonSerializable;
 use stdClass;
 
@@ -215,34 +214,5 @@ final class SchemaValues
     public static function list(mixed $value): array
     {
         return preg_split('/[\s,]+/', (string) $value, -1, PREG_SPLIT_NO_EMPTY) ?: [];
-    }
-
-    /**
-     * Which of a combining schema's branches a value matches: the branch on
-     * a single match (or the first, for anyOf or when asked to stop), else
-     * every match with its index, else the errors the branches raised.
-     *
-     * @param Closure(mixed, array): (true|Refusal) $validate a branch validator
-     * @return array{schema?: array, matches?: array<int, array>, errors?: list<array{error: Refusal, schema: array, index: int}>}
-     */
-    public static function combining(mixed $value, array $args, bool $stopAfterFirst, Closure $validate): array
-    {
-        $matches = [];
-        $errors = [];
-        foreach ($args['anyOf'] ?? $args['oneOf'] ?? [] as $index => $schema) {
-            $result = $validate($value, $schema);
-            if ($result === true) {
-                if ($stopAfterFirst || isset($args['anyOf'])) {
-                    return ['schema' => $schema];
-                }
-                $matches[$index] = $schema;
-                continue;
-            }
-            $errors[] = ['error' => $result, 'schema' => $schema, 'index' => $index];
-        }
-        if (count($matches) === 1) {
-            return ['schema' => reset($matches)];
-        }
-        return $matches === [] ? ['errors' => $errors] : ['matches' => $matches];
     }
 }

@@ -61,9 +61,10 @@ the wp/v2 surface: shapes and controllers
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 70 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 468 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 526 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 502 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
-| [`SchemaValues`](#schemavalues) | final class | 231 | The value side of JSON Schema, as the reference applies it: what counts |
+| [`SchemaValues`](#schemavalues) | final class | 202 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
@@ -2664,7 +2665,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -2678,6 +2679,10 @@ __construct(Closure $email, Closure $number, Closure $format)
 
 Whether a value satisfies a schema, or the reference's refusal.
 
+### `choices(): Minn\Rest\SchemaChoices`
+
+A schema's anyOf and oneOf: which of their schemas a value matches, and the refusal when not as wanted.
+
 ### `validateAs(string $type, mixed $value, array $args, string $param): Minn\Runtime\Refusal|true`
 
 One type's own checks, as the per-type validators run them: a number's
@@ -2686,12 +2691,6 @@ bounds before an integer's wholeness, and no enum or format.
 ### `validateEnum(mixed $value, array $args, string $param): Minn\Runtime\Refusal|true`
 
 Whether a value is one of the schema's enum, coerced to the schema's type first when it names one.
-
-### `combiningFailure(string $param, ?string $title, string $reason, mixed $position): Minn\Runtime\Refusal`
-
-The refusal for a value that matched none of a combinator's schemas,
-worded from the one that came closest: its title when it has one (an
-empty title still reads as one), and that schema's own reason.
 
 ### `sanitize(mixed $value, array $args, string $param = ''): mixed`
 
@@ -2723,7 +2722,63 @@ items and the value as a whole (probe rest-view-config).
 
 The schema with additionalProperties closed on every object.
 
-Internals: `validateInteger()` (private, line 108), `validateComposite()` (private, line 117), `validateString()` (private, line 143), `validateNumber()` (private, line 161), `validateArray()` (private, line 173), `validateObject()` (private, line 199), `validateFormat()` (private, line 242), `validateBounds()` (private, line 254), `enum()` (private, line 291), `wrongType()` (private, line 308)
+Internals: `validateInteger()` (private, line 110), `validateString()` (private, line 119), `validateNumber()` (private, line 137), `validateArray()` (private, line 149), `validateObject()` (private, line 175), `validateFormat()` (private, line 218), `validateBounds()` (private, line 230), `enum()` (private, line 267), `wrongType()` (private, line 284)
+
+
+## SchemaChoices
+
+`final readonly class Minn\Rest\SchemaChoices` · `public/minn/src/Minn/Rest/SchemaChoices.php`
+
+anyOf and oneOf the way the REST API's validation judges them (probe
+rest-schema-choices): a choice's schemas without a type take the
+choice's own; the refusal for matching none is named from the closest
+schema, or lists the titles, or is plain; several matches are named by
+their titles. Schema::validate() asks here first, then applies the
+schema's own keywords.
+
+Used by: `Minn\Rest\Schema`
+
+```php
+__construct(Minn\Rest\Schema $schema)
+```
+
+
+### `matchAny(mixed $value, array $args, string $param): Minn\Runtime\Refusal|array`
+
+The first of an anyOf's schemas the value matches, each without a type
+taking the choice's own, or the refusal for matching none (probe
+rest-media-actions).
+
+- `@return array<string, mixed>|Refusal`
+
+### `matchOne(mixed $value, array $args, string $param, string $settle = 'one'): Minn\Runtime\Refusal|array`
+
+The one of a oneOf's schemas the value matches, each without a type
+taking the choice's own; "first" settles for the first match. Matching
+none is refused as matchAny() refuses it; matching several names them
+when every one has a title, with their positions.
+
+- `@return array<string, mixed>|Refusal`
+
+### `combiningError(mixed $value, string $param, array $errors): Minn\Runtime\Refusal`
+
+The refusal for a value no schema of a choice matched (probe
+rest-media-actions). With one schema, its refusal is named. Otherwise
+the refusals that say only the value is not the schema's type are set
+aside, and one left is named. Of several left, when the first is an
+object's, the one whose properties share the most keys with the value
+is named (the first of a tie, none when none share). Then, when every
+schema has a title, they are listed; else the plain refusal.
+
+- `@param list<array{0: Refusal, 1: array<string, mixed>, 2: int|string}> $errors refusal, schema, position`
+
+### `combiningFailure(string $param, ?string $title, string $reason, mixed $position): Minn\Runtime\Refusal`
+
+The refusal for a value that matched none of a combinator's schemas,
+worded from the one that came closest: its title when it has one (an
+empty title still reads as one), and that schema's own reason.
+
+Internals: `closestObject()` (private, line 127), `listed()` (private, line 144)
 
 
 ## SchemaData
@@ -2828,15 +2883,6 @@ Whether a value is a version-4 uuid.
 A comma- or space-separated string as a list.
 
 - `@return list<string>`
-
-### static `combining(mixed $value, array $args, bool $stopAfterFirst, Closure $validate): array`
-
-Which of a combining schema's branches a value matches: the branch on
-a single match (or the first, for anyOf or when asked to stop), else
-every match with its index, else the errors the branches raised.
-
-- `@param Closure(mixed, array): (true|Refusal) $validate a branch validator`
-- `@return array{schema?: array, matches?: array<int, array>, errors?: list<array{error: Refusal, schema: array, index: int}>}`
 
 
 ## SearchController

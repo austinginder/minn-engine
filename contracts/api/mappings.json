@@ -1,15 +1,15 @@
 {
-    "generated": "2026-10-11",
+    "generated": "2026-10-12",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 801,
-        "composes": 2381,
-        "leaf": 1041,
-        "noop": 2755,
+        "composes": 2378,
+        "leaf": 1042,
+        "noop": 2758,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8672,
-        "minnMethods": 996,
+        "functions": 8673,
+        "minnMethods": 995,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -18940,6 +18940,17 @@
             "minn": [],
             "composes": []
         },
+        "WP_REST_Attachments_Controller::minn_register_actions": {
+            "file": "classes/WP_REST_Attachments_Controller.php",
+            "lines": 38,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "__",
+                "register_rest_route",
+                "wp_is_client_side_media_processing_enabled"
+            ]
+        },
         "WP_REST_Attachments_Controller::minn_sideload_recorded": {
             "file": "classes/WP_REST_Attachments_Controller.php",
             "lines": 16,
@@ -19045,14 +19056,10 @@
         },
         "WP_REST_Attachments_Controller::register_routes": {
             "file": "classes/WP_REST_Attachments_Controller.php",
-            "lines": 40,
-            "kind": "composes",
+            "lines": 3,
+            "kind": "leaf",
             "minn": [],
-            "composes": [
-                "__",
-                "register_rest_route",
-                "wp_is_client_side_media_processing_enabled"
-            ]
+            "composes": []
         },
         "WP_REST_Attachments_Controller::sideload_item": {
             "file": "classes/WP_REST_Attachments_Controller.php",
@@ -36389,15 +36396,6 @@
                 "add_action"
             ]
         },
-        "_minn_combining_refusal": {
-            "file": "rest-api.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__"
-            ]
-        },
         "_minn_comment_cookies_field": {
             "file": "comment.php",
             "lines": 2,
@@ -38197,6 +38195,15 @@
                 "sanitize_text_field",
                 "sanitize_textarea_field",
                 "sanitize_url"
+            ]
+        },
+        "_minn_schema_match": {
+            "file": "rest-api.php",
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
+            "composes": [
+                "_minn_schema_result"
             ]
         },
         "_minn_schema_result": {
@@ -44293,7 +44300,7 @@
         },
         "create_initial_rest_routes": {
             "file": "rest-api.php",
-            "lines": 9,
+            "lines": 11,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -59335,13 +59342,12 @@
         },
         "rest_find_any_matching_schema": {
             "file": "rest-api.php",
-            "lines": 12,
-            "kind": "composes",
+            "lines": 1,
+            "kind": "noop",
             "minn": [],
             "composes": [
-                "is_wp_error",
-                "rest_get_combining_operation_error",
-                "rest_validate_value_from_schema"
+                "_minn_schema",
+                "_minn_schema_match"
             ]
         },
         "rest_find_matching_pattern_property_schema": {
@@ -59355,16 +59361,12 @@
         },
         "rest_find_one_matching_schema": {
             "file": "rest-api.php",
-            "lines": 15,
-            "kind": "minn",
-            "minn": [
-                "Minn\\Rest\\SchemaValues::combining",
-                "Minn\\Runtime\\Refusal::__construct"
-            ],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [],
             "composes": [
-                "is_wp_error",
-                "rest_get_combining_operation_error",
-                "rest_validate_value_from_schema"
+                "_minn_schema",
+                "_minn_schema_match"
             ]
         },
         "rest_format_combining_operation_error": {
@@ -59420,12 +59422,14 @@
         },
         "rest_get_combining_operation_error": {
             "file": "rest-api.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
+            "lines": 2,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Refusal::__construct"
+            ],
             "composes": [
-                "__",
-                "_minn_combining_refusal"
+                "_minn_schema",
+                "_minn_schema_result"
             ]
         },
         "rest_get_date_with_gmt": {
