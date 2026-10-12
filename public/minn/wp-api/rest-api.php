@@ -824,11 +824,47 @@ function create_initial_rest_routes()
     }
     // The media actions are the controller class's; the media routes themselves are the engine's own (Rest\MediaController).
     (new WP_REST_Attachments_Controller('attachment'))->minn_register_actions();
+    // The search handlers, as plugins may extend them; the route is the engine's own (Rest\SearchController), which serves every type but posts through them.
+    _minn_rest_search_handlers(apply_filters('wp_rest_search_handlers', [new WP_REST_Post_Search_Handler(), new WP_REST_Term_Search_Handler(), new WP_REST_Post_Format_Search_Handler()]));
     // A legacy widget's preview page is the controller class's; the other widget-types routes are the engine's own (Rest\SidebarsController).
     $widgets = new WP_REST_Widget_Types_Controller();
     register_rest_route('wp/v2', '/widget-types/(?P<id>[a-zA-Z0-9_-]+)/render', [
         ['methods' => WP_REST_Server::CREATABLE, 'permission_callback' => [$widgets, 'get_item_permissions_check'], 'callback' => [$widgets, 'render'], 'args' => ['id' => ['description' => __('The widget type id.'), 'type' => 'string'], 'instance' => ['description' => __('Current instance settings of the widget.'), 'type' => 'object']]],
     ]);
+}
+
+/**
+ * @internal the search handlers, a filter's additions included: as
+ * create_initial_rest_routes() settled them, or settled now through
+ * wp_rest_search_handlers when the engine answers the search route before
+ * any server was made
+ */
+function _minn_rest_search_handlers(?array $set = null): array
+{
+    static $handlers = null;
+    if ($set !== null) {
+        $handlers = $set;
+    }
+    return $handlers ??= (array) apply_filters('wp_rest_search_handlers', [new WP_REST_Post_Search_Handler(), new WP_REST_Term_Search_Handler(), new WP_REST_Post_Format_Search_Handler()]);
+}
+
+/**
+ * @internal wp/v2/search for a type other than posts, answered by its search
+ * handler as the reference's controller answers it: the arguments checked
+ * and given their defaults, then cut to _fields.
+ */
+function _minn_rest_search_through_handlers(WP_REST_Request $request)
+{
+    $controller = new WP_REST_Search_Controller(_minn_rest_search_handlers());
+    $request->set_attributes(['args' => $controller->get_collection_params()] + (array) $request->get_attributes());
+    $request->set_default_params(array_map(static fn (array $arg) => $arg['default'], array_filter($controller->get_collection_params(), static fn (array $arg) => array_key_exists('default', $arg))));
+    $valid = $request->has_valid_params();
+    if (is_wp_error($valid)) {
+        return $valid;
+    }
+    $request->sanitize_params();
+    $response = rest_ensure_response($controller->get_items($request));
+    return is_wp_error($response) ? $response : rest_filter_response_fields($response, rest_get_server(), $request);
 }
 
 /** @internal the subtypes a search request names among a handler's: every one of them for "any" (probe rest-search-handlers) */

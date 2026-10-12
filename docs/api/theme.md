@@ -8,7 +8,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`BodyClasses`](#bodyclasses) | final class | 86 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
-| [`ClassicRenderer`](#classicrenderer) | final readonly class | 131 | A whole page from the active classic theme: the reference's PHP template |
+| [`ClassicRenderer`](#classicrenderer) | final readonly class | 125 | A whole page from the active classic theme: the reference's PHP template |
 | [`ClassicTheme`](#classictheme) | final readonly class | 31 | The active classic (PHP-template) theme on disk. A theme is classic when |
 | [`CustomCss`](#customcss) | final class | 69 | Custom CSS as theme.json and blocks write it (a styles node's "css", a |
 | [`EmbedRenderer`](#embedrenderer) | final readonly class | 33 | A post's embed page (its /embed/ address, or ?embed= on it), the card |
@@ -22,7 +22,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`Hierarchy`](#hierarchy) | final class | 148 | The classic template hierarchy: the candidate file names each template |
 | [`MainQueryBridge`](#mainquerybridge) | final readonly class | 132 | Stands the main query for a themed page and runs the front-end steps |
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
-| [`PageRenderer`](#pagerenderer) | final readonly class | 178 | A whole page from the active block theme: the template the resolution |
+| [`PageRenderer`](#pagerenderer) | final readonly class | 180 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 52 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
 | [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
@@ -30,6 +30,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
 | [`StylePresets`](#stylepresets) | final class | 148 | The preset side of theme.json: the colour, gradient, font-size, |
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
+| [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
 | [`TemplateIndex`](#templateindex) | final class | 310 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
@@ -168,7 +169,7 @@ The body-class tokens before plugins filter them (get_body_class filters them). 
 
 - `@return list<string>`
 
-Internals: `template()` (private, line 85), `bodyClasses()` (private, line 124), `registerHead()` (private, line 141), `registerStyles()` (private, line 147)
+Internals: `template()` (private, line 79), `bodyClasses()` (private, line 118), `registerHead()` (private, line 135), `registerStyles()` (private, line 141)
 
 
 ## ClassicTheme
@@ -758,7 +759,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `pluginTemplate()` (private, line 159), `skipLinkTarget()` (private, line 177), `head()` (private, line 191)
+Internals: `document()` (private, line 141), `skipLinkTarget()` (private, line 180), `head()` (private, line 194)
 
 
 ## PatternHeaders
@@ -971,6 +972,28 @@ expanded.
 Every var:preset|kind|slug token replaced by the custom property it names.
 
 Internals: `presetsUnder()` (private, line 69), `withAppearanceTools()` (private, line 81)
+
+
+## TemplateBuffer
+
+`final class Minn\Theme\TemplateBuffer` · `public/minn/src/Minn/Theme/TemplateBuffer.php`
+
+The reference includes a front-end template inside the template-enhancement
+buffer: wp_before_include_template fires with the template's file, its
+default callback opens the buffer when a plugin filters
+wp_template_enhancement_output_buffer, and that filter is handed the whole
+page. The engine builds the page as a string, so the string is passed
+through the same buffer: every buffer the action opened is closed in turn,
+its handler writing into the capture the page is read from.
+
+Used by: `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`
+
+### static `around(string $template, callable $render): ?string`
+
+The page a render gives, as the buffers opened before it leave it; null
+when the render gives none. A render that fails leaves nothing behind.
+
+- `@param callable(): ?string $render`
 
 
 ## TemplateHierarchy

@@ -2989,9 +2989,10 @@ loaded, it found these, each now matched to the oracle:
   then any `add_image_size` registrations, in the metadata order the
   reference writes. `intermediate_image_sizes_advanced` filters the list
   when plugins are loaded: Gravity Forms registers three image-choice sizes
-  and takes them back out there for every upload but its own. The engine
-  cuts the sizes before the attachment row exists, so the filter's
-  attachment id is 0 where the reference passes the new id.
+  and takes them back out there for every upload but its own. Uploads now
+  go through `wp_generate_attachment_metadata` after the row exists, which
+  passes the new id; the engine's own sizing path that passed 0 was removed
+  ("The media writer's dead path", 2026-10-12).
 - **Stored sessions are written back as they were read.** `Sessions` keeps
   each entry's serialized text and re-emits it untouched when another
   session is added or removed, so data a plugin attached through
@@ -8199,9 +8200,9 @@ removes them.
   - The handler leaves a CLEAN phase as it is. Any other phase is filtered
     through `wp_template_enhancement_output_buffer` (output, output), and
     the result goes to `wp_finalized_template_enhancement_output_buffer`.
-  - The engine builds its pages as strings and fires no
-    `wp_before_include_template`, so on the engine the buffer only runs
-    when a plugin calls it.
+  - The engine built its pages as strings and fired no
+    `wp_before_include_template`. Settled in "The template-enhancement
+    buffer" (2026-10-12).
 - **require_if_theme_supports.** When the theme supports the feature, the
   file is `require`d (again on every call) and the answer is true;
   otherwise false.
@@ -10722,9 +10723,8 @@ They are built in the facade from WordPress functions.
   a term) and the `post-format` type, and no links.
 - `detect_rest_item_route` announces its 5.5.0 deprecation.
 
-Owed: the engine's own `/wp/v2/search` still answers only `type=post`.
-Serving `term` and `post-format` through these handlers would complete the
-route.
+The engine's own `/wp/v2/search` answered only `type=post`. Settled in
+"Search beyond posts" (2026-10-12).
 
 ## The legacy HTTP transports (2026-10-10)
 
@@ -15077,3 +15077,79 @@ who may not assign terms, gets nothing.
 
 Not probed: what deleting a term does to posts left with no term of a
 taxonomy that has a default.
+
+## The template-enhancement buffer (2026-10-12)
+
+Since 6.9 the reference includes a front-end template inside the
+template-enhancement buffer, and plugins that rewrite the whole page hook
+it. `wp_before_include_template` fires with the template's file (once
+`template_include` has had its say). Its default callback opens the buffer
+when something filters `wp_template_enhancement_output_buffer`, and that
+filter is handed the finished page.
+
+The engine builds its pages as strings and never fired the action, so those
+filters never ran on Minn. `Theme\TemplateBuffer::around` now fires the
+action, renders the page, writes it into the open buffers
+(`Http\Response::write`, the one place outside sending a response where the
+engine writes output), and closes each buffer the action opened, so its
+handler writes into the capture the page is read from.
+
+It is used by:
+
+- the block-theme page (the canvas file), and the PHP file a plugin swaps
+  in through `template_include`;
+- the classic-theme template.
+
+Suite runtime asks the fixture plugin for `?minn-test-enhance` and
+compares what each stack heard. Both heard the action once with
+`template-canvas.php`, then the buffer starting, then the filter handed two
+arguments and the whole document, doctype to `</html>`.
+
+## The media writer's dead path (2026-10-12)
+
+`Media\Writer::attach()` cut an upload's sizes itself before the attachment
+row existed (`Media\Images`), so `intermediate_image_sizes_advanced` heard
+attachment id 0. Nothing called it any more: REST uploads go through
+`wp_handle_upload`, `wp_insert_attachment` and
+`wp_generate_attachment_metadata`, which pass the new id.
+
+Removed, as code no path reaches:
+
+- `Media\Images` and `Media\PreparedUpload`;
+- the writer's attach, prepare, row, insert, metadata, edit, stamp,
+  alt-text and remove methods;
+- `Uploads::store()` and `Uploads::remove()`;
+- `PostEvents::attachedFile()` and `PostEvents::altText()`.
+
+The writer keeps where files live (`urlOf`, `pathOf`, `relativeOf`).
+`Uploads::sanitizeName` stays: the security suite pins it.
+
+## Search beyond posts (2026-10-12)
+
+The engine's `/wp/v2/search` keeps its own query for posts. Any other type
+is now answered by the reference's search handlers in the runtime:
+
+- terms and post formats (proven by probe `rest-search-handlers`);
+- any type a plugin adds through `wp_rest_search_handlers`.
+
+`create_initial_rest_routes()` passes the three core handlers through that
+filter and keeps them, as the reference does at `rest_api_init`. When the
+engine answers the route before any server was made, the filter is applied
+there instead.
+
+The request's arguments are checked against the handlers' own collection
+parameters, given their defaults, and the answer is cut to `_fields`. The
+route leaves `type` and `subtype` to the handler (`Args::HANDLER_VALIDATES`):
+their values are the handlers', so a static list refused a plugin's type
+before it got there. An unknown type now gets the reference's error, naming
+every type a handler serves.
+
+Suites:
+
+- admin-surfaces compares terms, post formats, an unknown term subtype and
+  an unknown type with the reference;
+- runtime compares a fixture plugin's own `minn-test` handler (pages,
+  subtypes, `_fields`).
+
+Still owed (group E): the REST index publishes the static type list, not the
+handlers'.

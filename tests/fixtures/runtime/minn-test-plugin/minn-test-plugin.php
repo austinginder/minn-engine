@@ -128,6 +128,30 @@ add_filter('template_include', static function ($template) {
     return $template;
 });
 
+// The template-enhancement buffer (?minn-test-enhance): the action before the
+// template, the buffer opening, and the whole page handed to the filter, noted
+// in the page itself.
+if (isset($_GET['minn-test-enhance'])) {
+    $GLOBALS['minn_test_enhance'] = [];
+    add_action('wp_before_include_template', static function (...$args) {
+        $GLOBALS['minn_test_enhance'][] = ['before', count($args), basename((string) ($args[0] ?? ''))];
+    }, 10, 5);
+    add_action('wp_template_enhancement_output_buffer_started', static function () {
+        $GLOBALS['minn_test_enhance'][] = ['started'];
+    });
+    add_filter('wp_template_enhancement_output_buffer', static function ($output, ...$rest) {
+        $heard = [...$GLOBALS['minn_test_enhance'], ['filtered', 1 + count($rest), str_starts_with(ltrim((string) $output), '<!DOCTYPE'), str_contains((string) $output, '</html>')]];
+        return str_replace('</body>', '<!-- minn-test-enhance ' . json_encode($heard) . ' --></body>', (string) $output);
+    }, 10, 5);
+}
+
+// A search handler of the plugin's own: /wp/v2/search?type=minn-test.
+add_filter('wp_rest_search_handlers', static function (array $handlers): array {
+    require_once __DIR__ . '/search-handler.php';
+    $handlers[] = new Minn_Test_Search_Handler();
+    return $handlers;
+});
+
 // The functions that only send headers, each called by name on a request of its own (?minn-test-headers=).
 add_action('init', static function () {
     $which = isset($_GET['minn-test-headers']) ? (string) $_GET['minn-test-headers'] : '';

@@ -40,9 +40,9 @@ final readonly class SearchController
     #[Route(Method::Get, '/wp/v2/search', policy: new Policy(Access::Public), args: [Args::SEARCH])]
     public function list(Request $request): Response
     {
-        $type = $request->query('type') ?? 'post';
-        if ($type !== 'post') {
-            throw RestError::invalidParam('type', 'type is not one of post.');
+        // Terms, post formats and any type a plugin adds are its search handler's (wp_rest_search_handlers).
+        if (($request->query('type') ?? 'post') !== 'post') {
+            return RuntimeRoutes::fromWp(\_minn_rest_search_through_handlers(RuntimeRoutes::wpRequest($request)));
         }
         $perPage = max(1, min(self::MAX_PER_PAGE, (int) ($request->query('per_page') ?: 10)));
         $page = max(1, (int) ($request->query('page') ?: 1));

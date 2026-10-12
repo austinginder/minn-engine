@@ -30505,7 +30505,8 @@
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Front\\Renderer",
-                "Minn\\Theme\\MainQueryBridge"
+                "Minn\\Theme\\MainQueryBridge",
+                "Minn\\Theme\\PageRenderer"
             ],
             "constructor": {
                 "signature": "__construct(array $posts, int $total)",
@@ -31301,7 +31302,6 @@
                 "Minn\\Front\\RuleRoutes",
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries",
-                "Minn\\Media\\Writer",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\CommentsController",
                 "Minn\\Rest\\GlobalStylesController",
@@ -32308,7 +32308,6 @@
                 "Minn\\Content\\Menus",
                 "Minn\\Content\\Revisions",
                 "Minn\\Cron\\Cron",
-                "Minn\\Media\\Writer",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\PostEvents",
@@ -33385,7 +33384,6 @@
                 "Minn\\Front\\RuleRoutes",
                 "Minn\\Front\\SingleAddresses",
                 "Minn\\Front\\SingleQueries",
-                "Minn\\Media\\Writer",
                 "Minn\\Rest\\BlocksController",
                 "Minn\\Rest\\CommentObject",
                 "Minn\\Rest\\CommentsController",
@@ -34893,9 +34891,6 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\Mailer",
-                "Minn\\Media\\Images",
-                "Minn\\Media\\Uploads",
-                "Minn\\Media\\Writer",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Diagnostics",
                 "Minn\\Ops\\InstalledSoftware",
@@ -61492,7 +61487,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Args.php",
-            "lines": 148,
+            "lines": 149,
             "doc": "The parameters a route accepts, as the reference describes them in the\nREST index: name => {description, type, ...}. The descriptions, types,\nenums and bounds were captured from the reference, so a client that\nreads either index is told the same thing, and the router refuses a\nvalue the way the reference refuses it, before it judges the caller.\n\nA route declares only what it really reads. An argument published here\nthat the handler ignores would be worse than none at all, because a\nclient reading the index would build a request around it, so each set\nbelow names the code that consumes it. The sets keep the reference's\norder, because a refusal lists the invalid parameters in that order.\n`_fields` and `_embed` are read everywhere and declared nowhere, as the\nreference lists neither and validates neither.",
             "implements": [],
             "extends": null,
@@ -61594,7 +61589,7 @@
                 },
                 {
                     "name": "SEARCH",
-                    "value": "array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'post',     'description' => 'Limit results to items of an object type.',     'type' => 'string',     'enum' =>      array (       0 => 'post',       1 => 'term',       2 => 'post-format',     ),     'required' => false,   ),   'subtype' =>    array (     'default' => 'any',     'description' => 'Limit results to items of one or more object subtypes.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'post',         1 => 'page',         2 => 'category',         3 => 'post_tag',         4 => 'any',       ),       'type' => 'string',     ),     'required' => false,   ), )",
+                    "value": "array (   'context' =>    array (     'description' => 'Scope under which the request is made; determines fields present in response.',     'type' => 'string',     'enum' =>      array (       0 => 'view',       1 => 'embed',     ),     'default' => 'view',     'required' => false,   ),   'page' =>    array (     'description' => 'Current page of the collection.',     'type' => 'integer',     'default' => 1,     'minimum' => 1,     'required' => false,   ),   'per_page' =>    array (     'description' => 'Maximum number of items to be returned in result set.',     'type' => 'integer',     'default' => 10,     'minimum' => 1,     'maximum' => 100,     'required' => false,   ),   'search' =>    array (     'description' => 'Limit results to those matching a string.',     'type' => 'string',     'required' => false,   ),   'type' =>    array (     'default' => 'post',     'description' => 'Limit results to items of an object type.',     'type' => 'string',     'enum' =>      array (       0 => 'post',       1 => 'term',       2 => 'post-format',     ),     'required' => false,     'handler_validates' => true,   ),   'subtype' =>    array (     'default' => 'any',     'description' => 'Limit results to items of one or more object subtypes.',     'type' => 'array',     'items' =>      array (       'enum' =>        array (         0 => 'post',         1 => 'page',         2 => 'category',         3 => 'post_tag',         4 => 'any',       ),       'type' => 'string',     ),     'required' => false,     'handler_validates' => true,   ), )",
                     "doc": "Read by Rest\\SearchController::list(): the search collection, whose context has no edit view.",
                     "visibility": "public"
                 }
@@ -61621,8 +61616,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 165,
-                    "end": 168
+                    "line": 166,
+                    "end": 169
                 }
             ]
         },
@@ -66089,7 +66084,7 @@
             "namespace": "Minn\\Http",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Http/Response.php",
-            "lines": 123,
+            "lines": 133,
             "doc": "What a handler returns. Nothing is written to the client until the\nkernel calls send(), so a response can be inspected, wrapped, or\nreplaced on the way out. Work that belongs after the client has its\nanswer (a cron run a page found due) rides along as afterSend closures.",
             "implements": [],
             "extends": null,
@@ -66162,7 +66157,8 @@
                 "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Theme\\EmbedRenderer",
-                "Minn\\Theme\\FrontLifecycle"
+                "Minn\\Theme\\FrontLifecycle",
+                "Minn\\Theme\\TemplateBuffer"
             ],
             "constructor": {
                 "signature": "__construct(int $status = 200, array $headers = array ( ), string $body = '', array $cookies = array ( ), array $afterSend = array ( ))",
@@ -66483,6 +66479,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "write",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "write(string $bytes): void",
+                    "doc": "Bytes written to PHP's output now, so into whatever buffers are open:\nfor a page passed through buffers plugin code opened before it\n(Theme\\TemplateBuffer), whose handlers then see it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bytes",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 108
+                },
+                {
+                    "routes": [],
                     "name": "sendHead",
                     "static": false,
                     "visibility": "public",
@@ -66490,8 +66506,8 @@
                     "doc": "Writes the status, the headers, and the cookies now, and nothing else:\nfor an answer that code outside the engine may finish on its own (an\najax handler that ends the request), which must find them already said.",
                     "shapes": [],
                     "params": [],
-                    "line": 105,
-                    "end": 114
+                    "line": 115,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -66502,8 +66518,8 @@
                     "doc": "Writes the status, the headers, the cookies, and the body, ends the\nrequest for the client, then runs the after-send work in the same\nprocess (the server that can close the connection first does).",
                     "shapes": [],
                     "params": [],
-                    "line": 121,
-                    "end": 137
+                    "line": 131,
+                    "end": 147
                 }
             ]
         },
@@ -78220,9 +78236,7 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [
-                "Minn\\Media\\Images"
-            ],
+            "usedBy": [],
             "constructor": {
                 "signature": "__construct(GdImage $image, int $width, int $height)",
                 "doc": "",
@@ -78904,283 +78918,6 @@
             ]
         },
         {
-            "name": "Minn\\Media\\Images",
-            "short": "Images",
-            "namespace": "Minn\\Media",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Media/Images.php",
-            "lines": 163,
-            "doc": "GD sub-size generation for the sizes the site has.",
-            "implements": [],
-            "extends": null,
-            "uses": [
-                "Minn\\Content\\Site",
-                "Minn\\Media\\Canvas",
-                "Minn\\Media\\Sizing",
-                "Minn\\Runtime\\Runtime"
-            ],
-            "usedBy": [
-                "Minn\\Media\\Writer",
-                "Minn\\Rest\\Services"
-            ],
-            "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site)",
-                "doc": "",
-                "shapes": [],
-                "params": [
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    }
-                ],
-                "visibility": "public",
-                "line": 13,
-                "end": 15
-            },
-            "cases": [],
-            "constants": [
-                {
-                    "name": "BIG",
-                    "value": "2560",
-                    "doc": "Past this width or height an upload is scaled down to it, as the reference's big_image_size_threshold default.",
-                    "visibility": "public"
-                },
-                {
-                    "name": "SIZED",
-                    "value": "array (   0 => 'image/png',   1 => 'image/jpeg',   2 => 'image/gif',   3 => 'image/webp', )",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
-            "properties": [
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                }
-            ],
-            "methods": [
-                {
-                    "routes": [],
-                    "name": "ladder",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "ladder(): array",
-                    "doc": "The sizes an upload is cut into, in the order the reference writes\nthem to the metadata: the four from the site's options, then the ones\nregistered with add_image_size this request, the two big ones every\nsite has first (without plugins, just those two).",
-                    "shapes": [
-                        "@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]"
-                    ],
-                    "params": [],
-                    "line": 25,
-                    "end": 39
-                },
-                {
-                    "routes": [],
-                    "name": "constrain",
-                    "static": true,
-                    "visibility": "public",
-                    "signature": "constrain(int $width, int $height, int $maxWidth, int $maxHeight): array",
-                    "doc": "Fits (w, h) inside (maxW, maxH); 0 means unconstrained. One rule with the facade's wp_constrain_dimensions.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "width",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "height",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "maxWidth",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "maxHeight",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 66,
-                    "end": 69
-                },
-                {
-                    "routes": [],
-                    "name": "standIn",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "standIn(string $path, string $mime, int $orientation): ?array",
-                    "doc": "The upload's stand-in, as the reference saves one (probe\nimage-pipeline): one past BIG scaled to fit it and saved \"-scaled\",\none a JPEG's EXIF says was taken turned saved upright \"-rotated\"\n(both when both). Null when the upload is kept as it is.",
-                    "shapes": [
-                        "@return array{path: string, width: int, height: int, filesize: int, rotated: bool}|null"
-                    ],
-                    "params": [
-                        {
-                            "name": "path",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "mime",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "orientation",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 82,
-                    "end": 101
-                },
-                {
-                    "routes": [],
-                    "name": "makeSubsizes",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "makeSubsizes(string $path, string $mime, array $imageMeta = array ( ), int $orientation = 1): array",
-                    "doc": "Generates the sub-sizes for one image, cut from the upload turned\nupright when a JPEG's EXIF says so; returns the sizes metadata map.\nThe image's metadata so far rides along for the size filter.",
-                    "shapes": [
-                        "@param array<string, mixed> $imageMeta"
-                    ],
-                    "params": [
-                        {
-                            "name": "path",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "mime",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "imageMeta",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": "array ( )",
-                            "doc": ""
-                        },
-                        {
-                            "name": "orientation",
-                            "type": "int",
-                            "shape": "",
-                            "default": "1",
-                            "doc": ""
-                        }
-                    ],
-                    "line": 135,
-                    "end": 172
-                },
-                {
-                    "routes": [],
-                    "name": "filtered",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "filtered(array $ladder, array $imageMeta): array",
-                    "doc": "The ladder after intermediate_image_sizes_advanced when plugins are\nloaded, so a plugin can drop sizes it registered but wants only for\nits own uploads (Gravity Forms does). The sizes are cut before the\nattachment row exists, so the filter's attachment id is 0.",
-                    "shapes": [
-                        "@param array<string, array{0: int, 1: int, 2: bool}> $ladder @param array<string, mixed> $imageMeta",
-                        "@return array<string, array{0: int, 1: int, 2: bool}>"
-                    ],
-                    "params": [
-                        {
-                            "name": "ladder",
-                            "type": "array",
-                            "shape": "array<string, array{0: int, 1: int, 2: bool}>",
-                            "default": null,
-                            "doc": "@param array<string, mixed> $imageMeta"
-                        },
-                        {
-                            "name": "imageMeta",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 50,
-                    "end": 63
-                },
-                {
-                    "routes": [],
-                    "name": "upright",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "upright(Minn\\Media\\Canvas $canvas, int $orientation): Minn\\Media\\Canvas",
-                    "doc": "The image turned as its EXIF orientation says: a rotation counter-clockwise, then a mirror left to right.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "canvas",
-                            "type": "Minn\\Media\\Canvas",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "orientation",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 104,
-                    "end": 118
-                },
-                {
-                    "routes": [],
-                    "name": "quality",
-                    "static": true,
-                    "visibility": "private",
-                    "signature": "quality(string $mime): int",
-                    "doc": "The quality a size is written at: 86 for WebP, 82 otherwise, the reference's defaults.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "mime",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 121,
-                    "end": 124
-                }
-            ]
-        },
-        {
             "name": "Minn\\Media\\Kind",
             "short": "Kind",
             "namespace": "Minn\\Media",
@@ -79306,8 +79043,7 @@
                 "Minn\\Admin\\SiteController",
                 "Minn\\Blocks\\ImageTags",
                 "Minn\\Content\\SiteIcon",
-                "Minn\\Media\\PhotoMeta",
-                "Minn\\Media\\Writer"
+                "Minn\\Media\\PhotoMeta"
             ],
             "constructor": null,
             "cases": [],
@@ -79419,9 +79155,7 @@
             "uses": [
                 "Minn\\Media\\Metadata"
             ],
-            "usedBy": [
-                "Minn\\Media\\Writer"
-            ],
+            "usedBy": [],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -79652,87 +79386,6 @@
             ]
         },
         {
-            "name": "Minn\\Media\\PreparedUpload",
-            "short": "PreparedUpload",
-            "namespace": "Minn\\Media",
-            "kind": "final readonly class",
-            "file": "public/minn/src/Minn/Media/PreparedUpload.php",
-            "lines": 13,
-            "doc": "An upload made ready for its attachment: the file stored, its sizes cut,\nthe row it will be. The row is written apart, so what plugins hear\nbefore it (pre_post_insert) comes between.",
-            "implements": [],
-            "extends": null,
-            "uses": [],
-            "usedBy": [
-                "Minn\\Media\\Writer"
-            ],
-            "constructor": {
-                "signature": "__construct(array $columns, string $relative, ?array $metadata)",
-                "doc": "",
-                "shapes": [
-                    "@param array<string, mixed> $columns the attachment's row",
-                    "@param array<string, mixed>|null $metadata the image metadata, null for a file that is not an image"
-                ],
-                "params": [
-                    {
-                        "name": "columns",
-                        "type": "array",
-                        "shape": "array<string, mixed>",
-                        "default": null,
-                        "doc": "the attachment's row"
-                    },
-                    {
-                        "name": "relative",
-                        "type": "string",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "metadata",
-                        "type": "?array",
-                        "shape": "array<string, mixed>|null",
-                        "default": null,
-                        "doc": "the image metadata, null for a file that is not an image"
-                    }
-                ],
-                "visibility": "public",
-                "line": 18,
-                "end": 23
-            },
-            "cases": [],
-            "constants": [],
-            "properties": [
-                {
-                    "name": "columns",
-                    "type": "array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "relative",
-                    "type": "string",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                },
-                {
-                    "name": "metadata",
-                    "type": "?array",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "public",
-                    "promoted": true
-                }
-            ],
-            "methods": []
-        },
-        {
             "name": "Minn\\Media\\Sizing",
             "short": "Sizing",
             "namespace": "Minn\\Media",
@@ -79743,9 +79396,7 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [
-                "Minn\\Media\\Images"
-            ],
+            "usedBy": [],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -80102,7 +79753,6 @@
                 "Minn\\RestError"
             ],
             "usedBy": [
-                "Minn\\Media\\Writer",
                 "Minn\\Rest\\MediaController"
             ],
             "constructor": {
@@ -80339,14 +79989,12 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Uploads.php",
-            "lines": 179,
+            "lines": 135,
             "doc": "The uploads directory: paths, URLs, the allowed types, and landing a file.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\Site",
-                "Minn\\Front\\Permalinks",
-                "Minn\\RestError"
+                "Minn\\Front\\Permalinks"
             ],
             "usedBy": [
                 "Minn\\Blocks\\ImageTags",
@@ -80358,17 +80006,10 @@
                 "Minn\\Runtime\\PostEvents"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Site $site, Minn\\Front\\Permalinks $permalinks, string $baseDir)",
+                "signature": "__construct(Minn\\Front\\Permalinks $permalinks, string $baseDir)",
                 "doc": "",
                 "shapes": [],
                 "params": [
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
                     {
                         "name": "permalinks",
                         "type": "Minn\\Front\\Permalinks",
@@ -80385,8 +80026,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 28,
-                "end": 33
+                "line": 26,
+                "end": 30
             },
             "cases": [],
             "constants": [
@@ -80398,15 +80039,6 @@
                 }
             ],
             "properties": [
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
                 {
                     "name": "permalinks",
                     "type": "Minn\\Front\\Permalinks",
@@ -80436,8 +80068,8 @@
                     "doc": "The uploads directory on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 36,
-                    "end": 39
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -80448,8 +80080,8 @@
                     "doc": "The uploads directory's URL.",
                     "shapes": [],
                     "params": [],
-                    "line": 42,
-                    "end": 45
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -80468,8 +80100,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 51
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -80488,8 +80120,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 51,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -80508,42 +80140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 79
-                },
-                {
-                    "routes": [],
-                    "name": "store",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "store(string $filename, ?string $movedFrom, ?string $raw): string",
-                    "doc": "Lands content in the dated directory under a unique name and returns\nthe relative path (\"2026/08/name.png\").",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "filename",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "movedFrom",
-                            "type": "?string",
-                            "shape": "string|null",
-                            "default": null,
-                            "doc": "a temporary upload to move; null writes $raw"
-                        },
-                        {
-                            "name": "raw",
-                            "type": "?string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 87,
-                    "end": 108
+                    "line": 63,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -80562,35 +80160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 115
-                },
-                {
-                    "routes": [],
-                    "name": "remove",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "remove(string $relativePath, array $sizes): void",
-                    "doc": "Removes the original and every generated size; a size name that leaves the file's own folder is ignored.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "relativePath",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "sizes",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 118,
-                    "end": 129
+                    "line": 79,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -80627,8 +80198,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 164
+                    "line": 93,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -80698,8 +80269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 189
+                    "line": 127,
+                    "end": 143
                 }
             ]
         },
@@ -80750,103 +80321,37 @@
             "namespace": "Minn\\Media",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Media/Writer.php",
-            "lines": 181,
-            "doc": "The writes the media library makes. An Upload becomes an attachment: the\nfile lands in the dated uploads directory under a unique name, the row is\ninserted with the stored name as its title and slug, and an image gets\nits sub-sizes and the serialized metadata blob. Edits stamp the row\nmodified; removal takes the files with the row.",
+            "lines": 24,
+            "doc": "Where the media library's files live, as a REST upload names them: a\nstored file's address, its path on disk, and its path relative to the\nuploads folder. The attachment itself is written through the runtime\n(wp_handle_upload, wp_insert_attachment, wp_generate_attachment_metadata),\nas the reference writes it.",
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Content\\PostRecord",
-                "Minn\\Content\\PostWriter",
-                "Minn\\Content\\Posts",
-                "Minn\\Content\\Site",
-                "Minn\\Media\\Images",
-                "Minn\\Media\\Metadata",
-                "Minn\\Media\\PhotoMeta",
-                "Minn\\Media\\PreparedUpload",
-                "Minn\\Media\\Upload",
-                "Minn\\Media\\Uploads",
-                "Minn\\Support\\Kses"
+                "Minn\\Media\\Uploads"
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
-                "Minn\\Rest\\Services",
-                "Minn\\Runtime\\PostEvents"
+                "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\PostWriter $posts, Minn\\Content\\Posts $reads, Minn\\Content\\Site $site, Minn\\Media\\Uploads $uploads, Minn\\Media\\Images $images)",
+                "signature": "__construct(Minn\\Media\\Uploads $uploads)",
                 "doc": "",
                 "shapes": [],
                 "params": [
-                    {
-                        "name": "posts",
-                        "type": "Minn\\Content\\PostWriter",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "reads",
-                        "type": "Minn\\Content\\Posts",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
-                    {
-                        "name": "site",
-                        "type": "Minn\\Content\\Site",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
-                    },
                     {
                         "name": "uploads",
                         "type": "Minn\\Media\\Uploads",
                         "shape": "",
                         "default": null,
                         "doc": ""
-                    },
-                    {
-                        "name": "images",
-                        "type": "Minn\\Media\\Images",
-                        "shape": "",
-                        "default": null,
-                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 22,
-                "end": 29
+                "line": 16,
+                "end": 18
             },
             "cases": [],
             "constants": [],
             "properties": [
-                {
-                    "name": "posts",
-                    "type": "Minn\\Content\\PostWriter",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "reads",
-                    "type": "Minn\\Content\\Posts",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
-                {
-                    "name": "site",
-                    "type": "Minn\\Content\\Site",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
-                },
                 {
                     "name": "uploads",
                     "type": "Minn\\Media\\Uploads",
@@ -80855,154 +80360,9 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
-                },
-                {
-                    "name": "images",
-                    "type": "Minn\\Media\\Images",
-                    "readonly": true,
-                    "static": false,
-                    "doc": "",
-                    "visibility": "private",
-                    "promoted": true
                 }
             ],
             "methods": [
-                {
-                    "routes": [],
-                    "name": "attach",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "attach(Minn\\Media\\Upload $upload, int $authorId): int",
-                    "doc": "The new attachment's id. The mime is the caller's to check first.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "upload",
-                            "type": "Minn\\Media\\Upload",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "authorId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 32,
-                    "end": 41
-                },
-                {
-                    "routes": [],
-                    "name": "prepare",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "prepare(Minn\\Media\\Upload $upload, int $authorId): Minn\\Media\\PreparedUpload",
-                    "doc": "Stores the file and cuts its sizes, before the row exists: a decode\nthat fails leaves files to sweep, never a headless attachment.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "upload",
-                            "type": "Minn\\Media\\Upload",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "authorId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 47,
-                    "end": 52
-                },
-                {
-                    "routes": [],
-                    "name": "prepareStored",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "prepareStored(string $relative, string $mime, int $parent, int $authorId): Minn\\Media\\PreparedUpload",
-                    "doc": "The attachment for a file already in the uploads folder (one the\nruntime's wp_handle_upload stored, plugins' filters and all): its row\nand, for an image the engine sizes, its metadata.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "relative",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "mime",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "parent",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "authorId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 59,
-                    "end": 68
-                },
-                {
-                    "routes": [],
-                    "name": "prepareRow",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "prepareRow(string $relative, string $mime, int $parent, int $authorId): Minn\\Media\\PreparedUpload",
-                    "doc": "The attachment's row alone, its sizes left to be cut once it exists:\nwith plugins loaded, the runtime's wp_generate_attachment_metadata\ncuts them after the insert, as the reference does.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "relative",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "mime",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "parent",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "authorId",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 75,
-                    "end": 105
-                },
                 {
                     "routes": [],
                     "name": "urlOf",
@@ -81020,8 +80380,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 21,
+                    "end": 24
                 },
                 {
                     "routes": [],
@@ -81040,8 +80400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
@@ -81060,216 +80420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 123
-                },
-                {
-                    "routes": [],
-                    "name": "insert",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "insert(Minn\\Media\\PreparedUpload $prepared): int",
-                    "doc": "Writes a prepared attachment's row; returns its id.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "prepared",
-                            "type": "Minn\\Media\\PreparedUpload",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 126,
-                    "end": 129
-                },
-                {
-                    "routes": [],
-                    "name": "setAttachedFile",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "setAttachedFile(int $id, string $relative): void",
-                    "doc": "Records the file an attachment holds, relative to the uploads folder.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "relative",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 132,
-                    "end": 135
-                },
-                {
-                    "routes": [],
-                    "name": "setMetadata",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "setMetadata(int $id, array $metadata): void",
-                    "doc": "Stores an attachment's metadata in the reference's serialized shape. @param array<string, mixed> $metadata",
-                    "shapes": [
-                        "@param array<string, mixed> $metadata"
-                    ],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "metadata",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 138,
-                    "end": 141
-                },
-                {
-                    "routes": [],
-                    "name": "edit",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "edit(int $id, array $columns): void",
-                    "doc": "Sets the given columns on an attachment and stamps it modified; nothing happens for none.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "columns",
-                            "type": "array",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 144,
-                    "end": 149
-                },
-                {
-                    "routes": [],
-                    "name": "stamp",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "stamp(int $id, array $columns): void",
-                    "doc": "Sets the given columns, none included, and stamps the attachment modified, as the reference's update always does. @param array<string, mixed> $columns",
-                    "shapes": [
-                        "@param array<string, mixed> $columns"
-                    ],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "columns",
-                            "type": "array",
-                            "shape": "array<string, mixed>",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 152,
-                    "end": 157
-                },
-                {
-                    "routes": [],
-                    "name": "setAlt",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "setAlt(int $id, string $alt): void",
-                    "doc": "Sets an attachment's alt text.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "alt",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 160,
-                    "end": 163
-                },
-                {
-                    "routes": [],
-                    "name": "remove",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "remove(Minn\\Content\\PostRecord $attachment): void",
-                    "doc": "Removes an attachment: its files, every generated size, its meta, and its row.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "attachment",
-                            "type": "Minn\\Content\\PostRecord",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 166,
-                    "end": 173
-                },
-                {
-                    "routes": [],
-                    "name": "imageMetadata",
-                    "static": false,
-                    "visibility": "private",
-                    "signature": "imageMetadata(string $relative, string $mime): array",
-                    "doc": "An image's metadata as the reference makes it without plugins: its\nown description (Media\\PhotoMeta), a stand-in when it is big or taken\nturned (which becomes the attached file, the upload kept as\noriginal_image), and the sizes cut from the upload.",
-                    "shapes": [
-                        "@return array<string, mixed>"
-                    ],
-                    "params": [
-                        {
-                            "name": "relative",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "mime",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 183,
-                    "end": 199
+                    "line": 33,
+                    "end": 36
                 }
             ]
         },
@@ -89368,7 +88520,6 @@
                 "Minn\\Http\\Kernel",
                 "Minn\\Http\\Router",
                 "Minn\\Media\\Upload",
-                "Minn\\Media\\Uploads",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\Directory",
@@ -104886,6 +104037,7 @@
                 "Minn\\Rest\\PostsController",
                 "Minn\\Rest\\RuntimeEnvelope",
                 "Minn\\Rest\\RuntimePrepare",
+                "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
                 "Minn\\Runtime\\CommentEvents",
@@ -107090,6 +106242,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Types"
             ],
             "usedBy": [
@@ -107366,7 +106519,6 @@
                 "Minn\\Extension\\Loader",
                 "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Request",
-                "Minn\\Media\\Images",
                 "Minn\\Media\\Uploads",
                 "Minn\\Media\\Writer",
                 "Minn\\Ops\\Changelog",
@@ -107434,8 +106586,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 109,
-                "end": 115
+                "line": 108,
+                "end": 114
             },
             "cases": [],
             "constants": [
@@ -107518,8 +106670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 121
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -107538,8 +106690,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 136
+                    "line": 130,
+                    "end": 135
                 },
                 {
                     "routes": [],
@@ -107550,8 +106702,8 @@
                     "doc": "The record lookups the policy gate asks before it judges a caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 139,
-                    "end": 142
+                    "line": 138,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -107562,8 +106714,8 @@
                     "doc": "The database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 145,
-                    "end": 148
+                    "line": 144,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -107574,8 +106726,8 @@
                     "doc": "The request being answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 151,
-                    "end": 154
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -107586,8 +106738,8 @@
                     "doc": "The site root, no trailing slash.",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 160
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -107598,8 +106750,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 163,
-                    "end": 166
+                    "line": 162,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -107610,8 +106762,8 @@
                     "doc": "The users repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
-                    "end": 174
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -107622,8 +106774,8 @@
                     "doc": "The posts repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 177,
-                    "end": 180
+                    "line": 176,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -107634,8 +106786,8 @@
                     "doc": "The terms repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 183,
-                    "end": 186
+                    "line": 182,
+                    "end": 185
                 },
                 {
                     "routes": [],
@@ -107646,8 +106798,8 @@
                     "doc": "The comments repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 189,
-                    "end": 192
+                    "line": 188,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -107658,8 +106810,8 @@
                     "doc": "The site's options.",
                     "shapes": [],
                     "params": [],
-                    "line": 195,
-                    "end": 198
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -107670,8 +106822,8 @@
                     "doc": "The post writer.",
                     "shapes": [],
                     "params": [],
-                    "line": 201,
-                    "end": 204
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -107682,8 +106834,8 @@
                     "doc": "Revisions and autosaves.",
                     "shapes": [],
                     "params": [],
-                    "line": 207,
-                    "end": 210
+                    "line": 206,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -107694,8 +106846,8 @@
                     "doc": "The site editor's saved global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 213,
-                    "end": 216
+                    "line": 212,
+                    "end": 215
                 },
                 {
                     "routes": [],
@@ -107706,8 +106858,8 @@
                     "doc": "The active theme's global styles and variations.",
                     "shapes": [],
                     "params": [],
-                    "line": 219,
-                    "end": 222
+                    "line": 218,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -107718,8 +106870,8 @@
                     "doc": "Classic menus and their items.",
                     "shapes": [],
                     "params": [],
-                    "line": 225,
-                    "end": 228
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -107730,8 +106882,8 @@
                     "doc": "What wp-content holds: plugins, themes, drop-ins.",
                     "shapes": [],
                     "params": [],
-                    "line": 231,
-                    "end": 234
+                    "line": 230,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -107742,8 +106894,8 @@
                     "doc": "Link building from the permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 239,
-                    "end": 242
+                    "line": 238,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -107754,8 +106906,8 @@
                     "doc": "REST URL building.",
                     "shapes": [],
                     "params": [],
-                    "line": 245,
-                    "end": 248
+                    "line": 244,
+                    "end": 247
                 },
                 {
                     "routes": [],
@@ -107766,8 +106918,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 251,
-                    "end": 254
+                    "line": 250,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -107778,8 +106930,8 @@
                     "doc": "Who is making this call.",
                     "shapes": [],
                     "params": [],
-                    "line": 257,
-                    "end": 260
+                    "line": 256,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -107790,8 +106942,8 @@
                     "doc": "The session store.",
                     "shapes": [],
                     "params": [],
-                    "line": 263,
-                    "end": 266
+                    "line": 262,
+                    "end": 265
                 },
                 {
                     "routes": [],
@@ -107802,8 +106954,8 @@
                     "doc": "Application passwords for Basic auth.",
                     "shapes": [],
                     "params": [],
-                    "line": 269,
-                    "end": 272
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -107814,8 +106966,8 @@
                     "doc": "The extension loader.",
                     "shapes": [],
                     "params": [],
-                    "line": 277,
-                    "end": 280
+                    "line": 276,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -107826,8 +106978,8 @@
                     "doc": "The post types the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 283,
-                    "end": 286
+                    "line": 282,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -107838,8 +106990,8 @@
                     "doc": "The taxonomies the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 289,
-                    "end": 292
+                    "line": 288,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -107850,8 +107002,8 @@
                     "doc": "The uploads directory.",
                     "shapes": [],
                     "params": [],
-                    "line": 295,
-                    "end": 298
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -107862,8 +107014,8 @@
                     "doc": "Stores an upload as an attachment.",
                     "shapes": [],
                     "params": [],
-                    "line": 301,
-                    "end": 304
+                    "line": 300,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -107874,8 +107026,8 @@
                     "doc": "The JSON Schema validator, with the reference's filters passed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 307,
-                    "end": 314
+                    "line": 306,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -107886,8 +107038,8 @@
                     "doc": "The Minn Admin bundle on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 319,
-                    "end": 322
+                    "line": 318,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -107898,8 +107050,8 @@
                     "doc": "Installing and removing themes and extensions.",
                     "shapes": [],
                     "params": [],
-                    "line": 325,
-                    "end": 328
+                    "line": 324,
+                    "end": 327
                 },
                 {
                     "routes": [],
@@ -107910,8 +107062,8 @@
                     "doc": "The debug log reader.",
                     "shapes": [],
                     "params": [],
-                    "line": 331,
-                    "end": 334
+                    "line": 330,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -107922,8 +107074,8 @@
                     "doc": "Update checks and offers.",
                     "shapes": [],
                     "params": [],
-                    "line": 337,
-                    "end": 340
+                    "line": 336,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -107934,8 +107086,8 @@
                     "doc": "Locales and the app's catalogs.",
                     "shapes": [],
                     "params": [],
-                    "line": 343,
-                    "end": 346
+                    "line": 342,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -107946,8 +107098,8 @@
                     "doc": "The app's per-user appearance.",
                     "shapes": [],
                     "params": [],
-                    "line": 349,
-                    "end": 352
+                    "line": 348,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -107958,8 +107110,8 @@
                     "doc": "The app's per-user hidden views.",
                     "shapes": [],
                     "params": [],
-                    "line": 355,
-                    "end": 358
+                    "line": 354,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -107970,8 +107122,8 @@
                     "doc": "What happened lately.",
                     "shapes": [],
                     "params": [],
-                    "line": 361,
-                    "end": 364
+                    "line": 360,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -107982,8 +107134,8 @@
                     "doc": "The overview payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 367,
-                    "end": 370
+                    "line": 366,
+                    "end": 369
                 },
                 {
                     "routes": [],
@@ -107994,8 +107146,8 @@
                     "doc": "Minn's own releases, asked of GitHub once a day.",
                     "shapes": [],
                     "params": [],
-                    "line": 373,
-                    "end": 376
+                    "line": 372,
+                    "end": 375
                 },
                 {
                     "routes": [],
@@ -108006,8 +107158,8 @@
                     "doc": "Minn's changelog, read from its repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 379,
-                    "end": 382
+                    "line": 378,
+                    "end": 381
                 },
                 {
                     "routes": [],
@@ -108018,8 +107170,8 @@
                     "doc": "Minn Admin's changelog, read from its repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 385,
-                    "end": 388
+                    "line": 384,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -108030,8 +107182,8 @@
                     "doc": "Minn's version and the release on offer, behind the app's update banner.",
                     "shapes": [],
                     "params": [],
-                    "line": 391,
-                    "end": 394
+                    "line": 390,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -108042,8 +107194,8 @@
                     "doc": "The engine replacing itself with a release.",
                     "shapes": [],
                     "params": [],
-                    "line": 397,
-                    "end": 400
+                    "line": 396,
+                    "end": 399
                 },
                 {
                     "routes": [],
@@ -108054,8 +107206,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 403,
-                    "end": 406
+                    "line": 402,
+                    "end": 405
                 },
                 {
                     "routes": [],
@@ -108066,8 +107218,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 409,
-                    "end": 412
+                    "line": 408,
+                    "end": 411
                 },
                 {
                     "routes": [],
@@ -108078,8 +107230,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 417,
-                    "end": 424
+                    "line": 416,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -108090,8 +107242,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 427,
-                    "end": 431
+                    "line": 426,
+                    "end": 430
                 },
                 {
                     "routes": [],
@@ -108102,8 +107254,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 436,
-                    "end": 439
+                    "line": 435,
+                    "end": 438
                 },
                 {
                     "routes": [],
@@ -108114,8 +107266,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 442,
-                    "end": 445
+                    "line": 441,
+                    "end": 444
                 },
                 {
                     "routes": [],
@@ -108126,8 +107278,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 448,
-                    "end": 451
+                    "line": 447,
+                    "end": 450
                 },
                 {
                     "routes": [],
@@ -108138,8 +107290,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 454,
-                    "end": 457
+                    "line": 453,
+                    "end": 456
                 },
                 {
                     "routes": [],
@@ -108150,8 +107302,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 460,
-                    "end": 463
+                    "line": 459,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -108179,8 +107331,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 471,
-                    "end": 475
+                    "line": 470,
+                    "end": 474
                 }
             ]
         },
@@ -126381,7 +125533,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostEvents.php",
-            "lines": 193,
+            "lines": 181,
             "doc": "What the reference's REST controllers tell plugins about a post they\nwrite, for the engine's own controllers: the same actions in the same\norder with the same arguments, fired through the facade's lifecycle\nfunctions so the facade's own writes say the same (contracts/runtime.md\n\"Writes tell plugins\"). Without a booted runtime every method does\nnothing, so a write with no plugins loaded is exactly what it was.",
             "implements": [],
             "extends": null,
@@ -126390,7 +125542,6 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Http\\Request",
                 "Minn\\Media\\Uploads",
-                "Minn\\Media\\Writer",
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Rest\\RegisteredType",
                 "Minn\\Rest\\RestMeta",
@@ -126425,8 +125576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -126437,8 +125588,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 40,
-                    "end": 43
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -126466,8 +125617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 51
+                    "line": 45,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -126493,8 +125644,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 59
+                    "line": 53,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -126520,8 +125671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 73
+                    "line": 65,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -126563,8 +125714,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 92
+                    "line": 81,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -126606,42 +125757,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 111
-                },
-                {
-                    "routes": [],
-                    "name": "attachedFile",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "attachedFile(Minn\\Media\\Writer $library, int $id, string $relative): void",
-                    "doc": "The file a new attachment holds: through add_post_meta with plugins loaded, written directly without.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "library",
-                            "type": "Minn\\Media\\Writer",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "relative",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 114,
-                    "end": 117
+                    "line": 100,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -126660,8 +125777,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 126
+                    "line": 113,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -126687,8 +125804,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 138
+                    "line": 122,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -126721,42 +125838,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 154
-                },
-                {
-                    "routes": [],
-                    "name": "altText",
-                    "static": false,
-                    "visibility": "public",
-                    "signature": "altText(Minn\\Media\\Writer $library, int $id, string $alt): void",
-                    "doc": "An attachment's alt text: through update_post_meta with plugins loaded, written directly without.",
-                    "shapes": [],
-                    "params": [
-                        {
-                            "name": "library",
-                            "type": "Minn\\Media\\Writer",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "id",
-                            "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "alt",
-                            "type": "string",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        }
-                    ],
-                    "line": 157,
-                    "end": 160
+                    "line": 141,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -126789,8 +125872,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 166
+                    "line": 150,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -126823,8 +125906,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 156,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -126850,8 +125933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 180
+                    "line": 162,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -126886,8 +125969,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 188
+                    "line": 170,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -126927,8 +126010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 210
+                    "line": 178,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -126947,8 +126030,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 213,
-                    "end": 216
+                    "line": 200,
+                    "end": 203
                 }
             ]
         },
@@ -132658,7 +131741,6 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Mail\\Mailer",
                 "Minn\\Media\\Icons",
-                "Minn\\Media\\Images",
                 "Minn\\Ops\\UpgraderRun",
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\BatchController",
@@ -142951,7 +142033,6 @@
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
                 "Minn\\Content\\Users",
-                "Minn\\Media\\Writer",
                 "Minn\\Rest\\MenusController",
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\RevisionsController",
@@ -147339,7 +146420,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/ClassicRenderer.php",
-            "lines": 131,
+            "lines": 125,
             "doc": "A whole page from the active classic theme: the reference's PHP template\nloader. The main query stands, template_redirect fires, the hierarchy\npicks a PHP file, template_include filters it, and load_template() runs\nit as the response body. The theme prints its own document; the engine\ncontributes the reference's wp_head defaults (title tag, robots, feed\nlinks, REST and oEmbed discovery, canonical, site icon) as hooks the\ntheme's wp_head() call fires.",
             "implements": [],
             "extends": null,
@@ -147362,6 +146443,7 @@
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
+                "Minn\\Theme\\TemplateBuffer",
                 "Minn\\Theme\\Theme"
             ],
             "usedBy": [
@@ -147575,7 +146657,7 @@
                         }
                     ],
                     "line": 50,
-                    "end": 82
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -147603,8 +146685,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -147615,8 +146697,8 @@
                     "doc": "The reference's loader order: the first true conditional whose template exists wins, index.php last.",
                     "shapes": [],
                     "params": [],
-                    "line": 85,
-                    "end": 115
+                    "line": 79,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -147642,8 +146724,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 138
+                    "line": 118,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -147654,8 +146736,8 @@
                     "doc": "The piece only the renderer holds: the engine stylesheets. The head defaults registered at setup_theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 141,
-                    "end": 144
+                    "line": 135,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -147666,8 +146748,8 @@
                     "doc": "The engine's block stylesheet, and the theme.json presets when the theme ships one, where the reference prints its block-library and global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 147,
-                    "end": 157
+                    "line": 141,
+                    "end": 151
                 }
             ]
         },
@@ -150068,7 +149150,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/PageRenderer.php",
-            "lines": 178,
+            "lines": 180,
             "doc": "A whole page from the active block theme: the template the resolution\nmaps to, rendered against the main query, inside the document shell the\nreference emits (skip link, wp-site-blocks, the skip-link target on the\nfirst main element).",
             "implements": [],
             "extends": null,
@@ -150079,6 +149161,7 @@
                 "Minn\\Blocks\\RenderState",
                 "Minn\\Blocks\\Renderer",
                 "Minn\\Content\\Blocks",
+                "Minn\\Content\\Page",
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Reader",
                 "Minn\\Content\\Site",
@@ -150095,6 +149178,7 @@
                 "Minn\\Theme\\GlobalStyles",
                 "Minn\\Theme\\HeadLinks",
                 "Minn\\Theme\\MainQueryBridge",
+                "Minn\\Theme\\TemplateBuffer",
                 "Minn\\Theme\\Templates",
                 "Minn\\Theme\\Theme"
             ],
@@ -150158,8 +149242,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 44
+                "line": 36,
+                "end": 45
             },
             "cases": [],
             "constants": [],
@@ -150274,8 +149358,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 56
+                    "line": 48,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -150303,8 +149387,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 72
+                    "line": 68,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -150332,8 +149416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 109
+                    "line": 76,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -150359,20 +149443,51 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 152
+                    "line": 113,
+                    "end": 133
                 },
                 {
                     "routes": [],
-                    "name": "pluginTemplate",
+                    "name": "document",
                     "static": false,
                     "visibility": "private",
-                    "signature": "pluginTemplate(): ?string",
-                    "doc": "The reference filters template_include under block themes too (the\ncanvas is the incoming value); a plugin swapping in its own PHP file\ntakes the whole response over, the CaptainCore Manager shape.",
-                    "shapes": [],
-                    "params": [],
-                    "line": 159,
-                    "end": 169
+                    "signature": "document(Minn\\Front\\Resolution $resolution, array $coreClasses, array $template, Minn\\Content\\Page $query): string",
+                    "doc": "The block template's document: the blocks rendered, the head, the body\nclasses, the footer.",
+                    "shapes": [
+                        "@param array<string, mixed> $template"
+                    ],
+                    "params": [
+                        {
+                            "name": "resolution",
+                            "type": "Minn\\Front\\Resolution",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "coreClasses",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "template",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "query",
+                            "type": "Minn\\Content\\Page",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 141,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -150393,8 +149508,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 177,
-                    "end": 183
+                    "line": 180,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -150434,8 +149549,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 209
+                    "line": 194,
+                    "end": 212
                 }
             ]
         },
@@ -151463,6 +150578,59 @@
                     ],
                     "line": 81,
                     "end": 93
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Theme\\TemplateBuffer",
+            "short": "TemplateBuffer",
+            "namespace": "Minn\\Theme",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Theme/TemplateBuffer.php",
+            "lines": 31,
+            "doc": "The reference includes a front-end template inside the template-enhancement\nbuffer: wp_before_include_template fires with the template's file, its\ndefault callback opens the buffer when a plugin filters\nwp_template_enhancement_output_buffer, and that filter is handed the whole\npage. The engine builds the page as a string, so the string is passed\nthrough the same buffer: every buffer the action opened is closed in turn,\nits handler writing into the capture the page is read from.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http\\Response"
+            ],
+            "usedBy": [
+                "Minn\\Theme\\ClassicRenderer",
+                "Minn\\Theme\\PageRenderer"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "around",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "around(string $template, callable $render): ?string",
+                    "doc": "The page a render gives, as the buffers opened before it leave it; null\nwhen the render gives none. A render that fails leaves nothing behind.",
+                    "shapes": [
+                        "@param callable(): ?string $render"
+                    ],
+                    "params": [
+                        {
+                            "name": "template",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "render",
+                            "type": "callable",
+                            "shape": "callable(): ?string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 26,
+                    "end": 47
                 }
             ]
         },

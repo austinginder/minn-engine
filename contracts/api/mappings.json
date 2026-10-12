@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 802,
-        "composes": 2378,
+        "composes": 2380,
         "leaf": 1042,
         "noop": 2758,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8674,
+        "functions": 8676,
         "minnMethods": 1000,
         "leafLinesOver15": 12
     },
@@ -38092,12 +38092,34 @@
             "minn": [],
             "composes": []
         },
+        "_minn_rest_search_handlers": {
+            "file": "rest-api.php",
+            "lines": 5,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "apply_filters"
+            ]
+        },
         "_minn_rest_search_subtypes": {
             "file": "rest-api.php",
             "lines": 2,
             "kind": "leaf",
             "minn": [],
             "composes": []
+        },
+        "_minn_rest_search_through_handlers": {
+            "file": "rest-api.php",
+            "lines": 10,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "_minn_rest_search_handlers",
+                "is_wp_error",
+                "rest_ensure_response",
+                "rest_filter_response_fields",
+                "rest_get_server"
+            ]
         },
         "_minn_revision_differs": {
             "file": "post.php",
@@ -44320,11 +44342,13 @@
         },
         "create_initial_rest_routes": {
             "file": "rest-api.php",
-            "lines": 11,
+            "lines": 13,
             "kind": "composes",
             "minn": [],
             "composes": [
                 "__",
+                "_minn_rest_search_handlers",
+                "apply_filters",
                 "register_rest_route"
             ]
         },

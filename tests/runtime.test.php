@@ -55,6 +55,13 @@ $check('plugin code cannot rewrite the symbol-gate cache', update_option('minn_r
 $check('plugin code cannot add, update, or delete the engine-owned options', add_option('minn_cron_lock', '1') === false && update_option('minn_recovery_strikes', []) === false && delete_option('minn_login_throttle_x') === false && delete_option('minn_runtime_symbols') === false && get_option('minn_runtime_symbols') === $symbols);
 
 [, $feed] = minn_test_fetch($base . '/feed/');
+// The template-enhancement buffer: a plugin filtering it is handed the whole page, after the action before the template.
+$enhanced = static function (string $html): ?string {
+    return preg_match('/<!-- minn-test-enhance (.*?) -->/', $html, $m) === 1 ? $m[1] : null;
+};
+[, $engineEnhanced] = minn_test_fetch($base . '/hello-world/?minn-test-enhance=1');
+[, $referenceEnhanced] = minn_test_fetch(minn_test_reference_url() . '/hello-world/?minn-test-enhance=1');
+$check('the template-enhancement buffer hands a plugin the whole page, as the reference\'s does', $enhanced($engineEnhanced) !== null && $enhanced($engineEnhanced) === $enhanced($referenceEnhanced), var_export([$enhanced($engineEnhanced), $enhanced($referenceEnhanced)], true));
 $check('feed content runs the_content', str_contains($feed, 'minn-test-plugin-content'));
 
 // The plugin's REST routes: engine and reference answer from the same code on the same database.
@@ -73,7 +80,7 @@ $check('a string cut mid-character still answers, the bad byte as "?"', ($h['sta
 $indexData = json_decode($index, true);
 $check('index lists the plugin namespace and route', in_array('minn-test/v1', $indexData['namespaces'] ?? [], true) && isset($indexData['routes']['/minn-test/v1/echo']), substr($index, 0, 120));
 if ($referenceUp) {
-    foreach (['/minn-test/v1/echo?word=hi&n=2', '/minn-test/v1/echo', '/minn-test/v1/echo?word=hi&n=9', '/minn-test/v1/items/1', '/minn-test/v1/items/999999', '/minn-test/v1/nope', '/minn-test/v1'] as $path) {
+    foreach (['/minn-test/v1/echo?word=hi&n=2', '/minn-test/v1/echo', '/minn-test/v1/echo?word=hi&n=9', '/minn-test/v1/items/1', '/minn-test/v1/items/999999', '/minn-test/v1/nope', '/minn-test/v1', '/wp/v2/search?type=minn-test', '/wp/v2/search?type=minn-test&subtype=odd&per_page=2&page=2', '/wp/v2/search?type=minn-test&search=item+3&_fields=id,title', '/wp/v2/search?type=nope'] as $path) {
         [$eh, $eb] = minn_test_fetch($base . '/wp-json' . $path);
         [$rh, $rb] = minn_test_fetch($reference . '/?rest_route=' . rawurlencode(strtok($path, '?')) . (str_contains($path, '?') ? '&' . substr($path, strpos($path, '?') + 1) : ''));
         // Hosts are masked after decoding: escaped slashes in the raw JSON would hide them from a string replace.

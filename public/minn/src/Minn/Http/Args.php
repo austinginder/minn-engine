@@ -152,8 +152,9 @@ final class Args
         'page' => ['description' => 'Current page of the collection.', 'type' => 'integer', 'default' => 1, 'minimum' => 1, 'required' => false],
         'per_page' => ['description' => 'Maximum number of items to be returned in result set.', 'type' => 'integer', 'default' => 10, 'minimum' => 1, 'maximum' => 100, 'required' => false],
         'search' => ['description' => 'Limit results to those matching a string.', 'type' => 'string', 'required' => false],
-        'type' => ['default' => 'post', 'description' => 'Limit results to items of an object type.', 'type' => 'string', 'enum' => ['post', 'term', 'post-format'], 'required' => false],
-        'subtype' => ['default' => 'any', 'description' => 'Limit results to items of one or more object subtypes.', 'type' => 'array', 'items' => ['enum' => ['post', 'page', 'category', 'post_tag', 'any'], 'type' => 'string'], 'required' => false],
+        // The type and its subtypes are the search handlers' (plugins may add some), so the handler judges both.
+        'type' => ['default' => 'post', 'description' => 'Limit results to items of an object type.', 'type' => 'string', 'enum' => ['post', 'term', 'post-format'], 'required' => false, self::HANDLER_VALIDATES => true],
+        'subtype' => ['default' => 'any', 'description' => 'Limit results to items of one or more object subtypes.', 'type' => 'array', 'items' => ['enum' => ['post', 'page', 'category', 'post_tag', 'any'], 'type' => 'string'], 'required' => false, self::HANDLER_VALIDATES => true],
     ];
 
     /**

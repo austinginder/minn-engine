@@ -8,16 +8,14 @@ uploads, image sizes and attachment metadata
 | [`Canvas`](#canvas) | final readonly class | 168 | One GD bitmap and the operations the media layer needs on it. Every |
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
-| [`Images`](#images) | final readonly class | 163 | GD sub-size generation for the sizes the site has. |
 | [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 145 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
-| [`PreparedUpload`](#preparedupload) | final readonly class | 13 | An upload made ready for its attachment: the file stored, its sizes cut, |
 | [`Sizing`](#sizing) | final class | 239 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 120 | One file arriving for the library, on either transport: a multipart |
-| [`Uploads`](#uploads) | final readonly class | 179 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
+| [`Uploads`](#uploads) | final readonly class | 135 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
-| [`Writer`](#writer) | final readonly class | 181 | The writes the media library makes. An Upload becomes an attachment: the |
+| [`Writer`](#writer) | final readonly class | 24 | Where the media library's files live, as a REST upload names them: a |
 
 ## AvifInfo
 
@@ -49,8 +47,6 @@ Internals: `isAvif()` (private, line 63), `primaryItem()` (private, line 76), `a
 One GD bitmap and the operations the media layer needs on it. Every
 operation returns a new canvas; alpha is preserved throughout, which is
 what makes PNG and WebP sub-sizes match the reference's.
-
-Used by: `Minn\Media\Images`
 
 - readonly `int $width`
 - readonly `int $height`
@@ -160,55 +156,6 @@ The icon's address for a type or an attachment id.
 Internals: `map()` (private, line 52), `files()` (private, line 71)
 
 
-## Images
-
-`final readonly class Minn\Media\Images` · `public/minn/src/Minn/Media/Images.php`
-
-GD sub-size generation for the sizes the site has.
-
-- const `BIG` = `2560` — Past this width or height an upload is scaled down to it, as the reference's big_image_size_threshold default.
-- const `SIZED` = `array (   0 => 'image/png',   1 => 'image/jpeg',   2 => 'image/gif',   3 => 'image/webp', )`
-
-Used by: `Minn\Media\Writer`, `Minn\Rest\Services`
-
-```php
-__construct(Minn\Content\Site $site)
-```
-
-
-### `ladder(): array`
-
-The sizes an upload is cut into, in the order the reference writes
-them to the metadata: the four from the site's options, then the ones
-registered with add_image_size this request, the two big ones every
-site has first (without plugins, just those two).
-
-- `@return array<string, array{0: int, 1: int, 2: bool}> name => [max width, max height, crop]`
-
-### static `constrain(int $width, int $height, int $maxWidth, int $maxHeight): array`
-
-Fits (w, h) inside (maxW, maxH); 0 means unconstrained. One rule with the facade's wp_constrain_dimensions.
-
-### `standIn(string $path, string $mime, int $orientation): ?array`
-
-The upload's stand-in, as the reference saves one (probe
-image-pipeline): one past BIG scaled to fit it and saved "-scaled",
-one a JPEG's EXIF says was taken turned saved upright "-rotated"
-(both when both). Null when the upload is kept as it is.
-
-- `@return array{path: string, width: int, height: int, filesize: int, rotated: bool}|null`
-
-### `makeSubsizes(string $path, string $mime, array $imageMeta = array ( ), int $orientation = 1): array`
-
-Generates the sub-sizes for one image, cut from the upload turned
-upright when a JPEG's EXIF says so; returns the sizes metadata map.
-The image's metadata so far rides along for the size filter.
-
-- `@param array<string, mixed> $imageMeta`
-
-Internals: `filtered()` (private, line 50), `upright()` (private, line 104), `quality()` (private, line 121)
-
-
 ## Kind
 
 `final class Minn\Media\Kind` · `public/minn/src/Minn/Media/Kind.php`
@@ -246,7 +193,7 @@ image_meta as a:13 with alt last.
 
 - const `IMAGE_META_KEYS` = `array (   0 => 'aperture',   1 => 'credit',   2 => 'camera',   3 => 'caption',   4 => 'created_timestamp',   5 => 'copyright',   6 => 'focal_length',   7 => 'iso',   8 => 'shutter_speed',   9 => 'title',   10 => 'orientation', )`
 
-Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\PhotoMeta`, `Minn\Media\Writer`
+Used by: `Minn\Admin\SiteController`, `Minn\Blocks\ImageTags`, `Minn\Content\SiteIcon`, `Minn\Media\PhotoMeta`
 
 ### static `namesFile(string $location, array $meta): bool`
 
@@ -289,8 +236,6 @@ string; a short caption doubles as the title.
 
 - const `EXIF_TYPES` = `array (   0 => 2,   1 => 7,   2 => 8, )` — EXIF is read for these image types only: JPEG and TIFF, both byte orders.
 
-Used by: `Minn\Media\Writer`
-
 ### static `read(string $file, array $exifTypes, Closure $clean): ?array`
 
 The metadata, the image type, the IPTC and EXIF it came from; null
@@ -303,27 +248,6 @@ when there is no such file.
 Internals: `fromIptc()` (private, line 62), `fromExif()` (private, line 91), `described()` (private, line 134), `fraction()` (private, line 151), `exifTime()` (private, line 162), `cleaned()` (private, line 176)
 
 
-## PreparedUpload
-
-`final readonly class Minn\Media\PreparedUpload` · `public/minn/src/Minn/Media/PreparedUpload.php`
-
-An upload made ready for its attachment: the file stored, its sizes cut,
-the row it will be. The row is written apart, so what plugins hear
-before it (pre_post_insert) comes between.
-
-Used by: `Minn\Media\Writer`
-
-```php
-__construct(array $columns, string $relative, ?array $metadata)
-```
-- `@param array<string, mixed> $columns the attachment's row`
-- `@param array<string, mixed>|null $metadata the image metadata, null for a file that is not an image`
-
-- readonly `array $columns`
-- readonly `string $relative`
-- readonly `?array $metadata`
-
-
 ## Sizing
 
 `final class Minn\Media\Sizing` · `public/minn/src/Minn/Media/Sizing.php`
@@ -331,8 +255,6 @@ __construct(array $columns, string $relative, ?array $metadata)
 The image size arithmetic the media functions share: the crop or scale a
 resize needs, the registered size a requested box picks, and the srcset
 candidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.
-
-Used by: `Minn\Media\Images`
 
 ### static `constrain(int $width, int $height, int $maxWidth, int $maxHeight): array`
 
@@ -404,7 +326,7 @@ field named "file" (a temporary upload to move) or a raw body whose
 Content-Disposition names the file. The parent is read from the same
 request, wherever the client put it.
 
-Used by: `Minn\Media\Writer`, `Minn\Rest\MediaController`
+Used by: `Minn\Rest\MediaController`
 
 ```php
 __construct(string $filename, ?string $movedFrom, ?string $raw, int $parent = 0)
@@ -474,7 +396,7 @@ The uploads directory: paths, URLs, the allowed types, and landing a file.
 Used by: `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Media\Upload`, `Minn\Media\Writer`, `Minn\Rest\MediaObject`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`
 
 ```php
-__construct(Minn\Content\Site $site, Minn\Front\Permalinks $permalinks, string $baseDir)
+__construct(Minn\Front\Permalinks $permalinks, string $baseDir)
 ```
 
 
@@ -501,18 +423,9 @@ base and the last extension that is not itself an allowed extension
 is joined with an underscore, so "shell.php.png" lands as
 "shell_php.png" and no handler can be talked into running it.
 
-### `store(string $filename, ?string $movedFrom, ?string $raw): string`
-
-Lands content in the dated directory under a unique name and returns
-the relative path ("2026/08/name.png").
-
 ### `relativeOf(string $absolutePath): ?string`
 
 A stored file's path relative to the uploads folder, or null for a file outside it.
-
-### `remove(string $relativePath, array $sizes): void`
-
-Removes the original and every generated size; a size name that leaves the file's own folder is ignored.
 
 ### static `attachmentFiles(string $file, array $meta, ?array $backupSizes): array`
 
@@ -553,39 +466,18 @@ The width, height and kind a file's first bytes declare. @return array{width: in
 
 `final readonly class Minn\Media\Writer` · `public/minn/src/Minn/Media/Writer.php`
 
-The writes the media library makes. An Upload becomes an attachment: the
-file lands in the dated uploads directory under a unique name, the row is
-inserted with the stored name as its title and slug, and an image gets
-its sub-sizes and the serialized metadata blob. Edits stamp the row
-modified; removal takes the files with the row.
+Where the media library's files live, as a REST upload names them: a
+stored file's address, its path on disk, and its path relative to the
+uploads folder. The attachment itself is written through the runtime
+(wp_handle_upload, wp_insert_attachment, wp_generate_attachment_metadata),
+as the reference writes it.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`, `Minn\Runtime\PostEvents`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\Services`
 
 ```php
-__construct(Minn\Content\PostWriter $posts, Minn\Content\Posts $reads, Minn\Content\Site $site, Minn\Media\Uploads $uploads, Minn\Media\Images $images)
+__construct(Minn\Media\Uploads $uploads)
 ```
 
-
-### `attach(Minn\Media\Upload $upload, int $authorId): int`
-
-The new attachment's id. The mime is the caller's to check first.
-
-### `prepare(Minn\Media\Upload $upload, int $authorId): Minn\Media\PreparedUpload`
-
-Stores the file and cuts its sizes, before the row exists: a decode
-that fails leaves files to sweep, never a headless attachment.
-
-### `prepareStored(string $relative, string $mime, int $parent, int $authorId): Minn\Media\PreparedUpload`
-
-The attachment for a file already in the uploads folder (one the
-runtime's wp_handle_upload stored, plugins' filters and all): its row
-and, for an image the engine sizes, its metadata.
-
-### `prepareRow(string $relative, string $mime, int $parent, int $authorId): Minn\Media\PreparedUpload`
-
-The attachment's row alone, its sizes left to be cut once it exists:
-with plugins loaded, the runtime's wp_generate_attachment_metadata
-cuts them after the insert, as the reference does.
 
 ### `urlOf(string $relative): string`
 
@@ -598,38 +490,4 @@ A stored file's path on disk.
 ### `relativeOf(string $absolutePath): ?string`
 
 A stored file's path relative to the uploads folder, or null for one outside it.
-
-### `insert(Minn\Media\PreparedUpload $prepared): int`
-
-Writes a prepared attachment's row; returns its id.
-
-### `setAttachedFile(int $id, string $relative): void`
-
-Records the file an attachment holds, relative to the uploads folder.
-
-### `setMetadata(int $id, array $metadata): void`
-
-Stores an attachment's metadata in the reference's serialized shape. @param array<string, mixed> $metadata
-
-- `@param array<string, mixed> $metadata`
-
-### `edit(int $id, array $columns): void`
-
-Sets the given columns on an attachment and stamps it modified; nothing happens for none.
-
-### `stamp(int $id, array $columns): void`
-
-Sets the given columns, none included, and stamps the attachment modified, as the reference's update always does. @param array<string, mixed> $columns
-
-- `@param array<string, mixed> $columns`
-
-### `setAlt(int $id, string $alt): void`
-
-Sets an attachment's alt text.
-
-### `remove(Minn\Content\PostRecord $attachment): void`
-
-Removes an attachment: its files, every generated size, its meta, and its row.
-
-Internals: `imageMetadata()` (private, line 183)
 
