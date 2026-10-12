@@ -80,7 +80,10 @@ foreach ($files as $path) {
 // calls made from the facade (the work belongs in src/Minn/), and functions
 // whose body runs past forty lines (a decision hiding in a signature).
 // Lower a number here when a file loses its last offender; never raise one.
-$facadeQueries = [];
+// Query calls a facade file still makes, through the engine's Db or through
+// $wpdb (the facade's own wpdb answers on the same database, so a query there
+// is SQL in the facade all the same). Only falls: move the work into src/Minn/.
+$facadeQueries = ['canonical.php' => 1, 'comment.php' => 5, 'pluggable.php' => 1, 'post.php' => 5, 'query.php' => 3, 'upgrade.php' => 4, 'user.php' => 2];
 $facadeLong = [];
 $facadeDir = dirname($root) . '/wp-api';
 // Functions and methods, by brace matching: a method's body ends at the brace that closes it.
@@ -138,7 +141,7 @@ foreach ([...glob("{$facadeDir}/*.php"), ...glob("{$facadeDir}/classes/*.php"), 
         continue;
     }
     $src = (string) file_get_contents($file);
-    $queries = preg_match_all('/(?:\$db|Runtime::current\(\)->db|->db)->(rows|row|value|execute)\(/', $src);
+    $queries = preg_match_all('/(?:(?:\$db|Runtime::current\(\)->db|->db)->(?:rows|row|value|execute)|\$wpdb->(?:get_var|get_results|get_row|get_col|query|insert|update|delete|replace))\(/', $src);
     $check("facade {$name}: queries stay at or under " . ($facadeQueries[$name] ?? 0), $queries <= ($facadeQueries[$name] ?? 0), "{$queries} query calls; move the work into src/Minn/");
     foreach ($facadeBodies($src) as [$fn, $lines]) {
         if ($lines > 40 && !in_array($fn, $facadeLong, true)) {
