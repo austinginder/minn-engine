@@ -109,27 +109,6 @@ final readonly class PostEvents
         }
     }
 
-    /** add_attachment, once a new attachment's row and file are in. */
-    public function attachmentAdded(int $id): void
-    {
-        if ($this->live()) {
-            \clean_post_cache($id);
-            \do_action('add_attachment', $id);
-        }
-    }
-
-    /** edit_attachment and attachment_updated, after an attachment's row changed. */
-    public function attachmentEdited(int $id, PostRecord $before): void
-    {
-        if (!$this->live()) {
-            return;
-        }
-        $was = self::wpPost($before);
-        \clean_post_cache($was);
-        \do_action('edit_attachment', $id);
-        \do_action('attachment_updated', $id, \get_post($id), $was);
-    }
-
     /**
      * A new attachment's metadata made by the runtime, as the reference's
      * REST upload makes it: wp_generate_attachment_metadata over the stored

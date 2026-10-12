@@ -9,12 +9,11 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Blocks`](#blocks) | final class | 46 | The content pipeline's front door: block markup goes through the block |
 | [`Clickable`](#clickable) | final class | 64 | Bare addresses in text made links (make_clickable, probe |
 | [`CommentClasses`](#commentclasses) | final class | 26 | The class tokens a rendered comment carries: its type, its author, odd/even and thread alternation, depth, then the caller's extras. |
-| [`CommentModeration`](#commentmoderation) | final readonly class | 43 | Whether a comment may be stored and in what state: the duplicate and |
 | [`CommentRecord`](#commentrecord) | final readonly class | 114 | One row of the comments table, read by name: $comment->author, ->content, |
-| [`Comments`](#comments) | final readonly class | 268 | Reads and writes over the comments table. |
+| [`Comments`](#comments) | final readonly class | 245 | Reads and writes over the comments table. |
 | [`ContentScan`](#contentscan) | final class | 196 | What a site's stored content asks of the engine: shortcodes, block |
 | [`Emoji`](#emoji) | final class | 68 | Emoji as the reference's mail and feeds carry them, from the list the |
-| [`Excerpt`](#excerpt) | final class | 101 | The reference's generated excerpt, as captured from probe posts: |
+| [`Excerpt`](#excerpt) | final class | 90 | The reference's generated excerpt, as captured from probe posts: |
 | [`Inventory`](#inventory) | final readonly class | 253 | Plugins, themes, must-use plugins, and drop-ins as they sit on disk. |
 | [`Links`](#links) | final readonly class | 102 | The links manager's table, as get_bookmarks and wp_insert_link read and |
 | [`MediaShortcodes`](#mediashortcodes) | final class | 187 | The [video] and [audio] shortcodes as the reference prints them: a |
@@ -23,7 +22,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`MoreTag`](#moretag) | final class | 20 | The `<!--more-->` marker that splits a post into the part a listing shows |
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
 | [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
-| [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
+| [`Page`](#page) | final readonly class | 43 | One page of a listing: the rows on it and how many rows the whole |
 | [`PasswordGate`](#passwordgate) | final class | 44 | A password-protected post on the front end: its body is the password |
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
 | [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
@@ -34,7 +33,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`PostStatus`](#poststatus) | enum | 42 | The statuses a post row can hold; the value is the column's own spelling. |
 | [`PostWriter`](#postwriter) | final readonly class | 497 | Every write to the posts table and its satellites: rows, meta, term |
 | [`Posts`](#posts) | final readonly class | 536 | Reads over the posts table. A post comes back as a PostRecord; a listing |
-| [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
+| [`Reader`](#reader) | final class | 65 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
 | [`RowCache`](#rowcache) | final class | 100 | Rows read once a request: posts, their terms, users, and every object's |
 | [`Site`](#site) | final readonly class | 102 | Site-wide options and the site's clock. |
@@ -47,7 +46,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
 | [`Texturize`](#texturize) | final class | 182 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
-| [`Users`](#users) | final readonly class | 292 |  |
+| [`Users`](#users) | final readonly class | 286 |  |
 
 ## AdjacentScope
 
@@ -190,32 +189,6 @@ The class list a comment's list item carries, in the reference's order.
 - `@return list<string>`
 
 
-## CommentModeration
-
-`final readonly class Minn\Content\CommentModeration` · `public/minn/src/Minn/Content/CommentModeration.php`
-
-Whether a comment may be stored and in what state: the duplicate and
-flood refusals first, then the site's moderation settings, with a
-moderator's own comment always approved.
-
-- const `FLOOD_SECONDS` = `15`
-
-```php
-__construct(Minn\Content\Comments $comments)
-```
-
-
-### `refusal(array $data, bool $moderator): ?string`
-
-"comment_duplicate", "comment_flood", or null when the comment may proceed.
-
-### `approval(bool $moderator, string $author, string $email, Closure $option): string`
-
-"1" approved or "0" held, from the settings the reader supplies.
-
-- `@param Closure(string): ?string $option`
-
-
 ## CommentRecord
 
 `final readonly class Minn\Content\CommentRecord` · `public/minn/src/Minn/Content/CommentRecord.php` · implements `ArrayAccess`
@@ -300,7 +273,7 @@ Reads and writes over the comments table.
 - const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
 - const `FIELD_LENGTHS` = `array (   'comment_author' => 245,   'comment_author_email' => 100,   'comment_author_url' => 200,   'comment_content' => 65525, )` — The comment form fields whose length the table limits, with the length a stock table gives each.
 
-Used by: `Minn\Content\CommentModeration`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentEvents`
+Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentEvents`
 
 ```php
 __construct(Minn\Db $db)
@@ -332,14 +305,6 @@ The id of a comment this one would repeat (same post, same author, same words, n
 When the commenter last commented since the GMT time given, as a Unix
 time: matched by user id when signed in, else by address, or by email
 either way. Null when they have not.
-
-### `hasApprovedByEmail(string $email): bool`
-
-Whether this author email has any approved comment, the previously-approved gate check_comment applies.
-
-### `flooding(string $email, string $address, int $seconds): bool`
-
-Whether this author, by email or by address, commented within the last so many seconds: the flood check.
 
 ### `pendingCounts(array $postIds): array`
 
@@ -541,13 +506,7 @@ The more tag ends a listing's excerpt but not a feed's, and a feed
 texturizes before the tags go (so inline code keeps straight quotes)
 where a listing texturizes the finished text.
 
-### static `forFeed(Minn\Content\PostRecord $post): string`
-
-The excerpt as a feed carries it: the whole content counts (no stop at
-the more tag), texturize runs before the tags are stripped, and the
-paragraph is not texturized again.
-
-Internals: `source()` (private, line 62), `words()` (private, line 73), `recordRendered()` (private, line 96), `allowedMarkup()` (private, line 106)
+Internals: `source()` (private, line 51), `words()` (private, line 62), `recordRendered()` (private, line 85), `allowedMarkup()` (private, line 95)
 
 
 ## Inventory
@@ -934,10 +893,6 @@ The ids of the rows on this page.
 
 How many pages the whole listing makes at this page size.
 
-### `withPosts(array $posts): self`
-
-The same page with other rows on it and the same total behind it.
-
 
 ## PasswordGate
 
@@ -1235,7 +1190,7 @@ The statuses a post row can hold; the value is the column's own spelling.
 
 Cases: `Publish` = `'publish'`, `Draft` = `'draft'`, `Pending` = `'pending'`, `Private` = `'private'`, `Future` = `'future'`, `Trash` = `'trash'`, `Inherit` = `'inherit'`, `AutoDraft` = `'auto-draft'`
 
-Used by: `Minn\Content\PostRecord`, `Minn\Content\Reader`, `Minn\Rest\PostsWriteController`
+Used by: `Minn\Content\PostRecord`, `Minn\Rest\PostsWriteController`
 
 ### static `of(Minn\Content\PostRecord|array $row): ?self`
 
@@ -1683,12 +1638,6 @@ Whether the reader has a session.
 ### `canEdit(int $postId): bool`
 
 Whether this reader may edit a given post.
-
-### `listableStatuses(string $type = 'post'): array`
-
-The statuses a listing may show this reader: published, plus private when they may read it. @return list<string>
-
-- `@return list<string>`
 
 
 ## Revisions
@@ -2386,10 +2335,6 @@ Removes the user and their meta; their posts are reassigned or removed first by 
 User ids in login order, optionally the first N. @return list<int>
 
 - `@return list<int>`
-
-### `deleteAllMeta(int $userId): void`
-
-Removes every meta row of a user.
 
 ### `setPassword(int $userId, string $hash): void`
 

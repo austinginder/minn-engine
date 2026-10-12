@@ -45,7 +45,7 @@ final readonly class RegisteredPostFields
             'slug' => $p->slug,
             'status' => $p->status,
             'type' => $p->type,
-            'link' => $this->permalinks->forPost($p),
+            'link' => $this->permalinks->link($p),
             'title' => $type->supports('title') ? ['rendered' => RenderedFields::title($p)] : null,
             'content' => $type->supports('editor') ? ['rendered' => $protected ? '' : RenderedFields::content($p), 'protected' => $protected] : null,
             'excerpt' => $type->supports('excerpt') ? ['rendered' => $protected ? '' : RenderedFields::excerpt($p), 'protected' => $protected] : null,

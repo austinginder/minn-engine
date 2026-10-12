@@ -12,7 +12,7 @@
 | [`Formatting`](#formatting) | final class | 89 | The list of active formatting elements, with its markers (null): the |
 | [`HeadRules`](#headrules) | final class | 276 | The insertion modes around the body: initial (doctype and the |
 | [`Node`](#node) | final class | 109 | A node the tree builder places: an element (named as the HTML API |
-| [`OpenElements`](#openelements) | final class | 125 | The stack of open elements and the spec's scope tests over it: an |
+| [`OpenElements`](#openelements) | final class | 110 | The stack of open elements and the spec's scope tests over it: an |
 | [`Serializer`](#serializer) | final class | 72 | Normalized HTML for the processor's walk, token by token: tag names |
 | [`TableRules`](#tablerules) | final class | 292 | The table insertion modes: in table (and its text), in caption, in |
 | [`Token`](#token) | final readonly class | 45 | A token as the tree builder reads it: a tag (name upper-cased), a run of |
@@ -529,11 +529,7 @@ Whether the HTML element is in button scope (the default plus BUTTON).
 
 Whether one of the HTML elements is in table scope (HTML, TABLE and TEMPLATE bound it).
 
-### `inSelectScope(string $name): bool`
-
-Whether the HTML element is in select scope (anything but OPTGROUP and OPTION bounds it).
-
-Internals: `inSpecificScope()` (private, line 123)
+Internals: `inSpecificScope()` (private, line 108)
 
 
 ## Serializer

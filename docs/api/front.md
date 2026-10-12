@@ -25,7 +25,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`Maintenance`](#maintenance) | final class | 28 | Maintenance mode, as hosting tools and updaters switch it on: a |
 | [`PageLinks`](#pagelinks) | final class | 40 | The links between the pages of a post split with <!--nextpage-->, as |
 | [`Pagination`](#pagination) | final class | 62 | Numbered page links in the reference's shape: previous, the end and |
-| [`Permalinks`](#permalinks) | final readonly class | 248 | Builds public URLs from the site's permalink structure. With an empty |
+| [`Permalinks`](#permalinks) | final readonly class | 265 | Builds public URLs from the site's permalink structure. With an empty |
 | [`PostEmbed`](#postembed) | final class | 106 | A post as other sites embed it, the oEmbed provider side, as the |
 | [`PostNavigation`](#postnavigation) | final class | 36 | The links to the posts either side of this one, and the nav block that |
 | [`PrintedResponse`](#printedresponse) | final class | 39 | A response WordPress's handlers print themselves (a sitemap, robots.txt), |
@@ -741,9 +741,21 @@ A feed's address under a base path ("/", "/category/news/",
 "/hello-world/"): feed/ for the default feed (rss2, and rss with it),
 feed/<type>/ for another; a comments-<type> feed is its <type>.
 
+### `link(Minn\Content\PostRecord $post): string`
+
+A post's link as plugins and clients are given it: once the runtime
+runs, the reference's, through its link filters (post_link, page_link,
+post_type_link, as get_permalink() answers); before, the engine's own.
+
+### `forComment(int $commentId, ?Minn\Content\PostRecord $post, int $postId): string`
+
+A comment's link as plugins and clients are given it: once the
+runtime runs, get_comment_link()'s (its paging and its filter, over
+the post's filtered link); before, the post's own with the anchor.
+
 ### `forPost(Minn\Content\PostRecord $post): string`
 
-A post's permalink.
+A post's permalink, by the engine's own rules (no plugin filters: address matching uses it).
 
 ### `forPage(Minn\Content\PostRecord $page): string`
 
@@ -752,14 +764,6 @@ A page's permalink, the home for the front page.
 ### `pagePath(Minn\Content\PostRecord $page): string`
 
 A page's own pretty path, even for the static front page (its comments feed lives there).
-
-### `pageToken(): string`
-
-A page link with the %pagename% token left in place, for a plugin that fills it itself.
-
-### `pageAsPublished(Minn\Content\PostRecord $page): string`
-
-A page's pretty path as it will read once published, for a sample of an unpublished one.
 
 ### `forAttachment(Minn\Content\PostRecord $attachment): string`
 
@@ -787,7 +791,7 @@ A search's URL.
 
 A listing URL for a page number.
 
-Internals: `hasPrettyLink()` (private, line 238), `fill()` (private, line 243)
+Internals: `filtered()` (private, line 125), `hasPrettyLink()` (private, line 255), `fill()` (private, line 260)
 
 
 ## PostEmbed

@@ -75,12 +75,6 @@ final class TemplateIndex
         return null;
     }
 
-    /** A theme file as a template, whatever the site saved over it; null when the theme has none. */
-    public function fileRecord(string $type, string $slug): ?TemplateRecord
-    {
-        return $this->hasFile($type, $slug) ? $this->fromFile($slug, $type) : null;
-    }
-
     /** A saved wp_template or wp_template_part row as a template. @param array<string, mixed> $row */
     public function postRecord(array $row): TemplateRecord
     {

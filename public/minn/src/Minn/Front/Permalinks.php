@@ -98,7 +98,36 @@ final readonly class Permalinks
         return rtrim($base, '/') . '/feed/' . (in_array($type, ['', 'feed', 'rss2', 'rss'], true) ? '' : $type . '/');
     }
 
-    /** A post's permalink. */
+    /**
+     * A post's link as plugins and clients are given it: once the runtime
+     * runs, the reference's, through its link filters (post_link, page_link,
+     * post_type_link, as get_permalink() answers); before, the engine's own.
+     */
+    public function link(PostRecord $post): string
+    {
+        return self::filtered() ? (string) \get_permalink($post->id) : $this->forPost($post);
+    }
+
+    /**
+     * A comment's link as plugins and clients are given it: once the
+     * runtime runs, get_comment_link()'s (its paging and its filter, over
+     * the post's filtered link); before, the post's own with the anchor.
+     */
+    public function forComment(int $commentId, ?PostRecord $post, int $postId): string
+    {
+        if (self::filtered()) {
+            return (string) \get_comment_link($commentId);
+        }
+        return ($post === null ? $this->url('/?p=' . $postId) : $this->forPost($post)) . '#comment-' . $commentId;
+    }
+
+    /** Whether links go through the reference's filters: once plugins can hook them. */
+    private static function filtered(): bool
+    {
+        return Runtime::booted();
+    }
+
+    /** A post's permalink, by the engine's own rules (no plugin filters: address matching uses it). */
     public function forPost(PostRecord $post): string
     {
         $id = $post->id;
@@ -137,18 +166,6 @@ final readonly class Permalinks
         if (!$this->isPretty() || !$this->hasPrettyLink($page)) {
             return $this->url('/?page_id=' . $page->id);
         }
-        return $this->url('/' . $this->posts->pathOf($page) . '/');
-    }
-
-    /** A page link with the %pagename% token left in place, for a plugin that fills it itself. */
-    public function pageToken(): string
-    {
-        return $this->url('/%pagename%/');
-    }
-
-    /** A page's pretty path as it will read once published, for a sample of an unpublished one. */
-    public function pageAsPublished(PostRecord $page): string
-    {
         return $this->url('/' . $this->posts->pathOf($page) . '/');
     }
 

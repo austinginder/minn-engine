@@ -32,7 +32,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`StyleSettings`](#stylesettings) | final class | 82 | The settings and styles nodes as wp/v2/global-styles reports them: |
 | [`TemplateBuffer`](#templatebuffer) | final class | 31 | The reference includes a front-end template inside the template-enhancement |
 | [`TemplateHierarchy`](#templatehierarchy) | final class | 75 | The templates a block theme falls back through for a template slug, as |
-| [`TemplateIndex`](#templateindex) | final class | 310 | Every block template and template part the site offers, in the order the |
+| [`TemplateIndex`](#templateindex) | final class | 304 | Every block template and template part the site offers, in the order the |
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
@@ -1051,10 +1051,6 @@ Every template of a type: the theme's files with the saved rows over them.
 
 Null when the id names another theme, or a slug nothing provides.
 
-### `fileRecord(string $type, string $slug): ?Minn\Theme\TemplateRecord`
-
-A theme file as a template, whatever the site saved over it; null when the theme has none.
-
 ### `postRecord(array $row): Minn\Theme\TemplateRecord`
 
 A saved wp_template or wp_template_part row as a template. @param array<string, mixed> $row
@@ -1119,7 +1115,7 @@ where the template only named them, then every template-part block
 told which theme it belongs to. A record carries the markup as
 stored, because that is what get_block_templates() hands a plugin.
 
-Internals: `savedRows()` (private, line 212), `pluginRows()` (private, line 227), `fromRow()` (private, line 236), `fromFile()` (private, line 262), `fromPlugin()` (private, line 284), `fileTitle()` (private, line 309), `savedArea()` (private, line 318)
+Internals: `savedRows()` (private, line 206), `pluginRows()` (private, line 221), `fromRow()` (private, line 230), `fromFile()` (private, line 256), `fromPlugin()` (private, line 278), `fileTitle()` (private, line 303), `savedArea()` (private, line 312)
 
 
 ## TemplatePartTheme

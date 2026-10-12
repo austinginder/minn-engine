@@ -145,6 +145,11 @@ if (isset($_GET['minn-test-enhance'])) {
     }, 10, 5);
 }
 
+// Menus read by anyone when asked (?minn-test-menus-open), through rest_menu_read_access.
+add_filter('rest_menu_read_access', static function ($open, $request, $controller) {
+    return isset($_GET['minn-test-menus-open']) && $request instanceof WP_REST_Request && is_object($controller) ? true : $open;
+}, 10, 3);
+
 // A search handler of the plugin's own: /wp/v2/search?type=minn-test.
 add_filter('wp_rest_search_handlers', static function (array $handlers): array {
     require_once __DIR__ . '/search-handler.php';

@@ -80,7 +80,7 @@ $check('a string cut mid-character still answers, the bad byte as "?"', ($h['sta
 $indexData = json_decode($index, true);
 $check('index lists the plugin namespace and route', in_array('minn-test/v1', $indexData['namespaces'] ?? [], true) && isset($indexData['routes']['/minn-test/v1/echo']), substr($index, 0, 120));
 if ($referenceUp) {
-    foreach (['/minn-test/v1/echo?word=hi&n=2', '/minn-test/v1/echo', '/minn-test/v1/echo?word=hi&n=9', '/minn-test/v1/items/1', '/minn-test/v1/items/999999', '/minn-test/v1/nope', '/minn-test/v1', '/wp/v2/search?type=minn-test', '/wp/v2/search?type=minn-test&subtype=odd&per_page=2&page=2', '/wp/v2/search?type=minn-test&search=item+3&_fields=id,title', '/wp/v2/search?type=nope'] as $path) {
+    foreach (['/minn-test/v1/echo?word=hi&n=2', '/minn-test/v1/echo', '/minn-test/v1/echo?word=hi&n=9', '/minn-test/v1/items/1', '/minn-test/v1/items/999999', '/minn-test/v1/nope', '/minn-test/v1', '/wp/v2/search?type=minn-test', '/wp/v2/search?type=minn-test&subtype=odd&per_page=2&page=2', '/wp/v2/search?type=minn-test&search=item+3&_fields=id,title', '/wp/v2/search?type=nope', '/wp/v2/menus', '/wp/v2/menus?minn-test-menus-open=1', '/wp/v2/menu-items?minn-test-menus-open=1', '/wp/v2/menu-locations', '/wp/v2/menu-locations?minn-test-menus-open=1'] as $path) {
         [$eh, $eb] = minn_test_fetch($base . '/wp-json' . $path);
         [$rh, $rb] = minn_test_fetch($reference . '/?rest_route=' . rawurlencode(strtok($path, '?')) . (str_contains($path, '?') ? '&' . substr($path, strpos($path, '?') + 1) : ''));
         // Hosts are masked after decoding: escaped slashes in the raw JSON would hide them from a string replace.

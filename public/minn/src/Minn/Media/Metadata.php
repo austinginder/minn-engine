@@ -102,39 +102,6 @@ final class Metadata
         return $meta;
     }
 
-    /** The metadata as the reference's serialized blob, without unserialize ever being needed. */
-    public static function serialize(array $meta): string
-    {
-        $string = static fn (string $value): string => 's:' . strlen($value) . ':"' . $value . '";';
-        $pair = static fn (string $key, string $encoded): string => $string($key) . $encoded;
-
-        $sizes = '';
-        foreach ($meta['sizes'] as $name => $size) {
-            $entry = $pair('file', $string($size['file']))
-                . $pair('width', 'i:' . $size['width'] . ';')
-                . $pair('height', 'i:' . $size['height'] . ';')
-                . $pair('mime-type', $string($size['mime-type']))
-                . (isset($size['filesize']) ? $pair('filesize', 'i:' . $size['filesize'] . ';') : '');
-            $sizes .= $string((string) $name) . 'a:' . (isset($size['filesize']) ? 5 : 4) . ':{' . $entry . '}';
-        }
-
-        $image = $meta['image_meta'];
-        $imageMeta = '';
-        foreach (self::IMAGE_META_KEYS as $key) {
-            $imageMeta .= $pair($key, $string((string) $image[$key]));
-        }
-        $imageMeta .= $pair('keywords', 'a:0:{}') . $pair('alt', $string((string) ($image['alt'] ?? '')));
-
-        return 'a:6:{'
-            . $pair('width', 'i:' . $meta['width'] . ';')
-            . $pair('height', 'i:' . $meta['height'] . ';')
-            . $pair('file', $string($meta['file']))
-            . $pair('filesize', 'i:' . $meta['filesize'] . ';')
-            . $pair('sizes', 'a:' . count($meta['sizes']) . ':{' . $sizes . '}')
-            . $pair('image_meta', 'a:13:{' . $imageMeta . '}')
-            . '}';
-    }
-
     /** The image_meta block a fresh upload carries. */
     public static function blankImageMeta(): array
     {

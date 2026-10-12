@@ -1,0 +1,114 @@
+[
+    [
+        "../a against http://x.test/b/c/d",
+        "http://x.test/b/a"
+    ],
+    [
+        "./a against http://x.test/b/c",
+        "http://x.test/b/./a"
+    ],
+    [
+        "/a/../b against http://x.test/q",
+        "http://x.test/a/../b"
+    ],
+    [
+        "a/./b/../c against http://x.test/p/q",
+        "http://x.test/p/a/./c"
+    ],
+    [
+        "?x=1 against http://x.test/p/q?y=2",
+        "http://x.test/p/q?x=1"
+    ],
+    [
+        "#f against http://x.test/p/q",
+        "http://x.test/p/q#f"
+    ],
+    [
+        "//y.test/a against https://x.test/",
+        "https://y.test/a"
+    ],
+    [
+        "../../../a against http://x.test/b",
+        "http://x.test/a"
+    ],
+    [
+        "a against http://x.test",
+        "http://x.test/a"
+    ],
+    [
+        " against http://x.test/p",
+        "http://x.test/p"
+    ],
+    [
+        "b/../../c against http://x.test/p/q/r",
+        "http://x.test/p/c"
+    ],
+    [
+        ". against http://x.test/p/q",
+        "http://x.test/p/."
+    ],
+    [
+        ".. against http://x.test/p/q/",
+        "http://x.test/p/q/.."
+    ],
+    [
+        "#f against http://x.test/p/q?y=2",
+        "http://x.test/p/q#f"
+    ],
+    [
+        "a?x=1#g against http://x.test/p/q?y=2",
+        "http://x.test/p/a?x=1#g"
+    ],
+    [
+        "a against http://u:pw@x.test:8080/p/q?y=2",
+        "http://x.test:8080/p/a"
+    ],
+    [
+        "/a against http://u:pw@x.test:8080/p/q",
+        "http://x.test:8080/a"
+    ],
+    [
+        " against http://x.test/p?y=2#h",
+        "http://x.test/p"
+    ],
+    [
+        "a/../../b against http://x.test/",
+        "http://x.test/b"
+    ],
+    [
+        "./../a against http://x.test/p/q",
+        "http://x.test/p/a"
+    ],
+    [
+        "../ against http://x.test/p/q/r",
+        "http://x.test/p/"
+    ],
+    [
+        "a against http://x.test/p/",
+        "http://x.test/p/a"
+    ],
+    [
+        "a//b/../c against http://x.test/p/",
+        "http://x.test/p/a//c"
+    ],
+    [
+        "? against http://x.test/p?y=2",
+        "http://x.test/p"
+    ],
+    [
+        "a against https://x.test?y=1",
+        "https://x.test/a"
+    ],
+    [
+        "https://z.test/../a against http://x.test/p",
+        "https://z.test/../a"
+    ],
+    [
+        "mailto:a@x.test against http://x.test/p",
+        "mailto:a@x.test"
+    ],
+    [
+        "a against ",
+        "a"
+    ]
+]

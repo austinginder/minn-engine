@@ -217,12 +217,6 @@ final readonly class Users
         return array_map(static fn (array $r) => (int) $r['ID'], $this->db->rows('SELECT ID FROM ' . $this->db->table('users') . ' ORDER BY user_login ASC' . ($limit > 0 ? ' LIMIT ' . $limit : '')));
     }
 
-    /** Removes every meta row of a user. */
-    public function deleteAllMeta(int $userId): void
-    {
-        $this->db->execute("DELETE FROM {$this->db->table('usermeta')} WHERE user_id = ?", [$userId]);
-    }
-
     /** Stores a new password hash and clears any pending reset key. */
     public function setPassword(int $userId, string $hash): void
     {

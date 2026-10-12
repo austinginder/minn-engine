@@ -3,7 +3,6 @@
 
 use Minn\Runtime\Deferrals;
 use Minn\Content\CommentClasses;
-use Minn\Content\CommentModeration;
 use Minn\Content\Comments;
 use Minn\Runtime\CommentQuery;
 use Minn\Runtime\Runtime;

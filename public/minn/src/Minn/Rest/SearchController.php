@@ -81,7 +81,7 @@ final readonly class SearchController
         return [
             'id' => $row->id,
             'title' => Texturize::text($row->title),
-            'url' => $type === 'page' ? $this->permalinks->forPage($row) : $this->permalinks->forPost($row),
+            'url' => $this->permalinks->link($row),
             'type' => 'post',
             'subtype' => $type,
             '_links' => [

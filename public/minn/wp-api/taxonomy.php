@@ -1900,7 +1900,13 @@ function create_initial_taxonomies()
     foreach (Minn\Runtime\Runtime::registry()->taxonomies() as $name => $row) {
         if (!empty($row['_builtin'])) {
             $types = (array) ($row['object_type'] ?? []);
-            register_taxonomy($name, in_array($name, $named, true) ? (string) ($types[0] ?? '') : $types, ['capabilities' => (array) ($row['cap'] ?? [])] + $row);
+            $object = register_taxonomy($name, in_array($name, $named, true) ? (string) ($types[0] ?? '') : $types, ['capabilities' => (array) ($row['cap'] ?? [])] + $row);
+            // The captured labels are the merged ones; core's category and post tag name no archives label of their own, so none is derived for them.
+            $labels = $object instanceof WP_Taxonomy && is_object($object->labels) ? $object->labels : null;
+            if ($labels !== null && !isset($row['labels']['archives']) && isset($labels->archives) && $labels->archives === ($labels->all_items ?? null)) {
+                unset($labels->archives);
+                Minn\Runtime\Runtime::registry()->adoptTaxonomy($object);
+            }
         }
     }
 }

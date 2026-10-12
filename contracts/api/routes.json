@@ -3689,7 +3689,7 @@
             "summary": "Every classic menu.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts",
+                "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it",
                 "cap": "edit_posts",
                 "signIn": {
                     "code": "rest_cannot_view",
@@ -3698,7 +3698,8 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menus."
-                }
+                },
+                "opener": "rest_menu_read_access"
             },
             "args": [],
             "body": [],
@@ -3712,7 +3713,7 @@
             "summary": "One menu.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts; menu {id} must exist",
+                "describe": "cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it",
                 "cap": "edit_posts",
                 "param": "id",
                 "subject": "Menu",
@@ -3727,7 +3728,8 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menus."
-                }
+                },
+                "opener": "rest_menu_read_access"
             },
             "args": [],
             "body": [],
@@ -3880,7 +3882,7 @@
             "summary": "The items of a menu.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts",
+                "describe": "cap edit_posts; or anyone, when rest_menu_read_access opens it",
                 "cap": "edit_posts",
                 "signIn": {
                     "code": "rest_cannot_view",
@@ -3889,7 +3891,8 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menu items."
-                }
+                },
+                "opener": "rest_menu_read_access"
             },
             "args": [],
             "body": [],
@@ -3903,7 +3906,7 @@
             "summary": "One menu item.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_posts; menu item {id} must exist",
+                "describe": "cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it",
                 "cap": "edit_posts",
                 "param": "id",
                 "subject": "MenuItem",
@@ -3918,7 +3921,8 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menu items."
-                }
+                },
+                "opener": "rest_menu_read_access"
             },
             "args": [],
             "body": [],
@@ -4071,7 +4075,7 @@
             "summary": "The menu locations the theme and plugins register (none for a block theme without plugins), keyed by name; edit_theme_options to view.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_theme_options",
+                "describe": "cap edit_theme_options; or anyone, when rest_menu_read_access opens it",
                 "cap": "edit_theme_options",
                 "signIn": {
                     "code": "rest_cannot_view",
@@ -4080,7 +4084,8 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menu locations."
-                }
+                },
+                "opener": "rest_menu_read_access"
             },
             "args": [],
             "body": [],
@@ -4094,7 +4099,7 @@
             "summary": "One menu location.",
             "policy": {
                 "access": "Cap",
-                "describe": "cap edit_theme_options",
+                "describe": "cap edit_theme_options; or anyone, when rest_menu_read_access opens it",
                 "cap": "edit_theme_options",
                 "signIn": {
                     "code": "rest_cannot_view",
@@ -4103,7 +4108,8 @@
                 "refuse": {
                     "code": "rest_cannot_view",
                     "message": "Sorry, you are not allowed to view menu locations."
-                }
+                },
+                "opener": "rest_menu_read_access"
             },
             "args": [],
             "body": [],

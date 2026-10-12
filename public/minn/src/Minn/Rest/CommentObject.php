@@ -62,7 +62,7 @@ final readonly class CommentObject
         $object['date'] = PostObject::date($c->date);
         $object['date_gmt'] = PostObject::date($c->dateGmt);
         $object['content'] = $edit ? ['rendered' => $rendered, 'raw' => $c->content] : ['rendered' => $rendered];
-        $object['link'] = ($post === null ? $this->url->home('/?p=' . $postId) : $this->permalinks->forPost($post)) . '#comment-' . $id;
+        $object['link'] = $this->permalinks->forComment($id, $post, $postId);
         $object['status'] = Comments::statusOf($c->approved);
         $object['type'] = $c->type === '' ? 'comment' : $c->type;
         $object['author_avatar_urls'] = UserObject::avatarUrls($c->authorEmail);

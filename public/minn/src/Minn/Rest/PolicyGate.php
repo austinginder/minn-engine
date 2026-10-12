@@ -43,6 +43,12 @@ final readonly class PolicyGate
         if ($policy->subject !== null) {
             $this->subject($policy, $captures);
         }
+        if ($policy->opener !== null && $this->opened($policy->opener, $request)) {
+            if ($policy->edit !== null && Context::of($request)->isEdit()) {
+                $this->judge($policy->edit, $request, $captures);
+            }
+            return;
+        }
         match ($policy->access) {
             Access::Public => null,
             Access::SignedIn => $this->caller->require($policy->signIn, $policy->signInMessage, $policy->signInStatus),
@@ -137,6 +143,20 @@ final readonly class PolicyGate
         if (!$this->caller->can($capability, $policy->verb === 'create' ? null : $id)) {
             throw $this->caller->refuse($code, $message);
         }
+    }
+
+    /**
+     * Whether a policy's opener lets any caller through: the filter it names,
+     * handed false, the request, and a controller of the class the reference
+     * passes (built with the argument given).
+     *
+     * @param array{0: string, 1: class-string, 2?: string} $opener
+     */
+    private function opened(array $opener, Request $request): bool
+    {
+        $class = $opener[1];
+        $controller = isset($opener[2]) ? new $class($opener[2]) : new $class();
+        return (bool) \apply_filters($opener[0], false, RuntimeRoutes::wpRequest($request), $controller);
     }
 
     private function capabilities(Policy $policy): void

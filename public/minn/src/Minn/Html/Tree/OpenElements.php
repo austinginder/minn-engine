@@ -101,21 +101,6 @@ final class OpenElements
         return $this->inSpecificScope($names, ['html' => ['HTML', 'TABLE', 'TEMPLATE']]);
     }
 
-    /** Whether the HTML element is in select scope (anything but OPTGROUP and OPTION bounds it). */
-    public function inSelectScope(string $name): bool
-    {
-        for ($i = count($this->nodes) - 1; $i >= 0; $i--) {
-            $node = $this->nodes[$i];
-            if ($node->isHtml($name)) {
-                return true;
-            }
-            if (!$node->isHtml('OPTGROUP', 'OPTION')) {
-                return false;
-            }
-        }
-        return false;
-    }
-
     /**
      * @param list<string> $names
      * @param array<string, list<string>> $boundary

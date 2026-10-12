@@ -290,7 +290,7 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
 $bootedCeiling = 75;
-$wordpressCallCeiling = 1024;
+$wordpressCallCeiling = 1021;
 $apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
 $wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);
 $hookApi = ['apply_filters' => true, 'apply_filters_ref_array' => true, 'apply_filters_deprecated' => true, 'do_action' => true, 'do_action_ref_array' => true, 'do_action_deprecated' => true];
@@ -415,6 +415,115 @@ foreach ($model['classes'] ?? [] as $class) {
 $check("engine: public methods without a docblock stay at or under {$undocumentedCeiling}", $undocumented <= $undocumentedCeiling, (string) $undocumented);
 $check("engine: boolean parameters stay at or under {$boolParamCeiling}", $boolParams <= $boolParamCeiling, (string) $boolParams);
 $check("engine: constructors with six or more parameters stay at or under {$wideConstructorCeiling}", $wideConstructors <= $wideConstructorCeiling, (string) $wideConstructors);
+
+// Leanness (audit 2026-10-12). A method whose name appears nowhere but in
+// its own declaration (across the engine, the facade, the tests and the
+// boot files) is dead: nothing calls it, and the ceiling is 0. Route
+// handlers and other attribute-called methods, magic methods and the
+// methods PHP's own interfaces call are not counted. The rest count
+// duplication the audit found beside the one door for each job; each
+// ceiling only falls.
+$deadNameCeiling = 0;
+$liveCeiling = 20;
+$optionReadCeiling = 159;
+$rawOptionWriteCeiling = 7;
+$rawMetaWriteCeiling = 10;
+$postRowCeiling = 8;
+$linkHrefCeiling = 77;
+$htmlspecialcharsCeiling = 14;
+$permalinkCallerCeiling = 31;
+$interfaceMethods = ['jsonserialize', 'offsetget', 'offsetset', 'offsetexists', 'offsetunset', 'getiterator', 'count', 'current', 'key', 'next', 'rewind', 'valid'];
+$names = [];
+$declared = [];
+$engineDir = dirname($root);
+$scanned = [$root, "{$engineDir}/wp-api", "{$engineDir}/layout", dirname(__DIR__) . '/tests'];
+$files = [];
+foreach ($scanned as $tree) {
+    if (is_dir($tree)) {
+        foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tree, FilesystemIterator::SKIP_DOTS)) as $file) {
+            if ($file->getExtension() === 'php') {
+                $files[] = $file->getPathname();
+            }
+        }
+    }
+}
+$files = [...$files, ...(glob("{$engineDir}/*.php") ?: [])];
+$lean = ['live' => 0, 'optionRead' => 0, 'rawOptionWrite' => 0, 'rawMetaWrite' => 0, 'postRow' => 0, 'linkHref' => 0, 'htmlspecialchars' => 0, 'permalinkCaller' => 0];
+foreach ($files as $path) {
+    $source = (string) file_get_contents($path);
+    $tokens = token_get_all($source);
+    $inSrc = str_starts_with($path, $root . '/');
+    foreach ($tokens as $i => $token) {
+        if (!is_array($token)) {
+            continue;
+        }
+        if (in_array($token[0], [T_STRING, T_CONSTANT_ENCAPSED_STRING], true)) {
+            $name = strtolower(trim($token[1], '\'"'));
+            $names[$name] = ($names[$name] ?? 0) + 1;
+        } elseif (in_array($token[0], [T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED], true)) {
+            foreach (explode('\\', strtolower($token[1])) as $part) {
+                $names[$part] = ($names[$part] ?? 0) + 1;
+            }
+        }
+        if ($inSrc && $token[0] === T_FUNCTION) {
+            for ($j = $i + 1; isset($tokens[$j]) && (!is_array($tokens[$j]) ? $tokens[$j] === '&' : $tokens[$j][0] === T_WHITESPACE); $j++) {
+            }
+            if (isset($tokens[$j]) && is_array($tokens[$j]) && $tokens[$j][0] === T_STRING) {
+                $declared[] = [$tokens[$j][1], substr($path, strlen($root) + 1), $token[2], $source];
+            }
+        }
+    }
+    if ($inSrc) {
+        $relative = substr($path, strlen($root) + 1);
+        $lean['live'] += substr_count($source, '->live()');
+        $lean['optionRead'] += preg_match_all('/->option\(/', $source);
+        $lean['postRow'] += preg_match_all('/\'post_content_filtered\'\s*=>/', $source);
+        $lean['linkHref'] += preg_match_all('/\[\'href\'\s*=>/', $source);
+        $lean['permalinkCaller'] += preg_match_all('/->forPost\(/', $source);
+        if ($relative !== 'Minn/Support/Html.php') {
+            $lean['htmlspecialchars'] += preg_match_all('/\bhtmlspecialchars\(/', $source);
+        }
+        $writes = '/(?:INSERT\s+(?:IGNORE\s+)?INTO|UPDATE|DELETE\s+FROM|REPLACE\s+INTO)\s+\{\$[^}]*table\(\'%s\'\)\}/i';
+        if ($relative !== 'Minn/Runtime/Options.php') {
+            $lean['rawOptionWrite'] += preg_match_all(sprintf($writes, 'options'), $source);
+        }
+        if ($relative !== 'Minn/Runtime/Meta.php') {
+            $lean['rawMetaWrite'] += preg_match_all(sprintf($writes, '(?:post|user|term|comment)meta'), $source);
+        }
+    }
+}
+$dead = [];
+foreach ($declared as [$name, $relative, $line, $source]) {
+    $lower = strtolower($name);
+    if (str_starts_with($lower, '__') || in_array($lower, $interfaceMethods, true) || ($names[$lower] ?? 0) > 1) {
+        continue;
+    }
+    $above = implode("\n", array_slice(explode("\n", $source), max(0, $line - 7), 6));
+    if (preg_match('/#\[\w+/', $above) === 1) {
+        continue;
+    }
+    $dead[] = "{$relative}:{$line} {$name}";
+}
+$check("engine: methods nothing calls by name stay at or under {$deadNameCeiling}", count($dead) <= $deadNameCeiling, count($dead) . ': ' . implode(', ', array_slice($dead, 0, 10)));
+foreach (['live' => [$liveCeiling, 'lifecycle branches (->live())'], 'optionRead' => [$optionReadCeiling, 'option reads beside the options store (->option()'], 'rawOptionWrite' => [$rawOptionWriteCeiling, 'raw option writes outside Runtime\Options'], 'rawMetaWrite' => [$rawMetaWriteCeiling, 'raw meta writes outside Runtime\Meta'], 'postRow' => [$postRowCeiling, 'hand-built post rows (post_content_filtered keys)'], 'linkHref' => [$linkHrefCeiling, 'hand-built REST links ([\'href\' => ...])'], 'htmlspecialchars' => [$htmlspecialcharsCeiling, 'htmlspecialchars() calls outside Support\Html'], 'permalinkCaller' => [$permalinkCallerCeiling, 'callers of the unfiltered Permalinks::forPost']] as $key => [$ceiling, $label]) {
+    $check("engine: {$label} stay at or under {$ceiling}", $lean[$key] <= $ceiling, (string) $lean[$key]);
+}
+
+// contracts/runtime.md's open items: every "Open", "Owed", "Left" or "Not
+// taken" note outside the register has a row of its own in "Open items
+// register", so none is lost in the log (the 0.1.0 scorecard counts the rows
+// still open).
+$runtimeNotes = (string) file_get_contents(dirname(__DIR__) . '/contracts/runtime.md');
+$registerAt = strpos($runtimeNotes, "\n## Open items register");
+$register = '';
+if ($registerAt !== false) {
+    $end = strpos($runtimeNotes, "\n## ", $registerAt + 5);
+    $register = $end === false ? substr($runtimeNotes, $registerAt) : substr($runtimeNotes, $registerAt, $end - $registerAt);
+}
+$notes = str_replace($register, '', $runtimeNotes);
+$markers = preg_match_all('/^(?:- )?\*\*Left open\.?\*\*|^Left open|^Still open|^Not taken|^Open:|^Owed:|^Left:|^Not yet:|^Storefront gaps still open:/m', $notes);
+preg_match_all('/^\| (\d+) \|/m', $register, $rows);
+$check('runtime.md: every open-item note has a row in the open items register', $register !== '' && count(array_unique($rows[1])) >= $markers, count(array_unique($rows[1])) . ' noted lines in the register, ' . $markers . ' notes');
 
 $legacy = array_map('basename', glob("{$root}/*.php"));
 echo "\n  legacy procedural files remaining: " . count($legacy) . ' (' . implode(', ', $legacy) . ")\n";

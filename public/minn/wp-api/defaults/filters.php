@@ -13,6 +13,9 @@ add_filter('sanitize_user', 'trim');
 add_filter('sanitize_user', 'wp_strip_all_tags');
 add_filter('pre_kses', 'wp_pre_kses_less_than');
 add_filter('pre_kses', 'wp_pre_kses_block_attributes', 10, 3);
+// Core's post types and taxonomies are registered again on init, first of all, so a plugin's register_post_type_args, register_taxonomy_args and registered_* callbacks hear them, as on the reference (suite hook-parity).
+add_action('init', 'create_initial_post_types', 0);
+add_action('init', 'create_initial_taxonomies', 0);
 add_action('init', '_minn_register_core_rss_block');
 // User fields, as the reference sanitises them on the way in (pre_user_*)
 // and out (user_*); sanitize_user_field() runs these by context.

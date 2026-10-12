@@ -393,13 +393,45 @@ namespace {
             return wp_parse_url($url);
         }
 
-        /** A URL read against a base (RFC 3986, as a redirect is); one with a scheme stays as written. */
+        /**
+         * A path read against a base URL as the reference reads one (probe
+         * http-classes): one with a scheme stays as written, and one that
+         * starts // takes the base's scheme. Otherwise the result is the
+         * base's scheme, host and port (never its user, query or fragment)
+         * with: the base's path, for an empty path; the path as written,
+         * for one starting /; or the base's folder joined to the path, each
+         * segment/../ pair collapsed (a . segment too), climbs past the
+         * root dropped, and a leading / added. ./ segments and a trailing
+         * .. stay. The path's own query and fragment follow, when not empty.
+         */
         public static function make_absolute_url($maybe_relative_path, $url)
         {
-            if (empty($url) || preg_match('#^[a-z][a-z0-9+.-]*:#i', (string) $maybe_relative_path) === 1) {
+            $relative = (string) $maybe_relative_path;
+            if (empty($url) || preg_match('#^[a-z][a-z0-9+.-]*:#i', $relative) === 1) {
                 return $maybe_relative_path;
             }
-            return \Minn\Http\Location::resolve((string) $url, (string) $maybe_relative_path);
+            $base = (array) wp_parse_url((string) $url);
+            if (str_starts_with($relative, '//')) {
+                return ($base['scheme'] ?? '') . ':' . $relative;
+            }
+            $parts = (array) wp_parse_url($relative);
+            $path = (string) ($parts['path'] ?? '');
+            $basePath = (string) ($base['path'] ?? '');
+            if ($path === '') {
+                $path = $basePath;
+            } elseif (!str_starts_with($path, '/')) {
+                $slash = strrpos($basePath, '/');
+                $path = ($slash === false ? '/' : substr($basePath, 0, $slash + 1)) . $path;
+                do {
+                    $path = (string) preg_replace('#/(?!\.\./)[^/]+/\.\./#', '/', $path, 1, $collapsed);
+                } while ($collapsed > 0);
+                while (str_starts_with($path, '/../')) {
+                    $path = substr($path, 3);
+                }
+                $path = str_starts_with($path, '/') ? $path : '/' . $path;
+            }
+            return ($base['scheme'] ?? '') . '://' . ($base['host'] ?? '') . (isset($base['port']) ? ':' . $base['port'] : '') . $path
+                . (($parts['query'] ?? '') !== '' ? '?' . $parts['query'] : '') . (($parts['fragment'] ?? '') !== '' ? '#' . $parts['fragment'] : '');
         }
 
         /** A raw response split at its first blank line into the header block and the body. */
@@ -417,7 +449,6 @@ namespace {
             return $read;
         }
 
-        /** The request's cookies as one Cookie header (each name=value as given), when it has any. */
         /** The request's cookies made WP_Http_Cookie objects in place (name => value pairs too) and joined into its Cookie header (probe http-transports). */
         public static function buildCookieHeader(&$r)
         {

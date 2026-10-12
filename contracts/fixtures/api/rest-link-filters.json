@@ -1,0 +1,42 @@
+[
+    [
+        "without filters",
+        {
+            "post": [
+                "{home}/hello-world/"
+            ],
+            "page": [
+                "{home}/zz-link-page/"
+            ],
+            "typed": [
+                "{home}/zz-link/zz-link-typed/"
+            ],
+            "list": [
+                "{home}/hello-world/"
+            ],
+            "comment": [
+                "{home}/hello-world/#comment-{id}"
+            ]
+        }
+    ],
+    [
+        "with the link filters",
+        {
+            "post": [
+                "{home}/hello-world/?lang=fr"
+            ],
+            "page": [
+                "{home}/zz-link-page/?lang=de"
+            ],
+            "typed": [
+                "{home}/zz-link/zz-link-typed/?lang=es"
+            ],
+            "list": [
+                "{home}/hello-world/?lang=fr"
+            ],
+            "comment": [
+                "{home}/hello-world/?lang=fr/#comment-{id}"
+            ]
+        }
+    ]
+]

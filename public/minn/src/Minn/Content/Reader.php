@@ -79,11 +79,4 @@ final class Reader
     {
         return ($this->canEditPost)($postId);
     }
-
-    /** The statuses a listing may show this reader: published, plus private when they may read it. @return list<string> */
-    public function listableStatuses(string $type = 'post'): array
-    {
-        $private = $type === 'page' ? $this->readsPrivatePages : $this->readsPrivatePosts;
-        return PostStatus::values($private ? [PostStatus::Publish, PostStatus::Private] : [PostStatus::Publish]);
-    }
 }

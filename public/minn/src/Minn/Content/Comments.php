@@ -72,29 +72,6 @@ final readonly class Comments
         return $date === null ? null : (int) strtotime($date . ' UTC');
     }
 
-    /** A comment from the same address or email within the window. */
-    /** Whether this author email has any approved comment, the previously-approved gate check_comment applies. */
-    public function hasApprovedByEmail(string $email): bool
-    {
-        if ($email === '') {
-            return false;
-        }
-        return (int) $this->db->value(
-            "SELECT COUNT(*) FROM {$this->db->table('comments')} WHERE comment_author_email = ? AND comment_approved = '1' LIMIT 1",
-            [$email],
-        ) > 0;
-    }
-
-    /** Whether this author, by email or by address, commented within the last so many seconds: the flood check. */
-    public function flooding(string $email, string $address, int $seconds): bool
-    {
-        $since = gmdate('Y-m-d H:i:s', time() - $seconds);
-        return $this->db->value(
-            "SELECT comment_ID FROM {$this->db->table('comments')} WHERE comment_date_gmt > ? AND (comment_author_IP = ? OR (comment_author_email <> '' AND comment_author_email = ?)) LIMIT 1",
-            [$since, $address, $email],
-        ) !== null;
-    }
-
     /** Held comments per post, for the ids given (a post without any reads 0). */
     public function pendingCounts(array $postIds): array
     {

@@ -178,12 +178,6 @@ final class Types
         return array_values(array_map('strval', [...$core, ...$public]));
     }
 
-    /** Whether plugin code registered the type (not a built-in, not an extension's). */
-    public function isRegistered(string $slug): bool
-    {
-        return Runtime::booted() && isset($this->registered()[$slug]);
-    }
-
     /** @return array<string, array> the registered types under wp/v2 */
     private function servedRegistered(): array
     {

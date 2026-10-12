@@ -50,10 +50,4 @@ final readonly class Page
     {
         return $perPage > 0 ? (int) ceil($this->total / $perPage) : 0;
     }
-
-    /** The same page with other rows on it and the same total behind it. */
-    public function withPosts(array $posts): self
-    {
-        return new self(array_values($posts), $this->total);
-    }
 }

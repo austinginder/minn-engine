@@ -39,7 +39,7 @@ the wp/v2 surface: shapes and controllers
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
 | [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
-| [`PolicyGate`](#policygate) | final readonly class | 147 | Judges a route's policy against the caller, with the reference's |
+| [`PolicyGate`](#policygate) | final readonly class | 167 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 230 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 508 | Builds the wp/v2 post and page objects in the reference's shape: the |
@@ -80,7 +80,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 168 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 196 | The engine's registry of built-in post types, seeded from the observed |
+| [`Types`](#types) | final class | 190 | The engine's registry of built-in post types, seeded from the observed |
 | [`UrlDetails`](#urldetails) | final class | 64 | A page's details as the editor's link previews read them (probe |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
@@ -1441,13 +1441,13 @@ __construct(Minn\Content\Menus $menus, Minn\Rest\MenuObject $menuObject, Minn\Re
 
 ### `listMenus(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus (cap edit_posts)`
+Route: `GET /wp/v2/menus (cap edit_posts; or anyone, when rest_menu_read_access opens it)`
 
 Every classic menu.
 
 ### `singleMenu(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menus/{id:[\d]+} (cap edit_posts; menu {id} must exist)`
+Route: `GET /wp/v2/menus/{id:[\d]+} (cap edit_posts; menu {id} must exist; or anyone, when rest_menu_read_access opens it)`
 
 One menu.
 
@@ -1475,13 +1475,13 @@ Deletes a menu and its items.
 
 ### `listItems(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items (cap edit_posts)`
+Route: `GET /wp/v2/menu-items (cap edit_posts; or anyone, when rest_menu_read_access opens it)`
 
 The items of a menu.
 
 ### `singleItem(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-items/{id:[\d]+} (cap edit_posts; menu item {id} must exist)`
+Route: `GET /wp/v2/menu-items/{id:[\d]+} (cap edit_posts; menu item {id} must exist; or anyone, when rest_menu_read_access opens it)`
 
 One menu item.
 
@@ -1509,13 +1509,13 @@ Deletes a menu item.
 
 ### `locations(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-locations (cap edit_theme_options)`
+Route: `GET /wp/v2/menu-locations (cap edit_theme_options; or anyone, when rest_menu_read_access opens it)`
 
 The menu locations the theme and plugins register (none for a block theme without plugins), keyed by name; edit_theme_options to view.
 
 ### `oneLocation(Minn\Http\Request $request, string $location): Minn\Http\Response`
 
-Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options)`
+Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options; or anyone, when rest_menu_read_access opens it)`
 
 One menu location.
 
@@ -1699,7 +1699,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 66), `type()` (private, line 86), `taxonomy()` (private, line 117), `capabilities()` (private, line 142), `own()` (private, line 156)
+Internals: `subject()` (private, line 72), `type()` (private, line 92), `taxonomy()` (private, line 123), `opened()` (private, line 155), `capabilities()` (private, line 162), `own()` (private, line 176)
 
 
 ## PostCollectionParams
@@ -2541,7 +2541,7 @@ and the runtime's namespaces folded into the index.
 - const `ROUTE_SCOPED` = `array (   '_wp_connectors_rest_settings_dispatch' =>    array (     0 => 10,     1 => '/wp/v2/settings',   ), )` — rest_post_dispatch's defaults that touch one route only: elsewhere they hand the answer back as it came, so they are left out there.
 - const `SERVE_DONE` = `array (   '_oembed_rest_pre_serve_request' => 10,   'rest_send_cors_headers' => 10, )` — rest_pre_serve_request's defaults the engine does itself: oEmbed's XML (see oembedXml()).
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\SearchController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
+Used by: `Minn\Rest\Api`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\BatchController`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\MediaController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\SearchController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\UserEvents`
 
 
 ### static `gate(Minn\Http\Request $request): ?Minn\Http\Response`
@@ -3731,15 +3731,11 @@ as the reference's post search handler takes them.
 
 - `@return list<string>`
 
-### `isRegistered(string $slug): bool`
-
-Whether plugin code registered the type (not a built-in, not an extension's).
-
 ### `restBase(string $slug): string`
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 188)
+Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 182)
 
 
 ## UrlDetails

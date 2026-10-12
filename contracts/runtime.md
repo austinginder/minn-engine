@@ -15291,3 +15291,125 @@ Kept on purpose:
 - `WP_Comment_Query` keeps no cache of its own. Probes `wp-comment-query-sql`
   and `rest-comment-lists` pin a fresh request and fresh clauses on every
   query, so only the block renderers share one.
+
+
+## Leaner, and the hooks plugins hear on links and types (2026-10-12)
+
+Goal items 5 and 6 of the audit's scorecard, and two parity bugs it found.
+
+- **Dead code removed.** Nothing called these, by name, from anywhere:
+  - 17 methods (`PostEvents::attachmentAdded` and `attachmentEdited`,
+    `Comments::hasApprovedByEmail` and `flooding`, `Excerpt::forFeed`,
+    `Reader::listableStatuses`, `Users::deleteAllMeta`, `Page::withPosts`,
+    `OpenElements::inSelectScope`, `TemplateIndex::fileRecord`,
+    `Permalinks::pageToken` and `pageAsPublished`, `Types::isRegistered`,
+    `Upload::sniffedMime`, `renamedFor` and `isImage`, `Metadata::serialize`);
+  - the `CommentModeration` class, which only an import named.
+- **Leanness ratchets** in the style suite, each at today's count and only
+  falling:
+  - methods nothing calls by name, at 0;
+  - `->live()` branches (20);
+  - option reads beside the options store (159);
+  - raw option writes outside `Runtime\Options` (7);
+  - raw meta writes outside `Runtime\Meta` (10);
+  - hand-built post rows (8);
+  - hand-built REST links (77);
+  - `htmlspecialchars()` outside `Support\Html` (14);
+  - callers of the unfiltered `Permalinks::forPost` (31).
+
+  The WordPress-call ceiling falls to 1021.
+- **REST links through the link filters.** `Permalinks::link()` gives a
+  post's link as plugins see it once the runtime runs: `get_permalink()`,
+  through `post_link`, `page_link` and `post_type_link`. Before, it gives
+  the engine's own. The posts, pages and plugin-type routes, lists and
+  search results use it. `Permalinks::forComment()` gives the comment
+  link as `get_comment_link()` does. A translation plugin's links had
+  vanished from REST answers. Probe `rest-link-filters` pins it.
+  `forPost` stays unfiltered for address matching (`url_to_postid`).
+- **Core's types register again on `init`**, at priority 0, as the
+  reference registers them: `create_initial_post_types`, then
+  `create_initial_taxonomies`. A plugin's `register_post_type_args`,
+  `register_taxonomy_args`, `registered_*` and `post_type_labels_{name}`
+  callbacks now hear the built-in types. The captured rows pass their
+  mapped capabilities and their supports (none at all as `false`), so the
+  objects come out as before.
+- **`WP_Http::make_absolute_url`**, as the reference reads a path against
+  a base:
+  - the base's folder joined to the path, each `segment/../` pair
+    collapsed and climbs past the root dropped;
+  - `./` segments and a trailing `..` kept;
+  - an absolute path kept as written;
+  - never the base's user, query or fragment.
+
+  Probe `http-absolute-url` pins it.
+- **Menu routes and `rest_menu_read_access`.** A route policy may name an
+  opener: a filter that lets anyone through when it answers true. It is
+  handed the request and a controller of the class the reference passes.
+  The menus, menu-items and menu-locations read routes name
+  `rest_menu_read_access`, as the reference's do. Suite `runtime`
+  compares an anonymous read with the fixture plugin's filter on and off.
+- **The open items register** below: every open note in this file, one
+  row each, with its status.
+
+## Open items register (2026-10-12)
+
+Every "Open", "Owed", "Left" and "Not taken" note above, checked against
+the engine on 2026-10-12, one row per item. A row is `done` (settled, and
+where), `accepted` (left as it is, and why), `open` (engine work still
+owed), or `austin` (waiting on a decision of Austin's). The style suite
+holds every marker above to a row here, and the 0.1.0 scorecard counts the
+rows that are `open` or `austin`.
+
+| Line | Section | Item | Status | Where settled, or why |
+|---|---|---|---|---|
+| 1604 | Assets (09-01) | WooCommerce's `$product` on a singular render | done | the lab's product pages print the same cart forms as the reference (checked 2026-10-12) |
+| 1639 | Storefront (09-01) | `wp_page_menu`'s home item and current class; classic sidebars | done | "The page-list menu and block widgets (2026-09-01)" |
+| 2619 | Translations (10-05) | `switch_to_user_locale` | done | real in the facade |
+| 2619 | Translations (10-05) | the admin and network core translation files | accepted | wp-admin is Minn Admin's; network files are multisite, which a single site never loads |
+| 2619 | Translations (10-05) | the engine's own front-end strings are English, not through `__()` | open | the engine renders no core translations yet |
+| 3295 | Writes tell plugins (10-06) | cron publishes due posts without the actions | done | `Cron::publishDue` goes through `check_and_publish_future_post` |
+| 3295 | Writes tell plugins (10-06) | `apply_filters('the_content')` without core's defaults | done | the defaults fill `the_content` as the reference's do |
+| 3295 | Writes tell plugins (10-06) | `wp_new_comment`, `wp_check_comment_flood` | done | real in the facade |
+| 4951 | Shortcodes (10-07) | cookies read from the request, not `$_COOKIE` | done | `wp_parse_auth_cookie` reads `$_COOKIE` first |
+| 8514 | HTTPS detection (10-09) | block themes print head links themselves, so `remove_action('wp_head', …)` cleanups have nothing to remove | open | the EditURI link itself follows the XML-RPC dead end |
+| 8514 | HTTPS detection (10-09) | `get_option()` while installing | done | "Options while installing (2026-10-12)" |
+| 8644 | Small output helpers (10-09) | `wp_filter_global_styles_post` waits for `remove_insecure_properties` | done | both real ("What WP_Theme_JSON keeps when it removes what is not safe") |
+| 8644 | Small output helpers (10-09) | `_print_emoji_detection_script` | accepted | omitted by Austin's D12 |
+| 8644 | Small output helpers (10-09) | format links ignore a post_format permastruct removed at runtime | open | |
+| 8752 | Tabs helpers (10-09) | no tabs renderer of the engine's own | open | |
+| 8834 | Template loading (10-09) | WordPress's skip-link stylesheet text | accepted | Austin's D3: the engine keeps its own CSS |
+| 8834 | Template loading (10-09) | duotone SVG filters | done | `wp_get_global_styles_svg_filters` is real |
+| 8834 | Template loading (10-09) | `wp_map_sidebars_widgets` | done | real in the facade |
+| 9284 | WordPress 7.1.3 (10-09) | `make_absolute_url` resolves some paths differently | done | 2026-10-12, probe `http-absolute-url` |
+| 9284 | WordPress 7.1.3 (10-09) | Minn Admin's comment screen and the stored XSS 7.1.3 fixed | austin | a Minn Admin task, outside this repository |
+| 9341 | rest-api.php's helpers (10-09) | the engine's own routes answer OPTIONS without a schema | open | |
+| 9496 | The rest of post.php (10-09) | built-in types' labels never filtered | done | 2026-10-12: core types register again on `init` (suite `hook-parity`) |
+| 9569 | The rest of media.php (10-09) | `wp_enqueue_media` | accepted | an editor dead end (Austin's D7) |
+| 9569 | The rest of media.php (10-09) | the Imagick editor | done | Austin's D10; probe `imagick-editor` |
+| 9984 | The rest of query.php (10-09) | the old-slug lookup outside the front | accepted | nothing a visitor or a plugin can see: both stacks answer 404 on the front |
+| 10611 | Site logo callbacks (10-10) | the engine drew these blocks empty | done | "The site logo, footnotes and legacy widget in pages (2026-10-10)" |
+| 10863 | REST registry controllers (10-10) | `/wp/v2/taxonomies` without plugins' taxonomies | done | the lab lists WooCommerce's as the reference does (checked 2026-10-12) |
+| 10913 | REST block controllers (10-10) | menu routes ignore `rest_menu_read_access` | done | 2026-10-12: a route policy's opener (suite `runtime`) |
+| 10958 | REST widget controllers (10-10) | `retrieve_widgets`, `wp_map_sidebars_widgets` | done | real; probe `sidebars-mapping` |
+| 11077 | View configurations (10-10) | core's pattern categories | done | `_register_core_block_patterns_and_categories` is real |
+| 11077 | View configurations (10-10) | `get_post_type_object` builds a new object each call | done | "Post type and taxonomy objects, shared (2026-10-10)" |
+| 11120 | Type objects, shared (10-10) | REST `X-Robots-Tag`, `Vary: Origin`, CORS headers | done | "The REST server's own headers" (headers match, checked 2026-10-12) |
+| 11269 | oEmbed and URL details (10-10) | `/wp-block-editor/v1/export` and `/navigation-fallback` | accepted | their controllers are editor dead ends (Austin's D7) |
+| 11341 | Type objects' own setup (10-10) | a taxonomy's default term | done | "A taxonomy's default term (2026-10-12)" |
+| 11434 | theme.json resolver helpers (10-10) | `get_block_data` | done | real |
+| 11434 | theme.json resolver helpers (10-10) | `WP_Theme_JSON` keeps a variation its block lacks | done | "WP_Theme_JSON's constructor (2026-10-10)" |
+| 11477 | View configuration functions (10-10) | core's own patterns | done | as 11077 |
+| 11536 | Block patterns (10-10) | `_register_remote_theme_patterns` | accepted | omitted by Austin's D12 |
+| 11536 | Block patterns (10-10) | pattern headers read on every request | accepted | the engine reads theme files from disk ("Theme caches") |
+| 11962 | WP_Theme_JSON safety (10-10) | global styles saved past the save filters | done | "Global styles saved without unfiltered_html (2026-10-11)" |
+| 12037 | Posts controller, read (10-10) | the write side | done | "WP_REST_Posts_Controller, write side (2026-10-11)" |
+| 12037 | Posts controller, read (10-10) | `OPTIONS /wp/v2/posts` without the schema | open | as 9341 |
+| 12449 | Attachments controller (10-11) | sideload, finalize and post-process | done | real, routes listed; probe `rest-attachments-sideload` |
+| 12449 | Attachments controller (10-11) | a network's upload space check | accepted | multisite, which a single site never loads |
+| 13590 | Icon block, term template (10-11) | the playlist block | done | "The playlist block (2026-10-11)" |
+| 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module | open | |
+| 14006 | Imagick editor (10-11) | what `image_strip_meta` removes from a JPEG | accepted | profiles ImageMagick can write survive; the engine strips only names outside that set |
+| 14984 | An outside audit (10-11) | dead ends as a `__call` table, the DKIM key name, splitting this file | accepted | reasons given there |
+| 14984 | An outside audit (10-11) | release key rotation; the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
+| 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | open | |
+| 15221 | Security fixes (10-12) | the audit's Lows | open | listed on the Open Items page, to verify one by one |

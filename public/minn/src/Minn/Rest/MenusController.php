@@ -40,7 +40,7 @@ final readonly class MenusController
     }
 
     /** Every classic menu. */
-    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.'))]
+    #[Route(Method::Get, '/wp/v2/menus', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', \WP_REST_Menus_Controller::class, 'nav_menu']))]
     public function listMenus(Request $request): Response
     {
         $rows = $this->menus->all();
@@ -71,7 +71,7 @@ final readonly class MenusController
     }
 
     /** One menu. */
-    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.'))]
+    #[Route(Method::Get, '/wp/v2/menus/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::Menu, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menus.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menus.', opener: ['rest_menu_read_access', \WP_REST_Menus_Controller::class, 'nav_menu']))]
     public function singleMenu(Request $request, string $id): Response
     {
         $row = $this->menus->find((int) $id);
@@ -137,7 +137,7 @@ final readonly class MenusController
     }
 
     /** The items of a menu. */
-    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
+    #[Route(Method::Get, '/wp/v2/menu-items', policy: new Policy(Access::Cap, 'edit_posts', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', \WP_REST_Menu_Items_Controller::class, 'nav_menu_item']))]
     public function listItems(Request $request): Response
     {
         // One menu id, a list or a comma-separated string (probe rest-menus-controller).
@@ -160,7 +160,7 @@ final readonly class MenusController
     }
 
     /** One menu item. */
-    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.'))]
+    #[Route(Method::Get, '/wp/v2/menu-items/{id:[\d]+}', policy: new Policy(Access::Cap, 'edit_posts', param: 'id', subject: Subject::MenuItem, signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu items.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu items.', opener: ['rest_menu_read_access', \WP_REST_Menu_Items_Controller::class, 'nav_menu_item']))]
     public function singleItem(Request $request, string $id): Response
     {
         $item = $this->menus->findItem((int) $id);
@@ -222,7 +222,7 @@ final readonly class MenusController
     }
 
     /** The menu locations the theme and plugins register (none for a block theme without plugins), keyed by name; edit_theme_options to view. */
-    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
+    #[Route(Method::Get, '/wp/v2/menu-locations', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', \WP_REST_Menu_Locations_Controller::class]))]
     public function locations(Request $request): Response
     {
         $out = [];
@@ -234,7 +234,7 @@ final readonly class MenusController
     }
 
     /** One menu location. */
-    #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.'))]
+    #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', \WP_REST_Menu_Locations_Controller::class]))]
     public function oneLocation(Request $request, string $location): Response
     {
         $registered = \get_registered_nav_menus();

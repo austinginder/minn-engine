@@ -2907,9 +2907,15 @@ function _minn_list_author_item(WP_User $author, string $name, int $posts, array
 /** Registers the core post types and statuses again, as WordPress does at init: their objects come out the same, and plugins hear each registered again. */
 function create_initial_post_types()
 {
+    // The captured rows keep the mapped capabilities under cap and the supports beside them (Registry::supports);
+    // registering reads them as capabilities and supports (none at all as false, so no defaults are added).
     foreach (Runtime::registry()->postTypes() as $name => $row) {
         if (!empty($row['_builtin'])) {
-            register_post_type($name, $row);
+            $supports = [];
+            foreach (Runtime::registry()->supports($name) as $feature => $args) {
+                $args === true ? $supports[] = $feature : $supports[$feature] = $args;
+            }
+            register_post_type($name, ['capabilities' => (array) ($row['cap'] ?? []), 'supports' => $supports === [] ? false : $supports] + $row);
         }
     }
     foreach (Runtime::registry()->statuses() as $name => $row) {

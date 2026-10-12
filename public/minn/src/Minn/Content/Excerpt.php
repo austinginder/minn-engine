@@ -47,17 +47,6 @@ final class Excerpt
         return $text === '' ? '' : Texturize::html('<p>' . $text . "</p>\n");
     }
 
-    /**
-     * The excerpt as a feed carries it: the whole content counts (no stop at
-     * the more tag), texturize runs before the tags are stripped, and the
-     * paragraph is not texturized again.
-     */
-    public static function forFeed(PostRecord $post): string
-    {
-        $text = self::words(Texturize::html(self::source($post)));
-        return $text === '' ? '' : '<p>' . $text . "</p>\n";
-    }
-
     /** The stored excerpt, or the content's allowed markup. */
     private static function source(PostRecord $post): string
     {

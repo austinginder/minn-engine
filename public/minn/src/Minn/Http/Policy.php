@@ -45,6 +45,7 @@ final readonly class Policy
         public ?string $missingMessage = null,
         public int $signInStatus = 401,
         public ?string $verb = null,
+        public ?array $opener = null,
     ) {
     }
 
@@ -105,6 +106,9 @@ final readonly class Policy
         if ($this->edit !== null) {
             $row['edit'] = $this->edit->toArray();
         }
+        if ($this->opener !== null) {
+            $row['opener'] = $this->opener[0];
+        }
         return $row;
     }
 
@@ -122,6 +126,9 @@ final readonly class Policy
         };
         if ($this->subject !== null) {
             $line .= '; ' . strtolower((string) preg_replace('/(?<!^)[A-Z]/', ' $0', $this->subject->name)) . " {{$this->param}} must exist";
+        }
+        if ($this->opener !== null) {
+            $line .= "; or anyone, when {$this->opener[0]} opens it";
         }
         return $this->edit === null ? $line : "{$line}; edit context: " . $this->edit->describe();
     }

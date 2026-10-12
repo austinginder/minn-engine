@@ -65,7 +65,7 @@ the WordPress runtime plugins load against
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
-| [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
+| [`PostEvents`](#postevents) | final readonly class | 160 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
@@ -2956,14 +2956,6 @@ fields), core's own written directly without.
 
 - `@param array<string, mixed> $body`
 
-### `attachmentAdded(int $id): void`
-
-add_attachment, once a new attachment's row and file are in.
-
-### `attachmentEdited(int $id, Minn\Content\PostRecord $before): void`
-
-edit_attachment and attachment_updated, after an attachment's row changed.
-
 ### `attachmentGenerated(int $id, string $file, string $mime): void`
 
 A new attachment's metadata made by the runtime, as the reference's
@@ -2991,7 +2983,7 @@ rest_delete_{type}, after a trash or a delete, with the post as it was answered 
 
 - `@param array<string, mixed> $data`
 
-Internals: `rest()` (private, line 178), `wpPost()` (private, line 200)
+Internals: `rest()` (private, line 157), `wpPost()` (private, line 179)
 
 
 ## PostInsert

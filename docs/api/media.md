@@ -9,10 +9,10 @@ uploads, image sizes and attachment metadata
 | [`Gallery`](#gallery) | final class | 54 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
-| [`Metadata`](#metadata) | final class | 145 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
+| [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
 | [`Sizing`](#sizing) | final class | 239 | The image size arithmetic the media functions share: the crop or scale a |
-| [`Upload`](#upload) | final readonly class | 120 | One file arriving for the library, on either transport: a multipart |
+| [`Upload`](#upload) | final readonly class | 89 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 135 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
 | [`Writer`](#writer) | final readonly class | 24 | Where the media library's files live, as a REST upload names them: a |
@@ -211,10 +211,6 @@ The attachment metadata blob as an array, tolerant of anything missing.
 
 - `@return array{width: int, height: int, file: string, filesize: int, sizes: array<string, array>, image_meta: ?array}`
 
-### static `serialize(array $meta): string`
-
-The metadata as the reference's serialized blob, without unserialize ever being needed.
-
 ### static `blankImageMeta(): array`
 
 The image_meta block a fresh upload carries.
@@ -364,21 +360,6 @@ the REST request's, keyed by lower-case names with underscores.
 ### `mime(): ?string`
 
 The mime type the extension maps to, or null for one the library refuses.
-
-### `sniffedMime(): ?string`
-
-The image type the bytes themselves say they are, or null when they
-are not an image the library knows. What the name claims is checked
-against this: the reference refuses non-image bytes under an image
-name and renames a file whose bytes are a different image type.
-
-### `renamedFor(string $mime): self`
-
-The same upload under a name whose extension matches a mime type.
-
-### `isImage(): bool`
-
-Whether the file is an image the engine will make sizes for; SVG is not.
 
 ### static `parentOf(Minn\Http\Request $request): int`
 
