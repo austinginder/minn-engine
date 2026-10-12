@@ -23,14 +23,21 @@ final readonly class Site
         return $this->db->option($name);
     }
 
-    /** Writes an option, inserting it as autoloaded when it does not exist; the option store hears of it. */
-    public function setOption(string $name, string $value): void
+    /**
+     * Writes an option, inserting it as autoloaded when it does not exist;
+     * the option store hears of it. An $autoload given is written too, so a
+     * cache the engine reads on demand (autoload "off") stays out of the
+     * list every request loads.
+     */
+    public function setOption(string $name, string $value, ?string $autoload = null): void
     {
         $table = $this->db->table('options');
         if ($this->db->storedOption($name) === null) {
-            $this->db->execute("INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'auto')", [$name, $value]);
-        } else {
+            $this->db->execute("INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, ?)", [$name, $value, $autoload ?? 'auto']);
+        } elseif ($autoload === null) {
             $this->db->execute("UPDATE {$table} SET option_value = ? WHERE option_name = ?", [$value, $name]);
+        } else {
+            $this->db->execute("UPDATE {$table} SET option_value = ?, autoload = ? WHERE option_name = ?", [$value, $autoload, $name]);
         }
         Runtime::optionWritten($name);
     }

@@ -140,7 +140,7 @@ final readonly class Packages
             uasort($cache, static fn (array $a, array $b): int => $b['at'] <=> $a['at']);
             $cache = array_slice($cache, 0, 50, true);
         }
-        $this->site->setOption(self::INFO_OPTION, Json::encode($cache));
+        $this->site->setOption(self::INFO_OPTION, Json::encode($cache), autoload: 'off');
         return $card;
     }
 

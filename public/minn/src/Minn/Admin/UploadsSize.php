@@ -52,8 +52,8 @@ final readonly class UploadsSize
             return null;
         }
         $out = $this->walk();
-        $this->site->setOption(self::EXPIRES, (string) (time() + ($out['partial'] ? 1 : 12) * 3600));
-        $this->site->setOption(self::CACHE, Serialized::encode($out));
+        $this->site->setOption(self::EXPIRES, (string) (time() + ($out['partial'] ? 1 : 12) * 3600), autoload: 'off');
+        $this->site->setOption(self::CACHE, Serialized::encode($out), autoload: 'off');
         $this->site->deleteOption(self::LOCK);
         return $out;
     }
@@ -80,7 +80,7 @@ final readonly class UploadsSize
         if ($held !== null && (int) $held > time() - 120) {
             return false;
         }
-        $this->site->setOption(self::LOCK, (string) time());
+        $this->site->setOption(self::LOCK, (string) time(), autoload: 'off');
         return true;
     }
 

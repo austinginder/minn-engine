@@ -38,6 +38,13 @@ final class Options
     public const GUARDED = ['minn_runtime_symbols', 'minn_recovery_strikes', 'minn_cron_lock'];
     private const GUARDED_PREFIX = 'minn_login_throttle_';
 
+    /**
+     * The engine's own caches, read on demand and written with autoload off
+     * (Site::setOption). Rows an older engine wrote autoloaded are set right
+     * the first time a loaded list holds them.
+     */
+    public const ON_DEMAND = ['minn_admin_changelog', 'minn_changelog', 'minn_release', 'minn_plugin_info', 'minn_updates', '_transient_minn_admin_uploads_size', '_transient_timeout_minn_admin_uploads_size', 'minn_admin_uploads_size_lock'];
+
     /** The autoload column values that load an option with every request, in the reference's order. */
     public const AUTOLOAD_VALUES = ['yes', 'on', 'auto-on', 'auto'];
 
@@ -83,6 +90,12 @@ final class Options
         $in = implode(', ', array_fill(0, count(self::AUTOLOAD_VALUES), '?'));
         foreach ($this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE autoload IN ({$in})", self::AUTOLOAD_VALUES) as $row) {
             $list[(string) $row['option_name']] = (string) $row['option_value'];
+        }
+        $stray = array_intersect_key($list, array_flip(self::ON_DEMAND));
+        if ($stray !== []) {
+            $names = array_map('strval', array_keys($stray));
+            $this->db->execute("UPDATE {$this->db->table('options')} SET autoload = 'off' WHERE option_name IN (" . implode(', ', array_fill(0, count($names), '?')) . ')', $names);
+            $list = array_diff_key($list, $stray);
         }
         $this->group->set(self::ALL, $list);
         return $list;

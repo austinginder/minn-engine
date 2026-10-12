@@ -143,7 +143,7 @@ final class Updates
             // Which files answered for themselves, so a check with no runtime keeps their offers.
             'supplied' => array_values(array_unique([...array_keys($supplied['plugins']), ...array_keys($supplied['no_update'])])),
         ];
-        $this->site->setOption(self::OPTION, Json::encode($state));
+        $this->site->setOption(self::OPTION, Json::encode($state), autoload: 'off');
         $this->state = $state;
         $this->publish();
         return $state;
@@ -435,7 +435,7 @@ final class Updates
         $version = $kind === 'theme' ? ($this->themeHeaders()[$item]['Version'] ?? '') : ($this->pluginVersions()[$item] ?? '');
         $state['archives']["{$kind}/{$folder}"] = ['sha256' => $sha256, 'version' => $version, 'package' => $package, 'installed' => time()];
         $this->state = $state;
-        $this->site->setOption(self::OPTION, Json::encode($state));
+        $this->site->setOption(self::OPTION, Json::encode($state), autoload: 'off');
     }
 
     /**
@@ -452,7 +452,7 @@ final class Updates
             unset($state[$from][$key]);
         }
         $this->state = $state;
-        $this->site->setOption(self::OPTION, Json::encode($state));
+        $this->site->setOption(self::OPTION, Json::encode($state), autoload: 'off');
         $this->publish();
     }
 

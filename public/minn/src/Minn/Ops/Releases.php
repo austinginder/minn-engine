@@ -43,7 +43,7 @@ final class Releases
         return new self(
             static fn (): ?string => $site->option(self::OPTION),
             static function (string $json) use ($site): void {
-                $site->setOption(self::OPTION, $json);
+                $site->setOption(self::OPTION, $json, autoload: 'off');
             },
             $installed,
         );

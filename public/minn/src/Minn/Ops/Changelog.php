@@ -54,7 +54,7 @@ final class Changelog
         return new self(
             static fn (): ?string => $site->option($option),
             static function (string $json) use ($site, $option): void {
-                $site->setOption($option, $json);
+                $site->setOption($option, $json, autoload: 'off');
             },
             $source,
         );
