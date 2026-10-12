@@ -16,6 +16,7 @@ use Minn\Runtime\Runtime;
 use Minn\Theme\TemplateIndex;
 use Minn\Theme\TemplateRecord;
 use Minn\Theme\TemplateWriter;
+use Minn\Content\Slug;
 
 /**
  * wp/v2/templates and wp/v2/template-parts: the block theme's templates as
@@ -26,6 +27,9 @@ use Minn\Theme\TemplateWriter;
  */
 final readonly class TemplatesController
 {
+    /** What creating a template must send (the reference's create arguments). */
+    private const CREATE_BODY = ['slug' => ['description' => 'Unique slug identifying the template.', 'type' => 'string', 'minLength' => 1, 'pattern' => '[a-zA-Z0-9_\\%-]+', 'required' => true]];
+
     private const LOOKUP = [
         'slug' => ['description' => 'The slug of the template to get the fallback for', 'type' => 'string', 'required' => true],
         'is_custom' => ['description' => 'Indicates if a template is custom or part of the template hierarchy', 'type' => 'boolean', 'required' => false],
@@ -91,6 +95,20 @@ final readonly class TemplatesController
     public function part(Request $request, string $id): Response
     {
         return $this->single($request, TemplateIndex::PART, $id);
+    }
+
+    /** Creates a template. */
+    #[Route(Method::Post, '/wp/v2/templates', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL), body: [self::CREATE_BODY])]
+    public function createTemplate(Request $request): Response
+    {
+        return $this->create($request, TemplateIndex::TEMPLATE);
+    }
+
+    /** Creates a template part. */
+    #[Route(Method::Post, '/wp/v2/template-parts', policy: new Policy(Access::Cap, self::READ_CAP, caps: [self::WRITE_CAP], signIn: 'rest_cannot_manage_templates', signInMessage: self::REFUSAL, refuse: 'rest_cannot_manage_templates', message: self::REFUSAL), body: [self::CREATE_BODY])]
+    public function createPart(Request $request): Response
+    {
+        return $this->create($request, TemplateIndex::PART);
     }
 
     /** Saves a template. */
@@ -199,8 +217,45 @@ final readonly class TemplatesController
     {
         $this->requireWrite();
         $record = $this->record($type, $id);
-        $body = $request->json();
-        $fields = array_filter(
+        $this->writer->save($record, $this->fields($request->json()), $this->caller->id());
+        return Reply::item(
+            $this->object->view($this->record($type, $id), Context::Edit),
+            Fields::fromQuery($request->query),
+        );
+    }
+
+    /**
+     * A new template from the collection (probe rest-template-create): its
+     * slug sanitised and made unique among the site's own copies of the
+     * type (-2, -3...). A slug only a theme file holds makes the site's copy
+     * of that file, blank but for what the body sends. Whatever status is
+     * asked for, it is published; the answer is in the request's context.
+     */
+    private function create(Request $request, string $type): Response
+    {
+        $this->requireWrite();
+        $index = $this->readable();
+        $slug = Slug::sanitize((string) ($request->json()['slug'] ?? ''));
+        $taken = array_map(static fn (TemplateRecord $record) => $record->slug, array_filter($index->all($type), static fn (TemplateRecord $record) => $record->wpId > 0));
+        for ($n = 2, $unique = $slug; in_array($unique, $taken, true); $n++) {
+            $unique = $slug . '-' . $n;
+        }
+        // Over a theme file's slug the copy keeps nothing of the file: what the body leaves out is blank.
+        $record = new TemplateRecord(theme: $index->themeSlug(), slug: $unique, type: $type, content: '', title: '', description: '', source: 'custom', origin: null, hasThemeFile: $index->hasFile($type, $unique), author: 0, modified: null, date: null, wpId: 0, area: $type === TemplateIndex::PART ? 'uncategorized' : null);
+        $this->writer->create($record, $this->fields($request->json()), $this->caller->id());
+        // The answer is in the request's own context, the view unless it asks for edit.
+        return Reply::item($this->object->view($this->record($type, $index->themeSlug() . '//' . $unique), Context::of($request)), Fields::fromQuery($request->query), 201);
+    }
+
+    /**
+     * The fields a write sets, those the body sends.
+     *
+     * @param array<string, mixed> $body
+     * @return array<string, string>
+     */
+    private function fields(array $body): array
+    {
+        return array_filter(
             [
                 'title' => $this->text($body['title'] ?? null),
                 'content' => $this->text($body['content'] ?? null),
@@ -208,11 +263,6 @@ final readonly class TemplatesController
                 'area' => isset($body['area']) ? (string) $body['area'] : null,
             ],
             static fn (?string $value) => $value !== null,
-        );
-        $this->writer->save($record, $fields, $this->caller->id());
-        return Reply::item(
-            $this->object->view($this->record($type, $id), Context::Edit),
-            Fields::fromQuery($request->query),
         );
     }
 

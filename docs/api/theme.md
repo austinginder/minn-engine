@@ -35,7 +35,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`TemplatePartTheme`](#templateparttheme) | final readonly class | 45 | A template-part block inside a template says which theme's part it means. |
 | [`TemplatePatterns`](#templatepatterns) | final readonly class | 88 | A template can name a pattern instead of carrying its blocks, and the |
 | [`TemplateRecord`](#templaterecord) | final readonly class | 34 | One block template or template part, whatever it came from: a theme |
-| [`TemplateWriter`](#templatewriter) | final readonly class | 92 | Saving and removing block templates. A template the theme ships is never |
+| [`TemplateWriter`](#templatewriter) | final readonly class | 116 | Saving and removing block templates. A template the theme ships is never |
 | [`Templates`](#templates) | final readonly class | 175 | Which template renders a resolution, and where its markup comes from: |
 | [`Theme`](#theme) | final class | 347 | The active block theme on disk, read as data: theme.json, the templates |
 | [`ThemeJsonData`](#themejsondata) | final class | 54 | The theme's theme.json as plugins and the theme's own functions may |
@@ -1203,6 +1203,14 @@ time. Returns the post id.
 
 - `@param array{title?: string, content?: string, description?: string, area?: string} $fields`
 
+### `create(Minn\Theme\TemplateRecord $record, array $fields, int $authorId): int`
+
+A new site copy from the collection's create: as a save inserts one,
+but recording no origin, even over a theme file (probe
+rest-template-create).
+
+- `@param array<string, string> $fields`
+
 ### `trash(Minn\Theme\TemplateRecord $record): void`
 
 Moves a site copy to the trash, which hands the theme's file back.
@@ -1211,7 +1219,7 @@ Moves a site copy to the trash, which hands the theme's file back.
 
 Deletes a saved template row.
 
-Internals: `setArea()` (private, line 90), `themeTermId()` (private, line 100)
+Internals: `insert()` (private, line 76), `setArea()` (private, line 114), `themeTermId()` (private, line 124)
 
 
 ## Templates

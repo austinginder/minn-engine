@@ -47,6 +47,35 @@ final readonly class TemplateWriter
             $this->setArea($record->wpId, $fields['area'] ?? $record->area, $record->type);
             return $record->wpId;
         }
+        $id = $this->insert($record, $fields, $authorId);
+        // The reference records where a site copy came from, so the editor
+        // can tell "changed the theme's version" from "made a new one".
+        if ($record->hasThemeFile) {
+            $this->writer->setMeta($id, 'origin', 'theme');
+        }
+        return $id;
+    }
+
+    /**
+     * A new site copy from the collection's create: as a save inserts one,
+     * but recording no origin, even over a theme file (probe
+     * rest-template-create).
+     *
+     * @param array<string, string> $fields
+     */
+    public function create(TemplateRecord $record, array $fields, int $authorId): int
+    {
+        return $this->insert($record, $fields, $authorId);
+    }
+
+    /**
+     * The site copy's row, its theme term and its area.
+     *
+     * @param array<string, string> $fields
+     */
+    private function insert(TemplateRecord $record, array $fields, int $authorId): int
+    {
+        $now = $this->site->localNow();
         $id = $this->writer->insert([
             'post_author' => $authorId,
             'post_date' => $now,
@@ -66,11 +95,6 @@ final readonly class TemplateWriter
             'post_content_filtered' => '',
         ]);
         $this->writer->setTerms($id, 'wp_theme', [$this->themeTermId()]);
-        // The reference records where a site copy came from, so the editor
-        // can tell "changed the theme's version" from "made a new one".
-        if ($record->hasThemeFile) {
-            $this->writer->setMeta($id, 'origin', 'theme');
-        }
         $this->setArea($id, $fields['area'] ?? $record->area, $record->type);
         return $id;
     }

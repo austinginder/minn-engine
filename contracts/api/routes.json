@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 255,
-    "withPolicy": 249,
+    "routes": 257,
+    "withPolicy": 251,
     "entries": [
         {
             "method": "GET",
@@ -6613,6 +6613,74 @@
             },
             "args": [],
             "body": [],
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/templates",
+            "name": "Minn\\Rest\\TemplatesController::createTemplate",
+            "handler": "Minn\\Rest\\TemplatesController::createTemplate",
+            "summary": "Creates a template.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_posts + edit_theme_options",
+                "cap": "edit_posts",
+                "caps": [
+                    "edit_theme_options"
+                ],
+                "signIn": {
+                    "code": "rest_cannot_manage_templates",
+                    "message": "Sorry, you are not allowed to access the templates on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_templates",
+                    "message": "Sorry, you are not allowed to access the templates on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "slug": {
+                    "description": "Unique slug identifying the template.",
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[a-zA-Z0-9_\\%-]+",
+                    "required": true
+                }
+            },
+            "index": true
+        },
+        {
+            "method": "POST",
+            "pattern": "/wp/v2/template-parts",
+            "name": "Minn\\Rest\\TemplatesController::createPart",
+            "handler": "Minn\\Rest\\TemplatesController::createPart",
+            "summary": "Creates a template part.",
+            "policy": {
+                "access": "Cap",
+                "describe": "cap edit_posts + edit_theme_options",
+                "cap": "edit_posts",
+                "caps": [
+                    "edit_theme_options"
+                ],
+                "signIn": {
+                    "code": "rest_cannot_manage_templates",
+                    "message": "Sorry, you are not allowed to access the templates on this site."
+                },
+                "refuse": {
+                    "code": "rest_cannot_manage_templates",
+                    "message": "Sorry, you are not allowed to access the templates on this site."
+                }
+            },
+            "args": [],
+            "body": {
+                "slug": {
+                    "description": "Unique slug identifying the template.",
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "[a-zA-Z0-9_\\%-]+",
+                    "required": true
+                }
+            },
             "index": true
         },
         {

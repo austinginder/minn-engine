@@ -14664,3 +14664,41 @@ choices differently from the reference: an image edit's rotate modifier
 `SchemaValues::combining()` is gone.
 
 Left before the route-table proof: POST on templates and template parts.
+
+## The core REST routes, proven: every function accounted for and proven (2026-10-11)
+
+**Creating templates** (probe rest-template-create). `POST wp/v2/templates`
+and `/template-parts` are new on the engine's `TemplatesController`. As on
+the reference:
+
+- The slug is sanitised (`zz-Mixed` becomes `zz-mixed`) and made unique among
+  the site's own copies of the type: `zz-custom-2`, then `-3`.
+- A slug only a theme file holds makes the site's copy of that file. The copy
+  has `has_theme_file`, `original_source` "theme", and none of the file's
+  title, content or description unless the body sends them. Unlike a save,
+  create records no `origin`.
+- Whatever status is sent, the template is published.
+- A part with no area gets "uncategorized".
+- The answer is a 201 in the request's own context, the view unless it asks
+  for edit.
+
+The probe deletes the area terms its parts bring. A leftover "uncategorized"
+area term changed what `wp_unique_term_slug()` answers on both stacks.
+
+**The proof** (probe create-initial-rest-routes). A fresh `WP_REST_Server`
+is given `create_initial_rest_routes()`, and every route it then answers in
+`wp/v2`, `wp-block-editor/v1`, `wp-site-health/v1` and `wp-abilities/v1` is
+listed with its methods: 102 routes, the same on both stacks.
+
+- Set aside by their handler's class are the routes of the controllers left
+  out on purpose: Site Health; the editor's block and pattern directories,
+  font library, site export and navigation fallback; and template autosaves
+  and revisions. Also set aside is a namespace left with only its own index
+  (`wp-site-health/v1`).
+- The server's own routes (`/`, `/batch/v1`), oEmbed's and plugins' are
+  registered elsewhere and are not listed.
+
+With that, every function, class and method in the reference's PHP API is
+accounted for (real or a dead end) and every real one is proven: 2,962
+functions, 239 classes and 2,387 methods. That is the coverage half of
+v0.1.0's definition of done.

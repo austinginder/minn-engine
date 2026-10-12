@@ -74,7 +74,7 @@ the wp/v2 surface: shapes and controllers
 | [`Subjects`](#subjects) | final readonly class | 53 | Whether the record a route capture names exists, for the policy gate to |
 | [`Taxonomies`](#taxonomies) | final class | 48 | The taxonomy registry the wp/v2 surface describes: the core set seeded |
 | [`TemplateObject`](#templateobject) | final readonly class | 101 | The wp/v2/templates and wp/v2/template-parts resource. |
-| [`TemplatesController`](#templatescontroller) | final readonly class | 275 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
+| [`TemplatesController`](#templatescontroller) | final readonly class | 324 | wp/v2/templates and wp/v2/template-parts: the block theme's templates as |
 | [`TermCollectionParams`](#termcollectionparams) | final class | 13 | A taxonomy's term list parameters as the reference declares them (probe |
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
@@ -3419,6 +3419,7 @@ saved over one, or from a plugin. Reading needs only edit_posts (the
 reference lets an editor or author see the layout); changing anything
 needs edit_theme_options.
 
+- const `CREATE_BODY` = `array (   'slug' =>    array (     'description' => 'Unique slug identifying the template.',     'type' => 'string',     'minLength' => 1,     'pattern' => '[a-zA-Z0-9_\\%-]+',     'required' => true,   ), )` — What creating a template must send (the reference's create arguments).
 - const `LOOKUP` = `array (   'slug' =>    array (     'description' => 'The slug of the template to get the fallback for',     'type' => 'string',     'required' => true,   ),   'is_custom' =>    array (     'description' => 'Indicates if a template is custom or part of the template hierarchy',     'type' => 'boolean',     'required' => false,   ),   'template_prefix' =>    array (     'description' => 'The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy`',     'type' => 'string',     'required' => false,   ), )`
 - const `LIST` = `array (   'wp_id' =>    array (     'description' => 'Limit to the specified post id.',     'type' => 'integer',   ),   'area' =>    array (     'description' => 'Limit to the specified template part area.',     'type' => 'string',   ),   'post_type' =>    array (     'description' => 'Post type to get the templates for.',     'type' => 'string',   ), )` — The list filters both routes take, as the reference declares them.
 - const `READ_CAP` = `'edit_posts'`
@@ -3468,6 +3469,18 @@ Route: `GET /wp/v2/template-parts/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[
 
 One template part.
 
+### `createTemplate(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /wp/v2/templates (cap edit_posts + edit_theme_options)`
+
+Creates a template.
+
+### `createPart(Minn\Http\Request $request): Minn\Http\Response`
+
+Route: `POST /wp/v2/template-parts (cap edit_posts + edit_theme_options)`
+
+Creates a template part.
+
 ### `saveTemplate(Minn\Http\Request $request, string $id): Minn\Http\Response`
 
 Route: `POST /wp/v2/templates/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)?)[\/\w%-]+} (cap edit_posts + edit_theme_options)`
@@ -3500,7 +3513,7 @@ Route: `DELETE /wp/v2/template-parts/{id:([^\/:<>\*\?"\|]+(?:\/[^\/:<>\*\?"\|]+)
 
 Deletes a customised template part.
 
-Internals: `listing()` (private, line 128), `listed()` (private, line 154), `lookup()` (private, line 171), `single()` (private, line 189), `save()` (private, line 198), `delete()` (private, line 225), `trashed()` (private, line 242), `record()` (private, line 264), `readable()` (private, line 274), `requireWrite()` (private, line 285), `text()` (private, line 294)
+Internals: `listing()` (private, line 146), `listed()` (private, line 172), `lookup()` (private, line 189), `single()` (private, line 207), `save()` (private, line 216), `create()` (private, line 234), `fields()` (private, line 256), `delete()` (private, line 275), `trashed()` (private, line 292), `record()` (private, line 314), `readable()` (private, line 324), `requireWrite()` (private, line 335), `text()` (private, line 344)
 
 
 ## TermCollectionParams

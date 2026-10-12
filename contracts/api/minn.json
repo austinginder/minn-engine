@@ -35124,7 +35124,8 @@
                 "Minn\\Content\\PostWriter",
                 "Minn\\Content\\Terms",
                 "Minn\\Content\\Users",
-                "Minn\\Rest\\PostsWriteController"
+                "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\TemplatesController"
             ],
             "constructor": null,
             "cases": [],
@@ -109256,11 +109257,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/TemplatesController.php",
-            "lines": 275,
+            "lines": 324,
             "doc": "wp/v2/templates and wp/v2/template-parts: the block theme's templates as\none list, whether they come from the theme's files, from a row the site\nsaved over one, or from a plugin. Reading needs only edit_posts (the\nreference lets an editor or author see the layout); changing anything\nneeds edit_theme_options.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Content\\Slug",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Args",
                 "Minn\\Http\\Method",
@@ -109317,11 +109319,17 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 46,
-                "end": 52
+                "line": 50,
+                "end": 56
             },
             "cases": [],
             "constants": [
+                {
+                    "name": "CREATE_BODY",
+                    "value": "array (   'slug' =>    array (     'description' => 'Unique slug identifying the template.',     'type' => 'string',     'minLength' => 1,     'pattern' => '[a-zA-Z0-9_\\\\%-]+',     'required' => true,   ), )",
+                    "doc": "What creating a template must send (the reference's create arguments).",
+                    "visibility": "private"
+                },
                 {
                     "name": "LOOKUP",
                     "value": "array (   'slug' =>    array (     'description' => 'The slug of the template to get the fallback for',     'type' => 'string',     'required' => true,   ),   'is_custom' =>    array (     'description' => 'Indicates if a template is custom or part of the template hierarchy',     'type' => 'boolean',     'required' => false,   ),   'template_prefix' =>    array (     'description' => 'The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy`',     'type' => 'string',     'required' => false,   ), )",
@@ -109411,8 +109419,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [
@@ -109433,8 +109441,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 67,
+                    "end": 70
                 },
                 {
                     "routes": [
@@ -109455,8 +109463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [
@@ -109477,8 +109485,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 81,
+                    "end": 84
                 },
                 {
                     "routes": [
@@ -109506,8 +109514,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [
@@ -109535,8 +109543,52 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 94
+                    "line": 95,
+                    "end": 98
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/templates (cap edit_posts + edit_theme_options)"
+                    ],
+                    "name": "createTemplate",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "createTemplate(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Creates a template.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 105
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/template-parts (cap edit_posts + edit_theme_options)"
+                    ],
+                    "name": "createPart",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "createPart(Minn\\Http\\Request $request): Minn\\Http\\Response",
+                    "doc": "Creates a template part.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 109,
+                    "end": 112
                 },
                 {
                     "routes": [
@@ -109566,8 +109618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 103
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [
@@ -109597,8 +109649,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 112
+                    "line": 127,
+                    "end": 130
                 },
                 {
                     "routes": [
@@ -109626,8 +109678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 119
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [
@@ -109655,8 +109707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 141,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -109682,8 +109734,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 143
+                    "line": 146,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -109718,8 +109770,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 163
+                    "line": 172,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -109745,8 +109797,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 187
+                    "line": 189,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -109779,8 +109831,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 196
+                    "line": 207,
+                    "end": 214
                 },
                 {
                     "routes": [],
@@ -109813,8 +109865,58 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 217
+                    "line": 216,
+                    "end": 225
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "create(Minn\\Http\\Request $request, string $type): Minn\\Http\\Response",
+                    "doc": "A new template from the collection (probe rest-template-create): its\nslug sanitised and made unique among the site's own copies of the\ntype (-2, -3...). A slug only a theme file holds makes the site's copy\nof that file, blank but for what the body sends. Whatever status is\nasked for, it is published; the answer is in the request's context.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "type",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 234,
+                    "end": 248
+                },
+                {
+                    "routes": [],
+                    "name": "fields",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "fields(array $body): array",
+                    "doc": "The fields a write sets, those the body sends.",
+                    "shapes": [
+                        "@param array<string, mixed> $body",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "body",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 256,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -109847,8 +109949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 240
+                    "line": 275,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -109867,8 +109969,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 242,
-                    "end": 262
+                    "line": 292,
+                    "end": 312
                 },
                 {
                     "routes": [],
@@ -109894,8 +109996,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 271
+                    "line": 314,
+                    "end": 321
                 },
                 {
                     "routes": [],
@@ -109906,8 +110008,8 @@
                     "doc": "Reading the layout is an editor's business, not only an administrator's.",
                     "shapes": [],
                     "params": [],
-                    "line": 274,
-                    "end": 283
+                    "line": 324,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -109918,8 +110020,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 285,
-                    "end": 291
+                    "line": 335,
+                    "end": 341
                 },
                 {
                     "routes": [],
@@ -109938,8 +110040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 300
+                    "line": 344,
+                    "end": 350
                 }
             ]
         },
@@ -152102,7 +152204,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/TemplateWriter.php",
-            "lines": 92,
+            "lines": 116,
             "doc": "Saving and removing block templates. A template the theme ships is never\ntouched on disk: editing one writes a wp_template row that shadows the\nfile, and deleting that row is what \"reset to the theme version\" means.",
             "implements": [],
             "extends": null,
@@ -152247,7 +152349,43 @@
                         }
                     ],
                     "line": 34,
-                    "end": 76
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "create(Minn\\Theme\\TemplateRecord $record, array $fields, int $authorId): int",
+                    "doc": "A new site copy from the collection's create: as a save inserts one,\nbut recording no origin, even over a theme file (probe\nrest-template-create).",
+                    "shapes": [
+                        "@param array<string, string> $fields"
+                    ],
+                    "params": [
+                        {
+                            "name": "record",
+                            "type": "Minn\\Theme\\TemplateRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authorId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -152266,8 +152404,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 82
+                    "line": 103,
+                    "end": 106
                 },
                 {
                     "routes": [],
@@ -152286,8 +152424,44 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 109,
+                    "end": 112
+                },
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "insert(Minn\\Theme\\TemplateRecord $record, array $fields, int $authorId): int",
+                    "doc": "The site copy's row, its theme term and its area.",
+                    "shapes": [
+                        "@param array<string, string> $fields"
+                    ],
+                    "params": [
+                        {
+                            "name": "record",
+                            "type": "Minn\\Theme\\TemplateRecord",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fields",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "authorId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -152320,8 +152494,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 98
+                    "line": 114,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -152332,8 +152506,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 100,
-                    "end": 107
+                    "line": 124,
+                    "end": 131
                 }
             ]
         },
