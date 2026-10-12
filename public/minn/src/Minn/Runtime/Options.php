@@ -179,8 +179,13 @@ final class Options
         if ($pre !== false) {
             return $pre;
         }
-        $list = $this->autoloaded();
-        $held = $this->lookup($name, is_array($list) ? $list : []);
+        // While installing, each read is the row as stored, past the list and the group.
+        if (Runtime::installing()) {
+            $held = $this->db->storedOption($name);
+        } else {
+            $list = $this->autoloaded();
+            $held = $this->lookup($name, is_array($list) ? $list : []);
+        }
         if ($held === null) {
             return \apply_filters("default_option_{$name}", $fallback, $name, $default !== []);
         }
@@ -194,7 +199,7 @@ final class Options
         if ($configured !== null) {
             return $configured;
         }
-        $held = $this->lookup($name, $this->listed());
+        $held = Runtime::installing() ? $this->db->storedOption($name) : $this->lookup($name, $this->listed());
         return $held === null ? null : $this->decode($name, $held);
     }
 
@@ -221,6 +226,10 @@ final class Options
         $value = $value ?? '';
         $written = $this->upsert($name, self::toStorage($value), $autoload);
         $held = $this->remember($name, $value);
+        // While installing, writes leave the group as it was (a later read may find it stale), as on the reference.
+        if (Runtime::installing()) {
+            return $written;
+        }
         if (in_array($autoload, self::AUTOLOAD_VALUES, true)) {
             $list = $this->listed();
             $list[$name] = $held;
@@ -262,6 +271,9 @@ final class Options
         }
         $this->db->execute("UPDATE {$this->db->table('options')} SET option_value = ? WHERE option_name = ?", [self::toStorage($value), $name]);
         $held = $this->remember($name, $value);
+        if (Runtime::installing()) {
+            return true;
+        }
         $list = $this->listed();
         if (array_key_exists($name, $list)) {
             $list[$name] = $held;
@@ -348,6 +360,9 @@ final class Options
         }
         $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$name]);
         unset($this->decoded[$name]);
+        if (Runtime::installing()) {
+            return true;
+        }
         $list = $this->listed();
         if (array_key_exists($name, $list)) {
             unset($list[$name]);

@@ -15,7 +15,7 @@ $say = static function (string $label, $value) use (&$log): void {
     $log[] = [$label, $value];
 };
 global $wpdb;
-$names = ['zz_oc_auto', 'zz_oc_off', 'zz_oc_missing', 'zz_oc_new', 'zz_oc_injected'];
+$names = ['zz_oc_auto', 'zz_oc_off', 'zz_oc_missing', 'zz_oc_new', 'zz_oc_injected', 'zz_oc_gone'];
 $clear = static function () use ($names, $wpdb): void {
     foreach ($names as $name) {
         $wpdb->delete($wpdb->options, ['option_name' => $name]);
@@ -174,5 +174,26 @@ $writes['that one deleted'] = [delete_option('zz_oc_new'), $group()];
 $writes['autoload turned on'] = [wp_set_option_autoload('zz_oc_off', true), $group(), get_option('zz_oc_off')];
 $writes['autoload turned off'] = [wp_set_option_autoload('zz_oc_auto', false), $group(), get_option('zz_oc_auto')];
 $say('the group kept in step by the writes', $writes);
+
+// While installing, reads go past the group.
+$installing = [];
+wp_installing(true);
+$installing['an autoloaded option, heard'] = $step(static fn () => get_option('zz_oc_off'));
+wp_cache_set('zz_oc_missing', 'from the cache', 'options');
+$installing['a key set by hand'] = get_option('zz_oc_missing');
+$all = (array) wp_cache_get('alloptions', 'options');
+$all['zz_oc_off'] = 'from the cache';
+wp_cache_set('alloptions', $all, 'options');
+$installing['the list set by hand'] = get_option('zz_oc_off');
+$wpdb->insert($wpdb->options, ['option_name' => 'zz_oc_new', 'option_value' => 'written while installing', 'autoload' => 'off']);
+$installing['one known unset, written directly'] = get_option('zz_oc_new', 'fallback');
+$installing['one not there'] = $step(static fn () => get_option('zz_oc_gone', 'fallback'));
+$installing['the list'] = $step(static fn () => wp_load_alloptions());
+$installing['updated'] = [update_option('zz_oc_missing', 'updated while installing'), $group()];
+$installing['added'] = [add_option('zz_oc_gone', 'added while installing'), $group()];
+$installing['deleted'] = [delete_option('zz_oc_auto'), $group()];
+wp_installing(false);
+$installing['afterwards'] = [get_option('zz_oc_missing'), get_option('zz_oc_off'), get_option('zz_oc_new', 'fallback'), get_option('zz_oc_gone', 'fallback'), get_option('zz_oc_auto', 'fallback'), $group()];
+$say('while installing', $installing);
 
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

@@ -188,6 +188,12 @@ final class Runtime
         return self::$options ??= new Options(self::current()->db);
     }
 
+    /** Whether this request is installing (wp_installing()); false before a runtime boots. */
+    public static function installing(): bool
+    {
+        return (bool) self::$current?->get('installing', false);
+    }
+
     /** Tells the option store about a row the engine wrote behind it; nothing to do when no store was made. */
     public static function optionWritten(string $name): void
     {
