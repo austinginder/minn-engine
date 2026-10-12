@@ -14824,3 +14824,24 @@ Admin's `app.js` found:
 
 The 7.1.3 bug class has no foothold there. The note owed since the 7.1.3
 section is settled.
+
+## The db-error.php drop-in (2026-10-11)
+
+Found in the runtime.md audit. When the database can't be reached, the
+reference hands the page to `wp-content/db-error.php` if the site has one. Hosts
+and maintenance plugins ship that file to show their own outage page. The
+engine always showed its own.
+
+`Failure::databaseUnavailable()` now runs the drop-in when it exists, from
+`WP_CONTENT_DIR` when wp-config.php defines it. The page is what the drop-in
+prints, under the status it set (200 when it set none) and only the headers it
+sent itself, as on the reference.
+
+Kept on purpose: with no drop-in, the engine still serves its own 503 with
+`Retry-After: 60` and `no-store`. The reference answers 500 there, which tells
+a monitor or a crawler the site is broken rather than briefly away.
+
+Suite config-constants points both stacks at a closed port, with
+`WP_CONTENT_DIR` set to a temporary folder, and compares three cases: no
+drop-in (the engine's own page), a drop-in that only prints, and one that sets
+503 and its own `Retry-After`.

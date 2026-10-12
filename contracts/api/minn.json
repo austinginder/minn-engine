@@ -62574,7 +62574,7 @@
             "namespace": "Minn\\Http",
             "kind": "final class",
             "file": "public/minn/src/Minn/Http/Failure.php",
-            "lines": 185,
+            "lines": 207,
             "doc": "What the public sees when the engine cannot answer: a plain page with no\ndetail, while the detail goes to the log. Installed once per request,\nit sets PHP's error settings from the debug constants (display stays off\nunless WP_DEBUG and WP_DEBUG_DISPLAY ask for it) and catches the fatal\nerrors PHP would otherwise print.",
             "implements": [],
             "extends": null,
@@ -62767,7 +62767,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 158,
-                    "end": 163
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -62778,8 +62778,8 @@
                     "doc": "The 503 page while maintenance mode holds; monitors read the status, the retry hint, and the title.",
                     "shapes": [],
                     "params": [],
-                    "line": 166,
-                    "end": 173
+                    "line": 188,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -62819,8 +62819,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 186
+                    "line": 202,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -62878,6 +62878,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "dropin",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "dropin(string $file): Minn\\Http\\Response",
+                    "doc": "A drop-in's own page: what it prints, under the status it set (200\nwhen it set none) and only the headers it sent itself, as the\nreference serves db-error.php when its database is away.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 176,
+                    "end": 185
+                },
+                {
+                    "routes": [],
                     "name": "page",
                     "static": true,
                     "visibility": "private",
@@ -62914,8 +62934,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 201
+                    "line": 210,
+                    "end": 223
                 }
             ]
         },

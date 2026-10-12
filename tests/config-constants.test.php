@@ -1,12 +1,14 @@
 <?php
 /**
- * wp-config.php's address constants: WP_HOME and WP_SITEURL, defined to
- * hosts other than the stored options, stand for those options on every
- * read, as on the reference. Each stack is served by `php -S` through a
- * router that defines the constants first (a staging copy or a local setup
- * does this in wp-config.php), and the addresses the REST API builds are
- * compared: the index's home and url, and a post's link and self link (its
- * stored guid stays as it was written).
+ * wp-config.php's constants, each stack served by `php -S` through a router
+ * that defines them first (as a staging copy, a local setup, or a broken
+ * database does). WP_HOME and WP_SITEURL, set to hosts other than the stored
+ * options, stand for those options on every read, as on the reference: the
+ * index's home and url, a post's link and self link (its stored guid stays as
+ * written). And with DB_HOST unreachable, a db-error.php drop-in answers in
+ * the stack's place: its own output, under the status it set (200 when it set
+ * none), with the headers it sent. Without one the engine keeps its own 503
+ * page, a difference on purpose (the reference's is a 500).
  *
  *   php tests/config-constants.test.php
  */
@@ -33,13 +35,20 @@ $servers = [];
 $ports = [];
 $dir = sys_get_temp_dir() . '/minn-config-constants-' . getmypid();
 @mkdir($dir);
+foreach (['none' => null, 'plain' => '<?php echo "ZZ drop-in says the database is away";', 'status' => '<?php header("HTTP/1.1 503 Service Unavailable"); header("Retry-After: 30"); echo "ZZ drop-in with its own status";'] as $case => $dropin) {
+    @mkdir("{$dir}/{$case}");
+    if ($dropin !== null) {
+        file_put_contents("{$dir}/{$case}/db-error.php", $dropin . "\n");
+    }
+}
 foreach ($stacks as $stack => [$root, $entry]) {
     if (!is_file($entry)) {
         echo "SKIP: {$entry} is missing\n";
         exit(0);
     }
     $router = "{$dir}/{$stack}.php";
-    file_put_contents($router, "<?php\ndefine('WP_HOME', 'https://zz-home.example/');\ndefine('WP_SITEURL', 'https://zz-site.example/wp');\nini_set('display_errors', '0');\n\$_SERVER['HTTPS'] = 'on';\nchdir(" . var_export($root, true) . ");\n\$_SERVER['SCRIPT_FILENAME'] = " . var_export($entry, true) . ";\nrequire " . var_export($entry, true) . ";\n");
+    // ?zzoutage=<case> serves the stack with its database away and the case's folder as wp-content.
+    file_put_contents($router, "<?php\nif (isset(\$_GET['zzoutage'])) {\n    define('DB_HOST', '127.0.0.1:1');\n    define('WP_CONTENT_DIR', " . var_export($dir, true) . " . '/' . preg_replace('/[^a-z]/', '', (string) \$_GET['zzoutage']));\n}\ndefine('WP_HOME', 'https://zz-home.example/');\ndefine('WP_SITEURL', 'https://zz-site.example/wp');\nini_set('display_errors', '0');\n\$_SERVER['HTTPS'] = 'on';\nchdir(" . var_export($root, true) . ");\n\$_SERVER['SCRIPT_FILENAME'] = " . var_export($entry, true) . ";\nrequire " . var_export($entry, true) . ";\n");
     $probe = stream_socket_server('tcp://127.0.0.1:0');
     $ports[$stack] = (int) substr((string) strrchr((string) stream_socket_get_name($probe, false), ':'), 1);
     fclose($probe);
@@ -49,7 +58,11 @@ register_shutdown_function(static function () use (&$servers, $dir): void {
     foreach ($servers as $server) {
         proc_terminate($server);
     }
-    array_map('unlink', glob("{$dir}/*.php") ?: []);
+    // The stacks may log into a case's folder (debug.log): everything under the run's folder goes.
+    $items = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+    foreach ($items as $item) {
+        $item->isDir() ? rmdir($item->getPathname()) : unlink($item->getPathname());
+    }
     @rmdir($dir);
 });
 usleep(700000);
@@ -73,6 +86,30 @@ foreach (['home' => 'the index\'s home', 'url' => 'the index\'s url', 'link' => 
     $check("{$label} matches the reference", $engine[$key] === $reference[$key], json_encode(['engine' => $engine[$key], 'reference' => $reference[$key]], JSON_UNESCAPED_SLASHES));
 }
 $check('the constants stand for the options', $reference['home'] === 'https://zz-home.example' && $reference['url'] === 'https://zz-site.example/wp', json_encode($reference, JSON_UNESCAPED_SLASHES));
+
+// The database away.
+$outage = static function (string $stack, string $case) use ($ports): array {
+    $context = stream_context_create(['http' => ['ignore_errors' => true, 'timeout' => 30]]);
+    $body = (string) @file_get_contents("http://127.0.0.1:{$ports[$stack]}/?zzoutage={$case}", false, $context);
+    $status = 0;
+    $retry = null;
+    foreach ($http_response_header ?? [] as $line) {
+        if (preg_match('#^HTTP/\S+ (\d+)#', $line, $m) === 1) {
+            $status = (int) $m[1];
+        }
+        if (stripos($line, 'Retry-After:') === 0) {
+            $retry = trim(substr($line, 12));
+        }
+    }
+    return ['status' => $status, 'retry' => $retry, 'body' => $body];
+};
+foreach (['plain' => 'a db-error.php drop-in that only prints', 'status' => 'a db-error.php drop-in that sets its own status'] as $case => $label) {
+    $engineSide = $outage('engine', $case);
+    $referenceSide = $outage('reference', $case);
+    $check("the database away, {$label}: what it answers matches the reference", $engineSide === $referenceSide, json_encode(['engine' => $engineSide, 'reference' => $referenceSide], JSON_UNESCAPED_SLASHES));
+}
+$own = $outage('engine', 'none');
+$check('the database away without a drop-in: the engine\'s own 503 page', $own['status'] === 503 && $own['retry'] === '60' && str_contains($own['body'], 'Error establishing a database connection'), json_encode(['status' => $own['status'], 'retry' => $own['retry']]));
 
 echo "\n{$pass} passed, {$fail} failed\n";
 exit($fail === 0 ? 0 : 1);

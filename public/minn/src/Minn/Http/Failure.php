@@ -157,9 +157,31 @@ final class Failure
     /** The 503 page the reference shows when the database cannot be reached. */
     public static function databaseUnavailable(): Response
     {
+        // A db-error.php drop-in answers in the engine's place, as on the reference (suite dropins).
+        $content = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : (defined('ABSPATH') ? ABSPATH . 'wp-content' : null);
+        $dropin = $content === null ? null : $content . '/db-error.php';
+        if ($dropin !== null && is_file($dropin)) {
+            return self::dropin($dropin);
+        }
         return self::page(503, 'Error establishing a database connection', 'The site could not reach its database. If you are the site owner, check the database server and the credentials in wp-config.php.')
             ->withHeader('Cache-Control', 'no-store')
             ->withHeader('Retry-After', '60');
+    }
+
+    /**
+     * A drop-in's own page: what it prints, under the status it set (200
+     * when it set none) and only the headers it sent itself, as the
+     * reference serves db-error.php when its database is away.
+     */
+    private static function dropin(string $file): Response
+    {
+        ob_start();
+        (static function (string $file): void {
+            require $file;
+        })($file);
+        $body = (string) ob_get_clean();
+        $status = http_response_code();
+        return new Response(is_int($status) && $status > 0 ? $status : 200, [], $body);
     }
 
     /** The 503 page while maintenance mode holds; monitors read the status, the retry hint, and the title. */
