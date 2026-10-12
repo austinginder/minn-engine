@@ -272,9 +272,15 @@ final class Db
         return (int) $this->connection->insert_id;
     }
 
-    /** One option's raw value, or null when it is unset. */
+    /** One option's stored value, or null when it is unset; home and siteurl answer to WP_HOME and WP_SITEURL. */
     public function option(string $name): ?string
     {
+        // WP_HOME and WP_SITEURL, when wp-config.php defines them, stand for
+        // their options on every read, as on the reference (_config_wp_home).
+        $constant = ['home' => 'WP_HOME', 'siteurl' => 'WP_SITEURL'][$name] ?? null;
+        if ($constant !== null && defined($constant)) {
+            return rtrim((string) constant($constant), '/\\');
+        }
         $value = $this->value(
             "SELECT option_value FROM {$this->table('options')} WHERE option_name = ? LIMIT 1",
             [$name],

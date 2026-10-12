@@ -38797,7 +38797,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Db.php",
-            "lines": 287,
+            "lines": 293,
             "doc": "The one door to the database. Every query is a prepared statement; the\nplaceholder types are derived from the PHP values, so callers pass plain\narrays and never spell out \"issd\". A parameter that is a list stands for\na list of values: its \"?\" becomes as many placeholders as the list is\nlong, so \"post_type IN (?)\" takes the types themselves.",
             "implements": [],
             "extends": null,
@@ -39294,7 +39294,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "option(string $name): ?string",
-                    "doc": "One option's raw value, or null when it is unset.",
+                    "doc": "One option's stored value, or null when it is unset; home and siteurl answer to WP_HOME and WP_SITEURL.",
                     "shapes": [],
                     "params": [
                         {
@@ -39306,7 +39306,7 @@
                         }
                     ],
                     "line": 276,
-                    "end": 283
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -39354,8 +39354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 302
+                    "line": 291,
+                    "end": 308
                 }
             ]
         },

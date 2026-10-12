@@ -14788,3 +14788,39 @@ send, and `attach()` puts it on the response; `clearing()` covers sign-out.
 `SignIn` uses them, and so do the facade's `wp_set_auth_cookie()` and
 `wp_clear_auth_cookie()`. Signing in always runs under the booted runtime,
 so neither method branches on it. The `Runtime::booted()` ratchet falls to 78.
+
+## WP_HOME and WP_SITEURL, everywhere (2026-10-11)
+
+Found in the runtime.md audit. The facade honoured `WP_HOME` and `WP_SITEURL`,
+through `_config_wp_home` and `_config_wp_siteurl` on the option filters, but
+the engine's own classes read the stored options. On a staging copy or a local
+setup whose `wp-config.php` points the site elsewhere, every link the engine
+built named the database's address: REST links, permalinks, the REST index, and
+the cookie-name hash.
+
+`Db::option()`, the one door to the options table, now answers `home` and
+`siteurl` from the constants when they're defined, without a trailing slash, as
+every read does on the reference.
+
+Suite config-constants serves both stacks under `php -S` with the constants
+defined first, to hosts other than the stored ones, and compares:
+
+- the index's `home` and `url`;
+- a post's `link` and self link;
+- its stored guid, which stays as it was written.
+
+Before the fix, the engine answered with the stored host.
+
+**Also checked, Minn Admin's comment screen.** WordPress 7.1.3 fixed a stored
+XSS there. Its cause was the help tabs' click handler handing a link's `href`
+to jQuery's `$()`, which builds HTML. It became reachable in 7.1.0, when
+visitor comments could carry a `span` class. A read-only review of Minn
+Admin's `app.js` found:
+
+- its `$` is `querySelector`, so a selector, never markup;
+- a comment's content is shown only as escaped, tag-stripped text (and
+  escaped in the edit box);
+- its author fields and the activity feed's text all go through `esc()`.
+
+The 7.1.3 bug class has no foothold there. The note owed since the 7.1.3
+section is settled.
