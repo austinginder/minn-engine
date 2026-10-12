@@ -14716,3 +14716,40 @@ compares it:
 - A `robots_txt` filter's own text replaces the rest.
 - The hooks fire in order: `do_robotstxt`, then `robots_txt` with whether
   the site is public.
+
+## Global styles saved without unfiltered_html (2026-10-11)
+
+Found in the runtime.md audit. A global styles save over REST wrote its post
+directly, skipping the save filters a post update runs. So where an
+administrator may not post unfiltered HTML (`DISALLOW_UNFILTERED_HTML`), the
+engine kept what WordPress strips. Probe global-styles-unfiltered, observed
+on the reference:
+
+- **Without `unfiltered_html`, every setting goes**, safe ones included:
+  `settings` is left out of the stored JSON and answered as `{}`.
+- **Styles are kept**, with any value the theme.json sanitiser judges unsafe
+  removed. That sanitiser is `wp_filter_global_styles_post`, at priority 9
+  on `content_save_pre`, where `kses_init` hooks it.
+- **WordPress's filter writes its JSON with `JSON_HEX_TAG | JSON_HEX_AMP`**
+  (and unescaped slashes), so `<`, `>` and `&` go out as `<`, `>`
+  and `&`, and the kses that runs next has nothing to rewrite. The
+  engine wrote them plain, so kses turned `& p` into `&amp; p`, and a bare
+  `<` let it rewrite the rest of the JSON.
+- **Custom CSS that would close its style tag is refused for everyone**,
+  with `rest_custom_css_illegal_markup` (400):
+  - "The CSS must not contain "…"." quotes `</style` and the character after
+    it, as written and HTML-escaped. That character is white space, a slash
+    or `>`, in any case.
+  - "The CSS must not end in "…"." covers CSS that ends in `</style`.
+  - Only the top-level `styles.css` is checked: `</styles>`, `< /style>` and
+    a block's or element's CSS pass.
+
+The engine now runs the save's content and title through every column's db
+context, as an update runs them over the whole post
+(`PostSave::throughSaveFilters()`, the filter `UserStyles::save()` takes).
+The engine's `wp_filter_global_styles_post` encodes as the reference does.
+
+A shared fix came with it: an in-process REST answer kept its empty objects
+as empty arrays, because the native JSON was decoded to arrays. They stay
+objects now (`Json::decodeKeepingEmptyObjects()`), so
+`rest_do_request()->get_data()` holds `{}` where the reference's does.

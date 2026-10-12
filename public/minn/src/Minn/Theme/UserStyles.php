@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Closure;
 use Minn\Content\PostRecord;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
@@ -101,9 +102,13 @@ final readonly class UserStyles
 
     /**
      * Replaces what the caller names (null keeps the stored value), stamps
-     * the modified time, and snapshots a revision when anything changed.
+     * the modified time, and snapshots a revision when anything changed. A
+     * filter, when given, has the last word on the content and title written
+     * (the save filters a REST save runs them through).
+     *
+     * @param null|Closure(array<string, string>): array<string, string> $filter
      */
-    public function save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles): void
+    public function save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles, ?Closure $filter = null): void
     {
         $post = $this->find($id);
         if ($post === null) {
@@ -116,11 +121,12 @@ final readonly class UserStyles
             'isGlobalStylesUserThemeJSON' => true,
             'version' => 3,
         ], Json::ESCAPED);
-        $this->writer->update($id, [
-            'post_content' => $body,
+        $changes = ['post_content' => $body] + ($title === null ? [] : ['post_title' => $title]);
+        $changes = $filter === null ? $changes : $filter($changes);
+        $this->writer->update($id, $changes + [
             'post_modified' => $this->site->localNow(),
             'post_modified_gmt' => gmdate('Y-m-d H:i:s'),
-        ] + ($title === null ? [] : ['post_title' => $title]));
+        ]);
         $this->writer->maybeSaveRevision($id, $userId);
     }
 }

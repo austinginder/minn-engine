@@ -59,7 +59,7 @@ final class PostSave
         $columns = self::prepared($columns, $before, $body, $request, $type);
         // What the request gave, as wp_insert_post_data's third argument has it: a new post's own fields and type.
         $given = array_intersect_key($columns, array_flip(array_values(array_intersect_key(self::FIELDS, $body)))) + ['post_type' => $type];
-        $postarr = $before === null ? $columns : $columns + \get_post($id)->to_array();
+        $postarr = $before === null ? $columns : $columns + self::stored($id);
         $sanitized = self::sanitized(Slashes::add($postarr));
         if (self::refusesEmpty($sanitized, $type)) {
             throw new RestError('empty_content', 'Content, title, and excerpt are empty.', 400);
@@ -81,6 +81,35 @@ final class PostSave
         }
         $data = self::data(['post_name' => $slug, 'post_parent' => $parent] + $row, $sanitized, Slashes::add($before === null ? $given : $postarr), $id);
         return self::changed($columns, $data, $before);
+    }
+
+    /**
+     * A direct save's changed columns through every column's db context,
+     * as an update runs them over the whole post (pre_post_* and
+     * *_save_pre, where kses and the global styles strip sit): a global
+     * styles save writes its post this way (probe global-styles-unfiltered).
+     * Without a booted runtime the changes are as given.
+     *
+     * @param array<string, string> $changes column => value
+     * @return array<string, string>
+     */
+    public static function throughSaveFilters(int $id, array $changes): array
+    {
+        if (!Runtime::booted()) {
+            return $changes;
+        }
+        $sanitized = self::sanitized(Slashes::add($changes + self::stored($id)));
+        $out = [];
+        foreach (array_keys($changes) as $column) {
+            $out[$column] = (string) Slashes::strip($sanitized[$column] ?? '');
+        }
+        return $out;
+    }
+
+    /** The post as stored, its columns by name. @return array<string, mixed> */
+    private static function stored(int $id): array
+    {
+        return \get_post($id)->to_array();
     }
 
     /**

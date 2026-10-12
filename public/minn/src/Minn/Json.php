@@ -138,4 +138,23 @@ final class Json
     {
         return $text === '' || preg_match('//u', $text) === 1 ? $text : (string) mb_convert_encoding($text, 'UTF-8', 'UTF-8');
     }
+
+    /**
+     * JSON as arrays, but an empty object stays an object: an in-process
+     * REST answer keeps `{}` where the reference's data holds an empty
+     * object (a global style's emptied settings), which decoding to arrays
+     * would turn into `[]`.
+     */
+    public static function decodeKeepingEmptyObjects(string $json): mixed
+    {
+        $decoded = json_decode($json);
+        $arrays = static function (mixed $value) use (&$arrays): mixed {
+            if ($value instanceof \stdClass) {
+                $properties = get_object_vars($value);
+                return $properties === [] ? $value : array_map($arrays, $properties);
+            }
+            return is_array($value) ? array_map($arrays, $value) : $value;
+        };
+        return $arrays($decoded);
+    }
 }

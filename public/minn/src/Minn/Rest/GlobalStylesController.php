@@ -14,6 +14,8 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Html;
+use Minn\Runtime\PostSave;
 use Minn\Theme\ThemeStyles;
 use Minn\Theme\UserStyles;
 
@@ -62,8 +64,29 @@ final readonly class GlobalStylesController
             throw $this->caller->refuse('rest_cannot_edit', self::CANNOT_EDIT);
         }
         $body = $request->json();
-        $this->styles->save($post->id, $this->caller->id(), self::title($body['title'] ?? null), self::node($body, 'settings'), self::node($body, 'styles'));
+        $styles = self::node($body, 'styles');
+        self::refuseIllegalCss($styles['css'] ?? null);
+        // The content goes through the save filters a post update runs, where kses strips what a user without unfiltered_html may not save.
+        $this->styles->save($post->id, $this->caller->id(), self::title($body['title'] ?? null), self::node($body, 'settings'), $styles, static fn (array $changes): array => PostSave::throughSaveFilters($post->id, $changes));
         return Reply::answer($request, $this->object->item($this->post($post->id), Context::Edit));
+    }
+
+    /**
+     * Custom CSS that would close its style tag is refused, for every user
+     * (probe global-styles-unfiltered): "</style" followed by white space, a
+     * slash or ">", in any case, quoted as written; or "</style" at its end.
+     */
+    private static function refuseIllegalCss(mixed $css): void
+    {
+        if (!is_string($css)) {
+            return;
+        }
+        if (preg_match('#</style[\t\n\f\r />]#i', $css, $match) === 1) {
+            throw new RestError('rest_custom_css_illegal_markup', sprintf('The CSS must not contain "%s".', Html::esc($match[0])), 400);
+        }
+        if (preg_match('#</style$#i', $css, $match) === 1) {
+            throw new RestError('rest_custom_css_illegal_markup', sprintf('The CSS must not end in "%s".', Html::esc($match[0])), 400);
+        }
     }
 
     /** The style variations the active theme ships; listed ahead of the theme's own route, whose pattern would take this path too. */

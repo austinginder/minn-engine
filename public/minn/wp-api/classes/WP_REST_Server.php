@@ -339,7 +339,7 @@ class WP_REST_Server
         if ($response === null) {
             return null;
         }
-        $data = json_decode($response->body, true);
+        $data = Minn\Json::decodeKeepingEmptyObjects($response->body);
         if ($response->status === 404 && is_array($data) && ($data['code'] ?? '') === 'rest_no_route') {
             return null;
         }

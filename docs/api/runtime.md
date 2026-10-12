@@ -75,7 +75,7 @@ the WordPress runtime plugins load against
 | [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
 | [`PostQueryWhere`](#postquerywhere) | final class | 263 | The WHERE fragments WP_Query writes from its variables, in the reference's |
 | [`PostRevisions`](#postrevisions) | final class | 67 | A post's revisions as the reference's wp_save_post_revision keeps them |
-| [`PostSave`](#postsave) | final class | 210 | A REST save's columns through the filters the reference's save runs |
+| [`PostSave`](#postsave) | final class | 239 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
 | [`QueryFlags`](#queryflags) | final readonly class | 197 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 234 | Recovery from a fatal in someone else's code. When a plugin or theme |
@@ -3403,7 +3403,7 @@ changes is written. Without plugins loaded the columns are as given.
 - const `NEW_POSTARR` = `array (   0 => 'ID',   1 => 'post_author',   2 => 'post_date',   3 => 'post_date_gmt',   4 => 'post_content',   5 => 'post_content_filtered',   6 => 'post_title',   7 => 'post_excerpt',   8 => 'post_status',   9 => 'post_type',   10 => 'comment_status',   11 => 'ping_status',   12 => 'post_password',   13 => 'to_ping',   14 => 'pinged',   15 => 'post_parent',   16 => 'menu_order',   17 => 'guid',   18 => 'import_id', )` — The new post array wp_insert_post_parent is handed beside the whole one.
 - const `DEFAULTS` = `array (   'post_author' => 0,   'post_content' => '',   'post_content_filtered' => '',   'post_title' => '',   'post_excerpt' => '',   'post_status' => 'draft',   'post_type' => 'post',   'comment_status' => '',   'ping_status' => '',   'post_password' => '',   'to_ping' => '',   'pinged' => '',   'post_parent' => 0,   'menu_order' => 0,   'guid' => '',   'import_id' => 0,   'context' => '',   'post_date' => '',   'post_date_gmt' => '', )` — wp_insert_post's defaults, in its order (the order its filters run in).
 
-Used by: `Minn\Rest\PostsWriteController`
+Used by: `Minn\Rest\GlobalStylesController`, `Minn\Rest\PostsWriteController`
 
 ### static `filter(array $columns, ?Minn\Content\PostRecord $before, array $body, Minn\Http\Request $request, string $type, Minn\Content\PostSlugs $slugs): array`
 
@@ -3412,6 +3412,17 @@ The columns to write after the filters.
 - `@param array<string, mixed> $columns what the engine settled: a new post's whole row, or an update's changes`
 - `@param array<string, mixed> $body the request's fields`
 - `@return array<string, mixed>`
+
+### static `throughSaveFilters(int $id, array $changes): array`
+
+A direct save's changed columns through every column's db context,
+as an update runs them over the whole post (pre_post_* and
+*_save_pre, where kses and the global styles strip sit): a global
+styles save writes its post this way (probe global-styles-unfiltered).
+Without a booted runtime the changes are as given.
+
+- `@param array<string, string> $changes column => value`
+- `@return array<string, string>`
 
 ### static `sanitized(array $postarr): array`
 
@@ -3465,7 +3476,7 @@ back.
 - `@param array<string, mixed> $unsanitized`
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 188), `changed()` (private, line 223)
+Internals: `stored()` (private, line 110), `prepared()` (private, line 217), `changed()` (private, line 252)
 
 
 ## QueriedObject

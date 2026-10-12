@@ -450,5 +450,6 @@ function wp_filter_global_styles_post($data)
     unset($decoded['isGlobalStylesUserThemeJSON']);
     $filtered = WP_Theme_JSON::remove_insecure_properties($decoded, 'custom');
     $filtered['isGlobalStylesUserThemeJSON'] = true;
-    return wp_slash(wp_json_encode($filtered, JSON_UNESCAPED_SLASHES));
+    // Tags and ampersands go out as \u escapes, so the kses that runs after this filter has nothing to rewrite (probe global-styles-unfiltered).
+    return wp_slash(wp_json_encode($filtered, JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP));
 }

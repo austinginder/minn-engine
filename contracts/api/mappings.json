@@ -9,7 +9,7 @@
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8673,
-        "minnMethods": 995,
+        "minnMethods": 996,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -23127,6 +23127,7 @@
             "lines": 19,
             "kind": "minn",
             "minn": [
+                "Minn\\Json::decodeKeepingEmptyObjects",
                 "Minn\\Rest\\RuntimePrepare::during",
                 "Minn\\Rest\\RuntimeRoutes::wpHeaders"
             ],
@@ -67987,7 +67988,7 @@
         },
         "wp_filter_global_styles_post": {
             "file": "kses.php",
-            "lines": 8,
+            "lines": 9,
             "kind": "composes",
             "minn": [],
             "composes": [

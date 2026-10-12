@@ -42,7 +42,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`ThemeStyles`](#themestyles) | final readonly class | 122 | The active theme's global styles as wp/v2/global-styles/themes/{stylesheet} |
 | [`TreeStyles`](#treestyles) | final readonly class | 259 | The CSS one theme.json tree writes, as WP_Theme_JSON keeps the tree |
 | [`Typography`](#typography) | final class | 105 | Font sizes as the reference writes them (probe plugin-queue3): a size in |
-| [`UserStyles`](#userstyles) | final readonly class | 106 | The site editor's saved global styles: one wp_global_styles post per |
+| [`UserStyles`](#userstyles) | final readonly class | 111 | The site editor's saved global styles: one wp_global_styles post per |
 
 ## ArchiveTitle
 
@@ -1660,8 +1660,12 @@ node is empty, as the reference reads it.
 
 True when the body carries nothing at all under settings or styles, malformed or not.
 
-### `save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles): void`
+### `save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles, ?Closure $filter = NULL): void`
 
 Replaces what the caller names (null keeps the stored value), stamps
-the modified time, and snapshots a revision when anything changed.
+the modified time, and snapshots a revision when anything changed. A
+filter, when given, has the last word on the content and title written
+(the save filters a REST save runs them through).
+
+- `@param null|Closure(array<string, string>): array<string, string> $filter`
 

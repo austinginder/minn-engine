@@ -52119,6 +52119,7 @@
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginForm",
                 "Minn\\Login\\LoginNotices",
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Theme\\ArchiveTitle",
@@ -70226,7 +70227,7 @@
             "namespace": "Minn",
             "kind": "final class",
             "file": "public/minn/src/Minn/Json.php",
-            "lines": 115,
+            "lines": 134,
             "doc": "JSON in and out, for the engine and for code written for Minn:\n\nuse Minn\\Json;\n\nJson::encode($rows);              // {\"url\":\"https://example.com/a\",\"name\":\"Café\"}\nJson::decode($text);              // objects as arrays; JsonException when it is not JSON\nJson::decode($stored, or: []);    // the fallback, for text that may be empty or broken\nJson::file($path);                // the same, read from a file; the error names the file\n\nencode() writes slashes and characters as themselves unless flags say\notherwise (Json::ESCAPED is the form WordPress writes, which REST bodies\nkeep). A string cut mid-character still encodes: each invalid byte becomes\n\"?\", as wp_json_encode() does it (probe functions-utils). What cannot be\nencoded even then (NAN, nesting past the depth) throws a JsonException.",
             "implements": [],
             "extends": null,
@@ -70430,6 +70431,26 @@
                     ],
                     "line": 105,
                     "end": 125
+                },
+                {
+                    "routes": [],
+                    "name": "decodeKeepingEmptyObjects",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "decodeKeepingEmptyObjects(string $json): mixed",
+                    "doc": "JSON as arrays, but an empty object stays an object: an in-process\nREST answer keeps `{}` where the reference's data holds an empty\nobject (a global style's emptied settings), which decoding to arrays\nwould turn into `[]`.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "json",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -94764,13 +94785,14 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/GlobalStylesController.php",
-            "lines": 138,
+            "lines": 159,
             "doc": "wp/v2/global-styles: the site editor's saved styles (one post per\ntheme, read and written by id, with its revisions) and the active\ntheme's own styles and variations. There is no collection, no create\nand no delete; the post is made on first use, as on the reference.",
             "implements": [],
             "extends": null,
             "uses": [
                 "Minn\\Content\\PostRecord",
                 "Minn\\Content\\Revisions",
+                "Minn\\Html",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -94784,6 +94806,7 @@
                 "Minn\\Rest\\Fields",
                 "Minn\\Rest\\GlobalStylesObject",
                 "Minn\\Rest\\Reply",
+                "Minn\\Runtime\\PostSave",
                 "Minn\\Theme\\ThemeStyles",
                 "Minn\\Theme\\UserStyles"
             ],
@@ -94832,8 +94855,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 31,
-                "end": 38
+                "line": 33,
+                "end": 40
             },
             "cases": [],
             "constants": [
@@ -94924,8 +94947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 52
+                    "line": 44,
+                    "end": 54
                 },
                 {
                     "routes": [
@@ -94955,8 +94978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 67
+                    "line": 60,
+                    "end": 72
                 },
                 {
                     "routes": [
@@ -94984,8 +95007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 75
+                    "line": 94,
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -95013,8 +95036,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 79,
-                    "end": 83
+                    "line": 102,
+                    "end": 106
                 },
                 {
                     "routes": [
@@ -95042,8 +95065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 99
+                    "line": 110,
+                    "end": 122
                 },
                 {
                     "routes": [
@@ -95078,8 +95101,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 111
+                    "line": 126,
+                    "end": 134
+                },
+                {
+                    "routes": [],
+                    "name": "refuseIllegalCss",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "refuseIllegalCss(mixed $css): void",
+                    "doc": "Custom CSS that would close its style tag is refused, for every user\n(probe global-styles-unfiltered): \"</style\" followed by white space, a\nslash or \">\", in any case, quoted as written; or \"</style\" at its end.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "css",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 79,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -95098,8 +95141,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 116
+                    "line": 136,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -95118,8 +95161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 124
+                    "line": 142,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -95138,8 +95181,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 137
+                    "line": 150,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -95158,8 +95201,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 146
+                    "line": 163,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -95185,8 +95228,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 149,
-                    "end": 162
+                    "line": 172,
+                    "end": 185
                 }
             ]
         },
@@ -129102,7 +129145,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostSave.php",
-            "lines": 210,
+            "lines": 239,
             "doc": "A REST save's columns through the filters the reference's save runs\nbefore it writes, in its order (probe post-insert-filters,\ncontracts/runtime.md \"Saves plugins can change\"): rest_pre_insert_{type}\nover the prepared post; every column through its db context\n(pre_post_* and *_save_pre, where kses and the custom-CSS strip sit) on\nslashed text; wp_insert_post_empty_content, which refuses a post with no\ncontent, title or excerpt; wp_insert_post_parent; for a post that is live,\nthe slug, made again from the filtered title when the request gave none,\nthrough pre_wp_unique_post_slug, the bad-slug check and\nwp_unique_post_slug; and wp_insert_post_data over the row. What a filter\nchanges is written. Without plugins loaded the columns are as given.",
             "implements": [],
             "extends": null,
@@ -129116,6 +129159,7 @@
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
+                "Minn\\Rest\\GlobalStylesController",
                 "Minn\\Rest\\PostsWriteController"
             ],
             "constructor": null,
@@ -129221,6 +129265,36 @@
                 },
                 {
                     "routes": [],
+                    "name": "throughSaveFilters",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "throughSaveFilters(int $id, array $changes): array",
+                    "doc": "A direct save's changed columns through every column's db context,\nas an update runs them over the whole post (pre_post_* and\n*_save_pre, where kses and the global styles strip sit): a global\nstyles save writes its post this way (probe global-styles-unfiltered).\nWithout a booted runtime the changes are as given.",
+                    "shapes": [
+                        "@param array<string, string> $changes column => value",
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "changes",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "column => value"
+                        }
+                    ],
+                    "line": 96,
+                    "end": 107
+                },
+                {
+                    "routes": [],
                     "name": "sanitized",
                     "static": true,
                     "visibility": "public",
@@ -129239,8 +129313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 98
+                    "line": 122,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -129268,8 +129342,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 107
+                    "line": 130,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -129297,8 +129371,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 114
+                    "line": 139,
+                    "end": 143
                 },
                 {
                     "routes": [],
@@ -129352,8 +129426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 134
+                    "line": 151,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -129396,8 +129470,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 153
+                    "line": 174,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -129423,8 +129497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 159
+                    "line": 185,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -129469,8 +129543,30 @@
                             "doc": "the post an update saves, 0 for a new one"
                         }
                     ],
-                    "line": 172,
-                    "end": 177
+                    "line": 201,
+                    "end": 206
+                },
+                {
+                    "routes": [],
+                    "name": "stored",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "stored(int $id): array",
+                    "doc": "The post as stored, its columns by name. @return array<string, mixed>",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -129521,8 +129617,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 188,
-                    "end": 213
+                    "line": 217,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -129559,8 +129655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 235
+                    "line": 252,
+                    "end": 264
                 }
             ]
         },
@@ -154476,7 +154572,7 @@
             "namespace": "Minn\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Theme/UserStyles.php",
-            "lines": 106,
+            "lines": 111,
             "doc": "The site editor's saved global styles: one wp_global_styles post per\ntheme, tied to it by the wp_theme term, holding a versioned JSON body\nof the settings and styles the editor wrote. Every changed save leaves\na revision behind, as a post's does.",
             "implements": [],
             "extends": null,
@@ -154536,8 +154632,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 23,
-                "end": 30
+                "line": 24,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -154606,8 +154702,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 45
+                    "line": 34,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -154633,8 +154729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 70
+                    "line": 49,
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -154653,8 +154749,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 77
+                    "line": 74,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -154675,8 +154771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 93
+                    "line": 86,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -154695,17 +154791,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 100
+                    "line": 97,
+                    "end": 101
                 },
                 {
                     "routes": [],
                     "name": "save",
                     "static": false,
                     "visibility": "public",
-                    "signature": "save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles): void",
-                    "doc": "Replaces what the caller names (null keeps the stored value), stamps\nthe modified time, and snapshots a revision when anything changed.",
-                    "shapes": [],
+                    "signature": "save(int $id, int $userId, ?string $title, ?array $settings, ?array $styles, ?Closure $filter = NULL): void",
+                    "doc": "Replaces what the caller names (null keeps the stored value), stamps\nthe modified time, and snapshots a revision when anything changed. A\nfilter, when given, has the last word on the content and title written\n(the save filters a REST save runs them through).",
+                    "shapes": [
+                        "@param null|Closure(array<string, string>): array<string, string> $filter"
+                    ],
                     "params": [
                         {
                             "name": "id",
@@ -154741,10 +154839,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "filter",
+                            "type": "?Closure",
+                            "shape": "null|Closure(array<string, string>): array<string, string>",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 106,
-                    "end": 125
+                    "line": 111,
+                    "end": 131
                 }
             ]
         },
