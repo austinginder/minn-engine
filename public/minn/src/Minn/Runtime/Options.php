@@ -292,7 +292,7 @@ final class Options
      */
     private function remember(string $name, mixed $value): mixed
     {
-        $held = is_array($value) || is_object($value) ? self::toStorage($value) : $value;
+        $held = is_array($value) || is_object($value) || (is_string($value) && Serialized::looksSerialized($value)) ? self::toStorage($value) : $value;
         unset($this->decoded[$name]);
         if (!is_object($value) && !(is_array($value) && self::holdsObject($held))) {
             $this->decoded[$name] = [$held, $value];
@@ -422,10 +422,14 @@ final class Options
         }
     }
 
-    /** What the reference stores: arrays and objects serialized, scalars as their string form. */
+    /**
+     * What the reference stores (maybe_serialize): arrays and objects
+     * serialized, a string that looks serialized serialized again so it
+     * reads back as that string, other scalars as their string form.
+     */
     public static function toStorage(mixed $value): string
     {
-        if (is_array($value) || is_object($value)) {
+        if (is_array($value) || is_object($value) || (is_string($value) && Serialized::looksSerialized($value))) {
             return Serialized::encode($value);
         }
         if ($value === false || $value === null) {

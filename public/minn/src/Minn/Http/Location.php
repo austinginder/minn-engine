@@ -8,6 +8,26 @@ namespace Minn\Http;
 final class Location
 {
     /**
+     * A redirect's address made safe, as wp_sanitize_redirect() makes it
+     * (probe security-parity): spaces as %20, whole UTF-8 sequences
+     * URL-encoded, any other character outside the URL set dropped, and an
+     * encoded CR or LF taken out until none is left. Other encoded control
+     * characters stay, as they do on the reference.
+     */
+    public static function sanitize(string $location): string
+    {
+        $location = str_replace(' ', '%20', $location);
+        $utf8 = '/(?:[\xC2-\xDF][\x80-\xBF]|\xE0[\xA0-\xBF][\x80-\xBF]|[\xE1-\xEC\xEE\xEF][\x80-\xBF]{2}|\xED[\x80-\x9F][\x80-\xBF]|\xF0[\x90-\xBF][\x80-\xBF]{2}|[\xF1-\xF3][\x80-\xBF]{3}|\xF4[\x80-\x8F][\x80-\xBF]{2})+/';
+        $location = (string) preg_replace_callback($utf8, static fn (array $match): string => urlencode($match[0]), $location);
+        $location = (string) preg_replace('|[^a-z0-9-~+_.?#=&;,/:%!*\[\]()@]|i', '', $location);
+        do {
+            $before = $location;
+            $location = (string) preg_replace('/%0[da]/i', '', $location);
+        } while ($location !== $before);
+        return $location;
+    }
+
+    /**
      * The absolute URL $location names, read against $base as RFC 3986
      * reads a reference: a scheme keeps it as written, "//" takes the
      * base's scheme, a fragment or query alone keeps the base's path, and a

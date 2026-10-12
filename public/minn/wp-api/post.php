@@ -265,8 +265,7 @@ function post_password_required($post = null)
     if ($post === null || $post->post_password === '') {
         return apply_filters('post_password_required', false, $post);
     }
-    $cookie = Runtime::current()->reader->postPassword;
-    $required = $cookie === '' || !Minn\Auth\PortableHash::verify($post->post_password, $cookie);
+    $required = !Minn\Content\PasswordGate::cookieUnlocks($post->post_password, Runtime::current()->reader->postPassword);
     return apply_filters('post_password_required', $required, $post);
 }
 

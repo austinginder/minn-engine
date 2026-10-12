@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 441 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 443 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 233 | The sign-in page markup. |
 | [`LoginHooks`](#loginhooks) | final readonly class | 99 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `checkEmail()` (private, line 114), `signInNotices()` (private, line 125), `lostPassword()` (private, line 132), `retrieve()` (private, line 162), `openResetLink()` (private, line 179), `resetSession()` (private, line 196), `savePassword()` (private, line 211), `register()` (private, line 246), `validateReset()` (private, line 271), `parts()` (private, line 286), `tokenLogin()` (private, line 298), `safeRedirect()` (private, line 376), `logout()` (private, line 395), `action()` (private, line 425), `actionUrl()` (private, line 437), `base()` (private, line 447), `tooManyAttempts()` (private, line 453), `render()` (private, line 461)
+Internals: `checkEmail()` (private, line 115), `signInNotices()` (private, line 126), `lostPassword()` (private, line 133), `retrieve()` (private, line 163), `openResetLink()` (private, line 180), `resetSession()` (private, line 197), `savePassword()` (private, line 212), `register()` (private, line 247), `validateReset()` (private, line 272), `parts()` (private, line 287), `tokenLogin()` (private, line 299), `safeRedirect()` (private, line 377), `logout()` (private, line 398), `action()` (private, line 428), `actionUrl()` (private, line 440), `base()` (private, line 450), `tooManyAttempts()` (private, line 456), `render()` (private, line 464)
 
 
 ## LoginForm

@@ -824,6 +824,13 @@ function create_initial_rest_routes()
     }
     // The media actions are the controller class's; the media routes themselves are the engine's own (Rest\MediaController).
     (new WP_REST_Attachments_Controller('attachment'))->minn_register_actions();
+    // A type plugin code gave a REST controller of its own is served by that controller, as the reference serves it; the engine's {base} routes serve the rest.
+    foreach (get_post_types(['show_in_rest' => true, '_builtin' => false], 'objects') as $type) {
+        $own = (string) $type->rest_controller_class !== '' && $type->rest_controller_class !== WP_REST_Posts_Controller::class;
+        if ($own && (string) $type->rest_namespace === 'wp/v2' && ($controller = $type->get_rest_controller()) instanceof WP_REST_Controller) {
+            $controller->register_routes();
+        }
+    }
     // The search handlers, as plugins may extend them; the route is the engine's own (Rest\SearchController), which serves every type but posts through them.
     _minn_rest_search_handlers(apply_filters('wp_rest_search_handlers', [new WP_REST_Post_Search_Handler(), new WP_REST_Term_Search_Handler(), new WP_REST_Post_Format_Search_Handler()]));
     // A legacy widget's preview page is the controller class's; the other widget-types routes are the engine's own (Rest\SidebarsController).

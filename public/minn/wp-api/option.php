@@ -547,11 +547,7 @@ function is_serialized($data, $strict = true)
     if (!is_string($data)) {
         return false;
     }
-    $data = trim($data);
-    if ($data === 'N;') {
-        return true;
-    }
-    return preg_match('/^(?:[bid]:.+;|s:\d+:".*";|[aO]:\d+:.+)$/s', $data) === 1;
+    return Serialized::looksSerialized($data);
 }
 
 function is_serialized_string($data)

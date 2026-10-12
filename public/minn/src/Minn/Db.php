@@ -79,9 +79,20 @@ final class Db
             $connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
             $connection->set_charset('utf8mb4');
             self::$shared = new self($connection, $GLOBALS['table_prefix'] ?? 'wp_');
-            self::$shared->setModes(self::compatibleModes((string) self::$shared->value('SELECT @@SESSION.sql_mode', []), self::INCOMPATIBLE_MODES));
+            self::$shared->setModes(self::sessionModes((string) self::$shared->value('SELECT @@SESSION.sql_mode', [])));
         }
         return self::$shared;
+    }
+
+    /**
+     * The session's modes: the server's, less the reference's incompatible
+     * ones and NO_BACKSLASH_ESCAPES, which the engine's own literal escaping
+     * (Query\Sql) relies on being off. Plugins see only the reference's list
+     * (incompatible_sql_modes).
+     */
+    public static function sessionModes(string $modes): string
+    {
+        return self::compatibleModes($modes, [...self::INCOMPATIBLE_MODES, 'NO_BACKSLASH_ESCAPES']);
     }
 
     /**

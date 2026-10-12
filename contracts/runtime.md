@@ -15153,3 +15153,74 @@ Suites:
 
 Still owed (group E): the REST index publishes the static type list, not the
 handlers'.
+
+## Security fixes from the audit (2026-10-12)
+
+The five-part audit of 2026-10-12 found eight security issues that could
+be shown, each reproduced against the reference before it was fixed. Probe
+`security-parity` pins them against the reference; unit file
+`security-bounds` and a security-suite check pin the rest.
+
+- **File changes forbidden.** With `DISALLOW_FILE_MODS`, or with
+  `file_mod_allowed` answering false, the reference maps these to
+  `do_not_allow`:
+  - installing, uploading, updating and deleting plugins and themes, and
+    updating core (context `capability_update_core`);
+  - installing and updating languages (`can_install_language_pack`);
+  - editing plugins, themes and files, also under `DISALLOW_FILE_EDIT`
+    (`capability_edit_themes`).
+
+  The engine granted them, so an administrator on a locked-down host could
+  upload a plugin. `Capabilities::mapMore` now asks the same filter with
+  the same contexts. `update_php` maps to `update_core`, as on the reference.
+- **Search.**
+  - The post search covers the public types shown in REST, plus post, page
+    and extension types (`Types::searchable`). It had covered every type
+    shown in REST, so anonymous visitors could search a non-public type
+    such as a forms plugin's submissions. Naming such a type is refused.
+  - Someone signed out gets no password-protected post, by title or
+    content.
+- **A type with its own REST controller** is answered by that controller.
+  `create_initial_rest_routes()` registers its routes, and the engine's
+  `{base}` routes decline the type. A plugin's stricter permission check had
+  been bypassed by the engine's generic controller.
+- **Comments over REST.** Only a moderator may name another author, an
+  address other than the request's, or the status. Anyone else is refused
+  first, with the reference's `rest_comment_invalid_author`,
+  `rest_comment_invalid_author_ip` or `rest_comment_invalid_status`. A
+  subscriber could post as the administrator, and the comment was approved.
+- **Redirects.** `Http\Location::sanitize` is the reference's
+  `wp_sanitize_redirect`: it removes an encoded CR or LF until none is left,
+  and keeps other encoded control characters. The facade and the sign-in
+  page both use it.
+  - The facade had stripped every `%0X` in a single pass, so
+    `/%0%0%0999/evil.com` ended as `//evil.com`.
+  - The sign-in page judged the host before dropping a backslash, so
+    `https://evil.com\@site/` sent the browser off-site.
+- **Password cookies.** A `wp-postpass_` cookie is tried only in the
+  reference's own hash setting (`$P$B`), through `PasswordGate::cookieUnlocks`
+  on both paths. A cookie naming its own work factor made one request hash
+  up to 2^30 times.
+- **Serialized data.**
+  - The decoder takes lengths and counts as digits only. It refuses any no
+    larger than the bytes left could hold, and caps nesting at PHP's 4,096.
+    A negative length had moved it backwards forever.
+  - A string that looks serialized is stored serialized again, as
+    `maybe_serialize` stores it, so it reads back as the string it was.
+    This applies to options and every meta type. A user could plant an
+    object in their own profile, and it came back as an object.
+  - `Serialized::looksSerialized` is the one rule, and `is_serialized()`
+    uses it.
+- **SQL modes.** The session drops `NO_BACKSLASH_ESCAPES` along with the
+  reference's incompatible modes (`Db::sessionModes`). The engine's own
+  literal escaping relies on backslashes. Plugins still see only the
+  reference's list through `incompatible_sql_modes`.
+
+The booted-branch ceiling falls to 75.
+
+Not taken in this batch:
+- A post type under a namespace of its own still gets no route. Registering
+  its controller reaches the engine's listing, which has no statuses for a
+  type outside `wp/v2`. It stays on the open list.
+- The audit's Lows are listed on the Open Items page and are still to be
+  verified one by one.

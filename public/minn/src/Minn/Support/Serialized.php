@@ -52,6 +52,12 @@ final class Serialized
     /** Returned by decode() when the blob is not a serialized value the reader accepts. */
     public const INVALID = "\0minn:invalid\0";
 
+    /** The deepest nesting a record may have, PHP's own default (unserialize_max_depth). */
+    private const MAX_DEPTH = 4096;
+    /** The fewest bytes an array or object member can take: a key "i:0;" and a value "N;". */
+    private const SMALLEST_PAIR = 6;
+    private static int $depth = 0;
+
     /**
      * A serialized scalar or array as PHP data, parsed by this reader:
      * strings, integers, floats, booleans, null, and arrays of those. An
@@ -78,6 +84,19 @@ final class Serialized
 
     private static function read(string $blob, int &$offset, ?\Closure $revive): mixed
     {
+        if (++self::$depth > self::MAX_DEPTH) {
+            self::$depth = 0;
+            throw new \ValueError('depth');
+        }
+        try {
+            return self::readValue($blob, $offset, $revive);
+        } finally {
+            self::$depth = max(0, self::$depth - 1);
+        }
+    }
+
+    private static function readValue(string $blob, int &$offset, ?\Closure $revive): mixed
+    {
         $type = $blob[$offset] ?? '';
         $offset++;
         switch ($type) {
@@ -96,7 +115,7 @@ final class Serialized
                 return (float) self::until($blob, $offset, ';');
             case 's':
                 self::expect($blob, $offset, ':');
-                $length = (int) self::until($blob, $offset, ':');
+                $length = self::size($blob, $offset, ':', 1);
                 self::expect($blob, $offset, '"');
                 $string = substr($blob, $offset, $length);
                 $offset += $length;
@@ -107,7 +126,7 @@ final class Serialized
                 return self::readObject($blob, $offset, $revive);
             case 'a':
                 self::expect($blob, $offset, ':');
-                $count = (int) self::until($blob, $offset, ':');
+                $count = self::size($blob, $offset, ':', self::SMALLEST_PAIR);
                 self::expect($blob, $offset, '{');
                 $array = [];
                 for ($i = 0; $i < $count; $i++) {
@@ -135,13 +154,13 @@ final class Serialized
     private static function readObject(string $blob, int &$offset, ?\Closure $revive): object
     {
         self::expect($blob, $offset, ':');
-        $nameLength = (int) self::until($blob, $offset, ':');
+        $nameLength = self::size($blob, $offset, ':', 1);
         self::expect($blob, $offset, '"');
         $class = substr($blob, $offset, $nameLength);
         $offset += $nameLength;
         self::expect($blob, $offset, '"');
         self::expect($blob, $offset, ':');
-        $count = (int) self::until($blob, $offset, ':');
+        $count = self::size($blob, $offset, ':', self::SMALLEST_PAIR);
         self::expect($blob, $offset, '{');
         $object = new \stdClass();
         $keys = [];
@@ -216,6 +235,32 @@ final class Serialized
             throw new \ValueError('shape');
         }
         $offset++;
+    }
+
+    /**
+     * A length or a count: digits only, and never more than the bytes left
+     * could hold, $perItem bytes each. A negative length would move the
+     * reader backwards and a huge count would keep it reading, so either
+     * makes the record no record at all, as PHP's own reader finds it.
+     */
+    private static function size(string $blob, int &$offset, string $char, int $perItem): int
+    {
+        $digits = self::until($blob, $offset, $char);
+        if ($digits === '' || strlen($digits) > 18 || !ctype_digit($digits) || (int) $digits > intdiv(strlen($blob) - $offset, $perItem)) {
+            throw new \ValueError('size');
+        }
+        return (int) $digits;
+    }
+
+    /**
+     * Whether a string has the shape of serialized data, as is_serialized()
+     * judges it: what maybe_serialize() stores serialized again so it reads
+     * back as the string it was.
+     */
+    public static function looksSerialized(string $data): bool
+    {
+        $data = trim($data);
+        return $data === 'N;' || preg_match('/^(?:[bid]:.+;|s:\d+:".*";|[aO]:\d+:.+)$/s', $data) === 1;
     }
 
     private static function until(string $blob, int &$offset, string $char): string

@@ -19,7 +19,7 @@ request, response, routing, and the outgoing client
 | [`IriParts`](#iriparts) | final readonly class | 138 | An IRI (a URL that may carry non-ASCII text) split into its parts and |
 | [`Kernel`](#kernel) | final readonly class | 38 | The edge. Turns a request into a response through the router and turns |
 | [`LegacyHeaders`](#legacyheaders) | final class | 60 | WP_Http's legacy readers, kept for plugins that still call them (probe |
-| [`Location`](#location) | final class | 65 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
+| [`Location`](#location) | final class | 85 | Where a redirect leads: a Location header made absolute against the URL that sent it. |
 | [`Matched`](#matched) | final readonly class | 15 | A route the router matched to a request and whose policy it judged: the |
 | [`MediaType`](#mediatype) | final class | 18 | Reading the media types a request names in its Accept and Content-Type headers. |
 | [`Method`](#method) | enum | 33 |  |
@@ -585,7 +585,15 @@ other shape comes back as it was.
 
 Where a redirect leads: a Location header made absolute against the URL that sent it.
 
-Used by: `Minn\Http`
+Used by: `Minn\Http`, `Minn\Login\LoginController`
+
+### static `sanitize(string $location): string`
+
+A redirect's address made safe, as wp_sanitize_redirect() makes it
+(probe security-parity): spaces as %20, whole UTF-8 sequences
+URL-encoded, any other character outside the URL set dropped, and an
+encoded CR or LF taken out until none is left. Other encoded control
+characters stay, as they do on the reference.
 
 ### static `resolve(string $base, string $location): string`
 
@@ -598,7 +606,7 @@ relative path joins the base's directory with "." and ".." resolved.
 
 Whether two URLs share scheme, host, and port, so credentials may follow from one to the other.
 
-Internals: `withoutDotSegments()` (private, line 41)
+Internals: `withoutDotSegments()` (private, line 61)
 
 
 ## Matched

@@ -28,7 +28,7 @@ escaping, serialized readers, small helpers
 | [`Paths`](#paths) | final class | 64 | File-system path and permission spellings. |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
-| [`Serialized`](#serialized) | final class | 311 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
+| [`Serialized`](#serialized) | final class | 356 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
@@ -834,6 +834,8 @@ Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing
 here executes the blob; each reader scans for the one shape it needs.
 
 - const `INVALID` = `'' . "\0" . 'minn:invalid' . "\0" . ''` — Returned by decode() when the blob is not a serialized value the reader accepts.
+- const `MAX_DEPTH` = `4096` — The deepest nesting a record may have, PHP's own default (unserialize_max_depth).
+- const `SMALLEST_PAIR` = `6` — The fewest bytes an array or object member can take: a key "i:0;" and a value "N;".
 
 Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Support\SearchReplace`
 
@@ -865,6 +867,12 @@ malformed shape is INVALID.
 
 The class an object was stored as, when it came back as a stdClass of its properties.
 
+### static `looksSerialized(string $data): bool`
+
+Whether a string has the shape of serialized data, as is_serialized()
+judges it: what maybe_serialize() stores serialized again so it reads
+back as the string it was.
+
 ### static `encode(mixed $value): string`
 
 PHP's serialize() for the values decode() accepts: null, bool, int,
@@ -874,7 +882,7 @@ float, string, arrays of those, and objects written as their class.
 
 The integer values of a serialized list such as sticky_posts.
 
-Internals: `read()` (private, line 79), `readObject()` (private, line 135), `encodeRecord()` (private, line 189), `encodeWrapper()` (private, line 206), `expect()` (private, line 213), `until()` (private, line 221), `encodeValue()` (private, line 254), `encodeObject()` (private, line 294)
+Internals: `read()` (private, line 85), `readValue()` (private, line 98), `readObject()` (private, line 154), `encodeRecord()` (private, line 208), `encodeWrapper()` (private, line 225), `expect()` (private, line 232), `size()` (private, line 246), `until()` (private, line 266), `encodeValue()` (private, line 299), `encodeObject()` (private, line 339)
 
 
 ## Slashes

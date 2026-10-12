@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 271 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 282 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -65,7 +65,7 @@ the wp/v2 surface: shapes and controllers
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
 | [`SchemaValues`](#schemavalues) | final class | 202 | The value side of JSON Schema, as the reference applies it: what counts |
-| [`SearchController`](#searchcontroller) | final readonly class | 121 | wp/v2 search over published content: id, title, url, type, and the |
+| [`SearchController`](#searchcontroller) | final readonly class | 122 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
 | [`SettingsController`](#settingscontroller) | final readonly class | 32 | wp/v2/settings: read and write, both behind manage_options; with plugins loaded, every registered setting (LiveSettings). |
@@ -80,7 +80,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
 | [`TermsController`](#termscontroller) | final readonly class | 168 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
-| [`Types`](#types) | final class | 179 | The engine's registry of built-in post types, seeded from the observed |
+| [`Types`](#types) | final class | 196 | The engine's registry of built-in post types, seeded from the observed |
 | [`UrlDetails`](#urldetails) | final class | 64 | A page's details as the editor's link previews read them (probe |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
 | [`UserListArgs`](#userlistargs) | final class | 47 | The WP_User_Query arguments a user list request makes, as the reference |
@@ -785,7 +785,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 73), `events()` (private, line 136), `allowed()` (private, line 200), `readablePost()` (private, line 237), `readable()` (private, line 246), `plainComment()` (private, line 256), `prepared()` (private, line 278)
+Internals: `totals()` (private, line 73), `events()` (private, line 147), `allowed()` (private, line 211), `readablePost()` (private, line 248), `readable()` (private, line 257), `plainComment()` (private, line 267), `prepared()` (private, line 289)
 
 
 ## Context
@@ -2909,7 +2909,7 @@ Route: `GET /wp/v2/search (public)`
 
 Search across post types with the reference's relevance order.
 
-Internals: `item()` (private, line 76), `subtypes()` (private, line 99), `rankExpression()` (private, line 114), `terms()` (private, line 125), `escapeLike()` (private, line 142)
+Internals: `item()` (private, line 77), `subtypes()` (private, line 100), `rankExpression()` (private, line 115), `terms()` (private, line 126), `escapeLike()` (private, line 143)
 
 
 ## Services
@@ -3723,6 +3723,14 @@ taxonomies plugin code registered to show in REST under wp/v2.
 
 Whether the engine serves this type through its {base} routes: an extension declared it, or plugin code registered it to show in REST under wp/v2 (probe rest-plugin-types).
 
+### `searchable(): array`
+
+The types a post search covers: the built-in post and page, the ones
+extensions declare, and the public types plugin code shows in REST,
+as the reference's post search handler takes them.
+
+- `@return list<string>`
+
 ### `isRegistered(string $slug): bool`
 
 Whether plugin code registered the type (not a built-in, not an extension's).
@@ -3731,7 +3739,7 @@ Whether plugin code registered the type (not a built-in, not an extension's).
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 173)
+Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 188)
 
 
 ## UrlDetails

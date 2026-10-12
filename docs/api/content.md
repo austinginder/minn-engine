@@ -24,7 +24,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`NoteMarkers`](#notemarkers) | final class | 34 | The markers the block editor's notes leave in content: a mark element |
 | [`ObjectLabels`](#objectlabels) | final class | 24 | A post type's or taxonomy's labels from its own and the defaults |
 | [`Page`](#page) | final readonly class | 49 | One page of a listing: the rows on it and how many rows the whole |
-| [`PasswordGate`](#passwordgate) | final class | 34 | A password-protected post on the front end: its body is the password |
+| [`PasswordGate`](#passwordgate) | final class | 44 | A password-protected post on the front end: its body is the password |
 | [`PersonalData`](#personaldata) | final class | 36 | Personal data as the privacy tools hand it over (probe privacy): an |
 | [`Playlist`](#playlist) | final class | 25 | The [playlist] shortcode's markup as the reference prints it (probe |
 | [`PluginState`](#pluginstate) | final readonly class | 72 | Switching plugins on and off: a WordPress plugin file goes through the |
@@ -953,6 +953,13 @@ Used by: `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Theme\Comments`
 ### static `is(Minn\Content\PostRecord $post): bool`
 
 True while the post has a password the reader's cookie does not match.
+
+### static `cookieUnlocks(string $password, string $cookie): bool`
+
+Whether a wp-postpass cookie opens a post with this password. Only a
+hash in the setting the reference writes ("$P$B") is tried, as the
+reference tries it: a cookie naming its own work factor could
+otherwise make one request hash up to 2^30 times.
 
 ### static `title(Minn\Content\PostRecord $post): string`
 

@@ -163,6 +163,21 @@ final class Types
         return isset($this->declared[$slug]) || isset($this->servedRegistered()[$slug]);
     }
 
+    /**
+     * The types a post search covers: the built-in post and page, the ones
+     * extensions declare, and the public types plugin code shows in REST,
+     * as the reference's post search handler takes them.
+     *
+     * @return list<string>
+     */
+    public function searchable(): array
+    {
+        $core = array_diff(array_keys($this->core()), ['attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part', 'wp_global_styles', 'wp_navigation', 'wp_font_family', 'wp_font_face']);
+        $registered = array_keys(array_diff_key($this->all(), $this->core()));
+        $public = array_filter($registered, static fn ($slug): bool => !empty(Runtime::registry()->postTypes()[$slug]['public']));
+        return array_values(array_map('strval', [...$core, ...$public]));
+    }
+
     /** Whether plugin code registered the type (not a built-in, not an extension's). */
     public function isRegistered(string $slug): bool
     {
@@ -175,7 +190,9 @@ final class Types
         if (!Runtime::booted()) {
             return [];
         }
-        return array_filter($this->registered(), static fn (array $type): bool => $type['rest_namespace'] === 'wp/v2');
+        // A type plugin code gave a REST controller of its own is that controller's (create_initial_rest_routes registers its routes).
+        return array_filter($this->registered(), static fn (array $type, string $slug): bool => $type['rest_namespace'] === 'wp/v2'
+            && in_array((string) (Runtime::registry()->postTypes()[$slug]['rest_controller_class'] ?? ''), ['', 'WP_REST_Posts_Controller'], true), ARRAY_FILTER_USE_BOTH);
     }
 
     /** The rest_base of a type slug. */

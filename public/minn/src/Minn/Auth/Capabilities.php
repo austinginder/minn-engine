@@ -7,6 +7,7 @@ namespace Minn\Auth;
 use Minn\Content\PostRecord;
 use Minn\Content\Users;
 use Minn\Db;
+use Minn\Runtime\Runtime;
 use Minn\Support\Serialized;
 
 /**
@@ -87,6 +88,12 @@ final readonly class Capabilities
         return $held;
     }
 
+    /** Whether file changes are allowed for a capability check, as wp_is_file_mod_allowed() answers: DISALLOW_FILE_MODS, through file_mod_allowed with the check's context. */
+    private static function fileModsAllowed(string $context): bool
+    {
+        return (bool) Runtime::hooks()->filter('file_mod_allowed', [!(\defined('DISALLOW_FILE_MODS') && \constant('DISALLOW_FILE_MODS')), $context]);
+    }
+
     /** Does the user hold every primitive the (possibly meta) capability maps to? */
     public function can(int $userId, string $capability, ?int $postId = null): bool
     {
@@ -141,9 +148,13 @@ final readonly class Capabilities
         return match ($capability) {
             // Only a site that defines ALLOW_UNFILTERED_UPLOADS lets anyone upload any file type.
             'unfiltered_upload' => \defined('ALLOW_UNFILTERED_UPLOADS') && \constant('ALLOW_UNFILTERED_UPLOADS') ? ['unfiltered_upload'] : ['do_not_allow'],
-            'upload_plugins' => ['install_plugins'],
-            'upload_themes' => ['install_themes'],
-            'update_languages' => ['install_languages'],
+            // Installing, updating and deleting code, and editing files, stop where the site forbids file changes (probe security-parity).
+            'install_plugins', 'install_themes', 'update_plugins', 'update_themes', 'update_core', 'delete_plugins', 'delete_themes' => self::fileModsAllowed('capability_update_core') ? [$capability] : ['do_not_allow'],
+            'upload_plugins' => self::fileModsAllowed('capability_update_core') ? ['install_plugins'] : ['do_not_allow'],
+            'upload_themes' => self::fileModsAllowed('capability_update_core') ? ['install_themes'] : ['do_not_allow'],
+            'install_languages', 'update_languages' => self::fileModsAllowed('can_install_language_pack') ? ['install_languages'] : ['do_not_allow'],
+            'edit_plugins', 'edit_themes', 'edit_files' => !(\defined('DISALLOW_FILE_EDIT') && \constant('DISALLOW_FILE_EDIT')) && self::fileModsAllowed('capability_edit_themes') ? [$capability] : ['do_not_allow'],
+            'update_php' => ['update_core'],
             'deactivate_plugins', 'activate_plugin', 'deactivate_plugin' => ['activate_plugins'],
             'resume_plugin' => ['resume_plugins'],
             'resume_theme' => ['resume_themes'],

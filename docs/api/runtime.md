@@ -53,7 +53,7 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`Options`](#options) | final class | 426 | Options as plugin code sees them, kept where the reference keeps them: |
+| [`Options`](#options) | final class | 430 | Options as plugin code sees them, kept where the reference keeps them: |
 | [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
@@ -2426,7 +2426,9 @@ when it autoloads, and nothing else written this request is lost.
 
 ### static `toStorage(mixed $value): string`
 
-What the reference stores: arrays and objects serialized, scalars as their string form.
+What the reference stores (maybe_serialize): arrays and objects
+serialized, a string that looks serialized serialized again so it
+reads back as that string, other scalars as their string form.
 
 ### static `fromStorage(string $raw): mixed`
 

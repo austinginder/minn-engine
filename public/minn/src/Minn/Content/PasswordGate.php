@@ -23,8 +23,18 @@ final class PasswordGate
         if ($password === '') {
             return false;
         }
-        $cookie = Reader::current()->postPassword;
-        return $cookie === '' || !PortableHash::verify($password, $cookie);
+        return !self::cookieUnlocks($password, Reader::current()->postPassword);
+    }
+
+    /**
+     * Whether a wp-postpass cookie opens a post with this password. Only a
+     * hash in the setting the reference writes ("$P$B") is tried, as the
+     * reference tries it: a cookie naming its own work factor could
+     * otherwise make one request hash up to 2^30 times.
+     */
+    public static function cookieUnlocks(string $password, string $cookie): bool
+    {
+        return str_starts_with($cookie, '$P$B') && PortableHash::verify($password, $cookie);
     }
 
     /** "Protected: " for a password, "Private: " for a private post, as the reference prefixes titles. */

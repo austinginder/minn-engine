@@ -50,7 +50,8 @@ final readonly class SearchController
         $terms = self::terms((string) ($request->query('search') ?? ''));
 
         $posts = $this->db->table('posts');
-        $where = "post_status = 'publish' AND post_type IN (?)";
+        // A protected post is no search result for someone signed out, title or content, as on the reference.
+        $where = "post_status = 'publish' AND post_type IN (?)" . ($this->caller->id() === 0 ? " AND post_password = ''" : '');
         $params = [$subtypes];
         // With no term there is nothing to rank: the newest first, as the reference lists.
         $order = 'post_date DESC, ID DESC';
@@ -98,7 +99,7 @@ final readonly class SearchController
     /** The searchable post types: every registered type except the ones the reference keeps out. */
     private function subtypes(string $subtype): array
     {
-        $all = array_values(array_diff(array_keys($this->types->all()), ['attachment', 'nav_menu_item', 'wp_block', 'wp_template', 'wp_template_part', 'wp_global_styles', 'wp_navigation', 'wp_font_family', 'wp_font_face']));
+        $all = $this->types->searchable();
         if ($subtype === 'any' || $subtype === '') {
             return $all;
         }

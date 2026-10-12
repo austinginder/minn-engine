@@ -227,6 +227,10 @@ $login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_
 check($login['status'] === '302' && str_starts_with($login['headers']['location'] ?? '', $ENGINE), 'redirect_to off-site lands in the admin instead', $login['headers']['location'] ?? '');
 $login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')) . '&redirect_to=//evil.example/');
 check(str_starts_with($login['headers']['location'] ?? '', $ENGINE), 'protocol-relative redirect_to is refused too');
+// A backslash a browser reads as a slash (https://evil.example\@site/) is dropped before the host is judged, as wp_safe_redirect drops it.
+$login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')) . '&redirect_to=' . rawurlencode('https://evil.example\\@' . parse_url($ENGINE, PHP_URL_HOST) . '/'));
+$landing = $login['headers']['location'] ?? '';
+check(!str_contains($landing, '\\') && parse_url($landing, PHP_URL_HOST) === parse_url($ENGINE, PHP_URL_HOST), 'a backslash in redirect_to cannot point the browser off-site', $landing);
 $login = page("$ENGINE/wp-login.php", 'log=admin&pwd=' . rawurlencode(minn_test_local('adminPassword')) . '&redirect_to=/sample-page/');
 check(($login['headers']['location'] ?? '') === "$ENGINE/sample-page/", 'a same-site path is honoured');
 $login = page("$ENGINE/wp-login.php", 'log=admin@minn-engine.localhost&pwd=' . rawurlencode(minn_test_local('adminPassword')));

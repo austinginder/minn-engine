@@ -108,6 +108,17 @@ final readonly class CommentsController
     {
         $this->caller->require('rest_comment_login_required', 'Sorry, you must be logged in to comment.');
         $body = $request->json();
+        // Only a moderator names another author, an address other than the request's, or the status; refused before anything else, as on the reference.
+        $moderates = $this->caller->can('moderate_comments');
+        $refused = match (true) {
+            isset($body['author']) && (int) $body['author'] !== $this->caller->id() && !$moderates => 'author',
+            isset($body['author_ip']) && !$moderates && (string) $body['author_ip'] !== $request->remoteAddress => 'author_ip',
+            isset($body['status']) && !$moderates => 'status',
+            default => null,
+        };
+        if ($refused !== null) {
+            throw $this->caller->refuse($refused === 'author_ip' ? 'rest_comment_invalid_author_ip' : "rest_comment_invalid_{$refused}", "Sorry, you are not allowed to edit '{$refused}' for comments.");
+        }
         $postId = (int) ($body['post'] ?? 0);
         $post = $this->posts->find($postId);
         if ($post === null) {

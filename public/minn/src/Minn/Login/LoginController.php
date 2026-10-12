@@ -10,6 +10,7 @@ use Minn\Content\Site;
 use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Front\Permalinks;
+use Minn\Http\Location;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -375,6 +376,8 @@ final readonly class LoginController
      */
     private function safeRedirect(string $target): string
     {
+        // Sanitized first, as wp_safe_redirect() does: a backslash a browser reads as a slash is dropped before the host is judged.
+        $target = Location::sanitize($target);
         $home = $this->permalinks->url('');
         if ($target !== '' && str_starts_with($target, '/') && !str_starts_with($target, '//') && !str_starts_with($target, '/\\')) {
             return $home . $target;

@@ -6,7 +6,7 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 304 | The one door to the database. Every query is a prepared statement; the |
+| [`Db`](#db) | final class | 315 | The one door to the database. Every query is a prepared statement; the |
 | [`Engine`](#engine) | final readonly class | 288 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 109 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
@@ -114,6 +114,13 @@ on first use, its session without the incompatible modes, as
 WordPress's own connection is (a plugin's insert that leaves out a text
 column then succeeds, as it does there).
 
+### static `sessionModes(string $modes): string`
+
+The session's modes: the server's, less the reference's incompatible
+ones and NO_BACKSLASH_ESCAPES, which the engine's own literal escaping
+(Query\Sql) relies on being off. Plugins see only the reference's list
+(incompatible_sql_modes).
+
 ### static `compatibleModes(string $modes, array $incompatible): string`
 
 A comma-separated SQL mode list without the incompatible ones (any case).
@@ -201,7 +208,7 @@ reference (_config_wp_home), without a trailing slash.
 
 One option's row as stored, whatever wp-config.php says, or null when it is unset.
 
-Internals: `placeholders()` (private, line 203), `run()` (private, line 302)
+Internals: `placeholders()` (private, line 214), `run()` (private, line 313)
 
 
 ## Engine
