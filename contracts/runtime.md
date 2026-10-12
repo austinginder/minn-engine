@@ -8517,7 +8517,7 @@ are in http.php.
     on a block theme, `wp_is_local_html_output` answers null and the https
     check never reports `bad_response_source`.
   - While `wp_installing()`, the reference's `get_option()` reads past its
-    cache. The engine's does not.
+    cache. Settled in "Options while installing" (2026-10-12).
 
 ## Bootstrap guards and the pages that stop a request (2026-10-09)
 
@@ -11338,8 +11338,8 @@ flushed or saved.
   built-in post/page and tag/category data, kept until
   `reset_default_labels`.
 
-Left: a taxonomy's default term is not yet created when it registers (the
-reference adds the term and its `default_term_{$taxonomy}` option).
+Left: a taxonomy's default term is not yet created when it registers.
+Settled in "A taxonomy's default term" (2026-10-12).
 
 ## Identity internals: roles, users, application passwords, phpass (2026-10-10)
 
@@ -15026,3 +15026,54 @@ The content survey's lines are unchanged (shortcodes and blocks "with no
 extension", extra tables and post types "the engine does not read"). They
 predate plugins running, and rewording them changes when `install` asks
 for `--force`, so that waits on Austin.
+
+## Options while installing (2026-10-12)
+
+Probe `option-cache`, its last section. While `wp_installing()` is true,
+the reference keeps the option cache out of the way:
+
+- `get_option()` reads the row as stored. Only `pre_option_{name}` and
+  `option_{name}` (or the default's filter) are heard, not the alloptions
+  filters. A key set by hand, the list set by hand, and a name noted in
+  `notoptions` are all passed over, so a row written straight to the
+  database is read at once.
+- `wp_load_alloptions()` is unchanged: both filters, and the list the group
+  holds.
+- `add_option`, `update_option` and `delete_option` write the row and leave
+  the group as it was. Once installing ends, a read finds what the group
+  held before: a value set by hand, a deleted option's old key, a name
+  still noted unset.
+
+`Options` asks `Runtime::installing()` and does the same, in its plugin-facing
+reads and its own. With no runtime booted, the answer is false.
+
+## A taxonomy's default term (2026-10-12)
+
+Probe `taxonomy-default-term`. When `register_taxonomy` is given
+`default_term` (a name, or a name, slug and description), the reference
+settles the term before `registered_taxonomy` fires:
+
+- while `default_term_{taxonomy}` names a term that is there, nothing
+  happens;
+- otherwise a term with that **name** is kept. A term holding only the same
+  slug does not count: the new term gets the next free slug
+  (`zz-same-slug-2`);
+- otherwise the term is made (`create_term`, `created_term`, `saved_term`);
+- then its id is stored. A kept term's id is a string, as `term_exists` gives
+  it; a made term's id is an int.
+
+`wp_delete_term` refuses the default term, answering 0, as it refuses the
+default category.
+
+On save, a post whose type has the taxonomy, that brings none of its terms in
+`tax_input` and has none, gets the default term:
+
+- a published post and a draft;
+- a post whose terms were taken away, when it is saved again.
+
+A post that brings its own term, or already has one, keeps it. The terms are
+set through the same check as `tax_input`, so a save with nobody signed in,
+who may not assign terms, gets nothing.
+
+Not probed: what deleting a term does to posts left with no term of a
+taxonomy that has a default.

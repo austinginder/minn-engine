@@ -124,9 +124,33 @@ function register_taxonomy($taxonomy, $object_type, $args = [])
     $object->add_rewrite_rules();
     Runtime::registry()->adoptTaxonomy($object);
     $object->add_hooks();
+    if (!empty($object->default_term)) {
+        _minn_default_term($taxonomy, $object->default_term);
+    }
     do_action('registered_taxonomy', $taxonomy, $object_type, get_object_vars($object));
     do_action("registered_taxonomy_{$taxonomy}", $taxonomy, $object_type, get_object_vars($object));
     return $object;
+}
+
+/**
+ * @internal A taxonomy's default term, settled as it registers (probe
+ * taxonomy-default-term): nothing while default_term_{taxonomy} names a term
+ * that is there; otherwise a term of that name is kept, or the term is made,
+ * and its id stored.
+ */
+function _minn_default_term(string $taxonomy, array $term): void
+{
+    $stored = (int) get_option("default_term_{$taxonomy}");
+    if ($stored > 0 && term_exists($stored, $taxonomy)) {
+        return;
+    }
+    $found = term_exists((string) $term['name'], $taxonomy);
+    if (!is_array($found)) {
+        $found = wp_insert_term((string) $term['name'], $taxonomy, ['slug' => (string) $term['slug'], 'description' => (string) $term['description']]);
+    }
+    if (is_array($found)) {
+        update_option("default_term_{$taxonomy}", $found['term_id']);
+    }
 }
 
 function unregister_taxonomy($taxonomy)
@@ -589,7 +613,8 @@ function wp_delete_term($term, $taxonomy, $args = [])
         return false;
     }
     $default = (int) get_option('default_category');
-    if ($taxonomy === 'category' && $object->term_id === $default) {
+    // A taxonomy's default term stays, as the default category does (probe taxonomy-default-term).
+    if (($taxonomy === 'category' && $object->term_id === $default) || $object->term_id === (int) get_option("default_term_{$taxonomy}")) {
         return 0;
     }
     $args = wp_parse_args($args, ['default' => null, 'force_default' => false]);

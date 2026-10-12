@@ -1319,8 +1319,16 @@ function _minn_post_inputs(int $id, array $postarr, string $type, string $status
     if (isset($postarr['tags_input']) && in_array('post_tag', get_object_taxonomies($type), true)) {
         wp_set_post_tags($id, $postarr['tags_input']);
     }
+    // A taxonomy's default term goes to a post that brings none of its terms and has none (probe taxonomy-default-term).
+    $input = is_array($postarr['tax_input'] ?? null) ? $postarr['tax_input'] : [];
+    foreach (get_object_taxonomies($type, 'objects') as $name => $object) {
+        $default = empty($object->default_term) || isset($input[$name]) ? 0 : (int) get_option("default_term_{$name}");
+        if ($default > 0 && wp_get_object_terms($id, $name, ['fields' => 'ids']) === []) {
+            $input[$name] = [$default];
+        }
+    }
     // A taxonomy's terms are set only for a user who may assign them; the others are left as they were (probe template-loader-more).
-    foreach (is_array($postarr['tax_input'] ?? null) ? $postarr['tax_input'] : [] as $taxonomy => $terms) {
+    foreach ($input as $taxonomy => $terms) {
         $object = get_taxonomy((string) $taxonomy);
         if (!$object || current_user_can($object->cap->assign_terms)) {
             wp_set_post_terms($id, $terms, (string) $taxonomy);
