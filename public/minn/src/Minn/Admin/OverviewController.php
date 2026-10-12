@@ -65,11 +65,10 @@ final readonly class OverviewController
     }
 
     /** Saves the site's default overview cards. */
-    #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults', policy: new Policy(Access::Floor))]
+    #[Route(Method::Post, '/minn-admin/v1/overview/metric-defaults', policy: new Policy(Access::Floor, caps: ['manage_options']))]
     public function setOverviewMetricDefaults(Request $request): Response
     {
         $userId = $this->caller->requireFloor();
-        $this->caller->requireCap('manage_options');
         $keys = $this->metricKeysFrom($request);
         if ($keys === null || $keys === []) {
             $this->site->deleteOption('minn_admin_overview_metric_defaults');

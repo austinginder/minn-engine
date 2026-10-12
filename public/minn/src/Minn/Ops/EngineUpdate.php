@@ -56,10 +56,20 @@ final readonly class EngineUpdate
         return $this->install($zip, $release->sha256, $release->signature, $release->version);
     }
 
-    /** Installs an archive in hand once it matches its checksum and signature and holds the version named; the version now in place. */
+    /**
+     * Installs an archive in hand once it matches its checksum and signature,
+     * holds the version named, and that version is newer than the running
+     * one: an older release signed in its day is still signed, and putting
+     * it back would bring back what it was replaced for. The version now in
+     * place.
+     */
     public function install(string $zip, string $sha256, string $signature, string $version): string
     {
         $this->refuseCheckout();
+        $running = self::versionOf($this->engineDir);
+        if (!version_compare($version, $running, '>')) {
+            throw new RuntimeException("Minn {$version} is not newer than the running {$running}, so it is not installed.");
+        }
         $this->verify($zip, $sha256, $signature, $version, 'installed');
         $parent = dirname($this->engineDir);
         if (!is_writable($parent)) {
@@ -108,8 +118,12 @@ final readonly class EngineUpdate
             @unlink($file);
             Files::deleteTree($stage);
         }
-        ShapeFiles::refresh($this->engineDir, $parent, $aside);
-        Files::deleteTree($aside);
+        // The old engine is a whole copy of code in the webroot: it goes even when the shape files fail.
+        try {
+            ShapeFiles::refresh($this->engineDir, $parent, $aside);
+        } finally {
+            Files::deleteTree($aside);
+        }
         if (function_exists('opcache_reset')) {
             @opcache_reset();
         }

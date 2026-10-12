@@ -236,6 +236,24 @@ return [
             $clean($root);
         }
     },
+    'a signed release no newer than the running engine changes nothing' => static function () use ($webroot, $archive, $leftovers, $clean, $public, $sign) {
+        $root = $webroot('0.2.0');
+        try {
+            $answers = [];
+            foreach (['0.1.0', '0.2.0'] as $version) {
+                $zip = $archive($version);
+                try {
+                    (new EngineUpdate("{$root}/minn", [$public]))->install($zip, hash('sha256', $zip), $sign($zip), $version);
+                    $answers[] = 'installed';
+                } catch (RuntimeException $e) {
+                    $answers[] = str_contains($e->getMessage(), 'is not newer than the running 0.2.0') ? 'refused' : $e->getMessage();
+                }
+            }
+            return $answers === ['refused', 'refused'] && EngineUpdate::versionOf("{$root}/minn") === '0.2.0' && $leftovers($root) === [] ?: json_encode($answers);
+        } finally {
+            $clean($root);
+        }
+    },
     'a package that is not on the update service is refused before any download' => static function () use ($webroot, $clean) {
         $root = $webroot('0.1.0');
         $fake = new Fake([]);

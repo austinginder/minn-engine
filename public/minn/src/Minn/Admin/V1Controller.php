@@ -58,10 +58,9 @@ final readonly class V1Controller
     }
 
     /** Replaces the running engine with the release on offer. */
-    #[Route(Method::Post, '/minn-admin/v1/core/update', policy: new Policy(Access::Floor))]
+    #[Route(Method::Post, '/minn-admin/v1/core/update', policy: new Policy(Access::Floor, caps: ['update_core']))]
     public function coreUpdate(Request $request): Response
     {
-        $this->caller->requireCap('update_core');
         return Reply::answer($request, ['version' => $this->core->update()]);
     }
 

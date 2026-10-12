@@ -67,10 +67,9 @@ final readonly class ThemesController
     }
 
     /** Switches the active theme. */
-    #[Route(Method::Post, '/minn-admin/v1/themes/activate', policy: new Policy(Access::Floor))]
+    #[Route(Method::Post, '/minn-admin/v1/themes/activate', policy: new Policy(Access::Floor, caps: ['switch_themes']))]
     public function activateTheme(Request $request): Response
     {
-        $this->caller->requireCap('switch_themes');
         $stylesheet = trim((string) ($request->json()['stylesheet'] ?? $request->form['stylesheet'] ?? ''));
         $folders = $this->themeFolders();
         if ($stylesheet === '' || !isset($folders[$stylesheet])) {

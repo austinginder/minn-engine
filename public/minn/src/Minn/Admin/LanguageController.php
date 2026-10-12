@@ -80,10 +80,9 @@ final readonly class LanguageController
     }
 
     /** Sets the site's locale. */
-    #[Route(Method::Post, '/minn-admin/v1/site/language', policy: new Policy(Access::Floor))]
+    #[Route(Method::Post, '/minn-admin/v1/site/language', policy: new Policy(Access::Floor, caps: ['manage_options']))]
     public function site(Request $request): Response
     {
-        $this->caller->requireCap('manage_options');
         [$locale, $downloaded] = $this->ensure($request);
         $this->site->setOption('WPLANG', $locale === 'en_US' ? '' : $locale);
         return Reply::answer($request, ['ok' => true, 'locale' => $locale === 'en_US' ? '' : $locale, 'installed' => $downloaded]);

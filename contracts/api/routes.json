@@ -317,7 +317,10 @@
             "summary": "Sets the site's locale.",
             "policy": {
                 "access": "Floor",
-                "describe": "floor edit_posts",
+                "describe": "floor edit_posts + manage_options",
+                "caps": [
+                    "manage_options"
+                ],
                 "signIn": {
                     "code": "rest_not_logged_in",
                     "message": "You are not currently logged in."
@@ -405,7 +408,10 @@
             "summary": "Saves the site's default overview cards.",
             "policy": {
                 "access": "Floor",
-                "describe": "floor edit_posts",
+                "describe": "floor edit_posts + manage_options",
+                "caps": [
+                    "manage_options"
+                ],
                 "signIn": {
                     "code": "rest_not_logged_in",
                     "message": "You are not currently logged in."
@@ -1322,7 +1328,10 @@
             "summary": "Switches the active theme.",
             "policy": {
                 "access": "Floor",
-                "describe": "floor edit_posts",
+                "describe": "floor edit_posts + switch_themes",
+                "caps": [
+                    "switch_themes"
+                ],
                 "signIn": {
                     "code": "rest_not_logged_in",
                     "message": "You are not currently logged in."
@@ -1553,7 +1562,10 @@
             "summary": "Replaces the running engine with the release on offer.",
             "policy": {
                 "access": "Floor",
-                "describe": "floor edit_posts",
+                "describe": "floor edit_posts + update_core",
+                "caps": [
+                    "update_core"
+                ],
                 "signIn": {
                     "code": "rest_not_logged_in",
                     "message": "You are not currently logged in."
