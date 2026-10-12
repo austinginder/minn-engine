@@ -284,9 +284,7 @@ final readonly class Comments
             return $fields;
         };
         Runtime::hooks()->add('comment_form_defaults', $defaults);
-        ob_start();
-        \comment_form([], $postId);
-        $form = (string) ob_get_clean();
+        $form = \_minn_post_comments_form($postId);
         Runtime::hooks()->remove('comment_form_defaults', $defaults);
         $classes = implode(' ', ['comment-respond', 'wp-block-post-comments-form', ...Styles::classes($block->attrs)]);
         return str_replace('class="comment-respond"', 'class="' . Html::attr($classes) . '"', $form);

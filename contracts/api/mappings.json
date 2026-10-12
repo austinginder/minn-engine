@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 813,
-        "composes": 2373,
+        "composes": 2374,
         "leaf": 1040,
         "noop": 2756,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8676,
+        "functions": 8677,
         "minnMethods": 1010,
         "leafLinesOver15": 12
     },
@@ -37631,6 +37631,17 @@
                 "_minn_post_insert"
             ]
         },
+        "_minn_post_comments_form": {
+            "file": "comment.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "comment_form",
+                "get_option",
+                "wp_enqueue_script"
+            ]
+        },
         "_minn_post_delete_meta": {
             "file": "post.php",
             "lines": 3,
@@ -67013,7 +67024,7 @@
         },
         "wp_default_scripts": {
             "file": "script-loader.php",
-            "lines": 16,
+            "lines": 20,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\ScriptPack::handles"

@@ -4,7 +4,7 @@ the wp/v2 surface: shapes and controllers
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Api`](#api) | final readonly class | 398 | The REST API: wires the controllers for one request and dispatches a |
+| [`Api`](#api) | final readonly class | 404 | The REST API: wires the controllers for one request and dispatches a |
 | [`ApplicationPasswordsController`](#applicationpasswordscontroller) | final readonly class | 177 | wp/v2/users/{id}/application-passwords: list, create, rename, delete, |
 | [`ArgCheck`](#argcheck) | final readonly class | 85 | Judges a route's declared arguments against the request before the |
 | [`BatchController`](#batchcontroller) | final readonly class | 159 | batch/v1 as the reference answers it (probe rest-batch): up to 25 |
@@ -216,7 +216,9 @@ while rest_send_cors_headers stays hooked, for a request from an
 Origin the CORS headers echoing it with Vary: Origin, otherwise Vary:
 Origin for a GET from someone not signed in. A signed-in caller's
 answer also carries the no-cache headers (rest_send_nocache_headers,
-nocache_headers).
+nocache_headers). The CORS header lists go through
+rest_exposed_cors_headers and rest_allowed_cors_headers, handed the
+route's request.
 
 ### `withDiscovery(Minn\Http\Response $response): Minn\Http\Response`
 
@@ -237,7 +239,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 370), `withPageLinks()` (private, line 384), `options()` (private, line 415), `withAllow()` (private, line 428)
+Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 376), `withPageLinks()` (private, line 390), `options()` (private, line 421), `withAllow()` (private, line 434)
 
 
 ## ApplicationPasswordsController

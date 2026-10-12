@@ -1896,3 +1896,18 @@ function wp_send_note_notification($user, $comment, $post)
     }
     return $sent;
 }
+
+/**
+ * @internal The form a post-comments-form block renders: comment_form()'s
+ * markup, with comment-reply enqueued while replies are threaded (the reply
+ * links move this form), as the reference's block enqueues it.
+ */
+function _minn_post_comments_form(int $postId): string
+{
+    if (get_option('thread_comments')) {
+        wp_enqueue_script('comment-reply');
+    }
+    ob_start();
+    comment_form([], $postId);
+    return (string) ob_get_clean();
+}

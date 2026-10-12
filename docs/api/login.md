@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`LoginController`](#logincontroller) | final readonly class | 443 | Signing in. The page people see is /minn-admin/login: the form, the |
+| [`LoginController`](#logincontroller) | final readonly class | 458 | Signing in. The page people see is /minn-admin/login: the form, the |
 | [`LoginForm`](#loginform) | final class | 233 | The sign-in page markup. |
 | [`LoginHooks`](#loginhooks) | final readonly class | 99 | The sign-in as plugins see it, when they are loaded. The credentials go |
 | [`LoginNotices`](#loginnotices) | final readonly class | 113 | What a sign-in page tells the reader, held as the reference's pages hold |
@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `checkEmail()` (private, line 115), `signInNotices()` (private, line 126), `lostPassword()` (private, line 133), `retrieve()` (private, line 163), `openResetLink()` (private, line 180), `resetSession()` (private, line 197), `savePassword()` (private, line 212), `register()` (private, line 247), `validateReset()` (private, line 272), `parts()` (private, line 287), `tokenLogin()` (private, line 299), `safeRedirect()` (private, line 377), `logout()` (private, line 398), `action()` (private, line 428), `actionUrl()` (private, line 440), `base()` (private, line 450), `tooManyAttempts()` (private, line 456), `render()` (private, line 464)
+Internals: `landingFor()` (private, line 117), `asked()` (private, line 124), `checkEmail()` (private, line 131), `signInNotices()` (private, line 142), `lostPassword()` (private, line 148), `retrieve()` (private, line 178), `openResetLink()` (private, line 195), `resetSession()` (private, line 212), `savePassword()` (private, line 227), `register()` (private, line 262), `validateReset()` (private, line 287), `parts()` (private, line 302), `tokenLogin()` (private, line 314), `safeRedirect()` (private, line 392), `logout()` (private, line 413), `action()` (private, line 443), `actionUrl()` (private, line 455), `base()` (private, line 465), `tooManyAttempts()` (private, line 471), `render()` (private, line 479)
 
 
 ## LoginForm
@@ -176,9 +176,9 @@ is), and the footer (login_footer).
 
 - `@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, errors?: string, messages?: string, form: string, footer: string}`
 
-### `landing(string $redirect, string $requested, Minn\Content\UserRecord $user): string`
+### `landing(string $redirect, string $requested, Minn\Content\UserRecord|WP_Error|null $user): string`
 
-Where a good sign-in lands, as login_redirect says (the requested address and the user beside it).
+Where a sign-in lands, as login_redirect says (the requested address beside it, and the user it found or why not).
 
 ### `leaving(string $redirect, string $requested, int $userId): string`
 

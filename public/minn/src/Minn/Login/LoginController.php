@@ -108,7 +108,23 @@ final readonly class LoginController
         if ($request->query('password') === 'changed') {
             $notices = $notices->with('password_changed', 'Your password has been changed.', 'message');
         }
-        return Response::html($this->render($request, $notices));
+        // A visit runs the sign-in with nothing in it, as the reference's page does: wp_authenticate and the authenticate
+        // chain find nobody without credentials, and login_redirect names where a sign-in from the form lands.
+        return Response::html($this->render($request, $notices, $this->landingFor($request, (new LoginHooks($this->users))->authenticate('', ''))));
+    }
+
+    /** Where a sign-in from this page lands, through login_redirect: the address asked for, or the admin, with who the sign-in found. */
+    private function landingFor(Request $request, UserRecord|\WP_Error|null $user): string
+    {
+        [$requested, $landing] = $this->asked($request);
+        return (new LoginHooks($this->users))->landing($landing, $requested, $user);
+    }
+
+    /** The address a sign-in from this page asks for, and where it lands without one (the admin). @return array{0: string, 1: string} */
+    private function asked(Request $request): array
+    {
+        $requested = (string) ($request->query('redirect_to') ?? $request->form['redirect_to'] ?? '');
+        return [$requested, $requested !== '' ? $requested : \admin_url()];
     }
 
     /** The check-your-email page's word, as the reference's: the confirmation link is on its way, or the registration is done. */
@@ -125,8 +141,7 @@ final readonly class LoginController
     /** A sign-in page's notices after wp_login_errors, handed where a sign-in would land (the admin, unless the page names a landing). */
     private function signInNotices(Request $request, LoginNotices $notices): LoginNotices
     {
-        $requested = (string) ($request->query('redirect_to') ?? $request->form['redirect_to'] ?? '');
-        return $notices->forSignIn($requested !== '' ? $requested : \admin_url());
+        return $notices->forSignIn($this->asked($request)[1]);
     }
 
     /** POST lostpassword mints a key and mails the link; POST resetpass saves the new password. Null for other actions. */
@@ -356,7 +371,7 @@ final readonly class LoginController
         $user = $hooks->authenticate($login, $password);
         if (!$user instanceof UserRecord) {
             $this->signIn->recordFailure($request->remoteAddress);
-            return Response::html($this->render($request, LoginNotices::refused($user)));
+            return Response::html($this->render($request, LoginNotices::refused($user), $this->landingFor($request, $user)));
         }
         // Remember me extends the session from two days to fourteen and keeps
         // the cookie past the browser session; the failure counter is left to
@@ -456,18 +471,18 @@ final readonly class LoginController
     private function tooManyAttempts(Request $request, int $wait): Response
     {
         $minutes = max(1, (int) ceil($wait / 60));
-        return Response::html($this->render($request, LoginNotices::plain('too_many_attempts', "Error: Too many failed sign-in attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.')), 429)
+        return Response::html($this->render($request, LoginNotices::plain('too_many_attempts', "Error: Too many failed sign-in attempts. Try again in {$minutes} minute" . ($minutes === 1 ? '' : 's') . '.'), (string) ($request->form['redirect_to'] ?? '')), 429)
             ->withHeader('Retry-After', (string) $wait);
     }
 
     /** The sign-in page, its notices through wp_login_errors first. */
-    private function render(Request $request, LoginNotices $notices): string
+    private function render(Request $request, LoginNotices $notices, string $redirect): string
     {
         $siteName = (string) ($this->site->option('blogname') ?? 'Site');
         return LoginForm::render(
             $siteName,
             $this->permalinks->url($this->base($request)),
-            (string) ($request->query('redirect_to') ?? ''),
+            $redirect,
             '',
             '',
             $this->actionUrl($request, 'lostpassword'),

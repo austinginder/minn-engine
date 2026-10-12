@@ -14002,7 +14002,7 @@
             "namespace": "Minn\\Blocks\\Dynamic\\Theme",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Blocks/Dynamic/Theme/Comments.php",
-            "lines": 268,
+            "lines": 266,
             "doc": "comments, comments-title, comment-template, the comment-* blocks, and the comment form.",
             "implements": [],
             "extends": null,
@@ -14580,7 +14580,7 @@
                         }
                     ],
                     "line": 279,
-                    "end": 293
+                    "end": 291
                 }
             ]
         },
@@ -71200,7 +71200,7 @@
             "namespace": "Minn\\Login",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Login/LoginController.php",
-            "lines": 443,
+            "lines": 458,
             "doc": "Signing in. The page people see is /minn-admin/login: the form, the\nlost-password and reset flows, and logout all live there and link there.\n/wp-login.php stays as the address tooling knows (one-time login links,\nuptime probes, scripted sign-ins) and answers in place with the same\nshapes; a bare GET of it sends a browser to the clean page. Sessions\nand cookies validate on the engine AND on WordPress either way.",
             "implements": [],
             "extends": null,
@@ -71383,7 +71383,7 @@
                         }
                     ],
                     "line": 58,
-                    "end": 112
+                    "end": 114
                 },
                 {
                     "routes": [
@@ -71406,8 +71406,57 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 371
+                    "line": 351,
+                    "end": 386
+                },
+                {
+                    "routes": [],
+                    "name": "landingFor",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "landingFor(Minn\\Http\\Request $request, Minn\\Content\\UserRecord|WP_Error|null $user): string",
+                    "doc": "Where a sign-in from this page lands, through login_redirect: the address asked for, or the admin, with who the sign-in found.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "user",
+                            "type": "Minn\\Content\\UserRecord|WP_Error|null",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 121
+                },
+                {
+                    "routes": [],
+                    "name": "asked",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "asked(Minn\\Http\\Request $request): array",
+                    "doc": "The address a sign-in from this page asks for, and where it lands without one (the admin). @return array{0: string, 1: string}",
+                    "shapes": [
+                        "@return array{0: string, 1: string}"
+                    ],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 124,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -71426,8 +71475,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 123
+                    "line": 131,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -71453,8 +71502,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 130
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -71473,8 +71522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 155
+                    "line": 148,
+                    "end": 170
                 },
                 {
                     "routes": [],
@@ -71507,8 +71556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 173
+                    "line": 178,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -71527,8 +71576,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 194
+                    "line": 195,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -71549,8 +71598,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 210
+                    "line": 212,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -71569,8 +71618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 238
+                    "line": 227,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -71596,8 +71645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 266
+                    "line": 262,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -71623,8 +71672,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 272,
-                    "end": 280
+                    "line": 287,
+                    "end": 295
                 },
                 {
                     "routes": [],
@@ -71673,8 +71722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 287,
-                    "end": 291
+                    "line": 302,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -71693,8 +71742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 330
+                    "line": 314,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -71713,8 +71762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 391
+                    "line": 392,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -71733,8 +71782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 421
+                    "line": 413,
+                    "end": 436
                 },
                 {
                     "routes": [],
@@ -71753,8 +71802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 437
+                    "line": 443,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -71787,8 +71836,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 440,
-                    "end": 447
+                    "line": 455,
+                    "end": 462
                 },
                 {
                     "routes": [],
@@ -71807,8 +71856,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 453
+                    "line": 465,
+                    "end": 468
                 },
                 {
                     "routes": [],
@@ -71834,15 +71883,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 456,
-                    "end": 461
+                    "line": 471,
+                    "end": 476
                 },
                 {
                     "routes": [],
                     "name": "render",
                     "static": false,
                     "visibility": "private",
-                    "signature": "render(Minn\\Http\\Request $request, Minn\\Login\\LoginNotices $notices): string",
+                    "signature": "render(Minn\\Http\\Request $request, Minn\\Login\\LoginNotices $notices, string $redirect): string",
                     "doc": "The sign-in page, its notices through wp_login_errors first.",
                     "shapes": [],
                     "params": [
@@ -71859,10 +71908,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "redirect",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
                         }
                     ],
-                    "line": 464,
-                    "end": 476
+                    "line": 479,
+                    "end": 491
                 }
             ]
         },
@@ -72595,8 +72651,8 @@
                     "name": "landing",
                     "static": false,
                     "visibility": "public",
-                    "signature": "landing(string $redirect, string $requested, Minn\\Content\\UserRecord $user): string",
-                    "doc": "Where a good sign-in lands, as login_redirect says (the requested address and the user beside it).",
+                    "signature": "landing(string $redirect, string $requested, Minn\\Content\\UserRecord|WP_Error|null $user): string",
+                    "doc": "Where a sign-in lands, as login_redirect says (the requested address beside it, and the user it found or why not).",
                     "shapes": [],
                     "params": [
                         {
@@ -72615,7 +72671,7 @@
                         },
                         {
                             "name": "user",
-                            "type": "Minn\\Content\\UserRecord",
+                            "type": "Minn\\Content\\UserRecord|WP_Error|null",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -89192,7 +89248,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Api.php",
-            "lines": 398,
+            "lines": 404,
             "doc": "The REST API: wires the controllers for one request and dispatches a\nroute. Errors thrown anywhere underneath become the reference's error\npayload under the reference's headers.",
             "implements": [],
             "extends": null,
@@ -89834,7 +89890,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "withServerHeaders(Minn\\Http\\Response $response, string $route): Minn\\Http\\Response",
-                    "doc": "The headers the reference's server adds to every REST answer over\nHTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,\nwhile rest_send_cors_headers stays hooked, for a request from an\nOrigin the CORS headers echoing it with Vary: Origin, otherwise Vary:\nOrigin for a GET from someone not signed in. A signed-in caller's\nanswer also carries the no-cache headers (rest_send_nocache_headers,\nnocache_headers).",
+                    "doc": "The headers the reference's server adds to every REST answer over\nHTTP (probe rest-server-headers): X-Robots-Tag noindex always; and,\nwhile rest_send_cors_headers stays hooked, for a request from an\nOrigin the CORS headers echoing it with Vary: Origin, otherwise Vary:\nOrigin for a GET from someone not signed in. A signed-in caller's\nanswer also carries the no-cache headers (rest_send_nocache_headers,\nnocache_headers). The CORS header lists go through\nrest_exposed_cors_headers and rest_allowed_cors_headers, handed the\nroute's request.",
                     "shapes": [],
                     "params": [
                         {
@@ -89852,8 +89908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 304,
-                    "end": 325
+                    "line": 306,
+                    "end": 331
                 },
                 {
                     "routes": [],
@@ -89872,8 +89928,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 332
+                    "line": 334,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -89899,8 +89955,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 353
+                    "line": 347,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -89928,8 +89984,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 368
+                    "line": 367,
+                    "end": 374
                 },
                 {
                     "routes": [],
@@ -89977,8 +90033,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 370,
-                    "end": 377
+                    "line": 376,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -90004,8 +90060,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 384,
-                    "end": 406
+                    "line": 390,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -90024,8 +90080,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 415,
-                    "end": 422
+                    "line": 421,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -90051,8 +90107,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 428,
-                    "end": 432
+                    "line": 434,
+                    "end": 438
                 }
             ]
         },

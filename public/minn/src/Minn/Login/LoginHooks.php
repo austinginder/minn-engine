@@ -97,10 +97,10 @@ final readonly class LoginHooks
         return $parts;
     }
 
-    /** Where a good sign-in lands, as login_redirect says (the requested address and the user beside it). */
-    public function landing(string $redirect, string $requested, UserRecord $user): string
+    /** Where a sign-in lands, as login_redirect says (the requested address beside it, and the user it found or why not). */
+    public function landing(string $redirect, string $requested, UserRecord|\WP_Error|null $user): string
     {
-        return (string) \apply_filters('login_redirect', $redirect, $requested, new \WP_User($user->id));
+        return (string) \apply_filters('login_redirect', $redirect, $requested, $user instanceof UserRecord ? new \WP_User($user->id) : $user);
     }
 
     /** Where a sign-out lands, as logout_redirect says. */

@@ -4,7 +4,7 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 268 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Comments`](#comments) | final readonly class | 266 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
 | [`Navigation`](#navigation) | final readonly class | 374 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 259 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |

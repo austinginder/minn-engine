@@ -15351,6 +15351,101 @@ Goal items 5 and 6 of the audit's scorecard, and two parity bugs it found.
 - **The open items register** below: every open note in this file, one
   row each, with its status.
 
+
+## Comment replies, CORS filters and the sign-in visit (2026-10-12)
+
+Gaps the hook-parity battery found, where plugins listening to a hook
+heard nothing on the engine.
+
+- **Threaded comment replies.**
+  - The `comment-reply` handle is Minn's own script,
+    `/minn/assets/comment-reply.js`. It is written from the markup the
+    reply links and the form carry: `data-commentid`, `data-postid`,
+    `data-belowelement`, `data-respondelement` and `data-replyto`, then
+    `#respond`, `#reply-title` and `#cancel-comment-reply-link`.
+  - A reply link moves the form to just after its comment, sets the
+    parent and the post, shows the cancel link and words the heading.
+    Cancelling puts the form back.
+  - It loads as the reference's does: async, low fetch priority.
+  - The comment form block enqueues it while replies are threaded. A
+    classic theme that enqueues `comment-reply` itself now gets it too;
+    before, the handle was not registered at all.
+  - Single posts now print a classic script, so `script_loader_tag`,
+    `script_loader_src` and `wp_script_attributes` reach them.
+- **CORS header lists** go through `rest_exposed_cors_headers` and
+  `rest_allowed_cors_headers`, handed the route's request, on every REST
+  answer served over HTTP.
+- **A visit to the sign-in page** runs the sign-in with nothing in it, as
+  the reference's page does:
+  - `wp_authenticate` and the `authenticate` chain run. Without
+    credentials they find nobody, and no failure is recorded.
+  - `login_redirect` names where a sign-in from the form lands, the admin
+    unless an address is asked for. The form carries it in `redirect_to`.
+  - A refused sign-in shows the form the same way.
+  - `secure_signon_cookie` is not applied; no plugin in the weighed set
+    hooks it.
+
+
+## Hooks tracked like functions (2026-10-12)
+
+Goal item 3 of the audit's scorecard. The reference's hooks are counted
+the way `compat-status.php` counts its functions, and proven by a suite.
+
+- **The inventory.** `tests/tools/hook-inventory.php` writes
+  `contracts/api/hooks.json`: names only, plus the functions and methods
+  that fire each hook.
+  - A dynamic name keeps its fixed text: `"pre_option_{$option}"` and
+    `'pre_option_' . $option` are both `pre_option_{*}`.
+  - Comments are skipped, so a docblock's usage example (`example_action`)
+    is no hook.
+  - 2,691 hooks for 7.1.3.
+- **The weights.** `tests/tools/hook-weights.php` downloads the 500 most
+  installed plugins of the lab catalogue and keeps only names and counts.
+  It reads the hooks each plugin subscribes to and maps a dynamic name to
+  its pattern. `contracts/api/hook-weights.json` holds, per hook, how many
+  of the 500 hook it and their installs between them (264M installs).
+- **The battery.** Suite `hook-parity` records every hook on both stacks
+  in 388 scenarios, through the fixture mu-plugin `minn-test-hooks.php`:
+  - every api probe (`tests/tools/hook-record-probe.php`; the engine runs
+    `init` first, as WP-CLI hands the reference a site that has);
+  - pages, feeds, REST routes, the sign-in screens, admin-ajax and its
+    heartbeat, a canonical redirect, a refused sign-in, a refused comment
+    and a reset for nobody, signed out and as an administrator.
+
+  The recorder listens the way a plugin listens. It hooks every exact name
+  in the inventory, and the dynamic instances the reference fired in that
+  scenario, with a callback that passes the value on unchanged. A stack
+  that fires a hook only when someone listens is then recorded as a plugin
+  would find it.
+
+  The reference's side is captured twice into
+  `contracts/fixtures/hooks/battery.json`, and only what both runs fired is
+  kept. In each scenario the engine must fire every hook the reference
+  fires, as the same kind and with as many arguments, and nothing else.
+- **The snapshot.** `contracts/fixtures/hooks/engine-divergences.json`
+  keeps where each hook still differs, and how. The suite fails on a new
+  difference, and fails on a recorded one that now agrees until the
+  snapshot is written again (`--snapshot`). Writing it refuses a new
+  difference in a scenario it already covered, so it only shrinks.
+- **The status.** `tests/tools/hook-status.php` writes
+  `contracts/api/hook-status.json`. Each hook is one of:
+  - proven: it agrees in at least one scenario the reference fires it in,
+    as a function is proven by the probe that compares it;
+  - fired: by name in src or the facade, or seen firing in the battery;
+  - dead end: fired only from what Minn leaves behind;
+  - different: listed in `different.json`;
+  - outside: fired only from code a single site never loads (multisite,
+    the screens' list tables, signup), which the function inventory
+    leaves out too;
+  - missing: none of these.
+
+  Today: 92.3% accounted for, and 95.2% proven weighted by plugin installs
+  (84.6% of live hooks counted one each). 196 live hooks are never fired.
+  Some are multisite branches inside functions a single site loads
+  (`grant_super_admin`). Others are native paths that skip the
+  reference's filters: adjacent posts, the tag cloud, the archives list,
+  `wp_theme_json_data_*`, the register and reset-password forms.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

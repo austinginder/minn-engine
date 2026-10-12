@@ -299,11 +299,17 @@ final readonly class Api
      * Origin the CORS headers echoing it with Vary: Origin, otherwise Vary:
      * Origin for a GET from someone not signed in. A signed-in caller's
      * answer also carries the no-cache headers (rest_send_nocache_headers,
-     * nocache_headers).
+     * nocache_headers). The CORS header lists go through
+     * rest_exposed_cors_headers and rest_allowed_cors_headers, handed the
+     * route's request.
      */
     public function withServerHeaders(Response $response, string $route): Response
     {
         $response = $response->withHeader('X-Robots-Tag', 'noindex');
+        $wpRequest = RuntimeRoutes::wpRequest($this->request->withPath('/' . trim($route, '/')));
+        $response = $response
+            ->withHeader('Access-Control-Expose-Headers', implode(', ', (array) Runtime::hooks()->filter('rest_exposed_cors_headers', [['X-WP-Total', 'X-WP-TotalPages', 'Link'], $wpRequest])))
+            ->withHeader('Access-Control-Allow-Headers', implode(', ', (array) Runtime::hooks()->filter('rest_allowed_cors_headers', [['Authorization', 'X-WP-Nonce', 'Content-Disposition', 'Content-MD5', 'Content-Type'], $wpRequest])));
         // The runtime is up on this path (Engine boots it before a REST answer).
         $signedIn = $this->services->caller()->id() > 0;
         if (Runtime::hooks()->filter('rest_send_nocache_headers', [$signedIn])) {

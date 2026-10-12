@@ -381,6 +381,10 @@ function wp_default_scripts($scripts)
     foreach (['wp-polyfill' => [], 'wp-hooks' => [], 'wp-i18n' => ['wp-hooks'], 'wp-dom-ready' => [], 'wp-escape-html' => [], 'wp-url' => ['wp-polyfill'], 'wp-html-entities' => [], 'wp-a11y' => ['wp-dom-ready', 'wp-i18n', 'wp-polyfill'], 'wp-api-fetch' => ['wp-i18n', 'wp-url']] as $handle => $deps) {
         $scripts->add($handle, $wp(substr($handle, 3)), $deps, MINN_ENGINE_VERSION);
     }
+    // Threaded replies move the form under the comment answered (Minn's own script), loaded as the reference loads its: async, low priority.
+    $scripts->add('comment-reply', '/minn/assets/comment-reply.js', [], MINN_ENGINE_VERSION);
+    $scripts->add_data('comment-reply', 'strategy', 'async');
+    $scripts->add_data('comment-reply', 'fetchpriority', 'low');
     $contentDir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
     foreach (Minn\Runtime\ScriptPack::handles($contentDir) as $handle => $row) {
         if (!wp_script_is($handle, 'registered')) {
