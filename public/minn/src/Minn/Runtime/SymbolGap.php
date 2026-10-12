@@ -69,6 +69,98 @@ final readonly class SymbolGap
         return class_exists($name) || interface_exists($name) || trait_exists($name) || enum_exists($name);
     }
 
+    /**
+     * The gap read from the engine's own files without loading them, for a
+     * machine that has the engine but runs no site with it yet (preflight): a
+     * name counts as defined when a facade file declares it.
+     */
+    public static function ofShippedFacade(string $engineDir): self
+    {
+        $definedFunctions = [];
+        $definedClasses = [];
+        $facade = $engineDir . '/wp-api';
+        $files = is_dir($facade) ? new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($facade, \FilesystemIterator::SKIP_DOTS)) : [];
+        foreach ($files as $file) {
+            if ($file->isFile() && $file->getExtension() === 'php') {
+                [$functions, $classes] = self::declaredIn((string) file_get_contents($file->getPathname()));
+                $definedFunctions += $functions;
+                $definedClasses += $classes;
+            }
+        }
+        $pluggable = self::declaredIn((string) @file_get_contents($facade . '/pluggable.php'))[0];
+        $data = Json::file($engineDir . '/data/api-names.json', or: []);
+        $known = array_fill_keys(array_map(strtolower(...), (array) ($data['functions'] ?? [])), true);
+        $lacking = array_diff_key($known, $definedFunctions, $pluggable);
+        $classes = array_diff_key(array_fill_keys(array_map(strtolower(...), (array) ($data['classes'] ?? [])), true), $definedClasses);
+        return new self($lacking, $classes, $known, $pluggable);
+    }
+
+    /**
+     * The global functions and the classes (with their namespace) one file
+     * declares, lower-cased; a method, a closure and an anonymous class are
+     * not declarations.
+     *
+     * @return array{0: array<string, true>, 1: array<string, true>}
+     */
+    private static function declaredIn(string $source): array
+    {
+        $tokens = token_get_all($source);
+        $count = count($tokens);
+        $significant = static function (int $from, int $step) use ($tokens, $count): ?array {
+            for ($j = $from + $step; $j >= 0 && $j < $count; $j += $step) {
+                if (!is_array($tokens[$j])) {
+                    return [$tokens[$j], $tokens[$j]];
+                }
+                if (!in_array($tokens[$j][0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
+                    return $tokens[$j];
+                }
+            }
+            return null;
+        };
+        [$functions, $classes, $namespace, $depth, $bodies, $pending] = [[], [], '', 0, [], false];
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+            if (!is_array($token)) {
+                if ($token === '{') {
+                    $depth++;
+                    if ($pending) {
+                        [$bodies[], $pending] = [$depth, false];
+                    }
+                } elseif ($token === '}') {
+                    if ($bodies !== [] && end($bodies) === $depth) {
+                        array_pop($bodies);
+                    }
+                    $depth--;
+                }
+                continue;
+            }
+            if ($token[0] === T_CURLY_OPEN || $token[0] === T_DOLLAR_OPEN_CURLY_BRACES) {
+                $depth++;
+            } elseif ($token[0] === T_NAMESPACE) {
+                $next = $significant($i, 1);
+                $namespace = $next !== null && in_array($next[0], [T_STRING, T_NAME_QUALIFIED], true) ? $next[1] : '';
+            } elseif (in_array($token[0], [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
+                $prev = $significant($i, -1);
+                if ($prev !== null && $prev[0] === T_DOUBLE_COLON) {
+                    continue;
+                }
+                $pending = true;
+                $next = $significant($i, 1);
+                if (($prev === null || $prev[0] !== T_NEW) && $next !== null && $next[0] === T_STRING) {
+                    $classes[strtolower(ltrim($namespace . '\\' . $next[1], '\\'))] = true;
+                }
+            } elseif ($token[0] === T_FUNCTION && $bodies === []) {
+                $prev = $significant($i, -1);
+                $next = $significant($i, 1);
+                $next = $next !== null && $next[0] === '&' ? $significant(array_search($next, $tokens, true) ?: $i, 1) : $next;
+                if (($prev === null || $prev[0] !== T_USE) && $next !== null && $next[0] === T_STRING) {
+                    $functions[strtolower(ltrim($namespace . '\\' . $next[1], '\\'))] = true;
+                }
+            }
+        }
+        return [$functions, $classes];
+    }
+
     /** The gap read from its JSON file. */
     public static function fromFile(string $path): self
     {

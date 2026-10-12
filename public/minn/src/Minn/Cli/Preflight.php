@@ -7,6 +7,8 @@ namespace Minn\Cli;
 use Minn\Content\ContentScan;
 use Minn\Extension\Manifest;
 use Minn\Json;
+use Minn\Runtime\SymbolGap;
+use Minn\Runtime\Symbols;
 use Minn\Support\Serialized;
 use mysqli;
 use Throwable;
@@ -23,6 +25,11 @@ final class Preflight
     /** @var list<string> */
     private array $lines = [];
     private string $worst = 'GREEN';
+
+    /** @param string $engineDir the engine whose facade judges the plugins (this one when empty) */
+    public function __construct(private readonly string $engineDir = '')
+    {
+    }
 
     /** The report, one line per finding. @return list<string> */
     public function lines(): array
@@ -225,16 +232,68 @@ final class Preflight
                 $this->light(str_contains($provided[$plugin], '(') ? 'AMBER' : 'GREEN', explode('/', $plugin)[0] . ' is provided by the ' . $provided[$plugin] . (str_contains($provided[$plugin], '(') ? '' : ' extension'));
             }
         }
-        if ($missing !== []) {
-            $this->light('AMBER', count($missing) . ' active plugins will not run: ' . implode(', ', array_map(static fn (string $p) => explode('/', $p)[0], $missing)));
-        } elseif ($plugins === []) {
+        if ($plugins === []) {
             $this->light('GREEN', 'no active plugins');
         }
-        $mu = array_map('basename', glob("{$root}/wp-content/mu-plugins/*.php") ?: []);
-        if ($mu !== []) {
-            $this->light('AMBER', 'mu-plugins will not run: ' . implode(', ', $mu));
+        // Each plugin's main file, what the gate reads (its folder, or the file alone), and its name.
+        $judged = array_map(static fn (string $p) => ["{$root}/wp-content/plugins/{$p}", str_contains($p, '/') ? dirname("{$root}/wp-content/plugins/{$p}") : "{$root}/wp-content/plugins/{$p}", explode('/', $p)[0]], $missing);
+        foreach (glob("{$root}/wp-content/mu-plugins/*.php") ?: [] as $file) {
+            $judged[] = [$file, $file, 'mu-plugin ' . basename($file)];
+        }
+        if ($judged !== []) {
+            $engineDir = $this->engineDir !== '' ? $this->engineDir : dirname(__DIR__, 3);
+            $gap = SymbolGap::ofShippedFacade($engineDir);
+            $deadEnds = (array) Json::file("{$engineDir}/data/deadend-symbols.json", or: []);
+            foreach ($judged as [$file, $read, $label]) {
+                $this->preflightPlugin($file, $read, $label, $gap, $deadEnds);
+            }
         }
         return [$coveredShortcodes, $coveredBlocks, $coveredTypes];
+    }
+
+    /**
+     * One plugin as the engine's gate will judge it: refused for what the
+     * engine lacks, or for declaring a function the engine already defines
+     * in its main file; otherwise it runs, and the calls that answer with
+     * nothing on Minn are counted by area.
+     *
+     * @param array<string, mixed> $deadEnds
+     */
+    private function preflightPlugin(string $file, string $read, string $label, SymbolGap $gap, array $deadEnds): void
+    {
+        if (!is_file($file)) {
+            $this->light('AMBER', "{$label} is active but its file is missing");
+            return;
+        }
+        $survey = Symbols::survey($read, $gap, $deadEnds);
+        $lacks = [...array_map(static fn (string $name): string => "{$name}()", $survey['functions']), ...$survey['classes']];
+        $collisions = $survey['redeclares'] === [] ? [] : Symbols::missingAgainst($file, $gap)['redeclares'];
+        if ($lacks !== [] || $survey['truncated']) {
+            $this->light('AMBER', "{$label} will not load: " . ($lacks === [] ? 'it is too large for the engine to read' : 'it needs ' . self::some($lacks)));
+            return;
+        }
+        if ($collisions !== []) {
+            $this->light('AMBER', "{$label} will not load: it declares " . self::some(array_map(static fn (string $name): string => "{$name}()", $collisions)) . ', which the engine already defines');
+            return;
+        }
+        if ($survey['deadEnds'] === []) {
+            $this->light('GREEN', "{$label} runs");
+            return;
+        }
+        $counts = [];
+        foreach ($survey['deadEnds'] as $area => $names) {
+            $counts[] = count($names) . ' ' . (self::AREAS[$area] ?? $area);
+        }
+        $this->light('GREEN', "{$label} runs; calls that answer with nothing on Minn: " . implode(', ', $counts) . ' (' . self::some(array_merge(...array_values($survey['deadEnds']))) . ')');
+    }
+
+    /** What the dead-end areas are, as a report says them. */
+    private const AREAS = ['admin' => 'wp-admin', 'editor' => 'editor', 'customizer' => 'Customizer', 'xmlrpc' => 'XML-RPC', 'omitted' => 'left out'];
+
+    /** @param list<string> $names the first five, and how many more */
+    private static function some(array $names): string
+    {
+        return implode(', ', array_slice($names, 0, 5)) . (count($names) > 5 ? ' and ' . (count($names) - 5) . ' more' : '');
     }
 
     /**

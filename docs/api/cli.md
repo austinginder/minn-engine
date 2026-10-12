@@ -16,7 +16,7 @@ the wp verbs the engine answers itself
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
 | [`PluginCommand`](#plugincommand) | final class | 405 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
-| [`Preflight`](#preflight) | final class | 360 | What a site will and will not get from the engine, before anything |
+| [`Preflight`](#preflight) | final class | 417 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 80 | The engine, booted for a command: reads the site's wp-config.php (which |
 | [`SearchReplaceCommand`](#searchreplacecommand) | final class | 143 | `wp search-replace`: walks every string column, including serialized |
@@ -818,7 +818,13 @@ kind, the plugins the extensions cover, and the content survey (the
 shortcodes, third-party blocks, menus, extra tables, and extra post
 types in the database). Every finding is a light; the worst decides.
 
+- const `AREAS` = `array (   'admin' => 'wp-admin',   'editor' => 'editor',   'customizer' => 'Customizer',   'xmlrpc' => 'XML-RPC',   'omitted' => 'left out', )` — What the dead-end areas are, as a report says them.
+
 Used by: `Minn\Cli\Installer`
+
+```php
+__construct(string $engineDir = '')
+```
 
 
 ### `lines(): array`
@@ -837,7 +843,7 @@ Same line Theme::active / ClassicTheme::active draw: a block template
 index (child or parent) is a block theme; otherwise a parent index.php
 is a classic theme.
 
-Internals: `readConfig()` (private, line 90), `env()` (private, line 124), `optionReader()` (private, line 135), `preflightTheme()` (private, line 147), `preflightPlugins()` (private, line 186), `surveyContent()` (private, line 249), `surveyMarkup()` (private, line 258), `surveyMenus()` (private, line 299), `surveyTables()` (private, line 326), `surveyTypes()` (private, line 345), `light()` (private, line 367), `say()` (private, line 376)
+Internals: `readConfig()` (private, line 97), `env()` (private, line 131), `optionReader()` (private, line 142), `preflightTheme()` (private, line 154), `preflightPlugins()` (private, line 193), `preflightPlugin()` (private, line 262), `some()` (private, line 294), `surveyContent()` (private, line 308), `surveyMarkup()` (private, line 317), `surveyMenus()` (private, line 358), `surveyTables()` (private, line 385), `surveyTypes()` (private, line 404), `light()` (private, line 426), `say()` (private, line 435)
 
 
 ## RewriteCommand

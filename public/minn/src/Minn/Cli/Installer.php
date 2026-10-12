@@ -91,7 +91,7 @@ final class Installer
     /** What the site will and will not get; the worst light decides install. The report lands in the output. */
     public function preflight(string $root): string
     {
-        $preflight = new Preflight();
+        $preflight = new Preflight($this->engineDir);
         $light = $preflight->run($root);
         foreach ($preflight->lines() as $line) {
             $this->say($line);

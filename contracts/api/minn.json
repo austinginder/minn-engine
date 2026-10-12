@@ -3054,7 +3054,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/LanguageController.php",
-            "lines": 99,
+            "lines": 98,
             "doc": "Languages: what is installed, what a person reads in, what the site defaults to.",
             "implements": [],
             "extends": null,
@@ -3268,7 +3268,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/site/language (floor edit_posts)"
+                        "POST /minn-admin/v1/site/language (floor edit_posts + manage_options)"
                     ],
                     "name": "site",
                     "static": false,
@@ -3286,7 +3286,7 @@
                         }
                     ],
                     "line": 84,
-                    "end": 90
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -3312,8 +3312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 92,
-                    "end": 101
+                    "line": 91,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -3334,8 +3334,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 117
+                    "line": 103,
+                    "end": 116
                 }
             ]
         },
@@ -3744,7 +3744,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/OverviewController.php",
-            "lines": 141,
+            "lines": 140,
             "doc": "The Overview of minn-admin/v1: the payload, the drill-down behind one\nchart bar, and the pick of cards, the person's own and the site's default.",
             "implements": [],
             "extends": null,
@@ -3930,7 +3930,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/overview/metric-defaults (floor edit_posts)"
+                        "POST /minn-admin/v1/overview/metric-defaults (floor edit_posts + manage_options)"
                     ],
                     "name": "setOverviewMetricDefaults",
                     "static": false,
@@ -3948,7 +3948,7 @@
                         }
                     ],
                     "line": 69,
-                    "end": 80
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -3967,8 +3967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 97
+                    "line": 82,
+                    "end": 96
                 },
                 {
                     "routes": [],
@@ -3987,8 +3987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 112
+                    "line": 99,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -4007,8 +4007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 129
+                    "line": 114,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -4029,8 +4029,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 156
+                    "line": 131,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -4070,8 +4070,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 164
+                    "line": 157,
+                    "end": 163
                 }
             ]
         },
@@ -6005,7 +6005,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/ThemesController.php",
-            "lines": 100,
+            "lines": 99,
             "doc": "The theme inventory of minn-admin/v1: every theme on disk with its\nheaders, screenshot, and update offer, and the switch of the active one.",
             "implements": [],
             "extends": null,
@@ -6148,7 +6148,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/themes/activate (floor edit_posts)"
+                        "POST /minn-admin/v1/themes/activate (floor edit_posts + switch_themes)"
                     ],
                     "name": "activateTheme",
                     "static": false,
@@ -6166,7 +6166,7 @@
                         }
                     ],
                     "line": 71,
-                    "end": 92
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -6185,8 +6185,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 98
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -6199,8 +6199,8 @@
                         "@return array<string, array<string, string>> slug => style.css headers"
                     ],
                     "params": [],
-                    "line": 101,
-                    "end": 115
+                    "line": 100,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -6219,8 +6219,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 125
+                    "line": 116,
+                    "end": 124
                 }
             ]
         },
@@ -7061,7 +7061,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/V1Controller.php",
-            "lines": 81,
+            "lines": 80,
             "doc": "The boot burst of minn-admin/v1: the bell feed and its read marker, the\ncore status, and the one-round-trip boot-status the app starts from.\nEvery route sits behind the same capability floor (edit_posts) the\nplugin declares.",
             "implements": [],
             "extends": null,
@@ -7245,7 +7245,7 @@
                 },
                 {
                     "routes": [
-                        "POST /minn-admin/v1/core/update (floor edit_posts)"
+                        "POST /minn-admin/v1/core/update (floor edit_posts + update_core)"
                     ],
                     "name": "coreUpdate",
                     "static": false,
@@ -7263,7 +7263,7 @@
                         }
                     ],
                     "line": 62,
-                    "end": 66
+                    "end": 65
                 },
                 {
                     "routes": [
@@ -7284,8 +7284,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 91
+                    "line": 74,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -7304,8 +7304,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 103
+                    "line": 93,
+                    "end": 102
                 }
             ]
         },
@@ -24286,7 +24286,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Preflight.php",
-            "lines": 360,
+            "lines": 417,
             "doc": "What a site will and will not get from the engine, before anything\nmoves: the config it can read, the database it can reach, the theme's\nkind, the plugins the extensions cover, and the content survey (the\nshortcodes, third-party blocks, menus, extra tables, and extra post\ntypes in the database). Every finding is a light; the worst decides.",
             "implements": [],
             "extends": null,
@@ -24295,14 +24295,39 @@
                 "Minn\\Content\\ContentScan",
                 "Minn\\Extension\\Manifest",
                 "Minn\\Json",
+                "Minn\\Runtime\\SymbolGap",
+                "Minn\\Runtime\\Symbols",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
                 "Minn\\Cli\\Installer"
             ],
-            "constructor": null,
+            "constructor": {
+                "signature": "__construct(string $engineDir = '')",
+                "doc": "",
+                "shapes": [],
+                "params": [
+                    {
+                        "name": "engineDir",
+                        "type": "string",
+                        "shape": "",
+                        "default": "''",
+                        "doc": "the engine whose facade judges the plugins (this one when empty)"
+                    }
+                ],
+                "visibility": "public",
+                "line": 30,
+                "end": 32
+            },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "AREAS",
+                    "value": "array (   'admin' => 'wp-admin',   'editor' => 'editor',   'customizer' => 'Customizer',   'xmlrpc' => 'XML-RPC',   'omitted' => 'left out', )",
+                    "doc": "What the dead-end areas are, as a report says them.",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "lines",
@@ -24321,6 +24346,15 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": false
+                },
+                {
+                    "name": "engineDir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
@@ -24335,8 +24369,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 28,
-                    "end": 31
+                    "line": 35,
+                    "end": 38
                 },
                 {
                     "routes": [],
@@ -24355,8 +24389,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 35,
-                    "end": 65
+                    "line": 42,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -24382,8 +24416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 87
+                    "line": 81,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -24402,8 +24436,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 118
+                    "line": 97,
+                    "end": 125
                 },
                 {
                     "routes": [],
@@ -24429,8 +24463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 132
+                    "line": 131,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -24458,8 +24492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 144
+                    "line": 142,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -24487,8 +24521,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 176
+                    "line": 154,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -24517,8 +24551,80 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 238
+                    "line": 193,
+                    "end": 252
+                },
+                {
+                    "routes": [],
+                    "name": "preflightPlugin",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "preflightPlugin(string $file, string $read, string $label, Minn\\Runtime\\SymbolGap $gap, array $deadEnds): void",
+                    "doc": "One plugin as the engine's gate will judge it: refused for what the\nengine lacks, or for declaring a function the engine already defines\nin its main file; otherwise it runs, and the calls that answer with\nnothing on Minn are counted by area.",
+                    "shapes": [
+                        "@param array<string, mixed> $deadEnds"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "read",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "label",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gap",
+                            "type": "Minn\\Runtime\\SymbolGap",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deadEnds",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 262,
+                    "end": 288
+                },
+                {
+                    "routes": [],
+                    "name": "some",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "some(array $names): string",
+                    "doc": "",
+                    "shapes": [
+                        "@param list<string> $names the first five, and how many more"
+                    ],
+                    "params": [
+                        {
+                            "name": "names",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": "the first five, and how many more"
+                        }
+                    ],
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -24569,8 +24675,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 255
+                    "line": 308,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -24612,8 +24718,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 258,
-                    "end": 297
+                    "line": 317,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -24639,8 +24745,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 324
+                    "line": 358,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -24666,8 +24772,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 326,
-                    "end": 342
+                    "line": 385,
+                    "end": 401
                 },
                 {
                     "routes": [],
@@ -24702,8 +24808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 345,
-                    "end": 365
+                    "line": 404,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -24729,8 +24835,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 367,
-                    "end": 374
+                    "line": 426,
+                    "end": 433
                 },
                 {
                     "routes": [],
@@ -24749,8 +24855,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 376,
-                    "end": 379
+                    "line": 435,
+                    "end": 438
                 }
             ]
         },
@@ -34737,7 +34843,7 @@
             "namespace": "Minn\\Content",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Content/Site.php",
-            "lines": 95,
+            "lines": 102,
             "doc": "Site-wide options and the site's clock.",
             "implements": [],
             "extends": null,
@@ -34873,8 +34979,8 @@
                     "name": "setOption",
                     "static": false,
                     "visibility": "public",
-                    "signature": "setOption(string $name, string $value): void",
-                    "doc": "Writes an option, inserting it as autoloaded when it does not exist; the option store hears of it.",
+                    "signature": "setOption(string $name, string $value, ?string $autoload = NULL): void",
+                    "doc": "Writes an option, inserting it as autoloaded when it does not exist;\nthe option store hears of it. An $autoload given is written too, so a\ncache the engine reads on demand (autoload \"off\") stays out of the\nlist every request loads.",
                     "shapes": [],
                     "params": [
                         {
@@ -34890,10 +34996,17 @@
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "autoload",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 36
+                    "line": 32,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -34912,8 +35025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 43
+                    "line": 46,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -34939,8 +35052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 62
+                    "line": 60,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -34951,8 +35064,8 @@
                     "doc": "The site's timezone (wp_timezone): the zone timezone_string names, else\ngmt_offset as a fixed offset. With a zone set, the stored gmt_offset is\nnot read at all, as the reference does not read it.",
                     "shapes": [],
                     "params": [],
-                    "line": 69,
-                    "end": 81
+                    "line": 76,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -34963,8 +35076,8 @@
                     "doc": "The site's offset from UTC in seconds now: the zone's, daylight saving included, or gmt_offset's.",
                     "shapes": [],
                     "params": [],
-                    "line": 84,
-                    "end": 87
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -34975,8 +35088,8 @@
                     "doc": "Now in the site's local time, MySQL format.",
                     "shapes": [],
                     "params": [],
-                    "line": 90,
-                    "end": 93
+                    "line": 97,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -34997,8 +35110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 107
+                    "line": 108,
+                    "end": 114
                 }
             ]
         },
@@ -82926,7 +83039,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/EngineUpdate.php",
-            "lines": 136,
+            "lines": 150,
             "doc": "Replaces the running engine with a published release. The release's\nminn.zip comes from the Minn update service and nowhere else (every\nredirect hop is judged), must match the sha256 its release records, and\nmust carry an Ed25519 signature made with a key this engine was built to\ntrust (KEYS; the secret half never leaves the release maintainer's\nmachine, so neither GitHub nor the service can stand in a build of their\nown). It is unpacked beside the engine into a folder of its own, where it\nis checked again: its bootstrap names the version on offer and bin/minn is\nthere. Then the swap, two renames in the folder the engine lives in: the\nrunning engine moves aside, the new one moves in, and the old copy is\nremoved; when the second rename fails the first is undone. The webroot's\nshape files are laid again from the new engine (ShapeFiles::refresh): one\nstill as the old engine wrote it, a stock empty placeholder above all, is\nreplaced, and one the site changed is left alone. The legacy\ninstall record (.install.json, from installs that kept it inside the\nengine) comes along. One update runs at a time. A development checkout (a\nsymbolic link, or a folder under git) is refused: git owns those. The\nsite keeps answering throughout.",
             "implements": [],
             "extends": null,
@@ -83049,7 +83162,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "install(string $zip, string $sha256, string $signature, string $version): string",
-                    "doc": "Installs an archive in hand once it matches its checksum and signature and holds the version named; the version now in place.",
+                    "doc": "Installs an archive in hand once it matches its checksum and signature,\nholds the version named, and that version is newer than the running\none: an older release signed in its day is still signed, and putting\nit back would bring back what it was replaced for. The version now in\nplace.",
                     "shapes": [],
                     "params": [
                         {
@@ -83081,8 +83194,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 78
+                    "line": 66,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -83129,8 +83242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 128
+                    "line": 134,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -83149,8 +83262,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 154
+                    "line": 164,
+                    "end": 168
                 },
                 {
                     "routes": [],
@@ -83183,8 +83296,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 117
+                    "line": 91,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -83210,8 +83323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 147
+                    "line": 145,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -83222,8 +83335,8 @@
                     "doc": "A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).",
                     "shapes": [],
                     "params": [],
-                    "line": 157,
-                    "end": 166
+                    "line": 171,
+                    "end": 180
                 }
             ]
         },
@@ -123699,7 +123812,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Options.php",
-            "lines": 398,
+            "lines": 411,
             "doc": "Options as plugin code sees them, kept where the reference keeps them:\nwp_cache's options group (OptionsGroup) holds the autoloaded list, the\nnames known unset, and a key per option not autoloaded, so a plugin that\nreads, writes or drops those keys is heard. get_option() and\nwp_load_alloptions() pass the list through pre_wp_load_alloptions and\nalloptions. A value written this request is held as it was written (an\nint stays an int, true stays true), arrays and objects as stored. Each\nstored text is decoded once while it stays the same, except one holding\nan object, decoded afresh on every read as the reference does: a plugin\nthat changes the object it was handed and saves it must find the stored\ncopy still different, or its change is never written.",
             "implements": [],
             "extends": null,
@@ -123729,8 +123842,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 44,
-                "end": 47
+                "line": 51,
+                "end": 54
             },
             "cases": [],
             "constants": [
@@ -123757,6 +123870,12 @@
                     "value": "'minn_login_throttle_'",
                     "doc": "",
                     "visibility": "private"
+                },
+                {
+                    "name": "ON_DEMAND",
+                    "value": "array (   0 => 'minn_admin_changelog',   1 => 'minn_changelog',   2 => 'minn_release',   3 => 'minn_plugin_info',   4 => 'minn_updates',   5 => '_transient_minn_admin_uploads_size',   6 => '_transient_timeout_minn_admin_uploads_size',   7 => 'minn_admin_uploads_size_lock', )",
+                    "doc": "The engine's own caches, read on demand and written with autoload off\n(Site::setOption). Rows an older engine wrote autoloaded are set right\nthe first time a loaded list holds them.",
+                    "visibility": "public"
                 },
                 {
                     "name": "AUTOLOAD_VALUES",
@@ -123812,8 +123931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -123832,8 +123951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 69
+                    "line": 69,
+                    "end": 76
                 },
                 {
                     "routes": [],
@@ -123859,8 +123978,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 175
+                    "line": 170,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -123879,8 +123998,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 186
+                    "line": 191,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -123899,8 +124018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 192
+                    "line": 202,
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -123919,8 +124038,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 198
+                    "line": 208,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -123953,8 +124072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 220
+                    "line": 219,
+                    "end": 233
                 },
                 {
                     "routes": [],
@@ -123987,8 +124106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 237
+                    "line": 242,
+                    "end": 250
                 },
                 {
                     "routes": [],
@@ -124021,8 +124140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 261
+                    "line": 253,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -124041,8 +124160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 303
+                    "line": 308,
+                    "end": 316
                 },
                 {
                     "routes": [],
@@ -124061,8 +124180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 317
+                    "line": 319,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -124081,8 +124200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 331,
-                    "end": 349
+                    "line": 344,
+                    "end": 362
                 },
                 {
                     "routes": [],
@@ -124110,8 +124229,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 370
+                    "line": 370,
+                    "end": 383
                 },
                 {
                     "routes": [],
@@ -124130,8 +124249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 377,
-                    "end": 395
+                    "line": 390,
+                    "end": 408
                 },
                 {
                     "routes": [],
@@ -124150,8 +124269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 398,
-                    "end": 407
+                    "line": 411,
+                    "end": 420
                 },
                 {
                     "routes": [],
@@ -124170,8 +124289,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 410,
-                    "end": 419
+                    "line": 423,
+                    "end": 432
                 },
                 {
                     "routes": [],
@@ -124184,8 +124303,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 76,
-                    "end": 89
+                    "line": 83,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -124198,8 +124317,8 @@
                         "@return array<string, true> the names a read found unset, kept in the group under notoptions"
                     ],
                     "params": [],
-                    "line": 92,
-                    "end": 100
+                    "line": 105,
+                    "end": 113
                 },
                 {
                     "routes": [],
@@ -124227,8 +124346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 131
+                    "line": 122,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -124254,8 +124373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 147
+                    "line": 147,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -124281,8 +124400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 276
+                    "line": 281,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -124301,8 +124420,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 279,
-                    "end": 286
+                    "line": 292,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -124321,8 +124440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 292
+                    "line": 302,
+                    "end": 305
                 },
                 {
                     "routes": [],
@@ -124357,8 +124476,8 @@
                             "doc": "the stored values that already mean $wanted"
                         }
                     ],
-                    "line": 320,
-                    "end": 328
+                    "line": 333,
+                    "end": 341
                 }
             ]
         },
@@ -134997,7 +135116,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/SymbolGap.php",
-            "lines": 104,
+            "lines": 196,
             "doc": "The part of the reference's interface the runtime does not answer: names in\ndata/api-names.json that no facade file defines. It is the whole input the\nsymbol gate needs, so it can be exported to JSON and carried to a machine\nthat holds plugin source but no engine, which is how the catalogue-wide\ncompatibility scan runs.",
             "implements": [],
             "extends": null,
@@ -135005,6 +135124,7 @@
                 "Minn\\Json"
             ],
             "usedBy": [
+                "Minn\\Cli\\Preflight",
                 "Minn\\Runtime\\Symbols"
             ],
             "constructor": {
@@ -135113,6 +135233,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "ofShippedFacade",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ofShippedFacade(string $engineDir): self",
+                    "doc": "The gap read from the engine's own files without loading them, for a\nmachine that has the engine but runs no site with it yet (preflight): a\nname counts as defined when a facade file declares it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 96
+                },
+                {
+                    "routes": [],
                     "name": "fromFile",
                     "static": true,
                     "visibility": "public",
@@ -135128,8 +135268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 83
+                    "line": 165,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -135148,8 +135288,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 89
+                    "line": 178,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -135168,8 +135308,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 101
+                    "line": 189,
+                    "end": 193
                 },
                 {
                     "routes": [],
@@ -135188,8 +135328,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 107
+                    "line": 196,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -135200,8 +135340,8 @@
                     "doc": "The gap as JSON.",
                     "shapes": [],
                     "params": [],
-                    "line": 110,
-                    "end": 118
+                    "line": 202,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -135222,6 +135362,28 @@
                     ],
                     "line": 67,
                     "end": 70
+                },
+                {
+                    "routes": [],
+                    "name": "declaredIn",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "declaredIn(string $source): array",
+                    "doc": "The global functions and the classes (with their namespace) one file\ndeclares, lower-cased; a method, a closure and an anonymous class are\nnot declarations.",
+                    "shapes": [
+                        "@return array{0: array<string, true>, 1: array<string, true>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 162
                 }
             ]
         },
@@ -135449,7 +135611,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Symbols.php",
-            "lines": 354,
+            "lines": 391,
             "doc": "A static read of what a plugin's PHP calls: global functions and classes\nit uses but does not itself declare, minus the ones it guards with\nfunction_exists() or class_exists(). Checked against what the runtime\nprovides, this decides whether a plugin loads at all.\n\nThe read is cached in the minn_runtime_symbols option, keeping only the\nreference's own names (all a verdict reads). An entry is trusted while\nthe folder's fingerprint (its own time and its top-level files' newest)\nholds, for up to FULL_CHECK_EVERY seconds; then the whole folder is\nwalked again, as an update replaces it. Installing, updating or\nactivating a plugin walks its folder at once (recheck()). Walking every\nfolder on every request cost hundreds of milliseconds on a site with\nmany plugins.",
             "implements": [],
             "extends": null,
@@ -135460,6 +135622,7 @@
                 "Minn\\Runtime\\SymbolTable"
             ],
             "usedBy": [
+                "Minn\\Cli\\Preflight",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Upgrade"
             ],
@@ -135612,6 +135775,43 @@
                 },
                 {
                     "routes": [],
+                    "name": "survey",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "survey(string $dir, Minn\\Runtime\\SymbolGap $gap, array $deadEnds): array",
+                    "doc": "What a folder needs and what it reaches that Minn answers with nothing,\nin one read, for a machine judging a site before the engine runs it\n(preflight): the gate's verdict against the gap given, and the dead\nends it calls (the wp-admin screens, the editors, the Customizer,\nXML-RPC, what was left out), by area. A call the folder guards or\nanswers itself is not counted, as the gate counts it.",
+                    "shapes": [
+                        "@param array{functions?: array<string, string>, classes?: array<string, string>} $deadEnds name => area, as data/deadend-symbols.json holds them",
+                        "@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool, deadEnds: array<string, list<string>>}"
+                    ],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gap",
+                            "type": "Minn\\Runtime\\SymbolGap",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deadEnds",
+                            "type": "array",
+                            "shape": "array{functions?: array<string, string>, classes?: array<string, string>}",
+                            "default": null,
+                            "doc": "name => area, as data/deadend-symbols.json holds them"
+                        }
+                    ],
+                    "line": 169,
+                    "end": 193
+                },
+                {
+                    "routes": [],
                     "name": "keep",
                     "static": true,
                     "visibility": "private",
@@ -135726,8 +135926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 166,
-                    "end": 197
+                    "line": 203,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -135748,8 +135948,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 200,
-                    "end": 220
+                    "line": 237,
+                    "end": 257
                 },
                 {
                     "routes": [],
@@ -135771,8 +135971,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 250
+                    "line": 271,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -135800,8 +136000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 319
+                    "line": 290,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -135843,8 +136043,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 360
+                    "line": 365,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -135879,8 +136079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 374
+                    "line": 400,
+                    "end": 411
                 }
             ]
         },

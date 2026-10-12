@@ -156,6 +156,43 @@ final class Symbols
     }
 
     /**
+     * What a folder needs and what it reaches that Minn answers with nothing,
+     * in one read, for a machine judging a site before the engine runs it
+     * (preflight): the gate's verdict against the gap given, and the dead
+     * ends it calls (the wp-admin screens, the editors, the Customizer,
+     * XML-RPC, what was left out), by area. A call the folder guards or
+     * answers itself is not counted, as the gate counts it.
+     *
+     * @param array{functions?: array<string, string>, classes?: array<string, string>} $deadEnds name => area, as data/deadend-symbols.json holds them
+     * @return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool, deadEnds: array<string, list<string>>}
+     */
+    public static function survey(string $dir, SymbolGap $gap, array $deadEnds): array
+    {
+        $files = self::phpFiles($dir);
+        $scan = self::scan($files);
+        $areas = [];
+        $reached = [
+            [$scan['calls'], array_change_key_case($deadEnds['functions'] ?? []), $scan['declaredGlobal'] ?? [], '()'],
+            [$scan['classes'], array_change_key_case($deadEnds['classes'] ?? []), $scan['declaredClasses'] ?? [], ''],
+        ];
+        foreach ($reached as [$names, $known, $declared, $suffix]) {
+            foreach (array_unique($names) as $name) {
+                $lower = strtolower((string) $name);
+                $area = $known[$lower] ?? null;
+                // "different" names are real code Minn answers its own way, not dead ends.
+                if ($area !== null && $area !== 'different' && !isset($declared[$lower]) && !isset($scan['guarded'][$lower])) {
+                    $areas[$area][] = $name . $suffix;
+                }
+            }
+        }
+        ksort($areas);
+        foreach ($areas as &$list) {
+            sort($list);
+        }
+        return self::verdict($scan, count($files), $gap) + ['deadEnds' => $areas];
+    }
+
+    /**
      * Only the reference's own interface counts: a function or class the plugin
      * needs from WordPress. Its own integrations with other plugins and PHP
      * extensions are its business.

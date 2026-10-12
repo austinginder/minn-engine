@@ -17,9 +17,9 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
 | [`HiddenIntegrations`](#hiddenintegrations) | final readonly class | 94 | What a person hid from their own Minn Admin: the app's per-user map |
 | [`LanguageChoices`](#languagechoices) | final class | 42 | The language picker's markup. English always leads the list and carries the |
-| [`LanguageController`](#languagecontroller) | final readonly class | 99 | Languages: what is installed, what a person reads in, what the site defaults to. |
+| [`LanguageController`](#languagecontroller) | final readonly class | 98 | Languages: what is installed, what a person reads in, what the site defaults to. |
 | [`Notifications`](#notifications) | final readonly class | 191 | The bell feed: pending and recent comments, translation offers and a |
-| [`OverviewController`](#overviewcontroller) | final readonly class | 141 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
+| [`OverviewController`](#overviewcontroller) | final readonly class | 140 | The Overview of minn-admin/v1: the payload, the drill-down behind one |
 | [`PackagesController`](#packagescontroller) | final readonly class | 113 | Adding and removing themes and extensions from the Extensions view. |
 | [`PostListMarkup`](#postlistmarkup) | final class | 39 | The markup a post list writes beside each post, as the reference writes |
 | [`PreferencesController`](#preferencescontroller) | final readonly class | 115 | A person's own settings in minn-admin/v1: their appearance, the views |
@@ -28,11 +28,11 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`SiteController`](#sitecontroller) | final readonly class | 87 | The small Settings-view routes of minn-admin/v1: the site logo, the |
 | [`StructureController`](#structurecontroller) | final readonly class | 131 | The Structure view of minn-admin/v1: post types, taxonomies, and the |
 | [`SystemController`](#systemcontroller) | final readonly class | 73 | The System view: diagnostics, the scheduled-post list, autoloaded options, and the logs. |
-| [`ThemesController`](#themescontroller) | final readonly class | 100 | The theme inventory of minn-admin/v1: every theme on disk with its |
+| [`ThemesController`](#themescontroller) | final readonly class | 99 | The theme inventory of minn-admin/v1: every theme on disk with its |
 | [`Translations`](#translations) | final readonly class | 237 | Languages for the admin. A person's locale is their `locale` user meta, |
 | [`UpdatesController`](#updatescontroller) | final readonly class | 129 | The minn-admin/v1 update routes: offers, directory meta, the check, the installs, the auto-update lists. |
 | [`UploadsSize`](#uploadssize) | final readonly class | 93 | How much the uploads folder holds, as Minn Admin 0.43 works it out and |
-| [`V1Controller`](#v1controller) | final readonly class | 81 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
+| [`V1Controller`](#v1controller) | final readonly class | 80 | The boot burst of minn-admin/v1: the bell feed and its read marker, the |
 
 ## ActivityChart
 
@@ -571,11 +571,11 @@ Sets another user's locale.
 
 ### `site(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/site/language (floor edit_posts)`
+Route: `POST /minn-admin/v1/site/language (floor edit_posts + manage_options)`
 
 Sets the site's locale.
 
-Internals: `setUserLocale()` (private, line 92), `ensure()` (private, line 104)
+Internals: `setUserLocale()` (private, line 91), `ensure()` (private, line 103)
 
 
 ## Notifications
@@ -640,11 +640,11 @@ Saves the caller's pick of overview cards.
 
 ### `setOverviewMetricDefaults(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/overview/metric-defaults (floor edit_posts)`
+Route: `POST /minn-admin/v1/overview/metric-defaults (floor edit_posts + manage_options)`
 
 Saves the site's default overview cards.
 
-Internals: `metricKeysFrom()` (private, line 83), `storedMetricLayout()` (private, line 100), `days()` (private, line 115), `window()` (private, line 132), `parameterError()` (private, line 158)
+Internals: `metricKeysFrom()` (private, line 82), `storedMetricLayout()` (private, line 99), `days()` (private, line 114), `window()` (private, line 131), `parameterError()` (private, line 157)
 
 
 ## PackagesController
@@ -1036,11 +1036,11 @@ Every theme on disk with the active one marked.
 
 ### `activateTheme(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/themes/activate (floor edit_posts)`
+Route: `POST /minn-admin/v1/themes/activate (floor edit_posts + switch_themes)`
 
 Switches the active theme.
 
-Internals: `themeText()` (private, line 95), `themeFolders()` (private, line 101), `screenshot()` (private, line 117)
+Internals: `themeText()` (private, line 94), `themeFolders()` (private, line 100), `screenshot()` (private, line 116)
 
 
 ## Translations
@@ -1240,7 +1240,7 @@ Minn's version and any newer release; a day-old check of the update service runs
 
 ### `coreUpdate(Minn\Http\Request $request): Minn\Http\Response`
 
-Route: `POST /minn-admin/v1/core/update (floor edit_posts)`
+Route: `POST /minn-admin/v1/core/update (floor edit_posts + update_core)`
 
 Replaces the running engine with the release on offer.
 
@@ -1253,5 +1253,5 @@ contract's own fallback: the client loads a missing section
 standalone. The engine serves what it can honestly answer and omits
 the plugin-inventory sections it has no installation for.
 
-Internals: `checkingReleases()` (private, line 94)
+Internals: `checkingReleases()` (private, line 93)
 

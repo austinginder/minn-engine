@@ -53,7 +53,7 @@ the WordPress runtime plugins load against
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
 | [`ObjectTerms`](#objectterms) | final class | 30 | wp_get_object_terms's handling of taxonomies registered with their own |
 | [`OptionSanitizer`](#optionsanitizer) | final class | 114 | A core option's value cleaned as the reference's sanitize_option cleans |
-| [`Options`](#options) | final class | 398 | Options as plugin code sees them, kept where the reference keeps them: |
+| [`Options`](#options) | final class | 411 | Options as plugin code sees them, kept where the reference keeps them: |
 | [`OptionsGroup`](#optionsgroup) | final class | 57 | wp_cache's options group, where option reads are kept as the reference |
 | [`Pages`](#pages) | final class | 129 | get_pages() as the reference shapes it: its arguments as a post query |
 | [`Patterns`](#patterns) | final class | 161 | The block pattern, pattern category, and block style registries as data. |
@@ -90,9 +90,9 @@ the WordPress runtime plugins load against
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
 | [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
-| [`SymbolGap`](#symbolgap) | final readonly class | 104 | The part of the reference's interface the runtime does not answer: names in |
+| [`SymbolGap`](#symbolgap) | final readonly class | 196 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
-| [`Symbols`](#symbols) | final class | 354 | A static read of what a plugin's PHP calls: global functions and classes |
+| [`Symbols`](#symbols) | final class | 391 | A static read of what a plugin's PHP calls: global functions and classes |
 | [`TagEditor`](#tageditor) | final class | 149 | Edits one start tag's attributes in place the way the reference's tag |
 | [`TermEvents`](#termevents) | final readonly class | 114 | What the reference's REST terms controller tells plugins, for the |
 | [`TermFields`](#termfields) | final class | 65 | A term's fields in a context, as the reference's sanitize_term_field |
@@ -2335,6 +2335,9 @@ could otherwise rewrite to pass its own gate, the recovery strikes, the
 cron lock, and the sign-in throttle rows. The facade refuses to write
 them; the engine writes them through this class directly.
 - const `GUARDED_PREFIX` = `'minn_login_throttle_'`
+- const `ON_DEMAND` = `array (   0 => 'minn_admin_changelog',   1 => 'minn_changelog',   2 => 'minn_release',   3 => 'minn_plugin_info',   4 => 'minn_updates',   5 => '_transient_minn_admin_uploads_size',   6 => '_transient_timeout_minn_admin_uploads_size',   7 => 'minn_admin_uploads_size_lock', )` — The engine's own caches, read on demand and written with autoload off
+(Site::setOption). Rows an older engine wrote autoloaded are set right
+the first time a loaded list holds them.
 - const `AUTOLOAD_VALUES` = `array (   0 => 'yes',   1 => 'on',   2 => 'auto-on',   3 => 'auto', )` — The autoload column values that load an option with every request, in the reference's order.
 
 Used by: `Minn\Cli\OptionCommand`, `Minn\Runtime\AjaxController`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
@@ -2429,7 +2432,7 @@ What the reference stores: arrays and objects serialized, scalars as their strin
 
 A stored option value decoded the way the reference reads it.
 
-Internals: `listed()` (private, line 76), `missing()` (private, line 92), `lookup()` (private, line 109), `decode()` (private, line 134), `remember()` (private, line 268), `found()` (private, line 279), `holdsObject()` (private, line 289), `switchAutoload()` (private, line 320)
+Internals: `listed()` (private, line 83), `missing()` (private, line 105), `lookup()` (private, line 122), `decode()` (private, line 147), `remember()` (private, line 281), `found()` (private, line 292), `holdsObject()` (private, line 302), `switchAutoload()` (private, line 333)
 
 
 ## OptionsGroup
@@ -4539,7 +4542,7 @@ symbol gate needs, so it can be exported to JSON and carried to a machine
 that holds plugin source but no engine, which is how the catalogue-wide
 compatibility scan runs.
 
-Used by: `Minn\Runtime\Symbols`
+Used by: `Minn\Cli\Preflight`, `Minn\Runtime\Symbols`
 
 - readonly `array $functions`
 - readonly `array $classes`
@@ -4552,6 +4555,12 @@ Reads the reference's interface and subtracts everything the loaded facade
 defines. A plugin may define a name as it loads, so each call asks again,
 but only about the names still lacking: a name once defined stays defined,
 and asking about all four thousand for every plugin was a cost of its own.
+
+### static `ofShippedFacade(string $engineDir): self`
+
+The gap read from the engine's own files without loading them, for a
+machine that has the engine but runs no site with it yet (preflight): a
+name counts as defined when a facade file declares it.
 
 ### static `fromFile(string $path): self`
 
@@ -4576,7 +4585,7 @@ Whether the runtime lacks a class.
 
 The gap as JSON.
 
-Internals: `typeExists()` (private, line 67)
+Internals: `typeExists()` (private, line 67), `declaredIn()` (private, line 105)
 
 
 ## SymbolTable
@@ -4644,7 +4653,7 @@ many plugins.
 - const `READER` = `3` — Bumped whenever the token reader changes, so every cached scan is made again.
 - const `FULL_CHECK_EVERY` = `300` — How long a cached entry is trusted on its fingerprint alone before the folder is walked again.
 
-Used by: `Minn\Runtime\Plugins`, `Minn\Runtime\Upgrade`
+Used by: `Minn\Cli\Preflight`, `Minn\Runtime\Plugins`, `Minn\Runtime\Upgrade`
 
 
 ### static `missing(string $dir, Minn\Runtime\Options $options): array`
@@ -4673,7 +4682,19 @@ folder can be judged with no database, no options, and no facade loaded.
 
 - `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool}`
 
-Internals: `keep()` (private, line 81), `fingerprint()` (private, line 92), `namesStamp()` (private, line 105), `reduced()` (private, line 117), `verdict()` (private, line 166), `phpFiles()` (private, line 200), `scan()` (private, line 234), `scanTokens()` (private, line 253), `noteName()` (private, line 328), `significant()` (private, line 363)
+### static `survey(string $dir, Minn\Runtime\SymbolGap $gap, array $deadEnds): array`
+
+What a folder needs and what it reaches that Minn answers with nothing,
+in one read, for a machine judging a site before the engine runs it
+(preflight): the gate's verdict against the gap given, and the dead
+ends it calls (the wp-admin screens, the editors, the Customizer,
+XML-RPC, what was left out), by area. A call the folder guards or
+answers itself is not counted, as the gate counts it.
+
+- `@param array{functions?: array<string, string>, classes?: array<string, string>} $deadEnds name => area, as data/deadend-symbols.json holds them`
+- `@return array{functions: list<string>, classes: list<string>, redeclares: list<string>, files: int, truncated: bool, deadEnds: array<string, list<string>>}`
+
+Internals: `keep()` (private, line 81), `fingerprint()` (private, line 92), `namesStamp()` (private, line 105), `reduced()` (private, line 117), `verdict()` (private, line 203), `phpFiles()` (private, line 237), `scan()` (private, line 271), `scanTokens()` (private, line 290), `noteName()` (private, line 365), `significant()` (private, line 400)
 
 
 ## TagEditor

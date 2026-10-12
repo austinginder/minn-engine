@@ -36,7 +36,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`Posts`](#posts) | final readonly class | 406 | Reads over the posts table. A post comes back as a PostRecord; a listing |
 | [`Reader`](#reader) | final class | 72 | Who is reading this request: their user id, whether they may read |
 | [`Revisions`](#revisions) | final readonly class | 95 | Revision rows: the plain snapshots and the per-author autosave slots. |
-| [`Site`](#site) | final readonly class | 95 | Site-wide options and the site's clock. |
+| [`Site`](#site) | final readonly class | 102 | Site-wide options and the site's clock. |
 | [`SiteIcon`](#siteicon) | final readonly class | 63 | The site icon: the attachment the site_icon option names, as the file |
 | [`Slug`](#slug) | final class | 81 |  |
 | [`TagBalancer`](#tagbalancer) | final class | 82 | Closes what markup leaves open and drops what it closes without opening, |
@@ -1698,9 +1698,12 @@ __construct(Minn\Db $db)
 
 One option's raw value, or null when it is unset.
 
-### `setOption(string $name, string $value): void`
+### `setOption(string $name, string $value, ?string $autoload = NULL): void`
 
-Writes an option, inserting it as autoloaded when it does not exist; the option store hears of it.
+Writes an option, inserting it as autoloaded when it does not exist;
+the option store hears of it. An $autoload given is written too, so a
+cache the engine reads on demand (autoload "off") stays out of the
+list every request loads.
 
 ### `deleteOption(string $name): void`
 

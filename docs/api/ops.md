@@ -12,7 +12,7 @@
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
-| [`EngineUpdate`](#engineupdate) | final readonly class | 136 | Replaces the running engine with a published release. The release's |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 150 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
 | [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
@@ -349,7 +349,11 @@ Downloads, checks and installs a release; the version now in place.
 
 ### `install(string $zip, string $sha256, string $signature, string $version): string`
 
-Installs an archive in hand once it matches its checksum and signature and holds the version named; the version now in place.
+Installs an archive in hand once it matches its checksum and signature,
+holds the version named, and that version is newer than the running
+one: an older release signed in its day is still signed, and putting
+it back would bring back what it was replaced for. The version now in
+place.
 
 ### `verify(string $zip, string $sha256, string $signature, string $version, string $use = 'used'): void`
 
@@ -359,7 +363,7 @@ Throws unless an archive matches the checksum its release publishes and carries 
 
 The version a bootstrap.php names; "0.0.0" when it names none.
 
-Internals: `swap()` (private, line 81), `signed()` (private, line 131), `refuseCheckout()` (private, line 157)
+Internals: `swap()` (private, line 91), `signed()` (private, line 145), `refuseCheckout()` (private, line 171)
 
 
 ## InstalledSoftware

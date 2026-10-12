@@ -14888,8 +14888,10 @@ Probe `option-cache` (`tests/tools/option-cache-probe.php`) shows:
 `get_option()` and `wp_load_alloptions()` read the list through both filters.
 The engine's own reads use the same list unfiltered, as they skipped
 `option_{name}` before. Each stored text is still decoded once while it stays
-the same, so the change costs no speed. The autoloaded options now come in
-one query instead of one per name; the front page timed no slower.
+the same. The autoloaded options now come in one query instead of one per
+name. That load is the reference's too, but it made every autoloaded row a
+per-request cost, and the engine's own 577 KB changelog cache was one of
+them: see "The engine's own caches, out of the autoloaded list" below.
 
 The engine's own writes that bypass the store now tell it, so the group stays
 true within a request: `Site::setOption`, `Site::deleteOption`, the
@@ -14911,3 +14913,116 @@ throttle row can never stick.
 `Db::option()`, which the engine's classes call directly in about 160 places,
 still reads one row per call. Routing those reads through the list is a speed
 item for later.
+
+## The engine's own caches, out of the autoloaded list (2026-10-11)
+
+Found while timing the boot for an outside audit. Once option reads load
+the autoloaded list ("The option cache"), every autoloaded row costs every
+request. `Site::setOption` inserted new rows as `auto`, so the engine's
+own caches were autoloaded, although the engine reads each straight from
+its row when it needs it. On the test site, `minn_admin_changelog` alone
+was 577 KB of the 785 KB loaded per request.
+
+`Site::setOption` takes an autoload value and writes it to new and
+existing rows. These caches now use `off`:
+
+- the two changelogs;
+- the release check (`minn_release`);
+- plugin info (`minn_plugin_info`);
+- the update state (`minn_updates`);
+- the uploads-size cache, its timeout and its lock.
+
+`Options::ON_DEMAND` lists them. When a freshly loaded list holds one of
+these names, the row an older engine wrote autoloaded is set to `off` in
+one query and left out, so a site heals on its first request. The test
+site went from 785 KB to 205 KB per request.
+
+## An outside audit, checked (2026-10-11)
+
+An outside model's static audit of the engine was checked claim by claim
+against the code and live timings. What held, and what was done:
+
+- **The engine updater.**
+  - `install()` now refuses a release no newer than the running engine
+    (unit case `a signed release no newer than the running engine changes
+    nothing`). Both callers already offered only a newer release
+    (`Releases::offer`), so this is a second lock, not a fix for a live
+    path.
+  - After a successful swap, the old engine (`.minn-outgoing-*`, a whole
+    copy of code in the webroot) is removed even when the shape files fail.
+- **The authorization surface.** Every Minn Admin floor route that writes
+  was read. None trusts the floor alone: each checks its own capability, the
+  post, the user, or acts on the caller's own state. Four checked a fixed
+  capability inside the handler, so the route catalogue described them as
+  "floor edit_posts". Those capabilities moved into the route policies, so
+  the catalogue says what is checked:
+  - `core/update`: `update_core`;
+  - `themes/activate`: `switch_themes`;
+  - `site/language`: `manage_options`;
+  - `overview/metric-defaults`: `manage_options`.
+
+  The refusal (`rest_forbidden`, 403) is unchanged.
+- **Facade queries.** The ratchet counted only the engine's `Db` calls, so
+  `$wpdb` queries in the facade went unseen, and the claim above ("the
+  facade makes no queries at all") no longer held. It now counts both.
+  Twenty-one remain across seven files: `canonical`, `comment`,
+  `pluggable`, `post`, `query`, `upgrade` (index helpers, SQL by nature)
+  and `user`. They may only fall.
+- **Boot cost.** Measured, not estimated, on warm requests:
+  - loading the whole facade takes about 2.3 ms (classes 1.4, functions 0.8,
+    every dead end 0.1);
+  - the larger share was the default script registration, which held the
+    request's first option read and so the autoloaded list (above).
+
+  A lazy class map could save at most the 1.4 ms; it is not done.
+- **Data files.** The engine's own `data/*.json` cost 1 to 2.5 ms per
+  request (blocks.json 1.3 ms; rest-schemas.json 0.7 ms on REST). The theme's
+  style-variation files are most of the rest, and the reference reads those
+  too. Not changed yet.
+- **Preflight**, see the next section.
+
+Not taken up, with reasons:
+
+- A `__call` table in place of the generated dead ends: the dead ends cost
+  0.1 ms, functions cannot be answered that way, and the api suite pins
+  every signature.
+- Renaming the DKIM test key: a captured fixture names its path.
+- Key rotation, revocation and a freshness timestamp for releases: they
+  change the update service's protocol.
+- B2, B3, B5, B9, B10 and the rest of B12 (docs/architecture-review): the
+  agent-first decision they wait on.
+- Splitting this file.
+
+B12's parity half was already done: `allcapsOf` lays a user's own grants
+and denials over their roles.
+
+**Found on the way:** compat-status skips namespaced classes, 34 of the
+inventory's classes. Nine of them are defined nowhere in the engine: the
+seven `Avifinfo` parser classes and the AI client's
+`WithHttpTransporterInterface` and `WithHttpTransporterTrait`. The
+published class figure counts only un-namespaced classes.
+
+## Preflight judges plugins as the gate does (2026-10-11)
+
+Preflight still said "N active plugins will not run" and "mu-plugins will
+not run", from before the engine ran plugins. Now each active plugin and
+each mu-plugin is read as the plugin gate reads it (`Symbols::survey`):
+
+- **AMBER, will not load:** it needs a name the engine lacks, its main file
+  declares a function the engine already defines, or it is too large to
+  read.
+- **GREEN, runs:** the calls that answer with nothing on Minn are counted by
+  area (wp-admin, editor, Customizer, XML-RPC, left out) with the first
+  names. A call the plugin guards or answers itself is not counted.
+
+Preflight runs with no site booted, so `SymbolGap::ofShippedFacade` reads
+the gap from the engine's files by tokens, namespaces included. It finds
+exactly the nine missing classes above.
+
+On a copy of a busy production site (53 plugins and 5 mu-plugins), every
+plugin reads as running. Admin calls are nearly universal, and they stay GREEN.
+
+The content survey's lines are unchanged (shortcodes and blocks "with no
+extension", extra tables and post types "the engine does not read"). They
+predate plugins running, and rewording them changes when `install` asks
+for `--force`, so that waits on Austin.
