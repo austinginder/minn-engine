@@ -16,6 +16,33 @@ $minnLoginHeard = static function (string $what) use ($minnLoginDir, $minnLoginR
 foreach (['login_init', 'login_form_login', 'login_form_logout', 'login_form_lostpassword', 'wp_login', 'wp_logout', 'wp_login_failed', 'lostpassword_post', 'retrieve_password', 'login_form_register', 'register_post', 'register_new_user', 'login_form_checkemail'] as $minnLoginAction) {
     add_action($minnLoginAction, static fn () => $minnLoginHeard($minnLoginAction));
 }
+// The sign-in cookies' hooks, each with what can be compared across stacks (cookie values and tokens are each stack's own).
+add_filter('auth_cookie_expiration', static function ($length, $user, $remember) use ($minnLoginHeard) {
+    $minnLoginHeard('auth_cookie_expiration ' . round($length / DAY_IN_SECONDS, 2) . 'd ' . ($remember ? 'remember' : 'session'));
+    return $length;
+}, 10, 3);
+add_filter('secure_auth_cookie', static function ($secure) use ($minnLoginHeard) {
+    $minnLoginHeard('secure_auth_cookie ' . var_export($secure, true));
+    return $secure;
+});
+add_filter('secure_logged_in_cookie', static function ($secureLoggedIn, $user, $secure) use ($minnLoginHeard) {
+    $minnLoginHeard('secure_logged_in_cookie ' . var_export($secureLoggedIn, true) . ' ' . var_export($secure, true));
+    return $secureLoggedIn;
+}, 10, 3);
+foreach (['set_auth_cookie', 'set_logged_in_cookie'] as $minnLoginCookie) {
+    add_action($minnLoginCookie, static function ($cookie, $expire, $expiration, $user, $scheme, $token) use ($minnLoginHeard, $minnLoginCookie): void {
+        $minnLoginHeard($minnLoginCookie . ' ' . $scheme . ' ' . ($expire === 0 ? 'session' : 'expire ' . round(($expire - $expiration) / HOUR_IN_SECONDS) . 'h past') . ' ' . round(($expiration - time()) / DAY_IN_SECONDS) . 'd ' . (is_string($cookie) && substr_count($cookie, '|') === 3 ? 'cookie' : 'other') . ' ' . (is_string($token) && strlen($token) === 43 ? 'token' : 'no token') . ' ' . (is_int($user) ? 'user' : gettype($user)));
+    }, 10, 6);
+}
+add_filter('send_auth_cookies', static function ($send, $expire = null, $expiration = null, $user = null, $scheme = null, $token = null) use ($minnLoginHeard) {
+    $minnLoginHeard('send_auth_cookies ' . var_export($send, true) . ' ' . ($expire === 0 ? 'expire 0' : 'expire set') . ' ' . ($expiration === 0 ? 'expiration 0' : 'expiration set') . ' ' . (is_int($user) && $user > 0 ? 'user' : var_export($user, true)) . ' ' . var_export($scheme, true) . ' ' . (is_string($token) && strlen($token) === 43 ? 'token' : var_export($token, true)));
+    return $send;
+}, 10, 6);
+add_filter('attach_session_information', static function ($info) use ($minnLoginHeard) {
+    $minnLoginHeard('attach_session_information');
+    return $info;
+});
+add_action('clear_auth_cookie', static fn () => $minnLoginHeard('clear_auth_cookie'));
 add_action('login_enqueue_scripts', static function () use ($minnLoginHeard): void {
     $minnLoginHeard('login_enqueue_scripts');
     wp_enqueue_style('zz-login', 'https://zz-login.example/zz-login.css', [], '1');

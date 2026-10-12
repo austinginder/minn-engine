@@ -16,6 +16,10 @@ use Minn\Http\Response;
  */
 final readonly class AuthCookies
 {
+    private const DAY = 86400;
+
+    private const HOUR = 3600;
+
     public function __construct(
         private Db $db,
         private Cookie $cookie,
@@ -28,18 +32,68 @@ final readonly class AuthCookies
         return md5($this->db->option('siteurl') ?? '');
     }
 
-    /** A non-persistent sign-in keeps the server expiry but sends session cookies the browser drops on close. */
-    public function attach(Response $response, UserRecord $user, int $expiration, string $token, bool $secure, bool $persistent = false): Response
+    /**
+     * The sign-in cookies as the reference settles them (suite login-hooks):
+     * their life through auth_cookie_expiration (two days, or fourteen when
+     * remembered, the cookies then kept twelve hours past it); the auth
+     * cookie's security through secure_auth_cookie, and the logged-in
+     * cookie's through secure_logged_in_cookie (secure only over HTTPS); a
+     * session made for that life when none is given; then set_auth_cookie
+     * and set_logged_in_cookie told the values, and send_auth_cookies asked
+     * whether to send them. Signing in always runs under the booted
+     * runtime (its sessions are WordPress's), so the hooks always run.
+     *
+     * @return array{expiration: int, expire: int, secure: bool, secureLoggedIn: bool, scheme: string, token: string, auth: string, loggedIn: string, send: bool}
+     */
+    public function settle(UserRecord $user, int $days, bool $secure, bool $https, string $token = ''): array
     {
+        $remember = $days > 2;
+        $expiration = time() + (int) \apply_filters('auth_cookie_expiration', $days * self::DAY, $user->id, $remember);
+        $expire = $remember ? $expiration + 12 * self::HOUR : 0;
+        $secure = (bool) \apply_filters('secure_auth_cookie', $secure, $user->id);
+        $secureLoggedIn = (bool) \apply_filters('secure_logged_in_cookie', $secure && $https, $user->id, $secure);
+        // The session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
+        $token = $token !== '' ? $token : \WP_Session_Tokens::get_instance($user->id)->create($expiration);
+        $scheme = $secure ? 'secure_auth' : 'auth';
+        $auth = self::mint($user, $expiration, $token, $scheme);
+        $loggedIn = self::mint($user, $expiration, $token, 'logged_in');
+        \do_action('set_auth_cookie', $auth, $expire, $expiration, $user->id, $scheme, $token);
+        \do_action('set_logged_in_cookie', $loggedIn, $expire, $expiration, $user->id, 'logged_in', $token);
+        $send = (bool) \apply_filters('send_auth_cookies', true, $expire, $expiration, $user->id, $scheme, $token);
+        return ['expiration' => $expiration, 'expire' => $expire, 'secure' => $secure, 'secureLoggedIn' => $secureLoggedIn, 'scheme' => $scheme, 'token' => $token, 'auth' => $auth, 'loggedIn' => $loggedIn, 'send' => $send];
+    }
+
+    /**
+     * The response with the settled cookies on it: the auth cookie on the
+     * admin and plugins paths, the logged-in cookie on the site root; none
+     * when send_auth_cookies said not to.
+     *
+     * @param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool} $plan from settle()
+     */
+    public function attach(Response $response, array $plan): Response
+    {
+        if (!$plan['send']) {
+            return $response;
+        }
         $hash = $this->hash();
-        $authName = ($secure ? 'wordpress_sec_' : 'wordpress_') . $hash;
-        $authValue = self::mint($user, $expiration, $token, $secure ? 'secure_auth' : 'auth');
-        $loggedIn = $this->cookie->mint($user, $expiration, $token);
-        $common = ['expires' => $persistent ? $expiration : 0, 'httponly' => true, 'secure' => $secure, 'samesite' => 'Lax'];
+        $authName = ($plan['secure'] ? 'wordpress_sec_' : 'wordpress_') . $hash;
+        $auth = ['expires' => $plan['expire'], 'httponly' => true, 'secure' => $plan['secure'], 'samesite' => 'Lax'];
+        $loggedIn = ['expires' => $plan['expire'], 'httponly' => true, 'secure' => $plan['secureLoggedIn'], 'samesite' => 'Lax'];
         return $response
-            ->withCookie($authName, $authValue, ['path' => '/wp-admin'] + $common)
-            ->withCookie($authName, $authValue, ['path' => '/wp-content/plugins'] + $common)
-            ->withCookie('wordpress_logged_in_' . $hash, $loggedIn, ['path' => '/'] + $common);
+            ->withCookie($authName, $plan['auth'], ['path' => '/wp-admin'] + $auth)
+            ->withCookie($authName, $plan['auth'], ['path' => '/wp-content/plugins'] + $auth)
+            ->withCookie('wordpress_logged_in_' . $hash, $plan['loggedIn'], ['path' => '/'] + $loggedIn);
+    }
+
+    /**
+     * Whether signing out clears the cookies: clear_auth_cookie told, then
+     * send_auth_cookies asked with no cookie in hand, as the reference asks
+     * them (suite login-hooks).
+     */
+    public function clearing(): bool
+    {
+        \do_action('clear_auth_cookie');
+        return (bool) \apply_filters('send_auth_cookies', true, 0, 0, 0, '', '');
     }
 
     /** The response with every sign-in cookie expired. */

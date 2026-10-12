@@ -447,11 +447,11 @@ if (!function_exists('wp_clear_auth_cookie')) :
 /** Every sign-in cookie expired, unless send_auth_cookies says not to (probe pluggable-remaining). */
 function wp_clear_auth_cookie()
 {
-    do_action('clear_auth_cookie');
-    if (!apply_filters('send_auth_cookies', true, 0, 0, 0, '', '') || headers_sent()) {
+    $cookies = new AuthCookies(Runtime::current()->db, new Cookie(Runtime::current()->db, new Users(Runtime::current()->db), new Sessions(new Users(Runtime::current()->db))));
+    if (!$cookies->clearing() || headers_sent()) {
         return;
     }
-    $hash = (new AuthCookies(Runtime::current()->db, new Cookie(Runtime::current()->db, new Users(Runtime::current()->db), new Sessions(new Users(Runtime::current()->db)))))->hash();
+    $hash = $cookies->hash();
     foreach ([['wordpress_' . $hash, '/wp-admin'], ['wordpress_' . $hash, '/wp-content/plugins'], ['wordpress_sec_' . $hash, '/wp-admin'], ['wordpress_sec_' . $hash, '/wp-content/plugins'], ['wordpress_logged_in_' . $hash, '/']] as [$name, $path]) {
         setcookie($name, ' ', ['expires' => time() - YEAR_IN_SECONDS, 'path' => $path, 'httponly' => true]);
     }
@@ -482,32 +482,21 @@ if (!function_exists('wp_set_auth_cookie')) :
 /** Mints a session and sends the three sign-in cookies, the way the login endpoint does. */
 function wp_set_auth_cookie($user_id, $remember = false, $secure = '', $token = '')
 {
+    // The cookies settled with the engine's own sign-in: one path, its hooks told and asked (AuthCookies::settle).
     $runtime = Runtime::current();
     $user = (new Users($runtime->db))->find((int) $user_id);
     if ($user === null) {
         return null;
     }
-    $expiration = time() + (int) apply_filters('auth_cookie_expiration', ($remember ? 14 : 2) * DAY_IN_SECONDS, (int) $user_id, (bool) $remember);
-    $expire = $remember ? $expiration + (12 * HOUR_IN_SECONDS) : 0;
-    $secure = (bool) apply_filters('secure_auth_cookie', $secure === '' ? is_ssl() : (bool) $secure, (int) $user_id);
-    $secureLoggedIn = (bool) apply_filters('secure_logged_in_cookie', $secure && is_ssl(), (int) $user_id, $secure);
-    $sessions = new Sessions(new Users($runtime->db));
-    if ($token === '') {
-        $token = WP_Session_Tokens::get_instance((int) $user_id)->create($expiration);
-    }
-    $hash = (new AuthCookies($runtime->db, new Cookie($runtime->db, new Users($runtime->db), $sessions)))->hash();
-    $scheme = $secure ? 'secure_auth' : 'auth';
-    $auth = AuthCookies::mint($user, $expiration, $token, $scheme);
-    $loggedIn = AuthCookies::mint($user, $expiration, $token, 'logged_in');
-    do_action('set_auth_cookie', $auth, $expire, $expiration, (int) $user_id, $scheme, $token);
-    do_action('set_logged_in_cookie', $loggedIn, $expire, $expiration, (int) $user_id, 'logged_in', $token);
-    if (!apply_filters('send_auth_cookies', true, $expire, $expiration, (int) $user_id, $scheme, $token) || headers_sent()) {
+    $cookies = new AuthCookies($runtime->db, new Cookie($runtime->db, new Users($runtime->db), new Sessions(new Users($runtime->db))));
+    $plan = $cookies->settle($user, $remember ? 14 : 2, $secure === '' ? is_ssl() : (bool) $secure, is_ssl(), (string) $token);
+    if (!$plan['send'] || headers_sent()) {
         return null;
     }
-    $name = ($secure ? 'wordpress_sec_' : 'wordpress_') . $hash;
-    setcookie($name, $auth, ['expires' => $expire, 'path' => '/wp-admin', 'secure' => $secure, 'httponly' => true]);
-    setcookie($name, $auth, ['expires' => $expire, 'path' => '/wp-content/plugins', 'secure' => $secure, 'httponly' => true]);
-    setcookie('wordpress_logged_in_' . $hash, $loggedIn, ['expires' => $expire, 'path' => '/', 'secure' => $secureLoggedIn, 'httponly' => true]);
+    $name = ($plan['secure'] ? 'wordpress_sec_' : 'wordpress_') . $cookies->hash();
+    setcookie($name, $plan['auth'], ['expires' => $plan['expire'], 'path' => '/wp-admin', 'secure' => $plan['secure'], 'httponly' => true]);
+    setcookie($name, $plan['auth'], ['expires' => $plan['expire'], 'path' => '/wp-content/plugins', 'secure' => $plan['secure'], 'httponly' => true]);
+    setcookie('wordpress_logged_in_' . $cookies->hash(), $plan['loggedIn'], ['expires' => $plan['expire'], 'path' => '/', 'secure' => $plan['secureLoggedIn'], 'httponly' => true]);
     return null;
 }
 endif;

@@ -16,8 +16,6 @@ use Minn\Http\Response;
  */
 final readonly class SignIn
 {
-    private const DAY = 86400;
-
     public function __construct(
         private AuthCookies $cookies,
         private LoginThrottle $throttle,
@@ -57,18 +55,15 @@ final readonly class SignIn
     /** A session longer than the two-day default is one to keep past the browser session, as the reference's remember-me does. */
     private function open(Response $response, UserRecord $user, Request $request, int $days): Response
     {
-        $persistent = $days > 2;
-        $expiration = time() + $days * self::DAY;
-        // The session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
-        $token = \WP_Session_Tokens::get_instance($user->id)->create($expiration);
-        return $this->cookies->attach($response, $user, $expiration, $token, $request->secure, $persistent);
+        // The cookies settled as the reference settles them, its hooks told and asked (AuthCookies::settle).
+        return $this->cookies->attach($response, $this->cookies->settle($user, $days, $request->secure, $request->secure));
     }
 
-    /** Ends one session and clears the cookies from the response. */
+    /** Ends one session and clears the cookies from the response, unless send_auth_cookies says not to (AuthCookies::clearing). */
     public function end(Response $response, Authenticated $session): Response
     {
         \WP_Session_Tokens::get_instance($session->id())->destroy($session->token);
-        return $this->cookies->clear($response);
+        return $this->cookies->clearing() ? $this->cookies->clear($response) : $response;
     }
 
     /** Ends every session of a user (a password reset) and clears the cookies from the response. */

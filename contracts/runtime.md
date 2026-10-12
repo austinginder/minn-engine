@@ -14753,3 +14753,38 @@ A shared fix came with it: an in-process REST answer kept its empty objects
 as empty arrays, because the native JSON was decoded to arrays. They stay
 objects now (`Json::decodeKeepingEmptyObjects()`), so
 `rest_do_request()->get_data()` holds `{}` where the reference's does.
+
+## The sign-in cookies' hooks (2026-10-11)
+
+Found in the runtime.md audit. The engine's own sign-in set its cookies
+without telling plugins: security, session and SSO plugins that hook the
+cookie actions never heard a sign-in or a sign-out on Minn's own pages. The
+facade's `wp_set_auth_cookie()` ran the hooks. The engine's native path, which
+every real sign-in takes, ran none of them.
+
+Observed on the reference by suite login-hooks, whose fixture now records the
+cookie hooks:
+
+- **Signing in:**
+  1. `auth_cookie_expiration`: two days, or fourteen when remembered, with
+     the user and whether remembered.
+  2. `secure_auth_cookie`.
+  3. `secure_logged_in_cookie`: the auth cookie's security, and only over
+     HTTPS.
+  4. The session, made for that life, with `attach_session_information`.
+  5. `set_auth_cookie`: value, expire, expiration, user, scheme
+     (`secure_auth` over HTTPS), token.
+  6. `set_logged_in_cookie`: the same, scheme `logged_in`.
+  7. `send_auth_cookies(true, expire, expiration, user, scheme, token)`;
+     false sends no cookie.
+  8. Then `wp_login`.
+- **Remembered**, the cookies expire twelve hours after the auth expiration.
+  The engine had them expire at the expiration itself.
+- **Signing out:** the session is destroyed, then `clear_auth_cookie` fires,
+  then `send_auth_cookies(true, 0, 0, 0, '', '')`, and then `wp_logout`.
+
+One path now: `AuthCookies::settle()` runs the sequence and returns what to
+send, and `attach()` puts it on the response; `clearing()` covers sign-out.
+`SignIn` uses them, and so do the facade's `wp_set_auth_cookie()` and
+`wp_clear_auth_cookie()`. Signing in always runs under the booted runtime,
+so neither method branches on it. The `Runtime::booted()` ratchet falls to 78.

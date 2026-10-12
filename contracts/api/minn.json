@@ -7713,7 +7713,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/AuthCookies.php",
-            "lines": 53,
+            "lines": 107,
             "doc": "The three cookies a sign-in sets: the auth cookie on the admin and\nplugins paths (the secure variant over HTTPS, keyed off that scheme's\nsalt) and the logged_in cookie on the site root, which is the one REST\nreads. Every value shares the username|expiration|token|hmac shape.",
             "implements": [],
             "extends": null,
@@ -7749,11 +7749,24 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 23
+                "line": 23,
+                "end": 27
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "DAY",
+                    "value": "86400",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "HOUR",
+                    "value": "3600",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "db",
@@ -7784,25 +7797,20 @@
                     "doc": "The hash suffixed onto every cookie name: md5 of the siteurl option.",
                     "shapes": [],
                     "params": [],
-                    "line": 26,
-                    "end": 29
+                    "line": 30,
+                    "end": 33
                 },
                 {
                     "routes": [],
-                    "name": "attach",
+                    "name": "settle",
                     "static": false,
                     "visibility": "public",
-                    "signature": "attach(Minn\\Http\\Response $response, Minn\\Content\\UserRecord $user, int $expiration, string $token, bool $secure, bool $persistent = false): Minn\\Http\\Response",
-                    "doc": "A non-persistent sign-in keeps the server expiry but sends session cookies the browser drops on close.",
-                    "shapes": [],
+                    "signature": "settle(Minn\\Content\\UserRecord $user, int $days, bool $secure, bool $https, string $token = ''): array",
+                    "doc": "The sign-in cookies as the reference settles them (suite login-hooks):\ntheir life through auth_cookie_expiration (two days, or fourteen when\nremembered, the cookies then kept twelve hours past it); the auth\ncookie's security through secure_auth_cookie, and the logged-in\ncookie's through secure_logged_in_cookie (secure only over HTTPS); a\nsession made for that life when none is given; then set_auth_cookie\nand set_logged_in_cookie told the values, and send_auth_cookies asked\nwhether to send them. Signing in always runs under the booted\nruntime (its sessions are WordPress's), so the hooks always run.",
+                    "shapes": [
+                        "@return array{expiration: int, expire: int, secure: bool, secureLoggedIn: bool, scheme: string, token: string, auth: string, loggedIn: string, send: bool}"
+                    ],
                     "params": [
-                        {
-                            "name": "response",
-                            "type": "Minn\\Http\\Response",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
                         {
                             "name": "user",
                             "type": "Minn\\Content\\UserRecord",
@@ -7811,15 +7819,8 @@
                             "doc": ""
                         },
                         {
-                            "name": "expiration",
+                            "name": "days",
                             "type": "int",
-                            "shape": "",
-                            "default": null,
-                            "doc": ""
-                        },
-                        {
-                            "name": "token",
-                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -7832,15 +7833,63 @@
                             "doc": ""
                         },
                         {
-                            "name": "persistent",
+                            "name": "https",
                             "type": "bool",
                             "shape": "",
-                            "default": "false",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "token",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 43
+                    "line": 48,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "attach",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "attach(Minn\\Http\\Response $response, array $plan): Minn\\Http\\Response",
+                    "doc": "The response with the settled cookies on it: the auth cookie on the\nadmin and plugins paths, the logged-in cookie on the site root; none\nwhen send_auth_cookies said not to.",
+                    "shapes": [
+                        "@param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool} $plan from settle()"
+                    ],
+                    "params": [
+                        {
+                            "name": "response",
+                            "type": "Minn\\Http\\Response",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "plan",
+                            "type": "array",
+                            "shape": "array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool}",
+                            "default": null,
+                            "doc": "from settle()"
+                        }
+                    ],
+                    "line": 73,
+                    "end": 86
+                },
+                {
+                    "routes": [],
+                    "name": "clearing",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "clearing(): bool",
+                    "doc": "Whether signing out clears the cookies: clear_auth_cookie told, then\nsend_auth_cookies asked with no cookie in hand, as the reference asks\nthem (suite login-hooks).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 93,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -7859,8 +7908,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 60
+                    "line": 100,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -7900,8 +7949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 68
+                    "line": 117,
+                    "end": 122
                 }
             ]
         },
@@ -10920,7 +10969,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Auth/SignIn.php",
-            "lines": 70,
+            "lines": 65,
             "doc": "The door itself: what a sign-in surface needs beyond checking a\npassword. Sessions are minted here, the three cookies ride out on the\nresponse, and the failure counter behind the throttle is kept in one\nplace with the session store and the cookie jar it protects.",
             "implements": [],
             "extends": null,
@@ -10957,18 +11006,11 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 21,
-                "end": 25
+                "line": 19,
+                "end": 23
             },
             "cases": [],
-            "constants": [
-                {
-                    "name": "DAY",
-                    "value": "86400",
-                    "doc": "",
-                    "visibility": "private"
-                }
-            ],
+            "constants": [],
             "properties": [
                 {
                     "name": "cookies",
@@ -11007,8 +11049,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 28,
-                    "end": 31
+                    "line": 26,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -11027,8 +11069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 37
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -11039,8 +11081,8 @@
                     "doc": "The cookie-name hash the sign-in cookies, the postpass cookie, and the reset cookie share.",
                     "shapes": [],
                     "params": [],
-                    "line": 40,
-                    "end": 43
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -11073,8 +11115,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 49
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -11107,8 +11149,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -11116,7 +11158,7 @@
                     "static": false,
                     "visibility": "public",
                     "signature": "end(Minn\\Http\\Response $response, Minn\\Auth\\Authenticated $session): Minn\\Http\\Response",
-                    "doc": "Ends one session and clears the cookies from the response.",
+                    "doc": "Ends one session and clears the cookies from the response, unless send_auth_cookies says not to (AuthCookies::clearing).",
                     "shapes": [],
                     "params": [
                         {
@@ -11134,8 +11176,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 63,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -11161,8 +11203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 79
+                    "line": 70,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -11181,8 +11223,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -11222,8 +11264,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 65
+                    "line": 56,
+                    "end": 60
                 }
             ]
         },

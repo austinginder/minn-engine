@@ -5,7 +5,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`ApplicationPasswords`](#applicationpasswords) | final readonly class | 153 | Application passwords as the reference stores them: a serialized list in |
-| [`AuthCookies`](#authcookies) | final readonly class | 53 | The three cookies a sign-in sets: the auth cookie on the admin and |
+| [`AuthCookies`](#authcookies) | final readonly class | 107 | The three cookies a sign-in sets: the auth cookie on the admin and |
 | [`AuthFailure`](#authfailure) | final readonly class | 18 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
@@ -21,7 +21,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 166 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
-| [`SignIn`](#signin) | final readonly class | 70 | The door itself: what a sign-in surface needs beyond checking a |
+| [`SignIn`](#signin) | final readonly class | 65 | The door itself: what a sign-in surface needs beyond checking a |
 | [`TypeCapabilities`](#typecapabilities) | final readonly class | 51 | The capability names a post type's permissions are built from. Posts and |
 
 ## ApplicationPasswords
@@ -103,6 +103,9 @@ plugins paths (the secure variant over HTTPS, keyed off that scheme's
 salt) and the logged_in cookie on the site root, which is the one REST
 reads. Every value shares the username|expiration|token|hmac shape.
 
+- const `DAY` = `86400`
+- const `HOUR` = `3600`
+
 Used by: `Minn\Auth\SignIn`, `Minn\Engine`
 
 ```php
@@ -114,9 +117,33 @@ __construct(Minn\Db $db, Minn\Auth\Cookie $cookie)
 
 The hash suffixed onto every cookie name: md5 of the siteurl option.
 
-### `attach(Minn\Http\Response $response, Minn\Content\UserRecord $user, int $expiration, string $token, bool $secure, bool $persistent = false): Minn\Http\Response`
+### `settle(Minn\Content\UserRecord $user, int $days, bool $secure, bool $https, string $token = ''): array`
 
-A non-persistent sign-in keeps the server expiry but sends session cookies the browser drops on close.
+The sign-in cookies as the reference settles them (suite login-hooks):
+their life through auth_cookie_expiration (two days, or fourteen when
+remembered, the cookies then kept twelve hours past it); the auth
+cookie's security through secure_auth_cookie, and the logged-in
+cookie's through secure_logged_in_cookie (secure only over HTTPS); a
+session made for that life when none is given; then set_auth_cookie
+and set_logged_in_cookie told the values, and send_auth_cookies asked
+whether to send them. Signing in always runs under the booted
+runtime (its sessions are WordPress's), so the hooks always run.
+
+- `@return array{expiration: int, expire: int, secure: bool, secureLoggedIn: bool, scheme: string, token: string, auth: string, loggedIn: string, send: bool}`
+
+### `attach(Minn\Http\Response $response, array $plan): Minn\Http\Response`
+
+The response with the settled cookies on it: the auth cookie on the
+admin and plugins paths, the logged-in cookie on the site root; none
+when send_auth_cookies said not to.
+
+- `@param array{expire: int, secure: bool, secureLoggedIn: bool, auth: string, loggedIn: string, send: bool} $plan from settle()`
+
+### `clearing(): bool`
+
+Whether signing out clears the cookies: clear_auth_cookie told, then
+send_auth_cookies asked with no cookie in hand, as the reference asks
+them (suite login-hooks).
 
 ### `clear(Minn\Http\Response $response): Minn\Http\Response`
 
@@ -742,8 +769,6 @@ password. Sessions are minted here, the three cookies ride out on the
 response, and the failure counter behind the throttle is kept in one
 place with the session store and the cookie jar it protects.
 
-- const `DAY` = `86400`
-
 Used by: `Minn\Engine`, `Minn\Login\LoginController`
 
 ```php
@@ -773,7 +798,7 @@ Signs a user in for fourteen days, the cookies kept past the browser session: "r
 
 ### `end(Minn\Http\Response $response, Minn\Auth\Authenticated $session): Minn\Http\Response`
 
-Ends one session and clears the cookies from the response.
+Ends one session and clears the cookies from the response, unless send_auth_cookies says not to (AuthCookies::clearing).
 
 ### `endAll(Minn\Http\Response $response, int $userId): Minn\Http\Response`
 
@@ -783,7 +808,7 @@ Ends every session of a user (a password reset) and clears the cookies from the 
 
 The response with the sign-in cookies cleared.
 
-Internals: `open()` (private, line 58)
+Internals: `open()` (private, line 56)
 
 
 ## TypeCapabilities

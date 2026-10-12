@@ -9,7 +9,7 @@
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8673,
-        "minnMethods": 996,
+        "minnMethods": 999,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -66087,16 +66087,15 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\AuthCookies::__construct",
+                "Minn\\Auth\\AuthCookies::clearing",
+                "Minn\\Auth\\AuthCookies::hash",
                 "Minn\\Auth\\Cookie::__construct",
                 "Minn\\Auth\\Sessions::__construct",
                 "Minn\\Content\\Users::__construct",
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::db"
             ],
-            "composes": [
-                "apply_filters",
-                "do_action"
-            ]
+            "composes": []
         },
         "wp_clear_scheduled_hook": {
             "file": "cron.php",
@@ -75454,19 +75453,18 @@
         },
         "wp_set_auth_cookie": {
             "file": "pluggable.php",
-            "lines": 27,
+            "lines": 16,
             "kind": "minn",
             "minn": [
                 "Minn\\Auth\\AuthCookies::__construct",
-                "Minn\\Auth\\AuthCookies::mint",
+                "Minn\\Auth\\AuthCookies::hash",
+                "Minn\\Auth\\AuthCookies::settle",
                 "Minn\\Auth\\Cookie::__construct",
                 "Minn\\Auth\\Sessions::__construct",
                 "Minn\\Content\\Users::__construct",
                 "Minn\\Runtime\\Runtime::current"
             ],
             "composes": [
-                "apply_filters",
-                "do_action",
                 "is_ssl"
             ]
         },

@@ -286,7 +286,7 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // WordPress-named function (the hook API aside) is the facade reached from
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
-$bootedCeiling = 79;
+$bootedCeiling = 78;
 $wordpressCallCeiling = 1024;
 $apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
 $wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);

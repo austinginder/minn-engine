@@ -161,6 +161,13 @@ $landed = $both(static function (string $stack) use ($ask, $password, $stacks): 
 $same('a sign-in with the field: where it lands', $landed);
 $same('a sign-in with the field: the actions heard', $both($heard));
 
+// Signed in again, remembered: the cookies' longer life, as the hooks hear it.
+$both(static function (string $stack) use ($ask, $password): array {
+    $ask($stack, '/wp-login.php', ['log' => 'login-hooks-reader', 'pwd' => $password, 'zz_human' => 'yes', 'rememberme' => 'forever', 'testcookie' => '1']);
+    return [];
+});
+$same('a remembered sign-in: the actions heard', $both($heard));
+
 $left = $both(static function (string $stack) use ($ask, $stacks): array {
     [, , $body] = $ask($stack, '/wp-login.php?action=logout');
     preg_match('/href="([^"]*action=logout[^"]*_wpnonce=[^"]*)"/', html_entity_decode($body), $m);
