@@ -46530,6 +46530,7 @@
                 "Minn\\Rest\\PostObject",
                 "Minn\\Rest\\RegisteredPostFields",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\SearchController",
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\TermObject",
@@ -95833,7 +95834,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/Links.php",
-            "lines": 52,
+            "lines": 83,
             "doc": "Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along.",
             "implements": [],
             "extends": null,
@@ -95883,6 +95884,29 @@
                 },
                 {
                     "routes": [],
+                    "name": "expanded",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "expanded(array $links): array",
+                    "doc": "An answer's compact links as the reference keeps them on a response:\neach link under its full relation (a curie's short name expanded,\nthe curies themselves dropped), with its href and its other\nattributes.",
+                    "shapes": [
+                        "@param array<string, mixed> $links",
+                        "@return list<array{0: string, 1: string, 2: array<string, mixed>}>"
+                    ],
+                    "params": [
+                        {
+                            "name": "links",
+                            "type": "array",
+                            "shape": "array<string, mixed>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 56
+                },
+                {
+                    "routes": [],
                     "name": "compact",
                     "static": true,
                     "visibility": "public",
@@ -95909,8 +95933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 58
+                    "line": 65,
+                    "end": 89
                 }
             ]
         },
@@ -103154,8 +103178,8 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/RevisionsController.php",
-            "lines": 139,
-            "doc": "wp/v2 revisions and autosaves under posts, pages, and blocks.",
+            "lines": 229,
+            "doc": "wp/v2 revisions under posts, pages, patterns and navigation menus, and\nautosaves under those and menu items (probes rest-revisions,\nrest-autosaves). A revision carries the fields its parent's type\nsupports: a navigation menu's its title and content, a menu item's its\ntitle alone.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -103165,6 +103189,7 @@
                 "Minn\\Content\\Posts",
                 "Minn\\Content\\Revisions",
                 "Minn\\Content\\Texturize",
+                "Minn\\Front\\Permalinks",
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
                 "Minn\\Http\\Policy",
@@ -103180,13 +103205,14 @@
                 "Minn\\Rest\\PostsWriteController",
                 "Minn\\Rest\\Reply",
                 "Minn\\Rest\\RestUrl",
+                "Minn\\Runtime\\PostEvents",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
             ],
             "constructor": {
-                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Content\\Revisions $revisions, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller)",
+                "signature": "__construct(Minn\\Content\\Posts $posts, Minn\\Content\\Revisions $revisions, Minn\\Rest\\RestUrl $url, Minn\\Rest\\Caller $caller, ?Minn\\Front\\Permalinks $permalinks = NULL)",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -103217,14 +103243,40 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "permalinks",
+                        "type": "?Minn\\Front\\Permalinks",
+                        "shape": "",
+                        "default": "NULL",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 26,
-                "end": 32
+                "line": 42,
+                "end": 49
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "TYPES",
+                    "value": "array (   'posts' => 'post',   'pages' => 'page',   'blocks' => 'wp_block',   'navigation' => 'wp_navigation',   'menu-items' => 'nav_menu_item', )",
+                    "doc": "The parents' REST bases and their post types.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "FIELDS",
+                    "value": "array (   'wp_navigation' =>    array (     0 => 'title',     1 => 'content',   ),   'nav_menu_item' =>    array (     0 => 'title',   ), )",
+                    "doc": "The fields a revision carries by its parent's type; any other carries title, content and excerpt.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DELETE_REFUSAL",
+                    "value": "'Sorry, you are not allowed to delete revisions of this post.'",
+                    "doc": "",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "posts",
@@ -103261,12 +103313,21 @@
                     "doc": "",
                     "visibility": "private",
                     "promoted": true
+                },
+                {
+                    "name": "permalinks",
+                    "type": "?Minn\\Front\\Permalinks",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
                 }
             ],
             "methods": [
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages|blocks}/{parent:[\\d]+}/revisions (cap edit_post on {parent}; post parent {parent} must exist)"
+                        "GET /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\\d]+}/revisions (cap edit_post on {parent}; post parent {parent} must exist)"
                     ],
                     "name": "revisions",
                     "static": false,
@@ -103297,12 +103358,12 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 41
+                    "line": 53,
+                    "end": 58
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages|blocks}/{parent:[\\d]+}/revisions/{id:[\\d]+} (cap edit_post on {parent}; post parent {parent} must exist)"
+                        "GET /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\\d]+}/revisions/{id:[\\d]+} (cap edit_post on {parent}; post parent {parent} must exist)"
                     ],
                     "name": "revision",
                     "static": false,
@@ -103340,12 +103401,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 55
+                    "line": 62,
+                    "end": 72
                 },
                 {
                     "routes": [
-                        "GET /wp/v2/{base:posts|pages|blocks}/{id:[\\d]+}/autosaves (cap edit_post on {id}; post parent {id} must exist)"
+                        "DELETE /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\\d]+}/revisions/{id:[\\d]+} (cap delete_post on {parent}; post parent {parent} must exist)"
+                    ],
+                    "name": "deleteRevision",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "deleteRevision(Minn\\Http\\Request $request, string $base, string $parent, string $id): Minn\\Http\\Response",
+                    "doc": "A revision deleted for good, answered as it was; never trashed. The\nreference grants deleting a revision to nobody by default, so a\nrequest that passes the parent's check is refused at the revision's.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 104
+                },
+                {
+                    "routes": [
+                        "GET /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\\d]+}/autosaves (cap edit_post on {id}; post parent {id} must exist)"
                     ],
                     "name": "autosaves",
                     "static": false,
@@ -103376,12 +103480,55 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 69
+                    "line": 108,
+                    "end": 118
                 },
                 {
                     "routes": [
-                        "POST /wp/v2/{base:posts|pages|blocks}/{id:[\\d]+}/autosaves (cap edit_post on {id}; post {id} must exist)"
+                        "GET /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{parent:[\\d]+}/autosaves/{id:[\\d]+} (cap edit_post on {parent}; post parent {parent} must exist)"
+                    ],
+                    "name": "autosave",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "autosave(Minn\\Http\\Request $request, string $base, string $parent, string $id): Minn\\Http\\Response",
+                    "doc": "The caller's autosave of the parent, whichever autosave id is asked for; the edit view names its preview.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "id",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 122,
+                    "end": 132
+                },
+                {
+                    "routes": [
+                        "POST /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\\d]+}/autosaves (cap edit_post on {id}; post {id} must exist)"
                     ],
                     "name": "createAutosave",
                     "static": false,
@@ -103412,8 +103559,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 73,
-                    "end": 82
+                    "line": 136,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -103439,8 +103586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 121
+                    "line": 155,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -103459,8 +103606,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -103486,8 +103633,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 133
+                    "line": 191,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "previewLink",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "previewLink(int $parent): string",
+                    "doc": "Where to preview the parent with its autosave: its permalink once\npublished, its plain address before; none for a type that is never\nviewed (a navigation menu, a menu item).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parent",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 207,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -103495,7 +103662,7 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "meta(int $id, string $parentType): array",
-                    "doc": "A revision's meta: the footnotes, and for a pattern the sync status core revisions too.",
+                    "doc": "A revision's meta: the footnotes, and for a pattern the sync status core revisions too; none for a navigation menu or a menu item.",
                     "shapes": [],
                     "params": [
                         {
@@ -103513,8 +103680,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 145
+                    "line": 224,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -103540,8 +103707,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 161
+                    "line": 240,
+                    "end": 249
+                },
+                {
+                    "routes": [],
+                    "name": "parentOf",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "parentOf(int $parentId, string $base): Minn\\Content\\PostRecord",
+                    "doc": "The parent, of the type the route's base names, or rest_post_invalid_parent.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "parentId",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "base",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 252,
+                    "end": 259
                 }
             ]
         },
@@ -125404,7 +125598,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Runtime/PostEvents.php",
-            "lines": 181,
+            "lines": 193,
             "doc": "What the reference's REST controllers tell plugins about a post they\nwrite, for the engine's own controllers: the same actions in the same\norder with the same arguments, fired through the facade's lifecycle\nfunctions so the facade's own writes say the same (contracts/runtime.md\n\"Writes tell plugins\"). Without a booted runtime every method does\nnothing, so a write with no plugins loaded is exactly what it was.",
             "implements": [],
             "extends": null,
@@ -125423,6 +125617,7 @@
             "usedBy": [
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\PostsWriteController",
+                "Minn\\Rest\\RevisionsController",
                 "Minn\\Runtime\\MenuEvents"
             ],
             "constructor": null,
@@ -125432,6 +125627,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "deleteForGood",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "deleteForGood(int $id): mixed",
+                    "doc": "A post deleted for good through the reference's own deletion, so its\nhooks fire and its children (revisions, autosaves) go with it: the\none path every permanent delete takes. Deleting needs the facade, so\nunlike the events it runs only under a booted runtime, which the\nengine's write routes are. Answers what the deletion answered.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
                     "name": "live",
                     "static": false,
                     "visibility": "public",
@@ -125439,8 +125654,8 @@
                     "doc": "Whether plugins are loaded to be told anything.",
                     "shapes": [],
                     "params": [],
-                    "line": 28,
-                    "end": 31
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -125468,8 +125683,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 39
+                    "line": 46,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -125495,8 +125710,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 47
+                    "line": 54,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -125522,8 +125737,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 61
+                    "line": 66,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -125565,8 +125780,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 80
+                    "line": 82,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -125608,8 +125823,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 99
+                    "line": 101,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -125642,8 +125857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 105
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -125662,8 +125877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 114
+                    "line": 120,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -125689,8 +125904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 126
+                    "line": 129,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -125723,8 +125938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 142
+                    "line": 148,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -125757,8 +125972,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 148
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -125791,8 +126006,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 154
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -125825,8 +126040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 160
+                    "line": 169,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -125852,8 +126067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 168
+                    "line": 175,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -125888,8 +126103,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 176
+                    "line": 183,
+                    "end": 188
                 },
                 {
                     "routes": [],
@@ -125929,8 +126144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 198
+                    "line": 191,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -125949,8 +126164,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 204
+                    "line": 213,
+                    "end": 216
                 }
             ]
         },

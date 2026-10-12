@@ -14549,3 +14549,67 @@ at all, stays unregistered, which was the engine's behaviour before.
 Next, as agreed: Dashicons names mapped onto these icons, so that both the
 admin bar's markup and WordPress's planned SVG icons (wordpress-develop PR
 #12270) show Minn's artwork.
+
+## The core REST routes, part two: autosaves, navigation revisions, revision deletes (2026-10-11)
+
+Probe rest-autosaves. `Rest\RevisionsController` now serves:
+
+- **Revisions under navigation menus too:** listing and reading them.
+- **Autosaves under navigation menus and menu items too:** saving, listing,
+  and a new route that reads one autosave by id.
+- **Deleting a revision**, for posts, pages, patterns and navigation menus.
+
+Seven new autosave routes and two navigation-revision routes; nine of the
+remaining gaps.
+
+What the reference does, and the engine now does:
+
+- **A revision carries what its parent's type supports.** A post's, page's or
+  pattern's carries title, content and excerpt. A navigation menu's carries
+  title and content, with the content rendered as its blocks. A menu item's
+  carries the title alone, its `guid` raw in either context.
+  - Navigation menus and menu items register no meta, so their `meta` is an
+    empty list.
+  - Their autosave answers an empty `preview_link`, since neither type is
+    ever viewed.
+  - A menu item's autosave keeps no field of what was sent: title, content
+    and excerpt are stored blank.
+- **One autosave read by id answers the caller's own autosave of the
+  parent, whatever id is asked for**, even the parent's own id. With none
+  saved it answers `rest_post_no_autosave` (404). The edit view adds the
+  preview link.
+- **The preview link uses the parent's permalink once published**
+  (`/slug/?preview_id=…&preview_nonce=…&preview=true`), and its plain address
+  before. The engine had always used the plain one.
+- **Deleting a revision:**
+  - The parent must be deletable by the caller; signed out answers 401
+    `rest_cannot_delete` "…delete revisions of this post".
+  - The revision must exist (`rest_post_invalid_id`).
+  - Then `delete_post` on the revision is checked, which the reference grants
+    no one by default, administrators included. So it answers 403 "Sorry, you
+    are not allowed to delete this revision.", with or without `force`.
+  - Past that, without `force` it answers `rest_trash_not_supported` (501).
+    With it, the revision goes and `rest_delete_revision` fires.
+
+Two shared fixes:
+
+- **In-process REST responses keep a single object's links on the response.**
+  The reference's controllers add a single item's links to the response, so
+  `rest_do_request()->get_data()` has no `_links`, while a list's items carry
+  their own. The engine's native answers left `_links` in the data with
+  nothing on the response, on every single-object route. `engine_response()`
+  now moves them onto the response under their full relations, with the
+  engine's own target hints kept (`Links::expanded()`). `response_to_data()`
+  answers byte for byte as before.
+- **One path for deleting a post for good:** `PostEvents::deleteForGood()`.
+  Menu deletes, menu-item deletes, post deletes and revision deletes all go
+  through it. The engine's calls into WordPress-named functions fall from
+  1026 to 1024.
+
+Left before the route-table proof: the four media routes (edit,
+post-process, sideload, finalize), and POST on templates and template parts.
+
+Seen along the way: rendering a post's content in an in-process REST call
+queues block styles before `wp_enqueue_scripts`, so the engine notices
+`wp_enqueue_style` "called incorrectly". The reference doesn't. To look into
+next.

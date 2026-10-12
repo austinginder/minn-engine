@@ -71,7 +71,7 @@ final readonly class MenuEvents
     public function deleteMenu(int $menuId): void
     {
         foreach ($this->menus->items($menuId) as $item) {
-            \wp_delete_post($item->id, true);
+            (new PostEvents())->deleteForGood($item->id);
         }
         \wp_delete_term($menuId, 'nav_menu');
         $locations = \get_nav_menu_locations();
@@ -190,7 +190,7 @@ final readonly class MenuEvents
     public function restDeleteItem(int $itemId, array $previous, Request $request): void
     {
         $post = $this->posts->find($itemId);
-        \wp_delete_post($itemId, true);
+        (new PostEvents())->deleteForGood($itemId);
         if ($post !== null) {
             (new PostEvents())->restDeleted($post, ['deleted' => true, 'previous' => $previous], $request);
         }

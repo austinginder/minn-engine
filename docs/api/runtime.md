@@ -64,7 +64,7 @@ the WordPress runtime plugins load against
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 270 | Loads the site's plugins into the runtime the way the reference does: |
 | [`PostData`](#postdata) | final class | 68 | The loop's view of a post, as the reference's generate_postdata and |
-| [`PostEvents`](#postevents) | final readonly class | 181 | What the reference's REST controllers tell plugins about a post they |
+| [`PostEvents`](#postevents) | final readonly class | 193 | What the reference's REST controllers tell plugins about a post they |
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
@@ -2837,7 +2837,15 @@ functions so the facade's own writes say the same (contracts/runtime.md
 "Writes tell plugins"). Without a booted runtime every method does
 nothing, so a write with no plugins loaded is exactly what it was.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\PostsWriteController`, `Minn\Runtime\MenuEvents`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Runtime\MenuEvents`
+
+### `deleteForGood(int $id): mixed`
+
+A post deleted for good through the reference's own deletion, so its
+hooks fire and its children (revisions, autosaves) go with it: the
+one path every permanent delete takes. Deleting needs the facade, so
+unlike the events it runs only under a booted runtime, which the
+engine's write routes are. Answers what the deletion answered.
 
 ### `live(): bool`
 
@@ -2918,7 +2926,7 @@ rest_delete_{type}, after a trash or a delete, with the post as it was answered 
 
 - `@param array<string, mixed> $data`
 
-Internals: `rest()` (private, line 179), `wpPost()` (private, line 201)
+Internals: `rest()` (private, line 191), `wpPost()` (private, line 213)
 
 
 ## PostInsert

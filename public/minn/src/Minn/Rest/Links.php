@@ -25,6 +25,37 @@ final class Links
     }
 
     /**
+     * An answer's compact links as the reference keeps them on a response:
+     * each link under its full relation (a curie's short name expanded,
+     * the curies themselves dropped), with its href and its other
+     * attributes.
+     *
+     * @param array<string, mixed> $links
+     * @return list<array{0: string, 1: string, 2: array<string, mixed>}>
+     */
+    public static function expanded(array $links): array
+    {
+        $curies = [];
+        foreach ((array) ($links['curies'] ?? []) as $curie) {
+            $curies[(string) ($curie['name'] ?? '')] = (string) ($curie['href'] ?? '');
+        }
+        $out = [];
+        foreach ($links as $rel => $items) {
+            if ($rel === 'curies') {
+                continue;
+            }
+            [$prefix, $name] = array_pad(explode(':', (string) $rel, 2), 2, null);
+            $full = $name !== null && !str_starts_with($name, '//') && isset($curies[$prefix]) ? str_replace('{rel}', $name, $curies[$prefix]) : (string) $rel;
+            foreach ((array) $items as $link) {
+                if (is_array($link) && isset($link['href'])) {
+                    $out[] = [$full, (string) $link['href'], array_diff_key($link, ['href' => true])];
+                }
+            }
+        }
+        return $out;
+    }
+
+    /**
      * Links with their curies applied, as the reference compacts them.
      *
      * @param array<string, mixed> $links rel => items

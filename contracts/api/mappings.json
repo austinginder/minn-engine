@@ -2,14 +2,14 @@
     "generated": "2026-10-11",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 800,
+        "minn": 801,
         "composes": 2381,
         "leaf": 1041,
         "noop": 2755,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8671,
-        "minnMethods": 995,
+        "functions": 8672,
+        "minnMethods": 996,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -23117,7 +23117,7 @@
         },
         "WP_REST_Server::engine_response": {
             "file": "classes/WP_REST_Server.php",
-            "lines": 13,
+            "lines": 19,
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\RuntimePrepare::during",
@@ -23328,6 +23328,15 @@
             "kind": "minn",
             "minn": [
                 "Minn\\Rest\\RouteMatch::find"
+            ],
+            "composes": []
+        },
+        "WP_REST_Server::minn_add_links": {
+            "file": "classes/WP_REST_Server.php",
+            "lines": 3,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Rest\\Links::expanded"
             ],
             "composes": []
         },

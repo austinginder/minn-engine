@@ -24,6 +24,18 @@ use Minn\Rest\RuntimeRoutes;
  */
 final readonly class PostEvents
 {
+    /**
+     * A post deleted for good through the reference's own deletion, so its
+     * hooks fire and its children (revisions, autosaves) go with it: the
+     * one path every permanent delete takes. Deleting needs the facade, so
+     * unlike the events it runs only under a booted runtime, which the
+     * engine's write routes are. Answers what the deletion answered.
+     */
+    public function deleteForGood(int $id): mixed
+    {
+        return \wp_delete_post($id, true);
+    }
+
     /** Whether plugins are loaded to be told anything. */
     public function live(): bool
     {

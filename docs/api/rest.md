@@ -29,7 +29,7 @@ the wp/v2 surface: shapes and controllers
 | [`GlobalStylesObject`](#globalstylesobject) | final readonly class | 87 | The wp/v2/global-styles item, theme, and revision shapes. |
 | [`IndexController`](#indexcontroller) | final readonly class | 56 | The API index at /wp-json/: the site facts monitors read (name, url, |
 | [`InstalledThemesController`](#installedthemescontroller) | final readonly class | 141 | wp/v2/themes as the reference answers it (probe rest-themes): the |
-| [`Links`](#links) | final class | 52 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
+| [`Links`](#links) | final class | 83 | Response link relations compacted through CURIEs: a rel that matches a CURIE's template becomes `name:suffix`, and the used CURIEs ride along. |
 | [`LiveSettings`](#livesettings) | final readonly class | 77 | wp/v2/settings with plugins loaded, served from the registered settings |
 | [`MediaController`](#mediacontroller) | final readonly class | 264 | wp/v2/media: list, single, upload on both transports (multipart field |
 | [`MediaObject`](#mediaobject) | final readonly class | 161 | The wp/v2 media object, view and edit context. |
@@ -52,7 +52,7 @@ the wp/v2 surface: shapes and controllers
 | [`Reply`](#reply) | final class | 53 | JSON responses in the reference's shape: its header set, its json_encode |
 | [`RestMeta`](#restmeta) | final class | 265 | An object's meta field over REST, from the keys registered to show |
 | [`RestUrl`](#resturl) | final readonly class | 38 | REST URLs in the form the reference emits for the site's permalink mode: |
-| [`RevisionsController`](#revisionscontroller) | final readonly class | 139 | wp/v2 revisions and autosaves under posts, pages, and blocks. |
+| [`RevisionsController`](#revisionscontroller) | final readonly class | 229 | wp/v2 revisions under posts, pages, patterns and navigation menus, and |
 | [`RouteArgs`](#routeargs) | final class | 34 | The argument groups a route registers with, filled the way register_rest_route fills them. |
 | [`RouteCatalogue`](#routecatalogue) | final readonly class | 78 | The routes the engine serves, described in the reference's shape for the |
 | [`RouteIndex`](#routeindex) | final class | 61 | The description of one route the REST index publishes: namespace, methods, endpoints with their argument schemas, self link. |
@@ -1238,6 +1238,16 @@ self link's target hints after the href, where the reference adds them.
 - `@param array<string, mixed> $attributes`
 - `@return array<string, mixed>`
 
+### static `expanded(array $links): array`
+
+An answer's compact links as the reference keeps them on a response:
+each link under its full relation (a curie's short name expanded,
+the curies themselves dropped), with its href and its other
+attributes.
+
+- `@param array<string, mixed> $links`
+- `@return list<array{0: string, 1: string, 2: array<string, mixed>}>`
+
 ### static `compact(array $links, array $curies): array`
 
 Links with their curies applied, as the reference compacts them.
@@ -2268,36 +2278,58 @@ The curies entry every wp/v2 _links block ends with.
 
 `final readonly class Minn\Rest\RevisionsController` · `public/minn/src/Minn/Rest/RevisionsController.php`
 
-wp/v2 revisions and autosaves under posts, pages, and blocks.
+wp/v2 revisions under posts, pages, patterns and navigation menus, and
+autosaves under those and menu items (probes rest-revisions,
+rest-autosaves). A revision carries the fields its parent's type
+supports: a navigation menu's its title and content, a menu item's its
+title alone.
+
+- const `TYPES` = `array (   'posts' => 'post',   'pages' => 'page',   'blocks' => 'wp_block',   'navigation' => 'wp_navigation',   'menu-items' => 'nav_menu_item', )` — The parents' REST bases and their post types.
+- const `FIELDS` = `array (   'wp_navigation' =>    array (     0 => 'title',     1 => 'content',   ),   'nav_menu_item' =>    array (     0 => 'title',   ), )` — The fields a revision carries by its parent's type; any other carries title, content and excerpt.
+- const `DELETE_REFUSAL` = `'Sorry, you are not allowed to delete revisions of this post.'`
 
 Used by: `Minn\Rest\Api`
 
 ```php
-__construct(Minn\Content\Posts $posts, Minn\Content\Revisions $revisions, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller)
+__construct(Minn\Content\Posts $posts, Minn\Content\Revisions $revisions, Minn\Rest\RestUrl $url, Minn\Rest\Caller $caller, ?Minn\Front\Permalinks $permalinks = NULL)
 ```
 
 
 ### `revisions(Minn\Http\Request $request, string $base, string $parent): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages|blocks}/{parent:[\d]+}/revisions (cap edit_post on {parent}; post parent {parent} must exist)`
+Route: `GET /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions (cap edit_post on {parent}; post parent {parent} must exist)`
 
 Real revisions, not autosaves.
 
 ### `revision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages|blocks}/{parent:[\d]+}/revisions/{id:[\d]+} (cap edit_post on {parent}; post parent {parent} must exist)`
+Route: `GET /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions/{id:[\d]+} (cap edit_post on {parent}; post parent {parent} must exist)`
 
 One revision of a post, page, or block.
 
+### `deleteRevision(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `DELETE /wp/v2/{base:posts|pages|blocks|navigation}/{parent:[\d]+}/revisions/{id:[\d]+} (cap delete_post on {parent}; post parent {parent} must exist)`
+
+A revision deleted for good, answered as it was; never trashed. The
+reference grants deleting a revision to nobody by default, so a
+request that passes the parent's check is refused at the revision's.
+
 ### `autosaves(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `GET /wp/v2/{base:posts|pages|blocks}/{id:[\d]+}/autosaves (cap edit_post on {id}; post parent {id} must exist)`
+Route: `GET /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\d]+}/autosaves (cap edit_post on {id}; post parent {id} must exist)`
 
 The autosaves of a post.
 
+### `autosave(Minn\Http\Request $request, string $base, string $parent, string $id): Minn\Http\Response`
+
+Route: `GET /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{parent:[\d]+}/autosaves/{id:[\d]+} (cap edit_post on {parent}; post parent {parent} must exist)`
+
+The caller's autosave of the parent, whichever autosave id is asked for; the edit view names its preview.
+
 ### `createAutosave(Minn\Http\Request $request, string $base, string $id): Minn\Http\Response`
 
-Route: `POST /wp/v2/{base:posts|pages|blocks}/{id:[\d]+}/autosaves (cap edit_post on {id}; post {id} must exist)`
+Route: `POST /wp/v2/{base:posts|pages|blocks|navigation|menu-items}/{id:[\d]+}/autosaves (cap edit_post on {id}; post {id} must exist)`
 
 One autosave slot per author; the reply carries a preview link.
 
@@ -2305,7 +2337,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 84), `withPreviewLink()` (private, line 124), `meta()` (private, line 136), `requireParent()` (private, line 148)
+Internals: `clean()` (private, line 149), `withPreviewLink()` (private, line 191), `previewLink()` (private, line 207), `meta()` (private, line 224), `requireParent()` (private, line 240), `parentOf()` (private, line 252)
 
 
 ## RouteArgs

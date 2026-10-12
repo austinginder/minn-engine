@@ -114,7 +114,7 @@ final readonly class Api
             new SettingsController(new Settings($s->site()), $caller, new LiveSettings($s->schema())),
             new CommentsController($s->comments(), $s->posts(), $s->commentObject(), $caller),
             new GlobalStylesController($s->userStyles(), $s->themeStyles(), new GlobalStylesObject($s->revisions(), $s->url(), $caller), $s->revisions(), $caller),
-            new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller),
+            new RevisionsController($s->posts(), $s->revisions(), $s->url(), $caller, $s->permalinks()),
             new MediaController($s->posts(), $s->mediaWriter(), $s->mediaObject(), $caller, $postsController),
             new MenusController($s->menus(), new MenuObject($s->menus(), $s->url(), $caller), new MenuItemObject($s->url(), $caller), $caller, $s->url()),
         ];
@@ -157,7 +157,7 @@ final readonly class Api
     public function revisionObject(array $row, Context $context): array
     {
         $s = $this->services;
-        return (new RevisionsController($s->posts(), $s->revisions(), $s->url(), $s->caller()))->object($row, $context);
+        return (new RevisionsController($s->posts(), $s->revisions(), $s->url(), $s->caller(), $s->permalinks()))->object($row, $context);
     }
 
     /** Saves a user's autosave of a post in its one slot per author; the revision's id. */

@@ -291,7 +291,7 @@ final readonly class PostsWriteController
 
         // The deleted post as data, without its links, as the reference's previous carries it.
         $previous = array_diff_key($this->object->edit($post, $userId), ['_links' => true]);
-        \wp_delete_post($postId, true);
+        $events->deleteForGood($postId);
         $data = ['deleted' => true, 'previous' => $previous];
         $events->restDeleted($post, $data, $request);
         return Reply::item($data, $fields);

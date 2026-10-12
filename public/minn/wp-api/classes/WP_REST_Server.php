@@ -345,8 +345,22 @@ class WP_REST_Server
         }
         // The route's own headers (Allow, X-WP-Total, Location...), not the transport's, which serving adds.
         $out = new WP_REST_Response($data, $response->status, Minn\Rest\RuntimeRoutes::wpHeaders(array_diff_key($response->headers, Minn\Rest\Reply::HEADERS, ['Vary' => true, 'X-Robots-Tag' => true]), (string) $route));
+        // One object's links ride on the response, as the reference's controllers add them; a list's items keep their own.
+        if (is_array($data) && !array_is_list($data) && is_array($data['_links'] ?? null)) {
+            self::minn_add_links($out, $data['_links']);
+            unset($data['_links']);
+            $out->set_data($data);
+        }
         $out->set_matched_route($route);
         return $out;
+    }
+
+    /** Puts an answer's links on the response under their full relations, each with its attributes, the engine's own target hints among them (Links::expanded()). */
+    private static function minn_add_links(WP_REST_Response $response, array $links): void
+    {
+        foreach (Links::expanded($links) as [$rel, $href, $attributes]) {
+            $response->add_link($rel, $href, $attributes);
+        }
     }
 
     public function response_to_data($response, $embed)
