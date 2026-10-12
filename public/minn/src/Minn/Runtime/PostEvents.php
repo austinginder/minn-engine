@@ -8,7 +8,6 @@ use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
 use Minn\Http\Request;
 use Minn\Media\Uploads;
-use Minn\Media\Writer;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RegisteredType;
 use Minn\Rest\RestMeta;
@@ -110,12 +109,6 @@ final readonly class PostEvents
         }
     }
 
-    /** The file a new attachment holds: through add_post_meta with plugins loaded, written directly without. */
-    public function attachedFile(Writer $library, int $id, string $relative): void
-    {
-        $this->live() ? \add_post_meta($id, '_wp_attached_file', $relative) : $library->setAttachedFile($id, $relative);
-    }
-
     /** add_attachment, once a new attachment's row and file are in. */
     public function attachmentAdded(int $id): void
     {
@@ -151,12 +144,6 @@ final readonly class PostEvents
             return;
         }
         \wp_update_attachment_metadata($id, \wp_generate_attachment_metadata($id, $file));
-    }
-
-    /** An attachment's alt text: through update_post_meta with plugins loaded, written directly without. */
-    public function altText(Writer $library, int $id, string $alt): void
-    {
-        $this->live() ? \update_post_meta($id, '_wp_attachment_image_alt', $alt) : $library->setAlt($id, $alt);
     }
 
     /** rest_insert_{type}, before the request's own terms and fields are applied; a post with no $before is a new one. */

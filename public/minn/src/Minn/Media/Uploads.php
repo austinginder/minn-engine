@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Media;
 
-use Minn\Content\Site;
 use Minn\Front\Permalinks;
-use Minn\RestError;
 
 /** The uploads directory: paths, URLs, the allowed types, and landing a file. */
 final readonly class Uploads
@@ -26,7 +24,6 @@ final readonly class Uploads
     ];
 
     public function __construct(
-        private Site $site,
         private Permalinks $permalinks,
         private string $baseDir,
     ) {
@@ -78,54 +75,11 @@ final readonly class Uploads
         return $base . '.' . $extension;
     }
 
-    /**
-     * Lands content in the dated directory under a unique name and returns
-     * the relative path ("2026/08/name.png").
-     *
-     * @param string|null $movedFrom a temporary upload to move; null writes $raw
-     */
-    public function store(string $filename, ?string $movedFrom, ?string $raw): string
-    {
-        $subdir = gmdate('Y/m', time() + $this->site->gmtOffset());
-        $dir = $this->baseDir . '/' . $subdir;
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-        $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $stem = preg_replace('/\.[^.]+$/', '', $filename);
-        $try = $filename;
-        $n = 0;
-        while (file_exists("{$dir}/{$try}")) {
-            $n++;
-            $try = "{$stem}-{$n}.{$ext}";
-        }
-        $path = "{$dir}/{$try}";
-        $written = $movedFrom !== null ? @rename($movedFrom, $path) : @file_put_contents($path, (string) $raw) !== false;
-        if (!$written || !is_file($path)) {
-            throw new RestError('rest_upload_unknown_error', 'The file could not be written to the uploads folder.', 500);
-        }
-        return "{$subdir}/{$try}";
-    }
-
     /** A stored file's path relative to the uploads folder, or null for a file outside it. */
     public function relativeOf(string $absolutePath): ?string
     {
         $base = rtrim($this->baseDir, '/') . '/';
         return str_starts_with($absolutePath, $base) ? substr($absolutePath, strlen($base)) : null;
-    }
-
-    /** Removes the original and every generated size; a size name that leaves the file's own folder is ignored. */
-    public function remove(string $relativePath, array $sizes): void
-    {
-        $dir = dirname($this->pathFor($relativePath));
-        foreach ($sizes as $size) {
-            $name = (string) ($size['file'] ?? '');
-            if ($name === '' || str_contains($name, '/') || str_contains($name, '\\') || str_contains($name, '..')) {
-                continue;
-            }
-            @unlink($dir . '/' . $name);
-        }
-        @unlink($this->pathFor($relativePath));
     }
 
     /**

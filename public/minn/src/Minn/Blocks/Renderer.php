@@ -114,7 +114,7 @@ final class Renderer
     {
         $site = new Site($db);
         $permalinks = Permalinks::fromDb($db);
-        $uploads = new Uploads($site, $permalinks, ABSPATH . 'wp-content/uploads');
+        $uploads = new Uploads($permalinks, ABSPATH . 'wp-content/uploads');
         $posts = new Posts($db);
         $renderer = null;
         $images = new ImageTags($posts, $uploads, static function () use (&$renderer): bool {

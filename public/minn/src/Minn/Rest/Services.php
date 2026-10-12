@@ -40,7 +40,6 @@ use Minn\Db;
 use Minn\Extension\Loader;
 use Minn\Front\Permalinks;
 use Minn\Http\Request;
-use Minn\Media\Images;
 use Minn\Media\Uploads;
 use Minn\Media\Writer;
 use Minn\Runtime\Runtime;
@@ -294,13 +293,13 @@ final class Services
     /** The uploads directory. */
     public function uploads(): Uploads
     {
-        return $this->share(Uploads::class, fn () => new Uploads($this->site(), $this->permalinks(), $this->contentDir() . '/uploads'));
+        return $this->share(Uploads::class, fn () => new Uploads($this->permalinks(), $this->contentDir() . '/uploads'));
     }
 
     /** Stores an upload as an attachment. */
     public function mediaWriter(): Writer
     {
-        return $this->share(Writer::class, fn () => new Writer($this->writer(), $this->posts(), $this->site(), $this->uploads(), new Images($this->site())));
+        return $this->share(Writer::class, fn () => new Writer($this->uploads()));
     }
 
     /** The JSON Schema validator, with the reference's filters passed in. */
