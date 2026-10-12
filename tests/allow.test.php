@@ -91,15 +91,15 @@ if ($sessions['author'] === null || $sessions['admin'] === null) {
 $divergent = [
     'anonymous GET /wp/v2/posts/10' => 'B1',     'anonymous POST /wp/v2/comments' => 'B1',
     'author GET /wp/v2/settings' => 'B7',
-    'admin GET /wp/v2/categories/1' => 'B1',     'admin GET /wp/v2/templates' => 'B1',
+    'admin GET /wp/v2/categories/1' => 'B1',
     'admin GET /wp/v2/navigation' => 'B1',     'admin POST /wp/v2/categories' => 'B1s',     'author GET /wp/v2/comments' => 'B1b',
     'author POST /wp/v2/comments' => 'B1b',     'admin GET /wp/v2/comments' => 'B1b',     'admin POST /wp/v2/comments' => 'B1b',
     'anonymous OPTIONS /wp/v2/posts/10' => 'B1o',     'anonymous OPTIONS /wp/v2/comments' => 'B1o',
     'author OPTIONS /wp/v2/comments' => 'B1o',     'author OPTIONS /wp/v2/settings' => 'B1o',
     'admin OPTIONS /wp/v2/categories/1' => 'B1o',     'admin OPTIONS /wp/v2/comments' => 'B1o',
-    'admin OPTIONS /wp/v2/templates' => 'B1o',     'admin OPTIONS /wp/v2/navigation' => 'B1o',
+    'admin OPTIONS /wp/v2/navigation' => 'B1o',
 ];
-$ceiling = 19;
+$ceiling = 17;
 
 $reads = ['/', '/wp/v2', '/wp/v2/posts', '/wp/v2/posts/1', '/wp/v2/posts/11', '/wp/v2/posts/10', '/wp/v2/posts/999999', '/wp/v2/pages', '/wp/v2/pages/2',
     '/wp/v2/users', '/wp/v2/users/me', '/wp/v2/users/1', '/wp/v2/users/2', '/wp/v2/categories', '/wp/v2/categories/1', '/wp/v2/tags', '/wp/v2/comments',
