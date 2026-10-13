@@ -6,6 +6,9 @@ namespace Minn\Theme;
 
 use Minn\Content\PostClasses;
 use Minn\Db;
+use Minn\Objects\Post;
+use Minn\Objects\Term;
+use Minn\Objects\User;
 
 /**
  * The body-class tokens the main query stands for, in the reference's
@@ -49,7 +52,7 @@ final readonly class QueryClasses
             'error404' => $query->is_404(),
         ];
         $classes = array_keys(array_filter($views));
-        if ($query->is_singular() && $object instanceof \WP_Post) {
+        if ($query->is_singular() && $object instanceof Post) {
             array_push($classes, ...$this->singular($object, $query));
         } elseif ($query->is_archive()) {
             array_push($classes, ...self::archive($query, $object, $id));
@@ -65,7 +68,7 @@ final readonly class QueryClasses
     }
 
     /** @return list<string> */
-    private function singular(\WP_Post $post, \WP_Query $query): array
+    private function singular(Post $post, \WP_Query $query): array
     {
         if ($post->post_type !== 'page') {
             $classes = ['single', 'single-' . PostClasses::htmlClass($post->post_type), 'postid-' . $post->ID];
@@ -102,9 +105,9 @@ final readonly class QueryClasses
             return ['post-type-archive', 'post-type-archive-' . PostClasses::htmlClass($type)];
         }
         if ($query->is_author()) {
-            return $object instanceof \WP_User ? ['author', 'author-' . self::named((string) $object->user_nicename, $id), 'author-' . $id] : ['author'];
+            return $object instanceof User ? ['author', 'author-' . self::named((string) $object->user_nicename, $id), 'author-' . $id] : ['author'];
         }
-        if (!$object instanceof \WP_Term) {
+        if (!$object instanceof Term) {
             return [];
         }
         $slug = self::named((string) $object->slug, $id);

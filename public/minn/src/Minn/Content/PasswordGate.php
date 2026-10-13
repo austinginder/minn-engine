@@ -7,6 +7,8 @@ namespace Minn\Content;
 use Minn\Auth\PortableHash;
 use Minn\Html;
 use Minn\I18n\Gettext;
+use Minn\Objects\Post;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -69,7 +71,7 @@ final class PasswordGate
     {
         $request = Runtime::current()->request;
         $referer = (string) ($request?->query['_wp_http_referer'] ?? $request?->form['_wp_http_referer'] ?? $request?->header('referer') ?? '');
-        return self::form($post, $siteUrl, $permalink, self::invalid($permalink, $referer, Reader::current()->postPassword, static fn (): \WP_Post => new \WP_Post((object) $post->row())));
+        return self::form($post, $siteUrl, $permalink, self::invalid($permalink, $referer, Reader::current()->postPassword, static fn (): Post => Handoff::newPost((object) $post->row())));
     }
 
     /**

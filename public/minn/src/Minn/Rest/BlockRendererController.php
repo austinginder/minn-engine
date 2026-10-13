@@ -11,6 +11,7 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\Post;
 use Minn\RestError;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
@@ -82,7 +83,7 @@ final readonly class BlockRendererController
     private function permit(int $postId): void
     {
         if ($postId > 0) {
-            if (!\get_post($postId) instanceof \WP_Post || !$this->caller->can('edit_post', $postId)) {
+            if (!\get_post($postId) instanceof Post || !$this->caller->can('edit_post', $postId)) {
                 throw $this->caller->refuse('block_cannot_read', 'Sorry, you are not allowed to read blocks of this post.');
             }
             return;
@@ -109,7 +110,7 @@ final readonly class BlockRendererController
         } finally {
             $GLOBALS['post'] = $outer;
             Runtime::current()->set('post', $outerRuntime);
-            if ($outer instanceof \WP_Post) {
+            if ($outer instanceof Post) {
                 \setup_postdata($outer);
             }
         }

@@ -4,7 +4,7 @@ use Minn\Runtime\CommentThreads;
 
 /** A comment row as an object. */
 #[AllowDynamicProperties]
-final class WP_Comment
+final class WP_Comment implements \Minn\Objects\Comment
 {
     public $comment_ID;
     public $comment_post_ID = 0;

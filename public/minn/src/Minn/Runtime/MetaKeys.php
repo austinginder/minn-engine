@@ -6,6 +6,9 @@ namespace Minn\Runtime;
 
 use Minn\Auth\Can;
 use Minn\I18n\Gettext;
+use Minn\Objects\Comment;
+use Minn\Objects\Term;
+use Minn\Objects\User;
 
 /**
  * The meta keys code registers, kept where the reference keeps them
@@ -135,9 +138,9 @@ final class MetaKeys
         $term = $objectType === 'term' ? \get_term($objectId) : null;
         $subtype = match ($objectType) {
             'post' => (string) (\get_post($objectId)?->post_type ?? ''),
-            'term' => $term instanceof \WP_Term ? $term->taxonomy : '',
-            'comment' => \get_comment($objectId) instanceof \WP_Comment ? 'comment' : '',
-            'user' => Handoff::user($objectId) instanceof \WP_User ? 'user' : '',
+            'term' => $term instanceof Term ? $term->taxonomy : '',
+            'comment' => \get_comment($objectId) instanceof Comment ? 'comment' : '',
+            'user' => Handoff::user($objectId) instanceof User ? 'user' : '',
             default => '',
         };
         return (string) Runtime::hooks()->filter("get_object_subtype_{$objectType}", [$subtype, $objectId]);

@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Content\PostSlugs;
 use Minn\Http\Request;
+use Minn\Objects\Errors;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
 use Minn\Support\Sanitize;
@@ -244,7 +245,7 @@ final class PostSave
         $prepared->page_template = null;
         \Minn\Rest\RuntimePrepare::savedWithHookedBlocks($prepared, $type);
         $filtered = Runtime::hooks()->filter("rest_pre_insert_{$type}", [$prepared, RuntimeRoutes::wpRequest($request)]);
-        if ($filtered instanceof \WP_Error) {
+        if ($filtered instanceof Errors) {
             $status = $filtered->get_error_data();
             throw new RestError($filtered->get_error_code(), $filtered->get_error_message(), is_array($status) ? (int) ($status['status'] ?? 400) : 400);
         }

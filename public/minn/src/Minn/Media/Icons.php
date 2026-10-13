@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Media;
 
+use Minn\Objects\Post;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 
@@ -29,10 +30,10 @@ final class Icons
         $names = [];
         if (is_numeric($mime)) {
             $post = \get_post((int) $mime);
-            $postId = $post instanceof \WP_Post ? $post->ID : 0;
+            $postId = $post instanceof Post ? $post->ID : 0;
             $ext = $postId > 0 ? strtolower((string) pathinfo((string) \get_attached_file($postId), PATHINFO_EXTENSION)) : '';
             $names = $ext === '' ? [] : array_filter([$ext, FileTypes::kindOf($ext)]);
-            $mime = $post instanceof \WP_Post ? (string) $post->post_mime_type : '';
+            $mime = $post instanceof Post ? (string) $post->post_mime_type : '';
         }
         $mime = (string) $mime;
         if ($mime !== '') {

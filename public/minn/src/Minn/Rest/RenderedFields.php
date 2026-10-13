@@ -7,6 +7,8 @@ namespace Minn\Rest;
 use Closure;
 use Minn\Content\Blocks;
 use Minn\Content\PostRecord;
+use Minn\Objects\Post;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -35,14 +37,14 @@ final class RenderedFields
     /** The rendered excerpt. */
     public static function excerpt(PostRecord $p): string
     {
-        return (string) self::withPost($p, static fn (\WP_Post $post) => Runtime::hooks()->filter('the_excerpt', [Runtime::hooks()->filter('get_the_excerpt', [$post->post_excerpt, $post])]));
+        return (string) self::withPost($p, static fn (Post $post) => Runtime::hooks()->filter('the_excerpt', [Runtime::hooks()->filter('get_the_excerpt', [$post->post_excerpt, $post])]));
     }
 
     /**
      * Runs a render with the post as the global post and its postdata set
      * up, then puts back whatever was there.
      *
-     * @param Closure(\WP_Post): mixed $render
+     * @param Closure(Post): mixed $render
      */
     /** The post made current and set up for a response that renders none of its text, as the reference sets up every item it prepares. */
     public static function setUp(PostRecord $p): void
@@ -53,8 +55,8 @@ final class RenderedFields
     private static function withPost(PostRecord $p, Closure $render): mixed
     {
         $post = \get_post($p->id);
-        if (!$post instanceof \WP_Post) {
-            return $render(new \WP_Post((object) ['ID' => $p->id, 'post_title' => $p->title, 'post_content' => $p->content, 'post_excerpt' => $p->excerpt]));
+        if (!$post instanceof Post) {
+            return $render(Handoff::newPost((object) ['ID' => $p->id, 'post_title' => $p->title, 'post_content' => $p->content, 'post_excerpt' => $p->excerpt]));
         }
         $previous = $GLOBALS['post'] ?? null;
         $GLOBALS['post'] = $post;
@@ -63,7 +65,7 @@ final class RenderedFields
             return $render($post);
         } finally {
             $GLOBALS['post'] = $previous;
-            if ($previous instanceof \WP_Post) {
+            if ($previous instanceof Post) {
                 \setup_postdata($previous);
             }
         }

@@ -355,7 +355,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `submit()` (private, line 45), `refusal()` (private, line 66)
+Internals: `submit()` (private, line 46), `refusal()` (private, line 67)
 
 
 ## CustomLogo
@@ -489,7 +489,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 46)
+Internals: `enclosures()` (private, line 47)
 
 
 ## FeedTemplates
@@ -514,7 +514,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 63), `rss2()` (private, line 68), `rss2Item()` (private, line 87), `atom()` (private, line 113), `atomEntry()` (private, line 132), `rdf()` (private, line 159), `rdfItem()` (private, line 183), `rss()` (private, line 198), `commentsTitle()` (private, line 216), `commentTitle()` (private, line 228), `current()` (private, line 237), `rss2Comments()` (private, line 244), `rss2Comment()` (private, line 262), `atomComments()` (private, line 276), `atomComment()` (private, line 298)
+Internals: `syndication()` (private, line 64), `rss2()` (private, line 69), `rss2Item()` (private, line 88), `atom()` (private, line 114), `atomEntry()` (private, line 133), `rdf()` (private, line 160), `rdfItem()` (private, line 184), `rss()` (private, line 199), `commentsTitle()` (private, line 217), `commentTitle()` (private, line 229), `current()` (private, line 238), `rss2Comments()` (private, line 245), `rss2Comment()` (private, line 263), `atomComments()` (private, line 277), `atomComment()` (private, line 299)
 
 
 ## FeedWriter
@@ -824,7 +824,7 @@ get_oembed_response_data: the data, or false when the post cannot be embedded. @
 
 - `@return array<string, mixed>|false`
 
-### static `rich(array $data, WP_Post $post, int $width, int $height): array`
+### static `rich(array $data, Minn\Objects\Post $post, int $width, int $height): array`
 
 get_oembed_response_data_rich: the size, the markup, and a thumbnail when the post has one. @param array<string, mixed> $data @return array<string, mixed>
 
@@ -844,7 +844,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 118)
+Internals: `append()` (private, line 120)
 
 
 ## PostNavigation
@@ -1287,7 +1287,7 @@ fits. Null when the site has no rules (plain permalinks).
 
 - `@return array{request: string, rule: string, query: string, vars: array<string, string>}|null`
 
-Internals: `subject()` (private, line 60), `first()` (private, line 78), `queryOf()` (private, line 103), `pageAt()` (private, line 114)
+Internals: `subject()` (private, line 61), `first()` (private, line 79), `queryOf()` (private, line 104), `pageAt()` (private, line 115)
 
 
 ## SingleAddresses
@@ -1653,7 +1653,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 53), `creatable()` (private, line 255), `editPost()` (private, line 302), `editTerm()` (private, line 312)
+Internals: `profileUrl()` (private, line 54), `creatable()` (private, line 256), `editPost()` (private, line 303), `editTerm()` (private, line 313)
 
 
 ## ToolbarTree

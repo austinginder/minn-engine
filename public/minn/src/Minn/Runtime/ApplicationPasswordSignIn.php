@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
+use Minn\Objects\Errors;
+use Minn\Objects\User;
 use Minn\Support\Sanitize;
 
 /**
@@ -22,7 +24,7 @@ final class ApplicationPasswordSignIn
     /** The signed-in user, the input unchanged, or the refusal. */
     public static function authenticate(mixed $input, string $username, string $password): mixed
     {
-        if ($input instanceof \WP_User) {
+        if ($input instanceof User) {
             return $input;
         }
         $api = (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) || (defined('REST_REQUEST') && REST_REQUEST);
@@ -41,11 +43,11 @@ final class ApplicationPasswordSignIn
         $password = (string) preg_replace('/[^a-z\d]/i', '', $password);
         $item = (new \Minn\Auth\ApplicationPasswords(new \Minn\Content\Users(Runtime::current()->db)))->verify((int) $user->ID, $password);
         if ($item === null) {
-            $error = new \WP_Error('incorrect_password', Gettext::text('The provided password is an invalid application password.'));
+            $error = Handoff::newError('incorrect_password', Gettext::text('The provided password is an invalid application password.'));
             Runtime::hooks()->action('application_password_failed_authentication', [$error]);
             return $error;
         }
-        $errors = new \WP_Error();
+        $errors = Handoff::newError();
         Runtime::hooks()->actionRefArray('wp_authenticate_application_password_errors', [$errors, $user, $item, $password]);
         if ($errors->has_errors()) {
             Runtime::hooks()->action('application_password_failed_authentication', [$errors]);
@@ -79,7 +81,7 @@ final class ApplicationPasswordSignIn
             return $input;
         }
         if ($error === null) {
-            $error = new \WP_Error();
+            $error = Handoff::newError();
             Runtime::hooks()->actionRefArray('wp_authenticate_application_password_errors', [$error, $user, $auth['item'], (string) $auth['password']]);
         }
         if ($error->has_errors()) {
@@ -91,13 +93,13 @@ final class ApplicationPasswordSignIn
     }
 
     /** Why the user may not sign in by application password, or null when they may. */
-    private static function refusal(mixed $user, string $username): ?\WP_Error
+    private static function refusal(mixed $user, string $username): ?Errors
     {
         return match (true) {
-            !$user instanceof \WP_User && Sanitize::isEmail($username) => new \WP_Error('invalid_email', Gettext::text('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
-            !$user instanceof \WP_User => new \WP_Error('invalid_username', Gettext::text('<strong>Error:</strong> Unknown username. Check again or try your email address.')),
-            !\wp_is_application_passwords_available() => new \WP_Error('application_passwords_disabled', Gettext::text('Application passwords are not available.')),
-            !\wp_is_application_passwords_available_for_user($user) => new \WP_Error('application_passwords_disabled_for_user', Gettext::text('Application passwords are not available for your account. Please contact the site administrator for assistance.')),
+            !$user instanceof User && Sanitize::isEmail($username) => Handoff::newError('invalid_email', Gettext::text('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
+            !$user instanceof User => Handoff::newError('invalid_username', Gettext::text('<strong>Error:</strong> Unknown username. Check again or try your email address.')),
+            !\wp_is_application_passwords_available() => Handoff::newError('application_passwords_disabled', Gettext::text('Application passwords are not available.')),
+            !\wp_is_application_passwords_available_for_user($user) => Handoff::newError('application_passwords_disabled_for_user', Gettext::text('Application passwords are not available for your account. Please contact the site administrator for assistance.')),
             default => null,
         };
     }

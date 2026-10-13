@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
+use Minn\Objects\Term;
 use Minn\Support\Lists;
 use Minn\Support\Text;
 
@@ -43,7 +44,7 @@ final class NavMenuItems
      * @param array<string, mixed> $args
      * @return array<int, object>
      */
-    public static function forMenu(\WP_Term $menu, array $args): array
+    public static function forMenu(Term $menu, array $args): array
     {
         $args = Lists::args($args, [
             'order' => 'ASC', 'orderby' => 'menu_order', 'post_type' => 'nav_menu_item', 'post_status' => 'publish', 'output' => \ARRAY_A, 'output_key' => 'menu_order', 'nopaging' => true,
@@ -109,12 +110,12 @@ final class NavMenuItems
         $taxonomy = Registered::taxonomy((string) $item->object);
         $term = \get_term((int) $item->object_id, (string) $item->object);
         $item->type_label = $taxonomy ? $taxonomy->labels->singular_name : (string) $item->object;
-        $link = $term instanceof \WP_Term ? \get_term_link($term, (string) $item->object) : '';
-        if (!$taxonomy || !$term instanceof \WP_Term || \is_wp_error($link)) {
+        $link = $term instanceof Term ? \get_term_link($term, (string) $item->object) : '';
+        if (!$taxonomy || !$term instanceof Term || \is_wp_error($link)) {
             $item->_invalid = true;
         }
         $item->url = is_string($link) ? $link : '';
-        $item->title = (string) $item->post_title === '' ? ($term instanceof \WP_Term ? $term->name : '') : (string) $item->post_title;
+        $item->title = (string) $item->post_title === '' ? ($term instanceof Term ? $term->name : '') : (string) $item->post_title;
     }
 
     /** An item for a post type's archive: the archives label, the archive's address. */

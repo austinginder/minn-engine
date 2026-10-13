@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Content\PostRecord;
 use Minn\Content\PostWriter;
 use Minn\Http\Request;
+use Minn\Objects\Post;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RegisteredType;
 use Minn\Rest\RestMeta;
@@ -180,8 +181,8 @@ final readonly class PostEvents
     }
 
     /** A record as the runtime's post object, for a state the database no longer holds. */
-    private static function wpPost(?PostRecord $post): ?\WP_Post
+    private static function wpPost(?PostRecord $post): ?Post
     {
-        return $post === null ? null : new \WP_Post((object) $post->row());
+        return $post === null ? null : Handoff::newPost((object) $post->row());
     }
 }

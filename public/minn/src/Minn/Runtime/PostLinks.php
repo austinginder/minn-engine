@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Auth\Can;
+use Minn\Objects\Post;
+use Minn\Objects\Term;
 use Minn\Support\Sanitize;
 use Minn\Support\Url;
 
@@ -32,7 +34,7 @@ final class PostLinks
     private const UNPUBLISHED = ['draft', 'pending', 'auto-draft', 'future'];
 
     /** A post's address (not a page, attachment or plugin type). */
-    public static function post(\WP_Post $post, int $flags): string
+    public static function post(Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $structure = (string) Runtime::hooks()->filter('pre_post_link', [(string) Runtime::options()->filtered('permalink_structure'), $post, $leavename]);
@@ -45,7 +47,7 @@ final class PostLinks
     }
 
     /** What each structure tag of a post stands for; the name stays a tag when it is left. */
-    private static function tokens(\WP_Post $post, int $flags): array
+    private static function tokens(Post $post, int $flags): array
     {
         $time = strtotime((string) $post->post_date) ?: time();
         $tokens = [
@@ -63,13 +65,13 @@ final class PostLinks
     }
 
     /** The %category% part: the post's first category by id (post_link_category may choose another), under its parents. */
-    private static function category(\WP_Post $post): string
+    private static function category(Post $post): string
     {
         $categories = \get_the_category($post->ID);
         usort($categories, static fn ($a, $b) => (int) $a->term_id <=> (int) $b->term_id);
         $chosen = $categories === [] ? null : Runtime::hooks()->filter('post_link_category', [$categories[0], $categories, $post]);
-        $chosen = $chosen instanceof \WP_Term ? $chosen : \get_term((int) Runtime::options()->filtered('default_category'), 'category');
-        if (!$chosen instanceof \WP_Term) {
+        $chosen = $chosen instanceof Term ? $chosen : \get_term((int) Runtime::options()->filtered('default_category'), 'category');
+        if (!$chosen instanceof Term) {
             return '';
         }
         $parents = $chosen->parent ? (string) \get_category_parents((int) $chosen->parent, false, '/', true) : '';
@@ -77,7 +79,7 @@ final class PostLinks
     }
 
     /** A page's own address, before page_link: ?page_id= while unpublished, its tag when the name is left, else its path. */
-    public static function page(\WP_Post $post, int $flags): string
+    public static function page(Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
@@ -90,13 +92,13 @@ final class PostLinks
     }
 
     /** An attachment's address: under a parent it belongs to, else its own slug, else ?attachment_id=. */
-    public static function attachment(\WP_Post $post, int $flags): string
+    public static function attachment(Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $parent = (int) $post->post_parent > 0 && (int) $post->post_parent !== (int) $post->ID ? \get_post((int) $post->post_parent) : null;
         $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         $link = '';
-        if ($pretty && $parent instanceof \WP_Post && in_array($parent->post_type, Registered::postTypes(), true)) {
+        if ($pretty && $parent instanceof Post && in_array($parent->post_type, Registered::postTypes(), true)) {
             $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) \get_permalink($parent);
             $name = is_numeric($post->post_name) || str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
             if (!str_contains($parentLink, '?')) {
@@ -110,7 +112,7 @@ final class PostLinks
     }
 
     /** A plugin type's address by its pattern, by its query var, or by the type and id plainly. */
-    public static function custom(\WP_Post $post, int $flags): string
+    public static function custom(Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $sample = (bool) ($flags & self::SAMPLE);
@@ -134,7 +136,7 @@ final class PostLinks
      * nor private and readable, unless it is a sample of a status that is
      * not internal (a trashed post and a revision stay plain as samples).
      */
-    private static function plain(\WP_Post $post, int $flags): bool
+    private static function plain(Post $post, int $flags): bool
     {
         $status = Registered::status((string) $post->post_status);
         if ((($flags & self::SAMPLE) || ($post->filter ?? '') === 'sample') && !($status->internal ?? false)) {
@@ -150,7 +152,7 @@ final class PostLinks
      *
      * @return array{0: string, 1: string}
      */
-    public static function sample(\WP_Post $post, ?string $title, ?string $name): array
+    public static function sample(Post $post, ?string $title, ?string $name): array
     {
         $sample = clone $post;
         if (in_array($sample->post_status, self::UNPUBLISHED, true)) {

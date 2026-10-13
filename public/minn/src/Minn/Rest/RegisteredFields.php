@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Runtime\Registered;
 use Minn\Support\Lists;
@@ -56,7 +57,7 @@ final class RegisteredFields
                 continue;
             }
             $result = call_user_func($options['update_callback'], $request[$name], $object, $name, $request, $type);
-            if ($result instanceof \WP_Error) {
+            if ($result instanceof Errors) {
                 throw self::refusal($result);
             }
         }
@@ -115,7 +116,7 @@ final class RegisteredFields
         return empty($contexts) || in_array($context, (array) $contexts, true);
     }
 
-    private static function refusal(\WP_Error $error): RestError
+    private static function refusal(Errors $error): RestError
     {
         $data = $error->get_error_data();
         if (is_array($data) && isset($data['status'])) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Content;
 
 use Minn\Media\FileTypes;
+use Minn\Objects\Post;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
@@ -103,7 +104,7 @@ final class MediaShortcodes
      *
      * @param array<string, mixed> $atts
      * @param list<string> $types
-     * @return array{order: list<string>, file: string, attachment: ?\WP_Post, atts: array<string, mixed>}|string|null
+     * @return array{order: list<string>, file: string, attachment: ?Post, atts: array<string, mixed>}|string|null
      */
     private static function sources(array $atts, array $types, ?string $hosted, string $kind): array|string|null
     {
@@ -117,7 +118,7 @@ final class MediaShortcodes
         } elseif (!self::anyOwnFormat($atts, $types)) {
             $media = self::attached($kind, self::postId());
             $attachment = $media === [] ? null : reset($media);
-            $atts['src'] = $attachment instanceof \WP_Post ? (string) \wp_get_attachment_url($attachment->ID) : '';
+            $atts['src'] = $attachment instanceof Post ? (string) \wp_get_attachment_url($attachment->ID) : '';
             if ($atts['src'] === '') {
                 return null;
             }

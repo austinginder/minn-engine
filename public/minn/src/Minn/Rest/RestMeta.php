@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Auth\Can;
+use Minn\Objects\Errors;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\MetaKeys;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
@@ -79,7 +81,7 @@ final class RestMeta
         }
     }
 
-    /** Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<\WP_Error> */
+    /** Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<Errors> */
     public static function errors(string $objectType, int $objectId, string $subtype, array $meta): array
     {
         $errors = [];
@@ -145,7 +147,7 @@ final class RestMeta
     }
 
     /** @param array<string, mixed> $field */
-    private static function update(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?\WP_Error
+    private static function update(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Errors
     {
         $valid = \rest_validate_value_from_schema($value, $field['schema'], 'meta.' . $field['name']);
         if (\is_wp_error($valid)) {
@@ -157,7 +159,7 @@ final class RestMeta
     }
 
     /** A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field */
-    public static function store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?\WP_Error
+    public static function store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Errors
     {
         $old = \get_metadata($objectType, $objectId, $key);
         if (is_array($old) && count($old) === 1 && self::same($objectType, $subtype, $key, $field, $old[0], $value)) {
@@ -170,7 +172,7 @@ final class RestMeta
     }
 
     /** A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values */
-    public static function storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?\WP_Error
+    public static function storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?Errors
     {
         if (!Can::current("edit_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_update', $field['name']);
@@ -185,7 +187,7 @@ final class RestMeta
      * @param array<string, mixed> $field
      * @param array<mixed> $values
      */
-    private static function replaceAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?\WP_Error
+    private static function replaceAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?Errors
     {
         $current = \get_metadata($objectType, $objectId, $key, false);
         $current = is_array($current) ? $current : [];
@@ -210,7 +212,7 @@ final class RestMeta
     }
 
     /** A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field */
-    public static function delete(string $objectType, int $objectId, string $key, array $field): ?\WP_Error
+    public static function delete(string $objectType, int $objectId, string $key, array $field): ?Errors
     {
         if ($field['single'] && \is_wp_error(\rest_validate_value_from_schema(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
             return self::nullStored($field['name']);
@@ -221,7 +223,7 @@ final class RestMeta
         if (\get_metadata_raw($objectType, $objectId, Slashes::add($key)) === null) {
             return null;
         }
-        return \delete_metadata($objectType, $objectId, Slashes::add($key)) ? null : new \WP_Error('rest_meta_database_error', Gettext::text('Could not delete meta value from database.'), ['key' => $field['name'], 'status' => 500]);
+        return \delete_metadata($objectType, $objectId, Slashes::add($key)) ? null : Handoff::newError('rest_meta_database_error', Gettext::text('Could not delete meta value from database.'), ['key' => $field['name'], 'status' => 500]);
     }
 
     /** Whether a value sanitizes to what is stored (scalar types compared as the text the store keeps). @param array<string, mixed> $field */
@@ -235,25 +237,25 @@ final class RestMeta
         return $sanitized === $stored;
     }
 
-    private static function refused(string $code, string $name): \WP_Error
+    private static function refused(string $code, string $name): Errors
     {
         /* translators: %s: Custom field key. */
-        return new \WP_Error($code, sprintf(Gettext::text('Sorry, you are not allowed to edit the %s custom field.'), $name), ['key' => $name, 'status' => \rest_authorization_required_code()]);
+        return Handoff::newError($code, sprintf(Gettext::text('Sorry, you are not allowed to edit the %s custom field.'), $name), ['key' => $name, 'status' => \rest_authorization_required_code()]);
     }
 
-    private static function failed(string $key, string $name): \WP_Error
+    private static function failed(string $key, string $name): Errors
     {
         /* translators: %s: Custom field key. */
-        return new \WP_Error('rest_meta_database_error', sprintf(Gettext::text('Could not update the meta value of %s in database.'), $key), ['key' => $name, 'status' => 500]);
+        return Handoff::newError('rest_meta_database_error', sprintf(Gettext::text('Could not update the meta value of %s in database.'), $key), ['key' => $name, 'status' => 500]);
     }
 
-    private static function nullStored(string $name): \WP_Error
+    private static function nullStored(string $name): Errors
     {
         /* translators: %s: Custom field key. */
-        return new \WP_Error('rest_invalid_stored_value', sprintf(Gettext::text('The %s property has an invalid stored value, and cannot be updated to null.'), $name), ['status' => 500]);
+        return Handoff::newError('rest_invalid_stored_value', sprintf(Gettext::text('The %s property has an invalid stored value, and cannot be updated to null.'), $name), ['status' => 500]);
     }
 
-    /** The gathered errors as one refusal: the first answers, with its earlier data beside it, and the rest as additional errors. @param list<\WP_Error> $errors */
+    /** The gathered errors as one refusal: the first answers, with its earlier data beside it, and the rest as additional errors. @param list<Errors> $errors */
     private static function gathered(array $errors): RestError
     {
         $formatted = [];

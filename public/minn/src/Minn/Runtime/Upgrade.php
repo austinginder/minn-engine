@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Errors;
 use Minn\Support\Files;
 use Minn\Support\Url;
 
@@ -50,11 +51,11 @@ final class Upgrade
             return false;
         }
         $skin->before();
-        $working = $connected instanceof \WP_Error ? $connected : $upgrader->download_package($options['package'], false, $extra);
-        if (!$working instanceof \WP_Error) {
+        $working = $connected instanceof Errors ? $connected : $upgrader->download_package($options['package'], false, $extra);
+        if (!$working instanceof Errors) {
             $working = $upgrader->unpack_package($working, $working !== $options['package']);
         }
-        if ($working instanceof \WP_Error) {
+        if ($working instanceof Errors) {
             $skin->error($working);
             $skin->after();
             if ($single) {
@@ -133,28 +134,28 @@ final class Upgrade
      * walked by the symbol gate at its next check), and the result offered
      * to upgrader_post_install.
      */
-    public static function install(\WP_Upgrader $upgrader, array $args): array|\WP_Error
+    public static function install(\WP_Upgrader $upgrader, array $args): array|Errors
     {
         $args = array_merge(['source' => '', 'destination' => '', 'clear_destination' => false, 'clear_working' => false, 'abort_if_destination_exists' => true, 'hook_extra' => []], $args);
         $working = rtrim((string) $args['source'], '/');
         $destination = (string) $args['destination'];
         $extra = (array) $args['hook_extra'];
         if ($working === '' || $destination === '') {
-            return new \WP_Error('bad_request', $upgrader->strings['bad_request']);
+            return Handoff::newError('bad_request', $upgrader->strings['bad_request']);
         }
         $hooks = Runtime::hooks();
         $upgrader->skin->feedback('installing_package');
         $ready = $hooks->filter('upgrader_pre_install', [true, $extra]);
-        if ($ready instanceof \WP_Error) {
+        if ($ready instanceof Errors) {
             return $ready;
         }
         $found = self::listing($working);
         if ($found === []) {
-            return new \WP_Error('incompatible_archive_empty', $upgrader->strings['incompatible_archive'], $upgrader->strings['no_files']);
+            return Handoff::newError('incompatible_archive_empty', $upgrader->strings['incompatible_archive'], $upgrader->strings['no_files']);
         }
         $source = Url::withTrailingSlash(count($found) === 1 && is_dir("{$working}/{$found[0]}") ? "{$working}/{$found[0]}" : $working);
         $source = $hooks->filter('upgrader_source_selection', [$source, $working, $upgrader, $extra]);
-        if ($source instanceof \WP_Error) {
+        if ($source instanceof Errors) {
             return $source;
         }
         $source = (string) $source;
@@ -164,7 +165,7 @@ final class Upgrade
         if ($placed === true) {
             $placed = self::move(rtrim($source, '/'), rtrim($remote, '/'), $upgrader);
         }
-        if ($placed instanceof \WP_Error) {
+        if ($placed instanceof Errors) {
             return $placed;
         }
         Symbols::recheck($remote, Runtime::options());
@@ -181,7 +182,7 @@ final class Upgrade
             'clear_destination' => $args['clear_destination'],
         ];
         $after = $hooks->filter('upgrader_post_install', [true, $extra, $result]);
-        $upgrader->result = $after instanceof \WP_Error ? $after : $result;
+        $upgrader->result = $after instanceof Errors ? $after : $result;
         return $upgrader->result;
     }
 
@@ -191,7 +192,7 @@ final class Upgrade
      * the package unzipped into a folder named for it, and an archive that
      * will not open refused in the upgrader's words with the reader's reason.
      */
-    public static function unpack(\WP_Upgrader $upgrader, string $package): string|\WP_Error
+    public static function unpack(\WP_Upgrader $upgrader, string $package): string|Errors
     {
         $upgrader->skin->feedback('unpack_package');
         $folder = WP_CONTENT_DIR . '/upgrade';
@@ -200,22 +201,22 @@ final class Upgrade
         }
         $working = $folder . '/' . basename(basename($package, '.tmp'), '.zip');
         $unzipped = \unzip_file($package, $working);
-        if ($unzipped instanceof \WP_Error) {
+        if ($unzipped instanceof Errors) {
             Files::deleteTree($working);
             return $unzipped->get_error_code() === 'incompatible_archive'
-                ? new \WP_Error('incompatible_archive', $upgrader->strings['incompatible_archive'], $unzipped->get_error_data())
+                ? Handoff::newError('incompatible_archive', $upgrader->strings['incompatible_archive'], $unzipped->get_error_data())
                 : $unzipped;
         }
         return $working;
     }
 
     /** WP_Upgrader::clear_destination: whatever is at the destination removed; true when nothing is left there. */
-    public static function clear(\WP_Upgrader $upgrader, string $remote): bool|\WP_Error
+    public static function clear(\WP_Upgrader $upgrader, string $remote): bool|Errors
     {
         if (!file_exists($remote) && !is_link($remote)) {
             return true;
         }
-        return Files::deleteTree(rtrim($remote, '/')) ? true : new \WP_Error('remove_old_failed', $upgrader->strings['remove_old_failed']);
+        return Files::deleteTree(rtrim($remote, '/')) ? true : Handoff::newError('remove_old_failed', $upgrader->strings['remove_old_failed']);
     }
 
     /** Maintenance mode on, as a bulk update of active plugins turns it on: the .maintenance file the front door reads. */
@@ -244,36 +245,36 @@ final class Upgrade
     }
 
     /** Clears the destination (an update's copy set aside first), or refuses when something is there and must not be replaced. */
-    private static function clearOrRefuse(\WP_Upgrader $upgrader, string $remote, array $args): bool|\WP_Error
+    private static function clearOrRefuse(\WP_Upgrader $upgrader, string $remote, array $args): bool|Errors
     {
         $extra = (array) $args['hook_extra'];
         if (!$args['clear_destination']) {
             return $args['abort_if_destination_exists'] && file_exists($remote)
-                ? new \WP_Error('folder_exists', $upgrader->strings['folder_exists'], $remote)
+                ? Handoff::newError('folder_exists', $upgrader->strings['folder_exists'], $remote)
                 : true;
         }
         $aside = self::setAside($upgrader, (array) ($extra['temp_backup'] ?? []));
-        if ($aside instanceof \WP_Error) {
+        if ($aside instanceof Errors) {
             return $aside;
         }
         $upgrader->skin->feedback('remove_old');
         $removed = Runtime::hooks()->filter('upgrader_clear_destination', [$upgrader->clear_destination($remote), (string) $args['destination'], $remote, $extra]);
-        if ($removed instanceof \WP_Error) {
+        if ($removed instanceof Errors) {
             return $removed;
         }
-        return $removed ? true : new \WP_Error('remove_old_failed', $upgrader->strings['remove_old_failed']);
+        return $removed ? true : Handoff::newError('remove_old_failed', $upgrader->strings['remove_old_failed']);
     }
 
     /** The source moved (or, across filesystems, copied) to the destination; an existing destination is merged into. */
-    private static function move(string $source, string $remote, \WP_Upgrader $upgrader): bool|\WP_Error
+    private static function move(string $source, string $remote, \WP_Upgrader $upgrader): bool|Errors
     {
         if (!file_exists($remote) && @rename($source, $remote)) {
             return true;
         }
         if (!is_dir($remote) && !@mkdir($remote, 0755, true)) {
-            return new \WP_Error('mkdir_failed_destination', $upgrader->strings['mkdir_failed'], $remote);
+            return Handoff::newError('mkdir_failed_destination', $upgrader->strings['mkdir_failed'], $remote);
         }
-        return self::copyInto($source, $remote) ? true : new \WP_Error('copy_failed_copy_dir', $upgrader->strings['files_not_writable']);
+        return self::copyInto($source, $remote) ? true : Handoff::newError('copy_failed_copy_dir', $upgrader->strings['files_not_writable']);
     }
 
     private static function copyInto(string $from, string $to): bool
@@ -294,7 +295,7 @@ final class Upgrade
     {
         $skin = $upgrader->skin;
         $backup = (array) ($extra['temp_backup'] ?? []);
-        if ($result instanceof \WP_Error) {
+        if ($result instanceof Errors) {
             self::putBack($backup);
             $skin->error($result);
             if (!$skin->hide_process_failed($result)) {
@@ -308,7 +309,7 @@ final class Upgrade
     }
 
     /** Moves an update's current copy to the backup folder (one left there by an earlier pass is replaced). */
-    private static function setAside(\WP_Upgrader $upgrader, array $backup): true|\WP_Error
+    private static function setAside(\WP_Upgrader $upgrader, array $backup): true|Errors
     {
         $from = self::backedUp($backup, 'from');
         if ($from === null || !file_exists($from)) {
@@ -316,9 +317,9 @@ final class Upgrade
         }
         $to = (string) self::backedUp($backup, 'to');
         if ((!is_dir(dirname($to)) && !@mkdir(dirname($to), 0755, true)) || (file_exists($to) && !Files::deleteTree($to))) {
-            return new \WP_Error('fs_temp_backup_mkdir', $upgrader->strings['temp_backup_mkdir_failed']);
+            return Handoff::newError('fs_temp_backup_mkdir', $upgrader->strings['temp_backup_mkdir_failed']);
         }
-        return @rename($from, $to) ? true : new \WP_Error('fs_temp_backup_move', $upgrader->strings['temp_backup_move_failed']);
+        return @rename($from, $to) ? true : Handoff::newError('fs_temp_backup_move', $upgrader->strings['temp_backup_move_failed']);
     }
 
     private static function putBack(array $backup): void

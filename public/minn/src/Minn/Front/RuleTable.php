@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Closure;
+use Minn\Objects\Post;
 use Minn\Runtime\SiteUrls;
 
 /**
@@ -114,6 +115,6 @@ final class RuleTable
     private static function pageAt(string $path): bool
     {
         $page = \get_page_by_path($path);
-        return $page instanceof \WP_Post && !in_array($page->post_status, ['trash', 'auto-draft'], true);
+        return $page instanceof Post && !in_array($page->post_status, ['trash', 'auto-draft'], true);
     }
 }

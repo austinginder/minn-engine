@@ -8,6 +8,8 @@ use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Html;
 use Minn\I18n\Gettext;
+use Minn\Objects\Errors;
+use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
@@ -32,14 +34,14 @@ final readonly class LoginHooks
      * as the reference's sign-in runs them: the user, or the refusal (a
      * WP_Error, or null when the chain gave none).
      */
-    public function authenticate(string $login, string $password): UserRecord|\WP_Error|null
+    public function authenticate(string $login, string $password): UserRecord|Errors|null
     {
         Runtime::hooks()->actionRefArray('wp_authenticate', [&$login, &$password]);
         $result = Handoff::authenticate($login, $password);
-        if ($result instanceof \WP_User) {
+        if ($result instanceof User) {
             return $this->users->find((int) $result->ID);
         }
-        return $result instanceof \WP_Error ? $result : null;
+        return $result instanceof Errors ? $result : null;
     }
 
     /**
@@ -51,7 +53,7 @@ final readonly class LoginHooks
     public function signedIn(UserRecord $user): void
     {
         \wp_cache_delete($user->id, 'user_meta');
-        Runtime::hooks()->action('wp_login', [$user->login, new \WP_User($user->id)]);
+        Runtime::hooks()->action('wp_login', [$user->login, Handoff::newUser($user->id)]);
     }
 
     /** A sign-in page request arriving, as wp-login.php announces it: login_init, then login_form_{action}. */
@@ -93,7 +95,7 @@ final readonly class LoginHooks
         }
         $parts['form'] = match ($action) {
             'lostpassword', 'retrievepassword' => $printed('lostpassword_form'),
-            'rp', 'resetpass' => $printed('resetpass_form', $user === null ? null : new \WP_User($user->id)),
+            'rp', 'resetpass' => $printed('resetpass_form', $user === null ? null : Handoff::newUser($user->id)),
             'register' => $printed('register_form'),
             default => $printed('login_form'),
         };
@@ -102,15 +104,15 @@ final readonly class LoginHooks
     }
 
     /** Where a sign-in lands, as login_redirect says (the requested address beside it, and the user it found or why not). */
-    public function landing(string $redirect, string $requested, UserRecord|\WP_Error|null $user): string
+    public function landing(string $redirect, string $requested, UserRecord|Errors|null $user): string
     {
-        return (string) Runtime::hooks()->filter('login_redirect', [$redirect, $requested, $user instanceof UserRecord ? new \WP_User($user->id) : $user]);
+        return (string) Runtime::hooks()->filter('login_redirect', [$redirect, $requested, $user instanceof UserRecord ? Handoff::newUser($user->id) : $user]);
     }
 
     /** Where a sign-out lands, as logout_redirect says. */
     public function leaving(string $redirect, string $requested, int $userId): string
     {
-        return (string) Runtime::hooks()->filter('logout_redirect', [$redirect, $requested, new \WP_User($userId)]);
+        return (string) Runtime::hooks()->filter('logout_redirect', [$redirect, $requested, Handoff::newUser($userId)]);
     }
 
     /** After a sign-out ended the session. */
@@ -146,7 +148,7 @@ final readonly class LoginHooks
      * mail is out (lostpassword_redirect, kept in the form), and lost_password
      * with the page's errors. Returns the address the form keeps.
      */
-    public function lostPasswordPage(string $requested, \WP_Error $errors): string
+    public function lostPasswordPage(string $requested, Errors $errors): string
     {
         Runtime::hooks()->filter('login_link_separator', [' | ']);
         $redirect = (string) Runtime::hooks()->filter('lostpassword_redirect', [$requested]);

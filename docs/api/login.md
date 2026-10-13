@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `landingFor()` (private, line 122), `asked()` (private, line 129), `checkEmail()` (private, line 136), `signInNotices()` (private, line 147), `lostPassword()` (private, line 153), `retrieve()` (private, line 184), `openResetLink()` (private, line 204), `resetSession()` (private, line 221), `savePassword()` (private, line 236), `register()` (private, line 271), `validateReset()` (private, line 296), `parts()` (private, line 311), `tokenLogin()` (private, line 323), `adminEmail()` (private, line 408), `safeRedirect()` (private, line 430), `logout()` (private, line 451), `action()` (private, line 481), `actionUrl()` (private, line 493), `siteName()` (private, line 503), `base()` (private, line 509), `tooManyAttempts()` (private, line 515), `render()` (private, line 523)
+Internals: `landingFor()` (private, line 124), `asked()` (private, line 131), `checkEmail()` (private, line 138), `signInNotices()` (private, line 149), `lostPassword()` (private, line 155), `retrieve()` (private, line 186), `openResetLink()` (private, line 206), `resetSession()` (private, line 223), `savePassword()` (private, line 238), `register()` (private, line 273), `validateReset()` (private, line 298), `parts()` (private, line 313), `tokenLogin()` (private, line 325), `adminEmail()` (private, line 410), `safeRedirect()` (private, line 432), `logout()` (private, line 453), `action()` (private, line 483), `actionUrl()` (private, line 495), `siteName()` (private, line 505), `base()` (private, line 511), `tooManyAttempts()` (private, line 517), `render()` (private, line 525)
 
 
 ## LoginForm
@@ -159,7 +159,7 @@ __construct(Minn\Content\Users $users)
 ```
 
 
-### `authenticate(string $login, string $password): Minn\Content\UserRecord|WP_Error|null`
+### `authenticate(string $login, string $password): Minn\Content\UserRecord|Minn\Objects\Errors|null`
 
 The credentials through wp_authenticate and the authenticate filters,
 as the reference's sign-in runs them: the user, or the refusal (a
@@ -189,7 +189,7 @@ is), and the footer (login_footer).
 
 - `@return array{title: string, head: string, bodyClass: string, headerUrl: string, headerText: string, message: string, errors?: string, messages?: string, form: string, footer: string}`
 
-### `landing(string $redirect, string $requested, Minn\Content\UserRecord|WP_Error|null $user): string`
+### `landing(string $redirect, string $requested, Minn\Content\UserRecord|Minn\Objects\Errors|null $user): string`
 
 Where a sign-in lands, as login_redirect says (the requested address beside it, and the user it found or why not).
 
@@ -212,7 +212,7 @@ reference's page asks: the word beside Remember Me
 
 - `@return array{rememberHelp: string, lostLink: string, separator: string, autofocus: bool}`
 
-### `lostPasswordPage(string $requested, WP_Error $errors): string`
+### `lostPasswordPage(string $requested, Minn\Objects\Errors $errors): string`
 
 The lost-password page's questions, as the reference's page asks them:
 what stands between its links, where the form sends a reader once the
@@ -267,7 +267,7 @@ These notices and one more.
 
 Whether there are none.
 
-### `wpError(): WP_Error`
+### `wpError(): Minn\Objects\Errors`
 
 As the WP_Error plugins are handed.
 
@@ -282,7 +282,7 @@ through login_errors and login_messages.
 
 - `@return array{errors: string, messages: string}`
 
-Internals: `words()` (private, line 128)
+Internals: `words()` (private, line 130)
 
 
 ## ServeLogin

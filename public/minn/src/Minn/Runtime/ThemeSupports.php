@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Json;
+use Minn\Objects\Errors;
 
 /**
  * What a theme supports, as add_theme_support keeps it (probe rest-themes):
@@ -124,20 +125,20 @@ final class ThemeSupports
     }
 
     /** register_theme_feature: true, or why the feature cannot be registered. */
-    public static function register(string $feature, array $args): true|\WP_Error
+    public static function register(string $feature, array $args): true|Errors
     {
         $args = array_merge(['type' => 'boolean', 'variadic' => false, 'description' => '', 'show_in_rest' => false], $args);
         if (!in_array($args['type'], self::TYPES, true)) {
-            return new \WP_Error('invalid_type', 'The feature "type" is not valid JSON Schema type.');
+            return Handoff::newError('invalid_type', 'The feature "type" is not valid JSON Schema type.');
         }
         if ($args['variadic'] && $args['type'] !== 'array') {
-            return new \WP_Error('variadic_must_be_array', 'When registering a "variadic" theme feature, the "type" must be an "array".');
+            return Handoff::newError('variadic_must_be_array', 'When registering a "variadic" theme feature, the "type" must be an "array".');
         }
         $rest = $args['show_in_rest'] === true ? [] : $args['show_in_rest'];
         if (is_array($rest)) {
             $schema = (array) ($rest['schema'] ?? []);
             if (in_array($args['type'], ['array', 'object'], true) && !isset($schema['items']) && !isset($schema['properties'])) {
-                return new \WP_Error('missing_schema', 'When registering an "array" or "object" feature to show in the REST API, the feature\'s schema must also be defined.');
+                return Handoff::newError('missing_schema', 'When registering an "array" or "object" feature to show in the REST API, the feature\'s schema must also be defined.');
             }
             $type = in_array($args['type'], ['array', 'object'], true) ? ['boolean', $args['type']] : $args['type'];
             $schema = array_merge(['description' => $args['description'], 'type' => $type, 'default' => false], $schema);

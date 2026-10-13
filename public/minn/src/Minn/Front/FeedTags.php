@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Media\FileTypes;
+use Minn\Objects\Post;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
@@ -92,7 +93,7 @@ final class FeedTags
         $postId = $postId ?: (int) \get_the_ID();
         $feed = $feed !== '' ? $feed : \get_default_feed();
         $post = \get_post($postId);
-        if (!$post instanceof \WP_Post) {
+        if (!$post instanceof Post) {
             return '';
         }
         $unattached = $post->post_type === 'attachment' && (int) $post->post_parent === 0;

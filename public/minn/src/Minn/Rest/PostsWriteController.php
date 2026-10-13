@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Handoff;
 use Minn\Runtime\PostSave;
 use Minn\Http\Policy;
 use Minn\Http\Subject;
@@ -303,7 +304,7 @@ final readonly class PostsWriteController
 
         $events = $this->events();
         // Whether the post may go to the trash is asked on every delete, forced or not (probe hook-inputs-2).
-        $trashable = (bool) Runtime::hooks()->filter("rest_{$type}_trashable", [EMPTY_TRASH_DAYS > 0, \WP_Post::get_instance($postId)]);
+        $trashable = (bool) Runtime::hooks()->filter("rest_{$type}_trashable", [EMPTY_TRASH_DAYS > 0, Handoff::postInstance($postId)]);
         if (!$request->flagged('force')) {
             if (!$trashable) {
                 throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);

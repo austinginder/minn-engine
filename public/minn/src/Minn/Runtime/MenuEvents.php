@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Content\Menus;
 use Minn\Content\Posts;
 use Minn\Http\Request;
+use Minn\Objects\Errors;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
 use Minn\I18n\Gettext;
@@ -42,14 +43,14 @@ final readonly class MenuEvents
      *
      * @param array<string, mixed> $data menu-name, description
      */
-    public function saveMenu(int $menuId, array $data): int|\WP_Error
+    public function saveMenu(int $menuId, array $data): int|Errors
     {
         $named = array_key_exists('menu-name', $data);
         $name = trim((string) ($data['menu-name'] ?? ''));
         if ($named || $menuId === 0) {
             $refusal = $this->menus->refuseName($name, $menuId);
             if ($refusal !== null) {
-                return new \WP_Error($refusal->code, $refusal->message, $refusal->data);
+                return Handoff::newError($refusal->code, $refusal->message, $refusal->data);
             }
         }
         $args = array_filter(['name' => $named ? $name : null, 'description' => array_key_exists('description', $data) ? (string) $data['description'] : null], static fn ($v) => $v !== null);
@@ -59,7 +60,7 @@ final readonly class MenuEvents
             $args += ['description' => '', 'slug' => ''];
         }
         $saved = $created ? \wp_insert_term($name, 'nav_menu', $args) : \wp_update_term($menuId, 'nav_menu', $args);
-        if ($saved instanceof \WP_Error) {
+        if ($saved instanceof Errors) {
             return $saved;
         }
         $menuId = (int) $saved['term_id'];
@@ -90,14 +91,14 @@ final readonly class MenuEvents
      *
      * @param array<string, mixed> $data menu-item-* arguments
      */
-    public function saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): int|\WP_Error
+    public function saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): int|Errors
     {
         if ($menuId > 0 && $this->menus->find($menuId) === null) {
-            return new \WP_Error('invalid_menu_id', Gettext::text('Invalid menu ID.'));
+            return Handoff::newError('invalid_menu_id', Gettext::text('Invalid menu ID.'));
         }
         $before = $itemId > 0 ? $this->posts->find($itemId) : null;
         if ($itemId > 0 && ($before === null || $before->type !== 'nav_menu_item')) {
-            return new \WP_Error('update_nav_menu_item_failed', Gettext::text('The given object ID is not that of a menu item.'));
+            return Handoff::newError('update_nav_menu_item_failed', Gettext::text('The given object ID is not that of a menu item.'));
         }
         $args = array_merge(self::ITEM_DEFAULTS, $data, ['menu-item-db-id' => $itemId]);
         if ($itemId === 0 && (int) $args['menu-item-position'] === 0) {
@@ -135,7 +136,7 @@ final readonly class MenuEvents
         $prepared = self::prepared(Runtime::hooks()->filter('rest_pre_insert_nav_menu', [(object) $fields, RuntimeRoutes::wpRequest($request)]));
         $data = array_filter(['menu-name' => $prepared['name'] ?? null, 'description' => $prepared['description'] ?? null], static fn ($v) => $v !== null);
         $saved = $this->saveMenu($menuId, $data);
-        if ($saved instanceof \WP_Error) {
+        if ($saved instanceof Errors) {
             throw new RestError((string) $saved->get_error_code(), (string) $saved->get_error_message(), 400);
         }
         (new TermEvents())->restSaved($saved, 'nav_menu', $request, $menuId === 0 ? 'create' : 'update');
@@ -166,7 +167,7 @@ final readonly class MenuEvents
         $menuId = (int) ($args['menu-id'] ?? 0);
         unset($args['menu-id']);
         $saved = $this->saveItem($menuId, $itemId, $args, 'later');
-        if ($saved instanceof \WP_Error) {
+        if ($saved instanceof Errors) {
             throw new RestError((string) $saved->get_error_code(), (string) $saved->get_error_message(), 400);
         }
         $events = new PostEvents();
@@ -179,7 +180,7 @@ final readonly class MenuEvents
     /** What a rest_pre_insert filter handed back, as arguments; its refusal as the request's. @return array<string, mixed> */
     private static function prepared(mixed $prepared): array
     {
-        if ($prepared instanceof \WP_Error) {
+        if ($prepared instanceof Errors) {
             $data = $prepared->get_error_data();
             throw new RestError((string) $prepared->get_error_code(), (string) $prepared->get_error_message(), (int) (is_array($data) ? ($data['status'] ?? 400) : 400));
         }

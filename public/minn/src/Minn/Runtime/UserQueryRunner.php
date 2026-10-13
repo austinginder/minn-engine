@@ -225,7 +225,7 @@ final class UserQueryRunner
             Handoff::cacheUsers($results);
             $users = [];
             foreach ($results as $user) {
-                $object = new \WP_User($user, '', $qv['blog_id']);
+                $object = Handoff::newUser($user, '', $qv['blog_id']);
                 if ($qv['fields'] === 'all_with_meta') {
                     $users[is_scalar($user) ? $user : $object->ID] = $object;
                 } else {

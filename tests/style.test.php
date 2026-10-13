@@ -348,7 +348,7 @@ $check("engine: calls into the hook API by its WordPress names stay at or under 
 // which this check keeps current.
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/wordpress-names.php') . ' --check', $ignored, $wordpressNamesStale);
 $check('engine: contracts/api/wordpress-names.json is current', $wordpressNamesStale === 0, 'run php tests/tools/wordpress-names.php');
-$wordpressClassCeiling = 568;
+$wordpressClassCeiling = 287;
 $wordpressClassReferences = (int) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/wordpress-names.json'), true)['summary'] ?? [])['classReferences'] ?? PHP_INT_MAX);
 $check("engine: references to WordPress classes stay at or under {$wordpressClassCeiling}", $wordpressClassReferences <= $wordpressClassCeiling, (string) $wordpressClassReferences);
 $check("engine: calls into WordPress-named functions (the hook API aside) stay at or under {$wordpressCallCeiling}", $wordpressCalls <= $wordpressCallCeiling, $wordpressCalls . ', most in ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys(array_slice($callersByFile, 0, 5, true)), array_slice($callersByFile, 0, 5, true))));

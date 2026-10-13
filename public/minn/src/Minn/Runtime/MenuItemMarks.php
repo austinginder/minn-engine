@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Post;
+use Minn\Objects\Term;
 use Minn\Support\Url;
 
 /**
@@ -162,8 +164,8 @@ final class MenuItemMarks
     private static function view(\WP_Query $query): array
     {
         $queried = $query->get_queried_object();
-        $post = $queried instanceof \WP_Post ? $queried : null;
-        $term = $queried instanceof \WP_Term ? $queried : null;
+        $post = $queried instanceof Post ? $queried : null;
+        $term = $queried instanceof Term ? $queried : null;
         $registry = Runtime::registry();
         $nested = $post !== null && !empty($registry->postType((string) $post->post_type)['hierarchical']);
         [$objectParents, $termAncestors] = $query->is_singular() && $post !== null && !$nested ? self::postTerms($post) : [[], []];
@@ -198,7 +200,7 @@ final class MenuItemMarks
      *
      * @return array{list<int>, array<string, list<int>>}
      */
-    private static function postTerms(\WP_Post $post): array
+    private static function postTerms(Post $post): array
     {
         $terms = [];
         $ancestors = [];

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\Errors;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\PostEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -171,7 +173,7 @@ final readonly class MediaController
         // No title left after the filter: the file's name, without its extension.
         $args = array_filter($args, static fn ($value, $key) => $key !== 'post_title' || trim((string) $value) !== '', ARRAY_FILTER_USE_BOTH) + ['post_title' => (string) preg_replace('/\.[^.]+$/', '', basename($relative))];
         $id = \wp_insert_attachment(Slashes::add($args), $file, 0, true, false);
-        if ($id instanceof \WP_Error) {
+        if ($id instanceof Errors) {
             throw new RestError($id->get_error_code(), $id->get_error_message(), 500);
         }
         (new PostEvents())->restInserted((int) $id, $request, null);
@@ -196,7 +198,7 @@ final readonly class MediaController
         // Asked of every prepared post: an attachment's description is marked only when a plugin lists the type.
         RuntimePrepare::savedWithHookedBlocks($attachment, 'attachment');
         $attachment = Runtime::hooks()->filter('rest_pre_insert_attachment', [$attachment, RuntimeRoutes::wpRequest($request)]);
-        if ($attachment instanceof \WP_Error) {
+        if ($attachment instanceof Errors) {
             $data = $attachment->get_error_data();
             throw new RestError($attachment->get_error_code(), $attachment->get_error_message(), is_array($data) ? (int) ($data['status'] ?? 500) : 500);
         }
@@ -267,7 +269,7 @@ final readonly class MediaController
         $attachment->page_template = null;
         $args = $this->preparedAttachment($attachment, $body, $request) + $parentArgs;
         $saved = \wp_update_post(Slashes::add($args), true, false);
-        if ($saved instanceof \WP_Error) {
+        if ($saved instanceof Errors) {
             throw new RestError($saved->get_error_code(), $saved->get_error_message(), 500);
         }
         // The reference's posts controller prepares a response here, before the alt text, and sets it aside.
@@ -291,7 +293,7 @@ final readonly class MediaController
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this post.');
         }
         // Asked on every delete, forced or not (probe hook-inputs-2).
-        $trashable = (bool) Runtime::hooks()->filter('rest_attachment_trashable', [EMPTY_TRASH_DAYS > 0 && MEDIA_TRASH, \WP_Post::get_instance($attachmentId)]);
+        $trashable = (bool) Runtime::hooks()->filter('rest_attachment_trashable', [EMPTY_TRASH_DAYS > 0 && MEDIA_TRASH, Handoff::postInstance($attachmentId)]);
         if (!$request->flagged('force')) {
             if (!$trashable) {
                 throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);

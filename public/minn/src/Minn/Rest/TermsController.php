@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Auth\RegisteredCaps;
+use Minn\Objects\Post;
+use Minn\Objects\Term;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\TermEvents;
@@ -74,7 +76,7 @@ final readonly class TermsController
         }
         $objects = [];
         foreach (is_array($found) ? $found : [] as $term) {
-            if ($term instanceof \WP_Term) {
+            if ($term instanceof Term) {
                 $objects[] = $this->object->view(TermRecord::fromRow(get_object_vars($term)), $base);
             }
         }
@@ -206,7 +208,7 @@ final readonly class TermsController
      *
      * @param list<string> $objectTypes the taxonomy's post types
      */
-    private function termsReadable(\WP_Post $post, array $objectTypes): bool
+    private function termsReadable(Post $post, array $objectTypes): bool
     {
         if (!in_array($post->post_type, $objectTypes, true)) {
             return false;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Ops;
 
 use Closure;
+use Minn\Objects\Errors;
+use Minn\Runtime\Handoff;
 
 /**
  * plugins_api() and themes_api() as plugins call them and answer them
@@ -43,13 +45,13 @@ final readonly class DirectoryApi
     {
         $data = $this->packages->infoAction($this->kind, $action, $request);
         if ($data === null) {
-            return new \WP_Error("{$this->kind}_api_failed", $this->kind === 'themes' ? 'The theme directory did not answer.' : 'The plugin directory did not answer.');
+            return Handoff::newError("{$this->kind}_api_failed", $this->kind === 'themes' ? 'The theme directory did not answer.' : 'The plugin directory did not answer.');
         }
         if (isset($data['unexpected'])) {
             return $this->unexpected((string) $data['unexpected']);
         }
         if (isset($data['error'])) {
-            return new \WP_Error("{$this->kind}_api_failed", (string) $data['error']);
+            return Handoff::newError("{$this->kind}_api_failed", (string) $data['error']);
         }
         // An object at the top with arrays inside, as the reference hands it back; a theme search's themes are objects too.
         if ($this->kind === 'themes' && is_array($data['themes'] ?? null)) {
@@ -65,11 +67,11 @@ final readonly class DirectoryApi
      * would have been given; anything else is the reference's own message
      * for an answer it cannot read, the body kept as its data.
      */
-    private function unexpected(string $body): \WP_Error
+    private function unexpected(string $body): Errors
     {
         if ($this->kind === 'themes' && preg_match('#^\s*<p>(.+)</p>\s*$#s', $body, $paragraph) === 1) {
-            return new \WP_Error('themes_api_failed', trim($paragraph[1]));
+            return Handoff::newError('themes_api_failed', trim($paragraph[1]));
         }
-        return new \WP_Error("{$this->kind}_api_failed", 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>.', $body);
+        return Handoff::newError("{$this->kind}_api_failed", 'An unexpected error occurred. Something may be wrong with WordPress.org or this server&#8217;s configuration. If you continue to have problems, please try the <a href="https://wordpress.org/support/forums/">support forums</a>.', $body);
     }
 }

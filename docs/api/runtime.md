@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 131 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 169 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 385 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -254,15 +254,15 @@ then wp_before_execute_ability, the callback
 (an error it returns is the answer), the output checked against the
 output schema (ability_invalid_output), and wp_after_execute_ability.
 
-### static `input(string $name, array $schema, mixed $input): WP_Error|true`
+### static `input(string $name, array $schema, mixed $input): Minn\Objects\Errors|true`
 
 True, or why the input does not fit.
 
-### static `allowed(string $name, mixed $answer): WP_Error|true`
+### static `allowed(string $name, mixed $answer): Minn\Objects\Errors|true`
 
 True, or the error a permission answer other than true becomes (an error it returns is reported as a notice).
 
-### static `output(string $name, array $schema, mixed $output): WP_Error|true`
+### static `output(string $name, array $schema, mixed $output): Minn\Objects\Errors|true`
 
 True, or why the output does not fit the output schema.
 
@@ -281,17 +281,17 @@ and the new user about a registration (wp_new_user_notification).
 
 Used by: `Minn\Login\LoginController`
 
-### static `retrievePassword(string $login): WP_Error|bool`
+### static `retrievePassword(string $login): Minn\Objects\Errors|bool`
 
 A reset link mailed to the account a login or email names: true, or
 the refusal (no name, no such account, a plugin's error, reset not
 allowed, or the mail failing).
 
-### static `resetPassword(WP_User $user, string $password): void`
+### static `resetPassword(Minn\Objects\User $user, string $password): void`
 
 A new password for a user, announced before (password_reset) and after (after_password_reset).
 
-### static `registerNewUser(string $login, string $email): WP_Error|int`
+### static `registerNewUser(string $login, string $email): Minn\Objects\Errors|int`
 
 A new account for a login and an email, with a generated password and
 the nag to change it: its id, or every refusal at once (the name
@@ -304,7 +304,7 @@ A new account announced: to the site's address (unless only the user
 is told), then to the user with a link to set their password (unless
 only the site is, or the old call shape asks for nobody).
 
-Internals: `resetLink()` (private, line 154)
+Internals: `resetLink()` (private, line 156)
 
 
 ## AjaxController
@@ -372,22 +372,22 @@ wp_delete_application_password), then rest_after_insert_application_password.
 
 Used by: `Minn\Rest\ApplicationPasswordsController`
 
-### static `create(int $userId, array $body, WP_REST_Request $request): WP_Error|array`
+### static `create(int $userId, array $body, WP_REST_Request $request): Minn\Objects\Errors|array`
 
 A new password: its record and its plain text in groups of four, or
 the reference's refusal.
 
 - `@param array<string, mixed> $body`
-- `@return array{0: array<string, mixed>, 1: string}|\WP_Error`
+- `@return array{0: array<string, mixed>, 1: string}|Errors`
 
-### static `update(int $userId, string $uuid, array $body, WP_REST_Request $request): WP_Error|array`
+### static `update(int $userId, string $uuid, array $body, WP_REST_Request $request): Minn\Objects\Errors|array`
 
 A password renamed (when the body names it): its record as it stands.
 
 - `@param array<string, mixed> $body`
-- `@return array<string, mixed>|\WP_Error`
+- `@return array<string, mixed>|Errors`
 
-Internals: `prepared()` (private, line 59)
+Internals: `prepared()` (private, line 60)
 
 
 ## ApplicationPasswordSignIn
@@ -417,7 +417,7 @@ wp_authenticate_application_password_errors, then
 application_password_did_authenticate; a refusal is announced and
 leaves the request signed out.
 
-Internals: `refusal()` (private, line 94)
+Internals: `refusal()` (private, line 96)
 
 
 ## ArchiveLinks
@@ -998,7 +998,7 @@ rest_delete_comment, after a trash or a delete, with the comment as it was and t
 
 - `@param array<string, mixed> $data`
 
-Internals: `preprocessed()` (private, line 139), `requireContent()` (private, line 154), `field()` (private, line 164), `requireLengths()` (private, line 170), `refusal()` (private, line 179)
+Internals: `preprocessed()` (private, line 140), `requireContent()` (private, line 155), `field()` (private, line 165), `requireLengths()` (private, line 171), `refusal()` (private, line 180)
 
 
 ## CommentFeedQuery
@@ -1044,13 +1044,13 @@ flood checks and pre_comment_approved have their say. A refusal is a
 WP_Error whose data is the status the form answers with; none means a
 blank page.
 
-### static `submit(array $form): WP_Comment|WP_Error`
+### static `submit(array $form): Minn\Objects\Comment|Minn\Objects\Errors`
 
 The stored comment, or the refusal the form answers with.
 
 - `@param array<string, mixed> $form the posted fields, unslashed`
 
-Internals: `store()` (private, line 75), `postRefusal()` (private, line 93), `fieldRefusal()` (private, line 122)
+Internals: `store()` (private, line 78), `postRefusal()` (private, line 96), `fieldRefusal()` (private, line 125)
 
 
 ## CommentPages
@@ -1075,7 +1075,7 @@ its top-level comment's page. Null for a comment that is not there.
 
 - `@param array<string, mixed> $args`
 
-### static `linkPage(?WP_Comment $comment, array $args): mixed`
+### static `linkPage(?Minn\Objects\Comment $comment, array $args): mixed`
 
 The page a comment's link names (before get_comment_link): the one
 asked for, the loop's, or the comment's own; '' for the default page
@@ -1093,7 +1093,7 @@ oldest comments come first.
 
 A post's link opened at a page of its comments, as pretty or plain links write it.
 
-Internals: `olderQuery()` (private, line 64)
+Internals: `olderQuery()` (private, line 65)
 
 
 ## CommentQuery
@@ -1147,7 +1147,7 @@ the request counts them and found some.
 - `@param array{join?: string, where?: string} $meta`
 - `@return list<int>|int`
 
-Internals: `request()` (private, line 89), `comments()` (private, line 121)
+Internals: `request()` (private, line 90), `comments()` (private, line 122)
 
 
 ## CommentQueryWhere
@@ -1211,8 +1211,8 @@ Used by: `Minn\Runtime\CommentQueryRunner`
 
 The query's top-level comments with their descendants filled in.
 
-- `@param list<\WP_Comment> $top`
-- `@return array<int, \WP_Comment>`
+- `@param list<Comment> $top`
+- `@return array<int, Comment>`
 
 ### static `flatten(array $children, array $args): array`
 
@@ -1220,7 +1220,7 @@ A comment's children, then each one's own, depth first, as a list.
 
 - `@param array<array-key, mixed> $children`
 - `@param array<string, mixed> $args get_children()'s arguments, handed down`
-- `@return list<\WP_Comment>`
+- `@return list<Comment>`
 
 
 ## Connectors
@@ -1638,14 +1638,16 @@ plugins have had their chance), so a plugin's version answers the engine
 as it answers WordPress. Arguments pass as given, so each answer's own
 defaults hold.
 
-Used by: `Minn\Auth\Can`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PostData`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Auth\Can`, `Minn\Content\PasswordGate`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Ops\DirectoryApi`, `Minn\Ops\UpgraderRun`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MenuItemObject`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\TermSave`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Theme\FrontLifecycle`
 
 
 ### static `bind(array $answers): void`
 
-Binds answers by name: currentUser, signedIn, user, userBy, userRecord,
+Binds answers by name: currentUser, signedIn, user, userBy,
 becomeUser, cacheUsers, authenticate, setPassword, password, hash,
-createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop.
+createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, and the record
+factories newError, newPost, postInstance, newTerm, newComment,
+commentInstance, newUser.
 
 - `@param array<string, Closure> $answers`
 
@@ -1664,10 +1666,6 @@ A user by id, or false (get_userdata).
 ### static `userBy(mixed $field, mixed $value): mixed`
 
 A user by a field (id, ID, slug, email or login), or false (get_user_by).
-
-### static `userRecord(mixed $user): object`
-
-The value when it is a user record, else the record of nobody (user id 0).
 
 ### static `becomeUser(mixed ...$args): mixed`
 
@@ -1721,7 +1719,35 @@ Sends the browser elsewhere on the site's own hosts, else to the admin (wp_safe_
 
 Ends the request with a message (wp_die), as the handler plugins choose draws it.
 
-Internals: `answer()` (private, line 147)
+### static `newError(mixed ...$args): Minn\Objects\Errors`
+
+A list of errors, the first given (new WP_Error).
+
+### static `newPost(mixed $post): Minn\Objects\Post`
+
+A post object made from a row or another post (new WP_Post).
+
+### static `postInstance(mixed $id): mixed`
+
+The post object for an id, or false (WP_Post::get_instance).
+
+### static `newTerm(mixed $term): Minn\Objects\Term`
+
+A term object made from a row (new WP_Term).
+
+### static `newComment(mixed $comment): Minn\Objects\Comment`
+
+A comment object made from a row (new WP_Comment).
+
+### static `commentInstance(mixed $id): mixed`
+
+The comment object for an id, or false (WP_Comment::get_instance).
+
+### static `newUser(mixed ...$args): Minn\Objects\User`
+
+A user object by id (or login, with no id), nobody for 0 (new WP_User).
+
+Internals: `answer()` (private, line 190)
 
 
 ## Heartbeat
@@ -1985,7 +2011,7 @@ __construct(Minn\Content\Menus $menus, Minn\Content\Posts $posts)
 ```
 
 
-### `saveMenu(int $menuId, array $data): WP_Error|int`
+### `saveMenu(int $menuId, array $data): Minn\Objects\Errors|int`
 
 wp_update_nav_menu_object: a menu made (menu id 0) or changed, its id
 or the refusal. The name is checked first, as the reference checks it.
@@ -1996,7 +2022,7 @@ or the refusal. The name is checked first, as the reference checks it.
 
 wp_delete_nav_menu: the items through wp_delete_post, the term through wp_delete_term, the locations let go, then wp_delete_nav_menu.
 
-### `saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): WP_Error|int`
+### `saveItem(int $menuId, int $itemId, array $data, string $afterInsert = 'now'): Minn\Objects\Errors|int`
 
 wp_update_nav_menu_item: an item made (id 0) or changed in a menu, its
 id or the refusal; the post save actions around the write, then the
@@ -2044,7 +2070,7 @@ argument it isn't handed.
 
 - `@return array<string, mixed>`
 
-Internals: `prepared()` (private, line 180), `fields()` (private, line 227)
+Internals: `prepared()` (private, line 181), `fields()` (private, line 228)
 
 
 ## MenuItemMarks
@@ -2081,7 +2107,7 @@ and current_item_ancestor flags for what the main query has in view.
 - `@param list<object> $items`
 - `@return list<object>`
 
-Internals: `own()` (private, line 64), `related()` (private, line 112), `isCurrent()` (private, line 144), `view()` (private, line 162), `postTerms()` (private, line 201), `ancestors()` (private, line 219), `currentUrl()` (private, line 224)
+Internals: `own()` (private, line 66), `related()` (private, line 114), `isCurrent()` (private, line 146), `view()` (private, line 164), `postTerms()` (private, line 203), `ancestors()` (private, line 221), `currentUrl()` (private, line 226)
 
 
 ## Meta
@@ -2267,7 +2293,7 @@ exist. Null for any other capability.
 - `@param list<mixed> $args the object id, then the key`
 - `@return list<string>|null`
 
-Internals: `refusal()` (private, line 183), `defaultFits()` (private, line 201)
+Internals: `refusal()` (private, line 186), `defaultFits()` (private, line 204)
 
 
 ## MetaTypes
@@ -2331,14 +2357,14 @@ before its filter.
 
 wp_setup_nav_menu_item: the item dressed, whatever it was, then the filter.
 
-### static `forMenu(WP_Term $menu, array $args): array`
+### static `forMenu(Minn\Objects\Term $menu, array $args): array`
 
 wp_get_nav_menu_items for a menu found.
 
 - `@param array<string, mixed> $args`
 - `@return array<int, object>`
 
-Internals: `menuItem()` (private, line 67), `pointsAtPost()` (private, line 90), `pointsAtTerm()` (private, line 107), `pointsAtArchive()` (private, line 121), `custom()` (private, line 133), `post()` (private, line 141), `term()` (private, line 160)
+Internals: `menuItem()` (private, line 68), `pointsAtPost()` (private, line 91), `pointsAtTerm()` (private, line 108), `pointsAtArchive()` (private, line 122), `custom()` (private, line 134), `post()` (private, line 142), `term()` (private, line 161)
 
 
 ## Notices
@@ -2992,7 +3018,7 @@ ever removed, and a symlinked folder is unlinked, never followed.
 
 Used by: `Minn\Rest\PluginsController`
 
-### static `delete(array $plugins): WP_Error|bool`
+### static `delete(array $plugins): Minn\Objects\Errors|bool`
 
 delete_plugins: true, false for none asked, or the error naming those left behind.
 
@@ -3004,7 +3030,7 @@ uninstall_plugin: pre_uninstall_plugin, then the plugin's uninstall.php
 (WP_UNINSTALL_PLUGIN naming it) or the callback it registered (heard on
 uninstall_<file>, with the plugin loaded); either is forgotten once run.
 
-Internals: `deleteOne()` (private, line 73), `removeFiles()` (private, line 88), `removeTranslations()` (private, line 104), `forget()` (private, line 121), `forgetUpdates()` (private, line 130)
+Internals: `deleteOne()` (private, line 74), `removeFiles()` (private, line 89), `removeTranslations()` (private, line 105), `forget()` (private, line 122), `forgetUpdates()` (private, line 131)
 
 
 ## PluginRequirements
@@ -3145,7 +3171,7 @@ the content of that page, cut at the more tag with a more link (or run
 on past it when "more" is set), the teaser dropped when asked or marked
 <!--noteaser-->.
 
-### static `generate(WP_Post $post, ?WP_Query $query = NULL): array`
+### static `generate(Minn\Objects\Post $post, ?WP_Query $query = NULL): array`
 
 id, authordata, currentday, currentmonth, page, pages, multipage,
 more, numpages. The page comes from the query given (the main query
@@ -3154,7 +3180,7 @@ first page of a post split into pages (probe query-compat).
 
 - `@return array<string, mixed>`
 
-### static `content(?string $moreLinkText, WP_Post $post, array $elements): string`
+### static `content(?string $moreLinkText, Minn\Objects\Post $post, array $elements): string`
 
 The content get_the_content gives: the asked page, cut at the more tag
 unless "more" is set.
@@ -3250,7 +3276,7 @@ rest_delete_{type}, after a trash or a delete, with the post as it was answered 
 
 - `@param array<string, mixed> $data`
 
-Internals: `rest()` (private, line 161), `wpPost()` (private, line 183)
+Internals: `rest()` (private, line 162), `wpPost()` (private, line 184)
 
 
 ## PostInsert
@@ -3332,23 +3358,23 @@ get_sample_permalink shows a draft as it would be published.
 - const `SAMPLE` = `2` — The address an editor previews: a draft as if published.
 - const `UNPUBLISHED` = `array (   0 => 'draft',   1 => 'pending',   2 => 'auto-draft',   3 => 'future', )`
 
-### static `post(WP_Post $post, int $flags): string`
+### static `post(Minn\Objects\Post $post, int $flags): string`
 
 A post's address (not a page, attachment or plugin type).
 
-### static `page(WP_Post $post, int $flags): string`
+### static `page(Minn\Objects\Post $post, int $flags): string`
 
 A page's own address, before page_link: ?page_id= while unpublished, its tag when the name is left, else its path.
 
-### static `attachment(WP_Post $post, int $flags): string`
+### static `attachment(Minn\Objects\Post $post, int $flags): string`
 
 An attachment's address: under a parent it belongs to, else its own slug, else ?attachment_id=.
 
-### static `custom(WP_Post $post, int $flags): string`
+### static `custom(Minn\Objects\Post $post, int $flags): string`
 
 A plugin type's address by its pattern, by its query var, or by the type and id plainly.
 
-### static `sample(WP_Post $post, ?string $title, ?string $name): array`
+### static `sample(Minn\Objects\Post $post, ?string $title, ?string $name): array`
 
 The address an editor shows with the slug to edit: the post as if
 published, its name made unique, the address with the name left,
@@ -3356,7 +3382,7 @@ a page's parents written in.
 
 - `@return array{0: string, 1: string}`
 
-Internals: `tokens()` (private, line 48), `category()` (private, line 66), `plain()` (private, line 137)
+Internals: `tokens()` (private, line 50), `category()` (private, line 68), `plain()` (private, line 139)
 
 
 ## PostLookup
@@ -3690,7 +3716,7 @@ and _wp_put_post_revision (whose default copies the revisioned meta);
 then the oldest dropped past the limit, after
 wp_save_post_revision_revisions_before_deletion.
 
-### static `save(WP_Post $post): ?int`
+### static `save(Minn\Objects\Post $post): ?int`
 
 The new revision's id, or null when none was called for.
 
@@ -3701,7 +3727,7 @@ through wp_insert_post, then _wp_put_post_revision; its id.
 
 - `@param array<string, mixed> $data`
 
-Internals: `changed()` (private, line 45), `prune()` (private, line 74)
+Internals: `changed()` (private, line 46), `prune()` (private, line 75)
 
 
 ## PostSave
@@ -3801,7 +3827,7 @@ back.
 - `@param array<string, mixed> $unsanitized`
 - `@return array<string, mixed>`
 
-Internals: `stored()` (private, line 114), `prepared()` (private, line 224), `changed()` (private, line 267)
+Internals: `stored()` (private, line 115), `prepared()` (private, line 225), `changed()` (private, line 268)
 
 
 ## QueriedObject
@@ -5354,7 +5380,7 @@ Deletes a term, then tells plugins over REST with the term as it was and the res
 
 rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request.
 
-Internals: `prepared()` (private, line 76), `refusal()` (private, line 96)
+Internals: `prepared()` (private, line 77), `refusal()` (private, line 97)
 
 
 ## TermFields
@@ -5556,32 +5582,32 @@ __construct(array $taxonomies)
 The terms the rows name, keyed as the rows were.
 
 - `@param array<array-key, object> $rows`
-- `@return array<array-key, \WP_Term>`
+- `@return array<array-key, Term>`
 
 ### `settle(array $terms, array $args): array`
 
 The terms after the tree has had its say: descendants only, padded
 counts, empty branches dropped, the page cut.
 
-- `@param array<array-key, \WP_Term> $terms`
+- `@param array<array-key, Term> $terms`
 - `@param array<string, mixed> $args`
-- `@return array<array-key, \WP_Term>`
+- `@return array<array-key, Term>`
 
 ### static `pad(array $terms, string $taxonomy): void`
 
 Each term's count raised to the published posts in it or under it, as
 _pad_term_counts does for a hierarchical taxonomy.
 
-- `@param array<array-key, \WP_Term> $terms`
+- `@param array<array-key, Term> $terms`
 
 ### static `format(array $terms, string $fields): array`
 
 The terms in the shape the fields ask for.
 
-- `@param array<array-key, \WP_Term> $terms`
+- `@param array<array-key, Term> $terms`
 - `@return array<array-key, mixed>`
 
-Internals: `hasPosts()` (private, line 123)
+Internals: `hasPosts()` (private, line 125)
 
 
 ## TermSave
@@ -5603,21 +5629,21 @@ slug a sibling holds.
 
 - const `DEFAULTS` = `array (   'alias_of' => '',   'description' => '',   'parent' => 0,   'slug' => '', )`
 
-### static `insert(mixed $term, string $taxonomy, array $args): WP_Error|array`
+### static `insert(mixed $term, string $taxonomy, array $args): Minn\Objects\Errors|array`
 
 A new term's ids, or why not.
 
 - `@param array<string, mixed> $args`
-- `@return array{term_id: int, term_taxonomy_id: int}|\WP_Error`
+- `@return array{term_id: int, term_taxonomy_id: int}|Errors`
 
-### static `update(int $termId, string $taxonomy, array $changes): WP_Error|array`
+### static `update(int $termId, string $taxonomy, array $changes): Minn\Objects\Errors|array`
 
 A changed term's ids, or why not.
 
 - `@param array<string, mixed> $changes`
-- `@return array{term_id: int, term_taxonomy_id: int}|\WP_Error`
+- `@return array{term_id: int, term_taxonomy_id: int}|Errors`
 
-Internals: `write()` (private, line 130), `nameTaken()` (private, line 163), `updatedSlug()` (private, line 187), `slugFromId()` (private, line 206), `row()` (private, line 219)
+Internals: `write()` (private, line 132), `nameTaken()` (private, line 165), `updatedSlug()` (private, line 189), `slugFromId()` (private, line 208), `row()` (private, line 221)
 
 
 ## TermWriter
@@ -5754,7 +5780,7 @@ wp_enable_block_templates and wp_setup_widgets_block_editor: a block theme's tem
 
 _custom_header_background_just_in_time: the header's and background's defaults filled in once loaded.
 
-### static `register(string $feature, array $args): WP_Error|true`
+### static `register(string $feature, array $args): Minn\Objects\Errors|true`
 
 register_theme_feature: true, or why the feature cannot be registered.
 
@@ -5779,7 +5805,7 @@ or else cut to its schema.
 
 - `@param array<string, mixed> $config the feature as it was registered`
 
-Internals: `unwrapped()` (private, line 202)
+Internals: `unwrapped()` (private, line 203)
 
 
 ## ThemeSwitch
@@ -6018,7 +6044,7 @@ and the skin closed. False when the filesystem cannot be reached.
 - `@param array{directories: list<string>, maintenance: bool, prepare: \Closure(string): array{0: string, 1: array}, clean: \Closure(): void, complete: array} $how`
 - `@return array<string, mixed>|false`
 
-### static `install(WP_Upgrader $upgrader, array $args): WP_Error|array`
+### static `install(WP_Upgrader $upgrader, array $args): Minn\Objects\Errors|array`
 
 WP_Upgrader::install_package: the unpacked folder chosen (its one
 folder, or the working folder when it holds several things), offered
@@ -6027,14 +6053,14 @@ cleared or refused when something is there, the folder moved in (and
 walked by the symbol gate at its next check), and the result offered
 to upgrader_post_install.
 
-### static `unpack(WP_Upgrader $upgrader, string $package): WP_Error|string`
+### static `unpack(WP_Upgrader $upgrader, string $package): Minn\Objects\Errors|string`
 
 WP_Upgrader::unpack_package, without the package's deletion (the
 caller's): the upgrade folder emptied of what earlier passes left,
 the package unzipped into a folder named for it, and an archive that
 will not open refused in the upgrader's words with the reader's reason.
 
-### static `clear(WP_Upgrader $upgrader, string $remote): WP_Error|bool`
+### static `clear(WP_Upgrader $upgrader, string $remote): Minn\Objects\Errors|bool`
 
 WP_Upgrader::clear_destination: whatever is at the destination removed; true when nothing is left there.
 
@@ -6046,7 +6072,7 @@ Maintenance mode on, as a bulk update of active plugins turns it on: the .mainte
 
 Maintenance mode off; said only when it was on.
 
-Internals: `destinationFor()` (private, line 238), `clearOrRefuse()` (private, line 247), `move()` (private, line 268), `copyInto()` (private, line 279), `report()` (private, line 293), `setAside()` (private, line 311), `putBack()` (private, line 324), `forget()` (private, line 336), `backedUp()` (private, line 345), `listing()` (private, line 362)
+Internals: `destinationFor()` (private, line 239), `clearOrRefuse()` (private, line 248), `move()` (private, line 269), `copyInto()` (private, line 280), `report()` (private, line 294), `setAside()` (private, line 312), `putBack()` (private, line 325), `forget()` (private, line 337), `backedUp()` (private, line 346), `listing()` (private, line 363)
 
 
 ## UserEvents
@@ -6092,7 +6118,7 @@ none), then rest_delete_user with the account as it was.
 - `@param array<string, mixed> $data the response`
 - `@param Closure(): void $quietly the engine's own delete`
 
-Internals: `prepared()` (private, line 115)
+Internals: `prepared()` (private, line 116)
 
 
 ## UserInsert

@@ -6,6 +6,8 @@ namespace Minn\Runtime;
 
 use Minn\Mail\Mailer;
 use Minn\I18n\Gettext;
+use Minn\Objects\Errors;
+use Minn\Objects\User;
 use Minn\Support\Entities;
 use Minn\Support\Sanitize;
 
@@ -25,9 +27,9 @@ final class AccountFlows
      * the refusal (no name, no such account, a plugin's error, reset not
      * allowed, or the mail failing).
      */
-    public static function retrievePassword(string $login): bool|\WP_Error
+    public static function retrievePassword(string $login): bool|Errors
     {
-        $errors = new \WP_Error();
+        $errors = Handoff::newError();
         $login = trim(stripslashes($login));
         $user = false;
         if ($login === '') {
@@ -46,14 +48,14 @@ final class AccountFlows
         if ($errors->has_errors()) {
             return $errors;
         }
-        if (!$user instanceof \WP_User) {
-            return new \WP_Error('invalidcombo', Gettext::text(self::NO_ACCOUNT));
+        if (!$user instanceof User) {
+            return Handoff::newError('invalidcombo', Gettext::text(self::NO_ACCOUNT));
         }
         if (!Runtime::hooks()->filter('send_retrieve_password_email', [true, $user->user_login, $user])) {
             return true;
         }
         $key = \get_password_reset_key($user);
-        if ($key instanceof \WP_Error) {
+        if ($key instanceof Errors) {
             return $key;
         }
         $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) \get_user_locale($user)), (string) (Runtime::current()->request?->remoteAddress ?? ''));
@@ -61,13 +63,13 @@ final class AccountFlows
         $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
         $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);
         if (!Handoff::mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
-            return new \WP_Error('retrieve_password_email_failure', Gettext::text('<strong>Error:</strong> The email could not be sent. Your site may not be correctly configured to send emails.'));
+            return Handoff::newError('retrieve_password_email_failure', Gettext::text('<strong>Error:</strong> The email could not be sent. Your site may not be correctly configured to send emails.'));
         }
         return true;
     }
 
     /** A new password for a user, announced before (password_reset) and after (after_password_reset). */
-    public static function resetPassword(\WP_User $user, string $password): void
+    public static function resetPassword(User $user, string $password): void
     {
         Runtime::hooks()->action('password_reset', [$user, $password]);
         Handoff::setPassword($password, $user->ID);
@@ -81,9 +83,9 @@ final class AccountFlows
      * empty, illegal, taken or barred; the email empty, malformed or taken;
      * whatever register_post and registration_errors add).
      */
-    public static function registerNewUser(string $login, string $email): int|\WP_Error
+    public static function registerNewUser(string $login, string $email): int|Errors
     {
-        $errors = new \WP_Error();
+        $errors = Handoff::newError();
         $name = Sanitize::user($login);
         $email = (string) Runtime::hooks()->filter('user_registration_email', [$email]);
         $nameError = match (true) {
@@ -114,7 +116,7 @@ final class AccountFlows
         }
         $id = \wp_create_user($name, Handoff::password(12, false), $email);
         if (!is_int($id) || $id < 1) {
-            return new \WP_Error('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
+            return Handoff::newError('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
         }
         \update_user_meta($id, 'default_password_nag', true);
         Runtime::hooks()->action('register_new_user', [$id]);
@@ -129,7 +131,7 @@ final class AccountFlows
     public static function newUserNotification(int $userId, mixed $deprecated, string $notify): void
     {
         $user = Handoff::user($userId);
-        if (!in_array($notify, ['user', 'admin', 'both', ''], true) || !$user instanceof \WP_User) {
+        if (!in_array($notify, ['user', 'admin', 'both', ''], true) || !$user instanceof User) {
             return;
         }
         $site = Entities::decode((string) Runtime::options()->filtered('blogname'), ENT_QUOTES);
@@ -142,7 +144,7 @@ final class AccountFlows
             return;
         }
         $key = \get_password_reset_key($user);
-        if ($key instanceof \WP_Error) {
+        if ($key instanceof Errors) {
             return;
         }
         $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . SiteUrls::login() . "\r\n";
@@ -151,7 +153,7 @@ final class AccountFlows
     }
 
     /** The link that opens the password form for a user's key. */
-    private static function resetLink(\WP_User $user, string $key): string
+    private static function resetLink(User $user, string $key): string
     {
         return SiteUrls::site('wp-login.php?login=' . rawurlencode($user->user_login) . "&key={$key}&action=rp", 'login');
     }

@@ -10,6 +10,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Objects\Errors;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
@@ -45,7 +46,7 @@ final readonly class CommentPostController
     private function submit(Request $request): Response
     {
         $comment = \wp_handle_comment_submission($request->form);
-        if ($comment instanceof \WP_Error) {
+        if ($comment instanceof Errors) {
             $status = (int) $comment->get_error_data();
             return $status > 0 ? self::refusal($comment->get_error_message(), $status) : new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
         }

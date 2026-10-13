@@ -131,9 +131,6 @@ function user_can($user, $capability, ...$args)
     return Can::user($user, $capability, ...$args);
 }
 
-// The engine's user records are this layer's WP_User; anything else is asked as nobody.
-Handoff::bind(['userRecord' => static fn ($user) => $user instanceof WP_User ? $user : new WP_User(0)]);
-
 function author_can($post, $capability, ...$args)
 {
     $post = get_post($post);

@@ -2,7 +2,7 @@
 
 /** The error object plugin code passes around; shape from contracts/fixtures/api/functions.json. */
 #[AllowDynamicProperties]
-class WP_Error
+class WP_Error implements \Minn\Objects\Errors
 {
     public $errors = [];
     public $error_data = [];

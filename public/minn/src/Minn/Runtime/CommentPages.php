@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Comment;
 use Minn\Support\Url;
 use Minn\Support\Lists;
 
@@ -30,7 +31,7 @@ final class CommentPages
     public static function pageOf(mixed $commentId, array $args): ?int
     {
         $comment = \get_comment($commentId);
-        if (!$comment instanceof \WP_Comment) {
+        if (!$comment instanceof Comment) {
             return null;
         }
         $args = Lists::args($args, self::DEFAULTS);
@@ -61,7 +62,7 @@ final class CommentPages
     }
 
     /** @param array<string, mixed> $args the count of the top-level comments older than this one, through get_page_of_comment_query_args */
-    private static function olderQuery(\WP_Comment $comment, array $args): array
+    private static function olderQuery(Comment $comment, array $args): array
     {
         $query = [
             'type' => $args['type'],
@@ -87,7 +88,7 @@ final class CommentPages
      *
      * @param array<string, mixed> $args
      */
-    public static function linkPage(?\WP_Comment $comment, array &$args): mixed
+    public static function linkPage(?Comment $comment, array &$args): mixed
     {
         if ($args['cpage'] !== null) {
             return $args['cpage'];

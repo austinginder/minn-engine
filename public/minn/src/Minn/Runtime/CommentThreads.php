@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Comment;
+
 /**
  * A threaded or flat comment query's descendants as the reference fills
  * them (probe wp-comment-query-sql): one more comment query a level, with
@@ -19,8 +21,8 @@ final class CommentThreads
     /**
      * The query's top-level comments with their descendants filled in.
      *
-     * @param list<\WP_Comment> $top
-     * @return array<int, \WP_Comment>
+     * @param list<Comment> $top
+     * @return array<int, Comment>
      */
     public function fill(\WP_Comment_Query $query, array $top): array
     {
@@ -35,7 +37,7 @@ final class CommentThreads
             $children = (new \WP_Comment_Query())->query(['parent__in' => $parents] + self::LEVEL + $query->query_vars);
             $parents = [];
             foreach (is_array($children) ? $children : [] as $child) {
-                $id = $child instanceof \WP_Comment ? (int) $child->comment_ID : 0;
+                $id = $child instanceof Comment ? (int) $child->comment_ID : 0;
                 // A comment seen already ends its branch, so a parent loop in the data cannot run on.
                 if ($id === 0 || isset($byId[$id])) {
                     continue;
@@ -66,13 +68,13 @@ final class CommentThreads
      *
      * @param array<array-key, mixed> $children
      * @param array<string, mixed> $args get_children()'s arguments, handed down
-     * @return list<\WP_Comment>
+     * @return list<Comment>
      */
     public static function flatten(array $children, array $args): array
     {
         $flat = [];
         foreach ($children as $child) {
-            if ($child instanceof \WP_Comment) {
+            if ($child instanceof Comment) {
                 $flat[] = $child;
                 array_push($flat, ...array_values((array) $child->get_children($args)));
             }

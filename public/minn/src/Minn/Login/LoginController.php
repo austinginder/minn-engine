@@ -19,7 +19,9 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Nonce;
+use Minn\Objects\Errors;
 use Minn\Runtime\AccountFlows;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 use Minn\Auth\PasswordReset;
@@ -82,7 +84,7 @@ final readonly class LoginController
                     'expiredkey' => 'Error: Your password reset link has expired. Please request a new link below.',
                     default => '',
                 };
-                $redirect = (new LoginHooks($this->users))->lostPasswordPage((string) ($request->query('redirect_to') ?? ''), $error === '' ? new \WP_Error() : new \WP_Error($code, $error));
+                $redirect = (new LoginHooks($this->users))->lostPasswordPage((string) ($request->query('redirect_to') ?? ''), $error === '' ? Handoff::newError() : Handoff::newError($code, $error));
                 return Response::html(LoginForm::lostPassword($siteName, $this->actionUrl($request, 'lostpassword'), $error, '', $this->parts('lostpassword', 'Lost Password', $siteName, null, LoginNotices::plain($code, $error)), $redirect));
             case 'confirmaction':
                 // A personal data request's link: the facade checks the key and confirms it, as wp-login.php does.
@@ -119,7 +121,7 @@ final readonly class LoginController
     }
 
     /** Where a sign-in from this page lands, through login_redirect: the address asked for, or the admin, with who the sign-in found. */
-    private function landingFor(Request $request, UserRecord|\WP_Error|null $user): string
+    private function landingFor(Request $request, UserRecord|Errors|null $user): string
     {
         [$requested, $landing] = $this->asked($request);
         return (new LoginHooks($this->users))->landing($landing, $requested, $user);
@@ -185,7 +187,7 @@ final readonly class LoginController
     {
         $result = \retrieve_password($login);
         $requested = (string) ($request->form['redirect_to'] ?? $request->query('redirect_to') ?? '');
-        if (!$result instanceof \WP_Error) {
+        if (!$result instanceof Errors) {
             // The form's own address when it named one, else "check your email" (lostpassword_redirect wrote it into the form).
             return Response::redirect($requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?checkemail=confirm'), 302);
         }
@@ -256,7 +258,7 @@ final readonly class LoginController
         if (!$refusal->isEmpty()) {
             return Response::html(LoginForm::resetPassword($siteName, $action, $key, $user->login, '', $this->parts('resetpass', 'Reset Password', $siteName, $user, $refusal)));
         }
-        \reset_password(new \WP_User($user->id), $pass1);
+        \reset_password(Handoff::newUser($user->id), $pass1);
         return $this->signIn->endAll(Response::html(LoginForm::notice($siteName, 'Password Reset', 'Your password has been reset.', $this->permalinks->url($this->base($request)))), $user->id)
             ->withCookie('wp-resetpass-' . $this->signIn->hash(), ' ', ['expires' => time() - 31536000, 'path' => $this->base($request), 'httponly' => true, 'secure' => $request->secure, 'samesite' => 'Lax']);
     }
@@ -278,12 +280,12 @@ final readonly class LoginController
         $fields = array_intersect_key($request->form, ['user_login' => true, 'user_email' => true]) + ['user_login' => '', 'user_email' => ''];
         ['user_login' => $login, 'user_email' => $email] = array_map(static fn ($value) => is_string($value) ? $value : '', $fields);
         if ($request->method !== Method::Post) {
-            $landing = (string) Runtime::hooks()->filter('registration_redirect', [(string) ($request->query('redirect_to') ?? ''), new \WP_Error()]);
+            $landing = (string) Runtime::hooks()->filter('registration_redirect', [(string) ($request->query('redirect_to') ?? ''), Handoff::newError()]);
             return Response::html(LoginForm::register($siteName, $action, '', '', '', $landing, $this->parts('register', 'Registration Form', $siteName)));
         }
         $result = AccountFlows::registerNewUser((string) $login, (string) $email);
         $requested = (string) ($request->form['redirect_to'] ?? '');
-        if (!$result instanceof \WP_Error) {
+        if (!$result instanceof Errors) {
             return Response::redirect($requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?checkemail=registered'), 302);
         }
         return Response::html(LoginForm::register($siteName, $action, '', $login, $email, $requested, $this->parts('register', 'Registration Form', $siteName, null, LoginNotices::of($result))));
@@ -295,11 +297,11 @@ final readonly class LoginController
      */
     private function validateReset(UserRecord $user, string $mismatch): LoginNotices
     {
-        $errors = new \WP_Error();
+        $errors = Handoff::newError();
         if ($mismatch !== '') {
             $errors->add('password_reset_mismatch', '<strong>Error:</strong> The passwords do not match.');
         }
-        Runtime::hooks()->action('validate_password_reset', [$errors, new \WP_User($user->id)]);
+        Runtime::hooks()->action('validate_password_reset', [$errors, Handoff::newUser($user->id)]);
         return LoginNotices::of($errors);
     }
 

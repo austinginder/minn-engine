@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\I18n\TranslationFiles;
+use Minn\Objects\User;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\UserEvents;
@@ -92,7 +93,7 @@ final readonly class UsersController
         }
         $objects = [];
         foreach ((array) $query->get_results() as $user) {
-            if ($user instanceof \WP_User) {
+            if ($user instanceof User) {
                 $record = UserRecord::fromRow((array) $user->data);
                 $objects[] = $context->isEdit() ? $this->object->edit($record) : $this->object->view($record);
             }

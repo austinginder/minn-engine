@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\TagBalancer;
+use Minn\Objects\Post;
 
 /**
  * The loop's view of a post, as the reference's generate_postdata and
@@ -26,7 +27,7 @@ final class PostData
      *
      * @return array<string, mixed>
      */
-    public static function generate(\WP_Post $post, ?\WP_Query $query = null): array
+    public static function generate(Post $post, ?\WP_Query $query = null): array
     {
         $content = str_replace("\n<!--nextpage-->\n", '<!--nextpage-->', (string) $post->post_content);
         $content = str_replace(["\n<!--nextpage-->", "<!--nextpage-->\n"], '<!--nextpage-->', $content);
@@ -54,7 +55,7 @@ final class PostData
      *
      * @param array<string, mixed> $elements as generate() gives them, with strip_teaser when the teaser should go
      */
-    public static function content(?string $moreLinkText, \WP_Post $post, array $elements): string
+    public static function content(?string $moreLinkText, Post $post, array $elements): string
     {
         $stripTeaser = !empty($elements['strip_teaser']);
         $moreLinkText ??= sprintf('<span aria-label="%1$s">%2$s</span>', sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), \the_title_attribute(['echo' => false, 'post' => $post])), \Minn\I18n\Gettext::text('(more&hellip;)'));

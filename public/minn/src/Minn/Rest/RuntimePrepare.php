@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\Errors;
 use Minn\Runtime\Runtime;
 
 /**
@@ -140,7 +141,7 @@ final class RuntimePrepare
         $response = RuntimeRoutes::itemResponse($item);
         $before = [$response->get_data(), $response->get_links()];
         $filtered = \rest_ensure_response(Runtime::hooks()->filter((string) $filter, [$response, $described(), $request]));
-        if ($filtered instanceof \WP_Error) {
+        if ($filtered instanceof Errors) {
             return $item;
         }
         if ($filtered === $response && [$response->get_data(), $response->get_links()] === $before) {

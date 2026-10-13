@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Closure;
 use Minn\Http\Request;
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
@@ -43,14 +44,14 @@ final readonly class UserEvents
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
         $id = \wp_insert_user(['role' => false] + self::prepared($userdata, $wpRequest));
-        if ($id instanceof \WP_Error) {
+        if ($id instanceof Errors) {
             throw new RestError($id->get_error_code(), $id->get_error_message(), 400);
         }
         if (!is_int($id)) {
             return $quietly();
         }
         Runtime::hooks()->action('rest_insert_user', [Handoff::user($id), $wpRequest, true]);
-        (new \WP_User($id))->add_role($role);
+        (Handoff::newUser($id))->add_role($role);
         RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
         RegisteredFields::update(Handoff::user($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
@@ -73,11 +74,11 @@ final readonly class UserEvents
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
         $result = \wp_update_user(self::prepared(['ID' => $id] + $userdata, $wpRequest));
-        if ($result instanceof \WP_Error) {
+        if ($result instanceof Errors) {
             throw new RestError($result->get_error_code(), $result->get_error_message(), 400);
         }
         if ($role !== null) {
-            (new \WP_User($id))->set_role($role);
+            (Handoff::newUser($id))->set_role($role);
         }
         Runtime::hooks()->action('rest_insert_user', [Handoff::user($id), $wpRequest, false]);
         RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
@@ -115,7 +116,7 @@ final readonly class UserEvents
     private static function prepared(array $userdata, \WP_REST_Request $request): array
     {
         $filtered = Runtime::hooks()->filter('rest_pre_insert_user', [(object) $userdata, $request]);
-        if ($filtered instanceof \WP_Error) {
+        if ($filtered instanceof Errors) {
             $status = $filtered->get_error_data();
             throw new RestError($filtered->get_error_code(), $filtered->get_error_message(), is_array($status) ? (int) ($status['status'] ?? 400) : 400);
         }

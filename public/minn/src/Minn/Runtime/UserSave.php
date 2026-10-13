@@ -84,7 +84,7 @@ final class UserSave
      */
     public static function meta(array $meta, int $userId, array $userdata): array
     {
-        $user = new \WP_User($userId);
+        $user = Handoff::newUser($userId);
         $update = !empty($userdata['ID']);
         $meta = (array) Runtime::hooks()->filter('insert_user_meta', [$meta, $user, $update, $userdata]);
         $custom = isset($userdata['meta_input']) && is_array($userdata['meta_input']) ? array_diff_key($userdata['meta_input'], $meta) : [];

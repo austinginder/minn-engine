@@ -315,7 +315,7 @@ Route: `DELETE /wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[
 
 Removes one.
 
-Internals: `subject()` (private, line 138), `existing()` (private, line 162), `validate()` (private, line 171), `item()` (private, line 181), `when()` (private, line 198)
+Internals: `subject()` (private, line 139), `existing()` (private, line 163), `validate()` (private, line 172), `item()` (private, line 182), `when()` (private, line 199)
 
 
 ## ArgCheck
@@ -385,7 +385,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 88), `invalid()` (private, line 106), `claims()` (private, line 133), `batchablePath()` (private, line 143), `subRequest()` (private, line 161), `error()` (private, line 179), `envelope()` (private, line 185)
+Internals: `refusal()` (private, line 89), `invalid()` (private, line 107), `claims()` (private, line 134), `batchablePath()` (private, line 144), `subRequest()` (private, line 162), `error()` (private, line 180), `envelope()` (private, line 186)
 
 
 ## BatchRequest
@@ -435,7 +435,7 @@ Route: `POST /wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+} (public)`
 
 The block's markup, as {"rendered": "..."}.
 
-Internals: `refuseInvalid()` (private, line 64), `permit()` (private, line 82), `rendered()` (private, line 96)
+Internals: `refuseInvalid()` (private, line 65), `permit()` (private, line 83), `rendered()` (private, line 97)
 
 
 ## BlockTypesController
@@ -798,7 +798,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 74), `events()` (private, line 151), `allowed()` (private, line 220), `readablePost()` (private, line 261), `readable()` (private, line 270), `plainComment()` (private, line 280), `prepared()` (private, line 302)
+Internals: `totals()` (private, line 76), `events()` (private, line 153), `allowed()` (private, line 222), `readablePost()` (private, line 263), `readable()` (private, line 272), `plainComment()` (private, line 282), `prepared()` (private, line 304)
 
 
 ## Context
@@ -1369,7 +1369,7 @@ Attachments go to the trash only when MEDIA_TRASH (or
 rest_attachment_trashable) says so; force removes the row, its meta,
 and its files.
 
-Internals: `restDate()` (private, line 48), `storeWithPlugins()` (private, line 126), `insertedWithPlugins()` (private, line 153), `preparedAttachment()` (private, line 194), `finishedWithPlugins()` (private, line 218), `params()` (private, line 234), `attachment()` (private, line 315)
+Internals: `restDate()` (private, line 50), `storeWithPlugins()` (private, line 128), `insertedWithPlugins()` (private, line 155), `preparedAttachment()` (private, line 196), `finishedWithPlugins()` (private, line 220), `params()` (private, line 236), `attachment()` (private, line 317)
 
 
 ## MediaObject
@@ -1691,7 +1691,7 @@ rendered description.
 - `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
 - `@return array<string, mixed>`
 
-Internals: `items()` (private, line 145), `find()` (private, line 159), `statusOf()` (private, line 173), `manifestFor()` (private, line 185), `extensionItem()` (private, line 195), `pluginItem()` (private, line 223), `links()` (private, line 257), `extensionKey()` (private, line 262), `refuse()` (private, line 269)
+Internals: `items()` (private, line 146), `find()` (private, line 160), `statusOf()` (private, line 174), `manifestFor()` (private, line 186), `extensionItem()` (private, line 196), `pluginItem()` (private, line 224), `links()` (private, line 258), `extensionKey()` (private, line 263), `refuse()` (private, line 270)
 
 
 ## PolicyGate
@@ -1933,7 +1933,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 107), `readable()` (private, line 126), `visibleStatuses()` (private, line 149)
+Internals: `totals()` (private, line 108), `readable()` (private, line 127), `visibleStatuses()` (private, line 150)
 
 
 ## PostsWriteController
@@ -1999,7 +1999,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 140), `hasOrder()` (private, line 146), `events()` (private, line 152), `newColumns()` (private, line 163), `writeNewPost()` (private, line 197), `checkAssignTerms()` (private, line 226), `rememberOld()` (private, line 334), `floatingDate()` (private, line 348), `scheduledIfFuture()` (private, line 362), `askedDate()` (private, line 384), `updatedDate()` (private, line 402), `fieldColumns()` (private, line 415), `statusColumns()` (private, line 459), `checkStickyChange()` (private, line 495), `checkStickyPasswordConflict()` (private, line 507), `validStatus()` (private, line 527), `clean()` (private, line 536)
+Internals: `hasParent()` (private, line 141), `hasOrder()` (private, line 147), `events()` (private, line 153), `newColumns()` (private, line 164), `writeNewPost()` (private, line 198), `checkAssignTerms()` (private, line 227), `rememberOld()` (private, line 335), `floatingDate()` (private, line 349), `scheduledIfFuture()` (private, line 363), `askedDate()` (private, line 385), `updatedDate()` (private, line 403), `fieldColumns()` (private, line 416), `statusColumns()` (private, line 460), `checkStickyChange()` (private, line 496), `checkStickyPasswordConflict()` (private, line 508), `validStatus()` (private, line 528), `clean()` (private, line 537)
 
 
 ## RegisteredFields
@@ -2040,7 +2040,7 @@ The names of the fields registered for the type that show in the context. @retur
 
 - `@return list<string>`
 
-Internals: `of()` (private, line 95), `wanted()` (private, line 102), `inContext()` (private, line 112), `refusal()` (private, line 118)
+Internals: `of()` (private, line 96), `wanted()` (private, line 103), `inContext()` (private, line 113), `refusal()` (private, line 119)
 
 
 ## RegisteredPostFields
@@ -2145,7 +2145,7 @@ stock and type): the filter's answer without repeats, in order.
 - `@param list<string> $classes`
 - `@return list<string>`
 
-Internals: `withPost()` (private, line 53)
+Internals: `withPost()` (private, line 55)
 
 
 ## Reply
@@ -2227,9 +2227,9 @@ Applies a request's meta to an object; the gathered refusals are thrown.
 
 ### static `errors(string $objectType, int $objectId, string $subtype, array $meta): array`
 
-Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<\WP_Error>
+Applies a request's meta to an object, key by key in registration order; the refusals come back. @return list<Errors>
 
-- `@return list<\WP_Error>`
+- `@return list<Errors>`
 
 ### static `fields(string $objectType, string $subtype): array`
 
@@ -2246,19 +2246,19 @@ A value for the response: through the field's prepare callback, or checked again
 
 - `@param array<string, mixed> $field`
 
-### static `store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?WP_Error`
+### static `store(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Minn\Objects\Errors`
 
 A single key stored: an unchanged value is left alone, then the user must be allowed to edit it. @param array<string, mixed> $field
 
 - `@param array<string, mixed> $field`
 
-### static `storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?WP_Error`
+### static `storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?Minn\Objects\Errors`
 
 A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values
 
 - `@param array<string, mixed> $field @param array<mixed> $values`
 
-### static `delete(string $objectType, int $objectId, string $key, array $field): ?WP_Error`
+### static `delete(string $objectType, int $objectId, string $key, array $field): ?Minn\Objects\Errors`
 
 A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field
 
@@ -2274,7 +2274,7 @@ Whether a value sanitizes to what is stored (scalar types compared as the text t
 
 A type's empty value: '' for a string, false, 0, or an empty list.
 
-Internals: `update()` (private, line 148), `replaceAll()` (private, line 188), `refused()` (private, line 238), `failed()` (private, line 244), `nullStored()` (private, line 250), `gathered()` (private, line 257), `request()` (private, line 287)
+Internals: `update()` (private, line 150), `replaceAll()` (private, line 190), `refused()` (private, line 240), `failed()` (private, line 246), `nullStored()` (private, line 252), `gathered()` (private, line 259), `request()` (private, line 289)
 
 
 ## RestUrl
@@ -2519,7 +2519,7 @@ __construct(Minn\Rest\Types $types)
 
 The route's answer with the server's filters around it, or as the route gives it when no plugin can hear.
 
-Internals: `plain()` (private, line 74), `run()` (private, line 86), `routeName()` (private, line 96), `handler()` (private, line 114), `defaults()` (private, line 129), `typed()` (private, line 147)
+Internals: `plain()` (private, line 75), `run()` (private, line 87), `routeName()` (private, line 97), `handler()` (private, line 115), `defaults()` (private, line 130), `typed()` (private, line 148)
 
 
 ## RuntimePrepare
@@ -2576,7 +2576,7 @@ One item through a rest_prepare filter.
 - `@param \Closure(): mixed $described the object the item describes, fetched only when a plugin listens`
 - `@return array<string, mixed>`
 
-Internals: `hookedBlocks()` (private, line 76), `withHookedBlocks()` (private, line 113), `objectType()` (private, line 154)
+Internals: `hookedBlocks()` (private, line 77), `withHookedBlocks()` (private, line 114), `objectType()` (private, line 155)
 
 
 ## RuntimeRoutes
@@ -2657,7 +2657,7 @@ Keeps the route and handler a request matched, for the response plugins see at s
 
 - `@param array<string, mixed> $handler`
 
-### static `toWpError(Minn\RestError $error): WP_Error`
+### static `toWpError(Minn\RestError $error): Minn\Objects\Errors`
 
 An engine refusal as plugins handle one.
 
@@ -2708,7 +2708,7 @@ A callback's return as a response object, an error converted.
 
 The runtime's REST server, the one door to it (built, with rest_api_init, on first use).
 
-Internals: `allow()` (private, line 98), `dispatchDone()` (private, line 304), `asksForXml()` (private, line 379), `oembedXml()` (private, line 390), `look()` (private, line 404), `remember()` (private, line 409), `decode()` (private, line 416), `expand()` (private, line 436), `newWpRequest()` (private, line 461), `toResponse()` (private, line 490)
+Internals: `allow()` (private, line 100), `dispatchDone()` (private, line 306), `asksForXml()` (private, line 381), `oembedXml()` (private, line 392), `look()` (private, line 406), `remember()` (private, line 411), `decode()` (private, line 418), `expand()` (private, line 438), `newWpRequest()` (private, line 463), `toResponse()` (private, line 492)
 
 
 ## Schema
@@ -3610,7 +3610,7 @@ Used by: `Minn\Rest\TermsController`
 
 A term as get_term hands it back.
 
-Internals: `record()` (private, line 30)
+Internals: `record()` (private, line 31)
 
 
 ## TermListArgs
@@ -3735,7 +3735,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 155), `termsReadable()` (private, line 209)
+Internals: `requireParent()` (private, line 157), `termsReadable()` (private, line 211)
 
 
 ## Types
@@ -3968,7 +3968,7 @@ Route: `DELETE /wp/v2/users/{id:[\d]+} (cap delete_users; user {id} must exist)`
 
 reassign is REQUIRED (checked before the user lookup), and so is force.
 
-Internals: `listAllowed()` (private, line 108), `totals()` (private, line 132), `hasPublishedContent()` (private, line 167), `validRole()` (private, line 176), `validLocale()` (private, line 191), `assignableRole()` (private, line 203), `validEmail()` (private, line 212), `loginRefusal()` (private, line 398)
+Internals: `listAllowed()` (private, line 109), `totals()` (private, line 133), `hasPublishedContent()` (private, line 168), `validRole()` (private, line 177), `validLocale()` (private, line 192), `assignableRole()` (private, line 204), `validEmail()` (private, line 213), `loginRefusal()` (private, line 399)
 
 
 ## ViewConfigPatch

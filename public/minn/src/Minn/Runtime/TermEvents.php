@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Closure;
 use Minn\Http\Request;
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
@@ -40,7 +41,7 @@ final readonly class TermEvents
     {
         $prepared = self::prepared($taxonomy, $body, $request);
         $made = \wp_insert_term(Slashes::add($prepared['name'] ?? null), $taxonomy, Slashes::add($prepared));
-        if ($made instanceof \WP_Error) {
+        if ($made instanceof Errors) {
             throw self::refusal($made);
         }
         return (int) $made['term_id'];
@@ -60,7 +61,7 @@ final readonly class TermEvents
             return;
         }
         $changed = \wp_update_term($termId, $taxonomy, Slashes::add($prepared));
-        if ($changed instanceof \WP_Error) {
+        if ($changed instanceof Errors) {
             throw self::refusal($changed);
         }
     }
@@ -93,7 +94,7 @@ final readonly class TermEvents
     }
 
     /** A save's refusal as REST serves it: a name in use with the term's id, anything else with its own status or 500. */
-    private static function refusal(\WP_Error $error): RestError
+    private static function refusal(Errors $error): RestError
     {
         $existing = (int) $error->get_error_data('term_exists');
         if ($error->get_error_code() === 'term_exists' && $existing > 0) {

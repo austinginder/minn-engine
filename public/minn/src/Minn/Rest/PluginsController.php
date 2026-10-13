@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Http\Access;
+use Minn\Objects\Errors;
 use Minn\Ops\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
@@ -131,7 +132,7 @@ final readonly class PluginsController
         // A WordPress plugin is deleted as the reference deletes it (uninstalled first, the delete hooks around it).
         if (array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {
             $deleted = PluginRemoval::delete([$plugin . '.php']);
-            if ($deleted instanceof \WP_Error) {
+            if ($deleted instanceof Errors) {
                 throw new RestError((string) $deleted->get_error_code(), (string) $deleted->get_error_message(), 500);
             }
         } else {

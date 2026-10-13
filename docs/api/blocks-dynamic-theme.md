@@ -116,7 +116,7 @@ __construct(Minn\Content\Posts $posts, Minn\Content\Site $site, Minn\Front\Perma
 
 Registers this family's blocks with the renderer.
 
-Internals: `query()` (private, line 53), `queried()` (private, line 74), `loop()` (private, line 90), `current()` (private, line 103), `total()` (private, line 116), `postTemplate()` (private, line 132), `postClasses()` (private, line 166), `queryTitle()` (private, line 196), `noResults()` (private, line 216), `pagination()` (private, line 230), `paginationBase()` (private, line 276), `numbers()` (private, line 291), `archiveTitle()` (private, line 303)
+Internals: `query()` (private, line 54), `queried()` (private, line 75), `loop()` (private, line 91), `current()` (private, line 104), `total()` (private, line 117), `postTemplate()` (private, line 133), `postClasses()` (private, line 167), `queryTitle()` (private, line 197), `noResults()` (private, line 217), `pagination()` (private, line 231), `paginationBase()` (private, line 277), `numbers()` (private, line 292), `archiveTitle()` (private, line 304)
 
 
 ## Structure

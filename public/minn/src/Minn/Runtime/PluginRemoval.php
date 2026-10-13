@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Errors;
 use Minn\Support\Files;
 use Minn\Support\Paths;
 
@@ -23,7 +24,7 @@ final class PluginRemoval
      *
      * @param array<int, string> $plugins plugin files, relative to the plugins folder
      */
-    public static function delete(array $plugins): bool|\WP_Error
+    public static function delete(array $plugins): bool|Errors
     {
         if ($plugins === []) {
             return false;
@@ -36,7 +37,7 @@ final class PluginRemoval
             }
         }
         self::forgetUpdates(array_diff(array_map('strval', $plugins), $failed));
-        return $failed === [] ? true : new \WP_Error('could_not_remove_plugin', sprintf('Could not fully remove the plugin(s) %s.', implode(', ', $failed)));
+        return $failed === [] ? true : Handoff::newError('could_not_remove_plugin', sprintf('Could not fully remove the plugin(s) %s.', implode(', ', $failed)));
     }
 
     /**

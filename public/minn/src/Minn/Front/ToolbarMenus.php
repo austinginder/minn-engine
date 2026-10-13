@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Auth\Can;
 use Minn\I18n\Numbers;
+use Minn\Objects\User;
 use Minn\Runtime\CurrentUser;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
@@ -290,7 +291,7 @@ final class ToolbarMenus
         [$title, $href] = match (true) {
             !empty($shown->post_type) => self::editPost($shown),
             !empty($shown->taxonomy) => self::editTerm($shown),
-            $shown instanceof \WP_User && Can::current('edit_user', $shown->ID) => [Gettext::text('Edit User'), \get_edit_user_link($shown->ID)],
+            $shown instanceof User && Can::current('edit_user', $shown->ID) => [Gettext::text('Edit User'), \get_edit_user_link($shown->ID)],
             default => [null, null],
         };
         if ($title !== null && $href) {

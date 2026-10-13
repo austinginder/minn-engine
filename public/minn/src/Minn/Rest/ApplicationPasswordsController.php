@@ -17,6 +17,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Runtime\ApplicationPasswordEvents;
 
@@ -65,7 +66,7 @@ final readonly class ApplicationPasswordsController
         }
         $user = $this->subject($request, $userId, 'rest_cannot_create_application_passwords', 'Sorry, you are not allowed to create application passwords for this user.');
         $made = ApplicationPasswordEvents::create($user->id, $body, RuntimeRoutes::wpRequest($request));
-        if ($made instanceof \WP_Error) {
+        if ($made instanceof Errors) {
             return RuntimeRoutes::fromWp($made);
         }
         [$record, $plain] = $made;
@@ -115,7 +116,7 @@ final readonly class ApplicationPasswordsController
         $user = $this->subject($request, $userId, 'rest_cannot_edit_application_password', 'Sorry, you are not allowed to edit this application password.');
         $record = $this->existing($user, $uuid);
         $record = ApplicationPasswordEvents::update($user->id, (string) $record['uuid'], $body, RuntimeRoutes::wpRequest($request));
-        if ($record instanceof \WP_Error) {
+        if ($record instanceof Errors) {
             return RuntimeRoutes::fromWp($record);
         }
         return Reply::item($this->item($user, $record), Fields::fromQuery($request->query));

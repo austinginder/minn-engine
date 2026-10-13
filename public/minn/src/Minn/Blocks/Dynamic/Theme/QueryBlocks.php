@@ -17,6 +17,7 @@ use Minn\Blocks\Wrapper;
 use Minn\Content\Site;
 use Minn\Content\Texturize;
 use Minn\Front\Kind;
+use Minn\Objects\Post;
 use Minn\Runtime\Runtime;
 use Minn\Front\Permalinks;
 use Minn\Html;
@@ -76,7 +77,7 @@ final class QueryBlocks
         $queryId = $block->attrs['queryId'] ?? null;
         $template = new \WP_Block(['blockName' => 'core/post-template', 'attrs' => [], 'innerBlocks' => [], 'innerHTML' => '', 'innerContent' => []], ['queryId' => $queryId, 'query' => $attrs]);
         $query = new \WP_Query(\build_query_vars_from_query_block($template, $page));
-        $rows = array_map(static fn ($post) => array_diff_key(get_object_vars($post), ['filter' => true]), array_filter((array) $query->posts, static fn ($post) => $post instanceof \WP_Post));
+        $rows = array_map(static fn ($post) => array_diff_key(get_object_vars($post), ['filter' => true]), array_filter((array) $query->posts, static fn ($post) => $post instanceof Post));
         return new Page(PostRecord::fromRows(array_values($rows)), (int) $query->found_posts);
     }
 

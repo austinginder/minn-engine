@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Objects\Post;
+use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
@@ -28,7 +30,7 @@ final class PostEmbed
     public static function data(mixed $post, int $width): array|false
     {
         $post = \get_post($post);
-        if (!$post instanceof \WP_Post || !\is_post_publicly_viewable($post)) {
+        if (!$post instanceof Post || !\is_post_publicly_viewable($post)) {
             return false;
         }
         $limits = (array) Runtime::hooks()->filter('oembed_min_max_width', [['min' => 200, 'max' => 600]]);
@@ -44,7 +46,7 @@ final class PostEmbed
             'type' => 'link',
         ];
         $author = Handoff::user((int) $post->post_author);
-        if ($author instanceof \WP_User) {
+        if ($author instanceof User) {
             $data['author_name'] = $author->display_name;
             $data['author_url'] = \get_author_posts_url($author->ID);
         }
@@ -52,7 +54,7 @@ final class PostEmbed
     }
 
     /** get_oembed_response_data_rich: the size, the markup, and a thumbnail when the post has one. @param array<string, mixed> $data @return array<string, mixed> */
-    public static function rich(array $data, \WP_Post $post, int $width, int $height): array
+    public static function rich(array $data, Post $post, int $width, int $height): array
     {
         $data['width'] = abs($width);
         $data['height'] = abs($height);
@@ -73,7 +75,7 @@ final class PostEmbed
     public static function html(int $width, int $height, mixed $post): string|false
     {
         $post = \get_post($post);
-        if (!$post instanceof \WP_Post) {
+        if (!$post instanceof Post) {
             return false;
         }
         $secret = Handoff::password(10, false);
@@ -96,7 +98,7 @@ final class PostEmbed
     public static function url(mixed $post): string|false
     {
         $post = \get_post($post);
-        if (!$post instanceof \WP_Post) {
+        if (!$post instanceof Post) {
             return false;
         }
         $permalink = (string) \get_permalink($post);

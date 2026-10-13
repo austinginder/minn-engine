@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Objects\Comment;
 use Minn\Runtime\CommentEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -18,6 +19,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Support\Email;
 
@@ -57,7 +59,7 @@ final readonly class CommentsController
         $password = is_string($wp['password']) ? $wp['password'] : '';
         $objects = [];
         foreach (is_array($found) ? $found : [] as $comment) {
-            if ($comment instanceof \WP_Comment && $this->readable($comment, $password)) {
+            if ($comment instanceof Comment && $this->readable($comment, $password)) {
                 $objects[] = $this->object->build(CommentRecord::fromRow($comment->to_array()), $context);
             }
         }
@@ -189,7 +191,7 @@ final readonly class CommentsController
         $fields = Fields::fromQuery($request->query);
         $events = $this->events();
         // Whether the comment may go to the trash is asked on every delete, forced or not (probe hook-inputs-2).
-        $trashable = (bool) Runtime::hooks()->filter('rest_comment_trashable', [EMPTY_TRASH_DAYS > 0, \WP_Comment::get_instance($commentId)]);
+        $trashable = (bool) Runtime::hooks()->filter('rest_comment_trashable', [EMPTY_TRASH_DAYS > 0, Handoff::commentInstance($commentId)]);
         if ($request->flagged('force')) {
             $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($comment, Context::Edit), ['_links' => true])];
             $events->delete($comment);
@@ -267,7 +269,7 @@ final readonly class CommentsController
     }
 
     /** A listed comment this caller may read: a moderator any, its author their own, anyone an approved one on a post they may read. */
-    private function readable(\WP_Comment $comment, string $password): bool
+    private function readable(Comment $comment, string $password): bool
     {
         if ($this->caller->can('moderate_comments') || ((int) $comment->user_id > 0 && (int) $comment->user_id === $this->caller->id())) {
             return true;

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Term;
+
 /**
  * What a term query does with its rows, as the reference does it (probe
  * wp-term-query-sql): each row a term through get_term (with the object id
@@ -24,14 +26,14 @@ final class TermQueryTree
      * The terms the rows name, keyed as the rows were.
      *
      * @param array<array-key, object> $rows
-     * @return array<array-key, \WP_Term>
+     * @return array<array-key, Term>
      */
     public static function populate(array $rows): array
     {
         $terms = [];
         foreach ($rows as $key => $row) {
             $term = \get_term(is_object($row) && property_exists($row, 'term_id') ? $row->term_id : $row);
-            if (!$term instanceof \WP_Term) {
+            if (!$term instanceof Term) {
                 continue;
             }
             if (is_object($row) && property_exists($row, 'object_id')) {
@@ -49,9 +51,9 @@ final class TermQueryTree
      * The terms after the tree has had its say: descendants only, padded
      * counts, empty branches dropped, the page cut.
      *
-     * @param array<array-key, \WP_Term> $terms
+     * @param array<array-key, Term> $terms
      * @param array<string, mixed> $args
-     * @return array<array-key, \WP_Term>
+     * @return array<array-key, Term>
      */
     public function settle(array $terms, array $args): array
     {
@@ -81,7 +83,7 @@ final class TermQueryTree
      * Each term's count raised to the published posts in it or under it, as
      * _pad_term_counts does for a hierarchical taxonomy.
      *
-     * @param array<array-key, \WP_Term> $terms
+     * @param array<array-key, Term> $terms
      */
     public static function pad(array &$terms, string $taxonomy): void
     {
@@ -120,14 +122,14 @@ final class TermQueryTree
     }
 
     /** Whether a term, or one of its children, has posts. */
-    private static function hasPosts(\WP_Term $term): bool
+    private static function hasPosts(Term $term): bool
     {
         if ($term->count) {
             return true;
         }
         foreach ((array) \get_term_children($term->term_id, $term->taxonomy) as $child) {
             $child = \get_term($child, $term->taxonomy);
-            if ($child instanceof \WP_Term && $child->count) {
+            if ($child instanceof Term && $child->count) {
                 return true;
             }
         }
@@ -137,7 +139,7 @@ final class TermQueryTree
     /**
      * The terms in the shape the fields ask for.
      *
-     * @param array<array-key, \WP_Term> $terms
+     * @param array<array-key, Term> $terms
      * @return array<array-key, mixed>
      */
     public static function format(array $terms, string $fields): array

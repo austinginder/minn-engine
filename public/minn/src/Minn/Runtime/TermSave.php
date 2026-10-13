@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Terms;
+use Minn\Objects\Errors;
+use Minn\Objects\Term;
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 use Minn\Support\Lists;
@@ -31,23 +33,23 @@ final class TermSave
      * A new term's ids, or why not.
      *
      * @param array<string, mixed> $args
-     * @return array{term_id: int, term_taxonomy_id: int}|\WP_Error
+     * @return array{term_id: int, term_taxonomy_id: int}|Errors
      */
-    public static function insert(mixed $term, string $taxonomy, array $args): array|\WP_Error
+    public static function insert(mixed $term, string $taxonomy, array $args): array|Errors
     {
         $term = Runtime::hooks()->filter('pre_insert_term', [$term, $taxonomy, $args]);
         if (\is_wp_error($term)) {
             return $term;
         }
         if ($term === 0) {
-            return new \WP_Error('invalid_term_id', 'Invalid term ID.');
+            return Handoff::newError('invalid_term_id', 'Invalid term ID.');
         }
         if (trim((string) $term) === '') {
-            return new \WP_Error('empty_term_name', 'A name is required for this term.');
+            return Handoff::newError('empty_term_name', 'A name is required for this term.');
         }
         $args = Lists::args($args, self::DEFAULTS);
         if ((int) $args['parent'] > 0 && \term_exists((int) $args['parent']) === null) {
-            return new \WP_Error('missing_parent', 'Parent term does not exist.');
+            return Handoff::newError('missing_parent', 'Parent term does not exist.');
         }
         $args['name'] = $term;
         $args['taxonomy'] = $taxonomy;
@@ -87,16 +89,16 @@ final class TermSave
      * A changed term's ids, or why not.
      *
      * @param array<string, mixed> $changes
-     * @return array{term_id: int, term_taxonomy_id: int}|\WP_Error
+     * @return array{term_id: int, term_taxonomy_id: int}|Errors
      */
-    public static function update(int $termId, string $taxonomy, array $changes): array|\WP_Error
+    public static function update(int $termId, string $taxonomy, array $changes): array|Errors
     {
         $term = \get_term($termId, $taxonomy);
         if (\is_wp_error($term)) {
             return $term;
         }
-        if (!$term instanceof \WP_Term) {
-            return new \WP_Error('invalid_term', 'Empty Term.');
+        if (!$term instanceof Term) {
+            return Handoff::newError('invalid_term', 'Empty Term.');
         }
         $parsed = Lists::args(array_merge((array) Slashes::add($term->to_array()), $changes), self::DEFAULTS);
         $args = (array) TermFields::term($parsed, (string) $taxonomy, 'db');
@@ -105,16 +107,16 @@ final class TermSave
         $parsed['name'] = $name;
         $parsed['description'] = $description;
         if (trim($name) === '') {
-            return new \WP_Error('empty_term_name', 'A name is required for this term.');
+            return Handoff::newError('empty_term_name', 'A name is required for this term.');
         }
         if ((int) $parsed['parent'] > 0 && \term_exists((int) $parsed['parent']) === null) {
-            return new \WP_Error('missing_parent', 'Parent term does not exist.');
+            return Handoff::newError('missing_parent', 'Parent term does not exist.');
         }
         $asked = empty($args['slug']) ? '' : (string) $args['slug'];
         $parsed['slug'] = $asked === '' ? Sanitize::title($name) : $asked;
         $parent = (int) Runtime::hooks()->filter('wp_update_term_parent', [$args['parent'], $termId, $taxonomy, $parsed, $args]);
         $slug = self::updatedSlug((string) $parsed['slug'], $asked, $parent, $termId, $args);
-        if ($slug instanceof \WP_Error) {
+        if ($slug instanceof Errors) {
             return $slug;
         }
         return self::write($term, ['name' => $name, 'slug' => $slug, 'term_group' => (int) ($parsed['term_group'] ?? 0)], $description, $parent, $args);
@@ -127,7 +129,7 @@ final class TermSave
      * @param array<string, mixed> $args
      * @return array{term_id: int, term_taxonomy_id: int}
      */
-    private static function write(\WP_Term $term, array $data, string $description, int $parent, array $args): array
+    private static function write(Term $term, array $data, string $description, int $parent, array $args): array
     {
         [$termId, $ttId, $taxonomy] = [(int) $term->term_id, (int) $term->term_taxonomy_id, (string) $term->taxonomy];
         $terms = new Terms(Runtime::current()->db);
@@ -160,19 +162,19 @@ final class TermSave
      *
      * @param array<string, mixed> $args
      */
-    private static function nameTaken(string $name, string $taxonomy, array $args): ?\WP_Error
+    private static function nameTaken(string $name, string $taxonomy, array $args): ?Errors
     {
         $matches = \get_terms(['taxonomy' => $taxonomy, 'name' => $name, 'hide_empty' => false, 'parent' => $args['parent'], 'update_term_meta_cache' => false]);
         $match = is_array($matches) ? ($matches[0] ?? null) : null;
-        if (!$match instanceof \WP_Term) {
+        if (!$match instanceof Term) {
             return null;
         }
         if (!Registered::hierarchicalTaxonomy($taxonomy)) {
-            return new \WP_Error('term_exists', 'A term with the name provided already exists in this taxonomy.', (int) $match->term_id);
+            return Handoff::newError('term_exists', 'A term with the name provided already exists in this taxonomy.', (int) $match->term_id);
         }
         $asked = (string) ($args['slug'] ?? '');
         if ($asked === '' || $asked === $match->slug) {
-            return new \WP_Error('term_exists', 'A term with the name provided already exists with this parent.', (int) $match->term_id);
+            return Handoff::newError('term_exists', 'A term with the name provided already exists with this parent.', (int) $match->term_id);
         }
         return null;
     }
@@ -184,16 +186,16 @@ final class TermSave
      *
      * @param array<string, mixed> $args
      */
-    private static function updatedSlug(string $slug, string $asked, int $parent, int $termId, array $args): string|\WP_Error
+    private static function updatedSlug(string $slug, string $asked, int $parent, int $termId, array $args): string|Errors
     {
         $holder = \get_term_by('slug', $slug, (string) $args['taxonomy']);
-        if (!$holder instanceof \WP_Term || (int) $holder->term_id === $termId) {
+        if (!$holder instanceof Term || (int) $holder->term_id === $termId) {
             return $slug;
         }
         if ($asked === '' || $parent !== (int) $holder->parent) {
             return (string) \wp_unique_term_slug($slug, (object) $args);
         }
-        return new \WP_Error('duplicate_term_slug', sprintf('The slug &#8220;%s&#8221; is already in use by another term.', $slug));
+        return Handoff::newError('duplicate_term_slug', sprintf('The slug &#8220;%s&#8221; is already in use by another term.', $slug));
     }
 
     /**

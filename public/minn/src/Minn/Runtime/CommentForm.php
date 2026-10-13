@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Auth\Can;
+use Minn\Objects\Comment;
+use Minn\Objects\Errors;
+use Minn\Objects\User;
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
@@ -30,7 +33,7 @@ final class CommentForm
      *
      * @param array<string, mixed> $form the posted fields, unslashed
      */
-    public static function submit(array $form): \WP_Comment|\WP_Error
+    public static function submit(array $form): Comment|Errors
     {
         $text = static fn (string $key): string => isset($form[$key]) && is_scalar($form[$key]) ? trim((string) $form[$key]) : '';
         $postId = (int) $text('comment_post_ID');
@@ -41,9 +44,9 @@ final class CommentForm
         $parent = abs((int) ($text('comment_parent')));
         if ($parent > 0) {
             $replied = \get_comment($parent);
-            if (!$replied instanceof \WP_Comment || (string) $replied->comment_approved === '0') {
+            if (!$replied instanceof Comment || (string) $replied->comment_approved === '0') {
                 Runtime::hooks()->action('comment_reply_to_unapproved_comment', [$postId, $parent]);
-                return new \WP_Error('comment_reply_to_unapproved_comment', 'Sorry, replies to unapproved comments are not allowed.', 403);
+                return Handoff::newError('comment_reply_to_unapproved_comment', 'Sorry, replies to unapproved comments are not allowed.', 403);
             }
         }
         $refusal = self::postRefusal($postId);
@@ -61,7 +64,7 @@ final class CommentForm
                 \kses_init_filters();
             }
         } elseif (Runtime::options()->filtered('comment_registration')) {
-            return new \WP_Error('not_logged_in', 'Sorry, you must be logged in to comment.', 403);
+            return Handoff::newError('not_logged_in', 'Sorry, you must be logged in to comment.', 403);
         }
         $missing = self::fieldRefusal($user, $author, $email);
         if ($missing !== null) {
@@ -72,10 +75,10 @@ final class CommentForm
     }
 
     /** The comment checked for content and length, then stored through wp_new_comment. @param array<string, mixed> $data */
-    private static function store(array $data, string $content): \WP_Comment|\WP_Error
+    private static function store(array $data, string $content): Comment|Errors
     {
         if ($content === '' && !Runtime::hooks()->filter('allow_empty_comment', [false, $data])) {
-            return new \WP_Error('require_valid_comment', '<strong>Error:</strong> Please type your comment text.', 200);
+            return Handoff::newError('require_valid_comment', '<strong>Error:</strong> Please type your comment text.', 200);
         }
         $lengths = \wp_check_comment_data_max_lengths($data);
         if (\is_wp_error($lengths)) {
@@ -86,20 +89,20 @@ final class CommentForm
             return $id;
         }
         $comment = $id ? \get_comment($id) : null;
-        return $comment instanceof \WP_Comment ? $comment : new \WP_Error('comment_save_error', '<strong>Error:</strong> The comment could not be saved. Please try again later.', 500);
+        return $comment instanceof Comment ? $comment : Handoff::newError('comment_save_error', '<strong>Error:</strong> The comment could not be saved. Please try again later.', 500);
     }
 
     /** Why the post takes no comment, or null after pre_comment_on_post when it does. */
-    private static function postRefusal(int $postId): ?\WP_Error
+    private static function postRefusal(int $postId): ?Errors
     {
         $post = \get_post($postId);
         if ($post === null || (string) $post->comment_status === '') {
             Runtime::hooks()->action('comment_id_not_found', [$postId]);
-            return new \WP_Error('comment_id_not_found');
+            return Handoff::newError('comment_id_not_found');
         }
         $status = (string) \get_post_status($post);
         if ($status === 'private' && !Can::current('read_post', $postId)) {
-            return new \WP_Error('comment_id_not_found');
+            return Handoff::newError('comment_id_not_found');
         }
         $statusObject = Registered::status($status);
         $refusal = match (true) {
@@ -115,18 +118,18 @@ final class CommentForm
         }
         [$code, $message, $answer] = $refusal;
         Runtime::hooks()->action((string) $code, [$postId]);
-        return $answer > 0 ? new \WP_Error($code, $message, $answer) : new \WP_Error($code);
+        return $answer > 0 ? Handoff::newError($code, $message, $answer) : Handoff::newError($code);
     }
 
     /** A signed-out commenter's name and email, when the site requires them. */
-    private static function fieldRefusal(\WP_User $user, string $author, string $email): ?\WP_Error
+    private static function fieldRefusal(User $user, string $author, string $email): ?Errors
     {
         if (!Runtime::options()->filtered('require_name_email') || $user->exists()) {
             return null;
         }
         if ($email === '' || $author === '') {
-            return new \WP_Error('require_name_email', '<strong>Error:</strong> Please fill the required fields.', 200);
+            return Handoff::newError('require_name_email', '<strong>Error:</strong> Please fill the required fields.', 200);
         }
-        return Sanitize::isEmail($email) ? null : new \WP_Error('require_valid_email', '<strong>Error:</strong> Please enter a valid email address.', 200);
+        return Sanitize::isEmail($email) ? null : Handoff::newError('require_valid_email', '<strong>Error:</strong> Please enter a valid email address.', 200);
     }
 }

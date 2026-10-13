@@ -4,7 +4,7 @@ use Minn\Runtime\Runtime;
 
 /** The user object: a row in `data`, the role and capability maps, and meta by property. */
 #[AllowDynamicProperties]
-class WP_User
+class WP_User implements \Minn\Objects\User
 {
     public $data;
     public $ID = 0;

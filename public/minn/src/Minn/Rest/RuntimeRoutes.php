@@ -8,7 +8,9 @@ use Minn\Http\Args;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Json;
+use Minn\Objects\Errors;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -39,7 +41,7 @@ final class RuntimeRoutes
     public static function gate(Request $request): ?Response
     {
         $error = Runtime::hooks()->filter('rest_authentication_errors', [null]);
-        if ($error instanceof \WP_Error) {
+        if ($error instanceof Errors) {
             return self::toResponse(\rest_convert_error_to_response($error));
         }
         return self::predispatch($request);
@@ -76,7 +78,7 @@ final class RuntimeRoutes
         $server = self::server();
         $wpRequest = self::wpRequest($request);
         $matched = $server->match_request_to_handler($wpRequest);
-        if ($matched instanceof \WP_Error) {
+        if ($matched instanceof Errors) {
             return null;
         }
         self::matched($request, (string) $matched[0], (array) $matched[1]);
@@ -134,7 +136,7 @@ final class RuntimeRoutes
         }
         $server = self::server();
         $matched = $server->match_request_to_handler($wpRequest);
-        if ($matched instanceof \WP_Error) {
+        if ($matched instanceof Errors) {
             return null;
         }
         return $server->engine_route((string) $matched[0]) ? $server->engine_allowed($wpRequest) : self::allowedMethods((string) $matched[0], $wpRequest);
@@ -221,10 +223,10 @@ final class RuntimeRoutes
     }
 
     /** An engine refusal as plugins handle one. */
-    public static function toWpError(RestError $error): \WP_Error
+    public static function toWpError(RestError $error): Errors
     {
         $payload = $error->payload();
-        $wpError = new \WP_Error($error->errorCode, $error->getMessage(), $payload['data']);
+        $wpError = Handoff::newError($error->errorCode, $error->getMessage(), $payload['data']);
         self::remember($wpError, $error, [$wpError->errors, $wpError->error_data]);
         return $wpError;
     }
@@ -292,7 +294,7 @@ final class RuntimeRoutes
     {
         if (is_object($result) && isset(self::$origins[$result])) {
             [$look, $origin] = self::$origins[$result];
-            $now = $result instanceof \WP_Error ? [$result->errors, $result->error_data] : self::look($result);
+            $now = $result instanceof Errors ? [$result->errors, $result->error_data] : self::look($result);
             if ($look === $now) {
                 return $origin instanceof RestError ? Reply::error($origin) : $origin;
             }
@@ -346,7 +348,7 @@ final class RuntimeRoutes
         $result->set_matched_route($route);
         $result->set_matched_handler($handler);
         $result = \rest_ensure_response(Runtime::hooks()->filterWithout('rest_post_dispatch', [\rest_ensure_response($result), $server, $wpRequest], $done));
-        $result = $result instanceof \WP_Error ? \rest_convert_error_to_response($result) : $result;
+        $result = $result instanceof Errors ? \rest_convert_error_to_response($result) : $result;
         $headers = Reply::HEADERS;
         foreach ((array) $result->get_headers() as $name => $value) {
             $headers[$name] = (string) $value;
@@ -477,7 +479,7 @@ final class RuntimeRoutes
     public static function ensure(mixed $result): \WP_REST_Response
     {
         $response = \rest_ensure_response($result);
-        return $response instanceof \WP_Error ? \rest_convert_error_to_response($response) : $response;
+        return $response instanceof Errors ? \rest_convert_error_to_response($response) : $response;
     }
 
     /** The runtime's response as the engine sends it, with the reference's header set. */

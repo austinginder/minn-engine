@@ -13,6 +13,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Http\Router;
 use Minn\Json;
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
@@ -93,7 +94,7 @@ final readonly class BatchController
         }
         $wpRequest = new \WP_REST_Request($sub->method->value, $sub->path);
         $matched = RuntimeRoutes::server()->match_request_to_handler($wpRequest);
-        if ($matched instanceof \WP_Error) {
+        if ($matched instanceof Errors) {
             return self::error(RestError::noRoute(), []);
         }
         if (!empty($matched[1]['allow_batch']['v1'])) {
@@ -117,7 +118,7 @@ final readonly class BatchController
         }
         $wpRequest = RuntimeRoutes::wpRequest($sub);
         $matched = RuntimeRoutes::server()->match_request_to_handler($wpRequest);
-        if ($matched instanceof \WP_Error) {
+        if ($matched instanceof Errors) {
             return null;
         }
         $wpRequest->set_attributes((array) $matched[1]);

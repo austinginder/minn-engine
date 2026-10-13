@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Login;
 
 use Minn\Html;
+use Minn\Objects\Errors;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -53,7 +55,7 @@ final readonly class LoginNotices
     /** The notices a WP_Error holds (a plugin may have handed back something else: then none). */
     public static function of(mixed $errors): self
     {
-        if (!$errors instanceof \WP_Error) {
+        if (!$errors instanceof Errors) {
             return new self();
         }
         $notices = [];
@@ -79,9 +81,9 @@ final readonly class LoginNotices
     }
 
     /** As the WP_Error plugins are handed. */
-    public function wpError(): \WP_Error
+    public function wpError(): Errors
     {
-        $errors = new \WP_Error();
+        $errors = Handoff::newError();
         foreach ($this->notices as [$code, $html, $severity]) {
             $errors->add($code, $html, $severity);
         }

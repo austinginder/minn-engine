@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Closure;
 use Minn\I18n\Gettext;
+use Minn\Objects\Post;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteTime;
 use Minn\Support\Escape;
@@ -225,7 +226,7 @@ final class FeedTemplates
     }
 
     /** A comment's heading in a comments feed: by whom, and on what when the feed is not a single post's. */
-    private static function commentTitle(\WP_Post $post): string
+    private static function commentTitle(Post $post): string
     {
         if (\is_singular()) {
             return sprintf(Text::numericReferences(Gettext::text('By: %s')), \get_comment_author_rss());
@@ -233,7 +234,7 @@ final class FeedTemplates
         return sprintf(Text::numericReferences(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [\get_the_title($post->ID)]), \get_comment_author_rss());
     }
 
-    /** The comment the loop is on, with its post made the current one. @return array{0: object, 1: \WP_Post} */
+    /** The comment the loop is on, with its post made the current one. @return array{0: object, 1: Post} */
     private static function current(): array
     {
         $comment = $GLOBALS['comment'];

@@ -2,7 +2,7 @@
 
 /** A term joined with its taxonomy row; get_the_category adds the legacy category_* names. */
 #[AllowDynamicProperties]
-final class WP_Term
+final class WP_Term implements \Minn\Objects\Term
 {
     public $term_id;
     public $name = '';

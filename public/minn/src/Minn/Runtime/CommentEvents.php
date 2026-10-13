@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Http\Request;
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
@@ -66,12 +67,12 @@ final readonly class CommentEvents
         $prepared += ['comment_date_gmt' => SiteTime::now('mysql', true), 'comment_author_email' => '', 'comment_author_url' => '', 'comment_agent' => ''];
         self::requireLengths($prepared);
         $approved = \wp_allow_comment($prepared, true);
-        if ($approved instanceof \WP_Error) {
+        if ($approved instanceof Errors) {
             $status = ['comment_duplicate' => 409, 'comment_flood' => 400][$approved->get_error_code()] ?? null;
             throw $status === null ? self::refusal($approved) : new RestError($approved->get_error_code(), $approved->get_error_message(), $status);
         }
         $prepared = Runtime::hooks()->filter('rest_pre_insert_comment', [array_merge($prepared, ['comment_approved' => $approved]), $wpRequest]);
-        if ($prepared instanceof \WP_Error) {
+        if ($prepared instanceof Errors) {
             throw self::refusal($prepared);
         }
         $id = (int) \wp_insert_comment(\wp_filter_comment(Slashes::add((array) $prepared)));
@@ -99,7 +100,7 @@ final readonly class CommentEvents
             }
             self::requireLengths($prepared);
             $updated = \wp_update_comment(Slashes::add(['comment_ID' => $comment->id] + $prepared), true);
-            if ($updated instanceof \WP_Error) {
+            if ($updated instanceof Errors) {
                 throw new RestError('rest_comment_failed_edit', 'Updating comment failed.', 500);
             }
         }
@@ -139,7 +140,7 @@ final readonly class CommentEvents
     private static function preprocessed(array $prepared, \WP_REST_Request $request): array
     {
         $prepared = Runtime::hooks()->filter('rest_preprocess_comment', [$prepared, $request]);
-        if ($prepared instanceof \WP_Error) {
+        if ($prepared instanceof Errors) {
             throw self::refusal($prepared);
         }
         return (array) $prepared;
@@ -170,13 +171,13 @@ final readonly class CommentEvents
     private static function requireLengths(array $prepared): void
     {
         $long = \wp_check_comment_data_max_lengths($prepared);
-        if ($long instanceof \WP_Error) {
+        if ($long instanceof Errors) {
             throw new RestError($long->get_error_code(), $long->get_error_message(), 400);
         }
     }
 
     /** A plugin's error as REST serves it: its own status, or 500. */
-    private static function refusal(\WP_Error $error): RestError
+    private static function refusal(Errors $error): RestError
     {
         $data = $error->get_error_data();
         return is_array($data) && isset($data['status']) ? new RestError($error->get_error_code(), $error->get_error_message(), (int) $data['status']) : RestError::bare($error->get_error_code(), $error->get_error_message());
@@ -272,7 +273,7 @@ final readonly class CommentEvents
     {
         if ($this->live()) {
             $fields = array_map(static fn ($value) => is_int($value) || is_float($value) ? (string) $value : $value, $comment->row());
-            Runtime::hooks()->action('rest_delete_comment', [new \WP_Comment((object) $fields), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
+            Runtime::hooks()->action('rest_delete_comment', [Handoff::newComment((object) $fields), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
         }
     }
 }

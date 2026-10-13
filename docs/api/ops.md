@@ -267,7 +267,7 @@ __construct(string $kind, Closure $filter, Minn\Ops\Packages $packages, string $
 
 The answer for an action (plugin_information, query_themes, ...): an object, a WP_Error, or what a plugin returned.
 
-Internals: `directory()` (private, line 42), `unexpected()` (private, line 68)
+Internals: `directory()` (private, line 44), `unexpected()` (private, line 70)
 
 
 ## EngineChecksums
@@ -923,5 +923,5 @@ theme (folder), as Minn Admin does on WordPress: a plugin through
 bulk_upgrade, a theme through upgrade. The sha256 of the package, ''
 when it did not come from the service.
 
-Internals: `guarded()` (private, line 75), `refusal()` (private, line 106), `taken()` (private, line 126)
+Internals: `guarded()` (private, line 77), `refusal()` (private, line 108), `taken()` (private, line 128)
 

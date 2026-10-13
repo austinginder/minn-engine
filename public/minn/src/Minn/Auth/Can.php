@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Auth;
 
+use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MetaKeys;
 use Minn\Runtime\Runtime;
@@ -29,7 +30,7 @@ final class Can
         if (!is_object($user)) {
             $user = Handoff::user($user);
         }
-        return Handoff::userRecord($user)->has_cap($capability, ...$args);
+        return ($user instanceof User ? $user : Handoff::newUser(0))->has_cap($capability, ...$args);
     }
 
     /**

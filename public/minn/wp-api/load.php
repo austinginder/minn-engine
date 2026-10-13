@@ -739,3 +739,14 @@ function shutdown_action_hook()
     do_action('shutdown');
     wp_cache_close();
 }
+
+// The engine makes and looks up this layer's records through Minn\Runtime\Handoff, never by their class names.
+Minn\Runtime\Handoff::bind([
+    'newError' => static fn (...$args) => new WP_Error(...$args),
+    'newPost' => static fn ($post) => new WP_Post($post),
+    'postInstance' => static fn ($id) => WP_Post::get_instance($id),
+    'newTerm' => static fn ($term) => new WP_Term($term),
+    'newComment' => static fn ($comment) => new WP_Comment($comment),
+    'commentInstance' => static fn ($id) => WP_Comment::get_instance($id),
+    'newUser' => static fn (...$args) => new WP_User(...$args),
+]);

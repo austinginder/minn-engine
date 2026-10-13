@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Ops;
 
+use Minn\Objects\Errors;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -61,7 +63,7 @@ final readonly class UpgraderRun
         $upgrader = $kind === 'theme' ? new \Theme_Upgrader($skin) : new \Plugin_Upgrader($skin);
         $sha256 = '';
         $answer = $this->guarded($package, $sha256, static fn () => $kind === 'theme' ? $upgrader->upgrade($item) : ($upgrader->bulk_upgrade([$item])[$item] ?? false));
-        if ($answer === false || $answer === null || $answer instanceof \WP_Error) {
+        if ($answer === false || $answer === null || $answer instanceof Errors) {
             throw $this->refusal($kind, $skin, $answer, $upgrader);
         }
         return $sha256;
@@ -79,7 +81,7 @@ final readonly class UpgraderRun
                 return $reply;
             }
             if (!str_starts_with($package, Directory::PACKAGES)) {
-                return new \WP_Error('update_failed', "The package is not from the Minn update service and its publisher did not verify the download.");
+                return Handoff::newError('update_failed', "The package is not from the Minn update service and its publisher did not verify the download.");
             }
             $zip = $this->packages->fetch($package, Directory::ORIGIN);
             $file = (string) tempnam(sys_get_temp_dir(), 'minn-pkg-');
@@ -88,7 +90,7 @@ final readonly class UpgraderRun
                 Archive::inspect($file);
             } catch (RestError $refused) {
                 @unlink($file);
-                return new \WP_Error($refused->errorCode, $refused->getMessage());
+                return Handoff::newError($refused->errorCode, $refused->getMessage());
             }
             $sha256 = hash('sha256', $zip);
             return $file;
@@ -105,10 +107,10 @@ final readonly class UpgraderRun
     /** The upgrader's refusal in the engine's words: a taken folder says what is there and what came. */
     private function refusal(string $kind, \WP_Ajax_Upgrader_Skin $skin, mixed $answer, \WP_Upgrader $upgrader): RestError
     {
-        $error = $answer instanceof \WP_Error ? $answer : ($skin->result instanceof \WP_Error ? $skin->result : $skin->get_errors());
-        $code = $error instanceof \WP_Error ? (string) $error->get_error_code() : '';
-        $data = $error instanceof \WP_Error ? $error->get_error_data($code) : null;
-        $message = $error instanceof \WP_Error && $code !== '' ? (string) $error->get_error_message($code) . (is_string($data) && $data !== '' && !str_starts_with($data, '/') ? ' ' . strip_tags($data) : '') : 'The package could not be installed.';
+        $error = $answer instanceof Errors ? $answer : ($skin->result instanceof Errors ? $skin->result : $skin->get_errors());
+        $code = $error instanceof Errors ? (string) $error->get_error_code() : '';
+        $data = $error instanceof Errors ? $error->get_error_data($code) : null;
+        $message = $error instanceof Errors && $code !== '' ? (string) $error->get_error_message($code) . (is_string($data) && $data !== '' && !str_starts_with($data, '/') ? ' ' . strip_tags($data) : '') : 'The package could not be installed.';
         return match (true) {
             $code === 'folder_exists' => $this->taken($kind, (string) $data, $upgrader),
             $code === 'incompatible_archive_no_plugins' => new RestError('not_plugin', 'The archive is not a plugin: no minn.json and no file with a Plugin Name header in its folder.', 400),

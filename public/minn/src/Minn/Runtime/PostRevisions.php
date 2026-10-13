@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Objects\Post;
 use Minn\Support\Slashes;
 use Minn\Support\Text;
 
@@ -21,7 +22,7 @@ use Minn\Support\Text;
 final class PostRevisions
 {
     /** The new revision's id, or null when none was called for. */
-    public static function save(\WP_Post $post): ?int
+    public static function save(Post $post): ?int
     {
         if (!Registered::supports($post->post_type, 'revisions') || $post->post_status === 'auto-draft' || !\wp_revisions_enabled($post)) {
             return null;
@@ -42,7 +43,7 @@ final class PostRevisions
     }
 
     /** Whether the post differs from its latest revision in the revision fields, or a plugin says so. */
-    private static function changed(\WP_Post $latest, \WP_Post $post): bool
+    private static function changed(Post $latest, Post $post): bool
     {
         $changed = false;
         foreach (array_keys(\_wp_post_revision_fields($post)) as $field) {
@@ -71,7 +72,7 @@ final class PostRevisions
     }
 
     /** The oldest revisions past wp_revisions_to_keep removed (autosaves stay). */
-    private static function prune(\WP_Post $post): void
+    private static function prune(Post $post): void
     {
         $keep = \wp_revisions_to_keep($post);
         if ($keep < 0) {

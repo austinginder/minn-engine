@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\MenuItem;
+use Minn\Runtime\Handoff;
 
 /** The wp/v2/menu-items resource. */
 final readonly class MenuItemObject
@@ -79,6 +80,6 @@ final readonly class MenuItemObject
         }
         $object['_links'] = $links;
         // The filter is handed the item as wp_setup_nav_menu_item dresses it (probe hook-inputs-2).
-        return RuntimePrepare::item('rest_prepare_nav_menu_item', $object, static fn () => \wp_setup_nav_menu_item(\WP_Post::get_instance($item->id)));
+        return RuntimePrepare::item('rest_prepare_nav_menu_item', $object, static fn () => \wp_setup_nav_menu_item(Handoff::postInstance($item->id)));
     }
 }

@@ -2,7 +2,7 @@
 
 /** A post row as an object. */
 #[AllowDynamicProperties]
-final class WP_Post
+final class WP_Post implements \Minn\Objects\Post
 {
     public $ID;
     public $post_author = '0';

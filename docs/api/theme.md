@@ -860,7 +860,7 @@ The tokens for a main query.
 
 - `@return list<string>`
 
-Internals: `format()` (private, line 61), `singular()` (private, line 68), `archive()` (private, line 97), `paging()` (private, line 124), `named()` (private, line 145)
+Internals: `format()` (private, line 64), `singular()` (private, line 71), `archive()` (private, line 100), `paging()` (private, line 127), `named()` (private, line 148)
 
 
 ## SpacingScale

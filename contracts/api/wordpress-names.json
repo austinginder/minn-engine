@@ -4,9 +4,9 @@
         "functionCalls": 554,
         "functions": 273,
         "hookApi": 0,
-        "classReferences": 568,
-        "classes": 50,
-        "files": 147
+        "classReferences": 287,
+        "classes": 45,
+        "files": 143
     },
     "families": {
         "functions": {
@@ -64,14 +64,9 @@
             "wp-includes/vars.php": 1
         },
         "classes": {
-            "wp-includes/class-wp-error.php": 172,
-            "wp-includes/class-wp-post.php": 49,
             "wp-includes/rest-api/class-wp-rest-request.php": 47,
             "wp-includes/class-wp-query.php": 27,
             "wp-includes/class-wp-widget.php": 27,
-            "wp-includes/class-wp-user.php": 24,
-            "wp-includes/class-wp-term.php": 19,
-            "wp-includes/class-wp-comment.php": 17,
             "wp-includes/class-wp-admin-bar.php": 16,
             "wp-includes/class-wp-rewrite.php": 16,
             "wp-includes/rest-api/class-wp-rest-response.php": 14,
@@ -2168,69 +2163,6 @@
         }
     },
     "classes": {
-        "WP_Error": {
-            "uses": 172,
-            "family": "wp-includes/class-wp-error.php",
-            "files": {
-                "Minn/Front/CommentPostController.php": 1,
-                "Minn/Login/LoginController.php": 7,
-                "Minn/Login/LoginHooks.php": 4,
-                "Minn/Login/LoginNotices.php": 3,
-                "Minn/Ops/DirectoryApi.php": 5,
-                "Minn/Ops/UpgraderRun.php": 8,
-                "Minn/Rest/ApplicationPasswordsController.php": 2,
-                "Minn/Rest/BatchController.php": 2,
-                "Minn/Rest/MediaController.php": 3,
-                "Minn/Rest/PluginsController.php": 1,
-                "Minn/Rest/RegisteredFields.php": 2,
-                "Minn/Rest/RestMeta.php": 12,
-                "Minn/Rest/RuntimeEnvelope.php": 1,
-                "Minn/Rest/RuntimePrepare.php": 1,
-                "Minn/Rest/RuntimeRoutes.php": 8,
-                "Minn/Runtime/AbilityRun.php": 8,
-                "Minn/Runtime/AccountFlows.php": 9,
-                "Minn/Runtime/ApplicationPasswordEvents.php": 4,
-                "Minn/Runtime/ApplicationPasswordSignIn.php": 8,
-                "Minn/Runtime/CommentEvents.php": 6,
-                "Minn/Runtime/CommentForm.php": 14,
-                "Minn/Runtime/MenuEvents.php": 9,
-                "Minn/Runtime/PluginRemoval.php": 2,
-                "Minn/Runtime/PostSave.php": 1,
-                "Minn/Runtime/TermEvents.php": 3,
-                "Minn/Runtime/TermSave.php": 14,
-                "Minn/Runtime/ThemeSupports.php": 4,
-                "Minn/Runtime/Upgrade.php": 27,
-                "Minn/Runtime/UserEvents.php": 3
-            }
-        },
-        "WP_Post": {
-            "uses": 49,
-            "family": "wp-includes/class-wp-post.php",
-            "files": {
-                "Minn/Blocks/Dynamic/Theme/QueryBlocks.php": 1,
-                "Minn/Content/MediaShortcodes.php": 1,
-                "Minn/Content/PasswordGate.php": 2,
-                "Minn/Front/FeedTags.php": 1,
-                "Minn/Front/FeedTemplates.php": 1,
-                "Minn/Front/PostEmbed.php": 4,
-                "Minn/Front/RuleTable.php": 1,
-                "Minn/Media/Icons.php": 2,
-                "Minn/Rest/BlockRendererController.php": 2,
-                "Minn/Rest/MediaController.php": 1,
-                "Minn/Rest/MenuItemObject.php": 1,
-                "Minn/Rest/PostsController.php": 4,
-                "Minn/Rest/PostsWriteController.php": 1,
-                "Minn/Rest/RenderedFields.php": 4,
-                "Minn/Rest/TermsController.php": 1,
-                "Minn/Runtime/MenuItemMarks.php": 2,
-                "Minn/Runtime/PostData.php": 2,
-                "Minn/Runtime/PostEvents.php": 2,
-                "Minn/Runtime/PostLinks.php": 9,
-                "Minn/Runtime/PostRevisions.php": 4,
-                "Minn/Theme/FrontLifecycle.php": 1,
-                "Minn/Theme/QueryClasses.php": 2
-            }
-        },
         "WP_REST_Request": {
             "uses": 47,
             "family": "wp-includes/rest-api/class-wp-rest-request.php",
@@ -2284,53 +2216,6 @@
                 "Minn/Rest/WidgetObject.php": 4,
                 "Minn/Rest/WidgetsController.php": 5,
                 "Minn/Widgets/WidgetForms.php": 16
-            }
-        },
-        "WP_User": {
-            "uses": 24,
-            "family": "wp-includes/class-wp-user.php",
-            "files": {
-                "Minn/Front/PostEmbed.php": 1,
-                "Minn/Front/ToolbarMenus.php": 1,
-                "Minn/Login/LoginController.php": 2,
-                "Minn/Login/LoginHooks.php": 5,
-                "Minn/Rest/UsersController.php": 1,
-                "Minn/Runtime/AccountFlows.php": 4,
-                "Minn/Runtime/ApplicationPasswordSignIn.php": 3,
-                "Minn/Runtime/CommentForm.php": 1,
-                "Minn/Runtime/MetaKeys.php": 1,
-                "Minn/Runtime/UserEvents.php": 2,
-                "Minn/Runtime/UserQueryRunner.php": 1,
-                "Minn/Runtime/UserSave.php": 1,
-                "Minn/Theme/QueryClasses.php": 1
-            }
-        },
-        "WP_Term": {
-            "uses": 19,
-            "family": "wp-includes/class-wp-term.php",
-            "files": {
-                "Minn/Rest/TermFilters.php": 2,
-                "Minn/Rest/TermsController.php": 1,
-                "Minn/Runtime/MenuItemMarks.php": 1,
-                "Minn/Runtime/MetaKeys.php": 1,
-                "Minn/Runtime/NavMenuItems.php": 4,
-                "Minn/Runtime/PostLinks.php": 2,
-                "Minn/Runtime/TermQueryTree.php": 3,
-                "Minn/Runtime/TermSave.php": 4,
-                "Minn/Theme/QueryClasses.php": 1
-            }
-        },
-        "WP_Comment": {
-            "uses": 17,
-            "family": "wp-includes/class-wp-comment.php",
-            "files": {
-                "Minn/Rest/CommentsController.php": 3,
-                "Minn/Runtime/CommentEvents.php": 1,
-                "Minn/Runtime/CommentForm.php": 4,
-                "Minn/Runtime/CommentPages.php": 3,
-                "Minn/Runtime/CommentQueryRunner.php": 3,
-                "Minn/Runtime/CommentThreads.php": 2,
-                "Minn/Runtime/MetaKeys.php": 1
             }
         },
         "WP_Admin_Bar": {

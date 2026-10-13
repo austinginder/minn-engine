@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Content\TermRecord;
+use Minn\Objects\Term;
 use Minn\Runtime\Runtime;
 
 /**
@@ -23,11 +24,11 @@ final class TermFilters
             return $term;
         }
         $object = \get_term($term->id, $taxonomy);
-        return $object instanceof \WP_Term ? self::record($object, $term) : $term;
+        return $object instanceof Term ? self::record($object, $term) : $term;
     }
 
     /** The record with the fields a filter may have changed. */
-    private static function record(\WP_Term $object, TermRecord $term): TermRecord
+    private static function record(Term $object, TermRecord $term): TermRecord
     {
         return TermRecord::fromRow(array_replace($term->row(), [
             'term_id' => $term->id,

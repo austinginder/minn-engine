@@ -16,6 +16,7 @@ use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
+use Minn\Objects\Post;
 use Minn\RestError;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
@@ -77,13 +78,13 @@ final readonly class PostsController
         }
         // The list's rows, meta, terms and revisions read in one query each, as update_post_caches does.
         $taxonomies = array_keys(array_filter(Runtime::registry()->taxonomies(), static fn (array $row): bool => in_array($type, (array) ($row['object_type'] ?? []), true)));
-        $ids = array_map(static fn ($post): int => $post instanceof \WP_Post ? $post->ID : 0, (array) $posts);
+        $ids = array_map(static fn ($post): int => $post instanceof Post ? $post->ID : 0, (array) $posts);
         $this->posts->prime($ids, array_map('strval', $taxonomies));
         $this->posts->primeRevisions($ids);
         $objects = [];
         $fields = Fields::fromQuery($request->query);
         foreach ((array) $posts as $post) {
-            if (!$post instanceof \WP_Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : $this->readable($post))) {
+            if (!$post instanceof Post || !($context->isEdit() ? $this->caller->can('edit_post', $post->ID) : $this->readable($post))) {
                 continue;
             }
             $record = PostRecord::fromRow(get_object_vars($post));
@@ -123,7 +124,7 @@ final readonly class PostsController
     }
 
     /** Whether the caller may read a post: published, readable to them, a public status, or an attachment of one they may. */
-    private function readable(\WP_Post $post): bool
+    private function readable(Post $post): bool
     {
         if ($post->post_status === 'publish' || $this->caller->can('read_post', $post->ID)) {
             return true;
@@ -134,7 +135,7 @@ final readonly class PostsController
         }
         if ($post->post_status === 'inherit' && $post->post_parent > 0) {
             $parent = \get_post($post->post_parent);
-            if ($parent instanceof \WP_Post) {
+            if ($parent instanceof Post) {
                 return $this->readable($parent);
             }
         }

@@ -16014,6 +16014,16 @@ validate_file and `Runtime\StoredObjects::maybeDecode()` maybe_unserialize. The 
 them. The date query builder keeps its two guarded calls until the query batch (it runs without the
 site too). All 370 probes give identical output before and after.
 
+**Batch 11, the records (class references 568 → 287).** The engine no longer names WP_Error,
+WP_Post, WP_Term, WP_Comment or WP_User. It knows them by marks in `Minn\Objects` (`Errors`, `Post`,
+`Term`, `Comment`, `User`), interfaces the facade's classes implement, and makes them through
+`Runtime\Handoff` (`newError()`, `newPost()`, `postInstance()`, `newTerm()`, `newComment()`,
+`commentInstance()`, `newUser()`), which wp-api/load.php binds to the classes. Type declarations and
+`instanceof` checks name the marks; the facade's classes are the only ones that carry them, so every
+check answers as before. `Auth\Can` now asks the record itself whether it is a user (the user-record
+binding of batch 7 is gone). The facade's classes gain one interface each, which only reflection sees.
+All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

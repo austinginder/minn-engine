@@ -6,6 +6,11 @@ namespace Minn\Runtime;
 
 use Closure;
 use LogicException;
+use Minn\Objects\Comment;
+use Minn\Objects\Errors;
+use Minn\Objects\Post;
+use Minn\Objects\Term;
+use Minn\Objects\User;
 
 /**
  * What the engine asks of the layer it runs under, where a plugin may have
@@ -25,9 +30,11 @@ final class Handoff
     private static array $answers = [];
 
     /**
-     * Binds answers by name: currentUser, signedIn, user, userBy, userRecord,
+     * Binds answers by name: currentUser, signedIn, user, userBy,
      * becomeUser, cacheUsers, authenticate, setPassword, password, hash,
-     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop.
+     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, and the record
+     * factories newError, newPost, postInstance, newTerm, newComment,
+     * commentInstance, newUser.
      *
      * @param array<string, Closure> $answers
      */
@@ -58,12 +65,6 @@ final class Handoff
     public static function userBy(mixed $field, mixed $value): mixed
     {
         return self::answer('userBy', $field, $value);
-    }
-
-    /** The value when it is a user record, else the record of nobody (user id 0). */
-    public static function userRecord(mixed $user): object
-    {
-        return self::answer('userRecord', $user);
     }
 
     /** Makes a user the request's (wp_set_current_user): the user's record. */
@@ -142,6 +143,48 @@ final class Handoff
     public static function stop(mixed ...$args): void
     {
         self::answer('stop', ...$args);
+    }
+
+    /** A list of errors, the first given (new WP_Error). */
+    public static function newError(mixed ...$args): Errors
+    {
+        return self::answer('newError', ...$args);
+    }
+
+    /** A post object made from a row or another post (new WP_Post). */
+    public static function newPost(mixed $post): Post
+    {
+        return self::answer('newPost', $post);
+    }
+
+    /** The post object for an id, or false (WP_Post::get_instance). */
+    public static function postInstance(mixed $id): mixed
+    {
+        return self::answer('postInstance', $id);
+    }
+
+    /** A term object made from a row (new WP_Term). */
+    public static function newTerm(mixed $term): Term
+    {
+        return self::answer('newTerm', $term);
+    }
+
+    /** A comment object made from a row (new WP_Comment). */
+    public static function newComment(mixed $comment): Comment
+    {
+        return self::answer('newComment', $comment);
+    }
+
+    /** The comment object for an id, or false (WP_Comment::get_instance). */
+    public static function commentInstance(mixed $id): mixed
+    {
+        return self::answer('commentInstance', $id);
+    }
+
+    /** A user object by id (or login, with no id), nobody for 0 (new WP_User). */
+    public static function newUser(mixed ...$args): User
+    {
+        return self::answer('newUser', ...$args);
     }
 
     private static function answer(string $name, mixed ...$args): mixed

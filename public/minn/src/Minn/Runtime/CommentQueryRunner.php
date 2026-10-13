@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Content\RowCache;
 
+use Minn\Objects\Comment;
 use Minn\Query\CommentOrder;
 
 /**
@@ -47,7 +48,7 @@ final class CommentQueryRunner
             return $ids;
         }
         $comments = (array) Runtime::hooks()->filterRefArray('the_comments', [$this->comments($ids, $qv), &$query]);
-        $comments = array_values(array_filter(array_map(static fn ($c) => $c instanceof \WP_Comment ? $c : \get_comment($c), $comments)));
+        $comments = array_values(array_filter(array_map(static fn ($c) => $c instanceof Comment ? $c : \get_comment($c), $comments)));
         if (in_array($qv['hierarchical'] ?? false, ['threaded', 'flat'], true)) {
             $comments = (new CommentThreads())->fill($query, $comments);
         }
@@ -116,7 +117,7 @@ final class CommentQueryRunner
      *
      * @param list<int> $ids
      * @param array<string, mixed> $qv
-     * @return list<\WP_Comment>
+     * @return list<Comment>
      */
     private function comments(array $ids, array $qv): array
     {
@@ -138,8 +139,8 @@ final class CommentQueryRunner
         $comments = [];
         foreach ($ids as $id) {
             $row = RowCache::remember('comments', $id, static fn () => null);
-            $comment = $row !== null ? \get_comment(new \WP_Comment($row)) : null;
-            if ($comment instanceof \WP_Comment) {
+            $comment = $row !== null ? \get_comment(Handoff::newComment($row)) : null;
+            if ($comment instanceof Comment) {
                 $comments[] = $comment;
             }
         }

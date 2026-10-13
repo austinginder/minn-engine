@@ -11,6 +11,7 @@ use Minn\Http\Matched;
 use Minn\Http\Method;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
 
@@ -83,7 +84,7 @@ final readonly class RuntimeEnvelope implements Envelope
     }
 
     /** The route's answer as the server's filters hand it on: a response object, or the error it refused with. */
-    private static function run(Closure $invoke): \WP_REST_Response|\WP_Error
+    private static function run(Closure $invoke): \WP_REST_Response|Errors
     {
         try {
             return RuntimeRoutes::toWp($invoke());
