@@ -78,7 +78,7 @@ final class PostEmbed
         $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', Escape::attr($secret), \esc_url(\get_permalink($post)), $title);
         $output .= sprintf(
             '<iframe sandbox="allow-scripts" security="restricted" src="%1$s" width="%2$d" height="%3$d" title="%4$s" data-secret="%5$s" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" class="wp-embedded-content"></iframe>',
-            \esc_url(\get_post_embed_url($post) . '#?secret=' . $secret),
+            \esc_url(self::url($post) . '#?secret=' . $secret),
             abs($width),
             abs($height),
             Escape::attr(sprintf('&#8220;%1$s&#8221; &#8212; %2$s', $title, \get_bloginfo('name'))),

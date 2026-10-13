@@ -84,7 +84,7 @@ final readonly class WidgetsController
         $settings = (array) $object->get_settings();
         $number = max([1, ...array_filter(array_keys($settings), 'is_int')]) + 1;
         $id = $this->saveInstance($object, $number, $body);
-        \wp_assign_widget_to_sidebar($id, $sidebar);
+        WidgetAreas::assign($id, (string) $sidebar);
         Runtime::hooks()->action('rest_after_save_widget', [$id, $sidebar, Runtime::current()->get('rest_prepare_request'), true]);
         return Reply::item($this->object->view($id, $sidebar, Context::Edit), null, 201);
     }
@@ -105,7 +105,7 @@ final readonly class WidgetsController
         }
         if (isset($body['sidebar']) && (string) $body['sidebar'] !== $sidebar) {
             $sidebar = (string) $body['sidebar'];
-            \wp_assign_widget_to_sidebar($id, $sidebar);
+            WidgetAreas::assign($id, (string) $sidebar);
         }
         Runtime::hooks()->action('rest_after_save_widget', [$id, $sidebar, Runtime::current()->get('rest_prepare_request'), false]);
         return Reply::item($this->object->view($id, $sidebar, Context::Edit), null);
@@ -117,8 +117,8 @@ final readonly class WidgetsController
     {
         SidebarsController::ready();
         $sidebar = self::sidebarOf($id);
-        if (!\rest_sanitize_boolean($request->query['force'] ?? false)) {
-            \wp_assign_widget_to_sidebar($id, WidgetAreas::INACTIVE);
+        if (!SchemaValues::toBoolean($request->query['force'] ?? false)) {
+            WidgetAreas::assign($id, WidgetAreas::INACTIVE);
             return Reply::item($this->object->view($id, WidgetAreas::INACTIVE, Context::Edit), null);
         }
         // The answer carries the deleted widget's links, as the reference's does.
@@ -132,7 +132,7 @@ final readonly class WidgetsController
             unset($settings[$parsed['number'] ?? -1]);
             $object->save_settings($settings);
         }
-        \wp_assign_widget_to_sidebar($id, '');
+        WidgetAreas::assign($id, '');
         Runtime::hooks()->action('delete_widget', [$id, $sidebar, $parsed['id_base']]);
         return Reply::item(['deleted' => true, 'previous' => $previous, '_links' => $links], null);
     }
@@ -187,7 +187,7 @@ final readonly class WidgetsController
     /** The sidebar holding a widget; a widget no sidebar holds is no widget. */
     private static function sidebarOf(string $id): string
     {
-        $sidebar = \wp_find_widgets_sidebar($id);
+        $sidebar = WidgetAreas::find($id);
         if ($sidebar === null || !isset($GLOBALS['wp_registered_widgets'][$id])) {
             throw new RestError('rest_widget_not_found', 'No widget exists with that id.', 404);
         }

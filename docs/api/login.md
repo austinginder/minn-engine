@@ -52,7 +52,7 @@ Route: `POST /wp-login.php (public)`
 
 Handles the posted form for each of those pages.
 
-Internals: `landingFor()` (private, line 120), `asked()` (private, line 127), `checkEmail()` (private, line 134), `signInNotices()` (private, line 145), `lostPassword()` (private, line 151), `retrieve()` (private, line 182), `openResetLink()` (private, line 202), `resetSession()` (private, line 219), `savePassword()` (private, line 234), `register()` (private, line 269), `validateReset()` (private, line 294), `parts()` (private, line 309), `tokenLogin()` (private, line 321), `adminEmail()` (private, line 406), `safeRedirect()` (private, line 428), `logout()` (private, line 449), `action()` (private, line 479), `actionUrl()` (private, line 491), `siteName()` (private, line 501), `base()` (private, line 507), `tooManyAttempts()` (private, line 513), `render()` (private, line 521)
+Internals: `landingFor()` (private, line 121), `asked()` (private, line 128), `checkEmail()` (private, line 135), `signInNotices()` (private, line 146), `lostPassword()` (private, line 152), `retrieve()` (private, line 183), `openResetLink()` (private, line 203), `resetSession()` (private, line 220), `savePassword()` (private, line 235), `register()` (private, line 270), `validateReset()` (private, line 295), `parts()` (private, line 310), `tokenLogin()` (private, line 322), `adminEmail()` (private, line 407), `safeRedirect()` (private, line 429), `logout()` (private, line 450), `action()` (private, line 480), `actionUrl()` (private, line 492), `siteName()` (private, line 502), `base()` (private, line 508), `tooManyAttempts()` (private, line 514), `render()` (private, line 522)
 
 
 ## LoginForm

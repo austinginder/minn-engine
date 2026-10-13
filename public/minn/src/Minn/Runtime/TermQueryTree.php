@@ -65,7 +65,7 @@ final class TermQueryTree
         }
         if ($args['pad_counts'] && $args['fields'] === 'all') {
             foreach ($this->taxonomies as $taxonomy) {
-                \_pad_term_counts($terms, $taxonomy);
+                self::pad($terms, (string) $taxonomy);
             }
         }
         if ($hierarchical && $args['hide_empty']) {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\RestError;
+use Minn\Runtime\RegisteredSettings;
 use Minn\Runtime\Runtime;
 
 /**
@@ -32,7 +33,7 @@ final readonly class LiveSettings
     public function shown(): array
     {
         $out = [];
-        foreach (\get_registered_settings() as $option => $args) {
+        foreach (RegisteredSettings::all() as $option => $args) {
             $rest = $args['show_in_rest'] ?? false;
             if (empty($rest)) {
                 continue;

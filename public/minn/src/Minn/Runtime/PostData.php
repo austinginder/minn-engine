@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\TagBalancer;
+
 /**
  * The loop's view of a post, as the reference's generate_postdata and
  * get_the_content give it (probes the-content, excerpt): the content split
@@ -79,6 +81,6 @@ final class PostData
         if ($moreLinkText !== '') {
             $output .= Runtime::hooks()->filter('the_content_more_link', [' <a href="' . \get_permalink($post) . "#more-{$post->ID}\" class=\"more-link\">{$moreLinkText}</a>", $moreLinkText]);
         }
-        return \force_balance_tags($output);
+        return TagBalancer::balance((string) $output);
     }
 }

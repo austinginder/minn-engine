@@ -55,7 +55,7 @@ final class PostQuery
         Runtime::hooks()->actionRefArray('pre_get_posts', [&$query]);
         $query->query_vars = $query->fill_query_vars($query->query_vars);
         $query->allow_query_attachment_by_filename = Runtime::hooks()->filter('wp_allow_query_attachment_by_filename', [false]);
-        \remove_all_filters('wp_allow_query_attachment_by_filename');
+        Runtime::hooks()->removeAll('wp_allow_query_attachment_by_filename', false);
         $query->meta_query = new \WP_Meta_Query();
         $query->meta_query->parse_query_vars($query->query_vars);
         $hash = md5(serialize($query->query_vars));

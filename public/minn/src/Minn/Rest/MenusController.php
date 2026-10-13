@@ -15,6 +15,7 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Runtime\Refusal;
+use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
 use Minn\Support\Lists;
 
@@ -226,7 +227,7 @@ final readonly class MenusController
     public function locations(Request $request): Response
     {
         $out = [];
-        foreach (\get_registered_nav_menus() as $name => $description) {
+        foreach (Runtime::current()->get('nav_menus', []) as $name => $description) {
             $out[$name] = $this->locationItem((string) $name, (string) $description);
         }
         // Keyed by name, so _fields over the whole of it keeps nothing, as on the reference.
@@ -237,7 +238,7 @@ final readonly class MenusController
     #[Route(Method::Get, '/wp/v2/menu-locations/{location:[\w-]+}', policy: new Policy(Access::Cap, 'edit_theme_options', signIn: 'rest_cannot_view', signInMessage: 'Sorry, you are not allowed to view menu locations.', refuse: 'rest_cannot_view', message: 'Sorry, you are not allowed to view menu locations.', opener: ['rest_menu_read_access', \WP_REST_Menu_Locations_Controller::class]))]
     public function oneLocation(Request $request, string $location): Response
     {
-        $registered = \get_registered_nav_menus();
+        $registered = Runtime::current()->get('nav_menus', []);
         if (!array_key_exists($location, $registered)) {
             throw new RestError('rest_menu_location_invalid', 'Invalid menu location.', 404);
         }

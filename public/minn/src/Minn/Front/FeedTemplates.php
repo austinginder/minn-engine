@@ -102,7 +102,7 @@ final class FeedTemplates
             $w->put("]]></content:encoded>\n\t\t\t\t\t\n");
         }
         if ($discussed) {
-            $w->put("\t\t\t\t\t<wfw:commentRss>", \esc_url(\get_post_comments_feed_link(0, 'rss2')), "</wfw:commentRss>\n\t\t\t<slash:comments>", (string) \get_comments_number(), "</slash:comments>\n");
+            $w->put("\t\t\t\t\t<wfw:commentRss>", \esc_url(FeedTags::postCommentsFeedLink(0, 'rss2')), "</wfw:commentRss>\n\t\t\t<slash:comments>", (string) \get_comments_number(), "</slash:comments>\n");
         }
         $w->put("\t\t\n\t\t")->tag('rss_enclosure')->put("\n\t\t")->act('rss2_item')->put("\t</item>\n\t");
     }
@@ -148,7 +148,7 @@ final class FeedTemplates
         if (\get_comments_number() || \comments_open()) {
             $count = (string) \get_comments_number();
             $w->put("\t\t\t<link rel=\"replies\" type=\"")->tag('bloginfo_rss', 'html_type')->put('" href="')->tag('the_permalink_rss')
-                ->put("#comments\" thr:count=\"{$count}\" />\n\t\t\t<link rel=\"replies\" type=\"application/atom+xml\" href=\"", \esc_url(\get_post_comments_feed_link(0, 'atom')), "\" thr:count=\"{$count}\" />\n\t\t\t<thr:total>{$count}</thr:total>\n\t\t");
+                ->put("#comments\" thr:count=\"{$count}\" />\n\t\t\t<link rel=\"replies\" type=\"application/atom+xml\" href=\"", \esc_url(FeedTags::postCommentsFeedLink(0, 'atom')), "\" thr:count=\"{$count}\" />\n\t\t\t<thr:total>{$count}</thr:total>\n\t\t");
         }
         $w->put("\t</entry>\n\t");
     }
@@ -278,7 +278,7 @@ final class FeedTemplates
             ->put(">\n\t<title type=\"text\">\n\t", self::commentsTitle('Comments on %s'), "\t</title>\n\t<subtitle type=\"text\">")->tag('bloginfo_rss', 'description')
             ->put("</subtitle>\n\n\t<updated>", FeedTags::buildDate('Y-m-d\TH:i:s\Z'), "</updated>\n\n\t<link rel=\"alternate\" type=\"")->tag('bloginfo_rss', 'html_type')->put('" href="');
         if (\is_singular()) {
-            $self = \esc_url(\get_post_comments_feed_link('', 'atom'));
+            $self = \esc_url(FeedTags::postCommentsFeedLink(0, 'atom'));
             $w->tag('comments_link_feed')->put("\" />\n\t<link rel=\"self\" type=\"application/atom+xml\" href=\"{$self}\" />\n\t<id>{$self}</id>\n");
         } else {
             $w->tag('bloginfo_rss', 'url')->put("\" />\n\t<link rel=\"self\" type=\"application/atom+xml\" href=\"")->tag('bloginfo_rss', 'comments_atom_url')

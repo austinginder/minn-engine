@@ -85,7 +85,7 @@ final class ThemeSwitch
      */
     public static function mapLocations(array $new, mixed $old): array
     {
-        $registered = array_keys((array) \get_registered_nav_menus());
+        $registered = array_keys((array) Runtime::current()->get('nav_menus', []));
         if (!is_array($old) || $old === []) {
             return $new;
         }

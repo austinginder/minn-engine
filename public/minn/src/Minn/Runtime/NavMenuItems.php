@@ -124,7 +124,7 @@ final class NavMenuItems
         if (!$type) {
             $item->_invalid = true;
         }
-        $item->url = $type ? (string) \get_post_type_archive_link((string) $item->object) : '';
+        $item->url = $type ? (string) ArchiveLinks::archive((string) $item->object) : '';
         $item->title = (string) $item->post_title === '' ? ($type ? (string) $type->labels->archives : '') : (string) $item->post_title;
     }
 

@@ -18,6 +18,7 @@ use Minn\Runtime\Runtime;
 use Minn\Rest\Caller;
 use Minn\Rest\Reply;
 use Minn\RestError;
+use Minn\Runtime\ThemeSwitch;
 use Minn\Support\FileHeaders;
 
 /**
@@ -81,7 +82,7 @@ final readonly class ThemesController
         }
         // With plugins loaded the switch is the reference's (switch_theme now, after_switch_theme on the next load).
         if (Runtime::booted()) {
-            \switch_theme($stylesheet);
+            ThemeSwitch::switchTo((string) $stylesheet);
             return Reply::answer($request, ['active' => $stylesheet]);
         }
         $this->site->setOption('stylesheet', $stylesheet);

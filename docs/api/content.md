@@ -80,6 +80,8 @@ held newline keeps the block rules from reaching past it.
 - const `HELD_NEWLINE` = `' <> '` — A newline inside a tag, comment or CDATA section while paragraphs are made.
 - const `RAW_NEWLINE` = `''` — A newline inside script, style, svg or math while line breaks are added.
 
+Used by: `Minn\Theme\ClassicContent`
+
 ### static `apply(string $text, bool $lineBreaks = true): string`
 
 The classic paragraph rules: a blank line makes a paragraph, a single newline a line break when asked.
@@ -1890,6 +1892,8 @@ followed by a name is text.
 - const `NESTABLE` = `array (   0 => 'article',   1 => 'aside',   2 => 'blockquote',   3 => 'details',   4 => 'div',   5 => 'figure',   6 => 'object',   7 => 'q',   8 => 'section',   9 => 'span', )`
 - const `RAW` = `array (   0 => 'script',   1 => 'style', )`
 - const `TAG` = `'/<(\\/?)([a-zA-Z][\\w:-]*)(\\s[^>]*|\\/)?>/'`
+
+Used by: `Minn\Runtime\PostData`
 
 ### static `balance(string $text): string`
 

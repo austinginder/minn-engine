@@ -122,7 +122,7 @@ final class RestMeta
                 continue;
             }
             $schema['default'] ??= self::emptyValue((string) $type);
-            $schema = \rest_default_additional_properties_to_false($schema);
+            $schema = Schema::closeObjects((array) $schema);
             $field['schema'] = $field['single'] ? $schema : ['type' => 'array', 'items' => $schema];
             $field['single'] = (bool) $field['single'];
             $fields[(string) $key] = $field;

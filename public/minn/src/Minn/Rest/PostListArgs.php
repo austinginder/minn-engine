@@ -150,9 +150,9 @@ final class PostListArgs
             return null;
         }
         [$terms, $children] = [[], false];
-        if (\rest_is_array($given)) {
+        if (SchemaValues::isArray($given)) {
             $terms = $given;
-        } elseif (\rest_is_object($given)) {
+        } elseif (SchemaValues::isObject($given)) {
             $terms = empty($given['terms']) ? [] : $given['terms'];
             $children = !empty($given['include_children']);
             $operator = $operator === 'IN' && ($given['operator'] ?? null) === 'AND' ? 'AND' : $operator;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\TranslationFiles;
 use Minn\Support\Escape;
 
 /**
@@ -123,7 +124,7 @@ final class OptionSanitizer
     /** The languages the site may be set to: those installed, and the one wp-config names. @return list<string> */
     private static function languages(): array
     {
-        $allowed = (array) \get_available_languages();
+        $allowed = (array) TranslationFiles::languages((string) WP_LANG_DIR, null);
         if (defined('WPLANG') && WPLANG !== '' && WPLANG !== 'en_US') {
             $allowed[] = WPLANG;
         }

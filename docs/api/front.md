@@ -816,6 +816,8 @@ a publicly viewable post is embeddable; the width is held between 200
 and 600 (oembed_min_max_width) and the height is a 16:9 share of it, at
 least 200.
 
+Used by: `Minn\Front\EmbedCard`
+
 ### static `data(mixed $post, int $width): array|false`
 
 get_oembed_response_data: the data, or false when the post cannot be embedded. @return array<string, mixed>|false

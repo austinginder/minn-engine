@@ -72,7 +72,7 @@ final class PluginRemoval
     private static function deleteOne(string $plugin, array $translations): bool
     {
         if (\is_uninstallable_plugin($plugin)) {
-            \uninstall_plugin($plugin);
+            self::uninstall((string) $plugin);
         }
         Runtime::hooks()->action('delete_plugin', [$plugin]);
         $deleted = self::removeFiles($plugin);

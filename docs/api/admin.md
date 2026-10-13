@@ -1040,7 +1040,7 @@ Route: `POST /minn-admin/v1/themes/activate (floor edit_posts + switch_themes)`
 
 Switches the active theme.
 
-Internals: `themeText()` (private, line 94), `themeFolders()` (private, line 100), `screenshot()` (private, line 116)
+Internals: `themeText()` (private, line 95), `themeFolders()` (private, line 101), `screenshot()` (private, line 117)
 
 
 ## Translations

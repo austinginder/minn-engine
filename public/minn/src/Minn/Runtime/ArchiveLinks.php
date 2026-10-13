@@ -45,7 +45,7 @@ final class ArchiveLinks
     {
         $default = (string) \get_default_feed();
         $feed = $feed === '' ? $default : $feed;
-        $link = \get_post_type_archive_link($postType);
+        $link = self::archive($postType);
         if (!$link) {
             return false;
         }

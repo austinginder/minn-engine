@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\Content\Autop;
 use Minn\Content\PostRecord;
 use Minn\Content\Blocks;
 use Minn\Content\PasswordGate;
@@ -31,7 +32,7 @@ final class ClassicContent
         $raw = (string) ($post->content);
         if (PasswordGate::is($post)) {
             // The form takes the content's place and runs the content filters, paragraphs first, as the reference's the_content does.
-            return Runtime::contentFilter(\wpautop(PasswordGate::formForReader($post, $permalinks->url(''), $permalinks->forPost($post))));
+            return Runtime::contentFilter(Autop::apply(PasswordGate::formForReader($post, $permalinks->url(''), $permalinks->forPost($post))));
         }
         if (trim($raw) === '') {
             return '';

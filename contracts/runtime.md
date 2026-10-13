@@ -15923,6 +15923,17 @@ after it, URI attributes asked only when an allowed element opens), which `wp_ks
 `actionDeprecated()` back `apply_filters_deprecated` and `do_action_deprecated`. All 370 probes give
 identical output before and after.
 
+**Batch 3, the thin delegates (function calls 1,004 → 967).** Where the facade function the engine
+called was one call into a Minn class, the engine calls the class: widget areas
+(`WidgetAreas::assign/find/render/control`), the post comments feed link, the registered menus and
+settings, the post type archive link, schema booleans, arrays and objects, term sanitizing, term count
+padding, plugin deletion and uninstall, tag balancing, the installed languages, a comment's page, the
+embed HTML and address, sign-up, registering a setting, removing every callback of a hook, closing
+schema objects, switching themes, the toolbar's appearance menu, and autop. A call from inside the
+class that owns the method is now `self::`. The object cache functions stay for the batch that gives
+replaceable functions their seam (an `object-cache.php` drop-in may define them), and
+`reset_password` waits for the users (it takes a `WP_User`). All 370 probes give identical output.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

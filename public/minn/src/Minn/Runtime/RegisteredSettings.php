@@ -113,7 +113,7 @@ final class RegisteredSettings
             if (array_key_exists(5, $row)) {
                 $args['default'] = $row[5];
             }
-            \register_setting($group, $name, $args);
+            self::register((string) $group, (string) $name, $args);
         }
     }
 }

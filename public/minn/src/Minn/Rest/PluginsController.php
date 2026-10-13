@@ -16,6 +16,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\PluginRemoval;
 use Minn\Runtime\Refusal;
 use Minn\RestError;
 use Minn\Html;
@@ -129,7 +130,7 @@ final readonly class PluginsController
         }
         // A WordPress plugin is deleted as the reference deletes it (uninstalled first, the delete hooks around it).
         if (array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {
-            $deleted = \delete_plugins([$plugin . '.php']);
+            $deleted = PluginRemoval::delete([$plugin . '.php']);
             if ($deleted instanceof \WP_Error) {
                 throw new RestError((string) $deleted->get_error_code(), (string) $deleted->get_error_message(), 500);
             }

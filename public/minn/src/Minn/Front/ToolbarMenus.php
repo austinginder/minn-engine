@@ -143,7 +143,7 @@ final class ToolbarMenus
         if (\current_user_can('read')) {
             $bar->add_node(['parent' => 'site-name', 'id' => 'dashboard', 'title' => Gettext::text('Dashboard'), 'href' => \admin_url()]);
         }
-        \wp_admin_bar_appearance_menu($bar);
+        self::appearanceMenu($bar);
         if (\current_user_can('activate_plugins')) {
             $bar->add_node(['parent' => 'site-name', 'id' => 'plugins', 'title' => Gettext::text('Plugins'), 'href' => \admin_url('plugins.php')]);
         }

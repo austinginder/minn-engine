@@ -107,7 +107,7 @@ final class EmbedCard
         return "\t<div class=\"wp-embed-share-dialog hidden\" role=\"dialog\" aria-label=\"Sharing options\">\n\t\t<div class=\"wp-embed-share-dialog-content\">\n\t\t\t<div class=\"wp-embed-share-dialog-text\">\n\t\t\t\t<ul class=\"wp-embed-share-tabs\" role=\"tablist\">\n"
             . $tab('wordpress', 'WordPress Embed', true) . $tab('html', 'HTML Embed', false) . "\t\t\t\t</ul>\n"
             . $panel('wordpress', true, '<input type="text" value="' . \esc_url((string) \get_permalink()) . "\" class=\"wp-embed-share-input\" aria-label=\"URL\" aria-describedby=\"wp-embed-share-description-wordpress-{$key}\" tabindex=\"0\" readonly/>", 'Copy and paste this URL into your WordPress site to embed')
-            . $panel('html', false, "<textarea class=\"wp-embed-share-input\" aria-label=\"HTML\" aria-describedby=\"wp-embed-share-description-html-{$key}\" tabindex=\"0\" readonly>" . \esc_textarea((string) \get_post_embed_html(600, 400)) . '</textarea>', 'Copy and paste this code into your site to embed')
+            . $panel('html', false, "<textarea class=\"wp-embed-share-input\" aria-label=\"HTML\" aria-describedby=\"wp-embed-share-description-html-{$key}\" tabindex=\"0\" readonly>" . \esc_textarea((string) PostEmbed::html(600, 400, null)) . '</textarea>', 'Copy and paste this code into your site to embed')
             . "\t\t\t</div>\n\n\t\t\t<button type=\"button\" class=\"wp-embed-share-dialog-close\" aria-label=\"Close sharing dialog\">\n\t\t\t\t<span class=\"dashicons dashicons-no\"></span>\n\t\t\t</button>\n\t\t</div>\n\t</div>\n\t";
     }
 }

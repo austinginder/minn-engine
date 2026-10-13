@@ -1315,7 +1315,7 @@ Every shown setting's value. @return array<string, mixed>
 
 Writes the shown settings a body names, after refusing the values their schemas refuse.
 
-Internals: `refuseInvalid()` (private, line 82)
+Internals: `refuseInvalid()` (private, line 83)
 
 
 ## MediaController
@@ -1543,7 +1543,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options; or 
 
 One menu location.
 
-Internals: `locationItem()` (private, line 248), `argsFrom()` (private, line 272), `titleFrom()` (private, line 295), `urlFrom()` (private, line 305), `refuse()` (private, line 315), `plain()` (private, line 325)
+Internals: `locationItem()` (private, line 249), `argsFrom()` (private, line 273), `titleFrom()` (private, line 296), `urlFrom()` (private, line 306), `refuse()` (private, line 316), `plain()` (private, line 326)
 
 
 ## NavigationController
@@ -1691,7 +1691,7 @@ rendered description.
 - `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
 - `@return array<string, mixed>`
 
-Internals: `items()` (private, line 144), `find()` (private, line 158), `statusOf()` (private, line 172), `manifestFor()` (private, line 184), `extensionItem()` (private, line 194), `pluginItem()` (private, line 222), `links()` (private, line 256), `extensionKey()` (private, line 261), `refuse()` (private, line 268)
+Internals: `items()` (private, line 145), `find()` (private, line 159), `statusOf()` (private, line 173), `manifestFor()` (private, line 185), `extensionItem()` (private, line 195), `pluginItem()` (private, line 223), `links()` (private, line 257), `extensionKey()` (private, line 262), `refuse()` (private, line 269)
 
 
 ## PolicyGate
@@ -2724,7 +2724,7 @@ tests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/re
 - const `KEYWORDS` = `array (   0 => 'title',   1 => 'description',   2 => 'default',   3 => 'type',   4 => 'format',   5 => 'enum',   6 => 'items',   7 => 'properties',   8 => 'additionalProperties',   9 => 'patternProperties',   10 => 'minProperties',   11 => 'maxProperties',   12 => 'minimum',   13 => 'maximum',   14 => 'exclusiveMinimum',   15 => 'exclusiveMaximum',   16 => 'multipleOf',   17 => 'minLength',   18 => 'maxLength',   19 => 'pattern',   20 => 'minItems',   21 => 'maxItems',   22 => 'uniqueItems',   23 => 'anyOf',   24 => 'oneOf', )` — Every keyword a route schema may carry, in the reference's order; the endpoint subset drops the three descriptive ones.
 - const `ENDPOINT_KEYWORDS` = `array (   0 => 'type',   1 => 'format',   2 => 'enum',   3 => 'items',   4 => 'properties',   5 => 'additionalProperties',   6 => 'patternProperties',   7 => 'minProperties',   8 => 'maxProperties',   9 => 'minimum',   10 => 'maximum',   11 => 'exclusiveMinimum',   12 => 'exclusiveMaximum',   13 => 'multipleOf',   14 => 'minLength',   15 => 'maxLength',   16 => 'pattern',   17 => 'minItems',   18 => 'maxItems',   19 => 'uniqueItems',   20 => 'anyOf',   21 => 'oneOf', )` — An object schema that names its properties forbids the others unless it says otherwise, all the way down.
 
-Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\UsersController`
+Used by: `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\ArgCheck`, `Minn\Rest\BlockRendererController`, `Minn\Rest\ClientSchema`, `Minn\Rest\LiveSettings`, `Minn\Rest\RestMeta`, `Minn\Rest\SchemaChoices`, `Minn\Rest\SchemaValues`, `Minn\Rest\Services`, `Minn\Rest\UsersController`
 
 ```php
 __construct(Closure $email, Closure $number, Closure $format)
@@ -2867,7 +2867,7 @@ comparisons and date, colour, and uuid parsers the formats use, and the
 combining walk anyOf and oneOf share. Schema holds the rules; this holds
 what they are applied to.
 
-Used by: `Minn\Rest\Schema`, `Minn\Rest\Settings`
+Used by: `Minn\Rest\PostListArgs`, `Minn\Rest\Schema`, `Minn\Rest\Settings`, `Minn\Rest\TemplatesController`, `Minn\Rest\WidgetsController`
 
 ### static `isBoolean(mixed $value): bool`
 

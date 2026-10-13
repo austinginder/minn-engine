@@ -103,7 +103,7 @@ final class CommentPages
         $page = match (true) {
             !in_array($args['page'], ['', null], true) => $args['page'],
             !empty($GLOBALS['in_comment_loop']) => \get_query_var('cpage'),
-            default => \get_page_of_comment($comment?->comment_ID, $args),
+            default => self::pageOf($comment?->comment_ID, $args),
         };
         return $options->filtered('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;
     }

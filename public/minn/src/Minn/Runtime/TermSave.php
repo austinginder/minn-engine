@@ -50,7 +50,7 @@ final class TermSave
         }
         $args['name'] = $term;
         $args['taxonomy'] = $taxonomy;
-        $args = (array) \sanitize_term($args, $taxonomy, 'db');
+        $args = (array) TermFields::term($args, (string) $taxonomy, 'db');
         $name = (string) Slashes::strip((string) $args['name']);
         $taken = self::nameTaken($name, $taxonomy, $args);
         if ($taken !== null) {
@@ -98,7 +98,7 @@ final class TermSave
             return new \WP_Error('invalid_term', 'Empty Term.');
         }
         $parsed = Lists::args(array_merge((array) Slashes::add($term->to_array()), $changes), self::DEFAULTS);
-        $args = (array) \sanitize_term($parsed, $taxonomy, 'db');
+        $args = (array) TermFields::term($parsed, (string) $taxonomy, 'db');
         $name = (string) Slashes::strip((string) $args['name']);
         $description = (string) Slashes::strip((string) $args['description']);
         $parsed['name'] = $name;

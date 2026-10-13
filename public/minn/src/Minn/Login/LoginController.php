@@ -19,6 +19,7 @@ use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\Auth\Authenticated;
 use Minn\Auth\Nonce;
+use Minn\Runtime\AccountFlows;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 use Minn\Auth\PasswordReset;
@@ -279,7 +280,7 @@ final readonly class LoginController
             $landing = (string) Runtime::hooks()->filter('registration_redirect', [(string) ($request->query('redirect_to') ?? ''), new \WP_Error()]);
             return Response::html(LoginForm::register($siteName, $action, '', '', '', $landing, $this->parts('register', 'Registration Form', $siteName)));
         }
-        $result = \register_new_user($login, $email);
+        $result = AccountFlows::registerNewUser((string) $login, (string) $email);
         $requested = (string) ($request->form['redirect_to'] ?? '');
         if (!$result instanceof \WP_Error) {
             return Response::redirect($requested !== '' ? $this->safeRedirect($requested) : $this->permalinks->url($this->base($request) . '?checkemail=registered'), 302);

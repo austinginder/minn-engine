@@ -29,10 +29,10 @@ final readonly class WidgetObject
             'id' => $widgetId,
             'id_base' => $parsed['id_base'],
             'sidebar' => $sidebarId,
-            'rendered' => $sidebarId === WidgetAreas::INACTIVE ? '' : trim(\wp_render_widget($widgetId, $sidebarId)),
+            'rendered' => $sidebarId === WidgetAreas::INACTIVE ? '' : trim(WidgetAreas::render((string) $widgetId, (string) $sidebarId)),
         ];
         if ($context->isEdit()) {
-            $item['rendered_form'] = trim((string) ($object instanceof \WP_Widget ? self::form($object, $parsed['number'] ?? -1) : \wp_render_widget_control($widgetId)));
+            $item['rendered_form'] = trim((string) ($object instanceof \WP_Widget ? self::form($object, $parsed['number'] ?? -1) : WidgetAreas::control((string) $widgetId)));
             if ($object instanceof \WP_Widget) {
                 $item['instance'] = self::instance($object, $parsed['number'] ?? -1);
             }

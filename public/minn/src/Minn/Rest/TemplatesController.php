@@ -191,7 +191,7 @@ final readonly class TemplatesController
         if (!Runtime::booted()) {
             throw RestError::noRoute();
         }
-        $hierarchy = \get_template_hierarchy((string) $request->query['slug'], \rest_sanitize_boolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
+        $hierarchy = \get_template_hierarchy((string) $request->query['slug'], SchemaValues::toBoolean($request->query['is_custom'] ?? false), (string) ($request->query['template_prefix'] ?? ''));
         $found = [];
         foreach (\get_block_templates(['slug__in' => $hierarchy], TemplateIndex::TEMPLATE) as $template) {
             $found[$template->slug] ??= $template->id;
