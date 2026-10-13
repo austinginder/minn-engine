@@ -230,6 +230,37 @@ final class Hooks
         return $this->run($hook, $args, true, [], [$args]);
     }
 
+    /**
+     * apply_filters_deprecated: the value as given while nothing is hooked;
+     * otherwise the deprecation notice, then the filter as filterRefArray
+     * runs it.
+     *
+     * @param array<array-key, mixed> $args the value first
+     */
+    public function filterDeprecated(string $hook, array $args, mixed $version, mixed $replacement = '', mixed $message = ''): mixed
+    {
+        if (!$this->has($hook)) {
+            return $args[0];
+        }
+        Notices::deprecated('hook', $hook, $version, $replacement, $message);
+        return $this->filterRefArray($hook, array_values($args));
+    }
+
+    /**
+     * do_action_deprecated: nothing while nothing is hooked; otherwise the
+     * deprecation notice, then the action as actionRefArray runs it.
+     *
+     * @param array<array-key, mixed> $args
+     */
+    public function actionDeprecated(string $hook, array $args, mixed $version, mixed $replacement = '', mixed $message = ''): void
+    {
+        if (!$this->has($hook)) {
+            return;
+        }
+        Notices::deprecated('hook', $hook, $version, $replacement, $message);
+        $this->actionRefArray($hook, array_values($args));
+    }
+
     /** How often an action has run. */
     public function actionsDone(string $hook): int
     {

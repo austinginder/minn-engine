@@ -69714,6 +69714,7 @@
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Registry",
@@ -87690,7 +87691,8 @@
             "extends": null,
             "uses": [
                 "Minn\\I18n\\Gettext",
-                "Minn\\Query\\Sql"
+                "Minn\\Query\\Sql",
+                "Minn\\Runtime\\Notices"
             ],
             "usedBy": [],
             "constructor": {
@@ -87723,8 +87725,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 35,
-                "end": 37
+                "line": 36,
+                "end": 38
             },
             "cases": [],
             "constants": [
@@ -87810,8 +87812,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 40,
-                    "end": 47
+                    "line": 41,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -87830,8 +87832,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 80
+                    "line": 58,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -87857,8 +87859,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 122
+                    "line": 98,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -87877,8 +87879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 133
+                    "line": 126,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -87897,8 +87899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 154
+                    "line": 137,
+                    "end": 155
                 },
                 {
                     "routes": [],
@@ -87917,8 +87919,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 157,
-                    "end": 161
+                    "line": 158,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -87937,8 +87939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 168
+                    "line": 165,
+                    "end": 169
                 },
                 {
                     "routes": [],
@@ -87966,8 +87968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 171,
-                    "end": 174
+                    "line": 172,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -87988,8 +87990,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 183,
-                    "end": 203
+                    "line": 184,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -88015,8 +88017,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 220
+                    "line": 211,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -88063,8 +88065,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 251
+                    "line": 229,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -88090,8 +88092,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 288,
-                    "end": 310
+                    "line": 289,
+                    "end": 311
                 },
                 {
                     "routes": [],
@@ -88110,8 +88112,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 313,
-                    "end": 317
+                    "line": 314,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -88130,8 +88132,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 94
+                    "line": 84,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -88159,8 +88161,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 254,
-                    "end": 260
+                    "line": 255,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -88186,8 +88188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 273
+                    "line": 263,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -88206,8 +88208,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 276,
-                    "end": 280
+                    "line": 277,
+                    "end": 281
                 }
             ]
         },
@@ -114850,6 +114852,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [],
@@ -115292,7 +115295,9 @@
             "doc": "The checks of an ability's run, as the reference makes them (probes\nabilities-registry, abilities-classes); WP_Ability::execute strings them:\ninput left out takes the input schema's default, input given to an ability\nwithout an input schema is refused, input that its schema refuses is\nability_invalid_input; a permission callback that does not answer true is\nability_invalid_permissions (an error it returns is reported as a notice);\nthen wp_before_execute_ability, the callback\n(an error it returns is the answer), the output checked against the\noutput schema (ability_invalid_output), and wp_after_execute_ability.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Notices"
+            ],
             "usedBy": [],
             "constructor": null,
             "cases": [],
@@ -121531,11 +121536,13 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Hooks.php",
-            "lines": 354,
+            "lines": 385,
             "doc": "The hook registry plugin code registers into and the engine fires.\nSemantics come from contracts/fixtures/api/hooks.json: callbacks run\nby ascending priority then insertion order; a callback added at a\nhigher priority during a run takes part in that run, one added at the\ncurrent or a lower priority waits for the next; a callback removed\nbefore its turn is skipped; the \"all\" hook sees every firing with the\nhook name first and every argument regardless of its accepted count.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Runtime\\Notices"
+            ],
             "usedBy": [
                 "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\Runtime"
@@ -122030,6 +122037,106 @@
                 },
                 {
                     "routes": [],
+                    "name": "filterDeprecated",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "filterDeprecated(string $hook, array $args, mixed $version, mixed $replacement = '', mixed $message = ''): mixed",
+                    "doc": "apply_filters_deprecated: the value as given while nothing is hooked;\notherwise the deprecation notice, then the filter as filterRefArray\nruns it.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $args the value first"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": "the value first"
+                        },
+                        {
+                            "name": "version",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "replacement",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 240,
+                    "end": 247
+                },
+                {
+                    "routes": [],
+                    "name": "actionDeprecated",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "actionDeprecated(string $hook, array $args, mixed $version, mixed $replacement = '', mixed $message = ''): void",
+                    "doc": "do_action_deprecated: nothing while nothing is hooked; otherwise the\ndeprecation notice, then the action as actionRefArray runs it.",
+                    "shapes": [
+                        "@param array<array-key, mixed> $args"
+                    ],
+                    "params": [
+                        {
+                            "name": "hook",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "array<array-key, mixed>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "replacement",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 255,
+                    "end": 262
+                },
+                {
+                    "routes": [],
                     "name": "actionsDone",
                     "static": false,
                     "visibility": "public",
@@ -122045,8 +122152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 234,
-                    "end": 237
+                    "line": 265,
+                    "end": 268
                 },
                 {
                     "routes": [],
@@ -122065,8 +122172,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 243
+                    "line": 271,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -122077,8 +122184,8 @@
                     "doc": "The hook running now, or false.",
                     "shapes": [],
                     "params": [],
-                    "line": 246,
-                    "end": 249
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -122097,8 +122204,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 252,
-                    "end": 255
+                    "line": 283,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -122111,8 +122218,8 @@
                         "@return array<string, array<int, list<callable>>> a read-only view for diagnostics"
                     ],
                     "params": [],
-                    "line": 262,
-                    "end": 272
+                    "line": 293,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -122133,8 +122240,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 341,
-                    "end": 346
+                    "line": 372,
+                    "end": 377
                 },
                 {
                     "routes": [],
@@ -122185,8 +122292,8 @@
                             "doc": "what an 'all' callback gets after the hook's name; the arguments when null"
                         }
                     ],
-                    "line": 279,
-                    "end": 326
+                    "line": 310,
+                    "end": 357
                 },
                 {
                     "routes": [],
@@ -122212,8 +122319,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 337
+                    "line": 359,
+                    "end": 368
                 },
                 {
                     "routes": [],
@@ -122239,8 +122346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 348,
-                    "end": 357
+                    "line": 379,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -122259,8 +122366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 360,
-                    "end": 370
+                    "line": 391,
+                    "end": 401
                 }
             ]
         },
@@ -124206,6 +124313,7 @@
             "extends": null,
             "uses": [
                 "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -124957,6 +125065,262 @@
                     ],
                     "line": 159,
                     "end": 178
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\Notices",
+            "short": "Notices",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Notices.php",
+            "lines": 96,
+            "doc": "The debugging notices plugins and the engine raise: a deprecated function,\nargument, hook, file, class or constructor, and a function called\nincorrectly. Each is heard by its action first; then, only under WP_DEBUG\nand while its own filter still says so, it is raised as a PHP notice worded\nas the reference words it. Every raised message passes\nwp_trigger_error_always_run, wp_trigger_error_trigger_error and\nwp_trigger_error_run, and keeps only links (http and https), line breaks,\ncode and emphasis. Values reach the hooks exactly as they were given.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Kses"
+            ],
+            "usedBy": [
+                "Minn\\Query\\DateSql",
+                "Minn\\Runtime\\Abilities",
+                "Minn\\Runtime\\AbilityRun",
+                "Minn\\Runtime\\Hooks",
+                "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\PostQuery",
+                "Minn\\Runtime\\RegisteredSettings",
+                "Minn\\Runtime\\ThemeSupports",
+                "Minn\\Runtime\\UserQueryRunner"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "MARKUP",
+                    "value": "array (   'a' =>    array (     0 => 'href',   ),   'br' =>    array (   ),   'code' =>    array (   ),   'em' =>    array (   ),   'strong' =>    array (   ), )",
+                    "doc": "The markup a raised notice keeps (each element with its attributes), and the protocols its links may use.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "PROTOCOLS",
+                    "value": "array (   0 => 'http',   1 => 'https', )",
+                    "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "DEPRECATIONS",
+                    "value": "array (   'function' =>    array (     0 => 'deprecated_function_run',     1 => 'deprecated_function_trigger_error',     2 => 'Function %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',     3 => 'Function %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.',     4 => false,   ),   'argument' =>    array (     0 => 'deprecated_argument_run',     1 => 'deprecated_argument_trigger_error',     2 => 'Function %1$s was called with an argument that is <strong>deprecated</strong> since version %2$s! %3$s',     3 => 'Function %1$s was called with an argument that is <strong>deprecated</strong> since version %2$s with no alternative available.',     4 => false,   ),   'hook' =>    array (     0 => 'deprecated_hook_run',     1 => 'deprecated_hook_trigger_error',     2 => 'Hook %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',     3 => 'Hook %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.',     4 => true,   ),   'file' =>    array (     0 => 'deprecated_file_included',     1 => 'deprecated_file_trigger_error',     2 => 'File %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',     3 => 'File %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.',     4 => true,   ),   'class' =>    array (     0 => 'deprecated_class_run',     1 => 'deprecated_class_trigger_error',     2 => 'Class %1$s is <strong>deprecated</strong> since version %2$s! Use %3$s instead.',     3 => 'Class %1$s is <strong>deprecated</strong> since version %2$s with no alternative available.',     4 => false,   ), )",
+                    "doc": "Each kind of deprecation: the action that hears it, the filter that may\nsilence it, its wording with an alternative and without one, and\nwhether a closing note follows the wording (and is heard after the\nversion).",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "wanted",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "wanted(string $filter, mixed ...$args): bool",
+                    "doc": "Whether a notice is raised: only under WP_DEBUG, and only while its filter (handed true and anything else given) still says so.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "filter",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
+                },
+                {
+                    "routes": [],
+                    "name": "deprecated",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deprecated(string $kind, mixed $name, mixed $version, mixed $alternative = '', mixed $note = ''): void",
+                    "doc": "A deprecation of one kind (function, argument, hook, file or class): its\nname, the version that deprecated it, the alternative (for an argument,\nthe message), and for a hook or a file a note added after the wording.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "alternative",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "note",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 51,
+                    "end": 62
+                },
+                {
+                    "routes": [],
+                    "name": "constructor",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "constructor(mixed $class, mixed $version, mixed $parent = ''): void",
+                    "doc": "A class still constructed through its old PHP 4 style constructor, in its parent class when one is named.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "class",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 75
+                },
+                {
+                    "routes": [],
+                    "name": "doingItWrong",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "doingItWrong(mixed $function, mixed $message, mixed $version): void",
+                    "doc": "A function called incorrectly, with why, and the version that added the message.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "version",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 78,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "message",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "message(mixed $function, mixed $message, mixed $level): ?string",
+                    "doc": "A notice's message as it would be raised, or null when it is not:\nwp_trigger_error_always_run hears every one; under WP_DEBUG, and unless\nwp_trigger_error_trigger_error silences it, wp_trigger_error_run hears it\nand it is cleaned to the markup a notice keeps.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "function",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "message",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 95,
+                    "end": 105
+                },
+                {
+                    "routes": [],
+                    "name": "notify",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "notify(string $message, int $level = Minn\\Runtime\\E_USER_NOTICE): void",
+                    "doc": "One of the engine's own notices, raised when it is wanted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "message",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "level",
+                            "type": "int",
+                            "shape": "",
+                            "default": "Minn\\Runtime\\E_USER_NOTICE",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 108,
+                    "end": 114
                 }
             ]
         },
@@ -129749,6 +130113,7 @@
                 "Minn\\Query\\PostOrder",
                 "Minn\\Query\\PostSearch",
                 "Minn\\Runtime\\CommentFeedQuery",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\PostQueryParts",
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryStatus",
@@ -132928,6 +133293,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [],
@@ -134609,6 +134975,7 @@
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\OptionSanitizer",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\OptionsGroup",
@@ -134648,6 +135015,7 @@
                 "Minn\\Runtime\\UserSave",
                 "Minn\\Runtime\\WidgetAreas",
                 "Minn\\Support\\Escape",
+                "Minn\\Support\\Kses",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\ClassicRenderer",
@@ -140829,6 +141197,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Json",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -143170,6 +143539,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Query\\Sql",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\UserOrder",
                 "Minn\\Runtime\\UserQueryRoles",
@@ -144952,7 +145322,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Kses.php",
-            "lines": 481,
+            "lines": 509,
             "doc": "The HTML a user without unfiltered_html may store. Tags outside the\nallowlist are removed and their text kept; attributes outside the tag's\nlist are dropped; URL attributes lose unsafe schemes; style attributes\nkeep only listed properties and no code. Comments keep their text, and\nblock delimiters are written back with their attribute values filtered.",
             "implements": [],
             "extends": null,
@@ -144961,6 +145331,7 @@
                 "Minn\\Blocks\\Parser",
                 "Minn\\Blocks\\Serializer",
                 "Minn\\Html\\Decoder",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Entities",
                 "Minn\\Support\\KsesCss",
                 "Minn\\Support\\KsesEntities",
@@ -144979,6 +145350,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\TagEditor",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\KsesAttributes",
@@ -145045,8 +145417,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 40
+                    "line": 38,
+                    "end": 41
                 },
                 {
                     "routes": [],
@@ -145065,8 +145437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 46
+                    "line": 44,
+                    "end": 47
                 },
                 {
                     "routes": [],
@@ -145092,8 +145464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 58
+                    "line": 54,
+                    "end": 59
                 },
                 {
                     "routes": [],
@@ -145112,8 +145484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 64
+                    "line": 62,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -145132,8 +145504,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 71,
-                    "end": 86
+                    "line": 72,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -145161,8 +145533,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 98
+                    "line": 95,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -145181,8 +145553,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 107
+                    "line": 102,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -145210,8 +145582,64 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 128
+                    "line": 117,
+                    "end": 129
+                },
+                {
+                    "routes": [],
+                    "name": "allowing",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "allowing(string $content, array|string $allowedHtml, mixed $protocols, ?Closure $tagsFor = NULL): string",
+                    "doc": "Content kept to an allowlist as wp_kses keeps it: control characters\ndropped (a slashed zero kept), references normalized, then pre_kses\n(handed the allowlist and protocols as given), then only the markup the\nallowlist allows, with links on the given protocols. A named allowlist\n(a context such as \"post\") is resolved by $tagsFor after pre_kses. The\nURI attributes are asked for only when the content opens an element\nthe allowlist allows.",
+                    "shapes": [
+                        "@param array<string, mixed>|string $allowedHtml",
+                        "@param Closure(string): array<string, mixed>|null $tagsFor"
+                    ],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowedHtml",
+                            "type": "array|string",
+                            "shape": "array<string, mixed>|string",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "protocols",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "tagsFor",
+                            "type": "?Closure",
+                            "shape": "Closure(string): array<string, mixed>|null",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 159,
+                    "end": 167
+                },
+                {
+                    "routes": [],
+                    "name": "uriAttributes",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uriAttributes(): mixed",
+                    "doc": "The attributes judged as URIs, through wp_kses_uri_attributes (its answer as given).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 170,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -145237,8 +145665,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 155,
-                    "end": 162
+                    "line": 184,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -145264,8 +145692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 171
+                    "line": 197,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -145298,8 +145726,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 178,
-                    "end": 181
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -145320,8 +145748,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 268
+                    "line": 262,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -145340,8 +145768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 277
+                    "line": 300,
+                    "end": 306
                 },
                 {
                     "routes": [],
@@ -145360,8 +145788,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 285,
-                    "end": 293
+                    "line": 314,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -145389,8 +145817,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 321
+                    "line": 334,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -145409,8 +145837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 413,
-                    "end": 419
+                    "line": 442,
+                    "end": 448
                 },
                 {
                     "routes": [],
@@ -145436,8 +145864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 473,
-                    "end": 487
+                    "line": 502,
+                    "end": 516
                 },
                 {
                     "routes": [],
@@ -145465,8 +145893,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 144
+                    "line": 132,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -145492,8 +145920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 205
+                    "line": 213,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -145519,8 +145947,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 222
+                    "line": 241,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -145539,8 +145967,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 324,
-                    "end": 334
+                    "line": 353,
+                    "end": 363
                 },
                 {
                     "routes": [],
@@ -145559,8 +145987,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 341
+                    "line": 366,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -145579,8 +146007,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 352,
-                    "end": 367
+                    "line": 381,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -145599,8 +146027,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 375,
-                    "end": 392
+                    "line": 404,
+                    "end": 421
                 },
                 {
                     "routes": [],
@@ -145619,8 +146047,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 399
+                    "line": 424,
+                    "end": 428
                 },
                 {
                     "routes": [],
@@ -145639,8 +146067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 402,
-                    "end": 406
+                    "line": 431,
+                    "end": 435
                 },
                 {
                     "routes": [],
@@ -145673,8 +146101,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 427,
-                    "end": 449
+                    "line": 456,
+                    "end": 478
                 },
                 {
                     "routes": [],
@@ -145707,8 +146135,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 452,
-                    "end": 466
+                    "line": 481,
+                    "end": 495
                 },
                 {
                     "routes": [],
@@ -145727,8 +146155,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 490,
-                    "end": 499
+                    "line": 519,
+                    "end": 528
                 }
             ]
         },

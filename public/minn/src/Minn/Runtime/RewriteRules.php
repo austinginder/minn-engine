@@ -84,7 +84,7 @@ final class RewriteRules
         }
         $filter = static function (string $name, array $rules): array {
             $rules = (array) Runtime::hooks()->filter("{$name}_rewrite_rules", [$rules]);
-            return $name === 'post_tag' ? (array) \apply_filters_deprecated('tag_rewrite_rules', [$rules], '3.1.0', 'post_tag_rewrite_rules') : $rules;
+            return $name === 'post_tag' ? (array) Runtime::hooks()->filterDeprecated('tag_rewrite_rules', [$rules], '3.1.0', 'post_tag_rewrite_rules') : $rules;
         };
         [$top, $rules] = self::assemble($rewrite, $filter);
         // As the reference does, a permastruct's rules join the top rules for good.

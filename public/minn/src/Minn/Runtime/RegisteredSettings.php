@@ -58,7 +58,7 @@ final class RegisteredSettings
         $args = array_merge($defaults, $args);
         $rest = $args['show_in_rest'];
         if ($rest && $args['type'] === 'array' && empty($rest['schema']['items'])) {
-            \_doing_it_wrong('register_setting', self::ARRAY_ITEMS, '5.4.0');
+            Notices::doingItWrong('register_setting', self::ARRAY_ITEMS, '5.4.0');
         }
         $registered = self::all();
         $registered[$name] = $args;

@@ -290,9 +290,9 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
 $bootedCeiling = 73;
-$wordpressCallCeiling = 1018;
+$wordpressCallCeiling = 1004;
 // The hook API from src/Minn goes through Runtime::hooks() too: \apply_filters() and \do_action() are the facade's names for it.
-$hookApiCeiling = 3;
+$hookApiCeiling = 0;
 $hookApiCalls = 0;
 $apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
 $wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);

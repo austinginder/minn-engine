@@ -31,7 +31,7 @@ final class AbilityRun
     public static function allowed(string $name, mixed $answer): true|\WP_Error
     {
         if ($answer instanceof \WP_Error) {
-            \_doing_it_wrong('WP_Ability::execute', $answer->get_error_message(), '6.9.0');
+            Notices::doingItWrong('WP_Ability::execute', $answer->get_error_message(), '6.9.0');
         }
         return $answer === true ? true : new \WP_Error('ability_invalid_permissions', sprintf('Ability "%s" does not have necessary permission.', $name));
     }

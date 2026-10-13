@@ -6,6 +6,7 @@ namespace Minn\Query;
 
 use Closure;
 use Minn\I18n\Gettext;
+use Minn\Runtime\Notices;
 
 /**
  * The WHERE fragment of a date query in the reference's shape: before and
@@ -70,7 +71,7 @@ final class DateSql
         foreach ($ranges as $key => [$min, $max]) {
             foreach ((array) ($clause[$key] ?? []) as $value) {
                 if (is_numeric($value) && ((int) $value < $min || (int) $value > $max)) {
-                    \_doing_it_wrong('WP_Date_Query', sprintf(Gettext::text('Invalid value %1$s for %2$s. Expected value should be between %3$s and %4$s.'), (string) $value, $key, $min, $max), '4.1.0');
+                    Notices::doingItWrong('WP_Date_Query', sprintf(Gettext::text('Invalid value %1$s for %2$s. Expected value should be between %3$s and %4$s.'), (string) $value, $key, $min, $max), '4.1.0');
                     $valid = false;
                 }
             }
@@ -89,7 +90,7 @@ final class DateSql
         $message = isset($date['year'])
             ? sprintf(Gettext::text('The following values do not describe a valid date: year %1$s, month %2$s, day %3$s.'), $date['year'], $date['month'], $date['day'])
             : sprintf(Gettext::text('The following values do not describe a valid date: month %1$s, day %2$s.'), $date['month'], $date['day']);
-        \_doing_it_wrong('WP_Date_Query', $message, '4.1.0');
+        Notices::doingItWrong('WP_Date_Query', $message, '4.1.0');
         return false;
     }
 

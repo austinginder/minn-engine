@@ -16,7 +16,7 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 481 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 509 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -318,7 +318,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\TagEditor`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Theme\PatternText`
 
 ### static `post(string $html): string`
 
@@ -362,6 +362,23 @@ the same filter, and the delimiters written back in their canonical
 form ("--->" read as "-->"). Markup without a comment is left alone.
 
 - `@param Closure(string): string $clean`
+
+### static `allowing(string $content, array|string $allowedHtml, mixed $protocols, ?Closure $tagsFor = NULL): string`
+
+Content kept to an allowlist as wp_kses keeps it: control characters
+dropped (a slashed zero kept), references normalized, then pre_kses
+(handed the allowlist and protocols as given), then only the markup the
+allowlist allows, with links on the given protocols. A named allowlist
+(a context such as "post") is resolved by $tagsFor after pre_kses. The
+URI attributes are asked for only when the content opens an element
+the allowlist allows.
+
+- `@param array<string, mixed>|string $allowedHtml`
+- `@param Closure(string): array<string, mixed>|null $tagsFor`
+
+### static `uriAttributes(): mixed`
+
+The attributes judged as URIs, through wp_kses_uri_attributes (its answer as given).
 
 ### static `filter(string $html, Minn\Support\KsesPolicy $policy): string`
 
@@ -428,7 +445,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleanValue()` (private, line 131), `run()` (private, line 184), `htmlComment()` (private, line 212), `deepDecode()` (private, line 324), `visible()` (private, line 337), `normalizeText()` (private, line 352), `normalizeAttribute()` (private, line 375), `named()` (private, line 395), `codePoint()` (private, line 402), `attributes()` (private, line 427), `rendered()` (private, line 452), `srcset()` (private, line 490)
+Internals: `cleanValue()` (private, line 132), `run()` (private, line 213), `htmlComment()` (private, line 241), `deepDecode()` (private, line 353), `visible()` (private, line 366), `normalizeText()` (private, line 381), `normalizeAttribute()` (private, line 404), `named()` (private, line 424), `codePoint()` (private, line 431), `attributes()` (private, line 456), `rendered()` (private, line 481), `srcset()` (private, line 519)
 
 
 ## KsesAttributes

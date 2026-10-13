@@ -1,9 +1,9 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 1018,
-        "functions": 384,
-        "hookApi": 3,
+        "functionCalls": 1004,
+        "functions": 382,
+        "hookApi": 0,
         "classReferences": 568,
         "classes": 50,
         "files": 168
@@ -13,8 +13,8 @@
             "wp-includes/post.php": 128,
             "wp-includes/formatting.php": 95,
             "wp-includes/link-template.php": 80,
-            "wp-includes/functions.php": 77,
             "wp-includes/taxonomy.php": 77,
+            "wp-includes/functions.php": 63,
             "wp-includes/pluggable.php": 55,
             "wp-includes/query.php": 47,
             "wp-includes/comment.php": 44,
@@ -294,18 +294,6 @@
                 "Minn/Runtime/TermEvents.php": 4,
                 "Minn/Runtime/TermQueryTree.php": 2,
                 "Minn/Runtime/TermSave.php": 1
-            }
-        },
-        "_doing_it_wrong": {
-            "uses": 12,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Query/DateSql.php": 2,
-                "Minn/Runtime/Abilities.php": 5,
-                "Minn/Runtime/AbilityRun.php": 1,
-                "Minn/Runtime/MetaKeys.php": 2,
-                "Minn/Runtime/RegisteredSettings.php": 1,
-                "Minn/Runtime/ThemeSupports.php": 1
             }
         },
         "get_post_types": {
@@ -1147,14 +1135,6 @@
             "family": "wp-includes/comment.php",
             "files": {
                 "Minn/Runtime/CommentEvents.php": 3
-            }
-        },
-        "_deprecated_argument": {
-            "uses": 2,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Runtime/PostQuery.php": 1,
-                "Minn/Runtime/UserQueryRunner.php": 1
             }
         },
         "_get_plugin_data_markup_translate": {

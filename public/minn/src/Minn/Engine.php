@@ -164,7 +164,7 @@ final readonly class Engine
         // Creating the server fires rest_api_init once; the plugins' routes register there.
         \rest_get_server();
         // The old switch is still heard, with a notice; the API answers whatever it says, as the reference's does.
-        \apply_filters_deprecated('rest_enabled', [true], '4.7.0', 'rest_authentication_errors', sprintf(Gettext::text('The REST API can no longer be completely disabled, the %s filter can be used to restrict access to the API, instead.'), 'rest_authentication_errors'));
+        Runtime::hooks()->filterDeprecated('rest_enabled', [true], '4.7.0', 'rest_authentication_errors', sprintf(Gettext::text('The REST API can no longer be completely disabled, the %s filter can be used to restrict access to the API, instead.'), 'rest_authentication_errors'));
     }
 
     /**

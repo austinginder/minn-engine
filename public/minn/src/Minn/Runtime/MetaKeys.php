@@ -42,7 +42,7 @@ final class MetaKeys
         $subtype = (string) $args['object_subtype'];
         $refusal = self::refusal($objectType, $subtype, $args);
         if ($refusal !== null) {
-            \_doing_it_wrong('register_meta', $refusal, '5.3.0');
+            Notices::doingItWrong('register_meta', $refusal, '5.3.0');
             return false;
         }
         $suffix = $subtype === '' ? '' : "_for_{$subtype}";
@@ -54,7 +54,7 @@ final class MetaKeys
         }
         if (array_key_exists('default', $args)) {
             if (!self::defaultFits($args)) {
-                \_doing_it_wrong('register_meta', Gettext::text('When registering a default meta value the data must match the type provided.'), '5.5.0');
+                Notices::doingItWrong('register_meta', Gettext::text('When registering a default meta value the data must match the type provided.'), '5.5.0');
                 return false;
             }
             if (!Runtime::hooks()->has("default_{$objectType}_metadata", 'filter_default_metadata')) {
@@ -170,7 +170,7 @@ final class MetaKeys
             $filter = Runtime::hooks()->has("auth_{$objectType}_meta_{$key}_for_{$subtype}") ? "auth_{$objectType}_meta_{$key}_for_{$subtype}" : "auth_{$objectType}_meta_{$key}";
             $allowed = Runtime::hooks()->filter((string) $filter, [$allowed, $key, $objectId, $userId, $capability, $caps]);
             // The name before _for_ existed is still heard, with a notice (probe hook-inputs).
-            $allowed = \apply_filters_deprecated("auth_{$objectType}_{$subtype}_meta_{$key}", [$allowed, $key, $objectId, $userId, $capability, $caps], '4.9.8', "auth_{$objectType}_meta_{$key}_for_{$subtype}");
+            $allowed = Runtime::hooks()->filterDeprecated("auth_{$objectType}_{$subtype}_meta_{$key}", [$allowed, $key, $objectId, $userId, $capability, $caps], '4.9.8', "auth_{$objectType}_meta_{$key}_for_{$subtype}");
             if (!$allowed) {
                 $caps[] = $capability;
             }

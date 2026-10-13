@@ -116,7 +116,7 @@ final class UserQueryRunner
         $queries = (array) $query->meta_query->queries;
         if ($blog && ($qv['who'] ?? '') === 'authors') {
             // The old shorthand: a user level above zero, and no roles asked after it.
-            \_deprecated_argument('WP_User_Query', '5.9.0', '<code>who</code> is deprecated. Use <code>capability</code> instead.');
+            Notices::deprecated('argument', 'WP_User_Query', '5.9.0', '<code>who</code> is deprecated. Use <code>capability</code> instead.');
             $who = ['key' => $prefix . 'user_level', 'value' => 0, 'compare' => '!='];
             $queries = $queries === [] ? [$who] : ['relation' => 'AND', [$queries, $who]];
             [$qv['blog_id'], $blog] = [0, 0];

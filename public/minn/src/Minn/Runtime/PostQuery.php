@@ -70,7 +70,7 @@ final class PostQuery
     {
         $query = $this->query;
         if (isset($q['caller_get_posts'])) {
-            \_deprecated_argument('WP_Query', '3.1.0', sprintf('%1$s is deprecated. Use %2$s instead.', '<code>caller_get_posts</code>', '<code>ignore_sticky_posts</code>'));
+            Notices::deprecated('argument', 'WP_Query', '3.1.0', sprintf('%1$s is deprecated. Use %2$s instead.', '<code>caller_get_posts</code>', '<code>ignore_sticky_posts</code>'));
             $q['ignore_sticky_posts'] ??= $q['caller_get_posts'];
         }
         $q += ['ignore_sticky_posts' => false, 'suppress_filters' => false, 'cache_results' => true, 'update_post_term_cache' => true, 'update_menu_item_cache' => false];

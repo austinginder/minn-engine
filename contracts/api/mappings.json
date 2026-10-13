@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 833,
-        "composes": 2403,
+        "composes": 2393,
         "leaf": 1030,
-        "noop": 2742,
+        "noop": 2752,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1028,
+        "minnMethods": 1035,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -34698,75 +34698,57 @@
         },
         "_deprecated_argument": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::deprecated"
+            ],
+            "composes": []
         },
         "_deprecated_class": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::deprecated"
+            ],
+            "composes": []
         },
         "_deprecated_constructor": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::constructor"
+            ],
+            "composes": []
         },
         "_deprecated_file": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::deprecated"
+            ],
+            "composes": []
         },
         "_deprecated_function": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::deprecated"
+            ],
+            "composes": []
         },
         "_deprecated_hook": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::deprecated"
+            ],
+            "composes": []
         },
         "_device_can_upload": {
             "file": "functions.php",
@@ -34795,15 +34777,12 @@
         },
         "_doing_it_wrong": {
             "file": "functions.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_notice_wanted",
-                "do_action",
-                "wp_trigger_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Notices::doingItWrong"
+            ],
+            "composes": []
         },
         "_draft_or_post_title": {
             "file": "admin.php",
@@ -37688,10 +37667,10 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Notices::wanted"
+            ],
+            "composes": []
         },
         "_minn_oembed_secured": {
             "file": "embed.php",
@@ -42539,14 +42518,12 @@
         },
         "apply_filters_deprecated": {
             "file": "hooks.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_deprecated_hook",
-                "apply_filters_ref_array",
-                "has_filter"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::hooks"
+            ],
+            "composes": []
         },
         "apply_filters_ref_array": {
             "file": "hooks.php",
@@ -45466,14 +45443,12 @@
         },
         "do_action_deprecated": {
             "file": "hooks.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_deprecated_hook",
-                "do_action_ref_array",
-                "has_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Runtime::hooks"
+            ],
+            "composes": []
         },
         "do_action_ref_array": {
             "file": "hooks.php",
@@ -71968,17 +71943,14 @@
         },
         "wp_kses": {
             "file": "kses.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\Kses::filter"
+                "Minn\\Support\\Kses::allowing"
             ],
             "composes": [
-                "_minn_kses_policy",
                 "wp_allowed_protocols",
-                "wp_kses_hook",
-                "wp_kses_no_null",
-                "wp_kses_normalize_entities"
+                "wp_kses_allowed_html"
             ]
         },
         "wp_kses_allowed_html": {
@@ -72238,10 +72210,10 @@
             "file": "kses.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Support\\Kses::uriAttributes"
+            ],
+            "composes": []
         },
         "wp_kses_version": {
             "file": "kses.php",
@@ -77211,14 +77183,12 @@
         },
         "wp_trigger_error": {
             "file": "functions.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "do_action",
-                "wp_kses"
-            ]
+            "lines": 8,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Runtime\\Notices::message"
+            ],
+            "composes": []
         },
         "wp_trim_excerpt": {
             "file": "formatting.php",

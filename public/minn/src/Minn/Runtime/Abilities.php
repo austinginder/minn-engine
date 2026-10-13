@@ -78,7 +78,7 @@ final class Abilities
             $refusal = self::categoryRefusal($args);
         }
         if ($refusal !== null) {
-            \_doing_it_wrong(self::CATEGORIES . '::register', $refusal, '6.9.0');
+            Notices::doingItWrong(self::CATEGORIES . '::register', $refusal, '6.9.0');
             return null;
         }
         $state['categories'][$slug] = ['slug' => $slug, 'label' => $args['label'], 'description' => $args['description'], 'meta' => (array) ($args['meta'] ?? [])];
@@ -103,7 +103,7 @@ final class Abilities
             default => self::abilityRefusal($args),
         };
         if ($refusal !== null) {
-            \_doing_it_wrong(self::ABILITIES . '::register', $refusal, '6.9.0');
+            Notices::doingItWrong(self::ABILITIES . '::register', $refusal, '6.9.0');
             return null;
         }
         $state['abilities'][$name] = [
@@ -138,7 +138,7 @@ final class Abilities
     {
         $row = self::ability($name);
         if ($row === null) {
-            \_doing_it_wrong(self::ABILITIES . '::get_registered', sprintf('Ability "%s" not found.', $name), '6.9.0');
+            Notices::doingItWrong(self::ABILITIES . '::get_registered', sprintf('Ability "%s" not found.', $name), '6.9.0');
         }
         return $row;
     }
@@ -155,7 +155,7 @@ final class Abilities
     {
         $row = self::category($slug);
         if ($row === null) {
-            \_doing_it_wrong(self::CATEGORIES . '::get_registered', sprintf('Ability category "%s" not found.', $slug), '6.9.0');
+            Notices::doingItWrong(self::CATEGORIES . '::get_registered', sprintf('Ability category "%s" not found.', $slug), '6.9.0');
         }
         return $row;
     }
@@ -235,7 +235,7 @@ final class Abilities
         $state = self::state();
         $row = $state[$key][$name] ?? null;
         if ($row === null) {
-            \_doing_it_wrong($function, $notice, '6.9.0');
+            Notices::doingItWrong($function, $notice, '6.9.0');
             return null;
         }
         unset($state[$key][$name]);

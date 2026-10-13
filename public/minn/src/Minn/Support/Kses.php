@@ -9,6 +9,7 @@ use Minn\Blocks\Block;
 use Minn\Blocks\Parser;
 use Minn\Blocks\Serializer;
 use Minn\Html\Decoder;
+use Minn\Runtime\Runtime;
 
 /**
  * The HTML a user without unfiltered_html may store. Tags outside the
@@ -141,6 +142,34 @@ final class Kses
             $out[is_string($key) ? $clean($key) : $key] = self::cleanValue($inner, $clean);
         }
         return $out;
+    }
+
+    /**
+     * Content kept to an allowlist as wp_kses keeps it: control characters
+     * dropped (a slashed zero kept), references normalized, then pre_kses
+     * (handed the allowlist and protocols as given), then only the markup the
+     * allowlist allows, with links on the given protocols. A named allowlist
+     * (a context such as "post") is resolved by $tagsFor after pre_kses. The
+     * URI attributes are asked for only when the content opens an element
+     * the allowlist allows.
+     *
+     * @param array<string, mixed>|string $allowedHtml
+     * @param Closure(string): array<string, mixed>|null $tagsFor
+     */
+    public static function allowing(string $content, array|string $allowedHtml, mixed $protocols, ?Closure $tagsFor = null): string
+    {
+        $content = self::normalizeEntities((string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $content));
+        $content = (string) Runtime::hooks()->filter('pre_kses', [$content, $allowedHtml, $protocols]);
+        $tags = is_string($allowedHtml) ? ($tagsFor === null ? [] : $tagsFor($allowedHtml)) : $allowedHtml;
+        $opens = preg_match_all('/<([a-zA-Z][a-zA-Z0-9:-]*)/', $content, $found) > 0
+            && array_filter(array_unique(array_map('strtolower', $found[1])), static fn (string $tag): bool => !empty($tags[$tag])) !== [];
+        return self::filter($content, KsesPolicy::fromAllowlist($tags, array_values((array) $protocols), $opens ? (array) self::uriAttributes() : []));
+    }
+
+    /** The attributes judged as URIs, through wp_kses_uri_attributes (its answer as given). */
+    public static function uriAttributes(): mixed
+    {
+        return Runtime::hooks()->filter('wp_kses_uri_attributes', [self::URI_ATTRIBUTES]);
     }
 
     /**

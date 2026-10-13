@@ -62,14 +62,7 @@ function _minn_kses_policy(array|string $allowed_html, array $allowed_protocols,
 
 function wp_kses($content, $allowed_html, $allowed_protocols = [])
 {
-    $content = (string) $content;
-    if ($allowed_protocols === []) {
-        $allowed_protocols = wp_allowed_protocols();
-    }
-    $content = wp_kses_no_null($content, ['slash_zero' => 'keep']);
-    $content = wp_kses_normalize_entities($content);
-    $content = wp_kses_hook($content, $allowed_html, $allowed_protocols);
-    return Kses::filter((string) $content, _minn_kses_policy($allowed_html, (array) $allowed_protocols, (string) $content));
+    return Kses::allowing((string) $content, $allowed_html, $allowed_protocols === [] ? wp_allowed_protocols() : $allowed_protocols, static fn (string $context): array => (array) wp_kses_allowed_html($context));
 }
 
 function wp_kses_hook($content, $allowed_html, $allowed_protocols)
@@ -308,7 +301,7 @@ function kses_init()
 
 function wp_kses_uri_attributes()
 {
-    return apply_filters('wp_kses_uri_attributes', Kses::URI_ATTRIBUTES);
+    return Kses::uriAttributes();
 }
 
 /** Block content without the custom CSS a block's style may carry (style.css; a style left empty goes too): slashed text in, slashed out. */

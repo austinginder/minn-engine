@@ -15909,6 +15909,20 @@ not a plugin has loaded: with nothing hooked the value comes back as configured,
 fallback did. The three `apply_filters_deprecated` calls wait for the notices (batch 2). Proven by
 the 370 registered probes giving identical output on the engine at HEAD and after the change.
 
+**Batch 2, the notices (hook calls 3 → 0, function calls 1,018 → 1,004).** `Runtime\Notices` holds
+what `_deprecated_function`, `_deprecated_argument`, `_deprecated_hook`, `_deprecated_file`,
+`_deprecated_class`, `_deprecated_constructor`, `_doing_it_wrong` and `wp_trigger_error` did: each
+heard by its action, then raised only under WP_DEBUG while its filter says so, worded and translated
+in the reference's order, its message passing `wp_trigger_error_always_run`,
+`wp_trigger_error_trigger_error` and `wp_trigger_error_run` and kept to links, line breaks, code and
+emphasis. The facade's functions map onto it; `wp_trigger_error` keeps only the throw of a
+`WP_Exception` for a fatal level. The kses pipeline those messages pass is `Support\Kses::allowing()`
+(control characters, references, `pre_kses` handed the allowlist as given, a named allowlist resolved
+after it, URI attributes asked only when an allowed element opens), which `wp_kses` now maps onto, and
+`Kses::uriAttributes()` backs `wp_kses_uri_attributes`. `Hooks::filterDeprecated()` and
+`actionDeprecated()` back `apply_filters_deprecated` and `do_action_deprecated`. All 370 probes give
+identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
