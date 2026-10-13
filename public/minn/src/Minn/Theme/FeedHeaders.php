@@ -6,6 +6,7 @@ namespace Minn\Theme;
 
 use Minn\Http\Request;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteTime;
 
 /**
  * The headers a feed is sent with, as the reference's send_headers sends
@@ -28,9 +29,9 @@ final class FeedHeaders
     {
         $feed = (string) $vars['feed'];
         $headers = ['Content-Type' => \feed_content_type($feed === 'feed' ? \get_default_feed() : $feed) . '; charset=' . Runtime::options()->filtered('blog_charset')];
-        $last = (string) \mysql2date(self::FORMAT, \get_lastpostmodified('GMT'), false);
+        $last = (string) SiteTime::fromStored(self::FORMAT, \get_lastpostmodified('GMT'), false);
         if (self::carriesComments($vars, $feed)) {
-            $comment = (string) \mysql2date(self::FORMAT, \get_lastcommentmodified('GMT'), false);
+            $comment = (string) SiteTime::fromStored(self::FORMAT, \get_lastcommentmodified('GMT'), false);
             $last = strtotime($last) > strtotime($comment) ? $last : $comment;
         }
         $last = ($last !== '' ? $last : gmdate(self::FORMAT)) . ' GMT';

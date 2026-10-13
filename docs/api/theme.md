@@ -295,7 +295,7 @@ The headers, and whether the reader's copy is current.
 - `@param array<string, mixed> $vars the request's query variables`
 - `@return array{0: array<string, string>, 1: bool}`
 
-Internals: `carriesComments()` (private, line 51)
+Internals: `carriesComments()` (private, line 52)
 
 
 ## Folder

@@ -16002,6 +16002,18 @@ transients. `Support\Serialized::maybeEncode()` is maybe_serialize. Stopping a r
 option goes through `Handoff::stop()`, which the WordPress layer binds to wp_die, so the handler
 plugins choose still draws the page. All 370 probes give identical output before and after.
 
+**Batch 10, time, file types and small helpers (function calls 589 → 554).** `Runtime\SiteTime` keeps
+the site's time: its timezone (`zoneName()`, `zone()`), now (`now()`, current_time), a moment written
+in the site's language (`format()`, wp_date) and a stored date read back (`fromStored()`,
+mysql2date). `Media\FileTypes` reads data/mime.json: every type (`all()`), the ones a user may upload
+(`allowed()`), a file name's type (`check()`) and an extension's kind (`kinds()`, `kindOf()`), each
+list through its filter. `Runtime\VersionCheck` answers whether the reported WordPress and the PHP in
+use meet a requirement and where to read about updating PHP; `I18n\Numbers::format()` is
+number_format_i18n, `Http\NoCache::headers()` wp_get_nocache_headers, `Support\Paths::validate()`
+validate_file and `Runtime\StoredObjects::maybeDecode()` maybe_unserialize. The facade maps onto
+them. The date query builder keeps its two guarded calls until the query batch (it runs without the
+site too). All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Files;
+use Minn\Support\Paths;
 
 /**
  * Switching the theme as the reference does it, in two halves. The switch
@@ -137,7 +138,7 @@ final class ThemeSwitch
     /** A theme's folder, directly inside the themes folder (a symlink unlinked, never followed); one already gone counts. */
     private static function removeFolder(string $stylesheet): bool
     {
-        if (\validate_file($stylesheet) !== 0 || str_contains($stylesheet, '/') || $stylesheet === '.' || $stylesheet === '..') {
+        if (Paths::validate($stylesheet) !== 0 || str_contains($stylesheet, '/') || $stylesheet === '.' || $stylesheet === '..') {
             return false;
         }
         $path = rtrim((string) \get_theme_root($stylesheet), '/') . '/' . $stylesheet;

@@ -14,6 +14,7 @@ use Minn\Http\Route;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\StoredObjects;
 use Minn\Runtime\WidgetAreas;
 
 /**
@@ -139,7 +140,7 @@ final readonly class SidebarsController
             if (!hash_equals(Handoff::hash($serialized), (string) $body['instance']['hash'])) {
                 throw new RestError('rest_invalid_widget', 'The provided instance is malformed.', 400);
             }
-            $instance = (array) \maybe_unserialize($serialized);
+            $instance = (array) StoredObjects::maybeDecode($serialized);
         }
         if (isset($body['form_data'])) {
             parse_str((string) $body['form_data'], $fields);

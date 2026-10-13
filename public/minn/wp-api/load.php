@@ -158,12 +158,12 @@ function wp_is_development_mode($mode)
 
 function is_wp_version_compatible($required)
 {
-    return empty($required) || version_compare($GLOBALS['wp_version'], $required, '>=');
+    return Minn\Runtime\VersionCheck::wordpress($required);
 }
 
 function is_php_version_compatible($required)
 {
-    return empty($required) || version_compare(PHP_VERSION, $required, '>=');
+    return Minn\Runtime\VersionCheck::php($required);
 }
 
 function absint($maybeint)

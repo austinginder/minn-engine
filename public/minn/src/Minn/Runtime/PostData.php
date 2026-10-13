@@ -38,8 +38,8 @@ final class PostData
         return [
             'id' => (int) $post->ID,
             'authordata' => Handoff::user((int) $post->post_author),
-            'currentday' => \mysql2date('d.m.y', $post->post_date, false),
-            'currentmonth' => \mysql2date('m', $post->post_date, false),
+            'currentday' => SiteTime::fromStored('d.m.y', $post->post_date, false),
+            'currentmonth' => SiteTime::fromStored('m', $post->post_date, false),
             'page' => $page,
             'pages' => $pages,
             'multipage' => count($pages) > 1 ? 1 : 0,

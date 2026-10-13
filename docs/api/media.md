@@ -6,6 +6,7 @@ uploads, image sizes and attachment metadata
 |---|---|---|---|
 | [`AvifInfo`](#avifinfo) | final class | 142 | An AVIF file's primary image as wp_get_avif_info reports it (probe |
 | [`Canvas`](#canvas) | final readonly class | 168 | One GD bitmap and the operations the media layer needs on it. Every |
+| [`FileTypes`](#filetypes) | final class | 75 | File types as WordPress knows them (data/mime.json): every extension's |
 | [`Gallery`](#gallery) | final class | 73 | The classic `[gallery]` shortcode's markup. Every gallery on a page is |
 | [`Icons`](#icons) | final class | 68 | The icon a file type is shown with, as wp_mime_type_icon finds it (probe |
 | [`ImageMime`](#imagemime) | final class | 34 | An image file's real type from its first bytes, as the reference sniffs |
@@ -110,6 +111,51 @@ The bitmap written line by line from now on, as it is by default.
 Writes the image to the output in a format, at a quality.
 
 Internals: `affordable()` (private, line 60), `memoryLimit()` (private, line 72), `flipped()` (private, line 134), `encode()` (private, line 171)
+
+
+## FileTypes
+
+`final class Minn\Media\FileTypes` · `public/minn/src/Minn/Media/FileTypes.php`
+
+File types as WordPress knows them (data/mime.json): every extension's
+MIME type, the ones a user may upload, the kind each extension is (image,
+audio, document...), and the type a file name's extension says, each
+list through the filter plugins hook.
+
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\FileTypeCheck`
+
+
+### static `table(): array`
+
+The table: mime (extensions => type), allowed (the ones uploads take
+by default) and ext2type (kind => extensions).
+
+- `@return array<string, mixed>`
+
+### static `all(): mixed`
+
+Every extension's MIME type (wp_get_mime_types), as mime_types leaves them.
+
+### static `allowed(mixed $user = NULL): mixed`
+
+The types a user (the request's, unless one is given) may upload
+(get_allowed_mime_types): HTML and JavaScript too for one with
+unfiltered_html; then upload_mimes.
+
+### static `check(mixed $filename, mixed $mimes = NULL): array`
+
+The extension and type a file name has among the types given (the
+allowed ones by default), false for each when none matches (wp_check_filetype).
+
+- `@return array{ext: string|false, type: mixed}`
+
+### static `kinds(): mixed`
+
+The extensions of each kind (wp_get_ext_types), as ext2type leaves them.
+
+### static `kindOf(mixed $ext): mixed`
+
+The kind an extension is (wp_ext2type), or null.
 
 
 ## Gallery

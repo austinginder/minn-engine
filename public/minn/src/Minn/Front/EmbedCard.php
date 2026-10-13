@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\I18n\Gettext;
+use Minn\I18n\Numbers;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -82,7 +83,7 @@ final class EmbedCard
             return '';
         }
         $count = (int) \get_comments_number();
-        $words = sprintf(Gettext::plural('%s <span class="screen-reader-text">Comment</span>', '%s <span class="screen-reader-text">Comments</span>', $count), \number_format_i18n($count));
+        $words = sprintf(Gettext::plural('%s <span class="screen-reader-text">Comment</span>', '%s <span class="screen-reader-text">Comments</span>', $count), Numbers::format($count));
         return "\t<div class=\"wp-embed-comments\">\n\t\t<a href=\"" . Escape::url((string) \get_comments_link()) . "\" target=\"_top\">\n\t\t\t<span class=\"dashicons dashicons-admin-comments\"></span>\n\t\t\t"
             . $words . "\t\t</a>\n\t</div>\n\t";
     }

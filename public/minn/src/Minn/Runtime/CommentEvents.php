@@ -63,7 +63,7 @@ final readonly class CommentEvents
             $prepared = ['user_id' => $user->ID, 'comment_author' => $user->display_name, 'comment_author_email' => $user->user_email, 'comment_author_url' => $user->user_url] + $prepared;
         }
         self::requireContent($prepared);
-        $prepared += ['comment_date_gmt' => \current_time('mysql', true), 'comment_author_email' => '', 'comment_author_url' => '', 'comment_agent' => ''];
+        $prepared += ['comment_date_gmt' => SiteTime::now('mysql', true), 'comment_author_email' => '', 'comment_author_url' => '', 'comment_agent' => ''];
         self::requireLengths($prepared);
         $approved = \wp_allow_comment($prepared, true);
         if ($approved instanceof \WP_Error) {

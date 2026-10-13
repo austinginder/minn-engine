@@ -5,26 +5,19 @@ use Minn\Blocks\RenderState;
 use Minn\Runtime\Deferrals;
 use Minn\Runtime\Notices;
 use Minn\Runtime\QueryArgs;
+use Minn\Media\FileTypes;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteTime;
+use Minn\Runtime\VersionCheck;
 
 function wp_timezone_string()
 {
-    $timezone = (string) get_option('timezone_string');
-    if ($timezone !== '') {
-        return $timezone;
-    }
-    $offset = (float) get_option('gmt_offset');
-    $hours = (int) $offset;
-    $minutes = ($offset - $hours);
-    $sign = $offset < 0 ? '-' : '+';
-    $abs = abs($hours);
-    $abs_minutes = abs($minutes * 60);
-    return sprintf('%s%02d:%02d', $sign, $abs, $abs_minutes);
+    return SiteTime::zoneName();
 }
 
 function wp_timezone()
 {
-    return new DateTimeZone(wp_timezone_string());
+    return SiteTime::zone();
 }
 
 /** The MySQL week of a column, counted from the site's first day of the week (probe query-clauses). */
@@ -35,15 +28,7 @@ function _wp_mysql_week($column)
 
 function current_time($type, $gmt = false)
 {
-    if ($type === 'timestamp' || $type === 'U') {
-        return $gmt ? time() : time() + (int) ((float) get_option('gmt_offset') * HOUR_IN_SECONDS);
-    }
-    if ($type === 'mysql') {
-        $type = 'Y-m-d H:i:s';
-    }
-    $timezone = $gmt ? new DateTimeZone('UTC') : wp_timezone();
-    $datetime = new DateTime('now', $timezone);
-    return $datetime->format($type);
+    return SiteTime::now($type, $gmt);
 }
 
 function current_datetime()
@@ -53,13 +38,7 @@ function current_datetime()
 
 function wp_date($format, $timestamp = null, $timezone = null)
 {
-    $timestamp ??= time();
-    $timezone ??= wp_timezone();
-    $datetime = date_create('@' . $timestamp);
-    $datetime->setTimezone($timezone);
-    // The names in the site's language, as the reference's wp_date writes them.
-    $date = Minn\I18n\LocalDates::format($datetime, (string) $format);
-    return apply_filters('wp_date', $date, $format, $timestamp, $timezone);
+    return SiteTime::format($format, $timestamp, $timezone);
 }
 
 function date_i18n($format, $timestamp_with_offset = false, $gmt = false)
@@ -93,20 +72,7 @@ function get_date_from_gmt($date_string, $format = 'Y-m-d H:i:s')
 
 function mysql2date($format, $date, $translate = true)
 {
-    if (empty($date)) {
-        return false;
-    }
-    $datetime = date_create((string) $date, wp_timezone());
-    if ($datetime === false) {
-        return false;
-    }
-    if ($format === 'G') {
-        return $datetime->getTimestamp() + $datetime->getOffset();
-    }
-    if ($format === 'U') {
-        return $datetime->getTimestamp();
-    }
-    return $translate ? wp_date($format, $datetime->getTimestamp()) : $datetime->format($format);
+    return SiteTime::fromStored($format, $date, $translate);
 }
 
 function mysql_to_rfc3339($date_string)
@@ -132,57 +98,33 @@ function get_weekstartend($mysqlstring, $start_of_week = '')
 /** @internal */
 function _minn_mime_table(): array
 {
-    static $table = null;
-    return $table ??= json_decode((string) file_get_contents(Runtime::current()->engineDir . '/data/mime.json'), true);
+    return FileTypes::table();
 }
 
 function wp_get_mime_types()
 {
-    return apply_filters('mime_types', _minn_mime_table()['mime']);
+    return FileTypes::all();
 }
 
 function wp_get_ext_types()
 {
-    return apply_filters('ext2type', _minn_mime_table()['ext2type']);
+    return FileTypes::kinds();
 }
 
 function wp_ext2type($ext)
 {
-    $ext = strtolower((string) $ext);
-    foreach (wp_get_ext_types() as $type => $exts) {
-        if (in_array($ext, $exts, true)) {
-            return $type;
-        }
-    }
-    return null;
+    return FileTypes::kindOf($ext);
 }
 
 /** The types a user may upload, through upload_mimes: never Flash or executables, and web pages and scripts only for those who may post unfiltered HTML. */
 function get_allowed_mime_types($user = null)
 {
-    $types = _minn_mime_table()['allowed'];
-    $unfiltered = $user === null ? current_user_can('unfiltered_html') : user_can($user, 'unfiltered_html');
-    if ($unfiltered) {
-        $all = _minn_mime_table()['mime'];
-        $types += array_intersect_key($all, ['htm|html' => 0, 'js' => 0]);
-    }
-    return apply_filters('upload_mimes', $types, $user);
+    return FileTypes::allowed($user);
 }
 
 function wp_check_filetype($filename, $mimes = null)
 {
-    $mimes ??= get_allowed_mime_types();
-    $type = false;
-    $ext = false;
-    foreach ($mimes as $ext_preg => $mime_match) {
-        $ext_preg = '!\.(' . $ext_preg . ')$!i';
-        if (preg_match($ext_preg, (string) $filename, $m)) {
-            $type = $mime_match;
-            $ext = $m[1];
-            break;
-        }
-    }
-    return compact('ext', 'type');
+    return FileTypes::check($filename, $mimes);
 }
 
 /** A file's extension and type from its content as much as its name (Minn\Runtime\FileTypeCheck), with a corrected name when an image carried the wrong extension. */
@@ -461,17 +403,7 @@ function iis7_supports_permalinks()
  */
 function validate_file($file, $allowed_files = [])
 {
-    $file = str_replace('\\', '/', (string) $file);
-    if ($file === '../' || substr_count($file, '../') > 1 || (str_contains($file, '../') && !str_ends_with($file, '../'))) {
-        return 1;
-    }
-    if (($file[1] ?? '') === ':') {
-        return 2;
-    }
-    if (!empty($allowed_files) && !in_array($file, $allowed_files, true)) {
-        return 3;
-    }
-    return 0;
+    return Minn\Support\Paths::validate($file, $allowed_files);
 }
 
 /**
@@ -573,9 +505,7 @@ function nocache_headers()
 /** The no-cache headers through nocache_headers, then Last-Modified false, which a plugin cannot keep (probe functions-remaining). */
 function wp_get_nocache_headers()
 {
-    $headers = apply_filters('nocache_headers', ['Expires' => 'Wed, 11 Jan 1984 05:00:00 GMT', 'Cache-Control' => 'no-cache, must-revalidate, max-age=0, no-store, private']);
-    $headers['Last-Modified'] = false;
-    return $headers;
+    return Minn\Http\NoCache::headers();
 }
 
 /** A script served by PHP: JavaScript in the site's charset, kept for ten days (runtime suite, over HTTP). */
@@ -1350,13 +1280,12 @@ function wp_debug_backtrace_summary($ignore_class = null, $skip_frames = 0, $pre
 /** Where the "Learn more about updating PHP" links point: wp_update_php_url, or the default when that answers nothing (probe plugin-activation). */
 function wp_get_update_php_url()
 {
-    $url = apply_filters('wp_update_php_url', wp_get_default_update_php_url());
-    return is_string($url) && $url !== '' ? $url : wp_get_default_update_php_url();
+    return VersionCheck::updatePhpUrl();
 }
 
 function wp_get_default_update_php_url()
 {
-    return _x('https://wordpress.org/support/update-php/', 'localized PHP upgrade information page');
+    return VersionCheck::defaultUpdatePhpUrl();
 }
 
 /** The timezone setting's offset from UTC now, in hours; false when the site keeps a plain offset instead. */

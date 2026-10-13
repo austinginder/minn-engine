@@ -4,9 +4,29 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
-/** File-system path and permission spellings. */
+/** File-system path and permission spellings, and whether a path is safe to use. */
 final class Paths
 {
+    /**
+     * Whether a path is safe to use (validate_file): 0 when it is; 1 when it
+     * climbs out (a bare "../", more than one, or one not at the end); 2 for a
+     * drive letter; 3 when a list is given and the path is not on it.
+     */
+    public static function validate(mixed $file, mixed $allowed = []): int
+    {
+        $file = str_replace('\\', '/', (string) $file);
+        if ($file === '../' || substr_count($file, '../') > 1 || (str_contains($file, '../') && !str_ends_with($file, '../'))) {
+            return 1;
+        }
+        if (($file[1] ?? '') === ':') {
+            return 2;
+        }
+        if (!empty($allowed) && !in_array($file, $allowed, true)) {
+            return 3;
+        }
+        return 0;
+    }
+
     /**
      * The trailing-slashed directory holding a text domain's {domain}-{locale}.mo:
      * a custom path first, then the language dir's plugins and themes folders,

@@ -367,11 +367,7 @@ function maybe_serialize($data)
 
 function maybe_unserialize($data)
 {
-    if (!is_serialized($data)) {
-        return $data;
-    }
-    $decoded = Serialized::decode(trim((string) $data), StoredObjects::reviver());
-    return $decoded === Serialized::INVALID ? $data : $decoded;
+    return StoredObjects::maybeDecode($data);
 }
 
 /** Registers a setting (Runtime\RegisteredSettings): its arguments kept, its sanitize callback and default hooked. */

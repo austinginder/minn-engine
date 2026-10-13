@@ -29,9 +29,9 @@ final class PluginRequirements
         $wp = (string) ($GLOBALS['wp_version'] ?? '');
         $needsWp = (string) $headers['RequiresWP'];
         $needsPhp = (string) $headers['RequiresPHP'];
-        $wpOk = \is_wp_version_compatible($needsWp);
-        $phpOk = \is_php_version_compatible($needsPhp);
-        $updatePhp = '<p>' . sprintf('<a href="%s">Learn more about updating PHP</a>.', Escape::url(\wp_get_update_php_url())) . '</p>';
+        $wpOk = VersionCheck::wordpress($needsWp);
+        $phpOk = VersionCheck::php($needsPhp);
+        $updatePhp = '<p>' . sprintf('<a href="%s">Learn more about updating PHP</a>.', Escape::url(VersionCheck::updatePhpUrl())) . '</p>';
         if (!$wpOk && !$phpOk) {
             return new Refusal('plugin_wp_php_incompatible', '<p>' . sprintf('<strong>Error:</strong> Current versions of WordPress (%1$s) and PHP (%2$s) do not meet minimum requirements for %3$s. The plugin requires WordPress %4$s and PHP %5$s.', $wp, PHP_VERSION, $name, $needsWp, $needsPhp) . '</p>' . $updatePhp);
         }

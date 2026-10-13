@@ -23,6 +23,7 @@ request, response, routing, and the outgoing client
 | [`Matched`](#matched) | final readonly class | 15 | A route the router matched to a request and whose policy it judged: the |
 | [`MediaType`](#mediatype) | final class | 18 | Reading the media types a request names in its Accept and Content-Type headers. |
 | [`Method`](#method) | enum | 33 |  |
+| [`NoCache`](#nocache) | final class | 16 | The headers that keep a response out of every cache. |
 | [`Outbound`](#outbound) | final readonly class | 46 | One outgoing HTTP request, normalised: the transport needs nothing else. |
 | [`Policy`](#policy) | final readonly class | 115 | What a route requires of its caller, as data on the route: the router |
 | [`Punycode`](#punycode) | final class | 103 | Internationalized host names in ASCII: each label that is not ASCII is |
@@ -668,6 +669,23 @@ HEAD is served by GET handlers; the kernel drops the body.
 
 Canonical redirects (trailing slash, pretty-URL mapping, 404 guessing)
 run only for reads; every other method renders the URL as typed.
+
+
+## NoCache
+
+`final class Minn\Http\NoCache` · `public/minn/src/Minn/Http/NoCache.php`
+
+The headers that keep a response out of every cache.
+
+Used by: `Minn\Runtime\AjaxController`, `Minn\Theme\FrontLifecycle`
+
+### static `headers(): array`
+
+The headers (wp_get_nocache_headers): an expiry in the past and a
+Cache-Control that forbids storing, as nocache_headers leaves them, with
+Last-Modified always marked for removal.
+
+- `@return array<string, mixed>`
 
 
 ## Outbound

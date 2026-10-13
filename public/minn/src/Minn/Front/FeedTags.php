@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Media\FileTypes;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
@@ -69,7 +70,7 @@ final class FeedTags
     public static function atomEnclosures(): string
     {
         $out = '';
-        $mimes = \get_allowed_mime_types();
+        $mimes = FileTypes::allowed();
         foreach (self::enclosures() as $lines) {
             [$length, $type] = [0, ''];
             // The lines after the address hold the length and the type, in either order.

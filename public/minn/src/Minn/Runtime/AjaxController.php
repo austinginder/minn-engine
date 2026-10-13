@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Http\Access;
 use Minn\Http\Method;
+use Minn\Http\NoCache;
 use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\Response;
@@ -57,7 +58,7 @@ final readonly class AjaxController
         $headers = $origin + [
             'Content-Type' => 'text/html; charset=' . Runtime::options()->filtered('blog_charset'),
             'X-Robots-Tag' => 'noindex',
-        ] + \wp_get_nocache_headers();
+        ] + NoCache::headers();
         $action = $this->action($request);
         if ($action === null) {
             return new Response(400, $headers, '0');

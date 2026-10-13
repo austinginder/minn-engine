@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\Media\FileTypes;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
@@ -108,7 +109,7 @@ final class MediaShortcodes
     {
         $attachment = null;
         if (!empty($atts['src'])) {
-            $ext = strtolower((string) (\wp_check_filetype((string) $atts['src'], \wp_get_mime_types())['ext'] ?? ''));
+            $ext = strtolower((string) (FileTypes::check((string) $atts['src'], FileTypes::all())['ext'] ?? ''));
             if ($hosted === null && !in_array($ext, $types, true)) {
                 return sprintf('<a class="wp-embedded-%s" href="%s">%s</a>', $kind, Escape::url((string) $atts['src']), Escape::html((string) $atts['src']));
             }
@@ -135,7 +136,7 @@ final class MediaShortcodes
     private static function anyOwnFormat(array $atts, array $types): bool
     {
         foreach ($types as $type) {
-            if (!empty($atts[$type]) && strtolower((string) (\wp_check_filetype((string) $atts[$type], \wp_get_mime_types())['ext'] ?? '')) === $type) {
+            if (!empty($atts[$type]) && strtolower((string) (FileTypes::check((string) $atts[$type], FileTypes::all())['ext'] ?? '')) === $type) {
                 return true;
             }
         }
@@ -150,7 +151,7 @@ final class MediaShortcodes
             if (empty($atts[$fallback])) {
                 continue;
             }
-            $type = $fallback === 'src' && $hosted !== null ? $hosted : (string) (\wp_check_filetype((string) $atts[$fallback], \wp_get_mime_types())['type'] ?? '');
+            $type = $fallback === 'src' && $hosted !== null ? $hosted : (string) (FileTypes::check((string) $atts[$fallback], FileTypes::all())['type'] ?? '');
             $out .= sprintf('<source type="%s" src="%s" />', $type, Escape::url((string) QueryArgs::add('_', $instance, (string) $atts[$fallback])));
         }
         return $out;

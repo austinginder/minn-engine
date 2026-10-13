@@ -8477,6 +8477,7 @@
             ],
             "usedBy": [
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Media\\FileTypes",
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\CommentForm",
@@ -29292,6 +29293,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Media\\FileTypes",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Escape",
@@ -29342,8 +29344,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 29,
-                    "end": 62
+                    "line": 30,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -29371,8 +29373,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 85
+                    "line": 66,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -29398,8 +29400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 96
+                    "line": 89,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -29443,8 +29445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 132
+                    "line": 108,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -29472,8 +29474,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 143
+                    "line": 136,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -29515,8 +29517,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 146,
-                    "end": 157
+                    "line": 147,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -29544,8 +29546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 170
+                    "line": 161,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -29573,8 +29575,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 173,
-                    "end": 177
+                    "line": 174,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -29593,8 +29595,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 188
+                    "line": 181,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -29620,8 +29622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 194
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -29632,8 +29634,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 196,
-                    "end": 199
+                    "line": 197,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -29652,8 +29654,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 208
+                    "line": 203,
+                    "end": 209
                 }
             ]
         },
@@ -46354,6 +46356,7 @@
             "uses": [
                 "Minn\\Front\\PostEmbed",
                 "Minn\\I18n\\Gettext",
+                "Minn\\I18n\\Numbers",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Support\\Escape"
@@ -46375,8 +46378,8 @@
                         "@return array{0: int, 1: string, 2: string}|null"
                     ],
                     "params": [],
-                    "line": 30,
-                    "end": 53
+                    "line": 31,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -46402,8 +46405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 64
+                    "line": 57,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -46414,8 +46417,8 @@
                     "doc": "The site's name and icon, linking home, the whole block through embed_site_title_html.",
                     "shapes": [],
                     "params": [],
-                    "line": 67,
-                    "end": 76
+                    "line": 68,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -46426,8 +46429,8 @@
                     "doc": "The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open.",
                     "shapes": [],
                     "params": [],
-                    "line": 79,
-                    "end": 88
+                    "line": 80,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -46438,8 +46441,8 @@
                     "doc": "The button that opens the sharing dialog; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 91,
-                    "end": 97
+                    "line": 92,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -46450,8 +46453,8 @@
                     "doc": "The sharing dialog: the post's address and its embed code, each a tab; none on a 404.",
                     "shapes": [],
                     "params": [],
-                    "line": 100,
-                    "end": 113
+                    "line": 101,
+                    "end": 114
                 }
             ]
         },
@@ -46621,6 +46624,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Front\\FeedWriter",
+                "Minn\\Media\\FileTypes",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
@@ -46654,8 +46658,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 42
+                    "line": 26,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -46666,8 +46670,8 @@
                     "doc": "The current post's enclosures as RSS has them: address, length, and the type the third line starts with.",
                     "shapes": [],
                     "params": [],
-                    "line": 55,
-                    "end": 66
+                    "line": 56,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -46678,8 +46682,8 @@
                     "doc": "The current post's enclosures as Atom links: the length a line that is a number, the type a line that is a known MIME type.",
                     "shapes": [],
                     "params": [],
-                    "line": 69,
-                    "end": 86
+                    "line": 70,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -46705,8 +46709,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 111
+                    "line": 90,
+                    "end": 112
                 },
                 {
                     "routes": [],
@@ -46725,8 +46729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 137
+                    "line": 119,
+                    "end": 138
                 },
                 {
                     "routes": [],
@@ -46737,8 +46741,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 150
+                    "line": 141,
+                    "end": 151
                 },
                 {
                     "routes": [],
@@ -46749,8 +46753,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 157
+                    "line": 154,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -46763,8 +46767,8 @@
                         "@return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted"
                     ],
                     "params": [],
-                    "line": 45,
-                    "end": 52
+                    "line": 46,
+                    "end": 53
                 }
             ]
         },
@@ -46783,6 +46787,7 @@
                 "Minn\\Front\\FeedWriter",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Text"
             ],
@@ -46835,8 +46840,8 @@
                             "doc": "sends a header line (the Content-Type)"
                         }
                     ],
-                    "line": 35,
-                    "end": 59
+                    "line": 36,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -46855,8 +46860,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 65
+                    "line": 63,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -46875,8 +46880,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 84
+                    "line": 68,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -46895,8 +46900,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 110
+                    "line": 87,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -46915,8 +46920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 112,
-                    "end": 129
+                    "line": 113,
+                    "end": 130
                 },
                 {
                     "routes": [],
@@ -46935,8 +46940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 156
+                    "line": 132,
+                    "end": 157
                 },
                 {
                     "routes": [],
@@ -46955,8 +46960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 180
+                    "line": 159,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -46975,8 +46980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 195
+                    "line": 183,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -46995,8 +47000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 212
+                    "line": 198,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -47015,8 +47020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 224
+                    "line": 216,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -47035,8 +47040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 233
+                    "line": 228,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -47049,8 +47054,8 @@
                         "@return array{0: object, 1: \\WP_Post}"
                     ],
                     "params": [],
-                    "line": 236,
-                    "end": 241
+                    "line": 237,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -47069,8 +47074,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 259
+                    "line": 244,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -47089,8 +47094,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 261,
-                    "end": 273
+                    "line": 262,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -47109,8 +47114,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 295
+                    "line": 276,
+                    "end": 296
                 },
                 {
                     "routes": [],
@@ -47129,8 +47134,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 297,
-                    "end": 315
+                    "line": 298,
+                    "end": 316
                 }
             ]
         },
@@ -53115,6 +53120,7 @@
             "uses": [
                 "Minn\\Auth\\Can",
                 "Minn\\I18n\\Gettext",
+                "Minn\\I18n\\Numbers",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\QueryArgs",
@@ -53160,8 +53166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 74
+                    "line": 59,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -53180,8 +53186,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 91
+                    "line": 78,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -53200,8 +53206,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 99
+                    "line": 95,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -53220,8 +53226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 127
+                    "line": 103,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -53240,8 +53246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 157
+                    "line": 131,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -53260,8 +53266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 181
+                    "line": 161,
+                    "end": 182
                 },
                 {
                     "routes": [],
@@ -53280,8 +53286,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 195
+                    "line": 185,
+                    "end": 196
                 },
                 {
                     "routes": [],
@@ -53300,8 +53306,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 207
+                    "line": 199,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -53320,8 +53326,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 220
+                    "line": 211,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -53340,8 +53346,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 233
+                    "line": 224,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -53360,8 +53366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 236,
-                    "end": 251
+                    "line": 237,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -53380,8 +53386,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 298
+                    "line": 284,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -53400,8 +53406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 329
+                    "line": 322,
+                    "end": 330
                 },
                 {
                     "routes": [],
@@ -53420,8 +53426,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 332,
-                    "end": 336
+                    "line": 333,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -53440,8 +53446,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 339,
-                    "end": 350
+                    "line": 340,
+                    "end": 351
                 },
                 {
                     "routes": [],
@@ -53460,8 +53466,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 353,
-                    "end": 364
+                    "line": 354,
+                    "end": 365
                 },
                 {
                     "routes": [],
@@ -53480,8 +53486,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 55
+                    "line": 53,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -53494,8 +53500,8 @@
                         "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
                     ],
                     "params": [],
-                    "line": 254,
-                    "end": 280
+                    "line": 255,
+                    "end": 281
                 },
                 {
                     "routes": [],
@@ -53516,8 +53522,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 308
+                    "line": 302,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -53538,8 +53544,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 318
+                    "line": 312,
+                    "end": 319
                 }
             ]
         },
@@ -61908,6 +61914,7 @@
                 "Minn\\Http\\Matched",
                 "Minn\\Http\\MediaType",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\NoCache",
                 "Minn\\Http\\Outbound",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Punycode",
@@ -65823,6 +65830,45 @@
                     "params": [],
                     "line": 35,
                     "end": 38
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Http\\NoCache",
+            "short": "NoCache",
+            "namespace": "Minn\\Http",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Http/NoCache.php",
+            "lines": 16,
+            "doc": "The headers that keep a response out of every cache.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Http",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\AjaxController",
+                "Minn\\Theme\\FrontLifecycle"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "headers",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "headers(): array",
+                    "doc": "The headers (wp_get_nocache_headers): an expiry in the past and a\nCache-Control that forbids storing, as nocache_headers leaves them, with\nLast-Modified always marked for removal.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 19,
+                    "end": 24
                 }
             ]
         },
@@ -69966,6 +70012,7 @@
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\UpdateCounts",
+                "Minn\\Runtime\\VersionCheck",
                 "Minn\\Theme\\ArchiveTitle",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\HeadLinks",
@@ -70538,6 +70585,7 @@
             ],
             "usedBy": [
                 "Minn\\Blocks\\Dynamic\\Dates",
+                "Minn\\Runtime\\SiteTime",
                 "Minn\\Theme\\ArchiveTitle"
             ],
             "constructor": null,
@@ -70867,6 +70915,57 @@
                     ],
                     "line": 113,
                     "end": 120
+                }
+            ]
+        },
+        {
+            "name": "Minn\\I18n\\Numbers",
+            "short": "Numbers",
+            "namespace": "Minn\\I18n",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/I18n/Numbers.php",
+            "lines": 8,
+            "doc": "Numbers written for people: grouped by thousands, to the decimals asked.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Front\\EmbedCard",
+                "Minn\\Front\\ToolbarMenus"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "format",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "format(mixed $number, mixed $decimals = 0): mixed",
+                    "doc": "A number grouped by thousands (number_format_i18n), as the filter leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "number",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "decimals",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 13,
+                    "end": 16
                 }
             ]
         },
@@ -72239,6 +72338,7 @@
                 "Minn\\Mail\\MailLog",
                 "Minn\\Mail\\MailSettings",
                 "Minn\\Mail\\MailerStrings",
+                "Minn\\Media\\FileTypes",
                 "Minn\\Ops\\Changelog",
                 "Minn\\Ops\\Packages",
                 "Minn\\Ops\\Releases",
@@ -80658,6 +80758,152 @@
             ]
         },
         {
+            "name": "Minn\\Media\\FileTypes",
+            "short": "FileTypes",
+            "namespace": "Minn\\Media",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Media/FileTypes.php",
+            "lines": 75,
+            "doc": "File types as WordPress knows them (data/mime.json): every extension's\nMIME type, the ones a user may upload, the kind each extension is (image,\naudio, document...), and the type a file name's extension says, each\nlist through the filter plugins hook.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Can",
+                "Minn\\Json",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Content\\MediaShortcodes",
+                "Minn\\Front\\FeedTags",
+                "Minn\\Media\\Icons",
+                "Minn\\Rest\\PostCollectionParams",
+                "Minn\\Runtime\\FileTypeCheck"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "table",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "table",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "table(): array",
+                    "doc": "The table: mime (extensions => type), allowed (the ones uploads take\nby default) and ext2type (kind => extensions).",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 28,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(): mixed",
+                    "doc": "Every extension's MIME type (wp_get_mime_types), as mime_types leaves them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 34,
+                    "end": 37
+                },
+                {
+                    "routes": [],
+                    "name": "allowed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "allowed(mixed $user = NULL): mixed",
+                    "doc": "The types a user (the request's, unless one is given) may upload\n(get_allowed_mime_types): HTML and JavaScript too for one with\nunfiltered_html; then upload_mimes.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 44,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "check",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "check(mixed $filename, mixed $mimes = NULL): array",
+                    "doc": "The extension and type a file name has among the types given (the\nallowed ones by default), false for each when none matches (wp_check_filetype).",
+                    "shapes": [
+                        "@return array{ext: string|false, type: mixed}"
+                    ],
+                    "params": [
+                        {
+                            "name": "filename",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mimes",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 72
+                },
+                {
+                    "routes": [],
+                    "name": "kinds",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "kinds(): mixed",
+                    "doc": "The extensions of each kind (wp_get_ext_types), as ext2type leaves them.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 75,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "kindOf",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "kindOf(mixed $ext): mixed",
+                    "doc": "The kind an extension is (wp_ext2type), or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ext",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 90
+                }
+            ]
+        },
+        {
             "name": "Minn\\Media\\Gallery",
             "short": "Gallery",
             "namespace": "Minn\\Media",
@@ -80875,6 +81121,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Media\\FileTypes",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls"
             ],
@@ -100624,6 +100871,7 @@
             "uses": [
                 "Minn\\Http\\Args",
                 "Minn\\Http\\RouteParams",
+                "Minn\\Media\\FileTypes",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -100674,8 +100922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 30,
-                    "end": 33
+                    "line": 31,
+                    "end": 34
                 },
                 {
                     "routes": [],
@@ -100696,8 +100944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 39
+                    "line": 37,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -100718,8 +100966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 52
+                    "line": 49,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -100740,8 +100988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 136
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -100754,8 +101002,8 @@
                         "@return array<string, list<string>>"
                     ],
                     "params": [],
-                    "line": 215,
-                    "end": 223
+                    "line": 216,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -100776,8 +101024,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 68
+                    "line": 62,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -100798,8 +101046,8 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 71,
-                    "end": 86
+                    "line": 72,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -100820,8 +101068,8 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 89,
-                    "end": 100
+                    "line": 90,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -100842,8 +101090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 123
+                    "line": 109,
+                    "end": 124
                 },
                 {
                     "routes": [],
@@ -100871,8 +101119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 148
+                    "line": 140,
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -100893,8 +101141,8 @@
                             "doc": "@return array<string, array<string, mixed>>"
                         }
                     ],
-                    "line": 151,
-                    "end": 207
+                    "line": 152,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -100907,8 +101155,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 226,
-                    "end": 229
+                    "line": 227,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -100930,8 +101178,8 @@
                             "doc": "REST base => hierarchical"
                         }
                     ],
-                    "line": 237,
-                    "end": 250
+                    "line": 238,
+                    "end": 251
                 },
                 {
                     "routes": [],
@@ -100959,8 +101207,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 253,
-                    "end": 263
+                    "line": 254,
+                    "end": 264
                 }
             ]
         },
@@ -110377,6 +110625,7 @@
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\StoredObjects",
                 "Minn\\Runtime\\WidgetAreas"
             ],
             "usedBy": [
@@ -110404,8 +110653,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 34,
-                "end": 36
+                "line": 35,
+                "end": 37
             },
             "cases": [],
             "constants": [
@@ -110462,8 +110711,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 60
+                    "line": 46,
+                    "end": 61
                 },
                 {
                     "routes": [
@@ -110491,8 +110740,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 64,
-                    "end": 72
+                    "line": 65,
+                    "end": 73
                 },
                 {
                     "routes": [
@@ -110522,8 +110771,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 95
+                    "line": 79,
+                    "end": 96
                 },
                 {
                     "routes": [
@@ -110544,8 +110793,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 106
+                    "line": 100,
+                    "end": 107
                 },
                 {
                     "routes": [
@@ -110573,8 +110822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 118
+                    "line": 111,
+                    "end": 119
                 },
                 {
                     "routes": [
@@ -110602,8 +110851,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 158
+                    "line": 128,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -110614,8 +110863,8 @@
                     "doc": "The widgets are registered on init; a runtime that stopped short of it\nregisters them now. Without the runtime there are no widgets to serve.",
                     "shapes": [],
                     "params": [],
-                    "line": 164,
-                    "end": 172
+                    "line": 165,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -110636,8 +110885,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 198
+                    "line": 176,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -110658,8 +110907,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 201,
-                    "end": 215
+                    "line": 202,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -110672,8 +110921,8 @@
                         "@return array<string, \\WP_Widget> by id base, in id order"
                     ],
                     "params": [],
-                    "line": 218,
-                    "end": 226
+                    "line": 219,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -110692,8 +110941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 228,
-                    "end": 233
+                    "line": 229,
+                    "end": 234
                 }
             ]
         },
@@ -114840,6 +115089,7 @@
                 "Minn\\Rest\\WidgetObject",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\StoredObjects",
                 "Minn\\Runtime\\WidgetAreas"
             ],
             "usedBy": [
@@ -114866,8 +115116,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 40,
-                "end": 42
+                "line": 41,
+                "end": 43
             },
             "cases": [],
             "constants": [
@@ -114924,8 +115174,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 64
+                    "line": 47,
+                    "end": 65
                 },
                 {
                     "routes": [
@@ -114953,8 +115203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 69,
+                    "end": 73
                 },
                 {
                     "routes": [
@@ -114975,8 +115225,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 76,
-                    "end": 91
+                    "line": 77,
+                    "end": 92
                 },
                 {
                     "routes": [
@@ -115006,8 +115256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 113
+                    "line": 98,
+                    "end": 114
                 },
                 {
                     "routes": [
@@ -115035,8 +115285,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 139
+                    "line": 118,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -115071,8 +115321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 162
+                    "line": 149,
+                    "end": 163
                 },
                 {
                     "routes": [],
@@ -115107,8 +115357,8 @@
                             "doc": "@return array<string, mixed>"
                         }
                     ],
-                    "line": 165,
-                    "end": 186
+                    "line": 166,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -115127,8 +115377,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 196
+                    "line": 190,
+                    "end": 197
                 }
             ]
         },
@@ -115876,6 +116126,7 @@
             "uses": [
                 "Minn\\Http\\Access",
                 "Minn\\Http\\Method",
+                "Minn\\Http\\NoCache",
                 "Minn\\Http\\Policy",
                 "Minn\\Http\\Request",
                 "Minn\\Http\\Response",
@@ -115929,8 +116180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 42,
-                    "end": 45
+                    "line": 43,
+                    "end": 46
                 },
                 {
                     "routes": [
@@ -115951,8 +116202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 79
+                    "line": 50,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -115971,8 +116222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 86
+                    "line": 83,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -115983,8 +116234,8 @@
                     "doc": "The two cross-origin headers, for an Origin that is this site's own address; empty for any other.",
                     "shapes": [],
                     "params": [],
-                    "line": 89,
-                    "end": 96
+                    "line": 90,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -116003,8 +116254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 104
+                    "line": 100,
+                    "end": 105
                 }
             ]
         },
@@ -118473,6 +118724,7 @@
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime",
                 "Minn\\Support\\Slashes"
             ],
             "usedBy": [
@@ -121535,6 +121787,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Media\\FileTypes",
                 "Minn\\Media\\ImageMime"
             ],
             "usedBy": [],
@@ -121604,8 +121857,8 @@
                             "doc": "getimagesize_mimes_to_exts"
                         }
                     ],
-                    "line": 33,
-                    "end": 65
+                    "line": 35,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -121624,8 +121877,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 71
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -121651,8 +121904,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 92
+                    "line": 76,
+                    "end": 94
                 }
             ]
         },
@@ -128906,7 +129159,8 @@
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Transients",
-                "Minn\\Support\\Files"
+                "Minn\\Support\\Files",
+                "Minn\\Support\\Paths"
             ],
             "usedBy": [
                 "Minn\\Rest\\PluginsController"
@@ -128935,8 +129189,8 @@
                             "doc": "plugin files, relative to the plugins folder"
                         }
                     ],
-                    "line": 25,
-                    "end": 39
+                    "line": 26,
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -128955,8 +129209,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 69
+                    "line": 47,
+                    "end": 70
                 },
                 {
                     "routes": [],
@@ -128984,8 +129238,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 84
+                    "line": 73,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -129004,8 +129258,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 100
+                    "line": 88,
+                    "end": 101
                 },
                 {
                     "routes": [],
@@ -129033,8 +129287,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 117
+                    "line": 104,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -129062,8 +129316,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 126
+                    "line": 121,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -129084,8 +129338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 140
+                    "line": 130,
+                    "end": 141
                 }
             ]
         },
@@ -129103,6 +129357,7 @@
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\VersionCheck",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\FileHeaders"
             ],
@@ -129653,7 +129908,8 @@
                 "Minn\\Content\\TagBalancer",
                 "Minn\\I18n\\Gettext",
                 "Minn\\Runtime\\Handoff",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime"
             ],
             "usedBy": [],
             "constructor": null,
@@ -131901,7 +132157,8 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostQueryParts",
                 "Minn\\Runtime\\Registered",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime"
             ],
             "usedBy": [
                 "Minn\\Runtime\\PostQuery"
@@ -136598,13 +136855,16 @@
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Front\\ToolbarMarkup",
                 "Minn\\Front\\ToolbarMenus",
+                "Minn\\Http\\NoCache",
                 "Minn\\I18n\\Gettext",
+                "Minn\\I18n\\Numbers",
                 "Minn\\I18n\\SiteLanguage",
                 "Minn\\I18n\\TranslationFiles",
                 "Minn\\Login\\LoginController",
                 "Minn\\Login\\LoginHooks",
                 "Minn\\Login\\LoginNotices",
                 "Minn\\Mail\\Mailer",
+                "Minn\\Media\\FileTypes",
                 "Minn\\Media\\Icons",
                 "Minn\\Ops\\AutoUpdates",
                 "Minn\\Ops\\Updates",
@@ -136698,6 +136958,7 @@
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\Shortcodes",
                 "Minn\\Runtime\\SiteOptions",
+                "Minn\\Runtime\\SiteTime",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermFields",
@@ -136713,6 +136974,7 @@
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Runtime\\UserSave",
+                "Minn\\Runtime\\VersionCheck",
                 "Minn\\Runtime\\WidgetAreas",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Kses",
@@ -139170,6 +139432,153 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\SiteTime",
+            "short": "SiteTime",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/SiteTime.php",
+            "lines": 70,
+            "doc": "Time as the site keeps it: its timezone (the named one, else the UTC\noffset), now in that zone or in UTC, a moment written in the site's\nlanguage, and a stored date read back in a format.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\LocalDates",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Front\\FeedTemplates",
+                "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\PostData",
+                "Minn\\Runtime\\PostQueryResults",
+                "Minn\\Theme\\FeedHeaders"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "zoneName",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "zoneName(): string",
+                    "doc": "The site's timezone as text (wp_timezone_string): its name, else its offset as +HH:MM.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 19,
+                    "end": 29
+                },
+                {
+                    "routes": [],
+                    "name": "zone",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "zone(): DateTimeZone",
+                    "doc": "The site's timezone (wp_timezone).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 32,
+                    "end": 35
+                },
+                {
+                    "routes": [],
+                    "name": "now",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "now(mixed $type, mixed $gmt = false): mixed",
+                    "doc": "Now (current_time): a timestamp for \"timestamp\" or \"U\" (the site's\noffset added unless in UTC), a database date for \"mysql\", else the\nformat given, in the site's zone or UTC.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "gmt",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "format",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "format(mixed $format, mixed $timestamp = NULL, mixed $timezone = NULL): mixed",
+                    "doc": "A moment written in a format, its names in the site's language (wp_date), as the filter leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "timestamp",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        },
+                        {
+                            "name": "timezone",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 61
+                },
+                {
+                    "routes": [],
+                    "name": "fromStored",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromStored(mixed $format, mixed $date, mixed $translate = true): mixed",
+                    "doc": "A stored date in a format (mysql2date): false for none or one that is\nnot a date; \"G\" and \"U\" are timestamps (G with the site's offset); the\nnames translated unless asked not to be.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "format",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "date",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "translate",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 68,
+                    "end": 84
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\SiteUrls",
             "short": "SiteUrls",
             "namespace": "Minn\\Runtime",
@@ -139561,12 +139970,16 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/StoredObjects.php",
-            "lines": 64,
+            "lines": 78,
             "doc": "The classes a stored blob may name and come back as. The serialized\nreader never instantiates; the facade registers one factory per value\nclass it owns (WP_Post, WP_Term, WP_Comment) and a record naming any\nother class stays a stdClass of its properties. That is what lets a\ntransient the reference wrote, holding post objects, read back typed.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Support\\Serialized"
+            ],
             "usedBy": [
+                "Minn\\Rest\\SidebarsController",
+                "Minn\\Rest\\WidgetsController",
                 "Minn\\Runtime\\Options"
             ],
             "constructor": null,
@@ -139593,6 +140006,26 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "maybeDecode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "maybeDecode(mixed $data): mixed",
+                    "doc": "A stored value read back (maybe_unserialize): serialized data decoded,\nits objects revived by the registered factories; anything else, or\ndata that does not decode, as given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 36
+                },
+                {
+                    "routes": [],
                     "name": "register",
                     "static": true,
                     "visibility": "public",
@@ -139615,8 +140048,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 23,
-                    "end": 26
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -139627,8 +140060,8 @@
                     "doc": "The reviver the serialized reader takes: PHP's array wrappers rebuilt, a factory's object, or the properties as they are.",
                     "shapes": [],
                     "params": [],
-                    "line": 29,
-                    "end": 40
+                    "line": 45,
+                    "end": 56
                 },
                 {
                     "routes": [],
@@ -139647,8 +140080,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 70
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -139659,8 +140092,8 @@
                     "doc": "Forgets every factory, for suites.",
                     "shapes": [],
                     "params": [],
-                    "line": 73,
-                    "end": 76
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -139686,8 +140119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 64
+                    "line": 68,
+                    "end": 80
                 }
             ]
         },
@@ -143781,7 +144214,8 @@
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Transients",
-                "Minn\\Support\\Files"
+                "Minn\\Support\\Files",
+                "Minn\\Support\\Paths"
             ],
             "usedBy": [
                 "Minn\\Admin\\PackagesController",
@@ -143816,8 +144250,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 50
+                    "line": 32,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -143828,8 +144262,8 @@
                     "doc": "check_theme_switched: on the load after a switch, after_switch_theme with the theme that left.",
                     "shapes": [],
                     "params": [],
-                    "line": 53,
-                    "end": 68
+                    "line": 54,
+                    "end": 69
                 },
                 {
                     "routes": [],
@@ -143840,8 +144274,8 @@
                     "doc": "_wp_menus_changed: the leaving theme's menu locations mapped onto the arriving theme's.",
                     "shapes": [],
                     "params": [],
-                    "line": 71,
-                    "end": 76
+                    "line": 72,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -143869,8 +144303,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 86,
-                    "end": 117
+                    "line": 87,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -143898,8 +144332,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 135
+                    "line": 126,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -143918,8 +144352,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 145
+                    "line": 139,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -143947,8 +144381,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 158
+                    "line": 149,
+                    "end": 159
                 },
                 {
                     "routes": [],
@@ -143974,8 +144408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 164
+                    "line": 162,
+                    "end": 165
                 }
             ]
         },
@@ -146437,6 +146871,94 @@
                     ],
                     "line": 85,
                     "end": 92
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\VersionCheck",
+            "short": "VersionCheck",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/VersionCheck.php",
+            "lines": 27,
+            "doc": "Whether the WordPress version Minn reports and the PHP it runs on meet a\nrequirement (a plugin's \"Requires at least\" and \"Requires PHP\"), and where\nto read about updating PHP.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PluginRequirements"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "wordpress",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "wordpress(mixed $required): bool",
+                    "doc": "Whether the reported WordPress version is at least the one required (is_wp_version_compatible); nothing required always is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "required",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "php",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "php(mixed $required): bool",
+                    "doc": "Whether PHP is at least the version required (is_php_version_compatible); nothing required always is.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "required",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 26
+                },
+                {
+                    "routes": [],
+                    "name": "updatePhpUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updatePhpUrl(): string",
+                    "doc": "The page about updating PHP (wp_get_update_php_url): the filter's, unless it gives no address.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 29,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "defaultUpdatePhpUrl",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "defaultUpdatePhpUrl(): string",
+                    "doc": "The page about updating PHP before any filter (wp_get_default_update_php_url), in the site's language.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 36,
+                    "end": 39
                 }
             ]
         },
@@ -150180,17 +150702,47 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Paths.php",
-            "lines": 75,
-            "doc": "File-system path and permission spellings.",
+            "lines": 95,
+            "doc": "File-system path and permission spellings, and whether a path is safe to use.",
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\ThemeSwitch"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
             "properties": [],
             "methods": [
+                {
+                    "routes": [],
+                    "name": "validate",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "validate(mixed $file, mixed $allowed = array ( )): int",
+                    "doc": "Whether a path is safe to use (validate_file): 0 when it is; 1 when it\nclimbs out (a bare \"../\", more than one, or one not at the end); 2 for a\ndrive letter; 3 when a list is given and the path is not on it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowed",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 15,
+                    "end": 28
+                },
                 {
                     "routes": [],
                     "name": "translationDir",
@@ -150238,8 +150790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 19,
-                    "end": 43
+                    "line": 39,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -150258,8 +150810,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 46,
-                    "end": 58
+                    "line": 66,
+                    "end": 78
                 },
                 {
                     "routes": [],
@@ -150278,8 +150830,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 81
+                    "line": 81,
+                    "end": 101
                 }
             ]
         },
@@ -150719,6 +151271,7 @@
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\SiteOptions",
+                "Minn\\Runtime\\StoredObjects",
                 "Minn\\Support\\SearchReplace"
             ],
             "constructor": null,
@@ -153849,7 +154402,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Http\\Request",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteTime"
             ],
             "usedBy": [
                 "Minn\\Theme\\FrontLifecycle"
@@ -153893,8 +154447,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 27,
-                    "end": 48
+                    "line": 28,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -153922,8 +154476,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 65
+                    "line": 52,
+                    "end": 66
                 }
             ]
         },
@@ -154378,6 +154932,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Http\\NoCache",
                 "Minn\\Http\\Response",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Registered",
@@ -154435,8 +154990,8 @@
                             "doc": "the reference's parse vars for the public vars, when the request is known"
                         }
                     ],
-                    "line": 34,
-                    "end": 54
+                    "line": 35,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -154462,8 +155017,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 87
+                    "line": 67,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -154482,8 +155037,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 131
+                    "line": 96,
+                    "end": 132
                 }
             ]
         },

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Media\FileTypes;
+
 /**
  * A file's type from its content as much as its name, as the reference's
  * wp_check_filetype_and_ext decides it (probe upload-filters): an image the
@@ -32,7 +34,7 @@ final class FileTypeCheck
      */
     public static function check(string $file, string $filename, ?array $mimes, array $images): array
     {
-        ['ext' => $ext, 'type' => $type] = \wp_check_filetype($filename, $mimes);
+        ['ext' => $ext, 'type' => $type] = FileTypes::check($filename, $mimes);
         $proper = false;
         $real = false;
         if (!is_file($file)) {
@@ -48,7 +50,7 @@ final class FileTypeCheck
                 array_pop($parts);
                 $parts[] = $images[$real];
                 $proper = implode('.', $parts);
-                ['ext' => $ext, 'type' => $type] = \wp_check_filetype($proper, $mimes);
+                ['ext' => $ext, 'type' => $type] = FileTypes::check($proper, $mimes);
             }
         } elseif ($type && function_exists('finfo_open')) {
             $real = (string) finfo_file(finfo_open(FILEINFO_MIME_TYPE), $file);
@@ -57,7 +59,7 @@ final class FileTypeCheck
                 $type = false;
             }
         }
-        if ($type && !in_array($type, \get_allowed_mime_types(), true)) {
+        if ($type && !in_array($type, FileTypes::allowed(), true)) {
             $ext = false;
             $type = false;
         }

@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Http\Args;
 use Minn\Http\RouteParams;
+use Minn\Media\FileTypes;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -215,7 +216,7 @@ final class PostCollectionParams implements RouteParams
     public static function mediaTypes(): array
     {
         $types = [];
-        foreach (Runtime::booted() ? \get_allowed_mime_types() : ['jpg|jpeg|jpe' => 'image/jpeg'] as $mime) {
+        foreach (Runtime::booted() ? FileTypes::allowed() : ['jpg|jpeg|jpe' => 'image/jpeg'] as $mime) {
             $types[strtok((string) $mime, '/')][(string) $mime] = (string) $mime;
         }
         // Each MIME type once, where it first appears (two extensions can share one).

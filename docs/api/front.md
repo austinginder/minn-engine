@@ -489,7 +489,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 45)
+Internals: `enclosures()` (private, line 46)
 
 
 ## FeedTemplates
@@ -514,7 +514,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 62), `rss2()` (private, line 67), `rss2Item()` (private, line 86), `atom()` (private, line 112), `atomEntry()` (private, line 131), `rdf()` (private, line 158), `rdfItem()` (private, line 182), `rss()` (private, line 197), `commentsTitle()` (private, line 215), `commentTitle()` (private, line 227), `current()` (private, line 236), `rss2Comments()` (private, line 243), `rss2Comment()` (private, line 261), `atomComments()` (private, line 275), `atomComment()` (private, line 297)
+Internals: `syndication()` (private, line 63), `rss2()` (private, line 68), `rss2Item()` (private, line 87), `atom()` (private, line 113), `atomEntry()` (private, line 132), `rdf()` (private, line 159), `rdfItem()` (private, line 183), `rss()` (private, line 198), `commentsTitle()` (private, line 216), `commentTitle()` (private, line 228), `current()` (private, line 237), `rss2Comments()` (private, line 244), `rss2Comment()` (private, line 262), `atomComments()` (private, line 276), `atomComment()` (private, line 298)
 
 
 ## FeedWriter
@@ -1653,7 +1653,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 52), `creatable()` (private, line 254), `editPost()` (private, line 301), `editTerm()` (private, line 311)
+Internals: `profileUrl()` (private, line 53), `creatable()` (private, line 255), `editPost()` (private, line 302), `editTerm()` (private, line 312)
 
 
 ## ToolbarTree

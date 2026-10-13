@@ -1780,7 +1780,7 @@ the order the site allows them, each once.
 
 - `@return array<string, list<string>>`
 
-Internals: `named()` (private, line 61), `forType()` (private, line 71), `filtered()` (private, line 89), `type()` (private, line 108), `described()` (private, line 139), `build()` (private, line 151), `statuses()` (private, line 226), `taxonomies()` (private, line 237), `termFilter()` (private, line 253)
+Internals: `named()` (private, line 62), `forType()` (private, line 72), `filtered()` (private, line 90), `type()` (private, line 109), `described()` (private, line 140), `build()` (private, line 152), `statuses()` (private, line 227), `taxonomies()` (private, line 238), `termFilter()` (private, line 254)
 
 
 ## PostListArgs
@@ -3333,7 +3333,7 @@ as the_widget shows it, and the settings encoded again.
 The widgets are registered on init; a runtime that stopped short of it
 registers them now. Without the runtime there are no widgets to serve.
 
-Internals: `item()` (private, line 175), `type()` (private, line 201), `widgetTypes()` (private, line 218), `requireSidebar()` (private, line 228)
+Internals: `item()` (private, line 176), `type()` (private, line 202), `widgetTypes()` (private, line 219), `requireSidebar()` (private, line 229)
 
 
 ## StatusesController
@@ -4099,5 +4099,5 @@ Route: `DELETE /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
 
 Deletes a widget with force; without, sends it to the inactive widgets.
 
-Internals: `saveInstance()` (private, line 148), `newInstance()` (private, line 165), `sidebarOf()` (private, line 189)
+Internals: `saveInstance()` (private, line 149), `newInstance()` (private, line 166), `sidebarOf()` (private, line 190)
 

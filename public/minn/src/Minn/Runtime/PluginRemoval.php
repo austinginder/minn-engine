@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Files;
+use Minn\Support\Paths;
 
 /**
  * Deleting plugins as the reference's delete_plugins does it: each in turn
@@ -87,7 +88,7 @@ final class PluginRemoval
     private static function removeFiles(string $plugin): bool
     {
         $root = rtrim(WP_PLUGIN_DIR, '/');
-        if (\validate_file($plugin) !== 0 || $plugin === '' || str_starts_with($plugin, '/')) {
+        if (Paths::validate($plugin) !== 0 || $plugin === '' || str_starts_with($plugin, '/')) {
             return false;
         }
         $path = $root . '/' . (str_contains($plugin, '/') ? dirname($plugin) : $plugin);

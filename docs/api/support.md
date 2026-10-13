@@ -26,7 +26,7 @@ escaping, serialized readers, small helpers
 | [`Lists`](#lists) | final class | 190 | List shaping behind the facade's array utilities: arguments over their |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
-| [`Paths`](#paths) | final class | 75 | File-system path and permission spellings. |
+| [`Paths`](#paths) | final class | 95 | File-system path and permission spellings, and whether a path is safe to use. |
 | [`Sanitize`](#sanitize) | final class | 57 | Text made fit to store the way WordPress's sanitizers make it, each ending |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
@@ -855,7 +855,15 @@ keeps the empty line after its final newline.
 
 `final class Minn\Support\Paths` · `public/minn/src/Minn/Support/Paths.php`
 
-File-system path and permission spellings.
+File-system path and permission spellings, and whether a path is safe to use.
+
+Used by: `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
+
+### static `validate(mixed $file, mixed $allowed = array ( )): int`
+
+Whether a path is safe to use (validate_file): 0 when it is; 1 when it
+climbs out (a bare "../", more than one, or one not at the end); 2 for a
+drive letter; 3 when a list is given and the path is not on it.
 
 ### static `translationDir(string $domain, string $locale, string $langDir, ?string $customPath, ?Closure $listed = NULL): string|false`
 
@@ -973,7 +981,7 @@ here executes the blob; each reader scans for the one shape it needs.
 - const `MAX_DEPTH` = `4096` — The deepest nesting a record may have, PHP's own default (unserialize_max_depth).
 - const `SMALLEST_PAIR` = `6` — The fewest bytes an array or object member can take: a key "i:0;" and a value "N;".
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Runtime\SiteOptions`, `Minn\Support\SearchReplace`
+Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\StoredObjects`, `Minn\Support\SearchReplace`
 
 
 ### static `stringList(?string $blob): array`

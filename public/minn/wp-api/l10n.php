@@ -423,7 +423,7 @@ function _minn_locale_switcher(): WP_Locale_Switcher
 
 function number_format_i18n($number, $decimals = 0)
 {
-    return apply_filters('number_format_i18n', number_format((float) $number, absint($decimals), '.', ','), $number, $decimals);
+    return Minn\I18n\Numbers::format($number, $decimals);
 }
 
 function wp_get_word_count_type()

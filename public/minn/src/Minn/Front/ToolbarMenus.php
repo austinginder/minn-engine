@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Auth\Can;
+use Minn\I18n\Numbers;
 use Minn\Runtime\CurrentUser;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
@@ -213,7 +214,7 @@ final class ToolbarMenus
         if (!$total) {
             return;
         }
-        $count = \number_format_i18n($total);
+        $count = Numbers::format($total);
         $title = self::ICON . '<span class="ab-label" aria-hidden="true">' . $count . '</span>'
             . '<span class="screen-reader-text updates-available-text">' . sprintf(Gettext::plural('%s update available', '%s updates available', $total), $count) . '</span>';
         $bar->add_node(['id' => 'updates', 'title' => $title, 'href' => SiteUrls::admin('update-core.php')]);
@@ -226,7 +227,7 @@ final class ToolbarMenus
             return;
         }
         $waiting = (int) \wp_count_comments()->moderated;
-        $count = \number_format_i18n($waiting);
+        $count = Numbers::format($waiting);
         $title = self::ICON . '<span class="ab-label awaiting-mod pending-count count-' . $waiting . '" aria-hidden="true">' . $count . '</span>'
             . '<span class="screen-reader-text comments-in-moderation-text">' . sprintf(Gettext::plural('%s Comment in moderation', '%s Comments in moderation', $waiting), $count) . '</span>';
         $bar->add_node(['id' => 'comments', 'title' => $title, 'href' => SiteUrls::admin('edit-comments.php')]);

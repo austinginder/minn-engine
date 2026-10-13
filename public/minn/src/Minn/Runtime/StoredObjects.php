@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Serialized;
+
 /**
  * The classes a stored blob may name and come back as. The serialized
  * reader never instantiates; the facade registers one factory per value
@@ -18,6 +20,20 @@ final class StoredObjects
 
     /** @var array<string, \Closure(\stdClass): object> keyed by lower-cased class name */
     private static array $factories = [];
+
+    /**
+     * A stored value read back (maybe_unserialize): serialized data decoded,
+     * its objects revived by the registered factories; anything else, or
+     * data that does not decode, as given.
+     */
+    public static function maybeDecode(mixed $data): mixed
+    {
+        if (!is_string($data) || !Serialized::looksSerialized($data)) {
+            return $data;
+        }
+        $decoded = Serialized::decode(trim($data), self::reviver());
+        return $decoded === Serialized::INVALID ? $data : $decoded;
+    }
 
     /** Registers what a record naming this class becomes. */
     public static function register(string $class, \Closure $factory): void

@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 813,
-        "composes": 2356,
-        "leaf": 1024,
-        "noop": 2815,
+        "minn": 810,
+        "composes": 2348,
+        "leaf": 1023,
+        "noop": 2827,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1101,
+        "minnMethods": 1118,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -37601,11 +37601,10 @@
         },
         "_minn_mime_table": {
             "file": "functions.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::engineDir"
+                "Minn\\Media\\FileTypes::table"
             ],
             "composes": []
         },
@@ -44809,13 +44808,12 @@
         },
         "current_time": {
             "file": "functions.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_option",
-                "wp_timezone"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteTime::now"
+            ],
+            "composes": []
         },
         "current_user_can": {
             "file": "user.php",
@@ -47345,15 +47343,12 @@
         },
         "get_allowed_mime_types": {
             "file": "functions.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_mime_table",
-                "apply_filters",
-                "current_user_can",
-                "user_can"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Media\\FileTypes::allowed"
+            ],
+            "composes": []
         },
         "get_allowed_themes": {
             "file": "deadends.php",
@@ -54309,7 +54304,9 @@
             "file": "load.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\VersionCheck::php"
+            ],
             "composes": []
         },
         "is_plugin_active": {
@@ -54799,7 +54796,9 @@
             "file": "load.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\VersionCheck::wordpress"
+            ],
             "composes": []
         },
         "is_year": {
@@ -55355,15 +55354,12 @@
         },
         "maybe_unserialize": {
             "file": "option.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\StoredObjects::reviver",
-                "Minn\\Support\\Serialized::decode"
+                "Minn\\Runtime\\StoredObjects::maybeDecode"
             ],
-            "composes": [
-                "is_serialized"
-            ]
+            "composes": []
         },
         "mbstring_binary_safe_encoding": {
             "file": "functions.php",
@@ -55825,13 +55821,12 @@
         },
         "mysql2date": {
             "file": "functions.php",
-            "lines": 14,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_date",
-                "wp_timezone"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteTime::fromStored"
+            ],
+            "composes": []
         },
         "mysql_to_rfc3339": {
             "file": "functions.php",
@@ -56046,11 +56041,10 @@
             "file": "l10n.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "absint",
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\I18n\\Numbers::format"
+            ],
+            "composes": []
         },
         "offsetExists": {
             "file": "requests/Utility.php",
@@ -64082,9 +64076,11 @@
         },
         "validate_file": {
             "file": "functions.php",
-            "lines": 11,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Paths::validate"
+            ],
             "composes": []
         },
         "validate_file_to_edit": {
@@ -66275,12 +66271,12 @@
         },
         "wp_check_filetype": {
             "file": "functions.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_allowed_mime_types"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Media\\FileTypes::check"
+            ],
+            "composes": []
         },
         "wp_check_filetype_and_ext": {
             "file": "functions.php",
@@ -67268,15 +67264,12 @@
         },
         "wp_date": {
             "file": "functions.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\I18n\\LocalDates::format"
+                "Minn\\Runtime\\SiteTime::format"
             ],
-            "composes": [
-                "apply_filters",
-                "wp_timezone"
-            ]
+            "composes": []
         },
         "wp_debug_backtrace_summary": {
             "file": "functions.php",
@@ -68331,12 +68324,12 @@
         },
         "wp_ext2type": {
             "file": "functions.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_get_ext_types"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Media\\FileTypes::kindOf"
+            ],
+            "composes": []
         },
         "wp_extract_urls": {
             "file": "functions.php",
@@ -69272,10 +69265,10 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_x"
-            ]
+            "minn": [
+                "Minn\\Runtime\\VersionCheck::defaultUpdatePhpUrl"
+            ],
+            "composes": []
         },
         "wp_get_development_mode": {
             "file": "load.php",
@@ -69378,11 +69371,10 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_mime_table",
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Media\\FileTypes::kinds"
+            ],
+            "composes": []
         },
         "wp_get_extension_error_description": {
             "file": "load.php",
@@ -69772,11 +69764,10 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_minn_mime_table",
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Media\\FileTypes::all"
+            ],
+            "composes": []
         },
         "wp_get_missing_image_subsizes": {
             "file": "media.php",
@@ -69855,12 +69846,12 @@
         },
         "wp_get_nocache_headers": {
             "file": "functions.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Http\\NoCache::headers"
+            ],
+            "composes": []
         },
         "wp_get_note_mentioned_user_ids": {
             "file": "deadends.php",
@@ -70590,13 +70581,12 @@
         },
         "wp_get_update_php_url": {
             "file": "functions.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "wp_get_default_update_php_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\VersionCheck::updatePhpUrl"
+            ],
+            "composes": []
         },
         "wp_get_upload_dir": {
             "file": "link-template.php",
@@ -76892,10 +76882,10 @@
             "file": "functions.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "wp_timezone_string"
-            ]
+            "minn": [
+                "Minn\\Runtime\\SiteTime::zone"
+            ],
+            "composes": []
         },
         "wp_timezone_choice": {
             "file": "functions.php",
@@ -76919,12 +76909,12 @@
         },
         "wp_timezone_string": {
             "file": "functions.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteTime::zoneName"
+            ],
+            "composes": []
         },
         "wp_timezone_supported": {
             "file": "deprecated.php",

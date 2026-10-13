@@ -84,7 +84,7 @@ final class PostQueryResults
             }
             $query->is_preview = true;
             if ($status !== 'future') {
-                $first->post_date = \current_time('mysql');
+                $first->post_date = SiteTime::now('mysql');
             }
             return true;
         }

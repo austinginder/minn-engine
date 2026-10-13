@@ -31,7 +31,7 @@ final class Icons
             $post = \get_post((int) $mime);
             $postId = $post instanceof \WP_Post ? $post->ID : 0;
             $ext = $postId > 0 ? strtolower((string) pathinfo((string) \get_attached_file($postId), PATHINFO_EXTENSION)) : '';
-            $names = $ext === '' ? [] : array_filter([$ext, \wp_ext2type($ext)]);
+            $names = $ext === '' ? [] : array_filter([$ext, FileTypes::kindOf($ext)]);
             $mime = $post instanceof \WP_Post ? (string) $post->post_mime_type : '';
         }
         $mime = (string) $mime;

@@ -18,15 +18,15 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Front`](front.md) | 44 | URL resolution, permalinks, feeds, sitemaps and the public page |
 | [`Minn\Html`](html.md) | 7 | the HTML tag processor |
 | [`Minn\Html\Tree`](html-tree.md) | 13 |  |
-| [`Minn\Http`](http.md) | 37 | request, response, routing, and the outgoing client |
-| [`Minn\I18n`](i18n.md) | 13 |  |
+| [`Minn\Http`](http.md) | 38 | request, response, routing, and the outgoing client |
+| [`Minn\I18n`](i18n.md) | 14 |  |
 | [`Minn\Login`](login.md) | 5 | /wp-login.php and the sign-in surface |
 | [`Minn\Mail`](mail.md) | 24 | sending mail and the notices the engine sends |
-| [`Minn\Media`](media.md) | 13 | uploads, image sizes and attachment metadata |
+| [`Minn\Media`](media.md) | 14 | uploads, image sizes and attachment metadata |
 | [`Minn\Ops`](ops.md) | 18 |  |
 | [`Minn\Query`](query.md) | 10 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 85 | the wp/v2 surface: shapes and controllers |
-| [`Minn\Runtime`](runtime.md) | 120 | the WordPress runtime plugins load against |
+| [`Minn\Runtime`](runtime.md) | 122 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 35 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 41 | the block-theme reader, templates, global styles and the page renderer |
 | [`Minn\Widgets`](widgets.md) | 2 |  |
