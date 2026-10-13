@@ -6,8 +6,8 @@ the front door, the autoloader, the one database door, the REST error
 |---|---|---|---|
 | [`Autoloader`](#autoloader) | final class | 16 | PSR-4 for the Minn namespace: Minn\Http\Request lives at src/Minn/Http/Request.php. |
 | [`Context`](#context) | final readonly class | 41 | One request, as a value: the database door, who is asking, what they |
-| [`Db`](#db) | final class | 365 | The one door to the database. Every query is a prepared statement; the |
-| [`Engine`](#engine) | final readonly class | 315 | The engine's front door. An unmodified wp-config.php ends by requiring |
+| [`Db`](#db) | final class | 370 | The one door to the database. Every query is a prepared statement; the |
+| [`Engine`](#engine) | final readonly class | 335 | The engine's front door. An unmodified wp-config.php ends by requiring |
 | [`Html`](#html) | final class | 109 | HTML, the front door for escaping and cutting markup: plain static calls, |
 | [`Http`](#http) | final readonly class | 184 | Outgoing HTTP, a client handed to the code that uses it. An extension |
 | [`Json`](#json) | final class | 134 | JSON in and out, for the engine and for code written for Minn: |
@@ -129,7 +129,10 @@ A comma-separated SQL mode list without the incompatible ones (any case).
 
 ### `setModes(string $modes): void`
 
-Sets this session's SQL modes.
+Sets this session's SQL modes, never NO_BACKSLASH_ESCAPES: the
+engine's literals escape quotes with a backslash (Query\Sql), which
+that mode would turn into a plain character, so a set_sql_mode()
+asking for it gets every other mode it named.
 
 ### `connection(): mysqli`
 
@@ -225,7 +228,7 @@ reference (_config_wp_home), without a trailing slash.
 
 One option's row as stored, whatever wp-config.php says, or null when it is unset.
 
-Internals: `placeholders()` (private, line 244), `run()` (private, line 363)
+Internals: `placeholders()` (private, line 249), `run()` (private, line 368)
 
 
 ## Engine
@@ -258,7 +261,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 120), `bootRuntimeForRest()` (private, line 134), `recheckNonce()` (private, line 177), `adoptSettledUser()` (private, line 199), `markThemedRequest()` (private, line 223), `handle()` (private, line 231), `frontPipeline()` (private, line 313)
+Internals: `restRoute()` (private, line 120), `bootRuntimeForRest()` (private, line 134), `recheckNonce()` (private, line 177), `adoptSettledUser()` (private, line 199), `markThemedRequest()` (private, line 223), `armRecoveryPause()` (private, line 240), `plain()` (private, line 265), `handle()` (private, line 271), `frontPipeline()` (private, line 333)
 
 
 ## Html
@@ -271,7 +274,7 @@ Escaping at output boundaries goes through here.
 
 - const `SPLIT` = `'/(<(?:!--.*?(?:-->|$)|!\\[CDATA\\[.*?(?:\\]\\]>|$)|[^>]*>?))/s'` — Markup's pieces of HTML: comments and CDATA whole (to the end when unclosed), else from "<" to the next ">".
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Clickable`, `Minn\Content\Menus`, `Minn\Content\NoteMarkers`, `Minn\Content\PasswordGate`, `Minn\Content\SiteIcon`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Html\Decoder`, `Minn\Html\Edits`, `Minn\Html\Escaped`, `Minn\Html\Scanner`, `Minn\Html\TagQuery`, `Minn\Html\Tags`, `Minn\Html\TokenMap`, `Minn\Http\Failure`, `Minn\I18n\SiteLanguage`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\PluginsController`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\LanguageChoices`, `Minn\Blocks\Duotone`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\LatestPosts`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Blocks\Wrapper`, `Minn\Content\Clickable`, `Minn\Content\Menus`, `Minn\Content\NoteMarkers`, `Minn\Content\PasswordGate`, `Minn\Content\SiteIcon`, `Minn\Content\TermLinks`, `Minn\Front\AdminBar`, `Minn\Front\Calendar`, `Minn\Front\PostNavigation`, `Minn\Front\Renderer`, `Minn\Front\SitemapXml`, `Minn\Front\TermLists`, `Minn\Html\Decoder`, `Minn\Html\Edits`, `Minn\Html\Escaped`, `Minn\Html\Scanner`, `Minn\Html\TagQuery`, `Minn\Html\Tags`, `Minn\Html\TokenMap`, `Minn\Http\Failure`, `Minn\I18n\SiteLanguage`, `Minn\Login\LoginController`, `Minn\Login\LoginForm`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Rest\GlobalStylesController`, `Minn\Rest\PluginsController`, `Minn\Runtime\Shortcodes`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\HeadLinks`, `Minn\Theme\PageRenderer`
 
 ### static `split(string $html): array`
 

@@ -16,7 +16,7 @@ escaping, serialized readers, small helpers
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 475 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 481 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
@@ -33,7 +33,7 @@ escaping, serialized readers, small helpers
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`TimezoneChoice`](#timezonechoice) | final class | 98 | The timezone choices a settings form offers (wp_timezone_choice, probe |
-| [`Url`](#url) | final class | 220 | URL shaping the escaping and query helpers share: the character cleanup |
+| [`Url`](#url) | final class | 231 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 154 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
 
@@ -322,7 +322,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\TagEditor`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Theme\PatternText`
 
 ### static `post(string $html): string`
 
@@ -404,7 +404,10 @@ Plain text: tags gone, whitespace collapsed, control characters dropped.
 
 ### static `url(string $url): string`
 
-A URL for a stored field: empty when its scheme is not one the reference allows.
+A URL for a stored field: empty when its scheme is not one the
+reference allows. The scheme is judged as a browser reads it, without
+the tabs, line breaks and other control characters it drops (java,
+a tab, then script: is javascript:).
 
 ### static `attributeUrl(string $url, array $schemes = self::SCHEMES): string`
 
@@ -429,7 +432,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleanValue()` (private, line 131), `run()` (private, line 184), `htmlComment()` (private, line 212), `deepDecode()` (private, line 318), `visible()` (private, line 331), `normalizeText()` (private, line 346), `normalizeAttribute()` (private, line 369), `named()` (private, line 389), `codePoint()` (private, line 396), `attributes()` (private, line 421), `rendered()` (private, line 446), `srcset()` (private, line 484)
+Internals: `cleanValue()` (private, line 131), `run()` (private, line 184), `htmlComment()` (private, line 212), `deepDecode()` (private, line 324), `visible()` (private, line 337), `normalizeText()` (private, line 352), `normalizeAttribute()` (private, line 375), `named()` (private, line 395), `codePoint()` (private, line 402), `attributes()` (private, line 427), `rendered()` (private, line 452), `srcset()` (private, line 490)
 
 
 ## KsesAttributes
@@ -1043,7 +1046,7 @@ the host are kept, as the reference keeps them: the host decides.
 
 - `@param Closure(string): list<string> $allowedHosts the hosts allowed for the target's host`
 
-Internals: `isPrivate()` (private, line 148)
+Internals: `isPrivate()` (private, line 156)
 
 
 ## Utf8

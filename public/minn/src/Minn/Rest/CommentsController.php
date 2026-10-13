@@ -130,6 +130,9 @@ final readonly class CommentsController
         if (!$post->isPublished() && !$this->caller->can('edit_post', $postId)) {
             throw new RestError('rest_comment_draft_post', 'Sorry, you are not allowed to create a comment on this post.', 403);
         }
+        if (!$this->readablePost($post, is_string($body['password'] ?? null) ? $body['password'] : '')) {
+            throw $this->caller->refuse('rest_cannot_read_post', 'Sorry, you are not allowed to read the post for this comment.');
+        }
         if ($post->commentStatus !== 'open') {
             throw new RestError('rest_comment_closed', 'Sorry, comments are closed for this item.', 403);
         }
@@ -249,13 +252,17 @@ final readonly class CommentsController
         }
     }
 
-    /** A post whose comments this caller may read: one it may read, unlocked or opened with its password. */
+    /**
+     * A post whose comments this caller may read: a protected one only with
+     * its password or for someone who may edit it, as the reference reads
+     * it; otherwise one it may read, or any published one.
+     */
     private function readablePost(PostRecord $post, string $password): bool
     {
-        if ($this->caller->can('read_post', $post->id)) {
-            return true;
+        if ($post->isProtected() && !hash_equals($post->password, $password)) {
+            return $this->caller->can('edit_post', $post->id);
         }
-        return $post->isPublished() && (!$post->isProtected() || hash_equals($post->password, $password));
+        return $this->caller->can('read_post', $post->id) || $post->isPublished();
     }
 
     /** A listed comment this caller may read: a moderator any, its author their own, anyone an approved one on a post they may read. */

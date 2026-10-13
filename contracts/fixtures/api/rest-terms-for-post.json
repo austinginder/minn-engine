@@ -1,0 +1,146 @@
+[
+    [
+        "nobody tags published",
+        "200 ok"
+    ],
+    [
+        "nobody categories published",
+        "200 ok"
+    ],
+    [
+        "nobody tags draft",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody categories draft",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody tags private",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody categories private",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody tags protected",
+        "200 ok"
+    ],
+    [
+        "nobody categories protected",
+        "200 ok"
+    ],
+    [
+        "nobody tags page",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody categories page",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody tags pending",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "nobody categories pending",
+        "401 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber tags published",
+        "200 ok"
+    ],
+    [
+        "subscriber categories published",
+        "200 ok"
+    ],
+    [
+        "subscriber tags draft",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber categories draft",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber tags private",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber categories private",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber tags protected",
+        "200 ok"
+    ],
+    [
+        "subscriber categories protected",
+        "200 ok"
+    ],
+    [
+        "subscriber tags page",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber categories page",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber tags pending",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "subscriber categories pending",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "admin tags published",
+        "200 ok"
+    ],
+    [
+        "admin categories published",
+        "200 ok"
+    ],
+    [
+        "admin tags draft",
+        "200 ok"
+    ],
+    [
+        "admin categories draft",
+        "200 ok"
+    ],
+    [
+        "admin tags private",
+        "200 ok"
+    ],
+    [
+        "admin categories private",
+        "200 ok"
+    ],
+    [
+        "admin tags protected",
+        "200 ok"
+    ],
+    [
+        "admin categories protected",
+        "200 ok"
+    ],
+    [
+        "admin tags page",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "admin categories page",
+        "403 rest_forbidden_context: Sorry, you are not allowed to view terms for this post."
+    ],
+    [
+        "admin tags pending",
+        "200 ok"
+    ],
+    [
+        "admin categories pending",
+        "200 ok"
+    ]
+]

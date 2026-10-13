@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Html;
+
 /**
  * Duotone filters (probe block-supports): a CSS color read into its red,
  * green, blue (0 to 255) and alpha (0 to 1, to two places) channels, and
@@ -32,7 +34,7 @@ final class Duotone
             }
             $tables['a'][] = (string) $rgba['a'];
         }
-        return sprintf(self::SVG, $filterId, implode(' ', $tables['r']), implode(' ', $tables['g']), implode(' ', $tables['b']), implode(' ', $tables['a']));
+        return sprintf(self::SVG, Html::attr($filterId), implode(' ', $tables['r']), implode(' ', $tables['g']), implode(' ', $tables['b']), implode(' ', $tables['a']));
     }
 
     /**

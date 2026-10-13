@@ -3,12 +3,12 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 833,
-        "composes": 2402,
+        "composes": 2403,
         "leaf": 1030,
         "noop": 2742,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8701,
+        "functions": 8702,
         "minnMethods": 1028,
         "leafLinesOver15": 12
     },
@@ -11310,7 +11310,7 @@
         },
         "WP_Duotone::render_duotone_support": {
             "file": "classes/WP_Duotone.php",
-            "lines": 24,
+            "lines": 26,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -37551,6 +37551,19 @@
             "minn": [],
             "composes": []
         },
+        "_minn_media_attach": {
+            "file": "media.php",
+            "lines": 7,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "is_wp_error",
+                "wp_basename",
+                "wp_generate_attachment_metadata",
+                "wp_insert_attachment",
+                "wp_update_attachment_metadata"
+            ]
+        },
         "_minn_menu_events": {
             "file": "taxonomy.php",
             "lines": 1,
@@ -55463,29 +55476,28 @@
         },
         "media_handle_sideload": {
             "file": "media.php",
-            "lines": 11,
+            "lines": 5,
             "kind": "composes",
             "minn": [],
             "composes": [
-                "is_wp_error",
-                "wp_basename",
-                "wp_generate_attachment_metadata",
-                "wp_handle_sideload",
-                "wp_insert_attachment",
-                "wp_update_attachment_metadata"
+                "_minn_media_attach",
+                "wp_handle_sideload"
             ],
             "deadend": "admin"
         },
         "media_handle_upload": {
             "file": "media.php",
-            "lines": 5,
+            "lines": 14,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::request"
             ],
             "composes": [
-                "media_handle_sideload"
+                "_minn_media_attach",
+                "current_time",
+                "get_post",
+                "wp_handle_upload"
             ],
             "deadend": "admin"
         },

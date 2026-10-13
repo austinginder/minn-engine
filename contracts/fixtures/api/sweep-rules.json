@@ -1,0 +1,156 @@
+[
+    [
+        "navigation link class names",
+        [
+            "<li class=\"wp-block-navigation-item foo bar wp-block-navigation-link\">"
+        ]
+    ],
+    [
+        "a navigation link class name with a quote in it",
+        [
+            "<li class=\"wp-block-navigation-item a&quot;b wp-block-navigation-link\">"
+        ]
+    ],
+    [
+        "submenu in a navigation {\"openSubmenusOnClick\":true}",
+        [
+            [
+                "<li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-navigation-item has-child open-on-click baz qux wp-block-navigation-submenu\">",
+                "<li class=\"wp-block-navigation-item inner wp-block-navigation-link\">"
+            ],
+            [
+                "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container baz qux wp-block-navigation-submenu\">"
+            ]
+        ]
+    ],
+    [
+        "submenu in a navigation {\"showSubmenuIcon\":true}",
+        [
+            [
+                "<li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-navigation-item has-child open-on-hover-click baz qux wp-block-navigation-submenu\">",
+                "<li class=\"wp-block-navigation-item inner wp-block-navigation-link\">"
+            ],
+            [
+                "<ul data-wp-on--focus=\"actions.openMenuOnFocus\" class=\"wp-block-navigation__submenu-container baz qux wp-block-navigation-submenu\">"
+            ]
+        ]
+    ],
+    [
+        "submenu in a navigation {\"showSubmenuIcon\":false}",
+        [
+            [
+                "<li data-wp-context=\"{ &quot;submenuOpenedBy&quot;: { &quot;click&quot;: false, &quot;hover&quot;: false, &quot;focus&quot;: false }, &quot;type&quot;: &quot;submenu&quot;, &quot;modal&quot;: null, &quot;previousFocus&quot;: null }\" data-wp-interactive=\"core/navigation\" data-wp-on--focusout=\"actions.handleMenuFocusout\" data-wp-on--keydown=\"actions.handleMenuKeydown\" data-wp-on--pointerenter=\"actions.openMenuOnHover\" data-wp-on--pointerleave=\"actions.closeMenuOnHover\" data-wp-watch=\"callbacks.initMenu\" tabindex=\"-1\" class=\"wp-block-navigation-item has-child baz qux wp-block-navigation-submenu\">",
+                "<li class=\"wp-block-navigation-item inner wp-block-navigation-link\">"
+            ],
+            [
+                "<ul class=\"wp-block-navigation__submenu-container baz qux wp-block-navigation-submenu\">"
+            ]
+        ]
+    ],
+    [
+        "a navigation naming a draft menu",
+        {
+            "label": " 4\n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'>",
+            "links": [
+                "publish"
+            ]
+        }
+    ],
+    [
+        "a navigation naming a private menu",
+        {
+            "label": " 5\n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'>",
+            "links": [
+                "publish"
+            ]
+        }
+    ],
+    [
+        "a navigation naming a publish menu",
+        {
+            "label": "zz sweep menu publish\n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'>",
+            "links": [
+                "publish"
+            ]
+        }
+    ],
+    [
+        "a navigation naming a missing menu",
+        {
+            "label": " 6\n\t\t data-wp-interactive=\"core/navigation\" data-wp-context='{\"overlayOpenedBy\":{\"click\":false,\"hover\":false,\"focus\":false},\"type\":\"overlay\",\"roleAttribute\":\"\",\"ariaLabel\":\"Menu\"}'>",
+            "links": []
+        }
+    ],
+    [
+        "an image's duotone preset grayscale",
+        "<figure class=\"wp-block-image wp-duotone-grayscale\">"
+    ],
+    [
+        "an image's duotone preset zz-none",
+        "<figure class=\"wp-block-image wp-duotone-varpresetduotonezz-none-N\">"
+    ],
+    [
+        "author__in given as \"2,1\"",
+        "post_author IN (2)"
+    ],
+    [
+        "author__not_in given as \"2,1\"",
+        "post_author NOT IN (1,2)"
+    ],
+    [
+        "author__in given as \"3 1\"",
+        "post_author IN (3)"
+    ],
+    [
+        "author__not_in given as \"3 1\"",
+        "post_author NOT IN (1,3)"
+    ],
+    [
+        "author__in given as \" 5\"",
+        "post_author IN (5)"
+    ],
+    [
+        "author__not_in given as \" 5\"",
+        "post_author NOT IN (5)"
+    ],
+    [
+        "author__in given as \"7\"",
+        "post_author IN (7)"
+    ],
+    [
+        "author__not_in given as \"7\"",
+        "post_author NOT IN (7)"
+    ],
+    [
+        "addresses a safe request refuses",
+        {
+            "127.0.0.1": "refused",
+            "10.0.0.1": "refused",
+            "169.254.169.254": "refused",
+            "100.100.100.200": "refused",
+            "100.63.255.255": "allowed",
+            "100.64.0.1": "refused",
+            "100.127.255.255": "refused",
+            "100.128.0.1": "allowed",
+            "198.17.255.255": "allowed",
+            "198.18.0.1": "refused",
+            "198.19.255.255": "refused",
+            "198.20.0.1": "allowed",
+            "192.0.0.192": "refused",
+            "192.0.0.9": "refused",
+            "192.0.2.1": "refused",
+            "192.88.99.1": "refused",
+            "198.51.100.1": "refused",
+            "203.0.113.1": "refused",
+            "223.255.255.255": "allowed",
+            "224.0.0.1": "refused",
+            "239.255.255.255": "refused",
+            "240.0.0.1": "refused",
+            "255.255.255.255": "refused",
+            "172.15.255.255": "allowed",
+            "172.32.0.1": "allowed",
+            "8.8.8.8": "allowed",
+            "1.1.1.1": "allowed"
+        }
+    ]
+]

@@ -242,7 +242,7 @@ final readonly class Resolver
      *
      * @return list<string>
      */
-    private static function viewableTypes(): array
+    public static function viewableTypes(): array
     {
         $types = [];
         foreach (Runtime::registry()->postTypes() as $name => $type) {

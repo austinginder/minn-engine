@@ -171,6 +171,10 @@ final readonly class Capabilities
             'create_app_password', 'list_app_passwords', 'read_app_password', 'edit_app_password', 'delete_app_passwords', 'delete_app_password' => $objectId !== null && $objectId === $userId ? [] : ['edit_users'],
             'edit_comment' => $this->mapCommentCapability($userId, (int) $objectId),
             'edit_post_meta', 'delete_post_meta', 'add_post_meta' => $objectId === null ? ['do_not_allow'] : $this->mapPostCapability('edit_post', $userId, $objectId),
+            // A pattern's own names, asked directly, answer as the posts family's (as on the reference); a meta capability that
+            // maps to one of them (a private pattern's read_post) is held to the pattern name itself.
+            'edit_blocks', 'edit_others_blocks', 'publish_blocks', 'read_private_blocks', 'delete_blocks', 'delete_private_blocks',
+            'delete_published_blocks', 'delete_others_blocks', 'edit_private_blocks', 'edit_published_blocks' => [str_replace('_blocks', '_posts', $capability)],
             default => [$capability],
         };
     }

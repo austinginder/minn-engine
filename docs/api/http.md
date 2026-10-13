@@ -40,7 +40,7 @@ request, response, routing, and the outgoing client
 | [`StatusText`](#statustext) | final class | 16 | The reason phrase a status line carries for each code, as the reference's |
 | [`Subject`](#subject) | enum | 46 | The record a route capture names, so a policy can have it looked up |
 | [`Transport`](#transport) | final class | 138 | The engine's outgoing HTTP transport over curl: it sends exactly what an |
-| [`TrustedProxies`](#trustedproxies) | final readonly class | 104 | Which addresses in front of the engine may speak for the client. |
+| [`TrustedProxies`](#trustedproxies) | final readonly class | 115 | Which addresses in front of the engine may speak for the client. |
 
 ## Access
 
@@ -1333,7 +1333,10 @@ define('MINN_TRUSTED_PROXIES', '*');   // any: only when nothing but the proxy c
 The client is then the right-most address in `X-Forwarded-For` that is not
 itself trusted, which is what a proxy chain appends, so a client that sends
 its own `X-Forwarded-For` cannot put an address the engine believes to the
-right of the proxy's.
+right of the proxy's. `*` trusts whoever connects, not every forwarded
+hop: the client is the address that proxy appended (with it every hop,
+the client's own included, would be skipped as trusted, and every visitor
+would be the proxy again).
 
 Used by: `Minn\Http\Request`
 
@@ -1359,5 +1362,5 @@ right-most forwarded address that is not itself a trusted proxy.
 
 Whether a forwarded scheme may be believed, and says https.
 
-Internals: `bare()` (private, line 95), `covers()` (private, line 106)
+Internals: `coversHop()` (private, line 87), `bare()` (private, line 109), `covers()` (private, line 120)
 

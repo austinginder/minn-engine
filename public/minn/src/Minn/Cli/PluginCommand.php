@@ -213,7 +213,8 @@ final class PluginCommand
         foreach ($args as $slug) {
             $dir = rtrim(ABSPATH, '/') . '/wp-content/plugins/' . $slug;
             $file = $dir . '.php';
-            if (!is_dir($dir) && !is_file($file)) {
+            // A slug is one name in the plugins folder: one that climbs out of it, or names a path, is no plugin.
+            if (basename((string) $slug) !== $slug || in_array($slug, ['', '.', '..'], true) || (!is_dir($dir) && !is_file($file))) {
                 WP_CLI::warning("The '{$slug}' plugin could not be found.");
                 continue;
             }

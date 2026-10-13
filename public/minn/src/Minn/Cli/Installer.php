@@ -217,7 +217,7 @@ final class Installer
             return 1;
         }
         foreach ((array) ($manifest['layout'] ?? ShapeFiles::LAYOUT) as $file) {
-            if (str_starts_with($file, 'wp-includes/') || str_starts_with($file, 'wp-admin/')) {
+            if (!self::inside((string) $file) || str_starts_with($file, 'wp-includes/') || str_starts_with($file, 'wp-admin/')) {
                 continue;
             }
             @unlink("{$root}/{$file}");
@@ -226,7 +226,9 @@ final class Installer
             Files::deleteTree("{$root}/{$tree}");
         }
         foreach ((array) ($manifest['published'] ?? self::LEGACY_PUBLISHED) as $path) {
-            Files::deleteTree("{$root}/{$path}");
+            if (self::inside((string) $path)) {
+                Files::deleteTree("{$root}/{$path}");
+            }
         }
         $engine = "{$root}/minn";
         if (is_link($engine)) {
@@ -236,7 +238,7 @@ final class Installer
         }
         $restored = 0;
         foreach ((array) ($manifest['moved'] ?? []) as $entry) {
-            if (file_exists("{$park}/{$entry}") || is_link("{$park}/{$entry}")) {
+            if (self::inside((string) $entry) && (file_exists("{$park}/{$entry}") || is_link("{$park}/{$entry}"))) {
                 self::move("{$park}/{$entry}", "{$root}/{$entry}");
                 $restored++;
             }
@@ -280,6 +282,20 @@ final class Installer
         }
         $legacy = "{$root}/minn/" . self::LEGACY_RECORD;
         return !is_link("{$root}/minn") && is_file($legacy) ? (array) Json::file($legacy, or: null) : [];
+    }
+
+    /**
+     * Whether a path from the install record stays inside the webroot (or
+     * the park): relative, with no climbing segment and no NUL. The record
+     * is a file in the webroot, so anything able to write there could
+     * otherwise point an eject's removals anywhere the operator can write.
+     */
+    private static function inside(string $path): bool
+    {
+        if ($path === '' || str_starts_with($path, '/') || str_contains($path, "\0") || str_contains($path, '\\')) {
+            return false;
+        }
+        return !in_array('..', explode('/', $path), true);
     }
 
     /** rename() first; copy+remove when the park is on another filesystem. */

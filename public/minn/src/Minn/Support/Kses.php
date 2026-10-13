@@ -276,11 +276,17 @@ final class Kses
         return trim((string) preg_replace('/\s+/', ' ', $value));
     }
 
-    /** A URL for a stored field: empty when its scheme is not one the reference allows. */
+    /**
+     * A URL for a stored field: empty when its scheme is not one the
+     * reference allows. The scheme is judged as a browser reads it, without
+     * the tabs, line breaks and other control characters it drops (java,
+     * a tab, then script: is javascript:).
+     */
     public static function url(string $url): string
     {
         $url = trim($url);
-        if ($url === '' || !preg_match('/^([a-zA-Z][a-zA-Z0-9+.-]*):/', $url, $m)) {
+        $read = (string) preg_replace('/[\x00-\x20\x7F]+/', '', $url);
+        if ($read === '' || !preg_match('/^([a-zA-Z][a-zA-Z0-9+.-]*):/', $read, $m)) {
             return $url;
         }
         return in_array(strtolower($m[1]), self::SCHEMES, true) ? $url : '';

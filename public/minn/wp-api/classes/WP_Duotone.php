@@ -75,8 +75,10 @@ class WP_Duotone
         if (empty($value) || $selector === null || $block_content === '') {
             return $block_content;
         }
-        if (is_string($value) && str_starts_with($value, 'var:preset|duotone|')) {
-            $slug = substr($value, strlen('var:preset|duotone|'));
+        // A preset is one theme.json registers; any other slug is read as a custom value, as the reference reads it.
+        $preset = is_string($value) && str_starts_with($value, 'var:preset|duotone|') ? substr($value, strlen('var:preset|duotone|')) : null;
+        if ($preset !== null && self::preset_colors($preset) !== []) {
+            $slug = $preset;
             self::$used_global_styles_presets[$slug] = true;
             self::$used_svg_filter_data[self::filter_id($slug)] = ['slug' => $slug, 'colors' => self::preset_colors($slug)];
             $css = "var(--wp--preset--duotone--{$slug})";

@@ -21,7 +21,10 @@ namespace Minn\Http;
  * The client is then the right-most address in `X-Forwarded-For` that is not
  * itself trusted, which is what a proxy chain appends, so a client that sends
  * its own `X-Forwarded-For` cannot put an address the engine believes to the
- * right of the proxy's.
+ * right of the proxy's. `*` trusts whoever connects, not every forwarded
+ * hop: the client is the address that proxy appended (with it every hop,
+ * the client's own included, would be skipped as trusted, and every visitor
+ * would be the proxy again).
  */
 final readonly class TrustedProxies
 {
@@ -73,11 +76,22 @@ final readonly class TrustedProxies
         $hops = array_map(trim(...), explode(',', $forwardedFor));
         for ($i = count($hops) - 1; $i >= 0; $i--) {
             $hop = self::bare($hops[$i]);
-            if ($hop !== '' && !$this->trusts($hop)) {
+            if ($hop !== '' && !$this->coversHop($hop)) {
                 return $hop;
             }
         }
         return $remoteAddress;
+    }
+
+    /** Whether a forwarded hop is a trusted proxy: one a declared range covers (`*` speaks for the connecting address only). */
+    private function coversHop(string $hop): bool
+    {
+        foreach ($this->ranges as $range) {
+            if ($range !== '*' && self::covers($range, $hop)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Whether a forwarded scheme may be believed, and says https. */

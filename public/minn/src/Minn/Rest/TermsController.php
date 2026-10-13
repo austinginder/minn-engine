@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Auth\RegisteredCaps;
+use Minn\Runtime\Runtime;
 use Minn\Runtime\TermEvents;
 use Minn\Http\Policy;
 use Minn\Http\Args;
@@ -50,8 +51,14 @@ final readonly class TermsController
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit terms in this taxonomy.');
         }
         $post = isset($wp['post']) ? (int) $wp['post'] : 0;
-        if (isset($wp['post']) && \get_post($post) === null) {
-            throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 400);
+        if (isset($wp['post'])) {
+            $target = \get_post($post);
+            if ($target === null) {
+                throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 400);
+            }
+            if (!$this->termsReadable($target, (array) ($object->object_type ?? []))) {
+                throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to view terms for this post.');
+            }
         }
         $registered = (array) \apply_filters("rest_{$taxonomy}_collection_params", $params, $object);
         $args = (array) \apply_filters("rest_{$taxonomy}_query", TermListArgs::of($wp, $registered, $taxonomy, $request->method->value), $wp);
@@ -188,5 +195,24 @@ final readonly class TermsController
             return $taxonomy === 'category' ? 'manage_categories' : 'edit_posts';
         }
         return (string) ($registered->hierarchical ? $registered->cap->edit_terms : $registered->cap->assign_terms);
+    }
+
+    /**
+     * Whether a post's terms may be listed: the taxonomy must be one of its
+     * type's, and the post publicly viewable (a public status of a viewable
+     * type, a password or not) or one the caller may read, as the reference
+     * judges it.
+     *
+     * @param list<string> $objectTypes the taxonomy's post types
+     */
+    private function termsReadable(\WP_Post $post, array $objectTypes): bool
+    {
+        if (!in_array($post->post_type, $objectTypes, true)) {
+            return false;
+        }
+        $status = Runtime::registry()->status((string) $post->post_status);
+        $type = Runtime::registry()->postType((string) $post->post_type);
+        $viewable = !empty($type['publicly_queryable']) || (!empty($type['_builtin']) && !empty($type['public']));
+        return (!empty($status['public']) && $viewable) || $this->caller->can('read_post', (int) $post->ID);
     }
 }

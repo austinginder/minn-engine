@@ -240,7 +240,7 @@ function rest_cookie_check_errors($result)
     if (!empty($result)) {
         return $result;
     }
-    if ($GLOBALS['wp_rest_auth_cookie'] !== true && is_user_logged_in()) {
+    if (($GLOBALS['wp_rest_auth_cookie'] ?? null) !== true && is_user_logged_in()) {
         return $result;
     }
     $nonce = $_REQUEST['_wpnonce'] ?? $_SERVER['HTTP_X_WP_NONCE'] ?? null;

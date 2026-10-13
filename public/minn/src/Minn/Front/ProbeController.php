@@ -65,7 +65,7 @@ final readonly class ProbeController
     #[Route(Method::Any, '/wp-cron.php', policy: new Policy(Access::Public))]
     public function cron(Request $request): Response
     {
-        if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON)) {
+        if ($this->cron !== null && !(defined('DISABLE_WP_CRON') && DISABLE_WP_CRON) && !$this->cron->idle()) {
             $this->cron->run();
         }
         return Response::html('');

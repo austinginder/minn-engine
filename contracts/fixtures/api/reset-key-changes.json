@@ -1,0 +1,34 @@
+[
+    [
+        "email",
+        "key invalid"
+    ],
+    [
+        "password",
+        "key invalid"
+    ],
+    [
+        "display name",
+        "key valid"
+    ],
+    [
+        "url",
+        "key valid"
+    ],
+    [
+        "same email again",
+        "key valid"
+    ],
+    [
+        "rest email",
+        "key invalid"
+    ],
+    [
+        "rest password",
+        "key invalid"
+    ],
+    [
+        "wp_set_password",
+        "key invalid"
+    ]
+]

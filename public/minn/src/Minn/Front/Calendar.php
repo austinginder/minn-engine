@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Html;
+
 use Closure;
 use DateTimeImmutable;
 
@@ -75,7 +77,7 @@ final readonly class Calendar
         $out = '';
         for ($offset = 0; $offset < 7; $offset++) {
             $name = $this->labels->weekdays[($this->weekStart + $offset) % 7];
-            $out .= "\n\t\t" . '<th scope="col" aria-label="' . $name . '">' . $this->labels->weekdayShort[$name] . '</th>';
+            $out .= "\n\t\t" . '<th scope="col" aria-label="' . Html::attr($name) . '">' . Html::esc($this->labels->weekdayShort[$name]) . '</th>';
         }
         return $out;
     }
@@ -89,7 +91,7 @@ final readonly class Calendar
         $inner = (string) $day;
         if (in_array($day, $postDays, true)) {
             $label = 'Posts published on ' . $this->labels->months[$this->month] . ' ' . $day . ', ' . $this->year;
-            $inner = '<a href="' . ($this->link)($this->year, $this->month, $day) . '" aria-label="' . $label . '">' . $day . '</a>';
+            $inner = '<a href="' . ($this->link)($this->year, $this->month, $day) . '" aria-label="' . Html::attr($label) . '">' . $day . '</a>';
         }
         $open = $today === [$this->year, $this->month, $day] ? '<td id="today">' : '<td>';
         return $open . $inner . '</td>';

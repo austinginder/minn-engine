@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Cron;
 
+use Minn\Auth\LoginThrottle;
+
 use Closure;
 use Minn\Content\Posts;
 use Minn\Content\PostWriter;
@@ -72,6 +74,16 @@ final readonly class Cron
         } finally {
             $this->unlock();
         }
+    }
+
+    /**
+     * True when a hit has nothing to do: no job is due and the housekeeping
+     * (expired transients and throttle rows) ran within the last minute, so
+     * a request repeated as fast as a visitor can send it costs two reads.
+     */
+    public function idle(): bool
+    {
+        return !$this->due() && (int) (Runtime::options()->get('minn_cron_last') ?? 0) > time() - 60;
     }
 
     /** True when a scheduled post's time has come or the cron option holds a due event. */
@@ -168,16 +180,7 @@ final readonly class Cron
 
     private function sweepThrottle(): int
     {
-        $table = $this->db->table('options');
-        $rows = $this->db->rows("SELECT option_name, option_value FROM {$table} WHERE option_name LIKE 'minn\\_login\\_throttle\\_%'");
-        $swept = 0;
-        foreach ($rows as $row) {
-            if (preg_match('/^(\d+):/', (string) $row['option_value'], $m) && (int) $m[1] + 900 <= time()) {
-                $this->db->execute("DELETE FROM {$table} WHERE option_name = ?", [$row['option_name']]);
-                $swept++;
-            }
-        }
-        return $swept;
+        return LoginThrottle::sweep($this->db, time());
     }
 
     private function lock(): bool

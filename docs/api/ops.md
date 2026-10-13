@@ -4,7 +4,7 @@
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Archive`](#archive) | final class | 96 | A zip unpacked the safe way, for the plugin and theme installer and for |
+| [`Archive`](#archive) | final class | 105 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
 | [`Changelog`](#changelog) | final class | 68 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
@@ -55,7 +55,7 @@ Whether a zip file holds an entry by that name.
 
 A plain folder name: no separators, never "." or "..".
 
-Internals: `isSymlinkEntry()` (private, line 103)
+Internals: `isSymlinkEntry()` (private, line 112)
 
 
 ## AutoUpdates

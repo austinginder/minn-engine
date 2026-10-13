@@ -1,0 +1,242 @@
+[
+    [
+        "subscriber read_post published pattern",
+        false
+    ],
+    [
+        "subscriber read_post private pattern",
+        false
+    ],
+    [
+        "subscriber edit_post private pattern",
+        false
+    ],
+    [
+        "subscriber edit_post menu item",
+        false
+    ],
+    [
+        "subscriber delete_post published pattern",
+        false
+    ],
+    [
+        "subscriber edit_blocks",
+        false
+    ],
+    [
+        "subscriber edit_others_blocks",
+        false
+    ],
+    [
+        "subscriber publish_blocks",
+        false
+    ],
+    [
+        "subscriber read_private_blocks",
+        false
+    ],
+    [
+        "subscriber delete_private_blocks",
+        false
+    ],
+    [
+        "subscriber edit_private_blocks",
+        false
+    ],
+    [
+        "subscriber create_blocks",
+        false
+    ],
+    [
+        "subscriber read_blocks",
+        false
+    ],
+    [
+        "subscriber GET /wp/vN/blocks/N",
+        "403 rest_forbidden"
+    ],
+    [
+        "subscriber GET /wp/vN/menu-items/N/autosaves",
+        "403 rest_cannot_read"
+    ],
+    [
+        "contributor read_post published pattern",
+        true
+    ],
+    [
+        "contributor read_post private pattern",
+        false
+    ],
+    [
+        "contributor edit_post private pattern",
+        false
+    ],
+    [
+        "contributor edit_post menu item",
+        false
+    ],
+    [
+        "contributor delete_post published pattern",
+        false
+    ],
+    [
+        "contributor edit_blocks",
+        true
+    ],
+    [
+        "contributor edit_others_blocks",
+        false
+    ],
+    [
+        "contributor publish_blocks",
+        false
+    ],
+    [
+        "contributor read_private_blocks",
+        false
+    ],
+    [
+        "contributor delete_private_blocks",
+        false
+    ],
+    [
+        "contributor edit_private_blocks",
+        false
+    ],
+    [
+        "contributor create_blocks",
+        false
+    ],
+    [
+        "contributor read_blocks",
+        false
+    ],
+    [
+        "contributor GET /wp/vN/blocks/N",
+        "403 rest_forbidden"
+    ],
+    [
+        "contributor GET /wp/vN/menu-items/N/autosaves",
+        "403 rest_cannot_read"
+    ],
+    [
+        "author read_post published pattern",
+        true
+    ],
+    [
+        "author read_post private pattern",
+        false
+    ],
+    [
+        "author edit_post private pattern",
+        false
+    ],
+    [
+        "author edit_post menu item",
+        false
+    ],
+    [
+        "author delete_post published pattern",
+        false
+    ],
+    [
+        "author edit_blocks",
+        true
+    ],
+    [
+        "author edit_others_blocks",
+        false
+    ],
+    [
+        "author publish_blocks",
+        true
+    ],
+    [
+        "author read_private_blocks",
+        false
+    ],
+    [
+        "author delete_private_blocks",
+        false
+    ],
+    [
+        "author edit_private_blocks",
+        false
+    ],
+    [
+        "author create_blocks",
+        false
+    ],
+    [
+        "author read_blocks",
+        false
+    ],
+    [
+        "author GET /wp/vN/blocks/N",
+        "403 rest_forbidden"
+    ],
+    [
+        "author GET /wp/vN/menu-items/N/autosaves",
+        "403 rest_cannot_read"
+    ],
+    [
+        "editor read_post published pattern",
+        true
+    ],
+    [
+        "editor read_post private pattern",
+        false
+    ],
+    [
+        "editor edit_post private pattern",
+        false
+    ],
+    [
+        "editor edit_post menu item",
+        false
+    ],
+    [
+        "editor delete_post published pattern",
+        true
+    ],
+    [
+        "editor edit_blocks",
+        true
+    ],
+    [
+        "editor edit_others_blocks",
+        true
+    ],
+    [
+        "editor publish_blocks",
+        true
+    ],
+    [
+        "editor read_private_blocks",
+        true
+    ],
+    [
+        "editor delete_private_blocks",
+        true
+    ],
+    [
+        "editor edit_private_blocks",
+        true
+    ],
+    [
+        "editor create_blocks",
+        false
+    ],
+    [
+        "editor read_blocks",
+        false
+    ],
+    [
+        "editor GET /wp/vN/blocks/N",
+        "403 rest_forbidden"
+    ],
+    [
+        "editor GET /wp/vN/menu-items/N/autosaves",
+        "403 rest_cannot_read"
+    ]
+]

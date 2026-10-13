@@ -11,7 +11,10 @@ use Minn\Runtime\Runtime;
  * Failed sign-ins per address, so a password guesser meets a wall: twenty
  * failures in fifteen minutes and the address waits out the window. The
  * counters live in the options table (autoload off), one row per address,
- * as "window start:count"; a successful sign-in clears the row.
+ * as "window start:count"; a successful sign-in clears the row. An IPv6
+ * address counts as its /64, the block one subscriber is handed, so
+ * stepping through it buys no fresh tries; each failure is counted in one
+ * statement, so failures arriving together are all counted.
  */
 final readonly class LoginThrottle
 {
@@ -38,13 +41,17 @@ final readonly class LoginThrottle
     public function recordFailure(string $address, ?int $now = null): void
     {
         $now ??= time();
-        [$start, $count] = $this->read($address);
-        if ($start + self::WINDOW <= $now) {
-            [$start, $count] = [$now, 0];
-        }
-        $this->write($address, $start, $count + 1);
+        $table = $this->db->table('options');
+        // One statement: a window that has passed starts again at 1, a live one counts up, and two failures together are both counted.
+        $this->db->execute(
+            "INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'off') ON DUPLICATE KEY UPDATE option_value = IF("
+            . "CAST(SUBSTRING_INDEX(option_value, ':', 1) AS UNSIGNED) + ? <= ?, VALUES(option_value), "
+            . "CONCAT(SUBSTRING_INDEX(option_value, ':', 1), ':', CAST(SUBSTRING_INDEX(option_value, ':', -1) AS UNSIGNED) + 1))",
+            [self::key($address), "{$now}:1", self::WINDOW, $now],
+        );
+        Runtime::optionWritten(self::key($address));
         if (random_int(1, 50) === 1) {
-            $this->prune($now);
+            self::sweep($this->db, $now);
         }
     }
 
@@ -66,32 +73,28 @@ final readonly class LoginThrottle
         return [(int) $m[1], (int) $m[2]];
     }
 
-    private function write(string $address, int $start, int $count): void
+    /**
+     * Drops counters whose window has passed, at most a thousand in one
+     * statement, however many addresses have failed; the number dropped.
+     */
+    public static function sweep(Db $db, int $now): int
     {
-        $table = $this->db->table('options');
-        $value = "{$start}:{$count}";
-        // One statement: two first failures arriving together must not race a read-then-insert into a duplicate-key error.
-        $this->db->execute(
-            "INSERT INTO {$table} (option_name, option_value, autoload) VALUES (?, ?, 'off') ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
-            [self::key($address), $value],
+        return $db->execute(
+            "DELETE FROM {$db->table('options')} WHERE option_name LIKE ? AND CAST(SUBSTRING_INDEX(option_value, ':', 1) AS UNSIGNED) + ? <= ? LIMIT 1000",
+            [self::PREFIX . '%', self::WINDOW, $now],
         );
-        Runtime::optionWritten(self::key($address));
     }
 
-    /** Rows whose window has passed are dead weight; drop them now and then. */
-    private function prune(int $now): void
-    {
-        $rows = $this->db->rows("SELECT option_name, option_value FROM {$this->db->table('options')} WHERE option_name LIKE ?", [self::PREFIX . '%']);
-        foreach ($rows as $row) {
-            if (preg_match('/^(\d+):/', (string) $row['option_value'], $m) && (int) $m[1] + self::WINDOW <= $now) {
-                $this->db->execute("DELETE FROM {$this->db->table('options')} WHERE option_name = ?", [$row['option_name']]);
-                Runtime::optionWritten((string) $row['option_name']);
-            }
-        }
-    }
-
+    /**
+     * The counter's option: the address's, or an IPv6 address's /64. An
+     * address whose first 64 bits are zero (an IPv4 client a dual-stack
+     * server shows as ::ffff:a.b.c.d) keeps its whole address, or every IPv4
+     * visitor would share one counter.
+     */
     private static function key(string $address): string
     {
-        return self::PREFIX . md5($address);
+        $packed = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) !== false ? @inet_pton($address) : false;
+        $prefix = is_string($packed) ? substr($packed, 0, 8) : '';
+        return self::PREFIX . md5($prefix !== '' && $prefix !== str_repeat("\0", 8) ? 'v6:' . bin2hex($prefix) : $address);
     }
 }

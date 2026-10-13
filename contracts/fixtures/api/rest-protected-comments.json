@@ -1,0 +1,98 @@
+[
+    [
+        "nobody list, no password",
+        "401 rest_cannot_read_post"
+    ],
+    [
+        "nobody create, no password",
+        "401 rest_comment_login_required"
+    ],
+    [
+        "nobody list, wrong",
+        "401 rest_cannot_read_post"
+    ],
+    [
+        "nobody create, wrong",
+        "401 rest_comment_login_required"
+    ],
+    [
+        "nobody list, right",
+        "200 1 comments"
+    ],
+    [
+        "nobody create, right",
+        "401 rest_comment_login_required"
+    ],
+    [
+        "subscriber list, no password",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "subscriber create, no password",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "subscriber list, wrong",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "subscriber create, wrong",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "subscriber list, right",
+        "200 1 comments"
+    ],
+    [
+        "subscriber create, right",
+        "201 created"
+    ],
+    [
+        "author list, no password",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "author create, no password",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "author list, wrong",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "author create, wrong",
+        "403 rest_cannot_read_post"
+    ],
+    [
+        "author list, right",
+        "200 1 comments"
+    ],
+    [
+        "author create, right",
+        "201 created"
+    ],
+    [
+        "editor list, no password",
+        "200 1 comments"
+    ],
+    [
+        "editor create, no password",
+        "201 created"
+    ],
+    [
+        "editor list, wrong",
+        "200 2 comments"
+    ],
+    [
+        "editor create, wrong",
+        "201 created"
+    ],
+    [
+        "editor list, right",
+        "200 3 comments"
+    ],
+    [
+        "editor create, right",
+        "201 created"
+    ]
+]

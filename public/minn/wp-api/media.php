@@ -1593,6 +1593,12 @@ function media_handle_sideload($file_array, $post_id = 0, $desc = null, $post_da
     if (isset($file['error'])) {
         return new WP_Error('upload_error', $file['error']);
     }
+    return _minn_media_attach($file, (int) $post_id, $desc, (array) $post_data);
+}
+
+/** @internal an uploaded or sideloaded file made an attachment of the post, its metadata generated */
+function _minn_media_attach(array $file, int $post_id, $desc, array $post_data)
+{
     $title = $desc ?? preg_replace('/\.[^.]+$/', '', wp_basename($file['file']));
     $attachment = array_merge(['post_mime_type' => $file['type'], 'guid' => $file['url'], 'post_parent' => $post_id, 'post_title' => $title, 'post_content' => ''], (array) $post_data);
     $id = wp_insert_attachment($attachment, $file['file'], $post_id, true);
@@ -1602,13 +1608,28 @@ function media_handle_sideload($file_array, $post_id = 0, $desc = null, $post_da
     return $id;
 }
 
+/**
+ * A form upload made an attachment: through wp_handle_upload with the
+ * caller's overrides (its types, its tests, its file name callback) and
+ * its filters, filed under the parent post's month unless the parent is a
+ * page, as the reference files it.
+ */
 function media_handle_upload($file_id, $post_id, $post_data = [], $overrides = ['test_form' => false])
 {
     $files = Runtime::current()->request?->files[$file_id] ?? null;
     if ($files === null) {
         return new WP_Error('upload_error', 'No file was uploaded.');
     }
-    return media_handle_sideload($files, $post_id, null, $post_data);
+    $time = current_time('mysql');
+    $parent = $post_id ? get_post($post_id) : null;
+    if ($parent instanceof WP_Post && $parent->post_type !== 'page' && (int) substr((string) $parent->post_date, 0, 4) > 0) {
+        $time = $parent->post_date;
+    }
+    $file = wp_handle_upload($files, $overrides, $time);
+    if (isset($file['error'])) {
+        return new WP_Error('upload_error', $file['error']);
+    }
+    return _minn_media_attach($file, (int) $post_id, null, (array) $post_data);
 }
 
 function media_sideload_image($file, $post_id = 0, $desc = null, $return_type = 'html')

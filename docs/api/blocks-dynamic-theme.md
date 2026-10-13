@@ -5,7 +5,7 @@ the template blocks a block theme composes with
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Comments`](#comments) | final readonly class | 271 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 518 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Navigation`](#navigation) | final readonly class | 535 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 260 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -76,7 +76,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 68), `navigation()` (private, line 95), `responsive()` (private, line 176), `items()` (private, line 213), `groups()` (private, line 235), `filteredItems()` (private, line 261), `linkedPosts()` (private, line 283), `weighLinks()` (private, line 296), `linkable()` (private, line 311), `presetClasses()` (private, line 322), `overlayColors()` (private, line 344), `link()` (private, line 356), `submenu()` (private, line 391), `overlayClose()` (private, line 416), `classicItems()` (private, line 427), `pageList()` (private, line 433), `submenuColours()` (private, line 453), `ancestorsOf()` (private, line 469), `pageItems()` (private, line 496), `navParent()` (private, line 527), `menuPost()` (private, line 536), `enqueueView()` (private, line 546)
+Internals: `wiring()` (private, line 68), `navigation()` (private, line 95), `responsive()` (private, line 176), `items()` (private, line 213), `groups()` (private, line 235), `filteredItems()` (private, line 261), `linkedPosts()` (private, line 283), `weighLinks()` (private, line 296), `linkable()` (private, line 311), `presetClasses()` (private, line 322), `overlayColors()` (private, line 344), `link()` (private, line 356), `submenu()` (private, line 391), `overlayClose()` (private, line 419), `classicItems()` (private, line 430), `pageList()` (private, line 436), `submenuColours()` (private, line 456), `ancestorsOf()` (private, line 472), `pageItems()` (private, line 499), `navParent()` (private, line 530), `menuPost()` (private, line 548), `enqueueView()` (private, line 563)
 
 
 ## PostBlocks

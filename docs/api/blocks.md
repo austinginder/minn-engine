@@ -369,7 +369,7 @@ A color's channels: hex (3, 4, 6 or 8 digits), rgb()/rgba() and hsl()/hsla().
 
 - `@return array{r: float, g: float, b: float, a: float}|null`
 
-Internals: `alpha()` (private, line 61), `hsl()` (private, line 70)
+Internals: `alpha()` (private, line 63), `hsl()` (private, line 72)
 
 
 ## Elements

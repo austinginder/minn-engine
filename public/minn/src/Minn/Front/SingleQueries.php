@@ -48,10 +48,18 @@ final readonly class SingleQueries
             return Resolution::redirect($this->permalinks->url(Permalinks::feedPath('/', (string) $request->query('feed'))) . $request->queryStringWithout('name', 'feed'));
         }
         if ($request->has('name')) {
-            // A name is a post's, or the named type's (the other arguments go along when it moves).
-            $type = is_string($request->query['post_type'] ?? null) && $request->query['post_type'] !== '' ? $request->query['post_type'] : 'post';
-            $post = $this->posts->findByName((string) $request->query('name'), [$type]);
-            return $post === null ? $this->elsewhere->formerSlug((string) $request->query('name')) ?? Resolution::notFound() : $this->singleOrRedirect($post, $request, $redirects);
+            // A name is a post's, or the named type's when a visitor may query it (another type is dropped, as the
+            // reference drops it, so the name is a post's); the other arguments go along when it moves.
+            $asked = is_string($request->query['post_type'] ?? null) ? $request->query['post_type'] : '';
+            $type = $asked !== '' && !empty(Runtime::registry()->postType($asked)['publicly_queryable']) ? $asked : 'post';
+            $name = (string) $request->query('name');
+            $post = $this->posts->findByName($name, [$type]);
+            if ($post !== null) {
+                return $this->singleOrRedirect($post, $request, $redirects);
+            }
+            // No such post: a former slug's post, else the reference's guess (a viewable post of that name, any type).
+            $guess = $redirects->follows() ? $this->posts->guess($name, Resolver::viewableTypes()) : null;
+            return $this->elsewhere->formerSlug($name) ?? ($guess === null ? Resolution::notFound() : Resolution::redirect($this->permalinks->link($guess)));
         }
         return $request->has('pagename') ? $this->byPath((string) $request->query('pagename'), $redirects) : null;
     }

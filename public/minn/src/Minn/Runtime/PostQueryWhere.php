@@ -211,10 +211,11 @@ final class PostQueryWhere
             if (empty($q[$var])) {
                 continue;
             }
-            if (is_array($q[$var])) {
-                $q[$var] = array_values(array_unique(array_map('absint', $q[$var])));
-                sort($q[$var]);
-            }
+            // Only ids reach the SQL, as the reference reads them (probe audit 2026-10-13): a list, or a string excluded as an id
+            // list (split on commas and spaces), or a string included as the one id it starts with.
+            $ids = is_array($q[$var]) ? $q[$var] : ($var === 'author__not_in' ? (preg_split('/[\s,]+/', (string) $q[$var], -1, PREG_SPLIT_NO_EMPTY) ?: []) : [(string) $q[$var]]);
+            $q[$var] = array_values(array_unique(array_map('absint', $ids)));
+            sort($q[$var]);
             $this->parts->where .= " AND {$t}.post_author {$operator} (" . implode(',', (array) $q[$var]) . ') ';
             break;
         }

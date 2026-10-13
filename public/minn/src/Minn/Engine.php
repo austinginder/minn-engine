@@ -228,13 +228,21 @@ final readonly class Engine
         \define('WP_USE_THEMES', true);
     }
 
-    private function handle(Db $db, Request $request): Response
+    /**
+     * With the database in hand, a fatal during boot can be blamed on the
+     * extension it came from; the second inside ten minutes pauses it, so
+     * the next request comes back without it. The window in which this
+     * applies is opened by Plugins::load. Only a request that carries
+     * nothing a visitor chose counts: an extension that fails on some input
+     * fails for that input alone, and a visitor could otherwise pause it for
+     * everyone with two requests.
+     */
+    private static function armRecoveryPause(Db $db, Request $request): void
     {
-        // With the database in hand, a fatal during boot can be blamed on
-        // the extension it came from; the second inside ten minutes pauses
-        // it, so the next request comes back without it. The window in
-        // which this applies is opened by Plugins::load.
-        Failure::onFatal(static function (array $error) use ($db): void {
+        Failure::onFatal(static function (array $error) use ($db, $request): void {
+            if (!self::plain($request)) {
+                return;
+            }
             $recovery = new Recovery(new Site($db), ABSPATH . 'wp-content');
             $realpaths = array_flip(array_filter((array) ($GLOBALS['wp_plugin_paths'] ?? []), 'is_string'));
             unset($realpaths['']);
@@ -251,6 +259,18 @@ final readonly class Engine
             }
             error_log(sprintf('Minn Engine: paused %s %s after a second fatal error while booting; resume it with wp minn recovery resume', $blamed['kind'], $blamed['name']));
         });
+    }
+
+    /** Whether a request carries nothing a visitor chose but its path: a GET or HEAD with no query, body, upload or cookie. */
+    private static function plain(Request $request): bool
+    {
+        return in_array($request->method, [Method::Get, Method::Head], true)
+            && $request->query === [] && $request->form === [] && $request->files === [] && $request->cookies === [] && $request->body === '';
+    }
+
+    private function handle(Db $db, Request $request): Response
+    {
+        self::armRecoveryPause($db, $request);
 
         self::markThemedRequest($request);
 

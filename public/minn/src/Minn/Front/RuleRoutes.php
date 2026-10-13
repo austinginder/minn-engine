@@ -41,6 +41,10 @@ final readonly class RuleRoutes
         }
         $paged = max(1, (int) ($vars['paged'] ?? 1));
         $type = (string) ($vars['post_type'] ?? '');
+        // A type a visitor may not query is dropped, as the reference drops it when it reads the request.
+        if ($type !== '' && empty(Runtime::registry()->postType($type)['publicly_queryable'])) {
+            $type = '';
+        }
         return $this->single($vars, $type, $paged) ?? $this->archive($vars, $type, $paged);
     }
 
@@ -150,7 +154,8 @@ final readonly class RuleRoutes
 
     /**
      * The registered post types or taxonomies that answer to a var of their
-     * own: name => var.
+     * own, among those a visitor may query (the reference keeps no other's
+     * var public): name => var.
      *
      * @return array<string, string>
      */
@@ -159,7 +164,7 @@ final readonly class RuleRoutes
         $out = [];
         foreach ($kind === 'postTypes' ? Runtime::registry()->postTypes() : Runtime::registry()->taxonomies() as $name => $row) {
             $var = $row['query_var'] ?? false;
-            if (empty($row['_builtin']) && is_string($var) && $var !== '') {
+            if (empty($row['_builtin']) && !empty($row['publicly_queryable']) && is_string($var) && $var !== '') {
                 $out[(string) $name] = $var;
             }
         }

@@ -36,10 +36,10 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`RequestParse`](#requestparse) | final class | 68 | The query vars the reference's request parse sets for an address |
 | [`Resolution`](#resolution) | final readonly class | 116 | The outcome of resolving a public URL: which kind of thing it names, |
 | [`Resolver`](#resolver) | final readonly class | 325 | Turns a public URL into a Resolution the way the reference's request |
-| [`RuleRoutes`](#ruleroutes) | final readonly class | 151 | What a matched rewrite rule's query vars name, as the reference's main |
+| [`RuleRoutes`](#ruleroutes) | final readonly class | 156 | What a matched rewrite rule's query vars name, as the reference's main |
 | [`RuleTable`](#ruletable) | final class | 100 | An address read as WordPress's request parse reads it (suites |
 | [`SingleAddresses`](#singleaddresses) | final readonly class | 67 | The addresses a single answers to besides its own, as the reference |
-| [`SingleQueries`](#singlequeries) | final readonly class | 109 | The single a query string asks for, as the reference's request parse and |
+| [`SingleQueries`](#singlequeries) | final readonly class | 117 | The single a query string asks for, as the reference's request parse and |
 | [`SitemapController`](#sitemapcontroller) | final readonly class | 65 | The sitemap index, its pages, and the two stylesheets, as the |
 | [`SitemapRequest`](#sitemaprequest) | final class | 71 | A sitemap request at template_redirect, as the reference's sitemaps |
 | [`SitemapXml`](#sitemapxml) | final class | 49 | The two sitemap documents, index and URL set, from entry maps; one |
@@ -276,7 +276,7 @@ The table and its navigation.
 - `@param array{int, int}|null $next the nearest later month with posts`
 - `@param array{int, int, int}|null $today the site's current date, as [year, month, day]`
 
-Internals: `table()` (private, line 47), `head()` (private, line 73), `cell()` (private, line 87), `navigation()` (private, line 102), `abbreviation()` (private, line 113)
+Internals: `table()` (private, line 49), `head()` (private, line 75), `cell()` (private, line 89), `navigation()` (private, line 104), `abbreviation()` (private, line 115)
 
 
 ## CalendarLabels
@@ -1179,7 +1179,7 @@ posts, newest first. Archives never guess.
 - Non-public posts are 404 to anonymous readers and served to a reader
 who can edit them.
 
-Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`
+Used by: `Minn\Engine`, `Minn\Front\Canonical`, `Minn\Front\FrontController`, `Minn\Front\SingleQueries`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Terms $terms, Minn\Front\Permalinks $permalinks, Closure $canReadUnpublished, int $perPage)
@@ -1205,7 +1205,14 @@ $canonical mirrors the reference's redirect_canonical rule: only GET
 and HEAD get trailing-slash, pretty-URL, and 404-guess redirects;
 every other method renders what the query alone finds, as typed.
 
-Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `pagedMove()` (private, line 195), `missing()` (private, line 215), `viewableTypes()` (private, line 245), `endpointIn()` (private, line 258), `segments()` (private, line 270), `resolveQueryVars()` (private, line 281), `rootVars()` (private, line 306), `archives()` (private, line 333), `attachments()` (private, line 339), `elsewhere()` (private, line 345), `readable()` (private, line 350)
+### static `viewableTypes(): array`
+
+The post types a guess looks among: those a reader can view that
+searches include.
+
+- `@return list<string>`
+
+Internals: `resolvePath()` (private, line 100), `canonical()` (private, line 132), `pagedMove()` (private, line 195), `missing()` (private, line 215), `endpointIn()` (private, line 258), `segments()` (private, line 270), `resolveQueryVars()` (private, line 281), `rootVars()` (private, line 306), `archives()` (private, line 333), `attachments()` (private, line 339), `elsewhere()` (private, line 345), `readable()` (private, line 350)
 
 
 ## RuleRoutes
@@ -1237,7 +1244,7 @@ The resolution the vars stand for. @param array<string, string> $vars
 
 - `@param array<string, string> $vars`
 
-Internals: `single()` (private, line 48), `archive()` (private, line 81), `typeArchive()` (private, line 115), `found()` (private, line 127), `readable()` (private, line 142), `registered()` (private, line 157), `segments()` (private, line 170)
+Internals: `single()` (private, line 52), `archive()` (private, line 85), `typeArchive()` (private, line 119), `found()` (private, line 131), `readable()` (private, line 146), `registered()` (private, line 162), `segments()` (private, line 175)
 
 
 ## RuleTable
@@ -1337,7 +1344,7 @@ __construct(Minn\Content\Posts $posts, Minn\Front\Permalinks $permalinks, Minn\F
 
 The resolution the query's single vars amount to; null when it has none of them.
 
-Internals: `byId()` (private, line 60), `byPath()` (private, line 107), `singleOrRedirect()` (private, line 122)
+Internals: `byId()` (private, line 68), `byPath()` (private, line 115), `singleOrRedirect()` (private, line 130)
 
 
 ## SitemapController

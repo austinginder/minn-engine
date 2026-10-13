@@ -10,12 +10,12 @@ the wp verbs the engine answers itself
 | [`CoreCommand`](#corecommand) | final class | 112 | WP-CLI's core verbs where a host's automation meets a Minn site. A Minn |
 | [`CronCommand`](#croncommand) | final class | 277 | `wp cron`: the events, schedules, and spawn test a host and a fleet ask |
 | [`DirectorySearch`](#directorysearch) | final class | 37 | Shared wording for `wp theme search` and `wp plugin search`. The |
-| [`Installer`](#installer) | final class | 308 | The swap, both ways. Install parks WordPress's own files beside the |
+| [`Installer`](#installer) | final class | 324 | The swap, both ways. Install parks WordPress's own files beside the |
 | [`MaintenanceCommand`](#maintenancecommand) | final class | 65 | `wp maintenance-mode`: the `.maintenance` marker in the webroot. The |
 | [`MinnCommand`](#minncommand) | final class | 319 | Identifies the engine. |
 | [`OptionCommand`](#optioncommand) | final class | 185 | Options, read and written straight to the options table. Serialized |
 | [`PackageInstaller`](#packageinstaller) | final readonly class | 142 | Puts a theme or a plugin on disk for `wp theme install` and `wp plugin |
-| [`PluginCommand`](#plugincommand) | final class | 405 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
+| [`PluginCommand`](#plugincommand) | final class | 406 | `wp plugin list\|install\|update\|activate\|deactivate\|delete`: the inventory and the fleet's install/update/delete. |
 | [`Preflight`](#preflight) | final class | 417 | What a site will and will not get from the engine, before anything |
 | [`RewriteCommand`](#rewritecommand) | final class | 52 | `wp rewrite flush\|structure`: permalink_structure is the engine's |
 | [`Runtime`](#runtime) | final class | 80 | The engine, booted for a command: reads the site's wp-config.php (which |
@@ -328,7 +328,7 @@ was moved or copied keeps a record its own eject must not act on).
 
 - `@return array<string, mixed>`
 
-Internals: `help()` (private, line 102), `move()` (private, line 286), `copyTree()` (private, line 302), `version()` (private, line 321), `say()` (private, line 326)
+Internals: `help()` (private, line 102), `inside()` (private, line 293), `move()` (private, line 302), `copyTree()` (private, line 318), `version()` (private, line 337), `say()` (private, line 342)
 
 
 ## MaintenanceCommand
@@ -805,7 +805,7 @@ options:
 - yaml
 ---
 
-Internals: `switch()` (private, line 326), `pinVersion()` (private, line 368), `activateFolder()` (private, line 392), `plain()` (private, line 415)
+Internals: `switch()` (private, line 327), `pinVersion()` (private, line 369), `activateFolder()` (private, line 393), `plain()` (private, line 416)
 
 
 ## Preflight

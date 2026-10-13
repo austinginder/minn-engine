@@ -22,9 +22,15 @@ final class PortableHash
     /** bcrypt's own base64 alphabet. */
     private const BLOWFISH_ALPHABET = './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-    /** A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13). */
+    /** The longest password hashed; a longer one is refused before any work, as the reference refuses it. */
+    public const MAX_LENGTH = 4096;
+
+    /** A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13); "*" for one too long. */
     public static function hash(string $password, int $countLog2 = 13): string
     {
+        if (strlen($password) > self::MAX_LENGTH) {
+            return '*';
+        }
         return self::crypt($password, self::salt(random_bytes(6), $countLog2));
     }
 
@@ -51,7 +57,7 @@ final class PortableHash
     /** Whether a password matches a portable hash from the published algorithm. */
     public static function verify(string $password, string $hash): bool
     {
-        if (strlen($hash) !== 34 || !str_starts_with($hash, '$P$')) {
+        if (strlen($hash) !== 34 || !str_starts_with($hash, '$P$') || strlen($password) > self::MAX_LENGTH) {
             return false;
         }
         return hash_equals(self::crypt($password, substr($hash, 0, 12)), $hash);

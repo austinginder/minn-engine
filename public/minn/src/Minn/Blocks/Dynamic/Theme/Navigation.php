@@ -100,14 +100,14 @@ final readonly class Navigation
         $menuKey = null;
         if ($items === []) {
             $ref = (int) $block->attr('ref', 0);
-            $menu = $this->menuPost($ref);
+            [$menu, $named] = $this->menuPost($ref);
             $menuKey = $menu === null ? null : 'menu:' . (int) $menu['ID'];
             if ($menuKey !== null && !$renderer->state()->enter($menuKey)) {
                 return '';
             }
             $items = $menu !== null ? Parser::parse((string) $menu['post_content']) : ($ref > 0 ? [] : $this->classicItems());
-            // The menu's title labels the nav only when the block names the menu.
-            $label = $ref > 0 ? (string) ($menu['post_title'] ?? '') : '';
+            // The menu's title labels the nav only when the block names the menu and that menu is the one shown.
+            $label = $named ? (string) ($menu['post_title'] ?? '') : '';
         }
         $label = $ariaLabel !== '' ? $ariaLabel : $label;
         // Only blocks are items; the whitespace between them is not rendered.
@@ -190,7 +190,7 @@ final readonly class Navigation
             : Html::esc(\Minn\I18n\Gettext::text('Close'));
         return $nav . ($label === '' ? '' : ' aria-label="' . Html::attr($label) . '"') . ' ' . "\n\t\t" . ' data-wp-interactive="core/navigation" data-wp-context=\'{"overlayOpenedBy":{"click":false,"hover":false,"focus":false},"type":"overlay","roleAttribute":"","ariaLabel":"' . $ariaLabel . '"}\'>'
             . '<button aria-haspopup="dialog" ' . $open . ' class="wp-block-navigation__responsive-container-open" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.openMenuOnClick"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t" . '>' . $openInner . '</button>'
-            . "\n\t\t\t\t" . '<div class="wp-block-navigation__responsive-container' . $colors . '"  id="modal-' . $id . '" ' . "\n\t\t\t\t" . 'data-wp-class--has-modal-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-class--is-menu-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.initMenu"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t\t" . 'data-wp-on--focusout="actions.handleMenuFocusout"' . "\n\t\t\t\t" . 'tabindex="-1"' . "\n\t\t\t" . '>'
+            . "\n\t\t\t\t" . '<div class="' . Html::attr('wp-block-navigation__responsive-container' . $colors) . '"  id="modal-' . $id . '" ' . "\n\t\t\t\t" . 'data-wp-class--has-modal-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-class--is-menu-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.initMenu"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t\t" . 'data-wp-on--focusout="actions.handleMenuFocusout"' . "\n\t\t\t\t" . 'tabindex="-1"' . "\n\t\t\t" . '>'
             . "\n\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-close" tabindex="-1">'
             . "\n\t\t\t\t\t\t" . '<div class="wp-block-navigation__responsive-dialog" ' . "\n\t\t\t\t" . 'data-wp-bind--aria-modal="state.ariaModal"' . "\n\t\t\t\t" . 'data-wp-bind--aria-label="state.ariaLabel"' . "\n\t\t\t\t" . 'data-wp-bind--role="state.roleAttribute"' . "\n\t\t\t" . '>'
             . "\n\t\t\t\t\t\t\t" . '<button ' . $close . ' class="wp-block-navigation__responsive-container-close" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.closeMenuOnClick"' . "\n\t\t\t" . '>' . $closeInner . '</button>'
@@ -372,14 +372,14 @@ final readonly class Navigation
             && $id === $resolution->id()
             && $resolution->kind === ($type === 'page' ? Kind::Page : Kind::Single))
             || ($kind === 'taxonomy' && $type === 'category' && $resolution->kind === Kind::Category && $id === $resolution->id());
-        $className = (string) $block->attr('className', '');
-        $classes = 'wp-block-navigation-item' . $className . ($current ? ' current-menu-item' : '') . ' wp-block-navigation-link';
+        $className = trim((string) $block->attr('className', ''));
+        $classes = 'wp-block-navigation-item' . ($className === '' ? '' : ' ' . $className) . ($current ? ' current-menu-item' : '') . ' wp-block-navigation-link';
         $target = (bool) $block->attr('opensInNewTab', false) ? ' target="_blank"  ' : '';
         // A link made from a menu item carries its attribute title, even an empty one.
         $title = isset($block->attrs['title']) ? ' title="' . Html::attr((string) $block->attrs['title']) . '"' : '';
         // A link with no address at all has no href.
         $href = isset($block->attrs['url']) ? ' href="' . Html::attr($url) . '"' : '';
-        return '<li class="' . $classes . '"><a class="wp-block-navigation-item__content" ' . $href . $target . $title . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
+        return '<li class="' . Html::attr($classes) . '"><a class="wp-block-navigation-item__content" ' . $href . $target . $title . ($current ? ' aria-current="page"' : '') . '><span class="wp-block-navigation-item__label">' . $label . '</span></a></li>';
     }
 
     /**
@@ -404,12 +404,15 @@ final readonly class Navigation
             : '<a class="wp-block-navigation-item__content"' . (isset($block->attrs['url']) ? ' href="' . Html::attr(Kses::url((string) $block->attrs['url'])) . '"' : '') . '>' . $text . '</a>'
                 . ($icon ? '<button ' . $toggle . ' class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" >' . self::CHEVRON . '</button>' : '');
         $wired = $onClick || $icon;
-        if ($wired) {
+        // Inside a navigation the item is wired for hover even without the icon (only its list's focus handler waits on one).
+        $inNavigation = array_key_exists('showSubmenuIcon', $settings) || array_key_exists('openSubmenusOnClick', $settings);
+        if ($wired || $inNavigation) {
             $this->enqueueView();
         }
-        $item = 'class="wp-block-navigation-item has-child' . ($onClick ? ' open-on-click' : ($icon ? ' open-on-hover-click' : '')) . ' wp-block-navigation-submenu"';
-        $open = $wired ? self::wiring($onClick ? 'click' : 'hover') . $item : $item;
-        return '<li ' . $open . '>' . $head . '<ul' . ($wired ? ' data-wp-on--focus="actions.openMenuOnFocus"' : '') . ' class="wp-block-navigation__submenu-container wp-block-navigation-submenu">' . $this->items($block->innerBlocks, $renderer) . '</ul></li>';
+        $className = trim((string) $block->attr('className', ''));
+        $item = 'class="' . Html::attr('wp-block-navigation-item has-child' . ($onClick ? ' open-on-click' : ($icon ? ' open-on-hover-click' : '')) . ($className === '' ? '' : ' ' . $className) . ' wp-block-navigation-submenu') . '"';
+        $open = $wired || $inNavigation ? self::wiring($onClick ? 'click' : 'hover') . $item : $item;
+        return '<li ' . $open . '>' . $head . '<ul' . ($wired ? ' data-wp-on--focus="actions.openMenuOnFocus"' : '') . ' class="' . Html::attr('wp-block-navigation__submenu-container' . ($className === '' ? '' : ' ' . $className) . ' wp-block-navigation-submenu') . '">' . $this->items($block->innerBlocks, $renderer) . '</ul></li>';
     }
 
     /** The overlay's close button: an icon (named by aria-label), its text, or both. */
@@ -533,13 +536,27 @@ final readonly class Navigation
             . '<ul data-wp-on--focus="actions.openMenuOnFocus" class="wp-block-navigation__submenu-container">' . $children . '</ul></li>';
     }
 
-    private function menuPost(int $ref): ?array
+    /**
+     * The menu a navigation shows, and whether it is the one the block names.
+     * Only a published menu shows, as on the reference: a named menu that
+     * is not published (a draft, private or trashed one) gives way to the
+     * latest published menu, unlabelled; a named menu that does not exist
+     * shows nothing; with none named, the latest published menu.
+     *
+     * @return array{0: array<string, mixed>|null, 1: bool}
+     */
+    private function menuPost(int $ref): array
     {
         $table = $this->db->table('posts');
-        if ($ref > 0) {
-            return $this->db->row("SELECT * FROM {$table} WHERE ID = ? AND post_type = 'wp_navigation' LIMIT 1", [$ref]);
+        $latest = fn (): ?array => $this->db->row("SELECT * FROM {$table} WHERE post_type = 'wp_navigation' AND post_status = 'publish' ORDER BY post_date DESC LIMIT 1");
+        if ($ref <= 0) {
+            return [$latest(), false];
         }
-        return $this->db->row("SELECT * FROM {$table} WHERE post_type = 'wp_navigation' AND post_status = 'publish' ORDER BY post_date DESC LIMIT 1");
+        $named = $this->db->row("SELECT * FROM {$table} WHERE ID = ? AND post_type = 'wp_navigation' LIMIT 1", [$ref]);
+        if ($named === null) {
+            return [null, false];
+        }
+        return ($named['post_status'] ?? '') === 'publish' ? [$named, true] : [$latest(), false];
     }
 
     /** Interactive navigation markup brings the block's view module with it, as on the reference. */

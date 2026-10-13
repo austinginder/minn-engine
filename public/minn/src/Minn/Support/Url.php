@@ -144,10 +144,21 @@ final class Url
         return in_array($port, array_map('intval', $allowed), true) ? $url : null;
     }
 
-    /** @param list<int> $p */
+    /**
+     * Whether an IPv4 address is one a request must not reach: anything
+     * outside the global range (private, loopback, link-local, shared
+     * CGNAT space with the clouds' metadata hosts, benchmarking,
+     * documentation, reserved), the old 6to4 relays and multicast, as the
+     * reference refuses them.
+     *
+     * @param list<int> $p
+     */
     private static function isPrivate(array $p): bool
     {
-        return $p[0] === 127 || $p[0] === 10 || $p[0] === 0 || ($p[0] === 172 && $p[1] >= 16 && $p[1] <= 31) || ($p[0] === 192 && $p[1] === 168) || ($p[0] === 169 && $p[1] === 254);
+        $ip = implode('.', $p);
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 | FILTER_FLAG_GLOBAL_RANGE) === false
+            || ($p[0] >= 224 && $p[0] <= 239)
+            || ($p[0] === 192 && $p[1] === 88 && $p[2] === 99);
     }
 
     /** A query string in the reference's spelling (probe query-args): keys and values as given, nested keys as `a%5Bb%5D`, null left out, booleans as 0/1. */

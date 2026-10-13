@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Kses;
+
 /**
  * Edits one start tag's attributes in place the way the reference's tag
  * processor does: a replaced value keeps its position, a new attribute goes
@@ -48,9 +50,12 @@ final class TagEditor
         return false;
     }
 
-    /** true sets a bare boolean attribute. */
+    /** true sets a bare boolean attribute; a URL attribute (href, src, ...) keeps only a URL whose scheme is allowed, as the reference's set_attribute keeps it. */
     public function set(string $name, string|bool $value): void
     {
+        if (is_string($value) && in_array(strtolower($name), Kses::URI_ATTRIBUTES, true)) {
+            $value = Kses::url($value);
+        }
         $text = $value === true ? $name : $name . '="' . htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8', false) . '"';
         foreach ($this->attrs as $i => $a) {
             if (strcasecmp($a['name'], $name) === 0) {

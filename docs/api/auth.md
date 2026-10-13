@@ -9,15 +9,15 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
-| [`Capabilities`](#capabilities) | final readonly class | 273 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
+| [`Capabilities`](#capabilities) | final readonly class | 277 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
 | [`LoginThrottle`](#loginthrottle) | final readonly class | 82 | Failed sign-ins per address, so a password guesser meets a wall: twenty |
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
-| [`Password`](#password) | final class | 59 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
+| [`Password`](#password) | final class | 71 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 78 | Password reset keys in the reference's storage shape: user_activation_key |
-| [`PortableHash`](#portablehash) | final class | 90 | The portable phpass hash ("$P$"), from the published algorithm: an |
-| [`RegisteredCaps`](#registeredcaps) | final class | 22 | The capability names a plugin's post type or taxonomy registered, read |
+| [`PortableHash`](#portablehash) | final class | 96 | The portable phpass hash ("$P$"), from the published algorithm: an |
+| [`RegisteredCaps`](#registeredcaps) | final class | 24 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |
 | [`Sessions`](#sessions) | final readonly class | 173 | The session_tokens usermeta store: {sha256(token): {expiration, ip, ua, |
@@ -336,7 +336,7 @@ The primitives a capability requires, all of which must be held.
 
 - `@return list<string>`
 
-Internals: `fileModsAllowed()` (private, line 93), `mapMore()` (private, line 147), `mapCommentCapability()` (private, line 179), `mapPostCapability()` (private, line 204), `mapTermCapability()` (private, line 257), `fold()` (private, line 278), `trashedFrom()` (private, line 283)
+Internals: `fileModsAllowed()` (private, line 93), `mapMore()` (private, line 147), `mapCommentCapability()` (private, line 183), `mapPostCapability()` (private, line 208), `mapTermCapability()` (private, line 261), `fold()` (private, line 282), `trashedFrom()` (private, line 287)
 
 
 ## Cookie
@@ -428,13 +428,16 @@ Whether a secret matches a "$generic$" hash; false for any other kind of hash.
 Failed sign-ins per address, so a password guesser meets a wall: twenty
 failures in fifteen minutes and the address waits out the window. The
 counters live in the options table (autoload off), one row per address,
-as "window start:count"; a successful sign-in clears the row.
+as "window start:count"; a successful sign-in clears the row. An IPv6
+address counts as its /64, the block one subscriber is handed, so
+stepping through it buys no fresh tries; each failure is counted in one
+statement, so failures arriving together are all counted.
 
 - const `LIMIT` = `20`
 - const `WINDOW` = `900`
 - const `PREFIX` = `'minn_login_throttle_'`
 
-Used by: `Minn\Auth\SignIn`, `Minn\Engine`
+Used by: `Minn\Auth\SignIn`, `Minn\Cron\Cron`, `Minn\Engine`
 
 ```php
 __construct(Minn\Db $db)
@@ -453,7 +456,12 @@ Counts one failed sign-in from an address within the current window.
 
 Forgets an address's failures.
 
-Internals: `read()` (private, line 59), `write()` (private, line 69), `prune()` (private, line 82), `key()` (private, line 93)
+### static `sweep(Minn\Db $db, int $now): int`
+
+Drops counters whose window has passed, at most a thousand in one
+statement, however many addresses have failed; the number dropped.
+
+Internals: `read()` (private, line 66), `key()` (private, line 94)
 
 
 ## Nonce
@@ -507,7 +515,9 @@ Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\AuthCookies`, `Minn\Auth\A
 
 ### static `verify(string $password, string $hash): bool`
 
-Whether a password matches a stored hash: the "$wp$" scheme, legacy phpass, or any hash password_hash() makes.
+Whether a password matches a stored hash: the "$wp$" scheme, legacy
+phpass, or any hash password_hash() makes. A password over 4,096
+characters never matches and costs no hashing.
 
 ### static `hash(string $password, string $algorithm = Minn\Auth\PASSWORD_BCRYPT, array $options = array ( )): string`
 
@@ -526,12 +536,14 @@ another algorithm, whatever PHP says is outdated for it.
 
 ### static `fragment(string $hash): string`
 
-The four characters of the hash the cookie key is derived from: the
-LAST four for a "$wp$" hash, offset 8 for legacy phpass. Getting this
-wrong yields a cookie that verifies nowhere while every other check
-passes, so both branches are pinned by the auth suite.
+The four characters of the hash the cookie key is derived from:
+offset 8 for legacy phpass ("$P$") and plain bcrypt ("$2y$"), the LAST
+four for anything else ("$wp$", argon2, whose offset 8 is the same for
+every password). Getting this wrong yields a cookie that verifies
+nowhere while every other check passes, so the branches are pinned by
+the auth suite and the 2026-10-13 audit's probe.
 
-Internals: `prehash()` (private, line 59)
+Internals: `prehash()` (private, line 69)
 
 
 ## PasswordReset
@@ -600,12 +612,13 @@ both kinds of salt, and the hash with phpass's failure markers.
 
 - const `ALPHABET` = `'./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'`
 - const `BLOWFISH_ALPHABET` = `'./ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'` — bcrypt's own base64 alphabet.
+- const `MAX_LENGTH` = `4096` — The longest password hashed; a longer one is refused before any work, as the reference refuses it.
 
 Used by: `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Password`, `Minn\Auth\PasswordReset`, `Minn\Content\PasswordGate`, `Minn\Login\LoginController`
 
 ### static `hash(string $password, int $countLog2 = 13): string`
 
-A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13).
+A portable hash of a password, 2^$countLog2 iterations (the reference's cookies carry 2^13); "*" for one too long.
 
 ### static `salt(string $input, int $countLog2): string`
 
@@ -638,14 +651,15 @@ The capability names a plugin's post type or taxonomy registered, read
 from the runtime's registry once plugins are loaded (probe
 rest-plugin-caps): a type's cap object (create_posts, edit_posts,
 publish_posts...) and whether it maps meta capabilities, a taxonomy's
-term capabilities. Null for the built-in ones, whose names the engine
-knows, and when no runtime is up.
+term capabilities. A built-in type's too (patterns, menu items,
+templates), all but posts and pages, whose families the engine knows;
+null for those and when no runtime is up.
 
 Used by: `Minn\Auth\Capabilities`, `Minn\Auth\TypeCapabilities`, `Minn\Rest\TermsController`
 
 ### static `ofType(string $type): ?WP_Post_Type`
 
-A plugin's post type, or null.
+A post type's registered object (any but post and page), or null.
 
 ### static `ofTaxonomy(string $taxonomy): ?WP_Taxonomy`
 

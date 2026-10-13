@@ -17,7 +17,7 @@ the wp/v2 surface: shapes and controllers
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
 | [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
-| [`CommentsController`](#commentscontroller) | final readonly class | 287 | wp/v2/comments: the status tabs with pagination headers, single, |
+| [`CommentsController`](#commentscontroller) | final readonly class | 294 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
 | [`DeclaredPostsController`](#declaredpostscontroller) | final readonly class | 56 | wp/v2/{rest_base} for extra post types declared by an active extension. |
 | [`DeclaredTermsController`](#declaredtermscontroller) | final readonly class | 43 | wp/v2/{rest_base} for the taxonomies plugin code registers to show in |
@@ -79,7 +79,7 @@ the wp/v2 surface: shapes and controllers
 | [`TermFilters`](#termfilters) | final class | 25 | A term a REST read answers with, as plugin code filters it on the |
 | [`TermListArgs`](#termlistargs) | final class | 28 | The get_terms arguments a term list request makes, as the reference |
 | [`TermObject`](#termobject) | final readonly class | 107 | The wp/v2 category and tag objects. |
-| [`TermsController`](#termscontroller) | final readonly class | 168 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
+| [`TermsController`](#termscontroller) | final readonly class | 193 | wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. |
 | [`Types`](#types) | final class | 190 | The engine's registry of built-in post types, seeded from the observed |
 | [`UrlDetails`](#urldetails) | final class | 64 | A page's details as the editor's link previews read them (probe |
 | [`UserCollectionParams`](#usercollectionparams) | final class | 11 | The users list's parameters as the reference declares them (probe |
@@ -798,7 +798,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 73), `events()` (private, line 147), `allowed()` (private, line 216), `readablePost()` (private, line 253), `readable()` (private, line 262), `plainComment()` (private, line 272), `prepared()` (private, line 294)
+Internals: `totals()` (private, line 73), `events()` (private, line 150), `allowed()` (private, line 219), `readablePost()` (private, line 260), `readable()` (private, line 269), `plainComment()` (private, line 279), `prepared()` (private, line 301)
 
 
 ## Context
@@ -3733,7 +3733,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 147)
+Internals: `requireParent()` (private, line 154), `termsReadable()` (private, line 208)
 
 
 ## Types

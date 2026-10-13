@@ -15,9 +15,16 @@ namespace Minn\Auth;
  */
 final class Password
 {
-    /** Whether a password matches a stored hash: the "$wp$" scheme, legacy phpass, or any hash password_hash() makes. */
+    /**
+     * Whether a password matches a stored hash: the "$wp$" scheme, legacy
+     * phpass, or any hash password_hash() makes. A password over 4,096
+     * characters never matches and costs no hashing.
+     */
     public static function verify(string $password, string $hash): bool
     {
+        if (strlen($password) > PortableHash::MAX_LENGTH) {
+            return false;
+        }
         if (str_starts_with($hash, '$wp$')) {
             return password_verify(self::prehash($password), substr($hash, 3));
         }
@@ -35,6 +42,9 @@ final class Password
      */
     public static function hash(string $password, string $algorithm = PASSWORD_BCRYPT, array $options = []): string
     {
+        if (strlen($password) > PortableHash::MAX_LENGTH) {
+            return '*';
+        }
         if ($algorithm === PASSWORD_BCRYPT) {
             return '$wp' . password_hash(self::prehash($password), PASSWORD_BCRYPT, $options);
         }
@@ -62,13 +72,15 @@ final class Password
     }
 
     /**
-     * The four characters of the hash the cookie key is derived from: the
-     * LAST four for a "$wp$" hash, offset 8 for legacy phpass. Getting this
-     * wrong yields a cookie that verifies nowhere while every other check
-     * passes, so both branches are pinned by the auth suite.
+     * The four characters of the hash the cookie key is derived from:
+     * offset 8 for legacy phpass ("$P$") and plain bcrypt ("$2y$"), the LAST
+     * four for anything else ("$wp$", argon2, whose offset 8 is the same for
+     * every password). Getting this wrong yields a cookie that verifies
+     * nowhere while every other check passes, so the branches are pinned by
+     * the auth suite and the 2026-10-13 audit's probe.
      */
     public static function fragment(string $hash): string
     {
-        return str_starts_with($hash, '$wp$') ? substr($hash, -4) : substr($hash, 8, 4);
+        return str_starts_with($hash, '$P$') || str_starts_with($hash, '$2y$') ? substr($hash, 8, 4) : substr($hash, -4);
     }
 }

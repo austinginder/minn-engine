@@ -106,10 +106,15 @@ final class Db
         return implode(',', array_values(array_filter(array_map('trim', explode(',', $modes)), static fn (string $mode): bool => $mode !== '' && !in_array(strtoupper($mode), $off, true))));
     }
 
-    /** Sets this session's SQL modes. */
+    /**
+     * Sets this session's SQL modes, never NO_BACKSLASH_ESCAPES: the
+     * engine's literals escape quotes with a backslash (Query\Sql), which
+     * that mode would turn into a plain character, so a set_sql_mode()
+     * asking for it gets every other mode it named.
+     */
     public function setModes(string $modes): void
     {
-        $this->execute('SET SESSION sql_mode = ?', [$modes]);
+        $this->execute('SET SESSION sql_mode = ?', [self::compatibleModes($modes, ['NO_BACKSLASH_ESCAPES'])]);
     }
 
     /** The underlying mysqli handle, for the facade's wpdb. */

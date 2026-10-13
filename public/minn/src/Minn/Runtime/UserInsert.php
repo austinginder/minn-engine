@@ -124,6 +124,13 @@ final readonly class UserInsert
         if (!empty($userdata['user_pass'])) {
             $columns['user_pass'] = $hash((string) $userdata['user_pass']);
         }
+        // A new address or password ends a reset link already sent, as the reference ends it (an update hands the stored key back
+        // in, which is not a new one).
+        ['user_activation_key' => $storedKey] = $existing + ['user_activation_key' => ''];
+        $changesLogin = array_intersect_key($columns, ['user_email' => true, 'user_pass' => true]) !== [];
+        if (($resetKey === null || (string) $resetKey === (string) $storedKey) && $changesLogin && (string) $storedKey !== '') {
+            $columns += ['user_activation_key' => ''];
+        }
         return $columns;
     }
 }

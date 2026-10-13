@@ -41,7 +41,7 @@ foreach (array_slice($argv, 1) as $arg) {
 $json = static fn (string $path): ?array => is_file("{$root}/{$path}") ? json_decode((string) file_get_contents("{$root}/{$path}"), true) : null;
 $contains = static fn (string $path, string $text): bool => is_file("{$root}/{$path}") && str_contains((string) file_get_contents("{$root}/{$path}"), $text);
 
-// The audit's security findings, each with the check that pins it.
+// Every audit's and sweep's security findings, each with the check that pins it.
 $findings = [
     'File changes allowed under DISALLOW_FILE_MODS' => ['tests/tools/security-parity-probe.php', 'file_mod_allowed'],
     'Search reached non-public types' => ['tests/tools/security-parity-probe.php', 'search a non-public type, nobody'],
@@ -51,6 +51,29 @@ $findings = [
     'Redirect sanitizing let //host through' => ['tests/tools/security-parity-probe.php', 'wp_sanitize_redirect'],
     'Password cookies named their own work factor' => ['tests/unit/security-bounds.php', 'cookieUnlocks'],
     'Serialized data looped the decoder or revived objects' => ['tests/unit/security-bounds.php', 'Serialized::decode'],
+    // The sweep of 2026-10-13 (docs/security-review-2026-10-13.md).
+    'A URL scheme broken by a tab or line break reached links' => ['tests/unit/security-sweep.php', 'judged without the tabs'],
+    'Navigation class names reached the markup unescaped' => ['tests/tools/sweep-rules-probe.php', 'class name with a quote in it'],
+    'Two requests carrying input could pause a plugin for everyone' => ['tests/security-sweep.test.php', 'do not pause it'],
+    'Published posts of types nobody may query were shown' => ['tests/security-sweep.test.php', 'is not shown'],
+    'Safe requests reached reserved address ranges' => ['tests/tools/sweep-rules-probe.php', 'addresses a safe request refuses'],
+    'A post\'s terms were listed when the post could not be read' => ['tests/tools/rest-terms-for-post-probe.php', "set_query_params(['post' => \$id])"],
+    'Comments on a protected post were read and made without its password' => ['tests/tools/rest-protected-comments-probe.php', "'right' => 'pw'"],
+    'An unregistered duotone slug reached the markup' => ['tests/tools/sweep-rules-probe.php', "duotone preset"],
+    'Passwords of any length were hashed' => ['tests/unit/security-sweep.php', 'never hashed and never matches'],
+    'A reset key outlived a new address or password' => ['tests/tools/reset-key-changes-probe.php', 'rest password'],
+    'media_handle_upload dropped its overrides' => ['tests/security-sweep.test.php', 'refuses a type its overrides leave out'],
+    'A trusted-proxy wildcard made every visitor the proxy' => ['tests/unit/trusted-proxies.php', 'with any proxy trusted (*)'],
+    'Built-in types took the posts family\'s capabilities' => ['tests/tools/builtin-type-caps-probe.php', 'read_post private pattern'],
+    'A navigation showed a draft or private menu' => ['tests/tools/sweep-rules-probe.php', 'a navigation naming a'],
+    'The CLI deleted a file outside the plugins folder' => ['tests/security-sweep.test.php', 'deletes nothing'],
+    'The sign-in throttle raced and counted IPv6 by the address' => ['tests/unit/security-sweep.php', 'counts an IPv6 address by its /64'],
+    'A SQL mode could switch backslash escaping off' => ['tests/security-sweep.test.php', 'set_sql_mode keeps'],
+    'A string author list reached the SQL as typed' => ['tests/tools/sweep-rules-probe.php', "foreach (['author__in', 'author__not_in'] as \$var)"],
+    'Archive notes skipped the archive\'s limits' => ['tests/unit/security-sweep.php', '__MACOSX notes are checked'],
+    'Cookies for argon2 hashes never changed their key' => ['tests/unit/security-sweep.php', 'the cookie fragment'],
+    'An eject followed paths out of the webroot' => ['tests/unit/security-sweep.php', 'eject acts only'],
+    'A bound URL attribute kept any scheme' => ['tests/unit/security-sweep.php', 'keeps only an allowed scheme'],
 ];
 $fixed = count(array_filter($findings, static fn (array $pin): bool => $contains($pin[0], $pin[1])));
 

@@ -21,6 +21,16 @@ $configured = static function (array $ranges): TrustedProxies {
 };
 
 return [
+    'with any proxy trusted (*), the client is the address the proxy appended, not the proxy' => static function () use ($configured): bool|string {
+        $any = $configured(['*']);
+        $address = $any->clientAddress('10.0.0.5', '198.51.100.4');
+        $forged = $any->clientAddress('10.0.0.5', '203.0.113.66, 198.51.100.4');
+        return $address === '198.51.100.4' && $forged === '198.51.100.4' ? true : "{$address} / {$forged}";
+    },
+    'a declared range beside * still skips its own hops' => static function () use ($configured): bool|string {
+        $address = $configured(['*', '10.0.0.0/8'])->clientAddress('10.0.0.5', '198.51.100.4, 10.0.0.9');
+        return $address === '198.51.100.4' ? true : $address;
+    },
     'with nobody trusted, the connecting address is the client' => static function (): bool|string {
         $none = TrustedProxies::none();
         $address = $none->clientAddress('203.0.113.9', '198.51.100.4');

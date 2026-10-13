@@ -29,7 +29,15 @@ final class Archive
         }
         try {
             mkdir($stage, 0755, true);
-            if (!$archive->extractTo($stage)) {
+            // Only the folder's own entries are written: a Finder's __MACOSX/ notes stay in the archive.
+            $entries = [];
+            for ($i = 0; $i < $archive->numFiles; $i++) {
+                $name = (string) $archive->getNameIndex($i);
+                if ($name === $top || str_starts_with($name, $top . '/')) {
+                    $entries[] = $name;
+                }
+            }
+            if ($entries === [] || !$archive->extractTo($stage, $entries)) {
                 throw new RestError('extract_failed', 'The archive could not be unpacked.', 500);
             }
             return "{$stage}/{$top}";
@@ -53,9 +61,6 @@ final class Archive
             $bytes = 0;
             for ($i = 0; $i < $archive->numFiles; $i++) {
                 $name = (string) $archive->getNameIndex($i);
-                if (str_starts_with($name, '__MACOSX/')) {
-                    continue;
-                }
                 if ($name === '' || str_starts_with($name, '/') || str_contains($name, '..') || str_contains($name, "\0") || str_contains($name, '\\')) {
                     throw new RestError('bad_archive', 'The archive holds a path that leaves its folder.', 400);
                 }
@@ -65,6 +70,10 @@ final class Archive
                 $bytes += (int) (($archive->statIndex($i) ?: [])['size'] ?? 0);
                 if ($bytes > self::MAX_BYTES) {
                     throw new RestError('bad_archive', 'The archive unpacks to more than ' . (int) (self::MAX_BYTES / 1048576) . ' MB.', 400);
+                }
+                // A Finder's __MACOSX/ notes are checked and counted like any entry, but are no folder of the archive's.
+                if (str_starts_with($name, '__MACOSX/')) {
+                    continue;
                 }
                 $first = explode('/', $name, 2)[0];
                 if ($top !== null && $first !== $top) {
