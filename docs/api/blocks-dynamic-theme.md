@@ -4,8 +4,8 @@ the template blocks a block theme composes with
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`Comments`](#comments) | final readonly class | 266 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
-| [`Navigation`](#navigation) | final readonly class | 517 | navigation, navigation-link, page-list. A navigation block's items come |
+| [`Comments`](#comments) | final readonly class | 271 | comments, comments-title, comment-template, the comment-* blocks, and the comment form. |
+| [`Navigation`](#navigation) | final readonly class | 518 | navigation, navigation-link, page-list. A navigation block's items come |
 | [`PostBlocks`](#postblocks) | final readonly class | 260 | The post-* blocks: they render the context's current post. |
 | [`QueryBlocks`](#queryblocks) | final class | 283 | query, post-template, query-title, query-no-results, query-pagination, query-total. |
 | [`Structure`](#structure) | final readonly class | 105 | template-part, pattern, site-title, site-tagline, site-logo. |
@@ -37,7 +37,7 @@ drops it (RowCache).
 
 - `@param array<string, mixed> $vars`
 
-Internals: `comments()` (private, line 53), `title()` (private, line 67), `template()` (private, line 102), `records()` (private, line 126), `count()` (private, line 139), `list()` (private, line 145), `avatar()` (private, line 176), `authorAvatar()` (private, line 188), `date()` (private, line 204), `commentPost()` (private, line 220), `authorName()` (private, line 226), `content()` (private, line 240), `replyLink()` (private, line 251), `form()` (private, line 264), `commentForm()` (private, line 279)
+Internals: `comments()` (private, line 55), `title()` (private, line 69), `template()` (private, line 109), `records()` (private, line 133), `count()` (private, line 146), `list()` (private, line 152), `avatar()` (private, line 183), `authorAvatar()` (private, line 195), `date()` (private, line 211), `commentPost()` (private, line 227), `authorName()` (private, line 233), `content()` (private, line 247), `replyLink()` (private, line 258), `form()` (private, line 271), `commentForm()` (private, line 286)
 
 
 ## Navigation
@@ -76,7 +76,7 @@ that opens on hover, the init watcher, and its tab index.
 
 Registers this family's blocks with the renderer.
 
-Internals: `wiring()` (private, line 68), `navigation()` (private, line 95), `responsive()` (private, line 176), `items()` (private, line 212), `groups()` (private, line 234), `filteredItems()` (private, line 260), `linkedPosts()` (private, line 282), `weighLinks()` (private, line 295), `linkable()` (private, line 310), `presetClasses()` (private, line 321), `overlayColors()` (private, line 343), `link()` (private, line 355), `submenu()` (private, line 390), `overlayClose()` (private, line 415), `classicItems()` (private, line 426), `pageList()` (private, line 432), `submenuColours()` (private, line 452), `ancestorsOf()` (private, line 468), `pageItems()` (private, line 495), `navParent()` (private, line 526), `menuPost()` (private, line 535), `enqueueView()` (private, line 545)
+Internals: `wiring()` (private, line 68), `navigation()` (private, line 95), `responsive()` (private, line 176), `items()` (private, line 213), `groups()` (private, line 235), `filteredItems()` (private, line 261), `linkedPosts()` (private, line 283), `weighLinks()` (private, line 296), `linkable()` (private, line 311), `presetClasses()` (private, line 322), `overlayColors()` (private, line 344), `link()` (private, line 356), `submenu()` (private, line 391), `overlayClose()` (private, line 416), `classicItems()` (private, line 427), `pageList()` (private, line 433), `submenuColours()` (private, line 453), `ancestorsOf()` (private, line 469), `pageItems()` (private, line 496), `navParent()` (private, line 527), `menuPost()` (private, line 536), `enqueueView()` (private, line 546)
 
 
 ## PostBlocks

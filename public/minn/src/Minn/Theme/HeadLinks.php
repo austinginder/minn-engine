@@ -67,6 +67,6 @@ final readonly class HeadLinks
         if ($json === null) {
             return '';
         }
-        return '<link rel="alternate" title="JSON" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
+        return '<link rel="alternate" title="' . Html::attr(Gettext::inContext('JSON', 'REST API resource link name')) . '" type="application/json" href="' . Html::attr($this->permalinks->url('/wp-json' . $json)) . '" />';
     }
 }

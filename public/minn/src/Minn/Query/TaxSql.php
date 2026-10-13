@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Query;
 
 use Closure;
+use Minn\I18n\Gettext;
+use Minn\Runtime\Runtime;
 
 /**
  * The JOIN and WHERE fragments of a taxonomy query in the reference's
@@ -145,6 +147,13 @@ final class TaxSql
     public function clauseSql(array &$clause, array $parent): array
     {
         $clause += ['taxonomy' => '', 'terms' => [], 'field' => 'term_id', 'operator' => 'IN', 'include_children' => true];
+        // A clause on a taxonomy that is not registered (or on none, unless it names term_taxonomy_ids) is an
+        // error, its message asked as the reference makes it, and matches nothing, whatever its operator (probe query-clauses).
+        $taxonomy = (string) $clause['taxonomy'];
+        if ($taxonomy === '' ? $clause['field'] !== 'term_taxonomy_id' : Runtime::registry()->taxonomy($taxonomy) === null) {
+            Gettext::text('Invalid taxonomy.');
+            return ['where' => ['0 = 1'], 'join' => []];
+        }
         $operator = self::operator($clause);
         $object = "{$this->primaryTable}.{$this->primaryId}";
         if ($operator === 'EXISTS' || $operator === 'NOT EXISTS') {

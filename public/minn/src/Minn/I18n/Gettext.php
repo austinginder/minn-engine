@@ -31,6 +31,9 @@ final class Gettext
     public static function text(string $text, string $domain = 'default'): string
     {
         $translation = self::lookup($domain, Catalog::key($text, null)) ?? $text;
+        if (!self::hooked()) {
+            return $translation;
+        }
         $translation = \apply_filters('gettext', $translation, $text, $domain);
         return (string) \apply_filters("gettext_{$domain}", $translation, $text, $domain);
     }
@@ -39,6 +42,9 @@ final class Gettext
     public static function inContext(string $text, string $context, string $domain = 'default'): string
     {
         $translation = self::lookup($domain, Catalog::key($text, $context)) ?? $text;
+        if (!self::hooked()) {
+            return $translation;
+        }
         $translation = \apply_filters('gettext_with_context', $translation, $text, $context, $domain);
         return (string) \apply_filters("gettext_with_context_{$domain}", $translation, $text, $context, $domain);
     }
@@ -47,6 +53,9 @@ final class Gettext
     public static function plural(string $single, string $plural, int $number, string $domain = 'default'): string
     {
         $translation = self::pluralForm($single, $plural, $number, $domain, null);
+        if (!self::hooked()) {
+            return $translation;
+        }
         $translation = \apply_filters('ngettext', $translation, $single, $plural, $number, $domain);
         return (string) \apply_filters("ngettext_{$domain}", $translation, $single, $plural, $number, $domain);
     }
@@ -55,8 +64,17 @@ final class Gettext
     public static function pluralInContext(string $single, string $plural, int $number, string $context, string $domain = 'default'): string
     {
         $translation = self::pluralForm($single, $plural, $number, $domain, $context);
+        if (!self::hooked()) {
+            return $translation;
+        }
         $translation = \apply_filters('ngettext_with_context', $translation, $single, $plural, $number, $context, $domain);
         return (string) \apply_filters("ngettext_with_context_{$domain}", $translation, $single, $plural, $number, $context, $domain);
+    }
+
+    /** Whether the hook API is loaded: without it (an engine CLI verb, a unit case) a message stands unfiltered. */
+    private static function hooked(): bool
+    {
+        return \function_exists('apply_filters');
     }
 
     /** A domain's translation of a message key, or null (no runtime to have loaded one, no file, no entry). */

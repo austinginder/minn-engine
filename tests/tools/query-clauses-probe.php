@@ -123,6 +123,11 @@ $taxCases = [
     'nested' => ['relation' => 'AND', ['taxonomy' => 'zz_cf', 'field' => 'slug', 'terms' => ['zz-cf-one']], ['relation' => 'OR', ['taxonomy' => 'zz_ct', 'field' => 'slug', 'terms' => ['zz-ct-other']], ['taxonomy' => 'zz_ct', 'field' => 'slug', 'terms' => ['zz-ct-child'], 'operator' => 'NOT IN']]],
     'no such term' => [['taxonomy' => 'zz_ct', 'field' => 'slug', 'terms' => ['zz-ct-none']]],
     'no such taxonomy' => [['taxonomy' => 'zz_none', 'field' => 'slug', 'terms' => ['x']]],
+    'no such taxonomy, exists' => [['taxonomy' => 'zz_none', 'operator' => 'EXISTS']],
+    'no such taxonomy, not in' => [['taxonomy' => 'zz_none', 'terms' => [5], 'operator' => 'NOT IN']],
+    'no such taxonomy, no terms' => [['taxonomy' => 'zz_none', 'terms' => []]],
+    'no taxonomy, by id' => [['taxonomy' => '', 'terms' => [1]]],
+    'no taxonomy, by term_taxonomy_id' => [['taxonomy' => '', 'field' => 'term_taxonomy_id', 'terms' => [1]]],
     'empty' => [],
 ];
 foreach ($taxCases as $label => $query) {

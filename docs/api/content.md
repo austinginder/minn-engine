@@ -43,7 +43,7 @@ the repositories and records: posts, users, terms, comments, and the render pipe
 | [`TermRecord`](#termrecord) | final readonly class | 88 | One term with its taxonomy row, read by name: $term->name, ->slug, |
 | [`Terms`](#terms) | final readonly class | 219 |  |
 | [`TextFilters`](#textfilters) | final class | 161 | The small text filters the reference runs over content, titles and |
-| [`Texturize`](#texturize) | final class | 241 | The texturize subset the reference applies to rendered text: straight |
+| [`Texturize`](#texturize) | final class | 269 | The texturize subset the reference applies to rendered text: straight |
 | [`UserRecord`](#userrecord) | final readonly class | 96 | One row of the users table, read by name. Columns keep their WordPress |
 | [`Users`](#users) | final readonly class | 286 |  |
 
@@ -2158,6 +2158,14 @@ holds for the rest of the request (probe filter-inputs-3).
 
 Has the next text ask run_wptexturize again (wptexturize's reset), unless the answer was already no.
 
+### static `characters(): array`
+
+The characters texturizing writes, as the site's language writes them
+(each asked by its translation context, as the reference asks them):
+the dashes, the curly quotes, the apostrophe and the primes.
+
+- `@return array{en: string, em: string, open1: string, close1: string, apostrophe: string, open2: string, close2: string, prime: string, prime2: string}`
+
 ### static `skipPattern(): string`
 
 The elements whose text stays as written (no_texturize_tags: pre, code,
@@ -2210,7 +2218,7 @@ double quote becomes the closing quote, and a single one does only
 where a word ends (before the end, whitespace, a no-break space or
 . , ; : ! ? ) ] } -), staying an apostrophe or opening quote elsewhere.
 
-Internals: `shortcodePattern()` (private, line 117), `quiet()` (private, line 136), `endsWord()` (private, line 251)
+Internals: `shortcodePattern()` (private, line 144), `quiet()` (private, line 163), `endsWord()` (private, line 280)
 
 
 ## UserRecord

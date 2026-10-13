@@ -31,8 +31,8 @@ final readonly class Search
     public function render(Block $block, Renderer $renderer): string
     {
         $id = 'wp-block-search__input-' . $renderer->state()->nextId();
-        $label = (string) $block->attr('label', 'Search');
-        $buttonText = (string) $block->attr('buttonText', 'Search');
+        $label = (string) $block->attr('label', \Minn\I18n\Gettext::text('Search'));
+        $buttonText = (string) $block->attr('buttonText', \Minn\I18n\Gettext::text('Search'));
         $placeholder = (string) $block->attr('placeholder', '');
         $value = $renderer->context()->resolution->search ?? '';
         $position = (string) $block->attr('buttonPosition', 'button-outside');

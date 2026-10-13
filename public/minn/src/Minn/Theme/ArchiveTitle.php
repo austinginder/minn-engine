@@ -8,6 +8,8 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Minn\Front\Kind;
 use Minn\Front\Resolution;
+use Minn\I18n\Gettext;
+use Minn\I18n\LocalDates;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 
@@ -25,25 +27,25 @@ final class ArchiveTitle
      * The archive title's prefix and title for a resolution.
      *
      * @param string|null $dateFormat the site's date_format option, for day archives
-     * @return array{string, string} the label (no colon) and the escaped bare name; both empty when the view has none
+     * @return array{string, string} the prefix (its colon included, in the site's language) and the escaped bare name; both empty when the view has none
      */
     public static function parts(Resolution $resolution, ?string $dateFormat): array
     {
         $record = $resolution->record ?? [];
         return match ($resolution->kind) {
-            Kind::Category => ['Category', Html::esc((string) ($record['name'] ?? ''))],
-            Kind::Tag => ['Tag', Html::esc((string) ($record['name'] ?? ''))],
-            Kind::Taxonomy => [self::taxonomyLabel((string) ($record['taxonomy'] ?? '')), Html::esc((string) ($record['name'] ?? ''))],
-            Kind::Author => ['Author', Html::esc((string) ($record['display_name'] ?? $resolution->authorName ?? ''))],
+            Kind::Category => [Gettext::inContext('Category:', 'category archive title prefix'), Html::esc((string) ($record['name'] ?? ''))],
+            Kind::Tag => [Gettext::inContext('Tag:', 'tag archive title prefix'), Html::esc((string) ($record['name'] ?? ''))],
+            Kind::Taxonomy => [sprintf(Gettext::inContext('%s:', 'taxonomy term archive title prefix'), self::taxonomyLabel((string) ($record['taxonomy'] ?? ''))), Html::esc((string) ($record['name'] ?? ''))],
+            Kind::Author => [Gettext::inContext('Author:', 'author archive title prefix'), Html::esc((string) ($record['display_name'] ?? $resolution->authorName ?? ''))],
             Kind::Date => self::dateParts($resolution->date, $dateFormat),
             default => ['', ''],
         };
     }
 
-    /** The reference's prefixed shape: `Category: <span>Uncategorized</span>`. */
-    public static function compose(string $label, string $name): string
+    /** The reference's prefixed shape, `Category: <span>Uncategorized</span>`, through the language's own order. */
+    public static function compose(string $prefix, string $name): string
     {
-        return $label . ': <span>' . $name . '</span>';
+        return sprintf(Gettext::inContext('%1$s %2$s', 'archive title'), $prefix, '<span>' . $name . '</span>');
     }
 
     /**
@@ -58,12 +60,13 @@ final class ArchiveTitle
         [$year, $month, $day] = $date;
         $utc = new DateTimeZone('UTC');
         if ($day !== null) {
-            return ['Day', (new DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, $month, $day), $utc))->format($dateFormat !== null && $dateFormat !== '' ? $dateFormat : 'F j, Y')];
+            $format = $dateFormat !== null && $dateFormat !== '' ? $dateFormat : Gettext::inContext('F j, Y', 'daily archives date format');
+            return [Gettext::inContext('Day:', 'date archive title prefix'), LocalDates::format(new DateTimeImmutable(sprintf('%04d-%02d-%02d', $year, $month, $day), $utc), $format)];
         }
         if ($month !== null) {
-            return ['Month', (new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month), $utc))->format('F Y')];
+            return [Gettext::inContext('Month:', 'date archive title prefix'), LocalDates::format(new DateTimeImmutable(sprintf('%04d-%02d-01', $year, $month), $utc), Gettext::inContext('F Y', 'monthly archives date format'))];
         }
-        return ['Year', (string) $year];
+        return [Gettext::inContext('Year:', 'date archive title prefix'), LocalDates::format(new DateTimeImmutable(sprintf('%04d-01-01', $year), $utc), Gettext::inContext('Y', 'yearly archives date format'))];
     }
 
     /** The singular label a plugin registered for its taxonomy, for the archive title prefix. */

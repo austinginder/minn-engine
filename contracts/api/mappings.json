@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 832,
-        "composes": 2405,
+        "minn": 833,
+        "composes": 2402,
         "leaf": 1030,
-        "noop": 2740,
+        "noop": 2742,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8701,
-        "minnMethods": 1026,
+        "minnMethods": 1028,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -36542,6 +36542,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "wp_get_current_commenter"
             ]
         },
@@ -36573,16 +36574,19 @@
         },
         "_minn_comment_form_args": {
             "file": "comment.php",
-            "lines": 33,
+            "lines": 34,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\Runtime::current",
                 "Minn\\Runtime\\Runtime::get"
             ],
             "composes": [
+                "__",
                 "_minn_comment_form_fields",
+                "_x",
                 "apply_filters",
                 "esc_html",
+                "esc_html__",
                 "esc_url",
                 "get_edit_profile_url",
                 "get_option",
@@ -36619,8 +36623,10 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "_minn_comment_cookies_field",
                 "esc_attr",
+                "esc_html__",
                 "get_option",
                 "has_action",
                 "wp_get_current_commenter"
@@ -44348,6 +44354,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "_get_comment_reply_id",
                 "get_comment",
                 "get_comment_author"
@@ -44892,8 +44899,10 @@
         "date_i18n": {
             "file": "functions.php",
             "lines": 7,
-            "kind": "composes",
-            "minn": [],
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\LocalDates::format"
+            ],
             "composes": [
                 "apply_filters",
                 "current_time",
@@ -48548,6 +48557,8 @@
                 "Minn\\Runtime\\CommentPages::shown"
             ],
             "composes": [
+                "__",
+                "_x",
                 "add_query_arg",
                 "apply_filters",
                 "comments_open",
@@ -49494,16 +49505,12 @@
         },
         "get_language_attributes": {
             "file": "template.php",
-            "lines": 14,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "esc_attr",
-                "get_bloginfo",
-                "get_option",
-                "is_rtl"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\I18n\\SiteLanguage::attributes"
+            ],
+            "composes": []
         },
         "get_lastcommentmodified": {
             "file": "comment.php",
@@ -49670,16 +49677,12 @@
         },
         "get_locale": {
             "file": "l10n.php",
-            "lines": 9,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::locales",
-                "Minn\\Runtime\\Runtime::site->option"
+                "Minn\\I18n\\SiteLanguage::locale"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "get_locale_stylesheet_uri": {
             "file": "theme.php",
@@ -49982,6 +49985,7 @@
                 "Minn\\Runtime\\TermQuery::objectsIn"
             ],
             "composes": [
+                "__",
                 "_minn_term_query",
                 "taxonomy_exists",
                 "wp_parse_args"
@@ -51782,6 +51786,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "_minn_term_numbers",
                 "_minn_term_row",
                 "apply_filters",
@@ -51811,6 +51816,7 @@
                 "Minn\\Runtime\\TermQuery::children"
             ],
             "composes": [
+                "__",
                 "_minn_term_query",
                 "taxonomy_exists"
             ]
@@ -51904,6 +51910,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "apply_filters",
                 "taxonomy_exists",
                 "wp_parse_args"
@@ -54335,6 +54342,7 @@
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "is_wp_error",
                 "taxonomy_exists",
                 "wp_get_object_terms"
@@ -63002,6 +63010,7 @@
                 "Minn\\Runtime\\Runtime::registry"
             ],
             "composes": [
+                "__",
                 "do_action",
                 "get_taxonomy",
                 "taxonomy_exists"
@@ -67377,9 +67386,11 @@
         },
         "wp_date": {
             "file": "functions.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
+            "lines": 7,
+            "kind": "minn",
+            "minn": [
+                "Minn\\I18n\\LocalDates::format"
+            ],
             "composes": [
                 "apply_filters",
                 "wp_timezone"
@@ -69985,6 +69996,7 @@
                 "Minn\\Runtime\\ObjectTerms::byTaxonomyArgs"
             ],
             "composes": [
+                "__",
                 "apply_filters",
                 "get_terms",
                 "taxonomy_exists",
@@ -71373,6 +71385,7 @@
                 "Minn\\Runtime\\TermSave::insert"
             ],
             "composes": [
+                "__",
                 "taxonomy_exists"
             ]
         },
@@ -73344,6 +73357,7 @@
             ],
             "composes": [
                 "apply_filters",
+                "esc_attr_x",
                 "esc_url",
                 "get_permalink",
                 "home_url",
@@ -75072,6 +75086,7 @@
                 "Minn\\Runtime\\TermWriter::unrelate"
             ],
             "composes": [
+                "__",
                 "_minn_term_writer",
                 "taxonomy_exists",
                 "term_exists",
@@ -76101,6 +76116,7 @@
                 "Minn\\Runtime\\TermWriter::relate"
             ],
             "composes": [
+                "__",
                 "_minn_term_writer",
                 "do_action",
                 "is_wp_error",
@@ -77722,6 +77738,7 @@
                 "Minn\\Runtime\\TermSave::update"
             ],
             "composes": [
+                "__",
                 "taxonomy_exists"
             ]
         },

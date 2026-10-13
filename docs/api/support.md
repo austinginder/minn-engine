@@ -322,7 +322,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Theme\PatternText`
 
 ### static `post(string $html): string`
 
@@ -715,6 +715,8 @@ without this class changing.
 - const `LIST_ITEM_SEPARATOR` = `', '`
 - const `WORD_COUNT_TYPE` = `'words'`
 - const `TEXT_DIRECTION` = `'ltr'`
+
+Used by: `Minn\I18n\LocalDates`
 
 ### static `weekdayInitial(string $day): string`
 

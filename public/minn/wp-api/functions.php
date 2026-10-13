@@ -55,7 +55,8 @@ function wp_date($format, $timestamp = null, $timezone = null)
     $timezone ??= wp_timezone();
     $datetime = date_create('@' . $timestamp);
     $datetime->setTimezone($timezone);
-    $date = $datetime->format($format);
+    // The names in the site's language, as the reference's wp_date writes them.
+    $date = Minn\I18n\LocalDates::format($datetime, (string) $format);
     return apply_filters('wp_date', $date, $format, $timestamp, $timezone);
 }
 
@@ -66,7 +67,7 @@ function date_i18n($format, $timestamp_with_offset = false, $gmt = false)
     // as-is, attached to the site timezone only for timezone-name formats.
     $timezone = $gmt ? new DateTimeZone('UTC') : wp_timezone();
     $datetime = date_create(gmdate('Y-m-d H:i:s', $timestamp), $timezone);
-    $date = $datetime->format($format);
+    $date = Minn\I18n\LocalDates::format($datetime, (string) $format);
     return apply_filters('date_i18n', $date, $format, $timestamp_with_offset, $gmt);
 }
 

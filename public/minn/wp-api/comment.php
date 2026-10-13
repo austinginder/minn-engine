@@ -966,7 +966,7 @@ function get_comments_pagenum_link($pagenum = 1, $max_page = 0)
 /** The reply link for a comment, within the depth allowed and while comments stay open. */
 function get_comment_reply_link($args = [], $comment = null, $post = null)
 {
-    $args = wp_parse_args($args, ['add_below' => 'comment', 'respond_id' => 'respond', 'reply_text' => 'Reply', 'reply_to_text' => 'Reply to %s', 'login_text' => 'Log in to Reply', 'max_depth' => 0, 'depth' => 0, 'before' => '', 'after' => '', 'show_reply_to_text' => false]);
+    $args = wp_parse_args($args, ['add_below' => 'comment', 'respond_id' => 'respond', 'reply_text' => _x('Reply', 'verb'), 'reply_to_text' => __('Reply to %s'), 'login_text' => __('Log in to Reply'), 'max_depth' => 0, 'depth' => 0, 'before' => '', 'after' => '', 'show_reply_to_text' => false]);
     if ((int) $args['depth'] === 0 || (int) $args['max_depth'] <= (int) $args['depth']) {
         return null;
     }
@@ -1093,8 +1093,8 @@ function get_cancel_comment_reply_link($link_text = '', $post = null)
 /** The form heading: a reply to a named comment, or the plain title. */
 function comment_form_title($no_reply_text = false, $reply_text = false, $link_to_parent = true, $post = null)
 {
-    $no_reply_text = $no_reply_text === false ? 'Leave a Reply' : $no_reply_text;
-    $reply_text = $reply_text === false ? 'Leave a Reply to %s' : $reply_text;
+    $no_reply_text = $no_reply_text === false ? __('Leave a Reply') : $no_reply_text;
+    $reply_text = $reply_text === false ? __('Leave a Reply to %s') : $reply_text;
     $reply_id = _get_comment_reply_id($post);
     $reply_to = $reply_id > 0 ? get_comment($reply_id) : null;
     if ($reply_to === null) {
@@ -1262,12 +1262,12 @@ function _minn_comment_form_fields(): array
 {
     $commenter = wp_get_current_commenter();
     $req = (bool) get_option('require_name_email');
-    $required = $req ? ' <span class="required">*</span>' : '';
+    $required = $req ? ' <span class="required">' . esc_html__('*') . '</span>' : '';
     $attr = $req ? ' required' : '';
     $fields = [
-        'author' => '<p class="comment-form-author"><label for="author">Name' . $required . '</label> <input id="author" name="author" type="text" value="' . esc_attr($commenter['comment_author']) . '" size="30" maxlength="245" autocomplete="name"' . $attr . ' /></p>',
-        'email' => '<p class="comment-form-email"><label for="email">Email' . $required . '</label> <input id="email" name="email" type="email" value="' . esc_attr($commenter['comment_author_email']) . '" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email"' . $attr . ' /></p>',
-        'url' => '<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="url" value="' . esc_attr($commenter['comment_author_url']) . '" size="30" maxlength="200" autocomplete="url" /></p>',
+        'author' => '<p class="comment-form-author"><label for="author">' . __('Name') . $required . '</label> <input id="author" name="author" type="text" value="' . esc_attr($commenter['comment_author']) . '" size="30" maxlength="245" autocomplete="name"' . $attr . ' /></p>',
+        'email' => '<p class="comment-form-email"><label for="email">' . __('Email') . $required . '</label> <input id="email" name="email" type="email" value="' . esc_attr($commenter['comment_author_email']) . '" size="30" maxlength="100" aria-describedby="email-notes" autocomplete="email"' . $attr . ' /></p>',
+        'url' => '<p class="comment-form-url"><label for="url">' . __('Website') . '</label> <input id="url" name="url" type="url" value="' . esc_attr($commenter['comment_author_url']) . '" size="30" maxlength="200" autocomplete="url" /></p>',
     ];
     if (get_option('show_comments_cookies_opt_in') && has_action('set_comment_cookies', 'wp_set_comment_cookies')) {
         $fields['cookies'] = _minn_comment_cookies_field();
@@ -1279,7 +1279,7 @@ function _minn_comment_form_fields(): array
 function _minn_comment_cookies_field(): string
 {
     $consent = empty(wp_get_current_commenter()['comment_author_email']) ? '' : ' checked';
-    return '<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"' . $consent . ' /> <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>';
+    return '<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes"' . $consent . ' /> <label for="wp-comment-cookies-consent">' . __('Save my name, email, and website in this browser for the next time I comment.') . '</label></p>';
 }
 
 /** @internal the comment form's arguments after the defaults and filters */
@@ -1289,13 +1289,14 @@ function _minn_comment_form_args($args, WP_Post $post): array
     $req = (bool) get_option('require_name_email');
     $block = (bool) Runtime::current()->get('block_theme', false);
     $custom_button = is_array($args) && (isset($args['submit_button']) || isset($args['submit_field']));
+    $marked = $req ? '<span class="required-field-message">' . sprintf(__('Required fields are marked %s'), '<span class="required">' . esc_html__('*') . '</span>') . '</span>' : '';
     $defaults = [
         'fields' => apply_filters('comment_form_default_fields', _minn_comment_form_fields()),
-        'comment_field' => '<p class="comment-form-comment"><label for="comment">Comment <span class="required">*</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p>',
-        'must_log_in' => '<p class="must-log-in">You must be <a href="' . esc_url(wp_login_url(get_permalink($post->ID))) . '">logged in</a> to post a comment.</p>',
+        'comment_field' => '<p class="comment-form-comment"><label for="comment">' . _x('Comment', 'noun') . ' <span class="required">' . esc_html__('*') . '</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p>',
+        'must_log_in' => '<p class="must-log-in">' . sprintf(__('You must be <a href="%s">logged in</a> to post a comment.'), esc_url(wp_login_url(get_permalink($post->ID)))) . '</p>',
         // As the reference writes it: the name, the profile and log-out links, and the required-fields note.
-        'logged_in_as' => '<p class="logged-in-as">Logged in as ' . esc_html($user->display_name) . '. <a href="' . get_edit_profile_url() . '">Edit your profile</a>. <a href="' . wp_logout_url(apply_filters('the_permalink', get_permalink($post->ID), $post->ID)) . '">Log out?</a> ' . ($req ? '<span class="required-field-message">Required fields are marked <span class="required">*</span></span>' : '') . '</p>',
-        'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> ' . ($req ? '<span class="required-field-message">Required fields are marked <span class="required">*</span></span>' : '') . '</p>',
+        'logged_in_as' => '<p class="logged-in-as">' . sprintf(__('Logged in as %1$s. <a href="%2$s">Edit your profile</a>. <a href="%3$s">Log out?</a>'), esc_html($user->display_name), get_edit_profile_url(), wp_logout_url(apply_filters('the_permalink', get_permalink($post->ID), $post->ID))) . ' ' . $marked . '</p>',
+        'comment_notes_before' => '<p class="comment-notes"><span id="email-notes">' . __('Your email address will not be published.') . '</span> ' . $marked . '</p>',
         'comment_notes_after' => '',
         'action' => site_url('/wp-comments-post.php'),
         'id_form' => 'commentform',
@@ -1304,14 +1305,14 @@ function _minn_comment_form_args($args, WP_Post $post): array
         'class_form' => 'comment-form',
         'class_submit' => $block && !$custom_button ? 'submit wp-block-button__link wp-element-button' : 'submit',
         'name_submit' => 'submit',
-        'title_reply' => 'Leave a Reply',
-        'title_reply_to' => 'Leave a Reply to %s',
+        'title_reply' => __('Leave a Reply'),
+        'title_reply_to' => __('Leave a Reply to %s'),
         'title_reply_before' => '<h3 id="reply-title" class="comment-reply-title">',
         'title_reply_after' => '</h3>',
         'cancel_reply_before' => ' <small>',
         'cancel_reply_after' => '</small>',
-        'cancel_reply_link' => 'Cancel reply',
-        'label_submit' => 'Post Comment',
+        'cancel_reply_link' => __('Cancel reply'),
+        'label_submit' => __('Post Comment'),
         'submit_button' => '<input name="%1$s" type="submit" id="%2$s" class="%3$s" value="%4$s" />',
         'submit_field' => $block ? '<p class="form-submit wp-block-button">%1$s %2$s</p>' : '<p class="form-submit">%1$s %2$s</p>',
         'format' => 'xhtml',

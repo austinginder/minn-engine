@@ -117,6 +117,8 @@ final class Plugins
         }
         // The current user is settled here, as WP::init() settles it, with every plugin's determine_current_user in place.
         CurrentUser::settle($runtime);
+        // The built-in types and taxonomies take their labels in the site's language, as the reference registers them again on init.
+        Runtime::registry()->translateBuiltIns();
         $hooks->action('init', []);
         $hooks->action('wp_loaded', []);
     }

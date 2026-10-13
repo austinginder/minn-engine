@@ -6,14 +6,14 @@ shared SQL fragments
 |---|---|---|---|
 | [`AuthorPostsSql`](#authorpostssql) | final class | 30 | get_posts_by_author_sql as the reference writes it: for each type, its |
 | [`CommentOrder`](#commentorder) | final class | 100 | WP_Comment_Query's ORDER BY and LIMIT as the reference writes them |
-| [`DateSql`](#datesql) | final class | 301 | The WHERE fragment of a date query in the reference's shape: before and |
+| [`DateSql`](#datesql) | final class | 303 | The WHERE fragment of a date query in the reference's shape: before and |
 | [`MetaSql`](#metasql) | final class | 291 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
 | [`NetworkSql`](#networksql) | final class | 257 | The SQL WP_Site_Query and WP_Network_Query build from their variables |
 | [`PostOrder`](#postorder) | final class | 118 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
-| [`TaxSql`](#taxsql) | final class | 190 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
+| [`TaxSql`](#taxsql) | final class | 197 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
 
 ## AuthorPostsSql
 
@@ -168,7 +168,7 @@ in the site's zone. Missing parts start (or end) the unit.
 
 A comparison upper-cased, = for anything the reference does not know.
 
-Internals: `validDate()` (private, line 82), `partExpressions()` (private, line 251), `group()` (private, line 259), `clause()` (private, line 273)
+Internals: `validDate()` (private, line 83), `partExpressions()` (private, line 254), `group()` (private, line 262), `clause()` (private, line 276)
 
 
 ## MetaSql
@@ -597,5 +597,5 @@ or joins anew, and keeps that alias. A term nobody has yields "0 = 1"
 
 The alias of an IN sibling the clause can share under OR (find_compatible_table_alias), or false.
 
-Internals: `operator()` (private, line 185), `inClause()` (private, line 192)
+Internals: `operator()` (private, line 194), `inClause()` (private, line 201)
 

@@ -1,0 +1,3217 @@
+{
+ "_about": "The messages the built-in post types, taxonomies and statuses register their labels with, captured from the reference (a gettext log over create_initial_post_types and create_initial_taxonomies): label => [English, context or null]. Registry::translateBuiltIns() asks each on init.",
+ "post_types": {
+  "post": {
+   "label": [
+    "Posts",
+    "post type general name"
+   ],
+   "name": [
+    "Posts",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Post",
+    "post type singular name"
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "All Posts",
+    null
+   ],
+   "archives": [
+    "Post Archives",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Posts",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Post",
+    "add new from admin bar"
+   ]
+  },
+  "page": {
+   "label": [
+    "Pages",
+    "post type general name"
+   ],
+   "name": [
+    "Pages",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Page",
+    "add new from admin bar"
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Page",
+    null
+   ],
+   "edit_item": [
+    "Edit Page",
+    null
+   ],
+   "new_item": [
+    "New Page",
+    null
+   ],
+   "view_item": [
+    "View Page",
+    null
+   ],
+   "view_items": [
+    "View Pages",
+    null
+   ],
+   "search_items": [
+    "Search Pages",
+    null
+   ],
+   "not_found": [
+    "No pages found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No pages found in Trash.",
+    null
+   ],
+   "parent_item_colon": [
+    "Parent Page:",
+    null
+   ],
+   "all_items": [
+    "All Pages",
+    null
+   ],
+   "archives": [
+    "Page Archives",
+    null
+   ],
+   "attributes": [
+    "Page Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into page",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this page",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "page"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "page"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "page"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "page"
+   ],
+   "filter_items_list": [
+    "Filter pages list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Pages list navigation",
+    null
+   ],
+   "items_list": [
+    "Pages list",
+    null
+   ],
+   "item_published": [
+    "Page published.",
+    null
+   ],
+   "item_published_privately": [
+    "Page published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Page reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Page trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Page scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Page updated.",
+    null
+   ],
+   "item_link": [
+    "Page Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a page.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Pages",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Page",
+    "add new from admin bar"
+   ]
+  },
+  "attachment": {
+   "label": [
+    "Media",
+    "post type general name"
+   ],
+   "name": [
+    "Media",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Media",
+    "post type general name"
+   ],
+   "add_new": [
+    "Add Media File",
+    null
+   ],
+   "add_new_item": [
+    "Add Media File",
+    null
+   ],
+   "edit_item": [
+    "Edit Media",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Media File",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Media",
+    "post type general name"
+   ],
+   "archives": [
+    "Media",
+    "post type general name"
+   ],
+   "attributes": [
+    "Attachment Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Media",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Media",
+    "add new from admin bar"
+   ]
+  },
+  "revision": {
+   "label": [
+    "Revisions",
+    null
+   ],
+   "name": [
+    "Revisions",
+    null
+   ],
+   "singular_name": [
+    "Revision",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Revisions",
+    null
+   ],
+   "archives": [
+    "Revisions",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Revisions",
+    null
+   ],
+   "name_admin_bar": [
+    "Revision",
+    null
+   ]
+  },
+  "nav_menu_item": {
+   "label": [
+    "Navigation Menu Items",
+    null
+   ],
+   "name": [
+    "Navigation Menu Items",
+    null
+   ],
+   "singular_name": [
+    "Navigation Menu Item",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Navigation Menu Items",
+    null
+   ],
+   "archives": [
+    "Navigation Menu Items",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Navigation Menu Items",
+    null
+   ],
+   "name_admin_bar": [
+    "Navigation Menu Item",
+    null
+   ]
+  },
+  "custom_css": {
+   "label": [
+    "Custom CSS",
+    null
+   ],
+   "name": [
+    "Custom CSS",
+    null
+   ],
+   "singular_name": [
+    "Custom CSS",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Custom CSS",
+    null
+   ],
+   "archives": [
+    "Custom CSS",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Custom CSS",
+    null
+   ],
+   "name_admin_bar": [
+    "Custom CSS",
+    null
+   ]
+  },
+  "customize_changeset": {
+   "label": [
+    "Changesets",
+    "post type general name"
+   ],
+   "name": [
+    "Changesets",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Changeset",
+    "post type singular name"
+   ],
+   "add_new": [
+    "Add Changeset",
+    null
+   ],
+   "add_new_item": [
+    "Add Changeset",
+    null
+   ],
+   "edit_item": [
+    "Edit Changeset",
+    null
+   ],
+   "new_item": [
+    "New Changeset",
+    null
+   ],
+   "view_item": [
+    "View Changeset",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Changesets",
+    null
+   ],
+   "not_found": [
+    "No changesets found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No changesets found in Trash.",
+    null
+   ],
+   "all_items": [
+    "All Changesets",
+    null
+   ],
+   "archives": [
+    "All Changesets",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Changesets",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Changeset",
+    "post type singular name"
+   ]
+  },
+  "oembed_cache": {
+   "label": [
+    "oEmbed Responses",
+    null
+   ],
+   "name": [
+    "oEmbed Responses",
+    null
+   ],
+   "singular_name": [
+    "oEmbed Response",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "oEmbed Responses",
+    null
+   ],
+   "archives": [
+    "oEmbed Responses",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "oEmbed Responses",
+    null
+   ],
+   "name_admin_bar": [
+    "oEmbed Response",
+    null
+   ]
+  },
+  "user_request": {
+   "label": [
+    "User Requests",
+    null
+   ],
+   "name": [
+    "User Requests",
+    null
+   ],
+   "singular_name": [
+    "User Request",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "User Requests",
+    null
+   ],
+   "archives": [
+    "User Requests",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "User Requests",
+    null
+   ],
+   "name_admin_bar": [
+    "User Request",
+    null
+   ]
+  },
+  "wp_block": {
+   "label": [
+    "Patterns",
+    "post type general name"
+   ],
+   "name": [
+    "Patterns",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Pattern",
+    "post type singular name"
+   ],
+   "add_new": [
+    "Add Pattern",
+    null
+   ],
+   "add_new_item": [
+    "Add Pattern",
+    null
+   ],
+   "edit_item": [
+    "Edit Block Pattern",
+    null
+   ],
+   "new_item": [
+    "New Pattern",
+    null
+   ],
+   "view_item": [
+    "View Pattern",
+    null
+   ],
+   "view_items": [
+    "View Patterns",
+    null
+   ],
+   "search_items": [
+    "Search Patterns",
+    null
+   ],
+   "not_found": [
+    "No patterns found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No patterns found in Trash.",
+    null
+   ],
+   "all_items": [
+    "All Patterns",
+    null
+   ],
+   "archives": [
+    "All Patterns",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter patterns list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Patterns list navigation",
+    null
+   ],
+   "items_list": [
+    "Patterns list",
+    null
+   ],
+   "item_published": [
+    "Pattern published.",
+    null
+   ],
+   "item_published_privately": [
+    "Pattern published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Pattern reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Pattern scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Pattern updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Patterns",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Pattern",
+    "post type singular name"
+   ]
+  },
+  "wp_template": {
+   "label": [
+    "Templates",
+    "post type general name"
+   ],
+   "name": [
+    "Templates",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Template",
+    "post type singular name"
+   ],
+   "add_new": [
+    "Add Template",
+    null
+   ],
+   "add_new_item": [
+    "Add Template",
+    null
+   ],
+   "edit_item": [
+    "Edit Template",
+    null
+   ],
+   "new_item": [
+    "New Template",
+    null
+   ],
+   "view_item": [
+    "View Template",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Templates",
+    null
+   ],
+   "not_found": [
+    "No templates found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No templates found in Trash.",
+    null
+   ],
+   "parent_item_colon": [
+    "Parent Template:",
+    null
+   ],
+   "all_items": [
+    "Templates",
+    "post type general name"
+   ],
+   "archives": [
+    "Template archives",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into template",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this template",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter templates list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Templates list navigation",
+    null
+   ],
+   "items_list": [
+    "Templates list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Template updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Templates",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Template",
+    "post type singular name"
+   ]
+  },
+  "wp_template_part": {
+   "label": [
+    "Template Parts",
+    "post type general name"
+   ],
+   "name": [
+    "Template Parts",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Template Part",
+    "post type singular name"
+   ],
+   "add_new": [
+    "Add Template Part",
+    null
+   ],
+   "add_new_item": [
+    "Add Template Part",
+    null
+   ],
+   "edit_item": [
+    "Edit Template Part",
+    null
+   ],
+   "new_item": [
+    "New Template Part",
+    null
+   ],
+   "view_item": [
+    "View Template Part",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Template Parts",
+    null
+   ],
+   "not_found": [
+    "No template parts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No template parts found in Trash.",
+    null
+   ],
+   "parent_item_colon": [
+    "Parent Template Part:",
+    null
+   ],
+   "all_items": [
+    "Template Parts",
+    "post type general name"
+   ],
+   "archives": [
+    "Template part archives",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into template part",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this template part",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter template parts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Template parts list navigation",
+    null
+   ],
+   "items_list": [
+    "Template parts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Template part updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Template Parts",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Template Part",
+    "post type singular name"
+   ]
+  },
+  "wp_global_styles": {
+   "label": [
+    "Global Styles",
+    "post type general name"
+   ],
+   "name": [
+    "Global Styles",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Global Styles",
+    "post type general name"
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Global Styles",
+    "post type general name"
+   ],
+   "archives": [
+    "Global Styles",
+    "post type general name"
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Global Styles",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Global Styles",
+    "post type general name"
+   ]
+  },
+  "wp_navigation": {
+   "label": [
+    "Navigation Menus",
+    "post type general name"
+   ],
+   "name": [
+    "Navigation Menus",
+    "post type general name"
+   ],
+   "singular_name": [
+    "Navigation Menu",
+    "post type singular name"
+   ],
+   "add_new": [
+    "Add Navigation Menu",
+    null
+   ],
+   "add_new_item": [
+    "Add Navigation Menu",
+    null
+   ],
+   "edit_item": [
+    "Edit Navigation Menu",
+    null
+   ],
+   "new_item": [
+    "New Navigation Menu",
+    null
+   ],
+   "view_item": [
+    "View Navigation Menu",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Navigation Menus",
+    null
+   ],
+   "not_found": [
+    "No Navigation Menu found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No Navigation Menu found in Trash.",
+    null
+   ],
+   "parent_item_colon": [
+    "Parent Navigation Menu:",
+    null
+   ],
+   "all_items": [
+    "Navigation Menus",
+    "post type general name"
+   ],
+   "archives": [
+    "Navigation Menu archives",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into Navigation Menu",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this Navigation Menu",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter Navigation Menu list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Navigation Menus list navigation",
+    null
+   ],
+   "items_list": [
+    "Navigation Menus list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Navigation Menu updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Navigation Menus",
+    "post type general name"
+   ],
+   "name_admin_bar": [
+    "Navigation Menu",
+    "post type singular name"
+   ]
+  },
+  "wp_font_family": {
+   "label": [
+    "Font Families",
+    null
+   ],
+   "name": [
+    "Font Families",
+    null
+   ],
+   "singular_name": [
+    "Font Family",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Font Families",
+    null
+   ],
+   "archives": [
+    "Font Families",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Font Families",
+    null
+   ],
+   "name_admin_bar": [
+    "Font Family",
+    null
+   ]
+  },
+  "wp_font_face": {
+   "label": [
+    "Font Faces",
+    null
+   ],
+   "name": [
+    "Font Faces",
+    null
+   ],
+   "singular_name": [
+    "Font Face",
+    null
+   ],
+   "add_new": [
+    "Add",
+    null
+   ],
+   "add_new_item": [
+    "Add Post",
+    null
+   ],
+   "edit_item": [
+    "Edit Post",
+    null
+   ],
+   "new_item": [
+    "New Post",
+    null
+   ],
+   "view_item": [
+    "View Post",
+    null
+   ],
+   "view_items": [
+    "View Posts",
+    null
+   ],
+   "search_items": [
+    "Search Posts",
+    null
+   ],
+   "not_found": [
+    "No posts found.",
+    null
+   ],
+   "not_found_in_trash": [
+    "No posts found in Trash.",
+    null
+   ],
+   "all_items": [
+    "Font Faces",
+    null
+   ],
+   "archives": [
+    "Font Faces",
+    null
+   ],
+   "attributes": [
+    "Post Attributes",
+    null
+   ],
+   "insert_into_item": [
+    "Insert into post",
+    null
+   ],
+   "uploaded_to_this_item": [
+    "Uploaded to this post",
+    null
+   ],
+   "featured_image": [
+    "Featured image",
+    "post"
+   ],
+   "set_featured_image": [
+    "Set featured image",
+    "post"
+   ],
+   "remove_featured_image": [
+    "Remove featured image",
+    "post"
+   ],
+   "use_featured_image": [
+    "Use as featured image",
+    "post"
+   ],
+   "filter_items_list": [
+    "Filter posts list",
+    null
+   ],
+   "filter_by_date": [
+    "Filter by date",
+    null
+   ],
+   "items_list_navigation": [
+    "Posts list navigation",
+    null
+   ],
+   "items_list": [
+    "Posts list",
+    null
+   ],
+   "item_published": [
+    "Post published.",
+    null
+   ],
+   "item_published_privately": [
+    "Post published privately.",
+    null
+   ],
+   "item_reverted_to_draft": [
+    "Post reverted to draft.",
+    null
+   ],
+   "item_trashed": [
+    "Post trashed.",
+    null
+   ],
+   "item_scheduled": [
+    "Post scheduled.",
+    null
+   ],
+   "item_updated": [
+    "Post updated.",
+    null
+   ],
+   "item_link": [
+    "Post Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a post.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Font Faces",
+    null
+   ],
+   "name_admin_bar": [
+    "Font Face",
+    null
+   ]
+  }
+ },
+ "taxonomies": {
+  "category": {
+   "label": [
+    "Categories",
+    "taxonomy general name"
+   ],
+   "name": [
+    "Categories",
+    "taxonomy general name"
+   ],
+   "singular_name": [
+    "Category",
+    "taxonomy singular name"
+   ],
+   "search_items": [
+    "Search Categories",
+    null
+   ],
+   "all_items": [
+    "All Categories",
+    null
+   ],
+   "parent_item": [
+    "Parent Category",
+    null
+   ],
+   "parent_item_colon": [
+    "Parent Category:",
+    null
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "parent_field_description": [
+    "Assign a parent term to create a hierarchy. The term Jazz, for example, would be the parent of Bebop and Big Band.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Category",
+    null
+   ],
+   "view_item": [
+    "View Category",
+    null
+   ],
+   "update_item": [
+    "Update Category",
+    null
+   ],
+   "add_new_item": [
+    "Add Category",
+    null
+   ],
+   "new_item_name": [
+    "New Category Name",
+    null
+   ],
+   "not_found": [
+    "No categories found.",
+    null
+   ],
+   "no_terms": [
+    "No categories",
+    null
+   ],
+   "filter_by_item": [
+    "Filter by category",
+    null
+   ],
+   "items_list_navigation": [
+    "Categories list navigation",
+    null
+   ],
+   "items_list": [
+    "Categories list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "categories"
+   ],
+   "back_to_items": [
+    "&larr; Go to Categories",
+    null
+   ],
+   "item_link": [
+    "Category Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a category.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Categories",
+    "taxonomy general name"
+   ]
+  },
+  "post_tag": {
+   "label": [
+    "Tags",
+    "taxonomy general name"
+   ],
+   "name": [
+    "Tags",
+    "taxonomy general name"
+   ],
+   "singular_name": [
+    "Tag",
+    "taxonomy singular name"
+   ],
+   "search_items": [
+    "Search Tags",
+    null
+   ],
+   "popular_items": [
+    "Popular Tags",
+    null
+   ],
+   "all_items": [
+    "All Tags",
+    null
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Tag",
+    null
+   ],
+   "view_item": [
+    "View Tag",
+    null
+   ],
+   "update_item": [
+    "Update Tag",
+    null
+   ],
+   "add_new_item": [
+    "Add Tag",
+    null
+   ],
+   "new_item_name": [
+    "New Tag Name",
+    null
+   ],
+   "separate_items_with_commas": [
+    "Separate tags with commas",
+    null
+   ],
+   "add_or_remove_items": [
+    "Add or remove tags",
+    null
+   ],
+   "choose_from_most_used": [
+    "Choose from the most used tags",
+    null
+   ],
+   "not_found": [
+    "No tags found.",
+    null
+   ],
+   "no_terms": [
+    "No tags",
+    null
+   ],
+   "items_list_navigation": [
+    "Tags list navigation",
+    null
+   ],
+   "items_list": [
+    "Tags list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Tags",
+    null
+   ],
+   "item_link": [
+    "Tag Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a tag.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Tags",
+    "taxonomy general name"
+   ]
+  },
+  "nav_menu": {
+   "label": [
+    "Navigation Menus",
+    null
+   ],
+   "name": [
+    "Navigation Menus",
+    null
+   ],
+   "singular_name": [
+    "Navigation Menu",
+    null
+   ],
+   "search_items": [
+    "Search Tags",
+    null
+   ],
+   "popular_items": [
+    "Popular Tags",
+    null
+   ],
+   "all_items": [
+    "Navigation Menus",
+    null
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Tag",
+    null
+   ],
+   "view_item": [
+    "View Tag",
+    null
+   ],
+   "update_item": [
+    "Update Tag",
+    null
+   ],
+   "add_new_item": [
+    "Add Tag",
+    null
+   ],
+   "new_item_name": [
+    "New Tag Name",
+    null
+   ],
+   "separate_items_with_commas": [
+    "Separate tags with commas",
+    null
+   ],
+   "add_or_remove_items": [
+    "Add or remove tags",
+    null
+   ],
+   "choose_from_most_used": [
+    "Choose from the most used tags",
+    null
+   ],
+   "not_found": [
+    "No tags found.",
+    null
+   ],
+   "no_terms": [
+    "No tags",
+    null
+   ],
+   "items_list_navigation": [
+    "Tags list navigation",
+    null
+   ],
+   "items_list": [
+    "Tags list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Tags",
+    null
+   ],
+   "item_link": [
+    "Tag Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a tag.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Navigation Menus",
+    null
+   ],
+   "name_admin_bar": [
+    "Navigation Menu",
+    null
+   ],
+   "archives": [
+    "Navigation Menus",
+    null
+   ]
+  },
+  "link_category": {
+   "label": [
+    "Link Categories",
+    null
+   ],
+   "name": [
+    "Link Categories",
+    null
+   ],
+   "singular_name": [
+    "Link Category",
+    null
+   ],
+   "search_items": [
+    "Search Link Categories",
+    null
+   ],
+   "all_items": [
+    "All Link Categories",
+    null
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Link Category",
+    null
+   ],
+   "view_item": [
+    "View Tag",
+    null
+   ],
+   "update_item": [
+    "Update Link Category",
+    null
+   ],
+   "add_new_item": [
+    "Add Link Category",
+    null
+   ],
+   "new_item_name": [
+    "New Link Category Name",
+    null
+   ],
+   "not_found": [
+    "No tags found.",
+    null
+   ],
+   "no_terms": [
+    "No tags",
+    null
+   ],
+   "items_list_navigation": [
+    "Tags list navigation",
+    null
+   ],
+   "items_list": [
+    "Tags list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Link Categories",
+    null
+   ],
+   "item_link": [
+    "Tag Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a tag.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Link Categories",
+    null
+   ],
+   "name_admin_bar": [
+    "Link Category",
+    null
+   ],
+   "archives": [
+    "All Link Categories",
+    null
+   ]
+  },
+  "post_format": {
+   "label": [
+    "Formats",
+    "post format"
+   ],
+   "name": [
+    "Formats",
+    "post format"
+   ],
+   "singular_name": [
+    "Format",
+    "post format"
+   ],
+   "search_items": [
+    "Search Tags",
+    null
+   ],
+   "popular_items": [
+    "Popular Tags",
+    null
+   ],
+   "all_items": [
+    "Formats",
+    "post format"
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Tag",
+    null
+   ],
+   "view_item": [
+    "View Tag",
+    null
+   ],
+   "update_item": [
+    "Update Tag",
+    null
+   ],
+   "add_new_item": [
+    "Add Tag",
+    null
+   ],
+   "new_item_name": [
+    "New Tag Name",
+    null
+   ],
+   "separate_items_with_commas": [
+    "Separate tags with commas",
+    null
+   ],
+   "add_or_remove_items": [
+    "Add or remove tags",
+    null
+   ],
+   "choose_from_most_used": [
+    "Choose from the most used tags",
+    null
+   ],
+   "not_found": [
+    "No tags found.",
+    null
+   ],
+   "no_terms": [
+    "No tags",
+    null
+   ],
+   "items_list_navigation": [
+    "Tags list navigation",
+    null
+   ],
+   "items_list": [
+    "Tags list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Tags",
+    null
+   ],
+   "item_link": [
+    "Tag Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a tag.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Formats",
+    "post format"
+   ],
+   "name_admin_bar": [
+    "Format",
+    "post format"
+   ],
+   "archives": [
+    "Formats",
+    "post format"
+   ]
+  },
+  "wp_theme": {
+   "label": [
+    "Themes",
+    null
+   ],
+   "name": [
+    "Themes",
+    null
+   ],
+   "singular_name": [
+    "Theme",
+    null
+   ],
+   "search_items": [
+    "Search Tags",
+    null
+   ],
+   "popular_items": [
+    "Popular Tags",
+    null
+   ],
+   "all_items": [
+    "Themes",
+    null
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Tag",
+    null
+   ],
+   "view_item": [
+    "View Tag",
+    null
+   ],
+   "update_item": [
+    "Update Tag",
+    null
+   ],
+   "add_new_item": [
+    "Add Tag",
+    null
+   ],
+   "new_item_name": [
+    "New Tag Name",
+    null
+   ],
+   "separate_items_with_commas": [
+    "Separate tags with commas",
+    null
+   ],
+   "add_or_remove_items": [
+    "Add or remove tags",
+    null
+   ],
+   "choose_from_most_used": [
+    "Choose from the most used tags",
+    null
+   ],
+   "not_found": [
+    "No tags found.",
+    null
+   ],
+   "no_terms": [
+    "No tags",
+    null
+   ],
+   "items_list_navigation": [
+    "Tags list navigation",
+    null
+   ],
+   "items_list": [
+    "Tags list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Tags",
+    null
+   ],
+   "item_link": [
+    "Tag Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a tag.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Themes",
+    null
+   ],
+   "name_admin_bar": [
+    "Theme",
+    null
+   ],
+   "archives": [
+    "Themes",
+    null
+   ]
+  },
+  "wp_template_part_area": {
+   "label": [
+    "Template Part Areas",
+    null
+   ],
+   "name": [
+    "Template Part Areas",
+    null
+   ],
+   "singular_name": [
+    "Template Part Area",
+    null
+   ],
+   "search_items": [
+    "Search Tags",
+    null
+   ],
+   "popular_items": [
+    "Popular Tags",
+    null
+   ],
+   "all_items": [
+    "Template Part Areas",
+    null
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Tag",
+    null
+   ],
+   "view_item": [
+    "View Tag",
+    null
+   ],
+   "update_item": [
+    "Update Tag",
+    null
+   ],
+   "add_new_item": [
+    "Add Tag",
+    null
+   ],
+   "new_item_name": [
+    "New Tag Name",
+    null
+   ],
+   "separate_items_with_commas": [
+    "Separate tags with commas",
+    null
+   ],
+   "add_or_remove_items": [
+    "Add or remove tags",
+    null
+   ],
+   "choose_from_most_used": [
+    "Choose from the most used tags",
+    null
+   ],
+   "not_found": [
+    "No tags found.",
+    null
+   ],
+   "no_terms": [
+    "No tags",
+    null
+   ],
+   "items_list_navigation": [
+    "Tags list navigation",
+    null
+   ],
+   "items_list": [
+    "Tags list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Tags",
+    null
+   ],
+   "item_link": [
+    "Tag Link",
+    "navigation link block title"
+   ],
+   "item_link_description": [
+    "A link to a tag.",
+    "navigation link block description"
+   ],
+   "menu_name": [
+    "Template Part Areas",
+    null
+   ],
+   "name_admin_bar": [
+    "Template Part Area",
+    null
+   ],
+   "archives": [
+    "Template Part Areas",
+    null
+   ]
+  },
+  "wp_pattern_category": {
+   "label": [
+    "Pattern Categories",
+    "taxonomy general name"
+   ],
+   "name": [
+    "Pattern Categories",
+    "taxonomy general name"
+   ],
+   "singular_name": [
+    "Pattern Category",
+    "taxonomy singular name"
+   ],
+   "search_items": [
+    "Search Pattern Categories",
+    null
+   ],
+   "popular_items": [
+    "Popular Pattern Categories",
+    null
+   ],
+   "all_items": [
+    "Pattern Categories",
+    "taxonomy general name"
+   ],
+   "name_field_description": [
+    "The name is how it appears on your site.",
+    null
+   ],
+   "slug_field_description": [
+    "The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.",
+    null
+   ],
+   "desc_field_description": [
+    "The description is not prominent by default; however, some themes may show it.",
+    null
+   ],
+   "edit_item": [
+    "Edit Pattern Category",
+    null
+   ],
+   "view_item": [
+    "View Pattern Category",
+    null
+   ],
+   "update_item": [
+    "Update Pattern Category",
+    null
+   ],
+   "add_new_item": [
+    "Add Category",
+    null
+   ],
+   "new_item_name": [
+    "New Pattern Category Name",
+    null
+   ],
+   "separate_items_with_commas": [
+    "Separate pattern categories with commas",
+    null
+   ],
+   "add_or_remove_items": [
+    "Add or remove pattern categories",
+    null
+   ],
+   "choose_from_most_used": [
+    "Choose from the most used pattern categories",
+    null
+   ],
+   "not_found": [
+    "No pattern categories found.",
+    null
+   ],
+   "no_terms": [
+    "No pattern categories",
+    null
+   ],
+   "items_list_navigation": [
+    "Pattern Categories list navigation",
+    null
+   ],
+   "items_list": [
+    "Pattern Categories list",
+    null
+   ],
+   "most_used": [
+    "Most Used",
+    "tags"
+   ],
+   "back_to_items": [
+    "&larr; Go to Pattern Categories",
+    null
+   ],
+   "item_link": [
+    "Pattern Category Link",
+    null
+   ],
+   "item_link_description": [
+    "A link to a pattern category.",
+    null
+   ],
+   "menu_name": [
+    "Pattern Categories",
+    "taxonomy general name"
+   ],
+   "name_admin_bar": [
+    "Pattern Category",
+    "taxonomy singular name"
+   ],
+   "archives": [
+    "Pattern Categories",
+    "taxonomy general name"
+   ]
+  }
+ },
+ "statuses": {
+  "publish": [
+   "Published",
+   "post status"
+  ],
+  "future": [
+   "Scheduled",
+   "post status"
+  ],
+  "draft": [
+   "Draft",
+   "post status"
+  ],
+  "pending": [
+   "Pending",
+   "post status"
+  ],
+  "private": [
+   "Private",
+   "post status"
+  ],
+  "trash": [
+   "Trash",
+   "post status"
+  ],
+  "request-pending": [
+   "Pending",
+   "request status"
+  ],
+  "request-confirmed": [
+   "Confirmed",
+   "request status"
+  ],
+  "request-failed": [
+   "Failed",
+   "request status"
+  ],
+  "request-completed": [
+   "Completed",
+   "request status"
+  ]
+ }
+}

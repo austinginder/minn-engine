@@ -15809,6 +15809,88 @@ engine's host, so its view modules never load there.
 - Still stubs, as their blocks render no directives on the engine:
   `search-view.js`, `file-view.js`, `query-view.js` and `form-view.js`.
 
+## The engine's front-end strings are translated (2026-10-12)
+
+Suite `front-strings` (in run-all) stages the fixture mu-plugin
+`tests/fixtures/mu-plugins/minn-test-pseudo-l10n.php` in both stacks'
+mu-plugin folders: on a request with its cookie, every translated string
+comes back marked «like this». Twelve signed-out pages (the listing, a post
+with its comments and form, the form replying to a comment, a page, a
+category, a tag, an author, a year, a month, a day, two searches and a
+missing page) and three signed in (with the Minn Admin bar) must mark the
+same strings on both stacks, marks inside JSON included, and so must the
+built-in labels the REST API lists. Each message was
+captured from the reference with a gettext log (its text, context and
+domain) and the engine asks for the same one:
+
+- **Texturizing.** The dashes, curly quotes, apostrophe and primes are each
+  asked by their translation context (`en dash`, `em dash`, `opening curly
+  single quote` and the rest), once a request (`Texturize::characters()`,
+  asked again with the rest of its state). A quote inside a word is the
+  apostrophe.
+- **Dates.** `Minn\I18n\LocalDates::format` writes the weekday and month
+  names (D, l, F, M) and the meridiems (a, A) in the site's language, a
+  month after its day number in the genitive where the language declines
+  month names. `wp_date`, `date_i18n` and the blocks' dates use it.
+- **Archive titles.** The prefixes by their contexts (`category archive
+  title prefix` and its kin; `%s:` as `taxonomy term archive title prefix`
+  for a custom taxonomy), the date formats by theirs (`yearly archives date
+  format` and its kin), the whole composed through `%1$s %2$s` (`archive
+  title`); a search's title is `Search results for: “%s”`.
+- **Blocks.** More links (`Continue reading %s`, `(more…)`); navigation
+  (`%s submenu`, `Open menu`, `Close menu`, `Menu`, `Close`, the overlay's
+  label in its context JSON encoded as the reference encodes it); the
+  search block's defaults; the tag cloud's counts (`%s item`, plural); the
+  latest comments' `%1$s on %2$s`; the comments title (eight messages: one
+  comment or several, with or without the count and the post's title,
+  counts formatted with separators); the avatar's `%s Avatar`; the reply
+  link (`Reply` as a verb, `Reply to %s`).
+- **The comment form.** Its labels, notes, required mark, logged-in line,
+  cookies consent, titles, cancel link and submit button, and the reply
+  link's defaults, in the facade.
+- **The page.** The skip link, the JSON and oEmbed link titles, and the
+  html element's attributes: `Minn\I18n\SiteLanguage` reads the locale in
+  force (the facade's `get_locale` and `get_language_attributes` now ask it)
+  and writes dir and lang through `language_attributes`. A block theme's
+  page says `lang="en-US"`, as the reference's does; it said `lang="en"`.
+- **Theme patterns.** `PatternText` asks for `__`, `_x`, `_e`, `_ex` and
+  their escaping forms in the theme's domain, with the context where one
+  is given. `esc_url` and `esc_url_raw` give nothing for an address whose
+  scheme is not allowed, as the reference's do (a translated address can
+  carry one).
+- **The Minn Admin bar** asks for its strings in the `minn-admin` domain,
+  as the plugin does on WordPress, and for a built-in type's name in its
+  edit button as `post type singular name`. Its classic-admin item is the
+  reference's alone: a Minn site has no wp-admin.
+- **The built-in types, taxonomies and statuses** take their labels in
+  the site's language just before init, as the reference registers them
+  again there: `Registry::translateBuiltIns()` asks each label's own
+  message (`data/registry-labels.json`, 564 type labels, 216 taxonomy
+  labels and 10 statuses, captured from the reference with a gettext log
+  over their registration), names each single-item and archive template
+  after the singular name, and updates the rows and the shared objects. A
+  taxonomy's archive template asks `%s Archives` in its context (`taxonomy
+  template name`), a plugin's taxonomy too. The suite compares the labels
+  `wp/v2/types`, `taxonomies` and `statuses` give an editor.
+- With no hook API loaded (an engine CLI verb, a unit case), `Gettext`
+  gives the English unfiltered instead of failing.
+- **A tax query clause on a taxonomy that is not registered** (or on none,
+  unless it names term_taxonomy_ids) is an error on the reference, its
+  message `Invalid taxonomy.` asked, and matches nothing whatever its
+  operator. The engine wrote an EXISTS subquery for it, no condition at
+  all under NOT IN (every post matched), and took an empty taxonomy's term
+  ids as term_taxonomy_ids. `TaxSql::clauseSql` now gives `0 = 1` as the
+  reference does; five more cases in probe query-clauses. The facade's
+  `Invalid taxonomy.` errors and the date query's notices (out of range,
+  not a date, each with and without a year) ask for their messages.
+- **The hook battery's cron noise.** Four probe scenarios (cpt-rules,
+  registry-rewrites, query-clauses, rewrite-generate) were captured while
+  a cron event was due, so the reference's record had `cron_schedules`
+  and the plain `gettext` its schedule names ask for; the engine's untranslated
+  `%s Archives` had matched that `gettext` by chance. Recaptured (twice
+  over, steady), they hold neither; query-clauses keeps the `gettext` its
+  error messages ask for, which the engine now asks for too.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -15824,7 +15906,7 @@ rows that are `open` or `austin`.
 | 1639 | Storefront (09-01) | `wp_page_menu`'s home item and current class; classic sidebars | done | "The page-list menu and block widgets (2026-09-01)" |
 | 2619 | Translations (10-05) | `switch_to_user_locale` | done | real in the facade |
 | 2619 | Translations (10-05) | the admin and network core translation files | accepted | wp-admin is Minn Admin's; network files are multisite, which a single site never loads |
-| 2619 | Translations (10-05) | the engine's own front-end strings are English, not through `__()` | open | the engine renders no core translations yet |
+| 2619 | Translations (10-05) | the engine's own front-end strings are English, not through `__()` | done | "The engine's front-end strings are translated (2026-10-12)" |
 | 3295 | Writes tell plugins (10-06) | cron publishes due posts without the actions | done | `Cron::publishDue` goes through `check_and_publish_future_post` |
 | 3295 | Writes tell plugins (10-06) | `apply_filters('the_content')` without core's defaults | done | the defaults fill `the_content` as the reference's do |
 | 3295 | Writes tell plugins (10-06) | `wp_new_comment`, `wp_check_comment_flood` | done | real in the facade |

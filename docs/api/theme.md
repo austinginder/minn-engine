@@ -4,7 +4,7 @@ the block-theme reader, templates, global styles and the page renderer
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`ArchiveTitle`](#archivetitle) | final class | 54 | The label and name an archive titles itself with: `Category:` around the |
+| [`ArchiveTitle`](#archivetitle) | final class | 55 | The label and name an archive titles itself with: `Category:` around the |
 | [`BodyClasses`](#bodyclasses) | final class | 86 | The body-class list a classic theme's body_class() starts from, in the |
 | [`BodyFacts`](#bodyfacts) | final readonly class | 10 | The facts about a page that decide the body classes a classic theme's |
 | [`ClassicContent`](#classiccontent) | final class | 39 | What a classic theme's the_content() prints: the engine's block pipeline |
@@ -24,7 +24,7 @@ the block-theme reader, templates, global styles and the page renderer
 | [`NotModified`](#notmodified) | final class | 3 | Raised once a reader's copy of a feed has been found current and the |
 | [`PageRenderer`](#pagerenderer) | final readonly class | 185 | A whole page from the active block theme: the template the resolution |
 | [`PatternHeaders`](#patternheaders) | final class | 78 | A theme's pattern files read by their headers, as WP_Theme::get_block_patterns |
-| [`PatternText`](#patterntext) | final class | 198 | Block-theme patterns are PHP files whose only code is a handful of |
+| [`PatternText`](#patterntext) | final class | 234 | Block-theme patterns are PHP files whose only code is a handful of |
 | [`Printed`](#printed) | final class | 3 | Raised once a WordPress handler has printed a whole response (a sitemap, |
 | [`QueryClasses`](#queryclasses) | final readonly class | 128 | The body-class tokens the main query stands for, in the reference's |
 | [`SpacingScale`](#spacingscale) | final class | 48 | The spacing sizes a theme.json spacing scale makes (probe |
@@ -63,13 +63,13 @@ Used by: `Minn\Blocks\Dynamic\Theme\QueryBlocks`
 
 The archive title's prefix and title for a resolution.
 
-- `@return array{string, string} the label (no colon) and the escaped bare name; both empty when the view has none`
+- `@return array{string, string} the prefix (its colon included, in the site's language) and the escaped bare name; both empty when the view has none`
 
-### static `compose(string $label, string $name): string`
+### static `compose(string $prefix, string $name): string`
 
-The reference's prefixed shape: `Category: <span>Uncategorized</span>`.
+The reference's prefixed shape, `Category: <span>Uncategorized</span>`, through the language's own order.
 
-Internals: `dateParts()` (private, line 53), `taxonomyLabel()` (private, line 70)
+Internals: `dateParts()` (private, line 55), `taxonomyLabel()` (private, line 73)
 
 
 ## BodyClasses
@@ -745,7 +745,7 @@ The body-class tokens before plugins filter them (bodyClasses()). @return list<s
 
 The page for a resolution, or null when the theme has no template for it.
 
-Internals: `document()` (private, line 140), `skipLinkTarget()` (private, line 178), `head()` (private, line 193)
+Internals: `document()` (private, line 141), `skipLinkTarget()` (private, line 179), `head()` (private, line 194)
 
 
 ## PatternHeaders
@@ -797,11 +797,18 @@ Block-theme patterns are PHP files whose only code is a handful of
 echo-and-escape calls around literal strings. The engine never executes
 them: it interprets that small text grammar (string literals, "."
 concatenation, the i18n and escaping wrappers, the theme URI helper, and
-printf with %s) and leaves anything else out. The header comment block
+printf with %s) and leaves anything else out. A translated string is
+looked up in its domain (the theme's own), with its context where it
+gives one, as the reference's patterns ask for theirs. The header comment block
 is dropped, and every byte outside the PHP tags is kept as-is.
 
-- const `PASSTHROUGH` = `array (   0 => '__',   1 => '_x',   2 => 'esc_url',   3 => 'wp_kses_post',   4 => 'esc_url_raw', )` — Wrappers whose value is their first argument, unchanged.
-- const `ESCAPING` = `array (   0 => 'esc_html__',   1 => 'esc_html_x',   2 => 'esc_attr__',   3 => 'esc_attr_x',   4 => 'esc_html',   5 => 'esc_attr', )` — Wrappers whose value is their first argument with HTML special characters encoded.
+- const `PASSTHROUGH` = `array (   0 => 'wp_kses_post', )` — Wrappers whose value is their first argument, unchanged.
+- const `URLS` = `array (   0 => 'esc_url',   1 => 'esc_url_raw', )` — Wrappers whose value is their first argument as a URL: empty when what stands before a colon is no allowed scheme.
+- const `ESCAPING` = `array (   0 => 'esc_html',   1 => 'esc_attr', )` — Wrappers whose value is their first argument with HTML special characters encoded.
+- const `TRANSLATING` = `array (   '__' => 'text',   '_x' => 'context',   'esc_html__' => 'text escaped',   'esc_attr__' => 'text escaped',   'esc_html_x' => 'context escaped',   'esc_attr_x' => 'context escaped', )` — The translating wrappers, by how they read: "text" (text, domain) or
+"context" (text, context, domain), escaped or not; those that echo are
+statements, the rest values.
+- const `ECHOING` = `array (   '_e' => 'text',   '_ex' => 'context',   'esc_html_e' => 'text escaped',   'esc_attr_e' => 'text escaped', )`
 
 Used by: `Minn\Theme\Theme`
 
@@ -810,7 +817,7 @@ Used by: `Minn\Theme\Theme`
 
 A pattern file's HTML with its PHP interpreted, never executed.
 
-Internals: `statements()` (private, line 46), `printf()` (private, line 73), `expression()` (private, line 84), `term()` (private, line 100), `escape()` (private, line 128), `arguments()` (private, line 134), `stringLiteral()` (private, line 161), `identifier()` (private, line 184), `skipSpace()` (private, line 194)
+Internals: `statements()` (private, line 65), `printf()` (private, line 91), `expression()` (private, line 102), `term()` (private, line 118), `translated()` (private, line 159), `escape()` (private, line 169), `arguments()` (private, line 175), `stringLiteral()` (private, line 202), `identifier()` (private, line 225), `skipSpace()` (private, line 235)
 
 
 ## Printed

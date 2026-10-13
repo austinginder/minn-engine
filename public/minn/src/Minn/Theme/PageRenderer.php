@@ -21,6 +21,7 @@ use Minn\Front\AdminBar;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Front\Resolution;
+use Minn\I18n\SiteLanguage;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 
@@ -157,10 +158,10 @@ final readonly class PageRenderer
         // variations that rendering discovered.
         $styles = new GlobalStyles($this->theme, $this->templates->userStyles());
         $bar = $resolution->preview ? null : $this->bar;
-        $document = '<!DOCTYPE html>' . "\n" . '<html lang="en">' . "\n"
+        $document = '<!DOCTYPE html>' . "\n" . '<html ' . SiteLanguage::attributes() . '>' . "\n"
             . $this->head($resolution, $styles, $bar)
             . '<body class="' . Html::attr($bodyClass) . '">' . "\n"
-            . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">Skip to content</a>'
+            . '<a class="skip-link screen-reader-text" id="wp-skip-link" href="#' . Html::attr($skipTarget) . '">' . Html::esc(\Minn\I18n\Gettext::text('Skip to content')) . '</a>'
             . '<div class="wp-site-blocks">' . $body . '</div>' . "\n"
             . (Extensions::runner()?->footer() ?? '')
             . Runtime::capture('wp_footer')

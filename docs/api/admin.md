@@ -438,7 +438,7 @@ Theme patterns are GPL theme content the engine does not carry.
 
 The dashboard's number, size, age, and title formatting.
 
-Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`
+Used by: `Minn\Admin\ActivityFeed`, `Minn\Admin\Dashboard`, `Minn\Admin\Notifications`, `Minn\Admin\UploadsSize`, `Minn\Blocks\Dynamic\TagCloud`, `Minn\Blocks\Dynamic\Theme\Comments`
 
 ### static `number(int|float $value, int $decimals = 0): string`
 

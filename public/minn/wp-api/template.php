@@ -26,20 +26,7 @@ function wp_body_open()
 
 function get_language_attributes($doctype = 'html')
 {
-    $attributes = [];
-    if (function_exists('is_rtl') && is_rtl()) {
-        $attributes[] = 'dir="rtl"';
-    }
-    $lang = get_bloginfo('language');
-    if ($lang) {
-        if (get_option('html_type') === 'text/html' || $doctype === 'html') {
-            $attributes[] = 'lang="' . esc_attr($lang) . '"';
-        }
-        if (get_option('html_type') !== 'text/html' || $doctype === 'xhtml') {
-            $attributes[] = 'xml:lang="' . esc_attr($lang) . '"';
-        }
-    }
-    return apply_filters('language_attributes', implode(' ', $attributes), $doctype);
+    return Minn\I18n\SiteLanguage::attributes((string) $doctype);
 }
 
 function language_attributes($doctype = 'html')
@@ -818,8 +805,8 @@ function wp_oembed_add_discovery_links()
     Runtime::current()->set('oembed_discovery_printed', true);
     $permalink = (string) get_permalink();
     $base = home_url('/wp-json/oembed/1.0/embed');
-    $output = '<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink)) . '" />' . "\n";
-    $output .= '<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink) . '&format=xml') . '" />' . "\n";
+    $output = '<link rel="alternate" title="' . esc_attr_x('oEmbed (JSON)', 'oEmbed resource link name') . '" type="application/json+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink)) . '" />' . "\n";
+    $output .= '<link rel="alternate" title="' . esc_attr_x('oEmbed (XML)', 'oEmbed resource link name') . '" type="text/xml+oembed" href="' . esc_url($base . '?url=' . urlencode($permalink) . '&format=xml') . '" />' . "\n";
     echo apply_filters('oembed_discovery_links', $output);
 }
 

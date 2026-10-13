@@ -4,21 +4,40 @@ declare(strict_types=1);
 
 namespace Minn\Theme;
 
+use Minn\I18n\Gettext;
+use Minn\Support\Kses;
+
 /**
  * Block-theme patterns are PHP files whose only code is a handful of
  * echo-and-escape calls around literal strings. The engine never executes
  * them: it interprets that small text grammar (string literals, "."
  * concatenation, the i18n and escaping wrappers, the theme URI helper, and
- * printf with %s) and leaves anything else out. The header comment block
+ * printf with %s) and leaves anything else out. A translated string is
+ * looked up in its domain (the theme's own), with its context where it
+ * gives one, as the reference's patterns ask for theirs. The header comment block
  * is dropped, and every byte outside the PHP tags is kept as-is.
  */
 final class PatternText
 {
     /** Wrappers whose value is their first argument, unchanged. */
-    private const PASSTHROUGH = ['__', '_x', 'esc_url', 'wp_kses_post', 'esc_url_raw'];
+    private const PASSTHROUGH = ['wp_kses_post'];
+
+    /** Wrappers whose value is their first argument as a URL: empty when what stands before a colon is no allowed scheme. */
+    private const URLS = ['esc_url', 'esc_url_raw'];
 
     /** Wrappers whose value is their first argument with HTML special characters encoded. */
-    private const ESCAPING = ['esc_html__', 'esc_html_x', 'esc_attr__', 'esc_attr_x', 'esc_html', 'esc_attr'];
+    private const ESCAPING = ['esc_html', 'esc_attr'];
+
+    /**
+     * The translating wrappers, by how they read: "text" (text, domain) or
+     * "context" (text, context, domain), escaped or not; those that echo are
+     * statements, the rest values.
+     */
+    private const TRANSLATING = [
+        '__' => 'text', '_x' => 'context', 'esc_html__' => 'text escaped', 'esc_attr__' => 'text escaped',
+        'esc_html_x' => 'context escaped', 'esc_attr_x' => 'context escaped',
+    ];
+    private const ECHOING = ['_e' => 'text', '_ex' => 'context', 'esc_html_e' => 'text escaped', 'esc_attr_e' => 'text escaped'];
 
     private string $themeUri;
     private string $source;
@@ -55,11 +74,10 @@ final class PatternText
             if ($name === null) {
                 return $out;
             }
-            $out .= match ($name) {
-                'echo' => (string) $this->expression(),
-                '_e' => (string) ($this->arguments()[0] ?? ''),
-                'esc_html_e', 'esc_attr_e' => self::escape((string) ($this->arguments()[0] ?? '')),
-                'printf' => $this->printf($this->arguments()),
+            $out .= match (true) {
+                $name === 'echo' => (string) $this->expression(),
+                isset(self::ECHOING[$name]) => self::translated(self::ECHOING[$name], $this->arguments()),
+                $name === 'printf' => $this->printf($this->arguments()),
                 default => '',
             };
             $this->skipSpace();
@@ -115,13 +133,36 @@ final class PatternText
         if ($name === 'sprintf') {
             return $this->printf($arguments);
         }
+        if (isset(self::TRANSLATING[$name])) {
+            return self::translated(self::TRANSLATING[$name], $arguments);
+        }
         if (in_array($name, self::PASSTHROUGH, true)) {
             return (string) ($arguments[0] ?? '');
+        }
+        if (in_array($name, self::URLS, true)) {
+            $url = (string) ($arguments[0] ?? '');
+            return str_contains($url, ':') && Kses::attributeUrl($url) !== $url ? '' : $url;
         }
         if (in_array($name, self::ESCAPING, true)) {
             return self::escape((string) ($arguments[0] ?? ''));
         }
         return '';
+    }
+
+    /**
+     * A message in the site's language, read as its wrapper reads it
+     * (TRANSLATING): (text, domain) or (text, context, domain), escaped for
+     * the escaping wrappers.
+     *
+     * @param list<string|null> $arguments
+     */
+    private static function translated(string $layout, array $arguments): string
+    {
+        $text = (string) ($arguments[0] ?? '');
+        $message = str_starts_with($layout, 'context')
+            ? Gettext::inContext($text, (string) ($arguments[1] ?? ''), (string) ($arguments[2] ?? 'default'))
+            : Gettext::text($text, (string) ($arguments[1] ?? 'default'));
+        return str_ends_with($layout, 'escaped') ? self::escape($message) : $message;
     }
 
     /** Special characters encoded once; entities already present are kept. */

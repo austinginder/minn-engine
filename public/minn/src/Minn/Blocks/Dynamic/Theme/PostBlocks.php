@@ -85,7 +85,7 @@ final readonly class PostBlocks
         $suffix = '';
         if ($context->inLoop() && $more !== false) {
             $raw = substr($raw, 0, $more);
-            $suffix = "\n" . ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="Continue reading ' . Html::attr(Texturize::text($post->title)) . '">(more&hellip;)</span></a>';
+            $suffix = "\n" . ' <a href="' . Html::attr($this->permalinks->forPost($post) . '#more-' . $post->id) . '" class="more-link"><span aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('Continue reading %s'), Texturize::text($post->title))) . '">' . \Minn\I18n\Gettext::text('(more&hellip;)') . '</span></a>';
             $content = rtrim(Blocks::render($raw)) . $suffix;
         } else {
             $content = Blocks::render(str_replace('<!--more-->', '<span id="more-' . $post->id . '"></span>', $raw));

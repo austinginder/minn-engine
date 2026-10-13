@@ -8,15 +8,7 @@ use Minn\Runtime\Runtime;
 
 function get_locale()
 {
-    if (Runtime::locales()->switched()) {
-        return (string) Runtime::locales()->current();
-    }
-    $locale = apply_filters('pre_determine_locale', null);
-    if (is_string($locale) && $locale !== '') {
-        return $locale;
-    }
-    $locale = (string) (Runtime::current()->site->option('WPLANG') ?? '');
-    return apply_filters('locale', $locale === '' ? 'en_US' : $locale);
+    return Minn\I18n\SiteLanguage::locale();
 }
 
 /** A user's locale (the current user's for 0), or the site's when the user has none or does not exist. */

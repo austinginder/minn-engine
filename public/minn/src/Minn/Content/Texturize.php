@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\I18n\Gettext;
 use Minn\Runtime\Runtime;
 
 /**
@@ -18,6 +19,9 @@ final class Texturize
 
     /** Whether text is texturized at all (run_wptexturize), once asked; null until then. */
     private static ?bool $run = null;
+
+    /** @var array<string, string>|null the dashes, quotes and primes in the site's language, once asked; null until then */
+    private static ?array $characters = null;
 
     /**
      * Whether text is texturized at all (run_wptexturize): asked on the first
@@ -36,6 +40,29 @@ final class Texturize
         if (self::$run === true) {
             self::$run = null;
         }
+        self::$characters = null;
+    }
+
+    /**
+     * The characters texturizing writes, as the site's language writes them
+     * (each asked by its translation context, as the reference asks them):
+     * the dashes, the curly quotes, the apostrophe and the primes.
+     *
+     * @return array{en: string, em: string, open1: string, close1: string, apostrophe: string, open2: string, close2: string, prime: string, prime2: string}
+     */
+    public static function characters(): array
+    {
+        return self::$characters ??= [
+            'en' => Gettext::inContext('&#8211;', 'en dash'),
+            'em' => Gettext::inContext('&#8212;', 'em dash'),
+            'open1' => Gettext::inContext('&#8216;', 'opening curly single quote'),
+            'close1' => Gettext::inContext('&#8217;', 'closing curly single quote'),
+            'apostrophe' => Gettext::inContext('&#8217;', 'apostrophe'),
+            'open2' => Gettext::inContext('&#8220;', 'opening curly double quote'),
+            'close2' => Gettext::inContext('&#8221;', 'closing curly double quote'),
+            'prime' => Gettext::inContext('&#8242;', 'prime'),
+            'prime2' => Gettext::inContext('&#8243;', 'double prime'),
+        ];
     }
 
     /**
@@ -154,23 +181,25 @@ final class Texturize
     /** The same substitutions on a plain string with no tags. */
     public static function text(string $text): string
     {
+        $c = self::characters();
         $text = str_replace('...', '&#8230;', $text);
-        $text = str_replace('---', '&#8212;', $text);
-        $text = str_replace(' -- ', ' &#8212; ', $text);
-        $text = str_replace('--', '&#8211;', $text);
+        $text = str_replace('---', $c['em'], $text);
+        $text = str_replace(' -- ', ' ' . $c['em'] . ' ', $text);
+        $text = str_replace('--', $c['en'], $text);
         // A hyphen standing alone between spaces (or at an end) is an en dash; a-b stays.
-        $text = (string) preg_replace('/(?<=\s|^)-(?=\s|$)/', '&#8211;', $text);
+        $text = (string) preg_replace('/(?<=\s|^)-(?=\s|$)/', $c['en'], $text);
         // Abbreviated years: '99
-        $text = preg_replace('/(^|[\s(\[{<])\'(?=\d\d)/', '$1&#8217;', $text);
+        $text = (string) preg_replace('/(^|[\s(\[{<])\'(?=\d\d)/', '${1}' . $c['apostrophe'], $text);
         // A double quote after a digit is a prime (6'2" → 2&#8243;); a single
         // quote after a digit stays an apostrophe.
-        $text = preg_replace('/(?<=\d)"/', '&#8243;', $text);
-        // Opening singles, then everything left is a closing quote or apostrophe.
-        $text = preg_replace('/(^|[\s(\[{<"])\'(?=\S)/', '$1&#8216;', $text);
-        $text = str_replace("'", '&#8217;', $text);
+        $text = (string) preg_replace('/(?<=\d)"/', $c['prime2'], $text);
+        // Opening singles; one inside a word is an apostrophe (it's, 6'2), any other a closing quote (girls').
+        $text = (string) preg_replace('/(^|[\s(\[{<"])\'(?=\S)/', '${1}' . $c['open1'], $text);
+        $text = (string) preg_replace("/(?<=[\\p{L}\\p{N}])'(?=[\\p{L}\\p{N}])/u", $c['apostrophe'], $text);
+        $text = str_replace("'", $c['close1'], $text);
         // Opening doubles, then closers.
-        $text = preg_replace('/(^|[\s(\[{<])"(?=\S)/', '$1&#8220;', $text);
-        return str_replace('"', '&#8221;', $text);
+        $text = (string) preg_replace('/(^|[\s(\[{<])"(?=\S)/', '${1}' . $c['open2'], $text);
+        return str_replace('"', $c['close2'], $text);
     }
 
     /**

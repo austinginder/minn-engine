@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Blocks\Dynamic\Theme;
 
+use Minn\Admin\Format;
 use Minn\Content\CommentRecord;
 use Minn\Content\PostRecord;
 use Minn\Blocks\Block;
@@ -14,6 +15,7 @@ use Minn\Blocks\Wrapper;
 use Minn\Content\Blocks;
 use Minn\Content\Posts;
 use Minn\Content\RowCache;
+use Minn\I18n\Gettext;
 use Minn\Content\Site;
 use Minn\Content\Users;
 use Minn\Content\Texturize;
@@ -74,13 +76,18 @@ final readonly class Comments
         if ($count === 0) {
             return '';
         }
-        // "One response to “Title”", or less of it as showCommentsCount and showPostTitle ask.
-        $text = (bool) $block->attr('showCommentsCount', true)
-            ? ($count === 1 ? 'One response' : $count . ' responses')
-            : ($count === 1 ? 'Response' : 'Responses');
-        if ((bool) $block->attr('showPostTitle', true)) {
-            $text .= ' to ' . Texturize::text('"' . Html::esc($post->title) . '"');
-        }
+        // "One response to “Title”", or less of it as showCommentsCount and showPostTitle ask: each its own message.
+        $title = Texturize::text(Html::esc($post->title));
+        $text = match ([(bool) $block->attr('showCommentsCount', true), (bool) $block->attr('showPostTitle', true), $count === 1]) {
+            [true, true, true] => sprintf(Gettext::text('One response to &#8220;%s&#8221;'), $title),
+            [true, true, false] => sprintf(Gettext::plural('%1$s response to &#8220;%2$s&#8221;', '%1$s responses to &#8220;%2$s&#8221;', $count), Format::number($count), $title),
+            [true, false, true] => Gettext::text('One response'),
+            [true, false, false] => sprintf(Gettext::plural('%s response', '%s responses', $count), Format::number($count)),
+            [false, true, true] => sprintf(Gettext::text('Response to &#8220;%s&#8221;'), $title),
+            [false, true, false] => sprintf(Gettext::text('Responses to &#8220;%s&#8221;'), $title),
+            [false, false, true] => Gettext::text('Response'),
+            default => Gettext::text('Responses'),
+        };
         $level = (int) $block->attr('level', 2);
         $classes = implode(' ', ['wp-block-comments-title', ...Styles::classes($block->attrs)]);
         return '<h' . $level . ' id="comments" class="' . Html::attr($classes) . '">' . $text . '</h' . $level . '>';
@@ -181,8 +188,8 @@ final readonly class Comments
             return $this->authorAvatar($block, $renderer, $size);
         }
         $hash = hash('sha256', strtolower(trim($comment->authorEmail)));
-        $author = Html::attr($comment->author);
-        return '<div class="wp-block-avatar"><img alt=\'' . $author . ' Avatar\' src=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . $size . '&#038;d=mm&#038;r=g\' srcset=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . ($size * 2) . '&#038;d=mm&#038;r=g 2x\' class=\'avatar avatar-' . $size . ' photo wp-block-avatar__image\' height=\'' . $size . '\' width=\'' . $size . '\' decoding=\'async\'/></div>';
+        $author = Html::attr(sprintf(Gettext::text('%s Avatar'), $comment->author));
+        return '<div class="wp-block-avatar"><img alt=\'' . $author . '\' src=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . $size . '&#038;d=mm&#038;r=g\' srcset=\'https://secure.gravatar.com/avatar/' . $hash . '?s=' . ($size * 2) . '&#038;d=mm&#038;r=g 2x\' class=\'avatar avatar-' . $size . ' photo wp-block-avatar__image\' height=\'' . $size . '\' width=\'' . $size . '\' decoding=\'async\'/></div>';
     }
 
     private function authorAvatar(Block $block, Renderer $renderer, int $size): string
@@ -193,7 +200,7 @@ final readonly class Comments
             return '';
         }
         $url = 'https://secure.gravatar.com/avatar/' . Avatar::hash($user->email);
-        $img = "<img alt='" . Html::attr($user->displayName . ' Avatar') . "' src='{$url}?s={$size}&#038;d=mm&#038;r=g' srcset='{$url}?s=" . ($size * 2) . "&#038;d=mm&#038;r=g 2x' class='avatar avatar-{$size} photo wp-block-avatar__image' height='{$size}' width='{$size}' loading='lazy' decoding='async'/>";
+        $img = "<img alt='" . Html::attr(sprintf(Gettext::text('%s Avatar'), $user->displayName)) . "' src='{$url}?s={$size}&#038;d=mm&#038;r=g' srcset='{$url}?s=" . ($size * 2) . "&#038;d=mm&#038;r=g 2x' class='avatar avatar-{$size} photo wp-block-avatar__image' height='{$size}' width='{$size}' loading='lazy' decoding='async'/>";
         if ((bool) $block->attr('isLink', false)) {
             $img = '<a href="' . Html::attr($this->permalinks->forAuthor($user)) . '" target="' . Html::attr((string) $block->attr('linkTarget', '_self')) . '"  class="wp-block-avatar__link">' . $img . '</a>';
         }
@@ -256,9 +263,9 @@ final readonly class Comments
             return '';
         }
         $id = $comment->id;
-        $author = Html::attr($comment->author);
+        $replyTo = Html::attr(sprintf(Gettext::text('Reply to %s'), $comment->author));
         $href = $this->permalinks->forPost($post) . '?replytocom=' . $id . '#respond';
-        return '<div class="wp-block-comment-reply-link"><a rel="nofollow" class="comment-reply-link" href="' . Html::attr($href) . '" data-commentid="' . $id . '" data-postid="' . $post->id . '" data-belowelement="comment-' . $id . '" data-respondelement="respond" data-replyto="Reply to ' . $author . '" aria-label="Reply to ' . $author . '">Reply</a></div>';
+        return '<div class="wp-block-comment-reply-link"><a rel="nofollow" class="comment-reply-link" href="' . Html::attr($href) . '" data-commentid="' . $id . '" data-postid="' . $post->id . '" data-belowelement="comment-' . $id . '" data-respondelement="respond" data-replyto="' . $replyTo . '" aria-label="' . $replyTo . '">' . Gettext::inContext('Reply', 'verb') . '</a></div>';
     }
 
     private function form(Block $block, Renderer $renderer): string

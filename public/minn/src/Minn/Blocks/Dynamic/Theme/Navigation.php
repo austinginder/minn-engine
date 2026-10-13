@@ -175,18 +175,19 @@ final readonly class Navigation
      */
     private function responsive(string $nav, string $label, string $list, int $id, bool $hasIcon, string $colors): string
     {
-        $ariaLabel = 'Menu';
+        // The label sits in the context's JSON, inside a single-quoted attribute, encoded as the reference encodes it.
+        $ariaLabel = substr(\Minn\Json::encode(\Minn\I18n\Gettext::text('Menu'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP), 1, -1);
         $this->enqueueView();
         $open = $hasIcon
-            ? 'aria-label="Open menu"'
+            ? 'aria-label="' . Html::attr(\Minn\I18n\Gettext::text('Open menu')) . '"'
             : '';
         $openInner = $hasIcon
             ? '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7.5h16v1.5H4z"></path><path d="M4 15h16v1.5H4z"></path></svg>'
-            : 'Menu';
-        $close = $hasIcon ? 'aria-label="Close menu"' : '';
+            : Html::esc(\Minn\I18n\Gettext::text('Menu'));
+        $close = $hasIcon ? 'aria-label="' . Html::attr(\Minn\I18n\Gettext::text('Close menu')) . '"' : '';
         $closeInner = $hasIcon
             ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false"><path d="m13.06 12 6.47-6.47-1.06-1.06L12 10.94 5.53 4.47 4.47 5.53 10.94 12l-6.47 6.47 1.06 1.06L12 13.06l6.47 6.47 1.06-1.06L13.06 12Z"></path></svg>'
-            : 'Close';
+            : Html::esc(\Minn\I18n\Gettext::text('Close'));
         return $nav . ($label === '' ? '' : ' aria-label="' . Html::attr($label) . '"') . ' ' . "\n\t\t" . ' data-wp-interactive="core/navigation" data-wp-context=\'{"overlayOpenedBy":{"click":false,"hover":false,"focus":false},"type":"overlay","roleAttribute":"","ariaLabel":"' . $ariaLabel . '"}\'>'
             . '<button aria-haspopup="dialog" ' . $open . ' class="wp-block-navigation__responsive-container-open" ' . "\n\t\t\t\t" . 'data-wp-on--click="actions.openMenuOnClick"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t" . '>' . $openInner . '</button>'
             . "\n\t\t\t\t" . '<div class="wp-block-navigation__responsive-container' . $colors . '"  id="modal-' . $id . '" ' . "\n\t\t\t\t" . 'data-wp-class--has-modal-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-class--is-menu-open="state.isMenuOpen"' . "\n\t\t\t\t" . 'data-wp-watch="callbacks.initMenu"' . "\n\t\t\t\t" . 'data-wp-on--keydown="actions.handleMenuKeydown"' . "\n\t\t\t\t" . 'data-wp-on--focusout="actions.handleMenuFocusout"' . "\n\t\t\t\t" . 'tabindex="-1"' . "\n\t\t\t" . '>'
@@ -396,7 +397,7 @@ final readonly class Navigation
         if ($label === '') {
             return '';
         }
-        $toggle = self::SUBMENU_TOGGLE . ' aria-label="' . Html::attr(strip_tags($label) . ' submenu') . '"';
+        $toggle = self::SUBMENU_TOGGLE . ' aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('%s submenu'), strip_tags($label))) . '"';
         $text = '<span class="wp-block-navigation-item__label">' . $label . '</span>';
         $head = $onClick
             ? '<button ' . $toggle . ' class="wp-block-navigation-item__content wp-block-navigation-submenu__toggle" >' . $text . '</button><span class="wp-block-navigation__submenu-icon">' . self::CHEVRON . '</span>'
@@ -528,7 +529,7 @@ final readonly class Navigation
         $this->enqueueView();
         return '<li ' . self::wiring('hover') . 'class="wp-block-pages-list__item' . $marker . ' has-child wp-block-navigation-item open-on-hover-click' . $home . '">'
             . $link
-            . '<button ' . self::SUBMENU_TOGGLE . ' aria-label="' . Html::attr((string) $page['post_title']) . ' submenu" class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" >' . self::CHEVRON . '</button>'
+            . '<button ' . self::SUBMENU_TOGGLE . ' aria-label="' . Html::attr(sprintf(\Minn\I18n\Gettext::text('%s submenu'), (string) $page['post_title'])) . '" class="wp-block-navigation__submenu-icon wp-block-navigation-submenu__toggle" >' . self::CHEVRON . '</button>'
             . '<ul data-wp-on--focus="actions.openMenuOnFocus" class="wp-block-navigation__submenu-container">' . $children . '</ul></li>';
     }
 

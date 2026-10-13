@@ -7,6 +7,7 @@ namespace Minn\Blocks\Dynamic;
 use DateTimeImmutable;
 use DateTimeZone;
 use Minn\Content\Site;
+use Minn\I18n\LocalDates;
 
 /** Site-local dates the way the dynamic blocks print them. */
 final class Dates
@@ -17,11 +18,10 @@ final class Dates
         return (new DateTimeImmutable($local, $site->timezone()))->format('c');
     }
 
-    /** A site-local MySQL datetime in the format given, else the date_format option. */
+    /** A site-local MySQL datetime in the format given, else the date_format option, in the site's language. */
     public static function format(Site $site, string $local, string $format = ''): string
     {
         $format = $format !== '' ? $format : ($site->option('date_format') ?: 'F j, Y');
-        $time = new DateTimeImmutable($local, new DateTimeZone('UTC'));
-        return $time->format($format);
+        return LocalDates::format(new DateTimeImmutable($local, new DateTimeZone('UTC')), $format);
     }
 }

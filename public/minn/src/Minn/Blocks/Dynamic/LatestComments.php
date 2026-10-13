@@ -12,6 +12,7 @@ use Minn\Db;
 use Minn\Front\Permalinks;
 use Minn\Rest\UserObject;
 use Minn\Html;
+use Minn\I18n\Gettext;
 use Minn\Support\Kses;
 
 /** core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. */
@@ -58,8 +59,11 @@ final readonly class LatestComments
                 ? '<a class="wp-block-latest-comments__comment-author" href="' . Html::attr(Kses::url((string) $comment['comment_author_url'])) . '">' . Html::esc((string) $comment['comment_author']) . '</a>'
                 : '<span class="wp-block-latest-comments__comment-author">' . Html::esc((string) $comment['comment_author']) . '</span>';
             $link = $post === null ? '' : $this->permalinks->forPost($post) . '#comment-' . (int) $comment['comment_ID'];
-            $item .= '<article><footer class="wp-block-latest-comments__comment-meta">' . $author . ' on '
-                . '<a class="wp-block-latest-comments__comment-link" href="' . Html::attr($link) . '">' . ($post['post_title'] ?? '') . '</a>';
+            $item .= '<article><footer class="wp-block-latest-comments__comment-meta">' . sprintf(
+                Gettext::text('%1$s on %2$s'),
+                $author,
+                '<a class="wp-block-latest-comments__comment-link" href="' . Html::attr($link) . '">' . ($post['post_title'] ?? '') . '</a>',
+            );
             if ($dates) {
                 $item .= '<time datetime="' . Dates::iso($this->site, (string) $comment['comment_date']) . '" class="wp-block-latest-comments__comment-date">'
                     . Dates::format($this->site, (string) $comment['comment_date']) . '</time>';

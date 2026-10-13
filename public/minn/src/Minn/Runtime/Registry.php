@@ -34,7 +34,7 @@ final class Registry
     /** @var array<string, \WP_Taxonomy> the one object per registered taxonomy, as $wp_taxonomies holds it */
     private array $taxonomyObjects = [];
 
-    public function __construct(string $engineDir)
+    public function __construct(private readonly string $engineDir)
     {
         $data = Json::file($engineDir . '/data/registry.json') ?: [];
         $this->postTypes = $data['post_types'] ?? [];
@@ -168,6 +168,52 @@ final class Registry
     }
 
     /**
+     * The built-in types', taxonomies' and statuses' labels in the site's
+     * language, as the reference registers them again on init: each label
+     * asks for its own message (data/registry-labels.json, captured from the
+     * reference), and a type's single-item template and a taxonomy's
+     * archive template are named after the singular name. Rows and the
+     * shared objects both take them; what a plugin set before init gives
+     * way, as it does there.
+     */
+    public function translateBuiltIns(): void
+    {
+        $messages = Json::file($this->engineDir . '/data/registry-labels.json') ?: [];
+        $ask = static fn (array $message): string => $message[1] === null ? Gettext::text((string) $message[0]) : Gettext::inContext((string) $message[0], (string) $message[1]);
+        foreach (['postTypes' => 'post_types', 'taxonomies' => 'taxonomies'] as $property => $kind) {
+            foreach ((array) ($messages[$kind] ?? []) as $name => $labels) {
+                if (!isset($this->{$property}[$name])) {
+                    continue;
+                }
+                $row = &$this->{$property}[$name];
+                foreach ((array) $labels as $key => $message) {
+                    if ($key === 'label') {
+                        $row['label'] = $ask($message);
+                    } else {
+                        $row['labels'][$key] = $ask($message);
+                    }
+                }
+                if (isset($row['labels']['template_name'], $row['labels']['singular_name'])) {
+                    $row['labels']['template_name'] = $property === 'postTypes'
+                        ? sprintf(Gettext::text('Single item: %s'), (string) $row['labels']['singular_name'])
+                        : sprintf(Gettext::inContext('%s Archives', 'taxonomy template name'), (string) $row['labels']['singular_name']);
+                }
+                $object = $property === 'postTypes' ? ($this->postTypeObjects[$name] ?? null) : ($this->taxonomyObjects[$name] ?? null);
+                if ($object !== null) {
+                    $object->label = $row['label'];
+                    $object->labels = (object) $row['labels'];
+                }
+                unset($row);
+            }
+        }
+        foreach ((array) ($messages['statuses'] ?? []) as $name => $message) {
+            if (isset($this->statuses[$name])) {
+                $this->statuses[$name]['label'] = $ask($message);
+            }
+        }
+    }
+
+    /**
      * Takes a built post type as the registered one: the object
      * register_post_type made is the one every reader shares, and its
      * properties are the type's row. Registering again puts a new object in
@@ -243,7 +289,7 @@ final class Registry
         $defaults = array_diff_key((array) ($this->postTypes[$base]['labels'] ?? []), ['name_admin_bar' => true, 'template_name' => true]);
         $merged = array_merge($defaults, $labels);
         if (!isset($merged['template_name']) && isset($labels['singular_name'])) {
-            $merged['template_name'] = sprintf(\function_exists('__') ? Gettext::text('Single item: %s') : 'Single item: %s', (string) $labels['singular_name']);
+            $merged['template_name'] = sprintf(Gettext::text('Single item: %s'), (string) $labels['singular_name']);
         }
         return $merged;
     }
@@ -262,7 +308,7 @@ final class Registry
         $labels = self::derivedLabels($labels, $label, $name);
         $defaults = array_diff_key((array) ($this->taxonomies[$base]['labels'] ?? []), ['name_admin_bar' => true, 'template_name' => true, 'archives' => true]);
         $merged = array_merge($defaults, $labels);
-        $merged['template_name'] ??= sprintf(\function_exists('__') ? Gettext::text('%s Archives') : '%s Archives', (string) ($merged['singular_name'] ?? ''));
+        $merged['template_name'] ??= sprintf(Gettext::inContext('%s Archives', 'taxonomy template name'), (string) ($merged['singular_name'] ?? ''));
         return $merged;
     }
 

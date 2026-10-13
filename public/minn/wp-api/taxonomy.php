@@ -156,7 +156,7 @@ function _minn_default_term(string $taxonomy, array $term): void
 function unregister_taxonomy($taxonomy)
 {
     if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     if (!empty(Runtime::registry()->taxonomy((string) $taxonomy)['_builtin'])) {
         return new WP_Error('invalid_taxonomy', 'Unregistering a built-in taxonomy is not allowed.');
@@ -214,7 +214,7 @@ function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
         return new WP_Error('invalid_term', 'Empty Term.');
     }
     if ($taxonomy !== '' && !taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     if ($term instanceof WP_Term) {
         $object = $term;
@@ -328,7 +328,7 @@ function get_terms($args = [], $deprecated = '')
     }
     foreach ((array) $args['taxonomy'] as $taxonomy) {
         if (!taxonomy_exists($taxonomy)) {
-            return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+            return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
         }
     }
     $suppress = $args['suppress_filter'];
@@ -498,7 +498,7 @@ function wp_get_object_terms($object_ids, $taxonomies, $args = [])
     $taxonomies = (array) $taxonomies;
     foreach ($taxonomies as $taxonomy) {
         if (!taxonomy_exists($taxonomy)) {
-            return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+            return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
         }
     }
     $object_ids = array_map('intval', (array) $object_ids);
@@ -516,7 +516,7 @@ function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false)
 {
     $object_id = (int) $object_id;
     if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     $terms = array_values(array_filter(array_map(static fn ($t) => is_string($t) ? trim($t) : $t, (array) $terms), static fn ($t) => $t !== '' && $t !== null));
     $ttIds = [];
@@ -545,7 +545,7 @@ function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false)
 function wp_remove_object_terms($object_id, $terms, $taxonomy)
 {
     if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     $ttIds = [];
     foreach ((array) $terms as $term) {
@@ -640,7 +640,7 @@ function in_category($category, $post = null)
 function wp_insert_term($term, $taxonomy, $args = [])
 {
     if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     return TermSave::insert($term, (string) $taxonomy, (array) $args);
 }
@@ -649,7 +649,7 @@ function wp_insert_term($term, $taxonomy, $args = [])
 function wp_update_term($term_id, $taxonomy, $args = [])
 {
     if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     return TermSave::update((int) $term_id, (string) $taxonomy, (array) $args);
 }
@@ -801,7 +801,7 @@ function get_tags_to_edit($post_id, $taxonomy = 'post_tag')
 function get_term_children($term_id, $taxonomy)
 {
     if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     return _minn_term_query()->children((int) $term_id, (string) $taxonomy);
 }
@@ -811,7 +811,7 @@ function get_objects_in_term($term_ids, $taxonomies, $args = [])
     $taxonomies = array_values(array_map('strval', (array) $taxonomies));
     foreach ($taxonomies as $taxonomy) {
         if (!taxonomy_exists($taxonomy)) {
-            return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+            return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
         }
     }
     $order = (string) (wp_parse_args($args, ['order' => 'ASC'])['order']);
@@ -1406,7 +1406,7 @@ function _get_term_children($term_id, $terms, $taxonomy, &$ancestors = [])
 function is_object_in_term($object_id, $taxonomy, $terms = null)
 {
     if (!taxonomy_exists((string) $taxonomy)) {
-        return new WP_Error('invalid_taxonomy', 'Invalid taxonomy.');
+        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
     }
     $object_terms = wp_get_object_terms([(int) $object_id], [(string) $taxonomy]);
     if (is_wp_error($object_terms)) {

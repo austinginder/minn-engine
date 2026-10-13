@@ -202,7 +202,7 @@ final class QueryBlocks
         [$label, $name] = \Minn\Theme\ArchiveTitle::parts($resolution, (string) ($this->site->option('date_format') ?? ''));
         $text = match ($resolution->kind) {
             Kind::PostTypeArchive => Html::esc($this->archiveTitle($record)),
-            Kind::Search => 'Search results for: ' . Texturize::text('"' . Html::esc((string) $resolution->search) . '"'),
+            Kind::Search => sprintf(\Minn\I18n\Gettext::text('Search results for: &#8220;%s&#8221;'), Html::esc((string) $resolution->search)),
             default => $name === '' ? '' : ($prefix ? \Minn\Theme\ArchiveTitle::compose($label, $name) : $name),
         };
         if ($text === '') {

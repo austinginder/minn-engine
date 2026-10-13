@@ -5,8 +5,8 @@ dynamic core blocks that render from data
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
 | [`Archives`](#archives) | final readonly class | 29 | core/archives: the months that have published posts, newest first, with their counts when asked (showPostCounts). |
-| [`Dates`](#dates) | final class | 16 | Site-local dates the way the dynamic blocks print them. |
-| [`LatestComments`](#latestcomments) | final readonly class | 68 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
+| [`Dates`](#dates) | final class | 15 | Site-local dates the way the dynamic blocks print them. |
+| [`LatestComments`](#latestcomments) | final readonly class | 71 | core/latest-comments: the newest approved comments with avatar, meta, and a 20-word excerpt. |
 | [`LatestPosts`](#latestposts) | final readonly class | 34 | core/latest-posts: the newest published posts as a list, optionally dated. |
 | [`Search`](#search) | final readonly class | 48 | core/search: the site search form. The button sits outside or inside |
 | [`SocialLinks`](#sociallinks) | final class | 79 | core/social-links and core/social-link. The list keeps its stored |
@@ -45,7 +45,7 @@ ISO 8601 with the site's offset at that date (summer or winter time), from a sit
 
 ### static `format(Minn\Content\Site $site, string $local, string $format = ''): string`
 
-A site-local MySQL datetime in the format given, else the date_format option.
+A site-local MySQL datetime in the format given, else the date_format option, in the site's language.
 
 
 ## LatestComments
@@ -65,7 +65,7 @@ __construct(Minn\Db $db, Minn\Content\Site $site, Minn\Content\Posts $posts, Min
 
 The block's HTML.
 
-Internals: `excerpt()` (private, line 77)
+Internals: `excerpt()` (private, line 81)
 
 
 ## LatestPosts

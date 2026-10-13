@@ -4,7 +4,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 
 | Class | Kind | Lines | Summary |
 |---|---|---|---|
-| [`AdminBar`](#adminbar) | final readonly class | 318 | The Minn bar on the public site: the same server-rendered chrome the |
+| [`AdminBar`](#adminbar) | final readonly class | 326 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 97 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 63 | The archive periods wp_get_archives lists: months, years, days and weeks |
 | [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
@@ -78,7 +78,7 @@ The stylesheet link for the head.
 
 The bar markup, its config, and the script, for the end of the body.
 
-Internals: `markup()` (private, line 84), `siteMenu()` (private, line 137), `statusMenu()` (private, line 155), `newMenu()` (private, line 177), `notificationsMenu()` (private, line 191), `userMenu()` (private, line 204), `status()` (private, line 222), `editTarget()` (private, line 239), `commands()` (private, line 255), `searchTypes()` (private, line 280), `customSchemeStyle()` (private, line 289), `appUrl()` (private, line 308), `appPath()` (private, line 313), `assetUrl()` (private, line 318), `icon()` (private, line 323), `gridIcon()` (private, line 328), `menuItem()` (private, line 333)
+Internals: `t()` (private, line 49), `markup()` (private, line 91), `siteMenu()` (private, line 144), `statusMenu()` (private, line 162), `newMenu()` (private, line 184), `notificationsMenu()` (private, line 198), `userMenu()` (private, line 211), `status()` (private, line 229), `editTarget()` (private, line 246), `commands()` (private, line 264), `searchTypes()` (private, line 289), `customSchemeStyle()` (private, line 298), `appUrl()` (private, line 317), `appPath()` (private, line 322), `assetUrl()` (private, line 327), `icon()` (private, line 332), `gridIcon()` (private, line 337), `menuItem()` (private, line 342)
 
 
 ## ArchiveAddresses
