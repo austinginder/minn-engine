@@ -217,6 +217,8 @@ if (isset($options['site'])) {
     // The 0.1.0 scorecard as the commit holds it (tests/tools/scorecard.php).
     $scorecard = json_decode((string) shell_exec('git -C ' . escapeshellarg($root) . ' show HEAD:contracts/scorecard.json 2>/dev/null'), true);
     if (is_array($scorecard)) {
+        // The clean-room scan's figures stay in the repository until Austin has had its stretches reviewed.
+        unset($scorecard['clones']);
         $site['scorecard'] = $scorecard;
     }
     $target = "{$root}/site/minn-site/content/compat.json";
