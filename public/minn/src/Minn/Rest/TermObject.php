@@ -10,6 +10,7 @@ use Minn\Http\RouteMiss;
 use Minn\Content\TermRecord;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Registered;
 
 /** The wp/v2 category and tag objects. */
 final readonly class TermObject
@@ -65,11 +66,11 @@ final readonly class TermObject
         if ($restBase === '') {
             return null;
         }
-        foreach (\get_taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
+        foreach (Registered::taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
             if (!empty($taxonomy->_builtin) || ($taxonomy->rest_base ?: $taxonomy->name) !== $restBase || ($taxonomy->rest_namespace ?: 'wp/v2') !== 'wp/v2') {
                 continue;
             }
-            $type = \get_post_type_object((string) (((array) $taxonomy->object_type)[0] ?? 'post'));
+            $type = Registered::postType((string) (((array) $taxonomy->object_type)[0] ?? 'post'));
             return ['taxonomy' => (string) $taxonomy->name, 'has_parent' => (bool) $taxonomy->hierarchical, 'post_arg' => $restBase, 'post_base' => (string) ($type?->rest_base ?: $type?->name ?? 'posts')];
         }
         return null;

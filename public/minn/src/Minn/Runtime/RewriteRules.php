@@ -220,9 +220,9 @@ final class RewriteRules
         $post = $page || str_contains($struct, '%postname%') || str_contains($struct, '%post_id%')
             || array_filter(self::POST_BY_TIME, static fn ($tag) => !str_contains($struct, $tag)) === [];
         if (!$post && function_exists('get_post_types')) {
-            foreach (\get_post_types(['_builtin' => false]) as $type) {
+            foreach (Registered::postTypes(['_builtin' => false]) as $type) {
                 if (str_contains($struct, "%{$type}%")) {
-                    return [true, (bool) \is_post_type_hierarchical($type)];
+                    return [true, (bool) Registered::hierarchicalType($type)];
                 }
             }
         }

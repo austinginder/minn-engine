@@ -9,6 +9,7 @@ use Minn\Media\PhotoMeta;
 use Minn\Media\Sizing;
 use Minn\Media\Uploads;
 use Minn\Runtime\PostLookup;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /** @internal the registered sizes: the four from the options, then add_image_size's (the two big ones first) */
@@ -2130,19 +2131,7 @@ function _minn_content_img_tag($content)
 
 function get_taxonomies_for_attachments($output = 'names')
 {
-    $taxonomies = [];
-    foreach (get_taxonomies([], 'objects') as $taxonomy) {
-        $forAttachments = array_filter((array) $taxonomy->object_type, static fn ($type) => $type === 'attachment' || str_starts_with((string) $type, 'attachment:'));
-        if ($forAttachments === []) {
-            continue;
-        }
-        if ($output === 'names') {
-            $taxonomies[] = $taxonomy->name;
-        } else {
-            $taxonomies[$taxonomy->name] = $taxonomy;
-        }
-    }
-    return $taxonomies;
+    return Registered::forAttachments($output);
 }
 
 function get_attached_media($type, $post = 0)

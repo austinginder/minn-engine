@@ -100,7 +100,7 @@ final class CommentForm
         if ($status === 'private' && !\current_user_can('read_post', $postId)) {
             return new \WP_Error('comment_id_not_found');
         }
-        $statusObject = \get_post_status_object($status);
+        $statusObject = Registered::status($status);
         $refusal = match (true) {
             !\comments_open($postId) => ['comment_closed', 'Sorry, comments are closed for this item.', 403],
             $status === 'trash' => ['comment_on_trash', '', 0],

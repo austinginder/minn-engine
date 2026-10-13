@@ -167,7 +167,7 @@ final class TermSave
         if (!$match instanceof \WP_Term) {
             return null;
         }
-        if (!\is_taxonomy_hierarchical($taxonomy)) {
+        if (!Registered::hierarchicalTaxonomy($taxonomy)) {
             return new \WP_Error('term_exists', 'A term with the name provided already exists in this taxonomy.', (int) $match->term_id);
         }
         $asked = (string) ($args['slug'] ?? '');

@@ -15962,6 +15962,17 @@ calls are rewritten by the tokenizer, so only real calls changed, not names in c
 `wp_logout_url` and `wp_nonce_url` wait for the batch that gives replaceable functions their seam
 (the nonce is pluggable). All 370 probes give identical output before and after.
 
+**Batch 6, what is registered (function calls 804 → 718).** `Runtime\Registered` answers the
+lookups of post types, post statuses and taxonomies the way the facade did: one by name (`postType()`,
+`status()`, `taxonomy()`), lists filtered by their flags as names or the shared objects
+(`postTypes()`, `statuses()`, `taxonomies()`, `objectTaxonomies()`, `forAttachments()`), and whether one
+exists, is hierarchical or viewable (each viewable check ending in its filter); `supports()` is
+post_type_supports. A name that is not text or a number finds nothing, as before. The facade maps
+onto it; `get_object_taxonomies` keeps turning a post (or an attachment's file types) into the types
+asked. The engine's two `is_multisite()` branches are gone (Minn is one site), and the slug check no
+longer asks whether a facade function exists once the engine has booted. All 370 probes give identical
+output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

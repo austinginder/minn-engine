@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Json;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -149,7 +150,7 @@ final class Types
     public function routeBases(): array
     {
         $bases = $this->declaredBases();
-        foreach (Runtime::booted() ? \get_taxonomies(['show_in_rest' => true, '_builtin' => false], 'objects') : [] as $taxonomy) {
+        foreach (Runtime::booted() ? Registered::taxonomies(['show_in_rest' => true, '_builtin' => false], 'objects') : [] as $taxonomy) {
             if (($taxonomy->rest_namespace ?: 'wp/v2') === 'wp/v2') {
                 $bases[] = (string) ($taxonomy->rest_base ?: $taxonomy->name);
             }

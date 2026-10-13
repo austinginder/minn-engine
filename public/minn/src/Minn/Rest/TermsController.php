@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Auth\RegisteredCaps;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\TermEvents;
 use Minn\Http\Policy;
@@ -46,7 +47,7 @@ final readonly class TermsController
         $taxonomy = TermObject::config($base)['taxonomy'];
         $params = TermCollectionParams::for(['base' => $base]);
         $wp = RuntimeRoutes::sanitized($request, $params);
-        $object = \get_taxonomy($taxonomy);
+        $object = Registered::taxonomy($taxonomy);
         if (Context::of($request)->isEdit() && !$this->caller->can((string) ($object->cap->edit_terms ?? 'manage_categories'))) {
             throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to edit terms in this taxonomy.');
         }

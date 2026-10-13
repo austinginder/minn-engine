@@ -66,7 +66,7 @@ final class PostQueryResults
     {
         $query = $this->query;
         $first = $query->posts[0];
-        $object = \get_post_status_object((string) $status);
+        $object = Registered::status((string) $status);
         if (!$object) {
             return \current_user_can('edit_post', $first->ID);
         }

@@ -8,6 +8,7 @@ use Minn\Content\TermLinks;
 use Minn\Content\Terms;
 use Minn\Front\TermLists;
 use Minn\Content\PostWriter;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\TermFields;
 use Minn\Runtime\TermSave;
@@ -40,46 +41,36 @@ function _minn_terms(): Terms
 
 function get_taxonomy($taxonomy)
 {
-    return (is_scalar($taxonomy) ? Runtime::registry()->taxonomyObject((string) $taxonomy) : null) ?? false;
+    return Registered::taxonomy($taxonomy);
 }
 
 function taxonomy_exists($taxonomy)
 {
-    return is_scalar($taxonomy) && Runtime::registry()->taxonomy((string) $taxonomy) !== null;
+    return Registered::taxonomyExists($taxonomy);
 }
 
 function is_taxonomy_hierarchical($taxonomy)
 {
-    $row = is_scalar($taxonomy) ? Runtime::registry()->taxonomy((string) $taxonomy) : null;
-    return $row !== null && !empty($row['hierarchical']);
+    return Registered::hierarchicalTaxonomy($taxonomy);
 }
 
 function is_taxonomy_viewable($taxonomy)
 {
-    if (is_scalar($taxonomy)) {
-        $taxonomy = get_taxonomy($taxonomy);
-    }
-    return is_object($taxonomy) && (bool) $taxonomy->publicly_queryable;
+    return Registered::viewableTaxonomy($taxonomy);
 }
 
 function get_taxonomies($args = [], $output = 'names', $operator = 'and')
 {
-    return wp_filter_object_list(Runtime::registry()->taxonomyObjects(), $args, $operator, $output === 'names' ? 'name' : false);
+    return Registered::taxonomies($args, $output, $operator);
 }
 
 function get_object_taxonomies($object_type, $output = 'names')
 {
+    // A post is asked by its type; an attachment by its file's types too.
     if (is_object($object_type)) {
         $object_type = $object_type->post_type === 'attachment' ? get_attachment_taxonomies($object_type) : $object_type->post_type;
     }
-    $types = array_map('strval', (array) $object_type);
-    $out = [];
-    foreach (Runtime::registry()->taxonomies() as $name => $row) {
-        if (array_intersect($types, (array) $row['object_type']) !== []) {
-            $out[$name] = $output === 'names' ? $name : Runtime::registry()->taxonomyObject((string) $name);
-        }
-    }
-    return $output === 'names' ? array_values($out) : $out;
+    return Registered::objectTaxonomies($object_type, $output);
 }
 
 /**

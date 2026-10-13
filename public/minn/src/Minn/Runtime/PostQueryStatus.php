@@ -36,7 +36,7 @@ final class PostQueryStatus
         }
         $type = is_array($type) ? reset($type) : $type;
         $this->parts->postType = $type;
-        $this->parts->typeObject = is_string($type) ? \get_post_type_object($type) : null;
+        $this->parts->typeObject = is_string($type) ? Registered::postType($type) : null;
         if ($this->parts->typeObject === null) {
             $this->parts->typeCap = (string) $type;
         }
@@ -65,7 +65,7 @@ final class PostQueryStatus
         $t = $this->parts->table;
         $type = $this->parts->postType;
         if ($type === 'any') {
-            $searchable = \get_post_types(['exclude_from_search' => false]);
+            $searchable = Registered::postTypes(['exclude_from_search' => false]);
             return $searchable === [] ? [' AND 1=0 ', true] : [" AND {$t}.post_type IN ('" . implode("', '", array_map('esc_sql', $searchable)) . "')", false];
         }
         if (!empty($type) && is_array($type)) {
@@ -81,7 +81,7 @@ final class PostQueryStatus
         if (!empty($this->parts->postType)) {
             $this->parts->postType = $type;
         }
-        $this->parts->typeObject = \get_post_type_object($type);
+        $this->parts->typeObject = Registered::postType($type);
         return [" AND {$t}.post_type = " . Sql::quote($type), false];
     }
 
@@ -100,13 +100,13 @@ final class PostQueryStatus
         $this->parts->statuses = $asked;
         [$listed, $private, $excluded] = [[], [], []];
         if (in_array('any', $asked, true)) {
-            foreach (\get_post_stati(['exclude_from_search' => true]) as $status) {
+            foreach (Registered::statuses(['exclude_from_search' => true]) as $status) {
                 if (!in_array($status, $asked, true)) {
                     $excluded[] = "{$t}.post_status <> '{$status}'";
                 }
             }
         } else {
-            foreach (\get_post_stati() as $status) {
+            foreach (Registered::statuses() as $status) {
                 if ($status === 'private' && in_array($status, $asked, true)) {
                     $private[] = "{$t}.post_status = '{$status}'";
                 } elseif (in_array($status, $asked, true)) {
@@ -142,7 +142,7 @@ final class PostQueryStatus
         $t = $this->parts->table;
         $type = $this->parts->postType;
         $types = match (true) {
-            $type === 'any' => array_values(\get_post_types(['exclude_from_search' => false])),
+            $type === 'any' => array_values(Registered::postTypes(['exclude_from_search' => false])),
             is_array($type) => $type,
             !empty($type) => [$type],
             default => ['post'],
@@ -154,9 +154,9 @@ final class PostQueryStatus
         sort($types);
         $clauses = [];
         foreach ($types as $name) {
-            $clause = "({$t}.post_type = " . Sql::quote((string) $name) . ' AND (' . implode(' OR ', array_map(static fn (string $s) => "{$t}.post_status = '{$s}'", \get_post_stati(['public' => true])));
+            $clause = "({$t}.post_type = " . Sql::quote((string) $name) . ' AND (' . implode(' OR ', array_map(static fn (string $s) => "{$t}.post_status = '{$s}'", Registered::statuses(['public' => true])));
             if ($this->query->is_admin) {
-                foreach (\get_post_stati(['protected' => true, 'show_in_admin_all_list' => true]) as $status) {
+                foreach (Registered::statuses(['protected' => true, 'show_in_admin_all_list' => true]) as $status) {
                     $clause .= " OR {$t}.post_status = '{$status}'";
                 }
             }
@@ -168,7 +168,7 @@ final class PostQueryStatus
     /** The private statuses a signed-in user sees in a type: all of them with the cap to read them, their own otherwise. */
     private function privateStatuses(string $type): string
     {
-        $object = \get_post_type_object($type);
+        $object = Registered::postType($type);
         if (!\is_user_logged_in() || !$object instanceof \WP_Post_Type) {
             return '';
         }
@@ -176,7 +176,7 @@ final class PostQueryStatus
         $user = \get_current_user_id();
         $readable = \current_user_can($object->cap->read_private_posts);
         $sql = '';
-        foreach (\get_post_stati(['private' => true]) as $status) {
+        foreach (Registered::statuses(['private' => true]) as $status) {
             $sql .= $readable ? " \nOR {$t}.post_status = '{$status}'" : " \nOR ({$t}.post_author = {$user} AND {$t}.post_status = '{$status}')";
         }
         return $sql;

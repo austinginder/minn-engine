@@ -10,6 +10,7 @@ use Minn\Auth\Authenticator;
 use Minn\Auth\Capabilities;
 use Minn\Http\Request;
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -100,7 +101,7 @@ final class Caller
     public function editsAnyRestType(): bool
     {
         $caps = Runtime::booted()
-            ? array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, \get_post_types(['show_in_rest' => true], 'objects')))
+            ? array_unique(array_map(static fn ($type) => (string) $type->cap->edit_posts, Registered::postTypes(['show_in_rest' => true], 'objects')))
             : ['edit_posts', 'edit_pages', 'edit_theme_options'];
         foreach ($caps as $cap) {
             if ($this->can($cap)) {

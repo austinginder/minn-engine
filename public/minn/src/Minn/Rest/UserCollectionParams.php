@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Http\Args;
 use Minn\Http\RouteParams;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -20,7 +21,7 @@ final class UserCollectionParams implements RouteParams
     public static function for(array $captures): array
     {
         $params = Args::CONTEXT + Args::USERS;
-        $types = Runtime::booted() ? \get_post_types(['show_in_rest' => true], 'names') : ['post' => 'post', 'page' => 'page'];
+        $types = Runtime::booted() ? Registered::postTypes(['show_in_rest' => true], 'names') : ['post' => 'post', 'page' => 'page'];
         $params['has_published_posts']['items']['enum'] = $types;
         return $params;
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Runtime\QueryArgs;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
 use Minn\Runtime\SiteUrls;
@@ -249,7 +250,7 @@ final class ToolbarMenus
     /** @return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create */
     private static function creatable(): array
     {
-        $types = (array) \get_post_types(['show_in_admin_bar' => true], 'objects');
+        $types = (array) Registered::postTypes(['show_in_admin_bar' => true], 'objects');
         $can = static fn (string $name): bool => isset($types[$name]) && \current_user_can($types[$name]->cap->create_posts);
         $actions = [];
         if ($can('post')) {
@@ -269,7 +270,7 @@ final class ToolbarMenus
                 $actions['post-new.php?post_type=' . $name] = [$type->labels->name_admin_bar, $name === 'user' ? 'new-user-content' : 'new-' . $name];
             }
         }
-        if (\current_user_can('create_users') || (\is_multisite() && \current_user_can('promote_users'))) {
+        if (\current_user_can('create_users')) {
             $actions['user-new.php'] = [Gettext::inContext('User', 'add new from admin bar'), 'new-user'];
         }
         return $actions;
@@ -296,7 +297,7 @@ final class ToolbarMenus
     /** @return array{0: ?string, 1: ?string} the edit label and link for a post, or nulls */
     private static function editPost(object $post): array
     {
-        $type = \get_post_type_object($post->post_type);
+        $type = Registered::postType($post->post_type);
         if (!$type || !$type->show_in_admin_bar || !\current_user_can('edit_post', $post->ID)) {
             return [null, null];
         }
@@ -306,7 +307,7 @@ final class ToolbarMenus
     /** @return array{0: ?string, 1: ?string} the edit label and link for a term, or nulls */
     private static function editTerm(object $term): array
     {
-        $taxonomy = \get_taxonomy($term->taxonomy);
+        $taxonomy = Registered::taxonomy($term->taxonomy);
         if (!$taxonomy || !\current_user_can('edit_term', $term->term_id)) {
             return [null, null];
         }

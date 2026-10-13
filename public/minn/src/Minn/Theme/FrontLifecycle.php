@@ -6,6 +6,7 @@ namespace Minn\Theme;
 
 
 use Minn\Http\Response;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -36,9 +37,9 @@ final class FrontLifecycle
         }
         $known = (array) $wp->public_query_vars;
         $wp->public_query_vars = (array) Runtime::hooks()->filter('query_vars', [$known]);
-        foreach (\get_post_types([], 'objects') as $type) {
+        foreach (Registered::postTypes([], 'objects') as $type) {
             // The reference asks each type whether it is viewable as it maps type query vars.
-            \is_post_type_viewable($type);
+            Registered::viewableType($type);
         }
         foreach ($parse === null ? array_diff($wp->public_query_vars, $known) : [] as $var) {
             if (!isset($vars[$var]) && isset($given[$var]) && $given[$var] !== '') {

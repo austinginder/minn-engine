@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -128,7 +129,7 @@ final class PostListArgs
         if ($request['tax_relation']) {
             $args['tax_query'] = ['relation' => $request['tax_relation']];
         }
-        foreach (\get_object_taxonomies($type, 'objects') as $taxonomy) {
+        foreach (Registered::objectTaxonomies($type, 'objects') as $taxonomy) {
             if (empty($taxonomy->show_in_rest)) {
                 continue;
             }

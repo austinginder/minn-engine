@@ -10,6 +10,7 @@ use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\Json;
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -224,8 +225,8 @@ final class Embed
         $kind = match (true) {
             $type === 'attachment' => 'media',
             $type === 'user', $type === 'comment' => $type,
-            \taxonomy_exists($type) => 'term',
-            \post_type_exists($type) => 'post',
+            Registered::taxonomyExists($type) => 'term',
+            Registered::postTypeExists($type) => 'post',
             default => null,
         };
         return $kind === null ? $item : array_intersect_key($item, array_flip(self::KEYS[$kind]));

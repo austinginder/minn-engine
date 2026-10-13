@@ -23,7 +23,7 @@ final class PostRevisions
     /** The new revision's id, or null when none was called for. */
     public static function save(\WP_Post $post): ?int
     {
-        if (!\post_type_supports($post->post_type, 'revisions') || $post->post_status === 'auto-draft' || !\wp_revisions_enabled($post)) {
+        if (!Registered::supports($post->post_type, 'revisions') || $post->post_status === 'auto-draft' || !\wp_revisions_enabled($post)) {
             return null;
         }
         $latest = null;

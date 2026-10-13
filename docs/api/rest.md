@@ -385,7 +385,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 87), `invalid()` (private, line 105), `claims()` (private, line 132), `batchablePath()` (private, line 142), `subRequest()` (private, line 160), `error()` (private, line 178), `envelope()` (private, line 184)
+Internals: `refusal()` (private, line 88), `invalid()` (private, line 106), `claims()` (private, line 133), `batchablePath()` (private, line 143), `subRequest()` (private, line 161), `error()` (private, line 179), `envelope()` (private, line 185)
 
 
 ## BatchRequest
@@ -629,7 +629,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 163)
+Internals: `resolve()` (private, line 164)
 
 
 ## Catalogue
@@ -974,7 +974,7 @@ An item cut to the embed shape of its object type (a post type, a taxonomy, atta
 
 - `@param array<string, mixed> $item @return array<string, mixed>`
 
-Internals: `decorateItem()` (private, line 97), `answer()` (private, line 141), `target()` (private, line 177), `kind()` (private, line 195), `taxonomyBase()` (private, line 211), `context()` (private, line 235)
+Internals: `decorateItem()` (private, line 98), `answer()` (private, line 142), `target()` (private, line 178), `kind()` (private, line 196), `taxonomyBase()` (private, line 212), `context()` (private, line 236)
 
 
 ## EngineRoutes
@@ -1780,7 +1780,7 @@ the order the site allows them, each once.
 
 - `@return array<string, list<string>>`
 
-Internals: `named()` (private, line 60), `forType()` (private, line 70), `filtered()` (private, line 88), `type()` (private, line 107), `described()` (private, line 138), `build()` (private, line 150), `statuses()` (private, line 225), `taxonomies()` (private, line 236), `termFilter()` (private, line 252)
+Internals: `named()` (private, line 61), `forType()` (private, line 71), `filtered()` (private, line 89), `type()` (private, line 108), `described()` (private, line 139), `build()` (private, line 151), `statuses()` (private, line 226), `taxonomies()` (private, line 237), `termFilter()` (private, line 253)
 
 
 ## PostListArgs
@@ -1819,7 +1819,7 @@ rest_query_var-{name}, and the list's orderby names as the query's.
 - `@param array<string, mixed> $args`
 - `@return array<string, mixed>`
 
-Internals: `mimeTypes()` (private, line 100), `sticky()` (private, line 112), `taxonomies()` (private, line 126), `termClause()` (private, line 147), `formats()` (private, line 171)
+Internals: `mimeTypes()` (private, line 101), `sticky()` (private, line 113), `taxonomies()` (private, line 127), `termClause()` (private, line 148), `formats()` (private, line 172)
 
 
 ## PostObject
@@ -1881,7 +1881,7 @@ The view links plus the caller's verbs and cap-gated wp:action-* entries.
 
 A MySQL datetime in the reference's ISO form.
 
-Internals: `meta()` (private, line 83), `navigationView()` (private, line 94), `blockView()` (private, line 124), `viewFields()` (private, line 151), `viewTerms()` (private, line 206), `typeFields()` (private, line 222), `classList()` (private, line 251), `format()` (private, line 273), `termLinks()` (private, line 317), `editFields()` (private, line 336), `allow()` (private, line 519), `gmt()` (private, line 538)
+Internals: `meta()` (private, line 84), `navigationView()` (private, line 95), `blockView()` (private, line 125), `viewFields()` (private, line 152), `viewTerms()` (private, line 207), `typeFields()` (private, line 223), `classList()` (private, line 252), `format()` (private, line 274), `termLinks()` (private, line 318), `editFields()` (private, line 337), `allow()` (private, line 520), `gmt()` (private, line 539)
 
 
 ## PostsController
@@ -1933,7 +1933,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 106), `readable()` (private, line 125), `visibleStatuses()` (private, line 148)
+Internals: `totals()` (private, line 107), `readable()` (private, line 126), `visibleStatuses()` (private, line 149)
 
 
 ## PostsWriteController
@@ -2040,7 +2040,7 @@ The names of the fields registered for the type that show in the context. @retur
 
 - `@return list<string>`
 
-Internals: `of()` (private, line 94), `wanted()` (private, line 101), `inContext()` (private, line 111), `refusal()` (private, line 117)
+Internals: `of()` (private, line 95), `wanted()` (private, line 102), `inContext()` (private, line 112), `refusal()` (private, line 118)
 
 
 ## RegisteredPostFields
@@ -3370,7 +3370,7 @@ Route: `GET /wp/v2/statuses/{status:[\w-]+} (public)`
 
 One status.
 
-Internals: `item()` (private, line 84), `readable()` (private, line 108), `statuses()` (private, line 114), `context()` (private, line 119)
+Internals: `item()` (private, line 85), `readable()` (private, line 109), `statuses()` (private, line 115), `context()` (private, line 120)
 
 
 ## Subjects
@@ -3674,7 +3674,7 @@ first type it belongs to.
 
 - `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}|null`
 
-Internals: `viewFields()` (private, line 79), `allowedVerbs()` (private, line 112)
+Internals: `viewFields()` (private, line 80), `allowedVerbs()` (private, line 113)
 
 
 ## TermsController
@@ -3735,7 +3735,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 154), `termsReadable()` (private, line 208)
+Internals: `requireParent()` (private, line 155), `termsReadable()` (private, line 209)
 
 
 ## Types
@@ -3796,7 +3796,7 @@ as the reference's post search handler takes them.
 
 The rest_base of a type slug.
 
-Internals: `core()` (private, line 38), `registered()` (private, line 79), `servedRegistered()` (private, line 182)
+Internals: `core()` (private, line 39), `registered()` (private, line 80), `servedRegistered()` (private, line 183)
 
 
 ## UrlDetails

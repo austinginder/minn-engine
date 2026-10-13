@@ -1172,7 +1172,7 @@ The slug, or its first free numbered form.
 
 - `@param Closure(string): bool|null $bad a plugin's say over the slug asked for (the bad-slug filters), asked last`
 
-Internals: `taken()` (private, line 53), `reserved()` (private, line 66), `hierarchical()` (private, line 95)
+Internals: `taken()` (private, line 54), `reserved()` (private, line 67), `hierarchical()` (private, line 96)
 
 
 ## PostStatus

@@ -29,7 +29,7 @@ final class PostQueryTax
         if (!empty($q['taxonomy']) && !empty($q['term'])) {
             $clauses[] = ['taxonomy' => $q['taxonomy'], 'terms' => [$q['term']], 'field' => 'slug'];
         }
-        foreach (\get_taxonomies([], 'objects') as $name => $taxonomy) {
+        foreach (Registered::taxonomies([], 'objects') as $name => $taxonomy) {
             if ($name !== 'post_tag' && $taxonomy->query_var && !empty($q[$taxonomy->query_var])) {
                 array_push($clauses, ...self::queryVar($q, (string) $name, $taxonomy));
             }
@@ -158,8 +158,8 @@ final class PostQueryTax
     public static function postTypes(array $taxonomies): string|array
     {
         $types = [];
-        foreach (\get_post_types(['exclude_from_search' => false]) as $type) {
-            $objectTaxonomies = $type === 'attachment' ? \get_taxonomies_for_attachments() : \get_object_taxonomies($type);
+        foreach (Registered::postTypes(['exclude_from_search' => false]) as $type) {
+            $objectTaxonomies = $type === 'attachment' ? Registered::forAttachments() : Registered::objectTaxonomies($type);
             if (array_intersect($taxonomies, $objectTaxonomies) !== []) {
                 $types[] = $type;
             }

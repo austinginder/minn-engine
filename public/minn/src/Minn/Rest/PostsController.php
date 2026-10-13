@@ -17,6 +17,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /** wp/v2 posts and pages, read side. */
@@ -127,7 +128,7 @@ final readonly class PostsController
         if ($post->post_status === 'publish' || $this->caller->can('read_post', $post->ID)) {
             return true;
         }
-        $status = \get_post_status_object($post->post_status);
+        $status = Registered::status($post->post_status);
         if ($status && $status->public) {
             return true;
         }
@@ -211,7 +212,7 @@ final readonly class PostsController
     /** A viewable type's single post points at its page on the site. */
     public static function withAlternate(Response $response, PostRecord $post): Response
     {
-        if (!Runtime::booted() || !\is_post_type_viewable($post->type)) {
+        if (!Runtime::booted() || !Registered::viewableType($post->type)) {
             return $response;
         }
         return Reply::alternate($response, (string) \get_permalink($post->id));

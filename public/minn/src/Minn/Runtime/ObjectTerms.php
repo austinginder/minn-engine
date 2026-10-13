@@ -25,14 +25,14 @@ final class ObjectTerms
         $terms = [];
         if (count($taxonomies) > 1) {
             foreach ($taxonomies as $index => $taxonomy) {
-                $own = \get_taxonomy($taxonomy)->args ?? null;
+                $own = Registered::taxonomy($taxonomy)->args ?? null;
                 if (is_array($own) && array_merge($args, $own) != $args) {
                     unset($taxonomies[$index]);
                     $terms = array_merge($terms, (array) \wp_get_object_terms($objectIds, $taxonomy, array_merge($args, $own)));
                 }
             }
         } else {
-            $own = \get_taxonomy(reset($taxonomies))->args ?? null;
+            $own = Registered::taxonomy(reset($taxonomies))->args ?? null;
             $args = is_array($own) ? array_merge($args, $own) : $args;
         }
         $args['taxonomy'] = $taxonomies;

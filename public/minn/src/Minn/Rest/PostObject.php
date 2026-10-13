@@ -10,6 +10,7 @@ use Minn\Content\Posts;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Registered;
 use Minn\Support\Serialized;
 
 /**
@@ -472,8 +473,8 @@ final readonly class PostObject
         foreach ($registered?->taxonomies() ?? [] as $restBase => $taxonomy) {
             // A plugin's type: create and assign for each of its REST taxonomies, create needing the
             // taxonomy's edit_terms when it nests and assign_terms when it does not (probe rest-plugin-types).
-            $caps = \get_taxonomy($taxonomy)?->cap;
-            $actions["wp:action-create-{$restBase}"] = $caps !== null && $can(\is_taxonomy_hierarchical($taxonomy) ? $caps->edit_terms : $caps->assign_terms);
+            $caps = Registered::taxonomy($taxonomy)?->cap;
+            $actions["wp:action-create-{$restBase}"] = $caps !== null && $can(Registered::hierarchicalTaxonomy($taxonomy) ? $caps->edit_terms : $caps->assign_terms);
             $actions["wp:action-assign-{$restBase}"] = $caps !== null && $can($caps->assign_terms);
             array_push($taxonomyRels, "wp:action-create-{$restBase}", "wp:action-assign-{$restBase}");
         }

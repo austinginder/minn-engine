@@ -103,7 +103,7 @@ final class PostQueryWhere
             return;
         }
         foreach ((array) $types as $type) {
-            $object = \get_post_type_object($type);
+            $object = Registered::postType($type);
             if (!$object || !$object->query_var || empty($q[$object->query_var])) {
                 continue;
             }
@@ -127,7 +127,7 @@ final class PostQueryWhere
             ['post_type' => $types] = $q;
             if ($types !== 'page') {
                 foreach ((array) $types as $type) {
-                    $object = \get_post_type_object($type);
+                    $object = Registered::postType($type);
                     if ($object && $object->hierarchical) {
                         $found = \get_page_by_path($q['pagename'], OBJECT, $type);
                         if ($found) {

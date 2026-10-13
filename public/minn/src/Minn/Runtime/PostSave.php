@@ -135,7 +135,7 @@ final class PostSave
     {
         $none = static fn (string $column): bool => (string) Slashes::strip($sanitized[$column] ?? '') === '';
         $empty = $type !== 'attachment' && $none('post_content') && $none('post_title') && $none('post_excerpt')
-            && \post_type_supports($type, 'editor') && \post_type_supports($type, 'title') && \post_type_supports($type, 'excerpt');
+            && Registered::supports($type, 'editor') && Registered::supports($type, 'title') && Registered::supports($type, 'excerpt');
         return (bool) Runtime::hooks()->filter('wp_insert_post_empty_content', [$empty, $sanitized]);
     }
 
@@ -160,7 +160,7 @@ final class PostSave
         }
         $bad = static fn (string $candidate): bool => (bool) match (true) {
             $type === 'attachment' => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_attachment_slug', [false, $candidate]),
-            \is_post_type_hierarchical($type) => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_hierarchical_slug', [false, $candidate, $type, $parent]),
+            Registered::hierarchicalType($type) => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_hierarchical_slug', [false, $candidate, $type, $parent]),
             default => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_flat_slug', [false, $candidate, $type]),
         };
         return (string) Runtime::hooks()->filter('wp_unique_post_slug', [$slugs->unique($slug, $id, $type, $parent, $bad), $id, $status, $type, $parent, $slug]);

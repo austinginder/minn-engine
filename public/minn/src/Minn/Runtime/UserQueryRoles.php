@@ -35,7 +35,7 @@ final class UserQueryRoles
             }
             $queries = $queries === [] ? [$clauses] : ['relation' => 'AND', [$queries, [$clauses]]];
         }
-        if ($wanted['roles'] === [] && $in === [] && $out === [] && !\is_multisite()) {
+        if ($wanted['roles'] === [] && $in === [] && $out === []) {
             return $queries;
         }
         $roleQueries = [];

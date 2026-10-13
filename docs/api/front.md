@@ -1653,7 +1653,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 48), `creatable()` (private, line 250), `editPost()` (private, line 297), `editTerm()` (private, line 307)
+Internals: `profileUrl()` (private, line 49), `creatable()` (private, line 251), `editPost()` (private, line 298), `editTerm()` (private, line 308)
 
 
 ## ToolbarTree

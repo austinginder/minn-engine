@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -24,14 +25,14 @@ final readonly class RegisteredType
         if (!Runtime::booted()) {
             return null;
         }
-        $object = \get_post_type_object($type);
+        $object = Registered::postType($type);
         return $object instanceof \WP_Post_Type && empty($object->_builtin) ? new self($type, $object) : null;
     }
 
     /** Whether the type supports the feature (title, editor, author...). */
     public function supports(string $feature): bool
     {
-        return \post_type_supports($this->name, $feature);
+        return Registered::supports($this->name, $feature);
     }
 
     /** Whether the type's posts have parents. */
@@ -50,7 +51,7 @@ final readonly class RegisteredType
     public function taxonomies(): array
     {
         $out = [];
-        foreach (\get_object_taxonomies($this->name, 'objects') as $taxonomy) {
+        foreach (Registered::objectTaxonomies($this->name, 'objects') as $taxonomy) {
             if (!empty($taxonomy->show_in_rest)) {
                 $out[(string) ($taxonomy->rest_base ?: $taxonomy->name)] = (string) $taxonomy->name;
             }

@@ -14,6 +14,7 @@ use Minn\Http\Route;
 use Minn\Http\Router;
 use Minn\Json;
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -145,12 +146,12 @@ final readonly class BatchController
             return false;
         }
         $bases = ['users' => '\d+', 'widgets' => '[\w-]+'];
-        foreach (\get_post_types(['show_in_rest' => true], 'objects') as $type) {
+        foreach (Registered::postTypes(['show_in_rest' => true], 'objects') as $type) {
             if (!in_array($type->name, self::NOT_BATCHED, true)) {
                 $bases[(string) ($type->rest_base ?: $type->name)] = '\d+';
             }
         }
-        foreach (\get_taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
+        foreach (Registered::taxonomies(['show_in_rest' => true], 'objects') as $taxonomy) {
             $bases[(string) ($taxonomy->rest_base ?: $taxonomy->name)] = '\d+';
         }
         return isset($bases[$m[1]]) && (!isset($m[2]) || preg_match('#^' . $bases[$m[1]] . '$#', $m[2]) === 1);

@@ -81,7 +81,7 @@ The Links widget: the link category (the categories given as [id, name]),
 the sort order, what each link shows, and how many (the limit as the
 caller shows it).
 
-Internals: `marked()` (private, line 200), `number()` (private, line 205), `id()` (private, line 210), `name()` (private, line 215)
+Internals: `marked()` (private, line 201), `number()` (private, line 206), `id()` (private, line 211), `name()` (private, line 216)
 
 
 ## WidgetTemplates

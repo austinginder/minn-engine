@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Registry;
 use Minn\Runtime\Runtime;
 
@@ -95,7 +96,7 @@ final readonly class StatusesController
         ];
         $item = array_intersect_key($all, array_flip($fields));
         $item['_links'] = ['archives' => [['href' => $this->url->to('/wp/v2/posts', $name === 'publish' ? [] : ['status' => $name])]]];
-        return RuntimePrepare::item('rest_prepare_status', $item, static fn () => \get_post_status_object($name));
+        return RuntimePrepare::item('rest_prepare_status', $item, static fn () => Registered::status($name));
     }
 
     /**

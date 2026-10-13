@@ -202,7 +202,7 @@ final class MenuItemMarks
     {
         $terms = [];
         $ancestors = [];
-        foreach ((array) \get_object_taxonomies((string) $post->post_type) as $taxonomy) {
+        foreach ((array) Registered::objectTaxonomies((string) $post->post_type) as $taxonomy) {
             if (empty(Runtime::registry()->taxonomy((string) $taxonomy)['hierarchical'])) {
                 continue;
             }

@@ -189,7 +189,7 @@ final class MetaKeys
             if ($objectType !== 'post') {
                 return Gettext::text('Meta keys cannot enable revisions support unless the object type supports revisions.');
             }
-            if ($subtype !== '' && !\post_type_supports($subtype, 'revisions')) {
+            if ($subtype !== '' && !Registered::supports($subtype, 'revisions')) {
                 return Gettext::text('Meta keys cannot enable revisions support unless the object subtype supports revisions.');
             }
         }

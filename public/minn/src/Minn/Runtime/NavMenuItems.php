@@ -89,10 +89,10 @@ final class NavMenuItems
     /** An item for a post: the post type's name (its status's for a post not published), the post's address and filtered title. */
     private static function pointsAtPost(object $item): void
     {
-        $type = \get_post_type_object((string) $item->object);
+        $type = Registered::postType((string) $item->object);
         $original = \get_post((int) $item->object_id);
         $item->type_label = $type ? $type->labels->singular_name : (string) $item->object;
-        if ($original && $original->post_status !== 'publish' && ($status = \get_post_status_object($original->post_status))) {
+        if ($original && $original->post_status !== 'publish' && ($status = Registered::status($original->post_status))) {
             $item->type_label = $status->label;
         }
         if (!$type || !$original || $original->post_status === 'trash') {
@@ -106,7 +106,7 @@ final class NavMenuItems
     /** An item for a term: the taxonomy's name, the term's address and name. */
     private static function pointsAtTerm(object $item): void
     {
-        $taxonomy = \get_taxonomy((string) $item->object);
+        $taxonomy = Registered::taxonomy((string) $item->object);
         $term = \get_term((int) $item->object_id, (string) $item->object);
         $item->type_label = $taxonomy ? $taxonomy->labels->singular_name : (string) $item->object;
         $link = $term instanceof \WP_Term ? \get_term_link($term, (string) $item->object) : '';
@@ -120,7 +120,7 @@ final class NavMenuItems
     /** An item for a post type's archive: the archives label, the archive's address. */
     private static function pointsAtArchive(object $item): void
     {
-        $type = \get_post_type_object((string) $item->object);
+        $type = Registered::postType((string) $item->object);
         $item->type_label = Gettext::text('Post Type Archive');
         if (!$type) {
             $item->_invalid = true;
@@ -140,7 +140,7 @@ final class NavMenuItems
     /** A post of another kind, as a would-be item for it. */
     private static function post(object $item): void
     {
-        $type = \get_post_type_object((string) $item->post_type);
+        $type = Registered::postType((string) $item->post_type);
         $item->db_id = 0;
         $item->menu_item_parent = 0;
         $item->object_id = (int) $item->ID;
@@ -159,7 +159,7 @@ final class NavMenuItems
     /** A term, as a would-be item for it. */
     private static function term(object $item): void
     {
-        $taxonomy = \get_taxonomy((string) $item->taxonomy);
+        $taxonomy = Registered::taxonomy((string) $item->taxonomy);
         $link = \get_term_link($item, (string) $item->taxonomy);
         $item->ID = (int) $item->term_id;
         $item->db_id = 0;

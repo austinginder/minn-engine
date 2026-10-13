@@ -22,7 +22,7 @@ final class ArchiveLinks
     /** get_post_type_archive_link. */
     public static function archive(string $postType): string|false
     {
-        $type = \get_post_type_object($postType);
+        $type = Registered::postType($postType);
         if (!$type || ($type->name !== 'post' && !$type->has_archive)) {
             return false;
         }
@@ -49,7 +49,7 @@ final class ArchiveLinks
         if (!$link) {
             return false;
         }
-        $type = \get_post_type_object($postType);
+        $type = Registered::postType($postType);
         if (Runtime::options()->filtered('permalink_structure') && $type && is_array($type->rewrite) && !empty($type->rewrite['feeds'])) {
             $link = Url::withTrailingSlash((string) $link) . SiteUrls::trailing('feed' . ($feed === $default ? '' : '/' . $feed), 'feed');
         } else {

@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Http\Args;
 use Minn\Http\RouteParams;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -62,7 +63,7 @@ final class PostCollectionParams implements RouteParams
         if (!Runtime::booted()) {
             return self::type(['post' => 'posts', 'page' => 'pages'][$name] ?? '');
         }
-        $object = \get_post_type_object($name);
+        $object = Registered::postType($name);
         return $object instanceof \WP_Post_Type && !empty($object->show_in_rest) ? self::described($name, $object) : null;
     }
 
@@ -113,7 +114,7 @@ final class PostCollectionParams implements RouteParams
                 default => null,
             };
         }
-        foreach (\get_post_types(['show_in_rest' => true], 'objects') as $name => $object) {
+        foreach (Registered::postTypes(['show_in_rest' => true], 'objects') as $name => $object) {
             if (($object->rest_namespace ?: 'wp/v2') === 'wp/v2' && ($object->rest_base ?: $name) === $base) {
                 return self::described((string) $name, $object);
             }
@@ -138,12 +139,12 @@ final class PostCollectionParams implements RouteParams
     private static function described(string $name, \WP_Post_Type $object): array
     {
         $taxonomies = [];
-        foreach (\get_object_taxonomies($name, 'objects') as $taxonomy) {
+        foreach (Registered::objectTaxonomies($name, 'objects') as $taxonomy) {
             if (!empty($taxonomy->show_in_rest)) {
                 $taxonomies[(string) ($taxonomy->rest_base ?: $taxonomy->name)] = (bool) $taxonomy->hierarchical;
             }
         }
-        return ['name' => $name, 'object' => $object, 'author' => \post_type_supports($name, 'author'), 'attributes' => $name === 'page' || \post_type_supports($name, 'page-attributes'), 'hierarchical' => (bool) $object->hierarchical || $name === 'attachment', 'formats' => \post_type_supports($name, 'post-formats'), 'taxonomies' => $taxonomies];
+        return ['name' => $name, 'object' => $object, 'author' => Registered::supports($name, 'author'), 'attributes' => $name === 'page' || Registered::supports($name, 'page-attributes'), 'hierarchical' => (bool) $object->hierarchical || $name === 'attachment', 'formats' => Registered::supports($name, 'post-formats'), 'taxonomies' => $taxonomies];
     }
 
     /** @param array{name: string, author: bool, attributes: bool, hierarchical: bool, formats: bool, taxonomies: array<string, bool>} $type @return array<string, array<string, mixed>> */
@@ -224,7 +225,7 @@ final class PostCollectionParams implements RouteParams
     /** @return list<string> */
     private static function statuses(): array
     {
-        return Runtime::booted() ? array_values(array_map('strval', array_keys(\get_post_stati()))) : self::STATUSES;
+        return Runtime::booted() ? array_values(array_map('strval', array_keys(Registered::statuses()))) : self::STATUSES;
     }
 
     /**

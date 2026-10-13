@@ -11,6 +11,7 @@ use Minn\Content\PostClasses;
 use Minn\Runtime\PostData;
 use Minn\Runtime\PostLinks;
 use Minn\Runtime\PostRevisions;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\Pages;
 use Minn\Runtime\PostInsert;
@@ -1940,44 +1941,27 @@ function wp_set_post_tags($post_id = 0, $tags = '', $append = false)
 
 function get_post_type_object($post_type)
 {
-    if (!is_scalar($post_type)) {
-        return null;
-    }
-    return Runtime::registry()->postTypeObject((string) $post_type);
+    return Registered::postType($post_type);
 }
 
 function post_type_exists($post_type)
 {
-    return is_scalar($post_type) && Runtime::registry()->postType((string) $post_type) !== null;
+    return Registered::postTypeExists($post_type);
 }
 
 function is_post_type_hierarchical($post_type)
 {
-    $row = is_scalar($post_type) ? Runtime::registry()->postType((string) $post_type) : null;
-    return $row !== null && !empty($row['hierarchical']);
+    return Registered::hierarchicalType($post_type);
 }
 
 function is_post_type_viewable($post_type)
 {
-    if (is_scalar($post_type)) {
-        $post_type = get_post_type_object($post_type);
-    }
-    if (!is_object($post_type)) {
-        return false;
-    }
-    $viewable = $post_type->publicly_queryable || ($post_type->_builtin && $post_type->public);
-    return (bool) apply_filters('is_post_type_viewable', $viewable, $post_type);
+    return Registered::viewableType($post_type);
 }
 
 function is_post_status_viewable($post_status)
 {
-    if (is_scalar($post_status)) {
-        $post_status = get_post_status_object($post_status);
-    }
-    if (!is_object($post_status) || $post_status->internal || $post_status->protected) {
-        return false;
-    }
-    return (bool) apply_filters('is_post_status_viewable', $post_status->publicly_queryable || ($post_status->_builtin && $post_status->public), $post_status);
+    return Registered::viewableStatus($post_status);
 }
 
 function is_post_publicly_viewable($post = null)
@@ -1988,8 +1972,7 @@ function is_post_publicly_viewable($post = null)
 
 function get_post_types($args = [], $output = 'names', $operator = 'and')
 {
-    // The shared objects, so a flag a plugin changed on one is what the list filters on (probe type-object-sharing).
-    return wp_filter_object_list(Runtime::registry()->postTypeObjects(), $args, $operator, $output === 'names' ? 'name' : false);
+    return Registered::postTypes($args, $output, $operator);
 }
 
 function register_post_type($post_type, $args = [])
@@ -2056,7 +2039,7 @@ function get_all_post_type_supports($post_type)
 
 function post_type_supports($post_type, $feature)
 {
-    return isset(get_all_post_type_supports($post_type)[$feature]);
+    return Registered::supports($post_type, $feature);
 }
 
 function add_post_type_support($post_type, $feature, ...$args)
@@ -2087,17 +2070,12 @@ function get_post_types_by_support($feature, $operator = 'and')
 
 function get_post_status_object($post_status)
 {
-    $row = is_scalar($post_status) ? Runtime::registry()->status((string) $post_status) : null;
-    return $row === null ? null : (object) $row;
+    return Registered::status($post_status);
 }
 
 function get_post_stati($args = [], $output = 'names', $operator = 'and')
 {
-    $objects = [];
-    foreach (Runtime::registry()->statuses() as $name => $row) {
-        $objects[$name] = (object) $row;
-    }
-    return wp_filter_object_list($objects, $args, $operator, $output === 'names' ? 'name' : false);
+    return Registered::statuses($args, $output, $operator);
 }
 
 function register_post_status($post_status, $args = [])

@@ -95,7 +95,7 @@ final class PostLinks
         $parent = (int) $post->post_parent > 0 && (int) $post->post_parent !== (int) $post->ID ? \get_post((int) $post->post_parent) : null;
         $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         $link = '';
-        if ($pretty && $parent instanceof \WP_Post && in_array($parent->post_type, \get_post_types(), true)) {
+        if ($pretty && $parent instanceof \WP_Post && in_array($parent->post_type, Registered::postTypes(), true)) {
             $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) \get_permalink($parent);
             $name = is_numeric($post->post_name) || str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
             if (!str_contains($parentLink, '?')) {
@@ -113,7 +113,7 @@ final class PostLinks
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $sample = (bool) ($flags & self::SAMPLE);
-        $type = \get_post_type_object($post->post_type);
+        $type = Registered::postType($post->post_type);
         $struct = (string) \_minn_rewrite()->get_extra_permastruct($post->post_type);
         // A plugin type's sample is pretty whatever its status, a trashed post's too (probe rest-plugin-types).
         $plain = !$sample && self::plain($post, $flags);
@@ -135,7 +135,7 @@ final class PostLinks
      */
     private static function plain(\WP_Post $post, int $flags): bool
     {
-        $status = \get_post_status_object((string) $post->post_status);
+        $status = Registered::status((string) $post->post_status);
         if ((($flags & self::SAMPLE) || ($post->filter ?? '') === 'sample') && !($status->internal ?? false)) {
             return false;
         }
@@ -162,7 +162,7 @@ final class PostLinks
         $sample->post_name = (string) \wp_unique_post_slug($sample->post_name, $sample->ID, $sample->post_status, $sample->post_type, $sample->post_parent);
         $sample->filter = 'sample';
         $link = str_replace("%{$sample->post_type}%", '%pagename%', (string) \get_permalink($sample, true));
-        if (\is_post_type_hierarchical($sample->post_type)) {
+        if (Registered::hierarchicalType($sample->post_type)) {
             $uri = (string) \get_page_uri($sample);
             $uri = str_contains($uri, '/') ? substr($uri, 0, (int) strrpos($uri, '/')) : '';
             $uri = (string) Runtime::hooks()->filter('editable_slug', [$uri, $sample]);

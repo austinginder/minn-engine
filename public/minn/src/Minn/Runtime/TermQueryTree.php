@@ -85,7 +85,7 @@ final class TermQueryTree
      */
     public static function pad(array &$terms, string $taxonomy): void
     {
-        if (!\is_taxonomy_hierarchical($taxonomy) || \_get_term_hierarchy($taxonomy) === [] || $terms === []) {
+        if (!Registered::hierarchicalTaxonomy($taxonomy) || \_get_term_hierarchy($taxonomy) === [] || $terms === []) {
             return;
         }
         $byId = [];
@@ -95,7 +95,7 @@ final class TermQueryTree
             $ids[$term->term_taxonomy_id] = $term->term_id;
         }
         $db = Runtime::current()->db;
-        $types = (array) (\get_taxonomy($taxonomy)->object_type ?? []);
+        $types = (array) (Registered::taxonomy($taxonomy)->object_type ?? []);
         $rows = $db->rows("SELECT object_id, term_taxonomy_id FROM {$db->table('term_relationships')} INNER JOIN {$db->table('posts')} ON object_id = ID WHERE term_taxonomy_id IN (?) AND post_type IN (?) AND post_status = 'publish'", [array_keys($ids), $types === [] ? [''] : $types]);
         $items = [];
         foreach ($rows as $row) {

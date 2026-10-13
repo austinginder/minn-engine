@@ -6,6 +6,7 @@ namespace Minn\Content;
 
 use Closure;
 use Minn\Db;
+use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
 /**
@@ -94,6 +95,6 @@ final readonly class PostSlugs
 
     private function hierarchical(string $type): bool
     {
-        return Runtime::booted() && \function_exists('is_post_type_hierarchical') ? \is_post_type_hierarchical($type) : $type === 'page';
+        return Runtime::booted() ? Registered::hierarchicalType($type) : $type === 'page';
     }
 }

@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 827,
-        "composes": 2374,
+        "minn": 821,
+        "composes": 2370,
         "leaf": 1024,
-        "noop": 2783,
+        "noop": 2793,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1065,
+        "minnMethods": 1081,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -49928,10 +49928,10 @@
         },
         "get_object_taxonomies": {
             "file": "taxonomy.php",
-            "lines": 11,
+            "lines": 5,
             "kind": "minn",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::objectTaxonomies"
             ],
             "composes": [
                 "get_attachment_taxonomies"
@@ -50667,14 +50667,12 @@
         },
         "get_post_stati": {
             "file": "post.php",
-            "lines": 5,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::statuses"
             ],
-            "composes": [
-                "wp_filter_object_list"
-            ]
+            "composes": []
         },
         "get_post_status": {
             "file": "post.php",
@@ -50689,10 +50687,10 @@
         },
         "get_post_status_object": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::status"
             ],
             "composes": []
         },
@@ -50817,23 +50815,21 @@
         },
         "get_post_type_object": {
             "file": "post.php",
-            "lines": 4,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::postType"
             ],
             "composes": []
         },
         "get_post_types": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::postTypes"
             ],
-            "composes": [
-                "wp_filter_object_list"
-            ]
+            "composes": []
         },
         "get_post_types_by_support": {
             "file": "post.php",
@@ -51640,27 +51636,25 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::taxonomies"
             ],
-            "composes": [
-                "wp_filter_object_list"
-            ]
+            "composes": []
         },
         "get_taxonomies_for_attachments": {
             "file": "media.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_taxonomies"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Registered::forAttachments"
+            ],
+            "composes": []
         },
         "get_taxonomy": {
             "file": "taxonomy.php",
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::taxonomy"
             ],
             "composes": []
         },
@@ -54421,13 +54415,12 @@
         },
         "is_post_status_viewable": {
             "file": "post.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post_status_object"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Registered::viewableStatus"
+            ],
+            "composes": []
         },
         "is_post_type_archive": {
             "file": "query.php",
@@ -54440,22 +54433,21 @@
         },
         "is_post_type_hierarchical": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::hierarchicalType"
             ],
             "composes": []
         },
         "is_post_type_viewable": {
             "file": "post.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post_type_object"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Registered::viewableType"
+            ],
+            "composes": []
         },
         "is_preview": {
             "file": "query.php",
@@ -54690,21 +54682,21 @@
         },
         "is_taxonomy_hierarchical": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::hierarchicalTaxonomy"
             ],
             "composes": []
         },
         "is_taxonomy_viewable": {
             "file": "taxonomy.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_taxonomy"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Registered::viewableTaxonomy"
+            ],
+            "composes": []
         },
         "is_term": {
             "file": "deprecated.php",
@@ -56857,7 +56849,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::postTypeExists"
             ],
             "composes": []
         },
@@ -56865,10 +56857,10 @@
             "file": "post.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "get_all_post_type_supports"
-            ]
+            "minn": [
+                "Minn\\Runtime\\Registered::supports"
+            ],
+            "composes": []
         },
         "postbox_classes": {
             "file": "admin.php",
@@ -61661,7 +61653,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::registry"
+                "Minn\\Runtime\\Registered::taxonomyExists"
             ],
             "composes": []
         },

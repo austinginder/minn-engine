@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\RestError;
+use Minn\Runtime\Registered;
 use Minn\Support\Lists;
 
 /**
@@ -70,7 +71,7 @@ final class RegisteredFields
     {
         $method = $request->get_method();
         if ($method !== 'GET' && $method !== 'HEAD') {
-            $context = $method === 'DELETE' && \taxonomy_exists($type) ? 'view' : 'edit';
+            $context = $method === 'DELETE' && Registered::taxonomyExists($type) ? 'view' : 'edit';
             if ($request['context'] !== $context) {
                 $request->set_param('context', $context);
             }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Widgets;
 
+use Minn\Runtime\Registered;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 
@@ -101,8 +102,8 @@ final class WidgetForms
     /** The tag cloud: its title, the taxonomies that show a cloud (tags unless one is chosen), and the counts box. */
     public static function tagCloud(\WP_Widget $widget, array $instance): string
     {
-        $taxonomies = \get_taxonomies(['show_tagcloud' => true], 'object');
-        $current = isset($instance['taxonomy']) && \taxonomy_exists((string) $instance['taxonomy']) ? (string) $instance['taxonomy'] : 'post_tag';
+        $taxonomies = Registered::taxonomies(['show_tagcloud' => true], 'object');
+        $current = isset($instance['taxonomy']) && Registered::taxonomyExists((string) $instance['taxonomy']) ? (string) $instance['taxonomy'] : 'post_tag';
         $out = sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')));
         $options = '';
         foreach ($taxonomies as $taxonomy) {

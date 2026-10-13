@@ -85,7 +85,7 @@ final readonly class TermEvents
         if (isset($body['description'])) {
             $prepared['description'] = (string) $body['description'];
         }
-        if (isset($body['parent']) && \is_taxonomy_hierarchical($taxonomy)) {
+        if (isset($body['parent']) && Registered::hierarchicalTaxonomy($taxonomy)) {
             $prepared['parent'] = (int) $body['parent'];
         }
         $filtered = Runtime::hooks()->filter("rest_pre_insert_{$taxonomy}", [(object) $prepared, RuntimeRoutes::wpRequest($request)]);

@@ -84,7 +84,7 @@ final class UserQueryRunner
         if (!$qv['has_published_posts'] || !$blog) {
             return '';
         }
-        $types = $qv['has_published_posts'] === true ? array_values(\get_post_types(['public' => true])) : (array) $qv['has_published_posts'];
+        $types = $qv['has_published_posts'] === true ? array_values(Registered::postTypes(['public' => true])) : (array) $qv['has_published_posts'];
         $posts = $this->wpdb->get_blog_prefix($blog) . 'posts';
         return " AND {$this->wpdb->users}.ID IN ( SELECT DISTINCT {$posts}.post_author FROM {$posts} WHERE {$posts}.post_status = 'publish' AND {$posts}.post_type IN ( " . implode(', ', array_map(static fn ($t) => Sql::quote((string) $t), $types)) . ' ) )';
     }
