@@ -28,11 +28,11 @@ final class CommentQueryRunner
     public function run(\WP_Comment_Query $query): mixed
     {
         $query->parse_query();
-        \do_action_ref_array('pre_get_comments', [&$query]);
+        Runtime::hooks()->actionRefArray('pre_get_comments', [&$query]);
         $query->meta_query = new \WP_Meta_Query();
         $query->meta_query->parse_query_vars($query->query_vars);
         $meta = empty($query->meta_query->queries) ? [] : (array) $query->meta_query->get_sql('comment', $this->wpdb->comments, 'comment_ID', $query);
-        $answer = \apply_filters_ref_array('comments_pre_query', [null, &$query]);
+        $answer = Runtime::hooks()->filterRefArray('comments_pre_query', [null, &$query]);
         if ($answer !== null) {
             $query->comments = $answer;
             return $answer;
@@ -46,7 +46,7 @@ final class CommentQueryRunner
             $query->comments = $ids;
             return $ids;
         }
-        $comments = (array) \apply_filters_ref_array('the_comments', [$this->comments($ids, $qv), &$query]);
+        $comments = (array) Runtime::hooks()->filterRefArray('the_comments', [$this->comments($ids, $qv), &$query]);
         $comments = array_values(array_filter(array_map(static fn ($c) => $c instanceof \WP_Comment ? $c : \get_comment($c), $comments)));
         if (in_array($qv['hierarchical'] ?? false, ['threaded', 'flat'], true)) {
             $comments = (new CommentThreads())->fill($query, $comments);
@@ -73,7 +73,7 @@ final class CommentQueryRunner
         $ids = array_map('intval', (array) $this->wpdb->get_col($request));
         // An empty page counts nothing: the found rows are read only when the query found some.
         if ($found && $ids !== []) {
-            $query->found_comments = (int) $this->wpdb->get_var(\apply_filters_ref_array('found_comments_query', ['SELECT FOUND_ROWS()', &$query]));
+            $query->found_comments = (int) $this->wpdb->get_var(Runtime::hooks()->filterRefArray('found_comments_query', ['SELECT FOUND_ROWS()', &$query]));
             $query->max_num_pages = (int) ceil($query->found_comments / max(1, abs((int) ($qv['number']))));
         }
         return $ids;
@@ -94,7 +94,7 @@ final class CommentQueryRunner
         [$where, $join] = (new CommentQueryWhere($this->wpdb))->pieces($query, $meta);
         $limits = CommentOrder::limits($qv);
         $found = $limits !== '' && empty($qv['no_found_rows']) ? 'SQL_CALC_FOUND_ROWS' : '';
-        $clauses = (array) \apply_filters_ref_array('comments_clauses', [[
+        $clauses = (array) Runtime::hooks()->filterRefArray('comments_clauses', [[
             'fields' => $counted ? 'COUNT(*)' : "{$table}.comment_ID",
             'join' => $join . ($meta['join'] ?? ''),
             'where' => implode(' AND ', $where),

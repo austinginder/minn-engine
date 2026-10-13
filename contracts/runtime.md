@@ -15891,6 +15891,24 @@ domain) and the engine asks for the same one:
   over, steady), they hold neither; query-clauses keeps the `gettext` its
   error messages ask for, which the engine now asks for too.
 
+## A clean slate: WordPress names leave the engine (2026-10-13)
+
+Austin: no engine release while `src/Minn` uses a WordPress name. The engine does its work in Minn
+classes; the facade (`wp-api/`) maps WordPress's functions and classes onto them for plugins, and
+the engine never goes through it. `tests/tools/wordpress-names.php` tracks what is left
+(`contracts/api/wordpress-names.json`): calls into WordPress functions, calls into the hook API by
+its WordPress names, and references to WordPress classes, each a ratchet in the style suite that only
+falls. The baseline was 1,018, 384 and 568.
+
+**Batch 1, the hook calls (384 → 3).** `\apply_filters()`, `\do_action()` and their `_ref_array`
+forms are `Runtime::hooks()` calls now (`filter`, `action`, `filterRefArray`, `actionRefArray`), as
+the facade's own versions were already: the arguments after the hook's name become the list, a hook
+name that is not a literal is made a string as the facade made it, and a literal list keeps its
+references (`[$clauses, &$query]`). `Ops\AutoUpdates` filters through `Runtime::hooks()` whether or
+not a plugin has loaded: with nothing hooked the value comes back as configured, which is what its
+fallback did. The three `apply_filters_deprecated` calls wait for the notices (batch 2). Proven by
+the 370 registered probes giving identical output on the engine at HEAD and after the change.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

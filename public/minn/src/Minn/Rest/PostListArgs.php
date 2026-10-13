@@ -76,7 +76,7 @@ final class PostListArgs
     {
         $vars = [];
         foreach ($args as $key => $value) {
-            $vars[$key] = \apply_filters("rest_query_var-{$key}", $value);
+            $vars[$key] = Runtime::hooks()->filter("rest_query_var-{$key}", [$value]);
         }
         $orderby = $request['orderby'];
         if (isset($vars['orderby'], $orderby) && is_string($orderby) && isset(self::ORDERBY[$orderby])) {

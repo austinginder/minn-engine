@@ -66,17 +66,17 @@ final class TermFields
     private static function filtered(string $field, mixed $value, int $termId, string|false $taxonomy, string $context): mixed
     {
         return match ($context) {
-            'edit' => \apply_filters("edit_{$taxonomy}_{$field}", \apply_filters("edit_term_{$field}", $value, $termId, $taxonomy), $termId),
+            'edit' => Runtime::hooks()->filter("edit_{$taxonomy}_{$field}", [Runtime::hooks()->filter("edit_term_{$field}", [$value, $termId, $taxonomy]), $termId]),
             'db' => self::saving($field, $value, $taxonomy),
-            'rss' => \apply_filters("{$taxonomy}_{$field}_rss", \apply_filters("term_{$field}_rss", $value, $taxonomy)),
-            default => \apply_filters("{$taxonomy}_{$field}", \apply_filters("term_{$field}", $value, $termId, $taxonomy, $context), $termId, $context),
+            'rss' => Runtime::hooks()->filter("{$taxonomy}_{$field}_rss", [Runtime::hooks()->filter("term_{$field}_rss", [$value, $taxonomy])]),
+            default => Runtime::hooks()->filter("{$taxonomy}_{$field}", [Runtime::hooks()->filter("term_{$field}", [$value, $termId, $taxonomy, $context]), $termId, $context]),
         };
     }
 
     /** The db context's filters: the field's, the taxonomy's, and a slug's old category one. */
     private static function saving(string $field, mixed $value, string|false $taxonomy): mixed
     {
-        $value = \apply_filters("pre_{$taxonomy}_{$field}", \apply_filters("pre_term_{$field}", $value, $taxonomy));
-        return $field === 'slug' ? \apply_filters('pre_category_nicename', $value) : $value;
+        $value = Runtime::hooks()->filter("pre_{$taxonomy}_{$field}", [Runtime::hooks()->filter("pre_term_{$field}", [$value, $taxonomy])]);
+        return $field === 'slug' ? Runtime::hooks()->filter('pre_category_nicename', [$value]) : $value;
     }
 }

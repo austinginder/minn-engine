@@ -39,16 +39,16 @@ final class AccountFlows
         } else {
             $user = \get_user_by('login', $login);
         }
-        $user = \apply_filters('lostpassword_user_data', $user, $errors);
-        \do_action('lostpassword_post', $errors, $user);
-        $errors = \apply_filters('lostpassword_errors', $errors, $user);
+        $user = Runtime::hooks()->filter('lostpassword_user_data', [$user, $errors]);
+        Runtime::hooks()->action('lostpassword_post', [$errors, $user]);
+        $errors = Runtime::hooks()->filter('lostpassword_errors', [$errors, $user]);
         if ($errors->has_errors()) {
             return $errors;
         }
         if (!$user instanceof \WP_User) {
             return new \WP_Error('invalidcombo', Gettext::text(self::NO_ACCOUNT));
         }
-        if (!\apply_filters('send_retrieve_password_email', true, $user->user_login, $user)) {
+        if (!Runtime::hooks()->filter('send_retrieve_password_email', [true, $user->user_login, $user])) {
             return true;
         }
         $key = \get_password_reset_key($user);
@@ -56,9 +56,9 @@ final class AccountFlows
             return $key;
         }
         $notice = Mailer::noticesFor(Runtime::current()->site)->passwordReset($user->user_login, $user->user_email, self::resetLink($user, $key) . '&wp_lang=' . rawurlencode((string) \get_user_locale($user)), (string) (Runtime::current()->request?->remoteAddress ?? ''));
-        $title = \apply_filters('retrieve_password_title', $notice->subject, $user->user_login, $user);
-        $message = \apply_filters('retrieve_password_message', $notice->body, $key, $user->user_login, $user);
-        $email = (array) \apply_filters('retrieve_password_notification_email', ['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user);
+        $title = Runtime::hooks()->filter('retrieve_password_title', [$notice->subject, $user->user_login, $user]);
+        $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
+        $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);
         if (!\wp_mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
             return new \WP_Error('retrieve_password_email_failure', Gettext::text('<strong>Error:</strong> The email could not be sent. Your site may not be correctly configured to send emails.'));
         }
@@ -68,10 +68,10 @@ final class AccountFlows
     /** A new password for a user, announced before (password_reset) and after (after_password_reset). */
     public static function resetPassword(\WP_User $user, string $password): void
     {
-        \do_action('password_reset', $user, $password);
+        Runtime::hooks()->action('password_reset', [$user, $password]);
         \wp_set_password($password, $user->ID);
         \update_user_meta($user->ID, 'default_password_nag', false);
-        \do_action('after_password_reset', $user, $password);
+        Runtime::hooks()->action('after_password_reset', [$user, $password]);
     }
 
     /**
@@ -84,12 +84,12 @@ final class AccountFlows
     {
         $errors = new \WP_Error();
         $name = \sanitize_user($login);
-        $email = (string) \apply_filters('user_registration_email', $email);
+        $email = (string) Runtime::hooks()->filter('user_registration_email', [$email]);
         $nameError = match (true) {
             $name === '' => ['empty_username', '<strong>Error:</strong> Please enter a username.'],
             !\validate_username($login) => ['invalid_username', '<strong>Error:</strong> This username is invalid because it uses illegal characters. Please enter a valid username.'],
             (bool) \username_exists($name) => ['username_exists', '<strong>Error:</strong> This username is already registered. Please choose another one.'],
-            in_array(strtolower($name), array_map('strtolower', (array) \apply_filters('illegal_user_logins', [])), true) => ['invalid_username', '<strong>Error:</strong> Sorry, that username is not allowed.'],
+            in_array(strtolower($name), array_map('strtolower', (array) Runtime::hooks()->filter('illegal_user_logins', [[]])), true) => ['invalid_username', '<strong>Error:</strong> Sorry, that username is not allowed.'],
             default => null,
         };
         if ($nameError !== null) {
@@ -106,8 +106,8 @@ final class AccountFlows
             $errors->add(...$emailError);
             $email = $emailError[0] === 'invalid_email' ? '' : $email;
         }
-        \do_action('register_post', $name, $email, $errors);
-        $errors = \apply_filters('registration_errors', $errors, $name, $email);
+        Runtime::hooks()->action('register_post', [$name, $email, $errors]);
+        $errors = Runtime::hooks()->filter('registration_errors', [$errors, $name, $email]);
         if ($errors->has_errors()) {
             return $errors;
         }
@@ -116,7 +116,7 @@ final class AccountFlows
             return new \WP_Error('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
         }
         \update_user_meta($id, 'default_password_nag', true);
-        \do_action('register_new_user', $id);
+        Runtime::hooks()->action('register_new_user', [$id]);
         return $id;
     }
 
@@ -132,12 +132,12 @@ final class AccountFlows
             return;
         }
         $site = Entities::decode((string) Runtime::options()->filtered('blogname'), ENT_QUOTES);
-        if ($notify !== 'user' && \apply_filters('wp_send_new_user_notification_to_admin', true, $user)) {
+        if ($notify !== 'user' && Runtime::hooks()->filter('wp_send_new_user_notification_to_admin', [true, $user])) {
             $message = sprintf(Gettext::text('New user registration on your site %s:'), $site) . "\r\n\r\n" . sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . sprintf(Gettext::text('Email: %s'), $user->user_email) . "\r\n";
-            $mail = (array) \apply_filters('wp_new_user_notification_email_admin', ['to' => Runtime::options()->filtered('admin_email'), 'subject' => Gettext::text('[%s] New User Registration'), 'message' => $message, 'headers' => ''], $user, $site);
+            $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email_admin', [['to' => Runtime::options()->filtered('admin_email'), 'subject' => Gettext::text('[%s] New User Registration'), 'message' => $message, 'headers' => ''], $user, $site]);
             \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
         }
-        if ($notify === 'admin' || (empty($deprecated) && $notify === '') || !\apply_filters('wp_send_new_user_notification_to_user', true, $user)) {
+        if ($notify === 'admin' || (empty($deprecated) && $notify === '') || !Runtime::hooks()->filter('wp_send_new_user_notification_to_user', [true, $user])) {
             return;
         }
         $key = \get_password_reset_key($user);
@@ -145,7 +145,7 @@ final class AccountFlows
             return;
         }
         $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . \wp_login_url() . "\r\n";
-        $mail = (array) \apply_filters('wp_new_user_notification_email', ['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site);
+        $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email', [['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site]);
         \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
     }
 

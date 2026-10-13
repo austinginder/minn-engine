@@ -85,7 +85,7 @@ final readonly class WidgetsController
         $number = max([1, ...array_filter(array_keys($settings), 'is_int')]) + 1;
         $id = $this->saveInstance($object, $number, $body);
         \wp_assign_widget_to_sidebar($id, $sidebar);
-        \do_action('rest_after_save_widget', $id, $sidebar, Runtime::current()->get('rest_prepare_request'), true);
+        Runtime::hooks()->action('rest_after_save_widget', [$id, $sidebar, Runtime::current()->get('rest_prepare_request'), true]);
         return Reply::item($this->object->view($id, $sidebar, Context::Edit), null, 201);
     }
 
@@ -107,7 +107,7 @@ final readonly class WidgetsController
             $sidebar = (string) $body['sidebar'];
             \wp_assign_widget_to_sidebar($id, $sidebar);
         }
-        \do_action('rest_after_save_widget', $id, $sidebar, Runtime::current()->get('rest_prepare_request'), false);
+        Runtime::hooks()->action('rest_after_save_widget', [$id, $sidebar, Runtime::current()->get('rest_prepare_request'), false]);
         return Reply::item($this->object->view($id, $sidebar, Context::Edit), null);
     }
 
@@ -133,7 +133,7 @@ final readonly class WidgetsController
             $object->save_settings($settings);
         }
         \wp_assign_widget_to_sidebar($id, '');
-        \do_action('delete_widget', $id, $sidebar, $parsed['id_base']);
+        Runtime::hooks()->action('delete_widget', [$id, $sidebar, $parsed['id_base']]);
         return Reply::item(['deleted' => true, 'previous' => $previous, '_links' => $links], null);
     }
 
@@ -151,7 +151,7 @@ final readonly class WidgetsController
         $old = isset($settings[$number]) ? (array) $settings[$number] : [];
         $object->_set($number);
         $saved = $object->update($new, $old);
-        $saved = \apply_filters('widget_update_callback', $saved, $new, $old, $object);
+        $saved = Runtime::hooks()->filter('widget_update_callback', [$saved, $new, $old, $object]);
         if ($saved !== false) {
             $settings[$number] = $saved;
             $object->save_settings($settings);

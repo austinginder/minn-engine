@@ -153,7 +153,7 @@ final readonly class PostEvents
     public function restDeleted(PostRecord $post, array $data, Request $request): void
     {
         if ($this->live()) {
-            \do_action("rest_delete_{$post->type}", self::wpPost($post), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
+            Runtime::hooks()->action("rest_delete_{$post->type}", [self::wpPost($post), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
         }
     }
 
@@ -176,7 +176,7 @@ final readonly class PostEvents
             RegisteredFields::update($post, $post->post_type, $wpRequest);
             RegisteredFields::context($wpRequest, $post->post_type);
         }
-        \do_action($prefix . $post->post_type, $post, $wpRequest, $before === null);
+        Runtime::hooks()->action((string) $prefix . $post->post_type, [$post, $wpRequest, $before === null]);
     }
 
     /** A record as the runtime's post object, for a state the database no longer holds. */

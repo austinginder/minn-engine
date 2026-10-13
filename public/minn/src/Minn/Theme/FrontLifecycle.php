@@ -31,11 +31,11 @@ final class FrontLifecycle
      */
     public static function parseRequest(\WP $wp, array $vars, array $given, ?\Closure $parse = null): bool
     {
-        if (!\apply_filters('do_parse_request', true, $wp, $wp->extra_query_vars)) {
+        if (!Runtime::hooks()->filter('do_parse_request', [true, $wp, $wp->extra_query_vars])) {
             return false;
         }
         $known = (array) $wp->public_query_vars;
-        $wp->public_query_vars = (array) \apply_filters('query_vars', $known);
+        $wp->public_query_vars = (array) Runtime::hooks()->filter('query_vars', [$known]);
         foreach (\get_post_types([], 'objects') as $type) {
             // The reference asks each type whether it is viewable as it maps type query vars.
             \is_post_type_viewable($type);
@@ -46,8 +46,8 @@ final class FrontLifecycle
             }
         }
         // A date archive whose year, month or day is a post's numeric slug is that post, before plugins see the request.
-        $wp->query_vars = (array) \apply_filters('request', \wp_resolve_numeric_slug_conflicts($parse === null ? $vars : $parse($wp->public_query_vars)));
-        \do_action_ref_array('parse_request', [&$wp]);
+        $wp->query_vars = (array) Runtime::hooks()->filter('request', [\wp_resolve_numeric_slug_conflicts($parse === null ? $vars : $parse($wp->public_query_vars))]);
+        Runtime::hooks()->actionRefArray('parse_request', [&$wp]);
         return true;
     }
 
@@ -63,7 +63,7 @@ final class FrontLifecycle
      */
     public static function handle404(\WP_Query $query, bool $notFound): void
     {
-        if (\apply_filters('pre_handle_404', false, $query) !== false || $query->is_404()) {
+        if (Runtime::hooks()->filter('pre_handle_404', [false, $query]) !== false || $query->is_404()) {
             return;
         }
         $empty = empty($query->posts) && !$query->is_robots() && !$query->is_favicon();
@@ -111,7 +111,7 @@ final class FrontLifecycle
                 $headers['X-Pingback'] = \get_bloginfo('pingback_url', 'display');
             }
         }
-        $headers = (array) \apply_filters('wp_headers', $headers, $wp);
+        $headers = (array) Runtime::hooks()->filter('wp_headers', [$headers, $wp]);
         if ($status !== null) {
             \status_header($status);
         }
@@ -125,6 +125,6 @@ final class FrontLifecycle
         if ($fresh) {
             throw new NotModified();
         }
-        \do_action_ref_array('send_headers', [&$wp]);
+        Runtime::hooks()->actionRefArray('send_headers', [&$wp]);
     }
 }

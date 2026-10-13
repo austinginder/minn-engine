@@ -80,13 +80,13 @@ __construct(Closure $filter)
 
 ### static `forSite(): self`
 
-The gate as the site's plugins see it: through their filters once the runtime's hooks exist, as configured otherwise.
+The gate as the site's plugins see it: through their filters (none before any plugin loads, so as configured).
 
 ### `enabledFor(string $type): bool`
 
 Whether per-item auto-updates apply to a type ("plugin" or "theme"; anything else is never on).
 
-Internals: `updaterOff()` (private, line 41)
+Internals: `updaterOff()` (private, line 42)
 
 
 ## Changelog

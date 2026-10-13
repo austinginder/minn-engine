@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\Runtime;
+
 /**
  * The site logo a theme prints, as get_custom_logo builds it (probe
  * plugin-helpers): the custom_logo theme mod's image at full size, never
@@ -30,7 +32,7 @@ final class CustomLogo
             } elseif (empty(\get_post_meta($logo, '_wp_attachment_image_alt', true))) {
                 $attrs['alt'] = \get_bloginfo('name', 'display');
             }
-            $attrs = \apply_filters('get_custom_logo_image_attributes', $attrs, $logo, $blogId);
+            $attrs = Runtime::hooks()->filter('get_custom_logo_image_attributes', [$attrs, $logo, $blogId]);
             $image = (string) \wp_get_attachment_image($logo, 'full', false, $attrs);
             $html = $unlinked
                 ? sprintf('<span class="custom-logo-link">%s</span>', $image)
@@ -38,6 +40,6 @@ final class CustomLogo
         } elseif (\is_customize_preview()) {
             $html = sprintf('<a href="%1$s" class="custom-logo-link" style="display:none;"><img class="custom-logo" alt="" /></a>', \esc_url(\home_url('/')));
         }
-        return (string) \apply_filters('get_custom_logo', $html, $blogId);
+        return (string) Runtime::hooks()->filter('get_custom_logo', [$html, $blogId]);
     }
 }

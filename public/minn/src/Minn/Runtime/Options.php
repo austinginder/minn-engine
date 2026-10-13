@@ -83,11 +83,11 @@ final class Options
      */
     public function autoloaded(bool $force = false): mixed
     {
-        $pre = \apply_filters('pre_wp_load_alloptions', null, $force);
+        $pre = Runtime::hooks()->filter('pre_wp_load_alloptions', [null, $force]);
         if ($pre !== null) {
             return $pre;
         }
-        return \apply_filters('alloptions', $this->listed());
+        return Runtime::hooks()->filter('alloptions', [$this->listed()]);
     }
 
     /**
@@ -192,8 +192,8 @@ final class Options
         if ($name === '') {
             return false;
         }
-        $pre = \apply_filters("pre_option_{$name}", false, $name, $fallback);
-        $pre = \apply_filters('pre_option', $pre, $name, $fallback);
+        $pre = Runtime::hooks()->filter("pre_option_{$name}", [false, $name, $fallback]);
+        $pre = Runtime::hooks()->filter('pre_option', [$pre, $name, $fallback]);
         if ($pre !== false) {
             return $pre;
         }
@@ -205,9 +205,9 @@ final class Options
             $held = $this->lookup($name, is_array($list) ? $list : []);
         }
         if ($held === null) {
-            return \apply_filters("default_option_{$name}", $fallback, $name, $default !== []);
+            return Runtime::hooks()->filter("default_option_{$name}", [$fallback, $name, $default !== []]);
         }
-        return \apply_filters("option_{$name}", $this->decode($name, $held), $name);
+        return Runtime::hooks()->filter("option_{$name}", [$this->decode($name, $held), $name]);
     }
 
     /**

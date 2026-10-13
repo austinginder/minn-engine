@@ -76,7 +76,7 @@ final class RuntimePrepare
     private static function hookedBlocks(array $item, string $type, \Closure $described): array
     {
         $post = $described();
-        if (!in_array($type, (array) \apply_filters('rest_block_hooks_post_types', self::BLOCK_HOOKS_TYPES, $type, $post), true) || empty($item['content']['raw'])) {
+        if (!in_array($type, (array) Runtime::hooks()->filter('rest_block_hooks_post_types', [self::BLOCK_HOOKS_TYPES, $type, $post]), true) || empty($item['content']['raw'])) {
             return $item;
         }
         $atRoot = [];
@@ -86,7 +86,7 @@ final class RuntimePrepare
         }
         // Rendered again only where the item shows its content rendered (a pattern carries it raw alone).
         if (array_key_exists('rendered', (array) $item['content'])) {
-            $item['content']['rendered'] = \apply_filters('the_content', $item['content']['raw']);
+            $item['content']['rendered'] = Runtime::hooks()->filter('the_content', [$item['content']['raw']]);
         }
         return $item;
     }
@@ -99,7 +99,7 @@ final class RuntimePrepare
      */
     public static function savedWithHookedBlocks(\stdClass $prepared, string $type): void
     {
-        if (!in_array($type, (array) \apply_filters('rest_block_hooks_post_types', self::BLOCK_HOOKS_TYPES, $type, $prepared), true) || !isset($prepared->post_content)) {
+        if (!in_array($type, (array) Runtime::hooks()->filter('rest_block_hooks_post_types', [self::BLOCK_HOOKS_TYPES, $type, $prepared]), true) || !isset($prepared->post_content)) {
             return;
         }
         $atRoot = [];
@@ -139,7 +139,7 @@ final class RuntimePrepare
         }
         $response = RuntimeRoutes::itemResponse($item);
         $before = [$response->get_data(), $response->get_links()];
-        $filtered = \rest_ensure_response(\apply_filters($filter, $response, $described(), $request));
+        $filtered = \rest_ensure_response(Runtime::hooks()->filter((string) $filter, [$response, $described(), $request]));
         if ($filtered instanceof \WP_Error) {
             return $item;
         }

@@ -31,7 +31,7 @@ final class UserQueryRunner
     /** Builds the query's pieces from its variables, as prepare_query does. */
     public function prepare(\WP_User_Query $query): void
     {
-        \do_action_ref_array('pre_get_users', [&$query]);
+        Runtime::hooks()->actionRefArray('pre_get_users', [&$query]);
         $qv = &$query->query_vars;
         $qv = \WP_User_Query::fill_query_vars($qv);
         $users = $this->wpdb->users;
@@ -59,7 +59,7 @@ final class UserQueryRunner
         if (!empty($qv['date_query']) && is_array($qv['date_query'])) {
             $query->query_where .= (new \WP_Date_Query($qv['date_query'], 'user_registered'))->get_sql();
         }
-        \do_action_ref_array('pre_user_query', [&$query]);
+        Runtime::hooks()->actionRefArray('pre_user_query', [&$query]);
     }
 
     /** The SELECT's fields: named columns, ids, and the count's own. @param array<string, mixed> $qv */
@@ -179,7 +179,7 @@ final class UserQueryRunner
                 default => ['user_login', 'user_url', 'user_email', 'user_nicename', 'display_name'],
             };
         }
-        $columns = (array) \apply_filters('user_search_columns', $columns, $search, $query);
+        $columns = (array) Runtime::hooks()->filter('user_search_columns', [$columns, $search, $query]);
         return self::searchSql($search, $columns, $leading && $trailing ? 'both' : ($leading ? 'leading' : ($trailing ? 'trailing' : false)));
     }
 
@@ -203,13 +203,13 @@ final class UserQueryRunner
         if (is_array($qv['fields']) && count($qv['fields']) > 3) {
             $qv['cache_results'] = false;
         }
-        $results = \apply_filters_ref_array('users_pre_query', [null, &$query]);
+        $results = Runtime::hooks()->filterRefArray('users_pre_query', [null, &$query]);
         if ($results === null) {
             $break = "\n\t\t\t\t ";
             $query->request = "SELECT {$query->query_fields}{$break}{$query->query_from}{$break}{$query->query_where}{$break}{$query->query_orderby}{$break}{$query->query_limit}";
             $results = is_array($qv['fields']) ? $this->wpdb->get_results($query->request) : $this->wpdb->get_col($query->request);
             if (!empty($qv['count_total'])) {
-                $query->total_users = (int) $this->wpdb->get_var(\apply_filters('found_users_query', 'SELECT FOUND_ROWS()', $query));
+                $query->total_users = (int) $this->wpdb->get_var(Runtime::hooks()->filter('found_users_query', ['SELECT FOUND_ROWS()', $query]));
             }
         }
         $query->results = $results;

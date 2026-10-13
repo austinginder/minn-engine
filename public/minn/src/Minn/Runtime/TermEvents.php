@@ -87,7 +87,7 @@ final readonly class TermEvents
         if (isset($body['parent']) && \is_taxonomy_hierarchical($taxonomy)) {
             $prepared['parent'] = (int) $body['parent'];
         }
-        $filtered = \apply_filters("rest_pre_insert_{$taxonomy}", (object) $prepared, RuntimeRoutes::wpRequest($request));
+        $filtered = Runtime::hooks()->filter("rest_pre_insert_{$taxonomy}", [(object) $prepared, RuntimeRoutes::wpRequest($request)]);
         return is_object($filtered) ? get_object_vars($filtered) : [];
     }
 
@@ -116,7 +116,7 @@ final readonly class TermEvents
         }
         $term = \get_term($termId, $taxonomy);
         \wp_delete_term($termId, $taxonomy);
-        \do_action("rest_delete_{$taxonomy}", $term, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
+        Runtime::hooks()->action("rest_delete_{$taxonomy}", [$term, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
 
     /** rest_insert_{taxonomy}, then rest_after_insert_{taxonomy}, with the term as it stands and the request. */
@@ -126,10 +126,10 @@ final readonly class TermEvents
             return;
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        \do_action("rest_insert_{$taxonomy}", \get_term($termId, $taxonomy), $wpRequest, $verb === 'create');
+        Runtime::hooks()->action("rest_insert_{$taxonomy}", [\get_term($termId, $taxonomy), $wpRequest, $verb === 'create']);
         RestMeta::writeFrom($wpRequest, 'term', $termId, $taxonomy);
         RegisteredFields::update(\get_term($termId, $taxonomy), $taxonomy, $wpRequest);
         RegisteredFields::context($wpRequest, $taxonomy);
-        \do_action("rest_after_insert_{$taxonomy}", \get_term($termId, $taxonomy), $wpRequest, $verb === 'create');
+        Runtime::hooks()->action("rest_after_insert_{$taxonomy}", [\get_term($termId, $taxonomy), $wpRequest, $verb === 'create']);
     }
 }

@@ -38,7 +38,7 @@ final class TermQueryRunner
         $args = &$query->query_vars;
         $query->meta_query = new \WP_Meta_Query();
         $query->meta_query->parse_query_vars($args);
-        \do_action_ref_array('pre_get_terms', [&$query]);
+        Runtime::hooks()->actionRefArray('pre_get_terms', [&$query]);
         $taxonomies = (array) $args['taxonomy'];
         $args = $this->settle($args, $taxonomies);
         $parent = $args['child_of'] ?: $args['parent'];
@@ -49,7 +49,7 @@ final class TermQueryRunner
         [$orderby, $order] = $this->order($args);
         $this->clauses($args, $taxonomies);
         $this->select($args, $taxonomies, $orderby, $order);
-        $query->terms = \apply_filters_ref_array('terms_pre_query', [null, &$query]);
+        $query->terms = Runtime::hooks()->filterRefArray('terms_pre_query', [null, &$query]);
         if ($query->terms !== null) {
             return $query->terms;
         }
@@ -112,7 +112,7 @@ final class TermQueryRunner
         if ($args['get'] === 'all') {
             $args = array_replace($args, ['childless' => false, 'child_of' => 0, 'hide_empty' => 0, 'hierarchical' => false, 'pad_counts' => false]);
         }
-        return (array) \apply_filters('get_terms_args', $args, $taxonomies);
+        return (array) Runtime::hooks()->filter('get_terms_args', [$args, $taxonomies]);
     }
 
     /** Whether a parent or child_of term has children in any of the taxonomies (when none, the query is not run). @param list<string> $taxonomies */
@@ -149,7 +149,7 @@ final class TermQueryRunner
             $this->where['inclusions'] = 't.term_id IN ( ' . implode(',', Lists::ids($include)) . ' )';
         }
         $exclusions = $this->exclusions($args, $taxonomies);
-        $exclusions = \apply_filters('list_terms_exclusions', $exclusions, $args, $taxonomies);
+        $exclusions = Runtime::hooks()->filter('list_terms_exclusions', [$exclusions, $args, $taxonomies]);
         if (!empty($exclusions)) {
             $this->where['exclusions'] = (string) preg_replace('/^\s*AND\s*/', '', (string) $exclusions);
         }
@@ -235,14 +235,14 @@ final class TermQueryRunner
         [$join, $distinct] = $this->meta();
         $selects = $args['fields'] === 'count' ? ['COUNT(*)'] : ['t.term_id', ...($args['fields'] === 'all_with_object_id' && !empty($args['object_ids']) ? ['tr.object_id'] : [])];
         [$orderby, $order] = $args['fields'] === 'count' ? ['', ''] : [$orderby, $order];
-        $fields = implode(', ', (array) \apply_filters('get_terms_fields', $selects, $args, $taxonomies));
+        $fields = implode(', ', (array) Runtime::hooks()->filter('get_terms_fields', [$selects, $args, $taxonomies]));
         $join .= " INNER JOIN {$this->wpdb->term_taxonomy} AS tt ON t.term_id = tt.term_id";
         if (!empty($this->query->query_vars['object_ids'])) {
             $join .= " INNER JOIN {$this->wpdb->term_relationships} AS tr ON tr.term_taxonomy_id = tt.term_taxonomy_id";
             $distinct = 'DISTINCT';
         }
         $where = implode(' AND ', $this->where);
-        $clauses = (array) \apply_filters('terms_clauses', compact('fields', 'join', 'where', 'distinct', 'orderby', 'order', 'limits'), $taxonomies, $args);
+        $clauses = (array) Runtime::hooks()->filter('terms_clauses', [compact('fields', 'join', 'where', 'distinct', 'orderby', 'order', 'limits'), $taxonomies, $args]);
         $c = array_map(static fn ($piece) => $piece ?? '', $clauses + array_fill_keys(['fields', 'join', 'where', 'distinct', 'orderby', 'order', 'limits'], ''));
         $where = $c['where'] ? "WHERE {$c['where']}" : '';
         $sortby = $c['orderby'] ? "{$c['orderby']} {$c['order']}" : '';

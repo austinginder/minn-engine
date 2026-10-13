@@ -3,7 +3,7 @@
     "summary": {
         "functionCalls": 1018,
         "functions": 384,
-        "hookApi": 384,
+        "hookApi": 3,
         "classReferences": 568,
         "classes": 50,
         "files": 168

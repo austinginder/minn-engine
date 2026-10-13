@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Login;
 
 use Minn\Html;
+use Minn\Runtime\Runtime;
 
 /**
  * What a sign-in page tells the reader, held as the reference's pages hold
@@ -90,7 +91,7 @@ final readonly class LoginNotices
     /** The sign-in page's notices after wp_login_errors, which is handed where a sign-in would land. */
     public function forSignIn(string $redirect): self
     {
-        return self::of(\apply_filters('wp_login_errors', $this->wpError(), $redirect));
+        return self::of(Runtime::hooks()->filter('wp_login_errors', [$this->wpError(), $redirect]));
     }
 
     /**
@@ -118,8 +119,8 @@ final readonly class LoginNotices
             default => '<ul class="login-error-list"><li>' . implode('</li><li>', $errors) . '</li></ul>',
         };
         return [
-            'errors' => $errorHtml === '' ? '' : (string) \apply_filters('login_errors', $errorHtml),
-            'messages' => $messages === '' ? '' : (string) \apply_filters('login_messages', $messages),
+            'errors' => $errorHtml === '' ? '' : (string) Runtime::hooks()->filter('login_errors', [$errorHtml]),
+            'messages' => $messages === '' ? '' : (string) Runtime::hooks()->filter('login_messages', [$messages]),
         ];
     }
 

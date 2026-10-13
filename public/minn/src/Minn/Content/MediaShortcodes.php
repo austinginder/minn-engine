@@ -28,7 +28,7 @@ final class MediaShortcodes
     public static function video(array|string $attr, string $content): ?string
     {
         $instance = self::instance('video');
-        $override = \apply_filters('wp_video_shortcode_override', '', $attr, $content, $instance);
+        $override = Runtime::hooks()->filter('wp_video_shortcode_override', ['', $attr, $content, $instance]);
         if ($override !== '') {
             return (string) $override;
         }
@@ -53,18 +53,18 @@ final class MediaShortcodes
         $atts = $sources['atts'];
         [$atts['width'], $atts['height']] = self::fitted((int) $atts['width'], (int) $atts['height']);
         $library = self::library('video');
-        $atts['class'] = \apply_filters('wp_video_shortcode_class', $atts['class'], $atts);
+        $atts['class'] = Runtime::hooks()->filter('wp_video_shortcode_class', [$atts['class'], $atts]);
         $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => abs((int) ($atts['width'])), 'height' => abs((int) ($atts['height'])), 'poster' => \esc_url((string) $atts['poster']), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
         $html = '<video ' . $attributes . ' controls="controls">' . self::sourceTags($atts, $sources['order'], $instance, $hosted) . self::fallback($sources['file'], $library) . '</video>';
         $output = sprintf('<div style="%s" class="wp-video">%s</div>', empty($atts['width']) ? '' : sprintf('width: %dpx;', $atts['width']), $html);
-        return (string) \apply_filters('wp_video_shortcode', $output, $atts, $video, $postId, $library);
+        return (string) Runtime::hooks()->filter('wp_video_shortcode', [$output, $atts, $video, $postId, $library]);
     }
 
     /** [audio]. @param array<string, mixed>|string $attr */
     public static function audio(array|string $attr, string $content): ?string
     {
         $instance = self::instance('audio');
-        $override = \apply_filters('wp_audio_shortcode_override', '', $attr, $content, $instance);
+        $override = Runtime::hooks()->filter('wp_audio_shortcode_override', ['', $attr, $content, $instance]);
         if ($override !== '') {
             return (string) $override;
         }
@@ -77,10 +77,10 @@ final class MediaShortcodes
         }
         [$audio, $postId, $atts] = [$sources['attachment'], self::postId(), $sources['atts']];
         $library = self::library('audio');
-        $atts['class'] = \apply_filters('wp_audio_shortcode_class', $atts['class'], $atts);
+        $atts['class'] = Runtime::hooks()->filter('wp_audio_shortcode_class', [$atts['class'], $atts]);
         $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('audio-%d-%d', $postId, $instance), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload'], 'style' => $atts['style']], ['loop', 'autoplay', 'muted', 'preload']);
         $html = '<audio ' . $attributes . ' controls="controls">' . self::sourceTags($atts, $sources['order'], $instance, null) . self::fallback($sources['file'], $library) . '</audio>';
-        return (string) \apply_filters('wp_audio_shortcode', $html, $atts, $audio, $postId, $library);
+        return (string) Runtime::hooks()->filter('wp_audio_shortcode', [$html, $atts, $audio, $postId, $library]);
     }
 
     /** get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them. */
@@ -90,8 +90,8 @@ final class MediaShortcodes
         if (!$post) {
             return [];
         }
-        $args = (array) \apply_filters('get_attached_media_args', ['post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => $type, 'posts_per_page' => -1, 'orderby' => 'menu_order', 'order' => 'ASC'], $type, $post);
-        return (array) \apply_filters('get_attached_media', (array) \get_children($args), $type, $post);
+        $args = (array) Runtime::hooks()->filter('get_attached_media_args', [['post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => $type, 'posts_per_page' => -1, 'orderby' => 'menu_order', 'order' => 'ASC'], $type, $post]);
+        return (array) Runtime::hooks()->filter('get_attached_media', [(array) \get_children($args), $type, $post]);
     }
 
     /**
@@ -178,7 +178,7 @@ final class MediaShortcodes
     /** The player library (wp_*_shortcode_library), its scripts and styles queued when it is the reference's own. */
     private static function library(string $kind): string
     {
-        $library = (string) \apply_filters("wp_{$kind}_shortcode_library", 'mediaelement');
+        $library = (string) Runtime::hooks()->filter("wp_{$kind}_shortcode_library", ['mediaelement']);
         if ($library === 'mediaelement' && Runtime::hooks()->actionsDone('init')) {
             \wp_enqueue_style('wp-mediaelement');
             \wp_enqueue_script('wp-mediaelement');
@@ -189,7 +189,7 @@ final class MediaShortcodes
     /** The link a player without the library falls back to (wp_mediaelement_fallback). */
     private static function fallback(string $file, string $library): string
     {
-        return $library === 'mediaelement' ? (string) \apply_filters('wp_mediaelement_fallback', sprintf('<a href="%1$s">%1$s</a>', \esc_url($file)), $file) : '';
+        return $library === 'mediaelement' ? (string) Runtime::hooks()->filter('wp_mediaelement_fallback', [sprintf('<a href="%1$s">%1$s</a>', \esc_url($file)), $file]) : '';
     }
 
     private static function postId(): int

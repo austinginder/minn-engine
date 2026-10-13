@@ -745,7 +745,7 @@ A comment in the context asked for, through rest_prepare_comment when a plugin h
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 38)
+Internals: `buildFields()` (private, line 39)
 
 
 ## CommentsController
@@ -798,7 +798,7 @@ Route: `DELETE /wp/v2/comments/{id:[\d]+} (cap moderate_comments; comment {id} m
 
 Trash remembers where the comment came from; force removes it outright.
 
-Internals: `totals()` (private, line 73), `events()` (private, line 150), `allowed()` (private, line 219), `readablePost()` (private, line 260), `readable()` (private, line 269), `plainComment()` (private, line 279), `prepared()` (private, line 301)
+Internals: `totals()` (private, line 74), `events()` (private, line 151), `allowed()` (private, line 220), `readablePost()` (private, line 261), `readable()` (private, line 270), `plainComment()` (private, line 280), `prepared()` (private, line 302)
 
 
 ## Context
@@ -1369,7 +1369,7 @@ Attachments go to the trash only when MEDIA_TRASH (or
 rest_attachment_trashable) says so; force removes the row, its meta,
 and its files.
 
-Internals: `restDate()` (private, line 46), `storeWithPlugins()` (private, line 124), `insertedWithPlugins()` (private, line 151), `preparedAttachment()` (private, line 192), `finishedWithPlugins()` (private, line 216), `params()` (private, line 232), `attachment()` (private, line 313)
+Internals: `restDate()` (private, line 47), `storeWithPlugins()` (private, line 125), `insertedWithPlugins()` (private, line 152), `preparedAttachment()` (private, line 193), `finishedWithPlugins()` (private, line 217), `params()` (private, line 233), `attachment()` (private, line 314)
 
 
 ## MediaObject
@@ -1723,7 +1723,7 @@ Throws the refusal the policy names, or returns.
 
 - `@param array<string, string> $captures`
 
-Internals: `subject()` (private, line 72), `type()` (private, line 92), `taxonomy()` (private, line 123), `opened()` (private, line 155), `capabilities()` (private, line 162), `own()` (private, line 176)
+Internals: `subject()` (private, line 73), `type()` (private, line 93), `taxonomy()` (private, line 124), `opened()` (private, line 156), `capabilities()` (private, line 163), `own()` (private, line 177)
 
 
 ## PostCollectionParams
@@ -1999,7 +1999,7 @@ A body's meta must be an object of keys (probe rest-meta). @param array<string, 
 
 A field that may arrive as a scalar or as {raw: ...}.
 
-Internals: `hasParent()` (private, line 139), `hasOrder()` (private, line 145), `events()` (private, line 151), `newColumns()` (private, line 162), `writeNewPost()` (private, line 196), `checkAssignTerms()` (private, line 225), `rememberOld()` (private, line 333), `floatingDate()` (private, line 347), `scheduledIfFuture()` (private, line 361), `askedDate()` (private, line 383), `updatedDate()` (private, line 401), `fieldColumns()` (private, line 414), `statusColumns()` (private, line 458), `checkStickyChange()` (private, line 494), `checkStickyPasswordConflict()` (private, line 506), `validStatus()` (private, line 526), `clean()` (private, line 535)
+Internals: `hasParent()` (private, line 140), `hasOrder()` (private, line 146), `events()` (private, line 152), `newColumns()` (private, line 163), `writeNewPost()` (private, line 197), `checkAssignTerms()` (private, line 226), `rememberOld()` (private, line 334), `floatingDate()` (private, line 348), `scheduledIfFuture()` (private, line 362), `askedDate()` (private, line 384), `updatedDate()` (private, line 402), `fieldColumns()` (private, line 415), `statusColumns()` (private, line 459), `checkStickyChange()` (private, line 495), `checkStickyPasswordConflict()` (private, line 507), `validStatus()` (private, line 527), `clean()` (private, line 536)
 
 
 ## RegisteredFields
@@ -2371,7 +2371,7 @@ One autosave slot per author; the reply carries a preview link.
 
 One revision row as wp/v2 serves it (autosaves and revisions alike).
 
-Internals: `clean()` (private, line 157), `withPreviewLink()` (private, line 199), `previewLink()` (private, line 215), `meta()` (private, line 232), `requireParent()` (private, line 248), `parentOf()` (private, line 260)
+Internals: `clean()` (private, line 158), `withPreviewLink()` (private, line 200), `previewLink()` (private, line 216), `meta()` (private, line 233), `requireParent()` (private, line 249), `parentOf()` (private, line 261)
 
 
 ## RouteArgs

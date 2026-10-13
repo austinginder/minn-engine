@@ -49,12 +49,12 @@ final readonly class UserEvents
         if (!is_int($id)) {
             return $quietly();
         }
-        \do_action('rest_insert_user', \get_userdata($id), $wpRequest, true);
+        Runtime::hooks()->action('rest_insert_user', [\get_userdata($id), $wpRequest, true]);
         (new \WP_User($id))->add_role($role);
         RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
         RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
-        \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, true);
+        Runtime::hooks()->action('rest_after_insert_user', [\get_userdata($id), $wpRequest, true]);
         return $id;
     }
 
@@ -79,11 +79,11 @@ final readonly class UserEvents
         if ($role !== null) {
             (new \WP_User($id))->set_role($role);
         }
-        \do_action('rest_insert_user', \get_userdata($id), $wpRequest, false);
+        Runtime::hooks()->action('rest_insert_user', [\get_userdata($id), $wpRequest, false]);
         RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
         RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
-        \do_action('rest_after_insert_user', \get_userdata($id), $wpRequest, false);
+        Runtime::hooks()->action('rest_after_insert_user', [\get_userdata($id), $wpRequest, false]);
     }
 
     /**
@@ -101,7 +101,7 @@ final readonly class UserEvents
         }
         $user = \get_userdata($id);
         \wp_delete_user($id, $reassign);
-        \do_action('rest_delete_user', $user, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
+        Runtime::hooks()->action('rest_delete_user', [$user, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
 
     /**
@@ -114,7 +114,7 @@ final readonly class UserEvents
      */
     private static function prepared(array $userdata, \WP_REST_Request $request): array
     {
-        $filtered = \apply_filters('rest_pre_insert_user', (object) $userdata, $request);
+        $filtered = Runtime::hooks()->filter('rest_pre_insert_user', [(object) $userdata, $request]);
         if ($filtered instanceof \WP_Error) {
             $status = $filtered->get_error_data();
             throw new RestError($filtered->get_error_code(), $filtered->get_error_message(), is_array($status) ? (int) ($status['status'] ?? 400) : 400);

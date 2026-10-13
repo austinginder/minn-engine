@@ -38,7 +38,7 @@ final readonly class CommentEvents
     public function allow(string $address, string $email, string $dateGmt): void
     {
         if ($this->live()) {
-            \do_action('check_comment_flood', $address, $email, $dateGmt, true);
+            Runtime::hooks()->action('check_comment_flood', [$address, $email, $dateGmt, true]);
         }
     }
 
@@ -70,7 +70,7 @@ final readonly class CommentEvents
             $status = ['comment_duplicate' => 409, 'comment_flood' => 400][$approved->get_error_code()] ?? null;
             throw $status === null ? self::refusal($approved) : new RestError($approved->get_error_code(), $approved->get_error_message(), $status);
         }
-        $prepared = \apply_filters('rest_pre_insert_comment', array_merge($prepared, ['comment_approved' => $approved]), $wpRequest);
+        $prepared = Runtime::hooks()->filter('rest_pre_insert_comment', [array_merge($prepared, ['comment_approved' => $approved]), $wpRequest]);
         if ($prepared instanceof \WP_Error) {
             throw self::refusal($prepared);
         }
@@ -138,7 +138,7 @@ final readonly class CommentEvents
      */
     private static function preprocessed(array $prepared, \WP_REST_Request $request): array
     {
-        $prepared = \apply_filters('rest_preprocess_comment', $prepared, $request);
+        $prepared = Runtime::hooks()->filter('rest_preprocess_comment', [$prepared, $request]);
         if ($prepared instanceof \WP_Error) {
             throw self::refusal($prepared);
         }
@@ -155,7 +155,7 @@ final readonly class CommentEvents
     {
         $check = $prepared + ['comment_post_ID' => 0, 'comment_author' => null, 'comment_author_email' => null, 'comment_author_url' => null, 'comment_parent' => 0, 'user_id' => 0];
         $content = (string) (self::field($check, 'comment_content') ?? '');
-        if (!\apply_filters('allow_empty_comment', false, $check) && trim(strip_tags($content)) === '') {
+        if (!Runtime::hooks()->filter('allow_empty_comment', [false, $check]) && trim(strip_tags($content)) === '') {
             throw new RestError('rest_comment_content_invalid', 'Invalid comment content.', 400);
         }
     }
@@ -260,11 +260,11 @@ final readonly class CommentEvents
             return;
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        \do_action('rest_insert_comment', \get_comment($id), $wpRequest, $before === null);
+        Runtime::hooks()->action('rest_insert_comment', [\get_comment($id), $wpRequest, $before === null]);
         RestMeta::writeFrom($wpRequest, 'comment', $id, 'comment');
         RegisteredFields::update(\get_comment($id), 'comment', $wpRequest);
         RegisteredFields::context($wpRequest, 'comment');
-        \do_action('rest_after_insert_comment', \get_comment($id), $wpRequest, $before === null);
+        Runtime::hooks()->action('rest_after_insert_comment', [\get_comment($id), $wpRequest, $before === null]);
     }
 
     /** rest_delete_comment, after a trash or a delete, with the comment as it was and the response. @param array<string, mixed> $data */
@@ -272,7 +272,7 @@ final readonly class CommentEvents
     {
         if ($this->live()) {
             $fields = array_map(static fn ($value) => is_int($value) || is_float($value) ? (string) $value : $value, $comment->row());
-            \do_action('rest_delete_comment', new \WP_Comment((object) $fields), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request));
+            Runtime::hooks()->action('rest_delete_comment', [new \WP_Comment((object) $fields), new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
         }
     }
 }

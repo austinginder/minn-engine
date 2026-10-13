@@ -22,7 +22,7 @@ final class RenderedFields
     /** The rendered title. */
     public static function title(PostRecord $p): string
     {
-        return (string) self::withPost($p, static fn () => \apply_filters('the_title', $p->title, $p->id));
+        return (string) self::withPost($p, static fn () => Runtime::hooks()->filter('the_title', [$p->title, $p->id]));
     }
 
     /** The rendered content. */
@@ -35,7 +35,7 @@ final class RenderedFields
     /** The rendered excerpt. */
     public static function excerpt(PostRecord $p): string
     {
-        return (string) self::withPost($p, static fn (\WP_Post $post) => \apply_filters('the_excerpt', \apply_filters('get_the_excerpt', $post->post_excerpt, $post)));
+        return (string) self::withPost($p, static fn (\WP_Post $post) => Runtime::hooks()->filter('the_excerpt', [Runtime::hooks()->filter('get_the_excerpt', [$post->post_excerpt, $post])]));
     }
 
     /**
@@ -82,6 +82,6 @@ final class RenderedFields
         if (!Runtime::hooks()->has('post_class')) {
             return $classes;
         }
-        return array_values(array_unique(array_map('strval', (array) \apply_filters('post_class', $classes, [], $postId))));
+        return array_values(array_unique(array_map('strval', (array) Runtime::hooks()->filter('post_class', [$classes, [], $postId]))));
     }
 }

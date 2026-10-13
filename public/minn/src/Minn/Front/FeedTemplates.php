@@ -59,7 +59,7 @@ final class FeedTemplates
     /** What the period and frequency of updates are, as the syndication module says. */
     private static function syndication(FeedWriter $w): FeedWriter
     {
-        return $w->put("\t<sy:updatePeriod>\n\t", (string) \apply_filters('rss_update_period', 'hourly'), "\t</sy:updatePeriod>\n\t<sy:updateFrequency>\n\t", (string) \apply_filters('rss_update_frequency', '1'), "\t</sy:updateFrequency>\n\t");
+        return $w->put("\t<sy:updatePeriod>\n\t", (string) Runtime::hooks()->filter('rss_update_period', ['hourly']), "\t</sy:updatePeriod>\n\t<sy:updateFrequency>\n\t", (string) Runtime::hooks()->filter('rss_update_frequency', ['1']), "\t</sy:updateFrequency>\n\t");
     }
 
     private static function rss2(FeedWriter $w): void
@@ -227,7 +227,7 @@ final class FeedTemplates
         if (\is_singular()) {
             return sprintf(\ent2ncr(Gettext::text('By: %s')), \get_comment_author_rss());
         }
-        return sprintf(\ent2ncr(Gettext::text('Comment on %1$s by %2$s')), \apply_filters('the_title_rss', \get_the_title($post->ID)), \get_comment_author_rss());
+        return sprintf(\ent2ncr(Gettext::text('Comment on %1$s by %2$s')), Runtime::hooks()->filter('the_title_rss', [\get_the_title($post->ID)]), \get_comment_author_rss());
     }
 
     /** The comment the loop is on, with its post made the current one. @return array{0: object, 1: \WP_Post} */

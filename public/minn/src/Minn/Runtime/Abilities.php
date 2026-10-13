@@ -47,7 +47,7 @@ final class Abilities
         }
         $state['categoriesFired'] = true;
         self::save($state);
-        \do_action('wp_abilities_api_categories_init', \WP_Ability_Categories_Registry::get_instance());
+        Runtime::hooks()->action('wp_abilities_api_categories_init', [\WP_Ability_Categories_Registry::get_instance()]);
     }
 
     /** Fires the categories action, then the abilities action, each once. */
@@ -60,7 +60,7 @@ final class Abilities
         }
         $state['abilitiesFired'] = true;
         self::save($state);
-        \do_action('wp_abilities_api_init', \WP_Abilities_Registry::get_instance());
+        Runtime::hooks()->action('wp_abilities_api_init', [\WP_Abilities_Registry::get_instance()]);
     }
 
     /** Registers a category; its row, or null with the reference's notice. @return array<string, mixed>|null */
@@ -74,7 +74,7 @@ final class Abilities
         };
         // A well-formed new slug's arguments are the plugins' to change before they are judged (probe ability-hooks).
         if ($refusal === null) {
-            $args = (array) \apply_filters('wp_register_ability_category_args', $args, $slug);
+            $args = (array) Runtime::hooks()->filter('wp_register_ability_category_args', [$args, $slug]);
             $refusal = self::categoryRefusal($args);
         }
         if ($refusal !== null) {
@@ -92,7 +92,7 @@ final class Abilities
         $state = self::state();
         // A well-formed new name's arguments are the plugins' to change before they are judged (probe ability-hooks).
         if (preg_match(self::NAME, $name) === 1 && !isset($state['abilities'][$name])) {
-            $args = (array) \apply_filters('wp_register_ability_args', $args, $name);
+            $args = (array) Runtime::hooks()->filter('wp_register_ability_args', [$args, $name]);
         }
         $category = $args['category'] ?? null;
         $refusal = match (true) {

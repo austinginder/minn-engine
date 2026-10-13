@@ -38,7 +38,7 @@ final class RuntimeRoutes
      */
     public static function gate(Request $request): ?Response
     {
-        $error = \apply_filters('rest_authentication_errors', null);
+        $error = Runtime::hooks()->filter('rest_authentication_errors', [null]);
         if ($error instanceof \WP_Error) {
             return self::toResponse(\rest_convert_error_to_response($error));
         }
@@ -55,7 +55,7 @@ final class RuntimeRoutes
     {
         $server = self::server();
         $wpRequest = self::wpRequest($request);
-        $early = \apply_filters('rest_pre_dispatch', null, $server, $wpRequest);
+        $early = Runtime::hooks()->filter('rest_pre_dispatch', [null, $server, $wpRequest]);
         if ($early !== null) {
             // An early answer that names its route (an OPTIONS description) gets that route's Allow header.
             $early = self::ensure($early);
@@ -361,7 +361,7 @@ final class RuntimeRoutes
         if ($embedded !== null && is_array($out)) {
             $out['_embedded'] = $embedded;
         }
-        $out = \apply_filters('rest_pre_echo_response', $out, $server, $wpRequest);
+        $out = Runtime::hooks()->filter('rest_pre_echo_response', [$out, $server, $wpRequest]);
         return new Response($result->get_status(), $headers, Json::encode($out, Json::ESCAPED), $response->cookies, $response->afterSend);
     }
 

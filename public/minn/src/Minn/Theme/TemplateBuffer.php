@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Theme;
 
 use Minn\Http\Response;
+use Minn\Runtime\Runtime;
 
 /**
  * The reference includes a front-end template inside the template-enhancement
@@ -28,7 +29,7 @@ final class TemplateBuffer
         $level = ob_get_level();
         ob_start();
         try {
-            \do_action('wp_before_include_template', $template);
+            Runtime::hooks()->action('wp_before_include_template', [$template]);
             $page = $render();
             if ($page !== null) {
                 Response::write($page);

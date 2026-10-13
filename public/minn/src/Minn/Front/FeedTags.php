@@ -35,7 +35,7 @@ final class FeedTags
                 default => "\t\t<category><![CDATA[" . FeedWriter::insideCdata(html_entity_decode($name, ENT_COMPAT, (string) Runtime::options()->filtered('blog_charset'))) . "]]></category>\n",
             };
         }
-        return (string) \apply_filters('the_category_rss', $out, $type);
+        return (string) Runtime::hooks()->filter('the_category_rss', [$out, $type]);
     }
 
     /** @return list<list<string>> the current post's enclosures, each as its lines, unless its password is wanted */
@@ -57,7 +57,7 @@ final class FeedTags
                 continue;
             }
             $type = preg_split('/[ \t]/', trim($lines[2]))[0] ?? '';
-            $out .= \apply_filters('rss_enclosure', '<enclosure url="' . \esc_url(trim($lines[0])) . '" length="' . abs((int) (trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n");
+            $out .= Runtime::hooks()->filter('rss_enclosure', ['<enclosure url="' . \esc_url(trim($lines[0])) . '" length="' . abs((int) (trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n"]);
         }
         return $out;
     }
@@ -77,7 +77,7 @@ final class FeedTags
                     $type = trim($line);
                 }
             }
-            $out .= \apply_filters('atom_enclosure', sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", \esc_url(trim($lines[0])), Escape::attr((string) $length), Escape::attr($type)));
+            $out .= Runtime::hooks()->filter('atom_enclosure', [sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", \esc_url(trim($lines[0])), Escape::attr((string) $length), Escape::attr($type))]);
         }
         return $out;
     }
@@ -104,7 +104,7 @@ final class FeedTags
             $key = $unattached ? 'attachment_id' : ($post->post_type === 'page' ? 'page_id' : 'p');
             $url = \add_query_arg(['feed' => $feed, $key => $postId], \home_url('/'));
         }
-        return (string) \apply_filters('post_comments_feed_link', $url);
+        return (string) Runtime::hooks()->filter('post_comments_feed_link', [$url]);
     }
 
     /**
@@ -130,7 +130,7 @@ final class FeedTags
         if ($datetime === false) {
             $datetime = date_create_immutable('now', $utc);
         }
-        return (string) \apply_filters('get_feed_build_date', $datetime->format($format), $format);
+        return (string) Runtime::hooks()->filter('get_feed_build_date', [$datetime->format($format), $format]);
     }
 
     /** The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one. */

@@ -86,6 +86,6 @@ final class PasswordGate
         if ($cookie === '' || $referer === '' || $referer !== $permalink) {
             return '';
         }
-        return (string) \apply_filters('the_password_form_incorrect_password', Gettext::text('Invalid password.'), $post());
+        return (string) Runtime::hooks()->filter('the_password_form_incorrect_password', [Gettext::text('Invalid password.'), $post()]);
     }
 }

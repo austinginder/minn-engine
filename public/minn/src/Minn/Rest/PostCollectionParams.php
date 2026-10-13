@@ -89,7 +89,7 @@ final class PostCollectionParams implements RouteParams
     {
         $params = self::build($type);
         if (Runtime::booted()) {
-            $params = (array) \apply_filters("rest_{$type['name']}_collection_params", $params, $type['object']);
+            $params = (array) Runtime::hooks()->filter("rest_{$type['name']}_collection_params", [$params, $type['object']]);
         }
         $params = array_map(static fn ($arg): array => (array) $arg + ['required' => false], $params);
         if (isset($params['status'])) {

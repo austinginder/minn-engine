@@ -168,7 +168,7 @@ Text for an element's content.
 
 Text for an attribute's value.
 
-Internals: `encoded()` (private, line 28)
+Internals: `encoded()` (private, line 30)
 
 
 ## FileHeaders

@@ -8,6 +8,7 @@ use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Runtime;
 
 /** The wp/v2 comment object; edit context adds the moderation-desk fields. */
 final readonly class CommentObject
@@ -42,7 +43,7 @@ final readonly class CommentObject
         $postId = $c->postId;
         $post = $this->posts->find($postId);
         // The content passes comment_text, as the reference renders it.
-        $rendered = (string) \apply_filters('comment_text', $c->content, \get_comment($c->id), []);
+        $rendered = (string) Runtime::hooks()->filter('comment_text', [$c->content, \get_comment($c->id), []]);
 
         $object = [
             'id' => $id,

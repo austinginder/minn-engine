@@ -17,6 +17,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
 use Minn\Auth\Nonce;
 use Minn\Front\Permalinks;
@@ -96,7 +97,7 @@ final readonly class RevisionsController
         }
         $previous = array_diff_key($this->object($revision, Context::of($request)->isEdit() ? Context::Edit : Context::View), ['_links' => true]);
         $deleted = (new PostEvents())->deleteForGood((int) $id);
-        \do_action('rest_delete_revision', $deleted, $request);
+        Runtime::hooks()->action('rest_delete_revision', [$deleted, $request]);
         if (!$deleted) {
             throw new RestError('rest_cannot_delete', 'The post cannot be deleted.', 500);
         }
@@ -148,7 +149,7 @@ final readonly class RevisionsController
             foreach (array_intersect(['title', 'content', 'excerpt'], $fields, array_keys($body)) as $key) {
                 $given['post_' . $key] = $field($key, '');
             }
-            \do_action('wp_creating_autosave', $given + ['post_parent' => (int) $id, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_name' => $id . '-autosave-v1', 'post_date' => '', 'post_date_gmt' => '', 'ID' => $earlier->id, 'post_author' => $userId], true);
+            Runtime::hooks()->action('wp_creating_autosave', [$given + ['post_parent' => (int) $id, 'post_status' => 'inherit', 'post_type' => 'revision', 'post_name' => $id . '-autosave-v1', 'post_date' => '', 'post_date_gmt' => '', 'ID' => $earlier->id, 'post_author' => $userId], true]);
         }
         $revisionId = $this->revisions->saveAutosave((int) $id, $userId, $field('title', $earlier->title ?? ''), $field('content', $earlier->content ?? ''), $field('excerpt', $earlier->excerpt ?? ''));
         return Reply::item($this->withPreviewLink($this->object($this->posts->find($revisionId), Context::Edit), (int) $id), Fields::fromQuery($request->query));

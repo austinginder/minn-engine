@@ -25,7 +25,7 @@ final class PostQueryResults
         $this->singleStatus();
         $this->stickies($q);
         if (!$q['suppress_filters']) {
-            $query->posts = \apply_filters_ref_array('the_posts', [$query->posts, &$query]);
+            $query->posts = Runtime::hooks()->filterRefArray('the_posts', [$query->posts, &$query]);
         }
         if (!$query->posts) {
             [$query->post_count, $query->posts] = [0, []];
@@ -57,7 +57,7 @@ final class PostQueryResults
             $query->posts = $this->visible($status) ? $query->posts : [];
         }
         if ($query->is_preview && $query->posts && \current_user_can('edit_post', $query->posts[0]->ID)) {
-            $query->posts[0] = \get_post(\apply_filters_ref_array('the_preview', [$query->posts[0], &$query]));
+            $query->posts[0] = \get_post(Runtime::hooks()->filterRefArray('the_preview', [$query->posts[0], &$query]));
         }
     }
 

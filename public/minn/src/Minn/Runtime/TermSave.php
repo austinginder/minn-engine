@@ -34,7 +34,7 @@ final class TermSave
      */
     public static function insert(mixed $term, string $taxonomy, array $args): array|\WP_Error
     {
-        $term = \apply_filters('pre_insert_term', $term, $taxonomy, $args);
+        $term = Runtime::hooks()->filter('pre_insert_term', [$term, $taxonomy, $args]);
         if (\is_wp_error($term)) {
             return $term;
         }
@@ -57,7 +57,7 @@ final class TermSave
             return $taken;
         }
         $slug = (string) \wp_unique_term_slug(empty($args['slug']) ? \sanitize_title($name) : (string) $args['slug'], (object) $args);
-        $data = self::row(\apply_filters('wp_insert_term_data', ['name' => $name, 'slug' => $slug, 'term_group' => 0], $taxonomy, $args));
+        $data = self::row(Runtime::hooks()->filter('wp_insert_term_data', [['name' => $name, 'slug' => $slug, 'term_group' => 0], $taxonomy, $args]));
         $terms = new Terms(Runtime::current()->db);
         $termId = $terms->insertRow($data);
         if ($data['slug'] === '') {
@@ -65,20 +65,20 @@ final class TermSave
         }
         $ttId = $terms->addToTaxonomy($termId, $taxonomy, (string) Slashes::strip((string) $args['description']), (int) $args['parent']);
         // Nothing else holds this name and slug now; a plugin may still name a term to keep instead.
-        $duplicate = \apply_filters('wp_insert_term_duplicate_term_check', null, $term, $taxonomy, $args, $ttId);
+        $duplicate = Runtime::hooks()->filter('wp_insert_term_duplicate_term_check', [null, $term, $taxonomy, $args, $ttId]);
         if (is_object($duplicate) && isset($duplicate->term_id)) {
             $terms->dropRows($termId, $ttId);
             \clean_term_cache((int) $duplicate->term_id, $taxonomy);
             return ['term_id' => (int) $duplicate->term_id, 'term_taxonomy_id' => (int) ($duplicate->term_taxonomy_id ?? 0)];
         }
-        \do_action('create_term', $termId, $ttId, $taxonomy, $args);
-        \do_action("create_{$taxonomy}", $termId, $ttId, $args);
-        $termId = (int) \apply_filters('term_id_filter', $termId, $ttId, $args);
+        Runtime::hooks()->action('create_term', [$termId, $ttId, $taxonomy, $args]);
+        Runtime::hooks()->action("create_{$taxonomy}", [$termId, $ttId, $args]);
+        $termId = (int) Runtime::hooks()->filter('term_id_filter', [$termId, $ttId, $args]);
         \clean_term_cache($termId, $taxonomy);
-        \do_action('created_term', $termId, $ttId, $taxonomy, $args);
-        \do_action("created_{$taxonomy}", $termId, $ttId, $args);
-        \do_action('saved_term', $termId, $ttId, $taxonomy, false, $args);
-        \do_action("saved_{$taxonomy}", $termId, $ttId, false, $args);
+        Runtime::hooks()->action('created_term', [$termId, $ttId, $taxonomy, $args]);
+        Runtime::hooks()->action("created_{$taxonomy}", [$termId, $ttId, $args]);
+        Runtime::hooks()->action('saved_term', [$termId, $ttId, $taxonomy, false, $args]);
+        Runtime::hooks()->action("saved_{$taxonomy}", [$termId, $ttId, false, $args]);
         return ['term_id' => $termId, 'term_taxonomy_id' => $ttId];
     }
 
@@ -111,7 +111,7 @@ final class TermSave
         }
         $asked = empty($args['slug']) ? '' : (string) $args['slug'];
         $parsed['slug'] = $asked === '' ? \sanitize_title($name) : $asked;
-        $parent = (int) \apply_filters('wp_update_term_parent', $args['parent'], $termId, $taxonomy, $parsed, $args);
+        $parent = (int) Runtime::hooks()->filter('wp_update_term_parent', [$args['parent'], $termId, $taxonomy, $parsed, $args]);
         $slug = self::updatedSlug((string) $parsed['slug'], $asked, $parent, $termId, $args);
         if ($slug instanceof \WP_Error) {
             return $slug;
@@ -130,24 +130,24 @@ final class TermSave
     {
         [$termId, $ttId, $taxonomy] = [(int) $term->term_id, (int) $term->term_taxonomy_id, (string) $term->taxonomy];
         $terms = new Terms(Runtime::current()->db);
-        \do_action('edit_terms', $termId, $taxonomy, $args);
-        $data = self::row(\apply_filters('wp_update_term_data', $data, $termId, $taxonomy, $args));
+        Runtime::hooks()->action('edit_terms', [$termId, $taxonomy, $args]);
+        $data = self::row(Runtime::hooks()->filter('wp_update_term_data', [$data, $termId, $taxonomy, $args]));
         $terms->updateRow($termId, $data);
         if ($data['slug'] === '') {
             $terms->updateRow($termId, ['slug' => \sanitize_title($data['name'], (string) $termId)] + $data);
         }
-        \do_action('edited_terms', $termId, $taxonomy, $args);
-        \do_action('edit_term_taxonomy', $ttId, $taxonomy, $args);
+        Runtime::hooks()->action('edited_terms', [$termId, $taxonomy, $args]);
+        Runtime::hooks()->action('edit_term_taxonomy', [$ttId, $taxonomy, $args]);
         $terms->describe($termId, $taxonomy, $description, $parent);
-        \do_action('edited_term_taxonomy', $ttId, $taxonomy, $args);
-        \do_action('edit_term', $termId, $ttId, $taxonomy, $args);
-        \do_action("edit_{$taxonomy}", $termId, $ttId, $args);
-        $termId = (int) \apply_filters('term_id_filter', $termId, $ttId, $args);
+        Runtime::hooks()->action('edited_term_taxonomy', [$ttId, $taxonomy, $args]);
+        Runtime::hooks()->action('edit_term', [$termId, $ttId, $taxonomy, $args]);
+        Runtime::hooks()->action("edit_{$taxonomy}", [$termId, $ttId, $args]);
+        $termId = (int) Runtime::hooks()->filter('term_id_filter', [$termId, $ttId, $args]);
         \clean_term_cache($termId, $taxonomy);
-        \do_action('edited_term', $termId, $ttId, $taxonomy, $args);
-        \do_action("edited_{$taxonomy}", $termId, $ttId, $args);
-        \do_action('saved_term', $termId, $ttId, $taxonomy, true, $args);
-        \do_action("saved_{$taxonomy}", $termId, $ttId, true, $args);
+        Runtime::hooks()->action('edited_term', [$termId, $ttId, $taxonomy, $args]);
+        Runtime::hooks()->action("edited_{$taxonomy}", [$termId, $ttId, $args]);
+        Runtime::hooks()->action('saved_term', [$termId, $ttId, $taxonomy, true, $args]);
+        Runtime::hooks()->action("saved_{$taxonomy}", [$termId, $ttId, true, $args]);
         return ['term_id' => $termId, 'term_taxonomy_id' => $ttId];
     }
 
@@ -204,9 +204,9 @@ final class TermSave
      */
     private static function slugFromId(Terms $terms, int $termId, string $taxonomy, array $data, array $args): void
     {
-        \do_action('edit_terms', $termId, $taxonomy, $args);
+        Runtime::hooks()->action('edit_terms', [$termId, $taxonomy, $args]);
         $terms->updateRow($termId, ['slug' => \sanitize_title('', (string) $termId)] + $data);
-        \do_action('edited_terms', $termId, $taxonomy, $args);
+        Runtime::hooks()->action('edited_terms', [$termId, $taxonomy, $args]);
     }
 
     /**

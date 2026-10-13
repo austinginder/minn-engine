@@ -135,14 +135,14 @@ final class PostSave
         $none = static fn (string $column): bool => (string) Slashes::strip($sanitized[$column] ?? '') === '';
         $empty = $type !== 'attachment' && $none('post_content') && $none('post_title') && $none('post_excerpt')
             && \post_type_supports($type, 'editor') && \post_type_supports($type, 'title') && \post_type_supports($type, 'excerpt');
-        return (bool) \apply_filters('wp_insert_post_empty_content', $empty, $sanitized);
+        return (bool) Runtime::hooks()->filter('wp_insert_post_empty_content', [$empty, $sanitized]);
     }
 
     /** The parent through wp_insert_post_parent (whose default refuses a loop). @param array<string, mixed> $sanitized */
     public static function parent(array $sanitized, int $id): int
     {
         $parent = (int) ($sanitized[self::PARENT] ?? 0);
-        return (int) \apply_filters('wp_insert_post_parent', $parent, $id, array_intersect_key($sanitized, array_flip(self::NEW_POSTARR)), $sanitized);
+        return (int) Runtime::hooks()->filter('wp_insert_post_parent', [$parent, $id, array_intersect_key($sanitized, array_flip(self::NEW_POSTARR)), $sanitized]);
     }
 
     /**
@@ -153,16 +153,16 @@ final class PostSave
      */
     public static function slugFilters(string $slug, int $id, string $status, string $type, int $parent, PostSlugs $slugs): string
     {
-        $override = \apply_filters('pre_wp_unique_post_slug', null, $slug, $id, $status, $type, $parent);
+        $override = Runtime::hooks()->filter('pre_wp_unique_post_slug', [null, $slug, $id, $status, $type, $parent]);
         if ($override !== null) {
             return (string) $override;
         }
         $bad = static fn (string $candidate): bool => (bool) match (true) {
-            $type === 'attachment' => \apply_filters('wp_unique_post_slug_is_bad_attachment_slug', false, $candidate),
-            \is_post_type_hierarchical($type) => \apply_filters('wp_unique_post_slug_is_bad_hierarchical_slug', false, $candidate, $type, $parent),
-            default => \apply_filters('wp_unique_post_slug_is_bad_flat_slug', false, $candidate, $type),
+            $type === 'attachment' => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_attachment_slug', [false, $candidate]),
+            \is_post_type_hierarchical($type) => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_hierarchical_slug', [false, $candidate, $type, $parent]),
+            default => Runtime::hooks()->filter('wp_unique_post_slug_is_bad_flat_slug', [false, $candidate, $type]),
         };
-        return (string) \apply_filters('wp_unique_post_slug', $slugs->unique($slug, $id, $type, $parent, $bad), $id, $status, $type, $parent, $slug);
+        return (string) Runtime::hooks()->filter('wp_unique_post_slug', [$slugs->unique($slug, $id, $type, $parent, $bad), $id, $status, $type, $parent, $slug]);
     }
 
     /**
@@ -205,7 +205,7 @@ final class PostSave
     {
         $data = array_replace(array_fill_keys(self::DATA, ''), array_intersect_key($row, array_flip(self::DATA)));
         $filter = ($row['post_type'] ?? '') === 'attachment' ? 'wp_insert_attachment_data' : 'wp_insert_post_data';
-        return (array) Slashes::strip(\apply_filters($filter, Slashes::add($data), $sanitized, $unsanitized, $postId > 0));
+        return (array) Slashes::strip(Runtime::hooks()->filter((string) $filter, [Slashes::add($data), $sanitized, $unsanitized, $postId > 0]));
     }
 
     /**
@@ -242,7 +242,7 @@ final class PostSave
         // The template is set after the save; the prepared post names it null, sent or not.
         $prepared->page_template = null;
         \Minn\Rest\RuntimePrepare::savedWithHookedBlocks($prepared, $type);
-        $filtered = \apply_filters("rest_pre_insert_{$type}", $prepared, RuntimeRoutes::wpRequest($request));
+        $filtered = Runtime::hooks()->filter("rest_pre_insert_{$type}", [$prepared, RuntimeRoutes::wpRequest($request)]);
         if ($filtered instanceof \WP_Error) {
             $status = $filtered->get_error_data();
             throw new RestError($filtered->get_error_code(), $filtered->get_error_message(), is_array($status) ? (int) ($status['status'] ?? 400) : 400);

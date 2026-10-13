@@ -33,13 +33,13 @@ final class PostLinks
     public static function post(\WP_Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
-        $structure = (string) \apply_filters('pre_post_link', (string) Runtime::options()->filtered('permalink_structure'), $post, $leavename);
+        $structure = (string) Runtime::hooks()->filter('pre_post_link', [(string) Runtime::options()->filtered('permalink_structure'), $post, $leavename]);
         if ($structure !== '' && !self::plain($post, $flags)) {
             $link = \user_trailingslashit(\home_url(strtr($structure, self::tokens($post, $flags))), 'single');
         } else {
             $link = \home_url('?p=' . $post->ID);
         }
-        return (string) \apply_filters('post_link', $link, $post, $leavename);
+        return (string) Runtime::hooks()->filter('post_link', [$link, $post, $leavename]);
     }
 
     /** What each structure tag of a post stands for; the name stays a tag when it is left. */
@@ -65,7 +65,7 @@ final class PostLinks
     {
         $categories = \get_the_category($post->ID);
         usort($categories, static fn ($a, $b) => (int) $a->term_id <=> (int) $b->term_id);
-        $chosen = $categories === [] ? null : \apply_filters('post_link_category', $categories[0], $categories, $post);
+        $chosen = $categories === [] ? null : Runtime::hooks()->filter('post_link_category', [$categories[0], $categories, $post]);
         $chosen = $chosen instanceof \WP_Term ? $chosen : \get_term((int) Runtime::options()->filtered('default_category'), 'category');
         if (!$chosen instanceof \WP_Term) {
             return '';
@@ -84,7 +84,7 @@ final class PostLinks
         } else {
             $link = \home_url(\user_trailingslashit($leavename ? '%pagename%' : (string) \get_page_uri($post), 'page'));
         }
-        return (string) \apply_filters('_get_page_link', $link, $post->ID);
+        return (string) Runtime::hooks()->filter('_get_page_link', [$link, $post->ID]);
     }
 
     /** An attachment's address: under a parent it belongs to, else its own slug, else ?attachment_id=. */
@@ -104,7 +104,7 @@ final class PostLinks
         } elseif ($pretty && !$leavename) {
             $link = \home_url(\user_trailingslashit((string) $post->post_name));
         }
-        return (string) \apply_filters('attachment_link', $link !== '' ? $link : \home_url('/?attachment_id=' . $post->ID), $post->ID);
+        return (string) Runtime::hooks()->filter('attachment_link', [$link !== '' ? $link : \home_url('/?attachment_id=' . $post->ID), $post->ID]);
     }
 
     /** A plugin type's address by its pattern, by its query var, or by the type and id plainly. */
@@ -124,7 +124,7 @@ final class PostLinks
         } else {
             $link = \home_url(\add_query_arg(['post_type' => $post->post_type, 'p' => $post->ID], ''));
         }
-        return (string) \apply_filters('post_type_link', $link, $post, $leavename, $sample);
+        return (string) Runtime::hooks()->filter('post_type_link', [$link, $post, $leavename, $sample]);
     }
 
     /**
@@ -164,9 +164,9 @@ final class PostLinks
         if (\is_post_type_hierarchical($sample->post_type)) {
             $uri = (string) \get_page_uri($sample);
             $uri = str_contains($uri, '/') ? substr($uri, 0, (int) strrpos($uri, '/')) : '';
-            $uri = (string) \apply_filters('editable_slug', $uri, $sample);
+            $uri = (string) Runtime::hooks()->filter('editable_slug', [$uri, $sample]);
             $link = str_replace('%pagename%', ($uri !== '' ? $uri . '/' : '') . '%pagename%', $link);
         }
-        return (array) \apply_filters('get_sample_permalink', [$link, \apply_filters('editable_slug', $sample->post_name, $sample)], $post->ID, $title, $name, $sample);
+        return (array) Runtime::hooks()->filter('get_sample_permalink', [[$link, Runtime::hooks()->filter('editable_slug', [$sample->post_name, $sample])], $post->ID, $title, $name, $sample]);
     }
 }

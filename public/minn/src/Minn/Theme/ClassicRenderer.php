@@ -62,7 +62,7 @@ final readonly class ClassicRenderer
         Runtime::current()->set('classic_body_classes', $this->bodyClasses($resolution, $coreClasses));
         $this->registerHead();
         $this->bridge->stand($resolution);
-        $template = (string) \apply_filters('template_include', $this->template());
+        $template = (string) Runtime::hooks()->filter('template_include', [$this->template()]);
         if ($template === '' || !is_file($template)) {
             return null;
         }

@@ -67,7 +67,7 @@ final class WidgetAreas
         $params = array_merge([array_merge($sidebar, ['widget_id' => $widgetId, 'widget_name' => $widget['name']])], (array) $widget['params']);
         $classname = is_string($widget['classname'] ?? null) ? (string) $widget['classname'] : '';
         $params[0]['before_widget'] = sprintf((string) $params[0]['before_widget'], $widgetId, $classname);
-        $params = \apply_filters('dynamic_sidebar_params', $params);
+        $params = Runtime::hooks()->filter('dynamic_sidebar_params', [$params]);
         ob_start();
         call_user_func_array($widget['callback'], $params);
         return (string) ob_get_clean();

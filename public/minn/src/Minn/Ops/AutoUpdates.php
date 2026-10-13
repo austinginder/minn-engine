@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Ops;
 
 use Closure;
+use Minn\Runtime\Runtime;
 
 /**
  * Whether per-item auto-updates apply to plugins or themes, as the
@@ -22,10 +23,10 @@ final readonly class AutoUpdates
     {
     }
 
-    /** The gate as the site's plugins see it: through their filters once the runtime's hooks exist, as configured otherwise. */
+    /** The gate as the site's plugins see it: through their filters (none before any plugin loads, so as configured). */
     public static function forSite(): self
     {
-        return new self(function_exists('apply_filters') ? \apply_filters(...) : static fn (string $hook, mixed $value): mixed => $value);
+        return new self(static fn (string $hook, mixed $value, mixed ...$args): mixed => Runtime::hooks()->filter($hook, [$value, ...$args]));
     }
 
     /** Whether per-item auto-updates apply to a type ("plugin" or "theme"; anything else is never on). */

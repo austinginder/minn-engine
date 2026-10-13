@@ -31,7 +31,7 @@ final class PostData
         if (str_starts_with($content, '<!--nextpage-->')) {
             $content = substr($content, strlen('<!--nextpage-->'));
         }
-        $pages = (array) \apply_filters('content_pagination', explode('<!--nextpage-->', $content), $post);
+        $pages = (array) Runtime::hooks()->filter('content_pagination', [explode('<!--nextpage-->', $content), $post]);
         $page = max(1, (int) ($query === null ? \get_query_var('page') : $query->get('page')));
         return [
             'id' => (int) $post->ID,
@@ -77,7 +77,7 @@ final class PostData
             return $output . '<span id="more-' . $post->ID . '"></span>' . $parts[1];
         }
         if ($moreLinkText !== '') {
-            $output .= \apply_filters('the_content_more_link', ' <a href="' . \get_permalink($post) . "#more-{$post->ID}\" class=\"more-link\">{$moreLinkText}</a>", $moreLinkText);
+            $output .= Runtime::hooks()->filter('the_content_more_link', [' <a href="' . \get_permalink($post) . "#more-{$post->ID}\" class=\"more-link\">{$moreLinkText}</a>", $moreLinkText]);
         }
         return \force_balance_tags($output);
     }

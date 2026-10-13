@@ -276,7 +276,7 @@ final readonly class LoginController
         $fields = array_intersect_key($request->form, ['user_login' => true, 'user_email' => true]) + ['user_login' => '', 'user_email' => ''];
         ['user_login' => $login, 'user_email' => $email] = array_map(static fn ($value) => is_string($value) ? $value : '', $fields);
         if ($request->method !== Method::Post) {
-            $landing = (string) \apply_filters('registration_redirect', (string) ($request->query('redirect_to') ?? ''), new \WP_Error());
+            $landing = (string) Runtime::hooks()->filter('registration_redirect', [(string) ($request->query('redirect_to') ?? ''), new \WP_Error()]);
             return Response::html(LoginForm::register($siteName, $action, '', '', '', $landing, $this->parts('register', 'Registration Form', $siteName)));
         }
         $result = \register_new_user($login, $email);
@@ -297,7 +297,7 @@ final readonly class LoginController
         if ($mismatch !== '') {
             $errors->add('password_reset_mismatch', '<strong>Error:</strong> The passwords do not match.');
         }
-        \do_action('validate_password_reset', $errors, new \WP_User($user->id));
+        Runtime::hooks()->action('validate_password_reset', [$errors, new \WP_User($user->id)]);
         return LoginNotices::of($errors);
     }
 

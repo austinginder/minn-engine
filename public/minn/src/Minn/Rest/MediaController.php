@@ -18,6 +18,7 @@ use Minn\Http\Route;
 use Minn\Media\Upload;
 use Minn\Media\Writer;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 use Minn\Support\Slashes;
 
 /**
@@ -193,7 +194,7 @@ final readonly class MediaController
     {
         // Asked of every prepared post: an attachment's description is marked only when a plugin lists the type.
         RuntimePrepare::savedWithHookedBlocks($attachment, 'attachment');
-        $attachment = \apply_filters('rest_pre_insert_attachment', $attachment, RuntimeRoutes::wpRequest($request));
+        $attachment = Runtime::hooks()->filter('rest_pre_insert_attachment', [$attachment, RuntimeRoutes::wpRequest($request)]);
         if ($attachment instanceof \WP_Error) {
             $data = $attachment->get_error_data();
             throw new RestError($attachment->get_error_code(), $attachment->get_error_message(), is_array($data) ? (int) ($data['status'] ?? 500) : 500);
@@ -289,7 +290,7 @@ final readonly class MediaController
             throw $this->caller->refuse('rest_cannot_delete', 'Sorry, you are not allowed to delete this post.');
         }
         // Asked on every delete, forced or not (probe hook-inputs-2).
-        $trashable = (bool) \apply_filters('rest_attachment_trashable', EMPTY_TRASH_DAYS > 0 && MEDIA_TRASH, \WP_Post::get_instance($attachmentId));
+        $trashable = (bool) Runtime::hooks()->filter('rest_attachment_trashable', [EMPTY_TRASH_DAYS > 0 && MEDIA_TRASH, \WP_Post::get_instance($attachmentId)]);
         if (!$request->flagged('force')) {
             if (!$trashable) {
                 throw new RestError('rest_trash_not_supported', "The post does not support trashing. Set 'force=true' to delete.", 501);

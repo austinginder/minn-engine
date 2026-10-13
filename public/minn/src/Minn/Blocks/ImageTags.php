@@ -63,7 +63,7 @@ final readonly class ImageTags
             if (strtolower($m[1]) === 'iframe') {
                 return $template ? $m[0] : self::lazyFrame($m[0]);
             }
-            return (string) \apply_filters('wp_content_img_tag', $template ? $this->sized($m[0]) : $this->fit($m[0]), $context, self::attachmentOf($m[0]));
+            return (string) Runtime::hooks()->filter('wp_content_img_tag', [$template ? $this->sized($m[0]) : $this->fit($m[0]), $context, self::attachmentOf($m[0])]);
         }, $html);
     }
 
@@ -95,7 +95,7 @@ final readonly class ImageTags
         return (string) preg_replace_callback('/<img\s[^>]*>/i', function (array $m) use ($context): string {
             $done = RenderState::current()->fittedImage($m[0]) || str_contains($m[0], ' decoding=') || str_contains($m[0], ' loading=');
             $tag = $done ? $m[0] : $this->fit($m[0]);
-            return Runtime::hooks()->has('wp_content_img_tag') ? (string) \apply_filters('wp_content_img_tag', $tag, $context, self::attachmentOf($tag)) : $tag;
+            return Runtime::hooks()->has('wp_content_img_tag') ? (string) Runtime::hooks()->filter('wp_content_img_tag', [$tag, $context, self::attachmentOf($tag)]) : $tag;
         }, $html);
     }
 
@@ -132,7 +132,7 @@ final readonly class ImageTags
         if (preg_match('/\ssizes="([^"]*)"/', $tag, $m) !== 1 || preg_match('/^\s*auto\s*(,|$)/i', $m[1]) === 1) {
             return $tag;
         }
-        if (Runtime::hooks()->has('wp_img_tag_add_auto_sizes') && !\apply_filters('wp_img_tag_add_auto_sizes', true)) {
+        if (Runtime::hooks()->has('wp_img_tag_add_auto_sizes') && !Runtime::hooks()->filter('wp_img_tag_add_auto_sizes', [true])) {
             return $tag;
         }
         return str_replace($m[0], ' sizes="auto, ' . $m[1] . '"', $tag);

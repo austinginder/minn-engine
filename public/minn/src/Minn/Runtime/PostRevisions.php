@@ -32,7 +32,7 @@ final class PostRevisions
                 break;
             }
         }
-        if ($latest !== null && \apply_filters('wp_save_post_revision_check_for_changes', true, $latest, $post) && !self::changed($latest, $post)) {
+        if ($latest !== null && Runtime::hooks()->filter('wp_save_post_revision_check_for_changes', [true, $latest, $post]) && !self::changed($latest, $post)) {
             return null;
         }
         $revisionId = self::put(\_wp_post_revision_data($post));
@@ -50,7 +50,7 @@ final class PostRevisions
                 break;
             }
         }
-        return (bool) \apply_filters('wp_save_post_revision_post_has_changed', $changed, $latest, $post);
+        return (bool) Runtime::hooks()->filter('wp_save_post_revision_post_has_changed', [$changed, $latest, $post]);
     }
 
     /**
@@ -65,7 +65,7 @@ final class PostRevisions
         if (!is_int($revisionId) || $revisionId < 1) {
             return null;
         }
-        \do_action('_wp_put_post_revision', $revisionId, $data['post_parent']);
+        Runtime::hooks()->action('_wp_put_post_revision', [$revisionId, $data['post_parent']]);
         return $revisionId;
     }
 
@@ -76,7 +76,7 @@ final class PostRevisions
         if ($keep < 0) {
             return;
         }
-        $revisions = (array) \apply_filters('wp_save_post_revision_revisions_before_deletion', \wp_get_post_revisions($post->ID, ['order' => 'ASC']), $post->ID);
+        $revisions = (array) Runtime::hooks()->filter('wp_save_post_revision_revisions_before_deletion', [\wp_get_post_revisions($post->ID, ['order' => 'ASC']), $post->ID]);
         foreach (array_slice(array_values($revisions), 0, max(0, count($revisions) - $keep)) as $revision) {
             if (!str_contains((string) $revision->post_name, 'autosave')) {
                 \wp_delete_post_revision($revision->ID);

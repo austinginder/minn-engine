@@ -57,7 +57,7 @@ final class CommentPages
             $older = (int) (new \WP_Comment_Query())->query(self::olderQuery($comment, $args));
             $page = $older === 0 ? 1 : (int) ceil(($older + 1) / $args['per_page']);
         }
-        return (int) \apply_filters('get_page_of_comment', $page, $args, $original, $commentId);
+        return (int) Runtime::hooks()->filter('get_page_of_comment', [$page, $args, $original, $commentId]);
     }
 
     /** @param array<string, mixed> $args the count of the top-level comments older than this one, through get_page_of_comment_query_args */
@@ -77,7 +77,7 @@ final class CommentPages
         if ($unapproved) {
             $query['include_unapproved'] = [$unapproved];
         }
-        return (array) \apply_filters('get_page_of_comment_query_args', $query);
+        return (array) Runtime::hooks()->filter('get_page_of_comment_query_args', [$query]);
     }
 
     /**

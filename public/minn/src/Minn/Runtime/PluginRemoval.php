@@ -47,7 +47,7 @@ final class PluginRemoval
     {
         $file = (string) \plugin_basename($plugin);
         $registered = (array) Runtime::options()->filtered('uninstall_plugins');
-        \do_action('pre_uninstall_plugin', $plugin, $registered);
+        Runtime::hooks()->action('pre_uninstall_plugin', [$plugin, $registered]);
         $script = WP_PLUGIN_DIR . '/' . dirname($file) . '/uninstall.php';
         if (file_exists($script)) {
             self::forget($file, $registered);
@@ -63,7 +63,7 @@ final class PluginRemoval
             \wp_register_plugin_realpath(WP_PLUGIN_DIR . '/' . $file);
             include_once WP_PLUGIN_DIR . '/' . $file;
             Runtime::hooks()->add("uninstall_{$file}", $callback);
-            \do_action("uninstall_{$file}");
+            Runtime::hooks()->action("uninstall_{$file}", []);
         }
         return null;
     }
@@ -74,9 +74,9 @@ final class PluginRemoval
         if (\is_uninstallable_plugin($plugin)) {
             \uninstall_plugin($plugin);
         }
-        \do_action('delete_plugin', $plugin);
+        Runtime::hooks()->action('delete_plugin', [$plugin]);
         $deleted = self::removeFiles($plugin);
-        \do_action('deleted_plugin', $plugin, $deleted);
+        Runtime::hooks()->action('deleted_plugin', [$plugin, $deleted]);
         if ($deleted) {
             self::removeTranslations(dirname($plugin), $translations);
         }

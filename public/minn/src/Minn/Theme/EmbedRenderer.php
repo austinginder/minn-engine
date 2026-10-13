@@ -46,7 +46,7 @@ final readonly class EmbedRenderer
     {
         $response = PrintedResponse::stand($this->bridge, ['embed' => true], static function () use ($bodyClasses): void {
             Runtime::current()->set('classic_body_classes', array_values(array_diff($bodyClasses(), ['minn-front-bar'])));
-            $template = (string) \apply_filters('template_include', \get_embed_template());
+            $template = (string) Runtime::hooks()->filter('template_include', [\get_embed_template()]);
             if ($template !== '' && is_file($template)) {
                 \load_template($template, false);
             }

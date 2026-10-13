@@ -28,7 +28,7 @@ final class ThemeJsonData
         if (is_array($cached)) {
             return $cached;
         }
-        $data = \apply_filters('wp_theme_json_data_theme', new \WP_Theme_JSON_Data($json, 'theme'));
+        $data = Runtime::hooks()->filter('wp_theme_json_data_theme', [new \WP_Theme_JSON_Data($json, 'theme')]);
         $filtered = $data instanceof \WP_Theme_JSON_Data ? self::asWritten((array) $data->get_theme_json()->get_raw_data()) : $json;
         Runtime::current()->set($key, $filtered);
         return $filtered;
@@ -56,7 +56,7 @@ final class ThemeJsonData
         if (is_array($cached)) {
             return $cached;
         }
-        $data = \apply_filters($filter, new \WP_Theme_JSON_Data(['version' => 3] + $json, $origin));
+        $data = Runtime::hooks()->filter((string) $filter, [new \WP_Theme_JSON_Data(['version' => 3] + $json, $origin)]);
         $filtered = $data instanceof \WP_Theme_JSON_Data ? array_diff_key((array) $data->get_data(), ['version' => true]) : $json;
         Runtime::current()->set($key, $filtered);
         return $filtered;

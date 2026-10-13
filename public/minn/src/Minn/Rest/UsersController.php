@@ -81,10 +81,10 @@ final readonly class UsersController
         $params = UserCollectionParams::for([]);
         $wp = RuntimeRoutes::sanitized($request, $params);
         $this->listAllowed($wp, $context);
-        $registered = (array) \apply_filters('rest_user_collection_params', $params);
+        $registered = (array) Runtime::hooks()->filter('rest_user_collection_params', [$params]);
         $types = (array) ($params['has_published_posts']['items']['enum'] ?? []);
         $reader = $this->caller->can('list_users') ? 'lister' : 'public';
-        $args = (array) \apply_filters('rest_user_query', UserListArgs::of($wp, $registered, $request->method->value, $types, $reader), $wp);
+        $args = (array) Runtime::hooks()->filter('rest_user_query', [UserListArgs::of($wp, $registered, $request->method->value, $types, $reader), $wp]);
         $query = new \WP_User_Query($args);
         [$total, $pages] = self::totals($query, $args);
         if ($request->method === Method::Head) {
@@ -401,7 +401,7 @@ final readonly class UsersController
         if (!$valid) {
             return 'This username is invalid because it uses illegal characters. Please enter a valid username.';
         }
-        $illegal = array_map('strtolower', (array) \apply_filters('illegal_user_logins', []));
+        $illegal = array_map('strtolower', (array) Runtime::hooks()->filter('illegal_user_logins', [[]]));
         return in_array(strtolower($login), $illegal, true) ? 'Sorry, that username is not allowed.' : null;
     }
 }

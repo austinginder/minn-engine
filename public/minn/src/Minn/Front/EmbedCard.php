@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\I18n\Gettext;
+use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
 
 /**
@@ -31,7 +32,7 @@ final class EmbedCard
         if (\get_post_type() === 'attachment' && \wp_attachment_is_image()) {
             $id = (int) \get_the_ID();
         }
-        $id = (int) \apply_filters('embed_thumbnail_id', $id);
+        $id = (int) Runtime::hooks()->filter('embed_thumbnail_id', [$id]);
         if ($id === 0) {
             return null;
         }
@@ -45,8 +46,8 @@ final class EmbedCard
                 $size = (string) $name;
             }
         }
-        $size = \apply_filters('embed_thumbnail_image_size', $size, $id);
-        $shape = (string) \apply_filters('embed_thumbnail_image_shape', $measurements[0] / $measurements[1] >= 1.75 ? 'rectangular' : 'square', $id);
+        $size = Runtime::hooks()->filter('embed_thumbnail_image_size', [$size, $id]);
+        $shape = (string) Runtime::hooks()->filter('embed_thumbnail_image_shape', [$measurements[0] / $measurements[1] >= 1.75 ? 'rectangular' : 'square', $id]);
         return [$id, is_string($size) || is_array($size) ? $size : 'full', $shape];
     }
 
@@ -70,7 +71,7 @@ final class EmbedCard
             \esc_url((string) \get_site_icon_url(32, \includes_url('images/w-logo-gray-white-bg.svg'))),
             Escape::html((string) \get_bloginfo('name')),
         );
-        return (string) \apply_filters('embed_site_title_html', $title);
+        return (string) Runtime::hooks()->filter('embed_site_title_html', [$title]);
     }
 
     /** The comments button: the count, linking to the comments; none on a 404, or with neither comments nor comments open. */

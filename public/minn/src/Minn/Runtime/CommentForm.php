@@ -40,7 +40,7 @@ final class CommentForm
         if ($parent > 0) {
             $replied = \get_comment($parent);
             if (!$replied instanceof \WP_Comment || (string) $replied->comment_approved === '0') {
-                \do_action('comment_reply_to_unapproved_comment', $postId, $parent);
+                Runtime::hooks()->action('comment_reply_to_unapproved_comment', [$postId, $parent]);
                 return new \WP_Error('comment_reply_to_unapproved_comment', 'Sorry, replies to unapproved comments are not allowed.', 403);
             }
         }
@@ -72,7 +72,7 @@ final class CommentForm
     /** The comment checked for content and length, then stored through wp_new_comment. @param array<string, mixed> $data */
     private static function store(array $data, string $content): \WP_Comment|\WP_Error
     {
-        if ($content === '' && !\apply_filters('allow_empty_comment', false, $data)) {
+        if ($content === '' && !Runtime::hooks()->filter('allow_empty_comment', [false, $data])) {
             return new \WP_Error('require_valid_comment', '<strong>Error:</strong> Please type your comment text.', 200);
         }
         $lengths = \wp_check_comment_data_max_lengths($data);
@@ -92,7 +92,7 @@ final class CommentForm
     {
         $post = \get_post($postId);
         if ($post === null || (string) $post->comment_status === '') {
-            \do_action('comment_id_not_found', $postId);
+            Runtime::hooks()->action('comment_id_not_found', [$postId]);
             return new \WP_Error('comment_id_not_found');
         }
         $status = (string) \get_post_status($post);
@@ -108,11 +108,11 @@ final class CommentForm
             default => null,
         };
         if ($refusal === null) {
-            \do_action('pre_comment_on_post', $postId);
+            Runtime::hooks()->action('pre_comment_on_post', [$postId]);
             return null;
         }
         [$code, $message, $answer] = $refusal;
-        \do_action($code, $postId);
+        Runtime::hooks()->action((string) $code, [$postId]);
         return $answer > 0 ? new \WP_Error($code, $message, $answer) : new \WP_Error($code);
     }
 

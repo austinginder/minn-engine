@@ -22,12 +22,12 @@ final class SiteLanguage
         if ($stack->switched()) {
             return (string) $stack->current();
         }
-        $early = \apply_filters('pre_determine_locale', null);
+        $early = Runtime::hooks()->filter('pre_determine_locale', [null]);
         if (is_string($early) && $early !== '') {
             return $early;
         }
         $locale = (string) (Runtime::options()->get('WPLANG') ?? '');
-        return (string) \apply_filters('locale', $locale === '' ? 'en_US' : $locale);
+        return (string) Runtime::hooks()->filter('locale', [$locale === '' ? 'en_US' : $locale]);
     }
 
     /** The language tag pages carry: the locale with a hyphen, plain "en" read as en_US. */
@@ -53,6 +53,6 @@ final class SiteLanguage
         if ($type !== 'text/html' || $doctype === 'xhtml') {
             $attributes[] = 'xml:lang="' . Html::attr($tag) . '"';
         }
-        return (string) \apply_filters('language_attributes', implode(' ', $attributes), $doctype);
+        return (string) Runtime::hooks()->filter('language_attributes', [implode(' ', $attributes), $doctype]);
     }
 }

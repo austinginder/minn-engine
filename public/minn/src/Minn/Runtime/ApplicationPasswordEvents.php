@@ -33,7 +33,7 @@ final class ApplicationPasswordEvents
             return $made;
         }
         [$password, $item] = $made;
-        \do_action('rest_after_insert_application_password', $item, $request, true);
+        Runtime::hooks()->action('rest_after_insert_application_password', [$item, $request, true]);
         return [$item, ApplicationPasswords::chunked($password)];
     }
 
@@ -51,13 +51,13 @@ final class ApplicationPasswordEvents
             return $updated;
         }
         $item = (array) \WP_Application_Passwords::get_user_application_password($userId, $uuid);
-        \do_action('rest_after_insert_application_password', $item, $request, false);
+        Runtime::hooks()->action('rest_after_insert_application_password', [$item, $request, false]);
         return $item;
     }
 
     /** The item the request prepares (its name; a new one's app id), through rest_pre_insert_application_password. @param array<string, mixed> $fields */
     private static function prepared(array $fields, \WP_REST_Request $request): object
     {
-        return (object) \apply_filters('rest_pre_insert_application_password', (object) $fields, $request);
+        return (object) Runtime::hooks()->filter('rest_pre_insert_application_password', [(object) $fields, $request]);
     }
 }

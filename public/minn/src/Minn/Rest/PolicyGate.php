@@ -11,6 +11,7 @@ use Minn\Http\Policy;
 use Minn\Http\Request;
 use Minn\Http\RouteMiss;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 
 /**
  * Judges a route's policy against the caller, with the reference's
@@ -156,7 +157,7 @@ final readonly class PolicyGate
     {
         $class = $opener[1];
         $controller = isset($opener[2]) ? new $class($opener[2]) : new $class();
-        return (bool) \apply_filters($opener[0], false, RuntimeRoutes::wpRequest($request), $controller);
+        return (bool) Runtime::hooks()->filter((string) $opener[0], [false, RuntimeRoutes::wpRequest($request), $controller]);
     }
 
     private function capabilities(Policy $policy): void

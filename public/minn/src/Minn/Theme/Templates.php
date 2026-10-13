@@ -111,7 +111,7 @@ final readonly class Templates
             return $slugs;
         }
         $names = array_map(static fn (string $slug) => $slug . '.php', $slugs);
-        $names = (array) \apply_filters("{$type}_template_hierarchy", $names);
+        $names = (array) Runtime::hooks()->filter("{$type}_template_hierarchy", [$names]);
         return array_values(array_unique(array_map(static fn ($name) => (string) preg_replace('/\.php$/', '', (string) $name), $names)));
     }
 

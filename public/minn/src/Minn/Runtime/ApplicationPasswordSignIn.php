@@ -25,7 +25,7 @@ final class ApplicationPasswordSignIn
             return $input;
         }
         $api = (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) || (defined('REST_REQUEST') && REST_REQUEST);
-        if (!\apply_filters('application_password_is_api_request', $api)) {
+        if (!Runtime::hooks()->filter('application_password_is_api_request', [$api])) {
             return $input;
         }
         $user = \get_user_by('login', $username);
@@ -34,24 +34,24 @@ final class ApplicationPasswordSignIn
         }
         $error = self::refusal($user, $username);
         if ($error !== null) {
-            \do_action('application_password_failed_authentication', $error);
+            Runtime::hooks()->action('application_password_failed_authentication', [$error]);
             return $error;
         }
         $password = (string) preg_replace('/[^a-z\d]/i', '', $password);
         $item = (new \Minn\Auth\ApplicationPasswords(new \Minn\Content\Users(Runtime::current()->db)))->verify((int) $user->ID, $password);
         if ($item === null) {
             $error = new \WP_Error('incorrect_password', Gettext::text('The provided password is an invalid application password.'));
-            \do_action('application_password_failed_authentication', $error);
+            Runtime::hooks()->action('application_password_failed_authentication', [$error]);
             return $error;
         }
         $errors = new \WP_Error();
-        \do_action_ref_array('wp_authenticate_application_password_errors', [$errors, $user, $item, $password]);
+        Runtime::hooks()->actionRefArray('wp_authenticate_application_password_errors', [$errors, $user, $item, $password]);
         if ($errors->has_errors()) {
-            \do_action('application_password_failed_authentication', $errors);
+            Runtime::hooks()->action('application_password_failed_authentication', [$errors]);
             return $errors;
         }
         \WP_Application_Passwords::record_application_password_usage($user->ID, $item['uuid']);
-        \do_action('application_password_did_authenticate', $user, $item);
+        Runtime::hooks()->action('application_password_did_authenticate', [$user, $item]);
         return $user;
     }
 
@@ -79,13 +79,13 @@ final class ApplicationPasswordSignIn
         }
         if ($error === null) {
             $error = new \WP_Error();
-            \do_action_ref_array('wp_authenticate_application_password_errors', [$error, $user, $auth['item'], (string) $auth['password']]);
+            Runtime::hooks()->actionRefArray('wp_authenticate_application_password_errors', [$error, $user, $auth['item'], (string) $auth['password']]);
         }
         if ($error->has_errors()) {
-            \do_action('application_password_failed_authentication', $error);
+            Runtime::hooks()->action('application_password_failed_authentication', [$error]);
             return $input;
         }
-        \do_action('application_password_did_authenticate', $user, $auth['item']);
+        Runtime::hooks()->action('application_password_did_authenticate', [$user, $auth['item']]);
         return (int) $user->ID;
     }
 

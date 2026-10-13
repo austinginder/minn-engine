@@ -46,7 +46,7 @@ final class ThemeSwitch
         \update_option('theme_switched', $old->get_stylesheet());
         \update_option('theme_switched_via_customizer', false);
         \wp_set_option_autoload_values(['theme_mods_' . $new->get_stylesheet() => true, 'theme_mods_' . $old->get_stylesheet() => false]);
-        \do_action('switch_theme', $new->get('Name'), $new, $old);
+        Runtime::hooks()->action('switch_theme', [$new->get('Name'), $new, $old]);
     }
 
     /** check_theme_switched: on the load after a switch, after_switch_theme with the theme that left. */
@@ -62,7 +62,7 @@ final class ThemeSwitch
             Runtime::hooks()->remove('after_switch_theme', '_wp_sidebars_changed');
             \update_option('theme_switched_via_customizer', false);
         }
-        \do_action('after_switch_theme', $old->exists() ? $old->get('Name') : (string) $stylesheet, $old);
+        Runtime::hooks()->action('after_switch_theme', [$old->exists() ? $old->get('Name') : (string) $stylesheet, $old]);
         \flush_rewrite_rules();
         \update_option('theme_switched', false);
     }
@@ -127,9 +127,9 @@ final class ThemeSwitch
         if ($stylesheet === '') {
             return false;
         }
-        \do_action('delete_theme', $stylesheet);
+        Runtime::hooks()->action('delete_theme', [$stylesheet]);
         $deleted = $remove !== null ? (bool) $remove($stylesheet) : self::removeFolder($stylesheet);
-        \do_action('deleted_theme', $stylesheet, $deleted);
+        Runtime::hooks()->action('deleted_theme', [$stylesheet, $deleted]);
         \delete_site_transient('update_themes');
         return $deleted;
     }

@@ -27,8 +27,8 @@ final class Pages
     public static function get(array $args): array
     {
         $parsed = array_merge(self::DEFAULTS, $args);
-        $query = (array) \apply_filters('get_pages_query_args', self::queryArgs($parsed, Lists::ids($parsed['include']), Lists::ids($parsed['exclude'])), $parsed);
-        return (array) \apply_filters('get_pages', self::arrange((new \WP_Query())->query($query), $parsed), $parsed);
+        $query = (array) Runtime::hooks()->filter('get_pages_query_args', [self::queryArgs($parsed, Lists::ids($parsed['include']), Lists::ids($parsed['exclude'])), $parsed]);
+        return (array) Runtime::hooks()->filter('get_pages', [self::arrange((new \WP_Query())->query($query), $parsed), $parsed]);
     }
 
     /**

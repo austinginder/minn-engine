@@ -248,7 +248,7 @@ final readonly class BootPayload
             return [];
         }
         try {
-            $rawForms = \apply_filters('minn_admin_block_forms', []);
+            $rawForms = Runtime::hooks()->filter('minn_admin_block_forms', [[]]);
             return [
                 'surfaces' => \Minn_Admin_Surfaces::for_current_user(),
                 'editorPanels' => \Minn_Admin_Surfaces::editor_panels_for_current_user(),

@@ -40,7 +40,7 @@ final class OptionSanitizer
             $value = Runtime::options()->filtered($option);
             \add_settings_error($option, "invalid_{$option}", $error);
         }
-        return \apply_filters("sanitize_option_{$option}", $value, $option, $original);
+        return Runtime::hooks()->filter("sanitize_option_{$option}", [$value, $option, $original]);
     }
 
     /**

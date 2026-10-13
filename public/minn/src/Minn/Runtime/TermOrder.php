@@ -46,7 +46,7 @@ final class TermOrder
         if ($clause === null) {
             [$clause, $meta] = ['t.name', true];
         }
-        $clause = (string) \apply_filters('get_terms_orderby', $clause, $vars, $vars['taxonomy']);
+        $clause = (string) Runtime::hooks()->filter('get_terms_orderby', [$clause, $vars, $vars['taxonomy']]);
         // The meta reading comes after the filter, as the reference keeps it for older filters.
         $byMeta = $meta ? self::meta($query, $orderby) : '';
         return $byMeta !== '' ? $byMeta : $clause;

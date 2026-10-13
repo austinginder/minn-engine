@@ -28,7 +28,7 @@ final class ArchiveLinks
         }
         if ($type->name === 'post') {
             $postsPage = Runtime::options()->filtered('show_on_front') === 'page' ? (int) Runtime::options()->filtered('page_for_posts') : 0;
-            return \apply_filters('post_type_archive_link', $postsPage > 0 ? \get_permalink($postsPage) : \get_home_url(), $postType);
+            return Runtime::hooks()->filter('post_type_archive_link', [$postsPage > 0 ? \get_permalink($postsPage) : \get_home_url(), $postType]);
         }
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
         if (Runtime::options()->filtered('permalink_structure') && is_array($type->rewrite) && $rewrite instanceof \WP_Rewrite) {
@@ -37,7 +37,7 @@ final class ArchiveLinks
         } else {
             $link = \home_url('?post_type=' . $postType);
         }
-        return \apply_filters('post_type_archive_link', $link, $postType);
+        return Runtime::hooks()->filter('post_type_archive_link', [$link, $postType]);
     }
 
     /** get_post_type_archive_feed_link. */
@@ -55,6 +55,6 @@ final class ArchiveLinks
         } else {
             $link = \add_query_arg('feed', $feed, (string) $link);
         }
-        return \apply_filters('post_type_archive_feed_link', $link, $feed);
+        return Runtime::hooks()->filter('post_type_archive_feed_link', [$link, $feed]);
     }
 }

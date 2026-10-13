@@ -38,8 +38,8 @@ final class FileUpload
      */
     public static function handle(array &$file, array|false $overrides, ?string $time, string $action): array
     {
-        $file = (array) \apply_filters("{$action}_prefilter", $file);
-        $overrides = \apply_filters("{$action}_overrides", $overrides, $file);
+        $file = (array) Runtime::hooks()->filter("{$action}_prefilter", [$file]);
+        $overrides = Runtime::hooks()->filter("{$action}_overrides", [$overrides, $file]);
         $options = (is_array($overrides) ? $overrides : []) + ['test_form' => $action === 'wp_handle_upload', 'test_size' => true, 'test_type' => true, 'mimes' => null, 'unique_filename_callback' => null, 'action' => $action];
         $refusal = self::refusal($file, $options, $action);
         if ($refusal !== null) {
@@ -105,7 +105,7 @@ final class FileUpload
      */
     private static function move(array $file, string $target, string $type, string $url, string $action): array
     {
-        $moved = \apply_filters('pre_move_uploaded_file', null, $file, $target, $type);
+        $moved = Runtime::hooks()->filter('pre_move_uploaded_file', [null, $file, $target, $type]);
         if ($moved === null) {
             $tmp = (string) $file['tmp_name'];
             $moved = $action === 'wp_handle_upload' ? @move_uploaded_file($tmp, $target) : @copy($tmp, $target);
@@ -118,6 +118,6 @@ final class FileUpload
         }
         $perms = (stat(dirname($target))['mode'] ?? 0755) & 0000666;
         @chmod($target, $perms);
-        return \apply_filters('wp_handle_upload', ['file' => $target, 'url' => $url, 'type' => $type], $action === 'wp_handle_sideload' ? 'sideload' : 'upload');
+        return Runtime::hooks()->filter('wp_handle_upload', [['file' => $target, 'url' => $url, 'type' => $type], $action === 'wp_handle_sideload' ? 'sideload' : 'upload']);
     }
 }

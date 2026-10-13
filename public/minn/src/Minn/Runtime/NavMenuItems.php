@@ -33,7 +33,7 @@ final class NavMenuItems
         } elseif (is_object($item) && isset($item->taxonomy)) {
             self::term($item);
         }
-        return \apply_filters('wp_setup_nav_menu_item', $item);
+        return Runtime::hooks()->filter('wp_setup_nav_menu_item', [$item]);
     }
 
     /**
@@ -59,7 +59,7 @@ final class NavMenuItems
                 $item->$key = $n + 1;
             }
         }
-        return (array) \apply_filters('wp_get_nav_menu_items', $items, $menu, $args);
+        return (array) Runtime::hooks()->filter('wp_get_nav_menu_items', [$items, $menu, $args]);
     }
 
     /** A nav_menu_item post: its meta, what it points at, its attribute and description. */
@@ -79,8 +79,8 @@ final class NavMenuItems
             default => self::custom($item, (string) $meta('url')),
         };
         $item->target ??= (string) $meta('target');
-        $item->attr_title ??= \apply_filters('nav_menu_attr_title', $item->post_excerpt ?? '');
-        $item->description ??= \apply_filters('nav_menu_description', \wp_trim_words((string) ($item->post_content ?? ''), 200));
+        $item->attr_title ??= Runtime::hooks()->filter('nav_menu_attr_title', [$item->post_excerpt ?? '']);
+        $item->description ??= Runtime::hooks()->filter('nav_menu_description', [\wp_trim_words((string) ($item->post_content ?? ''), 200)]);
         $item->classes ??= (array) $meta('classes');
         $item->xfn ??= (string) $meta('xfn');
     }
@@ -98,7 +98,7 @@ final class NavMenuItems
             $item->_invalid = true;
         }
         $item->url = $original ? (string) \get_permalink($original) : '';
-        $title = $original ? \apply_filters('the_title', $original->post_title, $original->ID) : '';
+        $title = $original ? Runtime::hooks()->filter('the_title', [$original->post_title, $original->ID]) : '';
         $item->title = (string) $item->post_title === '' ? (string) $title : (string) $item->post_title;
     }
 
@@ -149,8 +149,8 @@ final class NavMenuItems
         $item->title = (string) $item->post_title;
         $item->url = (string) \get_permalink((int) $item->ID);
         $item->target = '';
-        $item->attr_title = \apply_filters('nav_menu_attr_title', '');
-        $item->description = \apply_filters('nav_menu_description', '');
+        $item->attr_title = Runtime::hooks()->filter('nav_menu_attr_title', ['']);
+        $item->description = Runtime::hooks()->filter('nav_menu_description', ['']);
         $item->classes = [];
         $item->xfn = '';
     }

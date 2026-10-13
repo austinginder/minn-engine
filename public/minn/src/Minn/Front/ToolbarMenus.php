@@ -129,7 +129,7 @@ final class ToolbarMenus
         $name = $name !== '' ? $name : (string) preg_replace('#^(https?://)?(www\.)?#', '', \get_home_url());
         $title = \wp_html_excerpt($name, 40, '&hellip;');
         $meta = ['menu_title' => $title];
-        if (\apply_filters('wp_admin_bar_show_site_icons', true) && \has_site_icon()) {
+        if (Runtime::hooks()->filter('wp_admin_bar_show_site_icons', [true]) && \has_site_icon()) {
             $small = (string) \get_site_icon_url(32);
             $large = (string) \get_site_icon_url(64);
             $title = '<img class="site-icon" src="' . \esc_url($small) . '"' . ($large !== $small ? ' srcset="' . \esc_url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;

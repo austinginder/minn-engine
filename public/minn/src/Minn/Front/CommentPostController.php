@@ -48,13 +48,13 @@ final readonly class CommentPostController
             return $status > 0 ? self::refusal($comment->get_error_message(), $status) : new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
         }
         $consent = isset($request->form['wp-comment-cookies-consent']);
-        \do_action('set_comment_cookies', $comment, \wp_get_current_user(), $consent);
+        Runtime::hooks()->action('set_comment_cookies', [$comment, \wp_get_current_user(), $consent]);
         $redirect = (string) ($request->form['redirect_to'] ?? '');
         $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
         if (!$consent && \wp_get_comment_status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
             $location = \add_query_arg(['unapproved' => $comment->comment_ID, 'moderation-hash' => \wp_hash($comment->comment_date_gmt)], $location);
         }
-        \wp_safe_redirect(\apply_filters('comment_post_redirect', $location, $comment));
+        \wp_safe_redirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));
         $sent = (array) Runtime::current()->get('redirect', []);
         $response = Response::redirect((string) ($sent['location'] ?? $location), (int) ($sent['status'] ?? 302));
         return is_string($sent['by'] ?? null) ? $response->withHeader('X-Redirect-By', (string) $sent['by']) : $response;

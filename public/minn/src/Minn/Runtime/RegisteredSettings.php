@@ -54,7 +54,7 @@ final class RegisteredSettings
     {
         $defaults = ['type' => 'string', 'group' => $group, 'label' => '', 'description' => '', 'sanitize_callback' => null, 'show_in_rest' => false];
         $args = is_array($args) ? $args : ['sanitize_callback' => $args];
-        $args = (array) \apply_filters('register_setting_args', $args, $defaults, $group, $name);
+        $args = (array) Runtime::hooks()->filter('register_setting_args', [$args, $defaults, $group, $name]);
         $args = array_merge($defaults, $args);
         $rest = $args['show_in_rest'];
         if ($rest && $args['type'] === 'array' && empty($rest['schema']['items'])) {
@@ -69,7 +69,7 @@ final class RegisteredSettings
         if (array_key_exists('default', $args)) {
             Runtime::hooks()->add("default_option_{$name}", 'filter_default_option', 10, 3);
         }
-        \do_action('register_setting', $group, $name, $args);
+        Runtime::hooks()->action('register_setting', [$group, $name, $args]);
     }
 
     /** unregister_setting: the setting, its sanitize callback and its default gone, unregister_setting fired. */
@@ -91,7 +91,7 @@ final class RegisteredSettings
         }
         unset($registered[$name]);
         Runtime::current()->set(self::KEY, $registered);
-        \do_action('unregister_setting', $group, $name);
+        Runtime::hooks()->action('unregister_setting', [$group, $name]);
     }
 
     /** A setting's registered default, or $default when it registered none. */

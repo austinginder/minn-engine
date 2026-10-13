@@ -34,8 +34,8 @@ final class Gettext
         if (!self::hooked()) {
             return $translation;
         }
-        $translation = \apply_filters('gettext', $translation, $text, $domain);
-        return (string) \apply_filters("gettext_{$domain}", $translation, $text, $domain);
+        $translation = Runtime::hooks()->filter('gettext', [$translation, $text, $domain]);
+        return (string) Runtime::hooks()->filter("gettext_{$domain}", [$translation, $text, $domain]);
     }
 
     /** A message in a context (_x). */
@@ -45,8 +45,8 @@ final class Gettext
         if (!self::hooked()) {
             return $translation;
         }
-        $translation = \apply_filters('gettext_with_context', $translation, $text, $context, $domain);
-        return (string) \apply_filters("gettext_with_context_{$domain}", $translation, $text, $context, $domain);
+        $translation = Runtime::hooks()->filter('gettext_with_context', [$translation, $text, $context, $domain]);
+        return (string) Runtime::hooks()->filter("gettext_with_context_{$domain}", [$translation, $text, $context, $domain]);
     }
 
     /** The form a count takes (_n): the domain's own plural, else English's. */
@@ -56,8 +56,8 @@ final class Gettext
         if (!self::hooked()) {
             return $translation;
         }
-        $translation = \apply_filters('ngettext', $translation, $single, $plural, $number, $domain);
-        return (string) \apply_filters("ngettext_{$domain}", $translation, $single, $plural, $number, $domain);
+        $translation = Runtime::hooks()->filter('ngettext', [$translation, $single, $plural, $number, $domain]);
+        return (string) Runtime::hooks()->filter("ngettext_{$domain}", [$translation, $single, $plural, $number, $domain]);
     }
 
     /** The form a count takes in a context (_nx). */
@@ -67,8 +67,8 @@ final class Gettext
         if (!self::hooked()) {
             return $translation;
         }
-        $translation = \apply_filters('ngettext_with_context', $translation, $single, $plural, $number, $context, $domain);
-        return (string) \apply_filters("ngettext_with_context_{$domain}", $translation, $single, $plural, $number, $context, $domain);
+        $translation = Runtime::hooks()->filter('ngettext_with_context', [$translation, $single, $plural, $number, $context, $domain]);
+        return (string) Runtime::hooks()->filter("ngettext_with_context_{$domain}", [$translation, $single, $plural, $number, $context, $domain]);
     }
 
     /** Whether the hook API is loaded: without it (an engine CLI verb, a unit case) a message stands unfiltered. */

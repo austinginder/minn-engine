@@ -121,7 +121,7 @@ final readonly class PageRenderer
         // canvas is the incoming value); a plugin swapping in its own PHP file
         // takes the whole response over, the CaptainCore Manager shape.
         $canvas = MINN_ENGINE_DIR . '/wp-api/template-canvas.php';
-        $swapped = (string) \apply_filters('template_include', $canvas);
+        $swapped = (string) Runtime::hooks()->filter('template_include', [$canvas]);
         if ($swapped !== $canvas && $swapped !== '' && is_file($swapped)) {
             return TemplateBuffer::around($swapped, static function () use ($swapped): string {
                 ob_start();

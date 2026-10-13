@@ -41,7 +41,7 @@ final readonly class ProbeController
     public function robots(Request $request): Response
     {
         if (Runtime::booted() && $this->bridge !== null) {
-            $printed = PrintedResponse::stand($this->bridge, ['robots' => 1], static fn () => \do_action('do_robots'));
+            $printed = PrintedResponse::stand($this->bridge, ['robots' => 1], static fn () => Runtime::hooks()->action('do_robots', []));
             if ($printed !== null) {
                 return $printed;
             }

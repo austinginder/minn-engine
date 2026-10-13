@@ -303,6 +303,6 @@ final class QueryBlocks
     private function archiveTitle(array $type): string
     {
         $label = (string) ($type['label'] ?? $type['name'] ?? '');
-        return (string) \apply_filters('post_type_archive_title', $label, (string) ($type['name'] ?? ''));
+        return (string) Runtime::hooks()->filter('post_type_archive_title', [$label, (string) ($type['name'] ?? '')]);
     }
 }

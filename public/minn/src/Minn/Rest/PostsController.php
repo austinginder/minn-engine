@@ -63,7 +63,7 @@ final readonly class PostsController
         if ($wp['orderby'] === 'include' && empty($wp['include'])) {
             throw new RestError('rest_orderby_include_missing_include', 'You need to define an include parameter to order by include.', 400);
         }
-        $args = (array) \apply_filters("rest_{$type}_query", PostListArgs::of($wp, $registered, $type), $wp);
+        $args = (array) Runtime::hooks()->filter("rest_{$type}_query", [PostListArgs::of($wp, $registered, $type), $wp]);
         $vars = PostListArgs::queryVars($args, $wp);
         if ($type === 'attachment' && !empty($vars['s'])) {
             Runtime::hooks()->add('wp_allow_query_attachment_by_filename', '__return_true');

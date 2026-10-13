@@ -50,7 +50,7 @@ final readonly class LiveSettings
     {
         $out = [];
         foreach ($this->shown() as $name => $args) {
-            $value = \apply_filters('rest_pre_get_setting', null, $name, $args);
+            $value = Runtime::hooks()->filter('rest_pre_get_setting', [null, $name, $args]);
             $value ??= Runtime::options()->filtered($args['option_name'], $args['schema']['default']);
             $out[$name] = $this->schema->validate($value, $args['schema'], $name) === true ? $this->schema->sanitize($value, $args['schema'], $name) : null;
         }
@@ -64,7 +64,7 @@ final readonly class LiveSettings
         $this->refuseInvalid($shown, $body);
         foreach ($shown as $name => $args) {
             $value = $body[$name] === null ? null : $this->schema->sanitize($body[$name], $args['schema'], $name);
-            if (\apply_filters('rest_pre_update_setting', false, $name, $value, $args)) {
+            if (Runtime::hooks()->filter('rest_pre_update_setting', [false, $name, $value, $args])) {
                 continue;
             }
             if ($value !== null) {

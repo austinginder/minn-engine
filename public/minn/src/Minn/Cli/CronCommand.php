@@ -104,7 +104,7 @@ final class CronCommand
                         \wp_reschedule_event((int) $timestamp, $entry['schedule'], (string) $hook, $entry['args'], true);
                     }
                     \wp_unschedule_event((int) $timestamp, (string) $hook, $entry['args'], true);
-                    \do_action_ref_array((string) $hook, $entry['args']);
+                    \Minn\Runtime\Runtime::hooks()->actionRefArray((string) (string) $hook, array_values((array) $entry['args']));
                     $elapsed = number_format(microtime(true) - $started, 3);
                     WP_CLI::log("Executed the cron event '{$hook}' in {$elapsed}s.");
                     $ran++;

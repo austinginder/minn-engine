@@ -27,17 +27,17 @@ final class Heartbeat
         $data = empty($post['data']) ? [] : (array) $post['data'];
         $response = [];
         if ($state !== 1) {
-            $response = (array) \apply_filters('wp_refresh_nonces', $response, $data, $screen);
+            $response = (array) Runtime::hooks()->filter('wp_refresh_nonces', [$response, $data, $screen]);
             if ($state === false) {
                 $response['nonces_expired'] = true;
                 return $response;
             }
         }
         if ($data !== []) {
-            $response = (array) \apply_filters('heartbeat_received', $response, $data, $screen);
+            $response = (array) Runtime::hooks()->filter('heartbeat_received', [$response, $data, $screen]);
         }
-        $response = (array) \apply_filters('heartbeat_send', $response, $screen);
-        \do_action('heartbeat_tick', $response, $screen);
+        $response = (array) Runtime::hooks()->filter('heartbeat_send', [$response, $screen]);
+        Runtime::hooks()->action('heartbeat_tick', [$response, $screen]);
         $response['server_time'] = time();
         return $response;
     }

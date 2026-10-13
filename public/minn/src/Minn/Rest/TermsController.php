@@ -60,8 +60,8 @@ final readonly class TermsController
                 throw $this->caller->refuse('rest_forbidden_context', 'Sorry, you are not allowed to view terms for this post.');
             }
         }
-        $registered = (array) \apply_filters("rest_{$taxonomy}_collection_params", $params, $object);
-        $args = (array) \apply_filters("rest_{$taxonomy}_query", TermListArgs::of($wp, $registered, $taxonomy, $request->method->value), $wp);
+        $registered = (array) Runtime::hooks()->filter("rest_{$taxonomy}_collection_params", [$params, $object]);
+        $args = (array) Runtime::hooks()->filter("rest_{$taxonomy}_query", [TermListArgs::of($wp, $registered, $taxonomy, $request->method->value), $wp]);
         $found = empty($args['post']) ? \get_terms($args) : \wp_get_object_terms($args['post'], $taxonomy, $args);
         $count = empty($args['post']) ? $args : ['object_ids' => $args['post']] + $args;
         unset($count['number'], $count['offset']);

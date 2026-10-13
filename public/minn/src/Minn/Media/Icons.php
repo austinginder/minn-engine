@@ -45,7 +45,7 @@ final class Icons
                 break;
             }
         }
-        return \apply_filters('wp_mime_type_icon', $found, $mime, $postId);
+        return Runtime::hooks()->filter('wp_mime_type_icon', [$found, $mime, $postId]);
     }
 
     /** Every icon by name, read once a request with the first asker's preferred kind. @return array<string, string> */
@@ -55,8 +55,8 @@ final class Icons
         if (is_array($cached)) {
             return $cached;
         }
-        $coreDir = (string) \apply_filters('icon_dir', ABSPATH . WPINC . '/images/media');
-        $dirs = (array) \apply_filters('icon_dirs', [$coreDir => \apply_filters('icon_dir_uri', \includes_url('images/media'))]);
+        $coreDir = (string) Runtime::hooks()->filter('icon_dir', [ABSPATH . WPINC . '/images/media']);
+        $dirs = (array) Runtime::hooks()->filter('icon_dirs', [[$coreDir => Runtime::hooks()->filter('icon_dir_uri', [\includes_url('images/media')])]]);
         $icons = [];
         foreach ($dirs as $dir => $uri) {
             foreach (self::files((string) $dir, $coreDir, $preferred) as $name => $file) {

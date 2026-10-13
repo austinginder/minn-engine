@@ -63,7 +63,7 @@ final readonly class MenuEvents
             return $saved;
         }
         $menuId = (int) $saved['term_id'];
-        \do_action($created ? 'wp_create_nav_menu' : 'wp_update_nav_menu', $menuId, $data);
+        Runtime::hooks()->action((string) $created ? 'wp_create_nav_menu' : 'wp_update_nav_menu', [$menuId, $data]);
         return $menuId;
     }
 
@@ -79,7 +79,7 @@ final readonly class MenuEvents
         if (count($kept) !== count($locations)) {
             \set_theme_mod('nav_menu_locations', $kept);
         }
-        \do_action('wp_delete_nav_menu', $menuId);
+        Runtime::hooks()->action('wp_delete_nav_menu', [$menuId]);
     }
 
     /**
@@ -113,9 +113,9 @@ final readonly class MenuEvents
         $events = new PostEvents();
         $events->saved($id, $before);
         if ($itemId === 0) {
-            \do_action('wp_add_nav_menu_item', $menuId, $id, $args);
+            Runtime::hooks()->action('wp_add_nav_menu_item', [$menuId, $id, $args]);
         }
-        \do_action('wp_update_nav_menu_item', $menuId, $id, $args);
+        Runtime::hooks()->action('wp_update_nav_menu_item', [$menuId, $id, $args]);
         if ($afterInsert === 'now') {
             $events->afterInsert($id, $before);
         }
@@ -132,7 +132,7 @@ final readonly class MenuEvents
      */
     public function restMenu(int $menuId, array $fields, Request $request): int
     {
-        $prepared = self::prepared(\apply_filters('rest_pre_insert_nav_menu', (object) $fields, RuntimeRoutes::wpRequest($request)));
+        $prepared = self::prepared(Runtime::hooks()->filter('rest_pre_insert_nav_menu', [(object) $fields, RuntimeRoutes::wpRequest($request)]));
         $data = array_filter(['menu-name' => $prepared['name'] ?? null, 'description' => $prepared['description'] ?? null], static fn ($v) => $v !== null);
         $saved = $this->saveMenu($menuId, $data);
         if ($saved instanceof \WP_Error) {
@@ -147,7 +147,7 @@ final readonly class MenuEvents
     {
         $term = \get_term($menuId, 'nav_menu');
         $this->deleteMenu($menuId);
-        \do_action('rest_delete_nav_menu', $term, new \WP_REST_Response(['deleted' => true, 'previous' => $previous], 200), RuntimeRoutes::wpRequest($request));
+        Runtime::hooks()->action('rest_delete_nav_menu', [$term, new \WP_REST_Response(['deleted' => true, 'previous' => $previous], 200), RuntimeRoutes::wpRequest($request)]);
     }
 
     /**
@@ -162,7 +162,7 @@ final readonly class MenuEvents
     public function restItem(int $itemId, array $args, Request $request): int
     {
         $before = $itemId > 0 ? $this->posts->find($itemId) : null;
-        $args = self::prepared(\apply_filters('rest_pre_insert_nav_menu_item', (object) $args, RuntimeRoutes::wpRequest($request)));
+        $args = self::prepared(Runtime::hooks()->filter('rest_pre_insert_nav_menu_item', [(object) $args, RuntimeRoutes::wpRequest($request)]));
         $menuId = (int) ($args['menu-id'] ?? 0);
         unset($args['menu-id']);
         $saved = $this->saveItem($menuId, $itemId, $args, 'later');

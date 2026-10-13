@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Support;
 
+use Minn\Runtime\Runtime;
+
 /**
  * Text made safe for HTML the way WordPress's escapers make it (esc_html,
  * esc_attr): invalid UTF-8 emptied, entities already present normalised
@@ -16,13 +18,13 @@ final class Escape
     /** Text for an element's content. */
     public static function html(mixed $text): string
     {
-        return (string) \apply_filters('esc_html', self::encoded((string) $text), $text);
+        return (string) Runtime::hooks()->filter('esc_html', [self::encoded((string) $text), $text]);
     }
 
     /** Text for an attribute's value. */
     public static function attr(mixed $text): string
     {
-        return (string) \apply_filters('attribute_escape', self::encoded((string) $text), $text);
+        return (string) Runtime::hooks()->filter('attribute_escape', [self::encoded((string) $text), $text]);
     }
 
     private static function encoded(string $text): string

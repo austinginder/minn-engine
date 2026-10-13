@@ -33,7 +33,7 @@ final class MetaKeys
         }
         $defaults = self::DEFAULTS;
         // Unknown arguments are dropped by a default filter (_wp_register_meta_args_allowed_list) ahead of the plugins' own.
-        $args = (array) \apply_filters('register_meta_args', $args, $defaults, $objectType, $key);
+        $args = (array) Runtime::hooks()->filter('register_meta_args', [$args, $defaults, $objectType, $key]);
         unset($defaults['default']);
         $args = array_merge($defaults, $args);
         if (empty($args['auth_callback'])) {
@@ -139,7 +139,7 @@ final class MetaKeys
             'user' => \get_userdata($objectId) instanceof \WP_User ? 'user' : '',
             default => '',
         };
-        return (string) \apply_filters("get_object_subtype_{$objectType}", $subtype, $objectId);
+        return (string) Runtime::hooks()->filter("get_object_subtype_{$objectType}", [$subtype, $objectId]);
     }
 
     /**
@@ -168,7 +168,7 @@ final class MetaKeys
         if ($key) {
             $allowed = !\is_protected_meta($key, $objectType);
             $filter = Runtime::hooks()->has("auth_{$objectType}_meta_{$key}_for_{$subtype}") ? "auth_{$objectType}_meta_{$key}_for_{$subtype}" : "auth_{$objectType}_meta_{$key}";
-            $allowed = \apply_filters($filter, $allowed, $key, $objectId, $userId, $capability, $caps);
+            $allowed = Runtime::hooks()->filter((string) $filter, [$allowed, $key, $objectId, $userId, $capability, $caps]);
             // The name before _for_ existed is still heard, with a notice (probe hook-inputs).
             $allowed = \apply_filters_deprecated("auth_{$objectType}_{$subtype}_meta_{$key}", [$allowed, $key, $objectId, $userId, $capability, $caps], '4.9.8', "auth_{$objectType}_meta_{$key}_for_{$subtype}");
             if (!$allowed) {

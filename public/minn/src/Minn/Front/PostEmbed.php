@@ -28,7 +28,7 @@ final class PostEmbed
         if (!$post instanceof \WP_Post || !\is_post_publicly_viewable($post)) {
             return false;
         }
-        $limits = (array) \apply_filters('oembed_min_max_width', ['min' => 200, 'max' => 600]);
+        $limits = (array) Runtime::hooks()->filter('oembed_min_max_width', [['min' => 200, 'max' => 600]]);
         $width = (int) min(max((int) $limits['min'], $width), (int) $limits['max']);
         $height = (int) max(ceil($width / 16 * 9), 200);
         $data = [
@@ -45,7 +45,7 @@ final class PostEmbed
             $data['author_name'] = $author->display_name;
             $data['author_url'] = \get_author_posts_url($author->ID);
         }
-        return \apply_filters('oembed_response_data', $data, $post, $width, $height);
+        return Runtime::hooks()->filter('oembed_response_data', [$data, $post, $width, $height]);
     }
 
     /** get_oembed_response_data_rich: the size, the markup, and a thumbnail when the post has one. @param array<string, mixed> $data @return array<string, mixed> */
@@ -86,7 +86,7 @@ final class PostEmbed
         );
         $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/embed-host.js');
         $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . \includes_url('js/wp-embed.min.js'));
-        return (string) \apply_filters('embed_html', $output, $post, $width, $height);
+        return (string) Runtime::hooks()->filter('embed_html', [$output, $post, $width, $height]);
     }
 
     /** get_post_embed_url: the post's /embed/ address (?embed=true without pretty links), through post_embed_url. */
@@ -100,7 +100,7 @@ final class PostEmbed
         $url = (string) Runtime::options()->filtered('permalink_structure') !== '' && !str_contains($permalink, '?')
             ? Url::withTrailingSlash($permalink) . \user_trailingslashit('embed')
             : \add_query_arg(['embed' => 'true'], $permalink);
-        return (string) \apply_filters('post_embed_url', $url, $post);
+        return (string) Runtime::hooks()->filter('post_embed_url', [$url, $post]);
     }
 
     /** _oembed_create_xml: the data as an oembed document (or under the root given), nested arrays as nested elements. @param array<string, mixed> $data */

@@ -145,7 +145,7 @@ final readonly class Comments
     /** How many comments a post shows: its count, as get_comments_number filters it. */
     private static function count(PostRecord $post): int
     {
-        return (int) \apply_filters('get_comments_number', $post->commentCount, $post->id);
+        return (int) Runtime::hooks()->filter('get_comments_number', [$post->commentCount, $post->id]);
     }
 
     /** @param list<array> $all */

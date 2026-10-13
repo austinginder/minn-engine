@@ -18,6 +18,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Runtime;
 use Minn\Support\Email;
 
 /**
@@ -45,8 +46,8 @@ final readonly class CommentsController
         $context = Context::of($request);
         $wp = RuntimeRoutes::sanitized($request, Args::CONTEXT + Args::COMMENTS);
         $this->allowed($wp, $context, (string) $request->query('author_email', ''));
-        $registered = (array) \apply_filters('rest_comment_collection_params', Args::CONTEXT + Args::COMMENTS);
-        $args = (array) \apply_filters('rest_comment_query', CommentListArgs::of($wp, $registered, $request->method->value), $wp);
+        $registered = (array) Runtime::hooks()->filter('rest_comment_collection_params', [Args::CONTEXT + Args::COMMENTS]);
+        $args = (array) Runtime::hooks()->filter('rest_comment_query', [CommentListArgs::of($wp, $registered, $request->method->value), $wp]);
         $query = new \WP_Comment_Query();
         $found = $query->query($args);
         [$total, $pages] = self::totals($query, $args, (int) $wp['per_page']);
@@ -188,7 +189,7 @@ final readonly class CommentsController
         $fields = Fields::fromQuery($request->query);
         $events = $this->events();
         // Whether the comment may go to the trash is asked on every delete, forced or not (probe hook-inputs-2).
-        $trashable = (bool) \apply_filters('rest_comment_trashable', EMPTY_TRASH_DAYS > 0, \WP_Comment::get_instance($commentId));
+        $trashable = (bool) Runtime::hooks()->filter('rest_comment_trashable', [EMPTY_TRASH_DAYS > 0, \WP_Comment::get_instance($commentId)]);
         if ($request->flagged('force')) {
             $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($comment, Context::Edit), ['_links' => true])];
             $events->delete($comment);

@@ -36,10 +36,10 @@ final class NavMenu
                 }
             }
         }
-        $items = \apply_filters('wp_nav_menu_objects', $items, $args);
+        $items = Runtime::hooks()->filter('wp_nav_menu_objects', [$items, $args]);
         $markup = (string) \walk_nav_menu_tree($items, (int) $args->depth, $args);
-        $markup = (string) \apply_filters('wp_nav_menu_items', $markup, $args);
-        $markup = (string) \apply_filters("wp_nav_menu_{$menu->slug}_items", $markup, $args);
+        $markup = (string) Runtime::hooks()->filter('wp_nav_menu_items', [$markup, $args]);
+        $markup = (string) Runtime::hooks()->filter("wp_nav_menu_{$menu->slug}_items", [$markup, $args]);
         if ($markup === '') {
             return false;
         }
@@ -86,7 +86,7 @@ final class NavMenu
         if (!$args->container) {
             return $nav;
         }
-        $allowed = \apply_filters('wp_nav_menu_container_allowedtags', ['div', 'nav']);
+        $allowed = Runtime::hooks()->filter('wp_nav_menu_container_allowedtags', [['div', 'nav']]);
         if (!in_array($args->container, (array) $allowed, true)) {
             return $nav;
         }

@@ -48,11 +48,11 @@ final class CommentFeedQuery
     /** The request, its pieces through the comment_feed_* filters. */
     private static function request(\WP_Query $query, string $join, string $where, string $groupby, string $select): string
     {
-        $join = \apply_filters_ref_array('comment_feed_join', [$join, &$query]);
-        $where = \apply_filters_ref_array('comment_feed_where', [$where, &$query]);
-        $groupby = \apply_filters_ref_array('comment_feed_groupby', [$groupby, &$query]);
-        $orderby = \apply_filters_ref_array('comment_feed_orderby', ['comment_date_gmt DESC', &$query]);
-        $limits = \apply_filters_ref_array('comment_feed_limits', ['LIMIT ' . Runtime::options()->filtered('posts_per_rss'), &$query]);
+        $join = Runtime::hooks()->filterRefArray('comment_feed_join', [$join, &$query]);
+        $where = Runtime::hooks()->filterRefArray('comment_feed_where', [$where, &$query]);
+        $groupby = Runtime::hooks()->filterRefArray('comment_feed_groupby', [$groupby, &$query]);
+        $orderby = Runtime::hooks()->filterRefArray('comment_feed_orderby', ['comment_date_gmt DESC', &$query]);
+        $limits = Runtime::hooks()->filterRefArray('comment_feed_limits', ['LIMIT ' . Runtime::options()->filtered('posts_per_rss'), &$query]);
         return "{$select} {$join} {$where} " . (!empty($groupby) ? 'GROUP BY ' . $groupby : '') . ' ' . (!empty($orderby) ? 'ORDER BY ' . $orderby : '') . " {$limits}";
     }
 

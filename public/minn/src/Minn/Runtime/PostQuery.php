@@ -52,9 +52,9 @@ final class PostQuery
     {
         $query = $this->query;
         $query->parse_query();
-        \do_action_ref_array('pre_get_posts', [&$query]);
+        Runtime::hooks()->actionRefArray('pre_get_posts', [&$query]);
         $query->query_vars = $query->fill_query_vars($query->query_vars);
-        $query->allow_query_attachment_by_filename = \apply_filters('wp_allow_query_attachment_by_filename', false);
+        $query->allow_query_attachment_by_filename = Runtime::hooks()->filter('wp_allow_query_attachment_by_filename', [false]);
         \remove_all_filters('wp_allow_query_attachment_by_filename');
         $query->meta_query = new \WP_Meta_Query();
         $query->meta_query->parse_query_vars($query->query_vars);
@@ -161,7 +161,7 @@ final class PostQuery
             $parts->search = $this->search($query, $q, $urlSearch);
         }
         if (!$q['suppress_filters']) {
-            $parts->search = \apply_filters_ref_array('posts_search', [$parts->search, &$query]);
+            $parts->search = Runtime::hooks()->filterRefArray('posts_search', [$parts->search, &$query]);
         }
         $this->taxonomies($q);
         $where->authors($q);
@@ -229,11 +229,11 @@ final class PostQuery
         $q['search_terms'] = $split['terms'];
         $given = !empty($q['search_columns']) ? (array) $q['search_columns'] : PostSearch::COLUMNS;
         $t = $this->parts->table;
-        $columns = array_map(static fn (string $column) => "{$t}.{$column}", PostSearch::columns((array) \apply_filters('post_search_columns', $given, $q['s'], $this->query)));
+        $columns = array_map(static fn (string $column) => "{$t}.{$column}", PostSearch::columns((array) Runtime::hooks()->filter('post_search_columns', [$given, $q['s'], $this->query])));
         if (!empty($this->query->allow_query_attachment_by_filename)) {
             $columns[] = 'sq1.meta_value';
         }
-        $prefix = \apply_filters('wp_query_search_exclusion_prefix', '-');
+        $prefix = Runtime::hooks()->filter('wp_query_search_exclusion_prefix', ['-']);
         $built = PostSearch::where($t, $q['search_terms'], $columns, is_scalar($prefix) && $prefix ? (string) $prefix : '', !empty($q['exact']) ? '' : '%');
         $q['search_orderby_title'] = $built['titles'];
         // A visitor's search leaves out password-protected posts.
@@ -244,7 +244,7 @@ final class PostQuery
     public function stopwords(): array
     {
         $list = Gettext::inContext(PostSearch::STOPWORDS, 'Comma-separated list of search stopwords in your language');
-        return (array) \apply_filters('wp_search_stopwords', PostSearch::stopwords((string) $list));
+        return (array) Runtime::hooks()->filter('wp_search_stopwords', [PostSearch::stopwords((string) $list)]);
     }
 
     /** A search's relevance order, ahead of the order asked for, when no other order is asked for. @param array<string, mixed> $q */
@@ -258,7 +258,7 @@ final class PostQuery
             $order = PostSearch::order($this->parts->table, (string) $q['s'], (int) $q['search_terms_count'], (array) ($q['search_orderby_title'] ?? []));
         }
         if (!$q['suppress_filters']) {
-            $order = \apply_filters('posts_search_orderby', $order, $this->query);
+            $order = Runtime::hooks()->filter('posts_search_orderby', [$order, $this->query]);
         }
         if ($order) {
             $this->parts->orderby = $this->parts->orderby ? $order . ', ' . $this->parts->orderby : $order;
@@ -272,8 +272,8 @@ final class PostQuery
         $parts = $this->parts;
         $filter = !$q['suppress_filters'];
         if ($filter) {
-            $parts->where = \apply_filters_ref_array('posts_where', [$parts->where, &$query]);
-            $parts->join = \apply_filters_ref_array('posts_join', [$parts->join, &$query]);
+            $parts->where = Runtime::hooks()->filterRefArray('posts_where', [$parts->where, &$query]);
+            $parts->join = Runtime::hooks()->filterRefArray('posts_join', [$parts->join, &$query]);
         }
         if ($query->is_comment_feed && !$query->is_singular) {
             CommentFeedQuery::listing($query, $parts, $this->wpdb);
@@ -282,7 +282,7 @@ final class PostQuery
         if ($filter) {
             $this->through(['posts_where_paged' => 'where', 'posts_groupby' => 'groupby', 'posts_join_paged' => 'join', 'posts_orderby' => 'orderby', 'posts_distinct' => 'distinct', 'post_limits' => 'limits', 'posts_fields' => 'fields'], 'posts_clauses');
         }
-        \do_action('posts_selection', $parts->where . $parts->groupby . $parts->orderby . $parts->limits . $parts->join);
+        Runtime::hooks()->action('posts_selection', [$parts->where . $parts->groupby . $parts->orderby . $parts->limits . $parts->join]);
         if ($filter) {
             $this->through(['posts_where_request' => 'where', 'posts_groupby_request' => 'groupby', 'posts_join_request' => 'join', 'posts_orderby_request' => 'orderby', 'posts_distinct_request' => 'distinct', 'posts_fields_request' => 'fields', 'post_limits_request' => 'limits'], 'posts_clauses_request');
         }
@@ -293,9 +293,9 @@ final class PostQuery
     {
         $query = $this->query;
         foreach ($hooks as $hook => $piece) {
-            $this->parts->{$piece} = \apply_filters_ref_array($hook, [$this->parts->{$piece}, &$query]);
+            $this->parts->{$piece} = Runtime::hooks()->filterRefArray((string) $hook, [$this->parts->{$piece}, &$query]);
         }
-        $this->parts->take((array) \apply_filters_ref_array($clausesHook, [$this->parts->pieces(), &$query]));
+        $this->parts->take((array) Runtime::hooks()->filterRefArray((string) $clausesHook, [$this->parts->pieces(), &$query]));
     }
 
     /** LIMIT for a listing that pages: the offset when one is given, the page's start otherwise. @param array<string, mixed> $q */
@@ -322,9 +322,9 @@ final class PostQuery
         $old = $this->parts->request($foundRows, $this->parts->fields);
         $query->request = $old;
         if (!$q['suppress_filters']) {
-            $query->request = \apply_filters_ref_array('posts_request', [$query->request, &$query]);
+            $query->request = Runtime::hooks()->filterRefArray('posts_request', [$query->request, &$query]);
         }
-        $query->posts = \apply_filters_ref_array('posts_pre_query', [null, &$query]);
+        $query->posts = Runtime::hooks()->filterRefArray('posts_pre_query', [null, &$query]);
         if ($q['fields'] === 'ids' || $q['fields'] === 'id=>parent') {
             return $this->idsOnly($q);
         }
@@ -335,7 +335,7 @@ final class PostQuery
             $query->posts = array_map('get_post', $query->posts);
         }
         if (!$q['suppress_filters']) {
-            $query->posts = \apply_filters_ref_array('posts_results', [$query->posts, &$query]);
+            $query->posts = Runtime::hooks()->filterRefArray('posts_results', [$query->posts, &$query]);
         }
         if ($query->is_comment_feed && $query->is_singular && !empty($query->posts)) {
             CommentFeedQuery::single($query, $this->wpdb);
@@ -377,13 +377,13 @@ final class PostQuery
         $query = $this->query;
         $t = $this->parts->table;
         $split = $old === $query->request && $this->parts->fields === "{$t}.*" && !empty($this->parts->limits) && $q['posts_per_page'] < 500;
-        $split = \apply_filters('split_the_query', $split, $query, $old, $this->parts->pieces());
+        $split = Runtime::hooks()->filter('split_the_query', [$split, $query, $old, $this->parts->pieces()]);
         if (!$split) {
             $query->posts = $this->wpdb->get_results($query->request);
             $this->foundPosts($q);
             return;
         }
-        $query->request = \apply_filters('posts_request_ids', $this->parts->request($foundRows, "{$t}.ID"), $query);
+        $query->request = Runtime::hooks()->filter('posts_request_ids', [$this->parts->request($foundRows, "{$t}.ID"), $query]);
         $ids = $this->wpdb->get_col($query->request);
         $query->posts = $ids ?: [];
         if ($ids) {
@@ -401,11 +401,11 @@ final class PostQuery
         }
         $paged = !empty($this->parts->limits);
         if ($paged) {
-            $query->found_posts = (int) $this->wpdb->get_var(\apply_filters_ref_array('found_posts_query', ['SELECT FOUND_ROWS()', &$query]));
+            $query->found_posts = (int) $this->wpdb->get_var(Runtime::hooks()->filterRefArray('found_posts_query', ['SELECT FOUND_ROWS()', &$query]));
         } else {
             $query->found_posts = is_array($query->posts) ? count($query->posts) : ($query->posts === null ? 0 : 1);
         }
-        $query->found_posts = (int) \apply_filters_ref_array('found_posts', [$query->found_posts, &$query]);
+        $query->found_posts = (int) Runtime::hooks()->filterRefArray('found_posts', [$query->found_posts, &$query]);
         if ($paged && (int) $q['posts_per_page'] !== 0) {
             $query->max_num_pages = (int) ceil($query->found_posts / $q['posts_per_page']);
         }

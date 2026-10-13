@@ -72,9 +72,9 @@ final readonly class Structure
         }
         $id = (string) $block->attr('theme', \get_stylesheet()) . '//' . $slug;
         match ($source) {
-            'post' => \do_action('render_block_core_template_part_post', $id, $block->attrs, \get_post((int) $where), $markup),
-            'file' => \do_action('render_block_core_template_part_file', $id, $block->attrs, $where, $markup),
-            default => \do_action('render_block_core_template_part_none', $id, $block->attrs, ''),
+            'post' => Runtime::hooks()->action('render_block_core_template_part_post', [$id, $block->attrs, \get_post((int) $where), $markup]),
+            'file' => Runtime::hooks()->action('render_block_core_template_part_file', [$id, $block->attrs, $where, $markup]),
+            default => Runtime::hooks()->action('render_block_core_template_part_none', [$id, $block->attrs, '']),
         };
     }
 

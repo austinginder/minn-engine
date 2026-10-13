@@ -7,6 +7,7 @@ namespace Minn\Auth;
 use Minn\Content\UserRecord;
 use Minn\Db;
 use Minn\Http\Response;
+use Minn\Runtime\Runtime;
 
 /**
  * The three cookies a sign-in sets: the auth cookie on the admin and
@@ -48,18 +49,18 @@ final readonly class AuthCookies
     public function settle(UserRecord $user, int $days, bool $secure, bool $https, string $token = ''): array
     {
         $remember = $days > 2;
-        $expiration = time() + (int) \apply_filters('auth_cookie_expiration', $days * self::DAY, $user->id, $remember);
+        $expiration = time() + (int) Runtime::hooks()->filter('auth_cookie_expiration', [$days * self::DAY, $user->id, $remember]);
         $expire = $remember ? $expiration + 12 * self::HOUR : 0;
-        $secure = (bool) \apply_filters('secure_auth_cookie', $secure, $user->id);
-        $secureLoggedIn = (bool) \apply_filters('secure_logged_in_cookie', $secure && $https, $user->id, $secure);
+        $secure = (bool) Runtime::hooks()->filter('secure_auth_cookie', [$secure, $user->id]);
+        $secureLoggedIn = (bool) Runtime::hooks()->filter('secure_logged_in_cookie', [$secure && $https, $user->id, $secure]);
         // The session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
         $token = $token !== '' ? $token : \WP_Session_Tokens::get_instance($user->id)->create($expiration);
         $scheme = $secure ? 'secure_auth' : 'auth';
         $auth = self::mint($user, $expiration, $token, $scheme);
         $loggedIn = self::mint($user, $expiration, $token, 'logged_in');
-        \do_action('set_auth_cookie', $auth, $expire, $expiration, $user->id, $scheme, $token);
-        \do_action('set_logged_in_cookie', $loggedIn, $expire, $expiration, $user->id, 'logged_in', $token);
-        $send = (bool) \apply_filters('send_auth_cookies', true, $expire, $expiration, $user->id, $scheme, $token);
+        Runtime::hooks()->action('set_auth_cookie', [$auth, $expire, $expiration, $user->id, $scheme, $token]);
+        Runtime::hooks()->action('set_logged_in_cookie', [$loggedIn, $expire, $expiration, $user->id, 'logged_in', $token]);
+        $send = (bool) Runtime::hooks()->filter('send_auth_cookies', [true, $expire, $expiration, $user->id, $scheme, $token]);
         return ['expiration' => $expiration, 'expire' => $expire, 'secure' => $secure, 'secureLoggedIn' => $secureLoggedIn, 'scheme' => $scheme, 'token' => $token, 'auth' => $auth, 'loggedIn' => $loggedIn, 'send' => $send];
     }
 
@@ -92,8 +93,8 @@ final readonly class AuthCookies
      */
     public function clearing(): bool
     {
-        \do_action('clear_auth_cookie');
-        return (bool) \apply_filters('send_auth_cookies', true, 0, 0, 0, '', '');
+        Runtime::hooks()->action('clear_auth_cookie', []);
+        return (bool) Runtime::hooks()->filter('send_auth_cookies', [true, 0, 0, 0, '', '']);
     }
 
     /** The response with every sign-in cookie expired. */

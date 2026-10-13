@@ -279,7 +279,7 @@ final readonly class PostWriter
     private function announceSticky(string $hook, int $id): void
     {
         if (Runtime::booted()) {
-            \do_action($hook, $id);
+            Runtime::hooks()->action((string) $hook, [$id]);
         }
     }
 

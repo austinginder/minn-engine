@@ -8,6 +8,7 @@ use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Html;
 use Minn\I18n\Gettext;
+use Minn\Runtime\Runtime;
 
 /**
  * The sign-in as plugins see it, when they are loaded. The credentials go
@@ -32,7 +33,7 @@ final readonly class LoginHooks
      */
     public function authenticate(string $login, string $password): UserRecord|\WP_Error|null
     {
-        \do_action_ref_array('wp_authenticate', [&$login, &$password]);
+        Runtime::hooks()->actionRefArray('wp_authenticate', [&$login, &$password]);
         $result = \wp_authenticate($login, $password);
         if ($result instanceof \WP_User) {
             return $this->users->find((int) $result->ID);
@@ -49,14 +50,14 @@ final readonly class LoginHooks
     public function signedIn(UserRecord $user): void
     {
         \wp_cache_delete($user->id, 'user_meta');
-        \do_action('wp_login', $user->login, new \WP_User($user->id));
+        Runtime::hooks()->action('wp_login', [$user->login, new \WP_User($user->id)]);
     }
 
     /** A sign-in page request arriving, as wp-login.php announces it: login_init, then login_form_{action}. */
     public function enter(string $action): void
     {
-        \do_action('login_init');
-        \do_action("login_form_{$action}");
+        Runtime::hooks()->action('login_init', []);
+        Runtime::hooks()->action("login_form_{$action}", []);
     }
 
     /**
@@ -75,17 +76,17 @@ final readonly class LoginHooks
     {
         $printed = static function (string $hook, mixed ...$args): string {
             ob_start();
-            \do_action($hook, ...$args);
+            Runtime::hooks()->action($hook, $args);
             return (string) ob_get_clean();
         };
         // In the reference's order: the page's head and header, then the form's own hook (the sign-in's,
         // the lost-password form's, or the new-password form's, with its user), then the footer.
-        $parts = ['title' => (string) \apply_filters('login_title', $title, 'Log In')];
+        $parts = ['title' => (string) Runtime::hooks()->filter('login_title', [$title, 'Log In'])];
         $parts['head'] = $printed('login_enqueue_scripts') . $printed('login_head');
-        $parts['bodyClass'] = implode(' ', array_map('sanitize_html_class', (array) \apply_filters('login_body_class', ['login', 'no-js', 'login-action-' . $action], $action)));
-        $parts['headerUrl'] = (string) \apply_filters('login_headerurl', $homeUrl);
-        $parts['headerText'] = (string) \apply_filters('login_headertext', $siteName);
-        $parts['message'] = (string) \apply_filters('login_message', '');
+        $parts['bodyClass'] = implode(' ', array_map('sanitize_html_class', (array) Runtime::hooks()->filter('login_body_class', [['login', 'no-js', 'login-action-' . $action], $action])));
+        $parts['headerUrl'] = (string) Runtime::hooks()->filter('login_headerurl', [$homeUrl]);
+        $parts['headerText'] = (string) Runtime::hooks()->filter('login_headertext', [$siteName]);
+        $parts['message'] = (string) Runtime::hooks()->filter('login_message', ['']);
         if ($notices !== null) {
             $parts += $notices->areas();
         }
@@ -102,19 +103,19 @@ final readonly class LoginHooks
     /** Where a sign-in lands, as login_redirect says (the requested address beside it, and the user it found or why not). */
     public function landing(string $redirect, string $requested, UserRecord|\WP_Error|null $user): string
     {
-        return (string) \apply_filters('login_redirect', $redirect, $requested, $user instanceof UserRecord ? new \WP_User($user->id) : $user);
+        return (string) Runtime::hooks()->filter('login_redirect', [$redirect, $requested, $user instanceof UserRecord ? new \WP_User($user->id) : $user]);
     }
 
     /** Where a sign-out lands, as logout_redirect says. */
     public function leaving(string $redirect, string $requested, int $userId): string
     {
-        return (string) \apply_filters('logout_redirect', $redirect, $requested, new \WP_User($userId));
+        return (string) Runtime::hooks()->filter('logout_redirect', [$redirect, $requested, new \WP_User($userId)]);
     }
 
     /** After a sign-out ended the session. */
     public function signedOut(int $userId): void
     {
-        \do_action('wp_logout', $userId);
+        Runtime::hooks()->action('wp_logout', [$userId]);
     }
 
     /**
@@ -129,12 +130,12 @@ final readonly class LoginHooks
      */
     public function signInFurniture(string $lostPasswordUrl): array
     {
-        $separator = (string) \apply_filters('login_link_separator', ' | ');
+        $separator = (string) Runtime::hooks()->filter('login_link_separator', [' | ']);
         return [
-            'rememberHelp' => (string) \apply_filters('login_remember_me_help_text', Gettext::text('Selecting "Remember Me" increases the length of time until you&#8217;re asked to log in again on this device. To keep your account secure, use this option only on your personal devices.')),
-            'lostLink' => (string) \apply_filters('lost_password_html_link', '<a class="wp-login-lost-password" href="' . Html::attr($lostPasswordUrl) . '">' . Gettext::text('Lost your password?') . '</a>'),
+            'rememberHelp' => (string) Runtime::hooks()->filter('login_remember_me_help_text', [Gettext::text('Selecting "Remember Me" increases the length of time until you&#8217;re asked to log in again on this device. To keep your account secure, use this option only on your personal devices.')]),
+            'lostLink' => (string) Runtime::hooks()->filter('lost_password_html_link', ['<a class="wp-login-lost-password" href="' . Html::attr($lostPasswordUrl) . '">' . Gettext::text('Lost your password?') . '</a>']),
             'separator' => $separator,
-            'autofocus' => (bool) \apply_filters('enable_login_autofocus', true),
+            'autofocus' => (bool) Runtime::hooks()->filter('enable_login_autofocus', [true]),
         ];
     }
 
@@ -146,15 +147,15 @@ final readonly class LoginHooks
      */
     public function lostPasswordPage(string $requested, \WP_Error $errors): string
     {
-        \apply_filters('login_link_separator', ' | ');
-        $redirect = (string) \apply_filters('lostpassword_redirect', $requested);
-        \do_action('lost_password', $errors);
+        Runtime::hooks()->filter('login_link_separator', [' | ']);
+        $redirect = (string) Runtime::hooks()->filter('lostpassword_redirect', [$requested]);
+        Runtime::hooks()->action('lost_password', [$errors]);
         return $redirect;
     }
 
     /** When a post password's cookie runs out (post_password_expires; 0 is when the browser closes). */
     public function postPasswordExpiry(int $expires): int
     {
-        return (int) \apply_filters('post_password_expires', $expires);
+        return (int) Runtime::hooks()->filter('post_password_expires', [$expires]);
     }
 }
