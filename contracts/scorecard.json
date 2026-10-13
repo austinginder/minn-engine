@@ -1,8 +1,8 @@
 {
     "wordpress": "7.1.3",
     "security": {
-        "found": 8,
-        "fixed": 8
+        "found": 30,
+        "fixed": 30
     },
     "sql": {
         "measured": "2026-10-12",
@@ -232,9 +232,45 @@
     },
     "run": {
         "measured": "2026-10-13",
-        "suites": 88,
-        "green": 88,
-        "checks": 25197,
-        "red": []
+        "suites": 89,
+        "green": 89,
+        "checks": 25375,
+        "red": [],
+        "engineWarnings": 0,
+        "warningKinds": []
+    },
+    "gate": {
+        "deadEndCalls": 2,
+        "deadEndsByHand": 84,
+        "deadEndsByHandAreas": {
+            "customizer": 20,
+            "admin": 59,
+            "editor": 5
+        },
+        "deadEndsByHandProven": 157,
+        "floor": {
+            "version": "8.3",
+            "newest": "8.5",
+            "binary": true,
+            "lintFailures": 0,
+            "unknown": 0
+        },
+        "hygiene": {
+            "localFacts": 3,
+            "hits": 0
+        }
+    },
+    "clones": {
+        "duplicated": {
+            "window": 100,
+            "stretches": 112,
+            "lines": 2082,
+            "engineLines": 169682
+        },
+        "wordpress": {
+            "window": 80,
+            "stretches": 127,
+            "lines": 3215
+        }
     }
 }

@@ -9,6 +9,9 @@
  *   dogfood        the dogfood site: a copy of a real site, child theme and all
  *   shop           the shop dogfood site: a copy of a production WooCommerce shop
  *   adminPassword  the admin password of the test and marketing sites
+ *   privateNames   other words no tracked file may hold (customer and host
+ *                  names); tests/tools/gate-scan.php checks them, with the
+ *                  values above
  *
  * No side effects, so a tool can require it without the suite helpers.
  */

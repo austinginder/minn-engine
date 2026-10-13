@@ -21,7 +21,13 @@
  * - open: contracts/runtime.md's open items register;
  * - run: the last full run, when a run-all log is given (--run-log): its
  *   suites, how many were green, the checks they passed, and any red,
- *   named; without one, the run already recorded stays.
+ *   named, and the PHP warnings, notices and deprecations engine code wrote
+ *   to the test site's error log while it ran (the log's birth to its last
+ *   write); without one, the run already recorded stays;
+ * - gate: the repository scans of tests/tools/gate-scan.php (dead ends
+ *   called or defined by hand, the PHP floor, public-repo hygiene);
+ * - clones: tests/tools/clone-scan.php, duplicated engine code and engine
+ *   code identical to the reference's source.
  *
  * php tests/tools/scorecard.php [--run-log=<run-all log>]
  */
@@ -30,6 +36,8 @@
 if (preg_match('#zoneinfo/(.+)$#', (string) @readlink('/etc/localtime'), $zone) === 1) {
     date_default_timezone_set($zone[1]);
 }
+
+require_once dirname(__DIR__) . '/local.php';
 
 $root = dirname(__DIR__, 2);
 $runLog = null;
@@ -134,8 +142,29 @@ if ($runLog !== null) {
             $red[] = $name;
         }
     }
-    $run = ['measured' => date('Y-m-d', (int) filemtime($runLog)), 'suites' => $suites, 'green' => $suites - count($red), 'checks' => $checks, 'red' => $red];
+    // What engine code wrote to the test site's error log between the run's first and last line.
+    $started = (int) trim((string) shell_exec('stat -f %B ' . escapeshellarg($runLog) . ' 2>/dev/null'));
+    $ended = (int) filemtime($runLog);
+    $warnings = [];
+    $errorLog = minn_test_site_dir('minn') . '/public/wp-content/debug.log';
+    foreach (is_file($errorLog) && $started > 0 ? (array) file($errorLog, FILE_IGNORE_NEW_LINES) : [] as $line) {
+        if (preg_match('/^\[([^\]]+)\] (PHP (?:Warning|Notice|Deprecated|Fatal error|Parse error):.*?\/public\/minn\/(?!admin\/).*)$/', $line, $m) !== 1) {
+            continue;
+        }
+        $at = strtotime($m[1]);
+        if ($at !== false && $at >= $started && $at <= $ended) {
+            $key = (string) preg_replace('#\S*/public/minn/#', 'minn/', $m[2]);
+            $warnings[$key] = ($warnings[$key] ?? 0) + 1;
+        }
+    }
+    arsort($warnings);
+    $run = ['measured' => date('Y-m-d', $ended), 'suites' => $suites, 'green' => $suites - count($red), 'checks' => $checks, 'red' => $red, 'engineWarnings' => array_sum($warnings), 'warningKinds' => array_slice(array_keys($warnings), 0, 10)];
 }
+
+// The repository scans: dead ends called from engine code or defined by hand, the PHP floor, public-repo hygiene.
+$gate = json_decode((string) shell_exec('php ' . escapeshellarg(__DIR__ . '/gate-scan.php') . ' --json 2>/dev/null'), true);
+// Token-window scans: duplicated engine code, and engine code identical to the reference's source.
+$clones = json_decode((string) shell_exec('php ' . escapeshellarg(__DIR__ . '/clone-scan.php') . ' --json 2>/dev/null'), true);
 
 // The open items register: rows marked open, accepted, done.
 $open = null;
@@ -155,6 +184,8 @@ $card = [
     'leanness' => $ceilings,
     'open' => $open,
     'run' => $run,
+    'gate' => is_array($gate) ? $gate : null,
+    'clones' => is_array($clones) ? $clones : null,
 ];
 file_put_contents("{$root}/contracts/scorecard.json", json_encode($card, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
 printf("security %d/%d fixed; sql %s; hooks %s; coverage %s; open %s\n",
@@ -165,4 +196,8 @@ printf("security %d/%d fixed; sql %s; hooks %s; coverage %s; open %s\n",
     $open === null ? 'no register' : "{$open['open']} open, {$open['austin']} for Austin, {$open['accepted']} accepted, {$open['done']} done");
 printf("leanness: %d ratchets, %d risen; run %s\n",
     count($ceilings), count(array_filter($ceilings, static fn (array $c): bool => $c['rose'])),
-    $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')'));
+    $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')') . (isset($run['engineWarnings']) ? ", {$run['engineWarnings']} engine warnings" : ''));
+printf("gate: %s\n", !is_array($gate) ? 'gate-scan.php failed' : sprintf('%d calls into stubbed dead ends, %d unproven dead ends written by hand, PHP %s floor (%d lint failures, %d names only newer PHP has), %d hygiene hits',
+    $gate['deadEndCalls'], $gate['deadEndsByHand'], $gate['floor']['version'], $gate['floor']['lintFailures'], $gate['floor']['unknown'], $gate['hygiene']['hits']));
+printf("clones: %s\n", !is_array($clones) ? 'clone-scan.php failed' : sprintf('%d duplicated engine lines; %s',
+    $clones['duplicated']['lines'], $clones['wordpress'] === null ? 'no reference to compare' : "{$clones['wordpress']['lines']} lines identical to the reference's source"));
