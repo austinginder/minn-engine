@@ -144,10 +144,10 @@ final readonly class QueryFlags
         ['post_status' => $statuses, 'post_type' => $types] = $vars + ['post_status' => null, 'post_type' => null];
         $clean = [];
         if (!empty($statuses)) {
-            $clean += ['post_status' => is_array($statuses) ? array_map('sanitize_key', $statuses) : preg_replace('|[^a-z0-9_,-]|', '', (string) $statuses)];
+            $clean += ['post_status' => is_array($statuses) ? array_map(static fn (mixed $key): string => Sanitize::key($key), $statuses) : preg_replace('|[^a-z0-9_,-]|', '', (string) $statuses)];
         }
         if (!empty($types)) {
-            $clean += ['post_type' => is_array($types) ? array_map('sanitize_key', $types) : Sanitize::key((string) $types)];
+            $clean += ['post_type' => is_array($types) ? array_map(static fn (mixed $key): string => Sanitize::key($key), $types) : Sanitize::key((string) $types)];
         }
         return array_replace($vars, $clean);
     }

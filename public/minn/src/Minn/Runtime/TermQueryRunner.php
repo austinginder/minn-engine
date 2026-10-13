@@ -102,7 +102,7 @@ final class TermQueryRunner
      */
     private function settle(array $args, array $taxonomies): array
     {
-        $hierarchical = $taxonomies === [] || array_filter($taxonomies, 'is_taxonomy_hierarchical') !== [];
+        $hierarchical = $taxonomies === [] || array_filter($taxonomies, static fn (mixed $taxonomy): bool => Registered::hierarchicalTaxonomy($taxonomy)) !== [];
         if (!$hierarchical) {
             $args['hierarchical'] = false;
             $args['pad_counts'] = false;
@@ -143,7 +143,7 @@ final class TermQueryRunner
     {
         $this->where = [];
         if ($taxonomies !== []) {
-            $this->where['taxonomy'] = "tt.taxonomy IN ('" . implode("', '", array_map('esc_sql', $taxonomies)) . "')";
+            $this->where['taxonomy'] = "tt.taxonomy IN ('" . implode("', '", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), $taxonomies)) . "')";
         }
         $include = empty($args['include']) ? [] : $args['include'];
         if (!empty($include)) {
@@ -191,11 +191,11 @@ final class TermQueryRunner
     {
         if (!empty($args['name']) || (is_string($args['name']) && $args['name'] !== '')) {
             $names = array_map(static fn ($name) => stripslashes((string) TermFields::field('name', $name, 0, reset($taxonomies), 'db')), (array) $args['name']);
-            $this->where['name'] = "t.name IN ('" . implode("', '", array_map('esc_sql', $names)) . "')";
+            $this->where['name'] = "t.name IN ('" . implode("', '", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), $names)) . "')";
         }
         if (!empty($args['slug']) || (is_string($args['slug']) && $args['slug'] !== '')) {
             $this->where['slug'] = is_array($args['slug'])
-                ? "t.slug IN ('" . implode("', '", array_map('sanitize_title', $args['slug'])) . "')"
+                ? "t.slug IN ('" . implode("', '", array_map(static fn (mixed $slug): string => Sanitize::title($slug), $args['slug'])) . "')"
                 : "t.slug = '" . Sanitize::title($args['slug']) . "'";
         }
         if (!empty($args['term_taxonomy_id'])) {

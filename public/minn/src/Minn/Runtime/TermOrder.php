@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Lists;
+use Minn\Support\Sanitize;
 
 /**
  * A term query's ORDER BY as the reference writes it (probe
@@ -38,7 +39,7 @@ final class TermOrder
             in_array($orderby, self::TAXONOMY_COLUMNS, true) => "tt.{$orderby}",
             $orderby === 'term_order' => 'tr.term_order',
             $orderby === 'include' && !empty($vars['include']) => 'FIELD( t.term_id, ' . implode(',', Lists::ids($vars['include'])) . ' )',
-            $orderby === 'slug__in' && !empty($vars['slug']) && is_array($vars['slug']) => "FIELD( t.slug, '" . implode("', '", array_map('sanitize_title_for_query', $vars['slug'])) . "')",
+            $orderby === 'slug__in' && !empty($vars['slug']) && is_array($vars['slug']) => "FIELD( t.slug, '" . implode("', '", array_map(static fn (mixed $title): string => Sanitize::title($title, '', 'query'), $vars['slug'])) . "')",
             $orderby === 'none' => '',
             $orderby === '' || $orderby === 'id' => 't.term_id',
             default => null,

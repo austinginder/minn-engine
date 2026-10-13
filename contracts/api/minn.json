@@ -74007,7 +74007,8 @@
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\Handoff",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Sanitize"
             ],
             "usedBy": [
                 "Minn\\Login\\LoginController",
@@ -74027,8 +74028,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 30
+                "line": 28,
+                "end": 31
             },
             "cases": [],
             "constants": [],
@@ -74068,8 +74069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 45
+                    "line": 38,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -74088,8 +74089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 53,
-                    "end": 57
+                    "line": 54,
+                    "end": 58
                 },
                 {
                     "routes": [],
@@ -74108,8 +74109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 64
+                    "line": 61,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -74165,8 +74166,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 104
+                    "line": 79,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -74199,8 +74200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 108,
+                    "end": 111
                 },
                 {
                     "routes": [],
@@ -74233,8 +74234,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 113,
-                    "end": 116
+                    "line": 114,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -74253,8 +74254,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 122
+                    "line": 120,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -74275,8 +74276,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 143
+                    "line": 135,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -74302,8 +74303,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 157
+                    "line": 152,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -74322,8 +74323,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 163
+                    "line": 161,
+                    "end": 164
                 }
             ]
         },
@@ -90192,7 +90193,9 @@
             "doc": "WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the\nkeys it takes, what each key becomes (a column, a meta value, a FIELD()\nlist, a seeded RAND()), and how a list or a map of keys joins with its\ndirections. A key it does not know is dropped; none left means post_date.",
             "implements": [],
             "extends": null,
-            "uses": [],
+            "uses": [
+                "Minn\\Support\\Sanitize"
+            ],
             "usedBy": [
                 "Minn\\Runtime\\PostQuery"
             ],
@@ -90243,8 +90246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 24,
-                    "end": 30
+                    "line": 26,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -90280,8 +90283,8 @@
                             "doc": "the meta query's clauses, by name"
                         }
                     ],
-                    "line": 40,
-                    "end": 64
+                    "line": 42,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -90324,8 +90327,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 118
+                    "line": 91,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -90367,8 +90370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 77
+                    "line": 69,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -90403,8 +90406,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 133
+                    "line": 123,
+                    "end": 135
                 }
             ]
         },
@@ -119467,6 +119470,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\PostQueryParts",
+                "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -120171,6 +120175,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Query\\Sql",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [
@@ -122344,7 +122349,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 188,
+            "lines": 194,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -122388,6 +122393,7 @@
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
+                "Minn\\Runtime\\CommentQueryWhere",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\MenuEvents",
@@ -122404,10 +122410,12 @@
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserEvents",
+                "Minn\\Runtime\\UserOrder",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Runtime\\UserSave",
                 "Minn\\Theme\\FrontLifecycle"
@@ -122433,7 +122441,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -122877,6 +122885,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "escSql",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "escSql(mixed $data): mixed",
+                    "doc": "A value, or each in a list, escaped for SQL by the database object plugins query with (esc_sql).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 168,
+                    "end": 171
+                },
+                {
+                    "routes": [],
                     "name": "newError",
                     "static": true,
                     "visibility": "public",
@@ -122892,8 +122920,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 171
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -122912,8 +122940,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 177
+                    "line": 180,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -122932,8 +122960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 183
+                    "line": 186,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -122952,8 +122980,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 189
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -122972,8 +123000,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 195
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -122992,8 +123020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -123012,8 +123040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 207
+                    "line": 210,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -123039,8 +123067,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 209,
-                    "end": 213
+                    "line": 215,
+                    "end": 219
                 }
             ]
         },
@@ -131942,6 +131970,7 @@
                 "Minn\\Runtime\\PostQueryStatus",
                 "Minn\\Runtime\\PostQueryTax",
                 "Minn\\Runtime\\PostQueryWhere",
+                "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -133018,6 +133047,7 @@
             "uses": [
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\TermFields",
+                "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Text"
             ],
             "usedBy": [
@@ -133055,8 +133085,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 52
+                    "line": 26,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -133078,8 +133108,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 175
+                    "line": 159,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -133114,8 +133144,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 184,
-                    "end": 208
+                    "line": 185,
+                    "end": 209
                 },
                 {
                     "routes": [],
@@ -133150,8 +133180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 55,
-                    "end": 67
+                    "line": 56,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -133172,8 +133202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 84
+                    "line": 71,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -133194,8 +133224,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 107
+                    "line": 88,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -133214,8 +133244,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 127
+                    "line": 111,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -133236,8 +133266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 148
+                    "line": 131,
+                    "end": 149
                 }
             ]
         },
@@ -134786,6 +134816,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\CommentEvents",
+                "Minn\\Runtime\\CommentFeedQuery",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryRunner",
@@ -134794,6 +134825,7 @@
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\PostQueryResults",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostSave",
@@ -135546,6 +135578,7 @@
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\UserQueryRunner",
@@ -142667,7 +142700,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Runtime",
-                "Minn\\Support\\Lists"
+                "Minn\\Support\\Lists",
+                "Minn\\Support\\Sanitize"
             ],
             "usedBy": [
                 "Minn\\Runtime\\TermQueryRunner"
@@ -142707,8 +142741,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 28
+                    "line": 23,
+                    "end": 29
                 },
                 {
                     "routes": [],
@@ -142734,8 +142768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 31,
-                    "end": 53
+                    "line": 32,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -142761,8 +142795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 75
+                    "line": 57,
+                    "end": 76
                 }
             ]
         },
@@ -143370,6 +143404,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Query\\Sql",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermFields",
                 "Minn\\Runtime\\TermOrder",
@@ -146909,6 +146945,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [
@@ -151618,7 +151655,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Sanitize.php",
-            "lines": 57,
+            "lines": 71,
             "doc": "Text made fit to store the way WordPress's sanitizers make it, each ending\nin the filter plugins hook there, handed the result and what was given: a\ntitle (accents gone when saving), a key, a line of plain text, a user name,\nan email address and the check of one.",
             "implements": [],
             "extends": null,
@@ -151634,6 +151671,8 @@
             "usedBy": [
                 "Minn\\Blocks\\TemplatePartVariations",
                 "Minn\\Front\\SitemapRequest",
+                "Minn\\Login\\LoginHooks",
+                "Minn\\Query\\PostOrder",
                 "Minn\\Rest\\MediaController",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
@@ -151643,11 +151682,13 @@
                 "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostQueryStatus",
+                "Minn\\Runtime\\PostQueryTax",
                 "Minn\\Runtime\\PostQueryWhere",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\QueryFlags",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\UserQueryRunner",
@@ -151761,6 +151802,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "htmlClass",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "htmlClass(mixed $classname, mixed $fallback = ''): mixed",
+                    "doc": "A class name for HTML (sanitize_html_class): escaped octets and\nanything but letters, digits, _ and - taken out; the fallback's when\nnothing is left; then the filter.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "classname",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "fallback",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 65,
+                    "end": 72
+                },
+                {
+                    "routes": [],
                     "name": "email",
                     "static": true,
                     "visibility": "public",
@@ -151776,8 +151844,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 61,
-                    "end": 65
+                    "line": 75,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -151796,8 +151864,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 68,
-                    "end": 72
+                    "line": 82,
+                    "end": 86
                 }
             ]
         },

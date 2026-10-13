@@ -64,7 +64,7 @@ final class OptionSanitizer
             in_array($option, self::STRIPPED, true) => [\wp_kses($text, []), null],
             $option === 'gmt_offset' => [is_numeric($value) ? $value : '', null],
             in_array($option, ['siteurl', 'home'], true) => preg_match('#http(s?)://(.+)#i', $text) ? [Escape::url($text, null, 'db'), null] : [$value, self::ERRORS[$option]],
-            $option === 'ping_sites' => [implode("\n", array_map('sanitize_url', array_filter(array_map('trim', explode("\n", $text))))), null],
+            $option === 'ping_sites' => [implode("\n", array_map(static fn (mixed $url): string => Escape::url($url, null, 'db'), array_filter(array_map('trim', explode("\n", $text))))), null],
             default => self::lists($option, $value),
         };
     }

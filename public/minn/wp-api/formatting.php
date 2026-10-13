@@ -6,6 +6,7 @@ use Minn\Content\Blocks;
 use Minn\Content\Slug;
 use Minn\Content\Texturize;
 use Minn\Json;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
@@ -88,6 +89,9 @@ function esc_sql($data)
     global $wpdb;
     return $wpdb instanceof wpdb ? $wpdb->_escape((string) $data) : Runtime::current()->db->escape((string) $data);
 }
+
+// The engine escapes through Minn\Runtime\Handoff, so a database drop-in's object escapes for it.
+Handoff::bind(['escSql' => static fn ($data) => esc_sql($data)]);
 
 function wp_pre_kses_less_than($content)
 {
@@ -187,13 +191,7 @@ function sanitize_key($key)
 
 function sanitize_html_class($classname, $fallback = '')
 {
-    $class = $classname;
-    $sanitized = preg_replace('|%[a-fA-F0-9][a-fA-F0-9]|', '', (string) $class);
-    $sanitized = preg_replace('/[^A-Za-z0-9_-]/', '', $sanitized);
-    if ($sanitized === '' && $fallback !== '') {
-        return sanitize_html_class($fallback);
-    }
-    return apply_filters('sanitize_html_class', $sanitized, $class, $fallback);
+    return Sanitize::htmlClass($classname, $fallback);
 }
 
 function remove_accents($text, $locale = '')
@@ -856,7 +854,7 @@ function shortcode_unautop($text)
 
 function sanitize_title_for_query($title)
 {
-    return sanitize_title($title, '', 'query');
+    return Sanitize::title($title, '', 'query');
 }
 
 /** The value of a file header line, cut at the end of its comment. */

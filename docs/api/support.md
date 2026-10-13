@@ -27,7 +27,7 @@ escaping, serialized readers, small helpers
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 95 | File-system path and permission spellings, and whether a path is safe to use. |
-| [`Sanitize`](#sanitize) | final class | 57 | Text made fit to store the way WordPress's sanitizers make it, each ending |
+| [`Sanitize`](#sanitize) | final class | 71 | Text made fit to store the way WordPress's sanitizers make it, each ending |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 369 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
@@ -893,7 +893,7 @@ in the filter plugins hook there, handed the result and what was given: a
 title (accents gone when saving), a key, a line of plain text, a user name,
 an email address and the check of one.
 
-Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Rest\MediaController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
+Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
 
 ### static `title(mixed $title, mixed $fallback = '', mixed $context = 'save'): string`
 
@@ -911,6 +911,12 @@ One line of plain text (sanitize_text_field): tags, line breaks, extra spaces an
 
 A user name (sanitize_user): tags, accents, octets and references gone,
 spaces collapsed; strictly, only letters, digits, spaces and _ . - @.
+
+### static `htmlClass(mixed $classname, mixed $fallback = ''): mixed`
+
+A class name for HTML (sanitize_html_class): escaped octets and
+anything but letters, digits, _ and - taken out; the fallback's when
+nothing is left; then the filter.
 
 ### static `email(mixed $email): string`
 

@@ -67,11 +67,11 @@ final class PostQueryStatus
         $type = $this->parts->postType;
         if ($type === 'any') {
             $searchable = Registered::postTypes(['exclude_from_search' => false]);
-            return $searchable === [] ? [' AND 1=0 ', true] : [" AND {$t}.post_type IN ('" . implode("', '", array_map('esc_sql', $searchable)) . "')", false];
+            return $searchable === [] ? [' AND 1=0 ', true] : [" AND {$t}.post_type IN ('" . implode("', '", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), $searchable)) . "')", false];
         }
         if (!empty($type) && is_array($type)) {
-            $this->parts->postType = array_map('sanitize_key', $type);
-            return [" AND {$t}.post_type IN ('" . implode("', '", \esc_sql($this->parts->postType)) . "')", false];
+            $this->parts->postType = array_map(static fn (mixed $key): string => Sanitize::key($key), $type);
+            return [" AND {$t}.post_type IN ('" . implode("', '", Handoff::escSql($this->parts->postType)) . "')", false];
         }
         $type = match (true) {
             !empty($type) => Sanitize::key((string) $type),

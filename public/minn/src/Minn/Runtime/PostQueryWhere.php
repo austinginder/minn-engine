@@ -88,7 +88,7 @@ final class PostQueryWhere
     /** A name list, sanitized in place; the clause lists each name once, sorted. @param array<string, mixed> $q @param list<mixed> $names */
     private function nameList(array &$q, array $names): void
     {
-        $names = array_map('sanitize_title_for_query', $names);
+        $names = array_map(static fn (mixed $title): string => Sanitize::title($title, '', 'query'), $names);
         $q = array_replace($q, ['post_name__in' => $names]);
         $names = array_unique($names);
         sort($names);
@@ -216,7 +216,7 @@ final class PostQueryWhere
             // Only ids reach the SQL, as the reference reads them (probe audit 2026-10-13): a list, or a string excluded as an id
             // list (split on commas and spaces), or a string included as the one id it starts with.
             $ids = is_array($q[$var]) ? $q[$var] : ($var === 'author__not_in' ? (preg_split('/[\s,]+/', (string) $q[$var], -1, PREG_SPLIT_NO_EMPTY) ?: []) : [(string) $q[$var]]);
-            $q[$var] = array_values(array_unique(array_map('absint', $ids)));
+            $q[$var] = array_values(array_unique(array_map(static fn (mixed $value): int => abs((int) $value), $ids)));
             sort($q[$var]);
             $this->parts->where .= " AND {$t}.post_author {$operator} (" . implode(',', (array) $q[$var]) . ') ';
             break;

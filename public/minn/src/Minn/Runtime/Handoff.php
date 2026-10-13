@@ -32,7 +32,7 @@ final class Handoff
     /**
      * Binds answers by name: currentUser, signedIn, user, userBy,
      * becomeUser, cacheUsers, authenticate, setPassword, password, hash,
-     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, cacheGet, cacheSet, cacheDelete, and the record
+     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
      * commentInstance, newUser.
      *
@@ -162,6 +162,12 @@ final class Handoff
     public static function cacheDelete(mixed ...$args): mixed
     {
         return self::answer('cacheDelete', ...$args);
+    }
+
+    /** A value, or each in a list, escaped for SQL by the database object plugins query with (esc_sql). */
+    public static function escSql(mixed $data): mixed
+    {
+        return self::answer('escSql', $data);
     }
 
     /** A list of errors, the first given (new WP_Error). */

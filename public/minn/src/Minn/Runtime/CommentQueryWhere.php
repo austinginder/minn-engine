@@ -129,7 +129,7 @@ final class CommentQueryWhere
                 });
             }
             if ($values !== []) {
-                $where[] = "comment_type {$operator} ('" . implode("', '", array_map('esc_sql', array_unique($values))) . "')";
+                $where[] = "comment_type {$operator} ('" . implode("', '", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), array_unique($values))) . "')";
             }
         }
         return $where;
@@ -178,7 +178,7 @@ final class CommentQueryWhere
         $where = [];
         foreach (self::POST_FIELDS as $field) {
             if (!empty($qv[$field])) {
-                $where[] = " {$posts}.{$field} IN ('" . implode("','", array_map(static fn ($v) => \esc_sql((string) $v), (array) $qv[$field])) . "')";
+                $where[] = " {$posts}.{$field} IN ('" . implode("','", array_map(static fn ($v) => Handoff::escSql((string) $v), (array) $qv[$field])) . "')";
             }
         }
         $joined = $where !== [];

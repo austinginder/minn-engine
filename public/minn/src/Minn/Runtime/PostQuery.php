@@ -332,7 +332,7 @@ final class PostQuery
             $this->select($q, $old, $foundRows);
         }
         if ($query->posts) {
-            $query->posts = array_map('get_post', $query->posts);
+            $query->posts = array_map(static fn (mixed $post): mixed => Records::post($post), $query->posts);
         }
         if (!$q['suppress_filters']) {
             $query->posts = Runtime::hooks()->filterRefArray('posts_results', [$query->posts, &$query]);

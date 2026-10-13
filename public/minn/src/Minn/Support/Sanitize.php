@@ -57,6 +57,20 @@ final class Sanitize
         return (string) Runtime::hooks()->filter('sanitize_user', [trim((string) preg_replace('|\s+|', ' ', $name)), $given, $strict]);
     }
 
+    /**
+     * A class name for HTML (sanitize_html_class): escaped octets and
+     * anything but letters, digits, _ and - taken out; the fallback's when
+     * nothing is left; then the filter.
+     */
+    public static function htmlClass(mixed $classname, mixed $fallback = ''): mixed
+    {
+        $sanitized = (string) preg_replace('/[^A-Za-z0-9_-]/', '', (string) preg_replace('|%[a-fA-F0-9][a-fA-F0-9]|', '', (string) $classname));
+        if ($sanitized === '' && $fallback !== '') {
+            return self::htmlClass($fallback);
+        }
+        return Runtime::hooks()->filter('sanitize_html_class', [$sanitized, $classname, $fallback]);
+    }
+
     /** An email address with what may not be in one taken out (sanitize_email), and why when nothing is left. */
     public static function email(mixed $email): string
     {

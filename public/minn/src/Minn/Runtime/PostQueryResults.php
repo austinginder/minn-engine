@@ -33,7 +33,7 @@ final class PostQueryResults
             [$query->post_count, $query->posts] = [0, []];
         } else {
             $query->post_count = count($query->posts);
-            $query->posts = array_map('get_post', $query->posts);
+            $query->posts = array_map(static fn (mixed $post): mixed => Records::post($post), $query->posts);
             if ($q['cache_results']) {
                 \update_post_caches($query->posts, $this->parts->postType, $q['update_post_term_cache'], $q['update_post_meta_cache']);
             }

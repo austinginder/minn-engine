@@ -1,8 +1,8 @@
 {
-    "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
+    "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 486,
-        "functions": 266,
+        "functionCalls": 482,
+        "functions": 265,
         "hookApi": 0,
         "classReferences": 287,
         "classes": 45,
@@ -34,7 +34,6 @@
             "wp-includes/block-template-utils.php": 5,
             "wp-includes/media.php": 5,
             "wp-includes/blocks.php": 5,
-            "wp-includes/formatting.php": 4,
             "wp-includes/script-loader.php": 4,
             "wp-includes/category-template.php": 4,
             "wp-includes/post-thumbnail-template.php": 3,
@@ -262,15 +261,6 @@
                 "Minn/Front/EmbedCard.php": 1,
                 "Minn/Front/FeedTemplates.php": 2,
                 "Minn/Runtime/CommentForm.php": 1
-            }
-        },
-        "esc_sql": {
-            "uses": 4,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/CommentQueryWhere.php": 1,
-                "Minn/Runtime/PostQueryStatus.php": 1,
-                "Minn/Runtime/UserOrder.php": 2
             }
         },
         "get_bloginfo_rss": {

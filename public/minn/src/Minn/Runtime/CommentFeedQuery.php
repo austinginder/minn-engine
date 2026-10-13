@@ -59,7 +59,7 @@ final class CommentFeedQuery
     /** @param list<mixed> $rows rows or ids, each made a WP_Comment */
     private static function keep(\WP_Query $query, array $rows): void
     {
-        $query->comments = array_values(array_filter(array_map('get_comment', $rows)));
+        $query->comments = array_values(array_filter(array_map(static fn (mixed $row): mixed => Records::comment($row), $rows)));
         $query->comment_count = count($query->comments);
     }
 }

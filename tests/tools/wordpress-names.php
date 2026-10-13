@@ -40,6 +40,8 @@ $inventory = static function (string $file): array {
 $knownFunctions = $inventory("{$root}/contracts/api/functions.json");
 $knownClasses = $inventory("{$root}/contracts/api/classes.json");
 const HOOK_API = ['apply_filters', 'apply_filters_ref_array', 'apply_filters_deprecated', 'do_action', 'do_action_ref_array', 'do_action_deprecated'];
+/** PHP functions that call a function they are handed, and which argument it is. */
+const CALLBACK_ARGUMENT = ['array_map' => 0, 'array_filter' => 1, 'array_walk' => 1, 'array_reduce' => 1, 'usort' => 1, 'uasort' => 1, 'uksort' => 1, 'call_user_func' => 0, 'call_user_func_array' => 0, 'preg_replace_callback' => 1];
 
 $paths = [];
 foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source, FilesystemIterator::SKIP_DOTS)) as $file) {
@@ -89,6 +91,28 @@ foreach ($paths as $path) {
         $name = strtolower(ltrim($token[1], '\\'));
         $next = $tokens[$i + 1] ?? null;
         $member = in_array($beforeId, [T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR, T_DOUBLE_COLON, T_FUNCTION, T_CONST], true);
+        // A function handed by name to one of PHP's callers is called all the same.
+        if ($next === '(' && !$member && isset(CALLBACK_ARGUMENT[$name])) {
+            $level = 0;
+            $argument = 0;
+            for ($j = $i + 1, $count = count($tokens); $j < $count; $j++) {
+                $part = $tokens[$j];
+                if (in_array($part, ['(', '[', '{'], true) || (is_array($part) && in_array($part[0], [T_CURLY_OPEN, T_DOLLAR_OPEN_CURLY_BRACES], true))) {
+                    $level++;
+                } elseif (in_array($part, [')', ']', '}'], true)) {
+                    if (--$level === 0) {
+                        break;
+                    }
+                } elseif ($part === ',' && $level === 1) {
+                    $argument++;
+                } elseif ($level === 1 && $argument === CALLBACK_ARGUMENT[$name] && is_array($part) && $part[0] === T_CONSTANT_ENCAPSED_STRING) {
+                    $handed = strtolower(trim($part[1], '\'"'));
+                    if (isset($knownFunctions[$handed])) {
+                        $tally($functions, $knownFunctions, $handed, $relative);
+                    }
+                }
+            }
+        }
         if ($next === '(' && !$member && $beforeId !== T_NEW && isset($knownFunctions[$name])) {
             if (in_array($name, HOOK_API, true)) {
                 $hookCalls++;
@@ -122,7 +146,7 @@ $summarize = static function (array $table): array {
 [$functions, $functionFamilies, $functionFiles] = $summarize($functions);
 [$classes, $classFamilies, $classFiles] = $summarize($classes);
 $report = [
-    'method' => 'tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in',
+    'method' => 'tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in',
     'summary' => [
         'functionCalls' => array_sum(array_column($functions, 'uses')),
         'functions' => count($functions),

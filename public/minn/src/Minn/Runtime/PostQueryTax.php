@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
 use Minn\Support\Text;
 
 /**
@@ -97,7 +98,7 @@ final class PostQueryTax
             if (empty($q[$var])) {
                 continue;
             }
-            $q[$var] = array_map('absint', array_unique((array) $q[$var]));
+            $q[$var] = array_map(static fn (mixed $value): int => abs((int) $value), array_unique((array) $q[$var]));
             sort($q[$var]);
             $clause = ['taxonomy' => 'category', 'terms' => $q[$var]];
             $clause += $var === 'category__not_in' ? [] : ['field' => 'term_id'];
@@ -138,7 +139,7 @@ final class PostQueryTax
             if (empty($q[$var])) {
                 continue;
             }
-            $q[$var] = array_map(str_starts_with($var, 'tag_slug') ? 'sanitize_title_for_query' : 'absint', array_unique((array) $q[$var]));
+            $q[$var] = array_map(str_starts_with($var, 'tag_slug') ? static fn (mixed $title): string => Sanitize::title($title, '', 'query') : static fn (mixed $value): int => abs((int) $value), array_unique((array) $q[$var]));
             sort($q[$var]);
             $clause = ['taxonomy' => 'post_tag', 'terms' => $q[$var]];
             $clause += str_starts_with($var, 'tag_slug') ? ['field' => 'slug'] : [];

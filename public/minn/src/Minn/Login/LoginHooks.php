@@ -12,6 +12,7 @@ use Minn\Objects\Errors;
 use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
+use Minn\Support\Sanitize;
 
 /**
  * The sign-in as plugins see it, when they are loaded. The credentials go
@@ -86,7 +87,7 @@ final readonly class LoginHooks
         // the lost-password form's, or the new-password form's, with its user), then the footer.
         $parts = ['title' => (string) Runtime::hooks()->filter('login_title', [$title, 'Log In'])];
         $parts['head'] = $printed('login_enqueue_scripts') . $printed('login_head');
-        $parts['bodyClass'] = implode(' ', array_map('sanitize_html_class', (array) Runtime::hooks()->filter('login_body_class', [['login', 'no-js', 'login-action-' . $action], $action])));
+        $parts['bodyClass'] = implode(' ', array_map(static fn (mixed $class): mixed => Sanitize::htmlClass($class), (array) Runtime::hooks()->filter('login_body_class', [['login', 'no-js', 'login-action-' . $action], $action])));
         $parts['headerUrl'] = (string) Runtime::hooks()->filter('login_headerurl', [$homeUrl]);
         $parts['headerText'] = (string) Runtime::hooks()->filter('login_headertext', [$siteName]);
         $parts['message'] = (string) Runtime::hooks()->filter('login_message', ['']);

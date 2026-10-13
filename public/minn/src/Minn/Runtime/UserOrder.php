@@ -41,9 +41,9 @@ final class UserOrder
             $orderby === 'meta_value' || $query->get('meta_key') === $orderby => "{$wpdb->usermeta}.meta_value",
             $orderby === 'meta_value_num' => "{$wpdb->usermeta}.meta_value+0",
             $orderby === 'include' && !empty($vars['include']) => "FIELD( {$wpdb->users}.ID, " . implode(',', Lists::ids($vars['include'])) . ' )',
-            $orderby === 'nicename__in' => "FIELD( user_nicename, '" . implode("','", array_map('esc_sql', (array) $vars['nicename__in'])) . "' )",
-            $orderby === 'login__in' => "FIELD( user_login, '" . implode("','", array_map('esc_sql', (array) $vars['login__in'])) . "' )",
-            isset($clauses[$orderby]) => sprintf('CAST(%s.meta_value AS %s)', \esc_sql($clauses[$orderby]['alias']), \esc_sql($clauses[$orderby]['cast'])),
+            $orderby === 'nicename__in' => "FIELD( user_nicename, '" . implode("','", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), (array) $vars['nicename__in'])) . "' )",
+            $orderby === 'login__in' => "FIELD( user_login, '" . implode("','", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), (array) $vars['login__in'])) . "' )",
+            isset($clauses[$orderby]) => sprintf('CAST(%s.meta_value AS %s)', Handoff::escSql($clauses[$orderby]['alias']), Handoff::escSql($clauses[$orderby]['cast'])),
             default => '',
         };
     }

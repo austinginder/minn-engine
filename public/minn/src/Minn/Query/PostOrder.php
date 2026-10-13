@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Query;
 
+use Minn\Support\Sanitize;
+
 /**
  * WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the
  * keys it takes, what each key becomes (a column, a meta value, a FIELD()
@@ -128,7 +130,7 @@ final class PostOrder
         return match ($orderby) {
             'post__in' => "FIELD({$table}.ID," . implode(',', $ids((array) $given)) . ')',
             'post_parent__in' => "FIELD( {$table}.post_parent," . implode(', ', $ids((array) $given)) . ' )',
-            default => "FIELD( {$table}.post_name,'" . implode("','", array_map('sanitize_title_for_query', (array) $given)) . "' )",
+            default => "FIELD( {$table}.post_name,'" . implode("','", array_map(static fn (mixed $title): string => Sanitize::title($title, '', 'query'), (array) $given)) . "' )",
         };
     }
 }

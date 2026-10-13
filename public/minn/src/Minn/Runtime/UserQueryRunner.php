@@ -99,7 +99,7 @@ final class UserQueryRunner
             }
             foreach (["{$var}__in" => 'IN', "{$var}__not_in" => 'NOT IN'] as $list => $operator) {
                 if (!empty($qv[$list])) {
-                    $where .= " AND {$column} {$operator} ( '" . implode("','", array_map('esc_sql', (array) $qv[$list])) . "' )";
+                    $where .= " AND {$column} {$operator} ( '" . implode("','", array_map(static fn (mixed $value): mixed => Handoff::escSql($value), (array) $qv[$list])) . "' )";
                 }
             }
         }

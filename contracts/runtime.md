@@ -16034,6 +16034,18 @@ associative array or a list as asked. `isError()` is is_wp_error. The object cac
 object-cache.php drop-in answers. The facade maps onto them. All 370 probes give identical output
 before and after.
 
+**Batch 13, functions handed by name (function calls 486 → 482).** The engine handed WordPress
+functions to `array_map` and `array_filter` by name in 25 places (get_post, get_comment, absint,
+sanitize_key, sanitize_title, sanitize_title_for_query, sanitize_url, sanitize_html_class,
+is_taxonomy_hierarchical, esc_sql); each is now a closure over the Minn method, so the count never
+saw them but they were calls all the same. esc_sql goes through `Handoff::escSql()`, bound to the
+function, so a database drop-in's object escapes for the engine; `Support\Sanitize::htmlClass()` is
+sanitize_html_class. tests/tools/wordpress-names.php now counts a function handed by name to
+array_map, array_filter, array_walk, array_reduce, the sorts, call_user_func(_array) and
+preg_replace_callback as a call (it finds none). A hook registration that names a WordPress function
+as its callback (the default filters) stays a name: plugins remove those callbacks by it. All 370
+probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

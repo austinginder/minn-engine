@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 808,
-        "composes": 2346,
+        "composes": 2345,
         "leaf": 1023,
-        "noop": 2831,
+        "noop": 2832,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1121,
+        "minnMethods": 1122,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -60532,12 +60532,12 @@
         },
         "sanitize_html_class": {
             "file": "formatting.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Sanitize::htmlClass"
+            ],
+            "composes": []
         },
         "sanitize_key": {
             "file": "formatting.php",
@@ -60660,10 +60660,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "sanitize_title"
-            ]
+            "minn": [
+                "Minn\\Support\\Sanitize::title"
+            ],
+            "composes": []
         },
         "sanitize_title_with_dashes": {
             "file": "formatting.php",
