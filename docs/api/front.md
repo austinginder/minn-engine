@@ -1428,7 +1428,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 65), `notFound()` (private, line 86)
+Internals: `page()` (private, line 66), `notFound()` (private, line 87)
 
 
 ## SitemapXml

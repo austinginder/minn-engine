@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Support\Sanitize;
 use Minn\Theme\Printed;
@@ -34,7 +35,7 @@ final class SitemapRequest
         if ($wanted === '' || ($wanted === $request->path && !$queryForm)) {
             return;
         }
-        \wp_redirect((string) $url, 301);
+        Handoff::redirect((string) $url, 301);
         throw new Printed();
     }
 

@@ -56,7 +56,7 @@ final class CommentForm
             $email = (string) $user->user_email;
             $url = (string) $user->user_url;
             // An administrator's comment is filtered after all unless the form carried its unfiltered-html nonce.
-            if (Can::current('unfiltered_html') && !\wp_verify_nonce((string) ($form['_wp_unfiltered_html_comment'] ?? ''), 'unfiltered-html-comment_' . $postId)) {
+            if (Can::current('unfiltered_html') && !Handoff::verifyNonce((string) ($form['_wp_unfiltered_html_comment'] ?? ''), 'unfiltered-html-comment_' . $postId)) {
                 \kses_remove_filters();
                 \kses_init_filters();
             }

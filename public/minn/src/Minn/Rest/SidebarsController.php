@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\WidgetAreas;
 
@@ -135,7 +136,7 @@ final readonly class SidebarsController
         $instance = [];
         if (isset($body['instance']['encoded'], $body['instance']['hash'])) {
             $serialized = (string) base64_decode((string) $body['instance']['encoded'], true);
-            if (!hash_equals(\wp_hash($serialized), (string) $body['instance']['hash'])) {
+            if (!hash_equals(Handoff::hash($serialized), (string) $body['instance']['hash'])) {
                 throw new RestError('rest_invalid_widget', 'The provided instance is malformed.', 400);
             }
             $instance = (array) \maybe_unserialize($serialized);
@@ -152,7 +153,7 @@ final readonly class SidebarsController
         ob_start();
         \the_widget(get_class($widget), $instance);
         $serialized = serialize($instance);
-        $encoded = ['encoded' => base64_encode($serialized), 'hash' => \wp_hash($serialized)] + (empty($widget->widget_options['show_instance_in_rest']) ? [] : ['raw' => $instance]);
+        $encoded = ['encoded' => base64_encode($serialized), 'hash' => Handoff::hash($serialized)] + (empty($widget->widget_options['show_instance_in_rest']) ? [] : ['raw' => $instance]);
         return Reply::item(['form' => $form, 'preview' => trim((string) ob_get_clean()), 'instance' => $encoded], null);
     }
 

@@ -76,7 +76,7 @@ final class PostEmbed
         if (!$post instanceof \WP_Post) {
             return false;
         }
-        $secret = \wp_generate_password(10, false);
+        $secret = Handoff::password(10, false);
         $title = \get_the_title($post);
         $output = sprintf('<blockquote class="wp-embedded-content" data-secret="%1$s"><a href="%2$s">%3$s</a></blockquote>', Escape::attr($secret), Escape::url(\get_permalink($post)), $title);
         $output .= sprintf(

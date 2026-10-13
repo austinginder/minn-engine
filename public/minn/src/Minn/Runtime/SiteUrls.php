@@ -9,7 +9,7 @@ use Minn\Support\Url;
 
 /**
  * The site's own addresses as WordPress builds them: the home and site
- * addresses, the admin's, wp-includes' and the sign-in page's (each with its
+ * addresses, the admin's, wp-includes', the sign-in and sign-out pages' (each with its
  * scheme settled and its filter run), whether the request came over HTTPS,
  * the switch that forces the admin onto it, and the trailing slash the
  * permalink structure asks for.
@@ -98,6 +98,17 @@ final class SiteUrls
             $url = QueryArgs::add('reauth', '1', $url);
         }
         return (string) Runtime::hooks()->filter('login_url', [$url, $redirect, $forceReauth]);
+    }
+
+    /** The sign-out address (wp_logout_url), its nonce after the action and where to go after, as logout_url leaves it. */
+    public static function logout(mixed $redirect = ''): string
+    {
+        $args = ['action' => 'logout'];
+        if (!empty($redirect)) {
+            $args['redirect_to'] = urlencode((string) $redirect);
+        }
+        $url = QueryArgs::withNonce(QueryArgs::add($args, self::site('wp-login.php', 'login')), 'log-out');
+        return (string) Runtime::hooks()->filter('logout_url', [$url, $redirect]);
     }
 
     /**

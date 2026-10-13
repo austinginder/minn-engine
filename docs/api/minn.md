@@ -261,7 +261,7 @@ The response for one request, whatever happens: a database that
 cannot be reached, salts that are not set, or a failure anywhere
 underneath, each answered in the language the request asked in.
 
-Internals: `restRoute()` (private, line 120), `bootRuntimeForRest()` (private, line 134), `recheckNonce()` (private, line 177), `adoptSettledUser()` (private, line 199), `markThemedRequest()` (private, line 223), `armRecoveryPause()` (private, line 240), `plain()` (private, line 265), `handle()` (private, line 271), `frontPipeline()` (private, line 333)
+Internals: `restRoute()` (private, line 121), `bootRuntimeForRest()` (private, line 135), `recheckNonce()` (private, line 178), `adoptSettledUser()` (private, line 200), `markThemedRequest()` (private, line 224), `armRecoveryPause()` (private, line 241), `plain()` (private, line 266), `handle()` (private, line 272), `frontPipeline()` (private, line 334)
 
 
 ## Html

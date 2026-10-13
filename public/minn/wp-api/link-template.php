@@ -88,14 +88,7 @@ function wp_login_url($redirect = '', $force_reauth = false)
 
 function wp_logout_url($redirect = '')
 {
-    // The action leads and the redirect follows it, in that order.
-    $args = ['action' => 'logout'];
-    if (!empty($redirect)) {
-        $args['redirect_to'] = urlencode((string) $redirect);
-    }
-    $url = add_query_arg($args, site_url('wp-login.php', 'login'));
-    $url = wp_nonce_url($url, 'log-out');
-    return apply_filters('logout_url', $url, $redirect);
+    return SiteUrls::logout($redirect);
 }
 
 function wp_registration_url()

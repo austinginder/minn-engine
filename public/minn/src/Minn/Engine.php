@@ -40,6 +40,7 @@ use Minn\Login\LoginController;
 use Minn\Rest\Api;
 use Minn\Rest\RestUrl;
 use Minn\Rest\Types;
+use Minn\Runtime\Handoff;
 use Minn\Theme\PageRenderer;
 use Minn\Theme\Theme;
 use Minn\Auth\Salts;
@@ -210,7 +211,7 @@ final readonly class Engine
         if ($caller->id() > 0) {
             $caller->resolveInvalidNonce();
         }
-        \wp_set_current_user(0);
+        Handoff::becomeUser(0);
         $runtime->identify(Reader::anonymous($runtime->reader->postPassword));
     }
 

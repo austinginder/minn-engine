@@ -3333,7 +3333,7 @@ as the_widget shows it, and the settings encoded again.
 The widgets are registered on init; a runtime that stopped short of it
 registers them now. Without the runtime there are no widgets to serve.
 
-Internals: `item()` (private, line 174), `type()` (private, line 200), `widgetTypes()` (private, line 217), `requireSidebar()` (private, line 227)
+Internals: `item()` (private, line 175), `type()` (private, line 201), `widgetTypes()` (private, line 218), `requireSidebar()` (private, line 228)
 
 
 ## StatusesController
@@ -4039,7 +4039,7 @@ A widget's settings, encoded and signed, and raw when it shows them. @return arr
 
 - `@return array<string, mixed>`
 
-Internals: `form()` (private, line 63)
+Internals: `form()` (private, line 64)
 
 
 ## WidgetsController
@@ -4099,5 +4099,5 @@ Route: `DELETE /wp/v2/widgets/{id:[\w\-]+} (cap edit_theme_options)`
 
 Deletes a widget with force; without, sends it to the inactive widgets.
 
-Internals: `saveInstance()` (private, line 147), `newInstance()` (private, line 164), `sidebarOf()` (private, line 188)
+Internals: `saveInstance()` (private, line 148), `newInstance()` (private, line 165), `sidebarOf()` (private, line 189)
 

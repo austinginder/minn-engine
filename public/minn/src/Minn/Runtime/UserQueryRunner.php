@@ -222,7 +222,7 @@ final class UserQueryRunner
                 $row->id = $row->ID;
             }
         } elseif ($qv['fields'] === 'all' || $qv['fields'] === 'all_with_meta') {
-            \cache_users($results);
+            Handoff::cacheUsers($results);
             $users = [];
             foreach ($results as $user) {
                 $object = new \WP_User($user, '', $qv['blog_id']);

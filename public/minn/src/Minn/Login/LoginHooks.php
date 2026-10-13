@@ -8,6 +8,7 @@ use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Html;
 use Minn\I18n\Gettext;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -34,7 +35,7 @@ final readonly class LoginHooks
     public function authenticate(string $login, string $password): UserRecord|\WP_Error|null
     {
         Runtime::hooks()->actionRefArray('wp_authenticate', [&$login, &$password]);
-        $result = \wp_authenticate($login, $password);
+        $result = Handoff::authenticate($login, $password);
         if ($result instanceof \WP_User) {
             return $this->users->find((int) $result->ID);
         }

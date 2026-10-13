@@ -555,7 +555,7 @@ loaded the message goes through wp_mail(), so its filters and the
 phpmailer_init hook (an SMTP plugin's way in) apply as they do on the
 reference; otherwise through the configured transport directly.
 
-Internals: `viaSmtp()` (private, line 77), `viaMail()` (private, line 87), `draft()` (private, line 98)
+Internals: `viaSmtp()` (private, line 78), `viaMail()` (private, line 88), `draft()` (private, line 99)
 
 
 ## MailerStrings

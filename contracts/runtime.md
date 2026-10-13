@@ -15985,6 +15985,13 @@ nobody). `user()` asks the record's own `has_cap`, so a record class that change
 `CurrentUser::id()` is get_current_user_id; the facade keeps its answer of 0 before the runtime is
 up, as no engine path asks then. All 370 probes give identical output before and after.
 
+**Batch 8, the other replaceable functions (function calls 637 → 614).** The engine's remaining
+calls to replaceable functions go through `Runtime\Handoff` too: making a user the request's, caching
+users, signing in, setting and generating passwords, hashing, creating and verifying nonces, mail,
+avatars and redirects, each bound to its function by the WordPress layer and passing its arguments as
+given, so each function's own defaults hold. `QueryArgs::withNonce()` is wp_nonce_url and
+`SiteUrls::logout()` is wp_logout_url. All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

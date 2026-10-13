@@ -3,13 +3,13 @@
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 820,
-        "composes": 2368,
+        "composes": 2366,
         "leaf": 1024,
-        "noop": 2796,
+        "noop": 2798,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1084,
+        "minnMethods": 1086,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -72570,15 +72570,12 @@
         },
         "wp_logout_url": {
             "file": "link-template.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_query_arg",
-                "apply_filters",
-                "site_url",
-                "wp_nonce_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteUrls::logout"
+            ],
+            "composes": []
         },
         "wp_lostpassword_url": {
             "file": "link-template.php",
@@ -73172,14 +73169,12 @@
         },
         "wp_nonce_url": {
             "file": "functions.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_query_arg",
-                "esc_html",
-                "wp_create_nonce"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\QueryArgs::withNonce"
+            ],
+            "composes": []
         },
         "wp_normalize_path": {
             "file": "formatting.php",

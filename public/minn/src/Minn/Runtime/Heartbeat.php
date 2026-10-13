@@ -24,7 +24,7 @@ final class Heartbeat
      */
     public static function answer(array $post): array
     {
-        $state = \wp_verify_nonce((string) ($post['_nonce'] ?? ''), 'heartbeat-nonce');
+        $state = Handoff::verifyNonce((string) ($post['_nonce'] ?? ''), 'heartbeat-nonce');
         $screen = empty($post['screen_id']) ? 'front' : Sanitize::key((string) $post['screen_id']);
         $data = empty($post['data']) ? [] : (array) $post['data'];
         $response = [];

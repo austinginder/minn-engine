@@ -12,6 +12,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\WidgetAreas;
 
@@ -172,7 +173,7 @@ final readonly class WidgetsController
         }
         if (isset($instance['encoded'], $instance['hash'])) {
             $serialized = (string) base64_decode((string) $instance['encoded'], true);
-            if (!hash_equals(\wp_hash($serialized), (string) $instance['hash'])) {
+            if (!hash_equals(Handoff::hash($serialized), (string) $instance['hash'])) {
                 throw new RestError('rest_invalid_widget', 'The provided instance is malformed.', 400);
             }
             return (array) \maybe_unserialize($serialized);

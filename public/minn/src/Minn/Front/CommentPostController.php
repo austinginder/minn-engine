@@ -54,9 +54,9 @@ final readonly class CommentPostController
         $redirect = (string) ($request->form['redirect_to'] ?? '');
         $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
         if (!$consent && \wp_get_comment_status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
-            $location = QueryArgs::add(['unapproved' => $comment->comment_ID, 'moderation-hash' => \wp_hash($comment->comment_date_gmt)], $location);
+            $location = QueryArgs::add(['unapproved' => $comment->comment_ID, 'moderation-hash' => Handoff::hash($comment->comment_date_gmt)], $location);
         }
-        \wp_safe_redirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));
+        Handoff::safeRedirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));
         $sent = (array) Runtime::current()->get('redirect', []);
         $response = Response::redirect((string) ($sent['location'] ?? $location), (int) ($sent['status'] ?? 302));
         return is_string($sent['by'] ?? null) ? $response->withHeader('X-Redirect-By', (string) $sent['by']) : $response;

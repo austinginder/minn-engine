@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Runtime\Handoff;
 use Minn\Runtime\WidgetAreas;
 
 /**
@@ -53,7 +54,7 @@ final readonly class WidgetObject
         $all = $object->get_settings();
         $instance = is_array($all) && isset($all[$number]) ? (array) $all[$number] : [];
         $serialized = serialize($instance);
-        $out = ['encoded' => base64_encode($serialized), 'hash' => \wp_hash($serialized)];
+        $out = ['encoded' => base64_encode($serialized), 'hash' => Handoff::hash($serialized)];
         if (!empty($object->widget_options['show_instance_in_rest'])) {
             $out['raw'] = $instance;
         }

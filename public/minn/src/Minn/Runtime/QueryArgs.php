@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Http\Request;
+use Minn\Support\Escape;
 use Minn\Support\Text;
 use Minn\Support\Url;
 
 /**
  * Query arguments added to and taken from an address the way WordPress's
  * add_query_arg() and remove_query_arg() do, the current request's address
- * when none is given.
+ * when none is given, and an action's nonce added to one.
  */
 final class QueryArgs
 {
@@ -44,6 +45,12 @@ final class QueryArgs
             return $query;
         }
         return self::add($key, false, $query);
+    }
+
+    /** An address carrying a nonce for the action (wp_nonce_url), escaped for HTML. */
+    public static function withNonce(mixed $actionUrl, mixed $action = -1, mixed $name = '_wpnonce'): string
+    {
+        return Escape::html(self::add($name, Handoff::createNonce($action), str_replace('&amp;', '&', (string) $actionUrl)));
     }
 
     /** The request's address as PHP was given it; a runtime built without one gives its request's path and query. */

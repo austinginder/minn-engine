@@ -6,6 +6,7 @@ namespace Minn\Mail;
 
 use Minn\Content\Site;
 use Minn\Db;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Throwable;
 
@@ -53,7 +54,7 @@ final readonly class Mailer
     {
         if (Runtime::booted() && function_exists('wp_mail')) {
             $headers = $message->fromEmail !== '' ? ['From: ' . ($message->fromName !== '' ? $message->fromName . ' <' . $message->fromEmail . '>' : $message->fromEmail)] : [];
-            return (bool) \wp_mail($message->to, $message->subject, $message->body, $headers);
+            return (bool) Handoff::mail($message->to, $message->subject, $message->body, $headers);
         }
         $from = $message->fromEmail !== '' ? $message->fromEmail : $this->settings->fromEmail;
         $fromName = $message->fromName !== '' ? $message->fromName : $this->settings->fromName;

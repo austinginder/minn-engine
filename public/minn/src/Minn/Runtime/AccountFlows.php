@@ -60,7 +60,7 @@ final class AccountFlows
         $title = Runtime::hooks()->filter('retrieve_password_title', [$notice->subject, $user->user_login, $user]);
         $message = Runtime::hooks()->filter('retrieve_password_message', [$notice->body, $key, $user->user_login, $user]);
         $email = (array) Runtime::hooks()->filter('retrieve_password_notification_email', [['to' => $user->user_email, 'subject' => $title, 'message' => $message, 'headers' => ''], $key, $user->user_login, $user]);
-        if (!\wp_mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
+        if (!Handoff::mail($email['to'] ?? $user->user_email, Entities::decode((string) ($email['subject'] ?? $title), ENT_NOQUOTES), (string) ($email['message'] ?? $message), $email['headers'] ?? '')) {
             return new \WP_Error('retrieve_password_email_failure', Gettext::text('<strong>Error:</strong> The email could not be sent. Your site may not be correctly configured to send emails.'));
         }
         return true;
@@ -70,7 +70,7 @@ final class AccountFlows
     public static function resetPassword(\WP_User $user, string $password): void
     {
         Runtime::hooks()->action('password_reset', [$user, $password]);
-        \wp_set_password($password, $user->ID);
+        Handoff::setPassword($password, $user->ID);
         \update_user_meta($user->ID, 'default_password_nag', false);
         Runtime::hooks()->action('after_password_reset', [$user, $password]);
     }
@@ -112,7 +112,7 @@ final class AccountFlows
         if ($errors->has_errors()) {
             return $errors;
         }
-        $id = \wp_create_user($name, \wp_generate_password(12, false), $email);
+        $id = \wp_create_user($name, Handoff::password(12, false), $email);
         if (!is_int($id) || $id < 1) {
             return new \WP_Error('registerfail', sprintf(Gettext::text('<strong>Error:</strong> Could not register you&hellip; please contact the <a href="mailto:%s">site admin</a>!'), Runtime::options()->filtered('admin_email')));
         }
@@ -136,7 +136,7 @@ final class AccountFlows
         if ($notify !== 'user' && Runtime::hooks()->filter('wp_send_new_user_notification_to_admin', [true, $user])) {
             $message = sprintf(Gettext::text('New user registration on your site %s:'), $site) . "\r\n\r\n" . sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . sprintf(Gettext::text('Email: %s'), $user->user_email) . "\r\n";
             $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email_admin', [['to' => Runtime::options()->filtered('admin_email'), 'subject' => Gettext::text('[%s] New User Registration'), 'message' => $message, 'headers' => ''], $user, $site]);
-            \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+            Handoff::mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
         }
         if ($notify === 'admin' || (empty($deprecated) && $notify === '') || !Runtime::hooks()->filter('wp_send_new_user_notification_to_user', [true, $user])) {
             return;
@@ -147,7 +147,7 @@ final class AccountFlows
         }
         $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . SiteUrls::login() . "\r\n";
         $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email', [['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site]);
-        \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
+        Handoff::mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
     }
 
     /** The link that opens the password form for a user's key. */

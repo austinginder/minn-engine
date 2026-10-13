@@ -40,7 +40,7 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 51 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 125 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 385 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -81,7 +81,7 @@ the WordPress runtime plugins load against
 | [`PostRevisions`](#postrevisions) | final class | 67 | A post's revisions as the reference's wp_save_post_revision keeps them |
 | [`PostSave`](#postsave) | final class | 253 | A REST save's columns through the filters the reference's save runs |
 | [`QueriedObject`](#queriedobject) | final readonly class | 70 | Which object a query is "about", read from its flags and variables: a term |
-| [`QueryArgs`](#queryargs) | final class | 48 | Query arguments added to and taken from an address the way WordPress's |
+| [`QueryArgs`](#queryargs) | final class | 54 | Query arguments added to and taken from an address the way WordPress's |
 | [`QueryFlags`](#queryflags) | final readonly class | 197 | The conditional flags a set of query variables implies (is_single, is_archive, |
 | [`Recovery`](#recovery) | final readonly class | 234 | Recovery from a fatal in someone else's code. When a plugin or theme |
 | [`Refusal`](#refusal) | final readonly class | 6 | A refused operation, the way plugin code expects to read it: a code, a message, optional data. The facade turns it into WP_Error. |
@@ -94,7 +94,7 @@ the WordPress runtime plugins load against
 | [`ScriptModules`](#scriptmodules) | final class | 303 | The script modules registry: registrations with typed dependencies, the |
 | [`ScriptPack`](#scriptpack) | final class | 146 | The site-supplied script pack: the `wp-*` JavaScript packages the engine |
 | [`Shortcodes`](#shortcodes) | final class | 274 | The shortcode registry plugin code fills with add_shortcode, and the |
-| [`SiteUrls`](#siteurls) | final class | 113 | The site's own addresses as WordPress builds them: the home and site |
+| [`SiteUrls`](#siteurls) | final class | 124 | The site's own addresses as WordPress builds them: the home and site |
 | [`StoredObjects`](#storedobjects) | final class | 64 | The classes a stored blob may name and come back as. The serialized |
 | [`SymbolGap`](#symbolgap) | final readonly class | 196 | The part of the reference's interface the runtime does not answer: names in |
 | [`SymbolTable`](#symboltable) | final class | 69 | What a folder's PHP names, collected while its tokens are read: the |
@@ -1623,18 +1623,23 @@ Internals: `refusal()` (private, line 78), `move()` (private, line 108)
 `final class Minn\Runtime\Handoff` · `public/minn/src/Minn/Runtime/Handoff.php`
 
 What the engine asks of the layer it runs under, where a plugin may have
-the last word. WordPress lets a plugin define its own wp_get_current_user,
-get_userdata, get_user_by or is_user_logged_in before the defaults load,
-and its user records are that layer's objects; the WordPress layer binds
-each answer here (the replaceable ones once the plugins have had their
-chance), so a plugin's version answers the engine as it answers WordPress.
+the last word. WordPress lets a plugin define its own version of the
+replaceable functions (the current user, users by id or field, hashes,
+nonces, passwords, mail, avatars, redirects, signing in) before the
+defaults load, and its user records are that layer's objects; the
+WordPress layer binds each answer here (the replaceable ones once the
+plugins have had their chance), so a plugin's version answers the engine
+as it answers WordPress. Arguments pass as given, so each answer's own
+defaults hold.
 
-Used by: `Minn\Auth\Can`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Rest\UserObject`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostData`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\UserEvents`, `Minn\Theme\FrontLifecycle`
+Used by: `Minn\Auth\Can`, `Minn\Engine`, `Minn\Front\CommentPostController`, `Minn\Front\PostEmbed`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMenus`, `Minn\Login\LoginHooks`, `Minn\Mail\Mailer`, `Minn\Rest\SidebarsController`, `Minn\Rest\UserObject`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostData`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\FrontLifecycle`
 
 
 ### static `bind(array $answers): void`
 
-Binds answers by name: currentUser, signedIn, user, userBy, userRecord.
+Binds answers by name: currentUser, signedIn, user, userBy, userRecord,
+becomeUser, cacheUsers, authenticate, setPassword, password, hash,
+createNonce, verifyNonce, mail, avatar, redirect, safeRedirect.
 
 - `@param array<string, Closure> $answers`
 
@@ -1658,7 +1663,55 @@ A user by a field (id, ID, slug, email or login), or false (get_user_by).
 
 The value when it is a user record, else the record of nobody (user id 0).
 
-Internals: `answer()` (private, line 63)
+### static `becomeUser(mixed ...$args): mixed`
+
+Makes a user the request's (wp_set_current_user): the user's record.
+
+### static `cacheUsers(mixed $ids): void`
+
+Reads users and their meta into the cache together (cache_users).
+
+### static `authenticate(mixed $username, mixed $password): mixed`
+
+Signs in by name and password (wp_authenticate): the user, or an error.
+
+### static `setPassword(mixed $password, mixed $userId): mixed`
+
+Sets a user's password (wp_set_password).
+
+### static `password(mixed ...$args): mixed`
+
+A random password (wp_generate_password).
+
+### static `hash(mixed ...$args): mixed`
+
+A hash of the data keyed with the site's salt (wp_hash).
+
+### static `createNonce(mixed ...$args): mixed`
+
+A nonce for an action (wp_create_nonce).
+
+### static `verifyNonce(mixed ...$args): mixed`
+
+Whether a nonce holds for an action: 1 or 2 by its age, or false (wp_verify_nonce).
+
+### static `mail(mixed ...$args): mixed`
+
+Sends an email (wp_mail): whether it was accepted for delivery.
+
+### static `avatar(mixed ...$args): mixed`
+
+A user's or address's avatar image, or false (get_avatar).
+
+### static `redirect(mixed ...$args): mixed`
+
+Sends the browser elsewhere (wp_redirect): whether it was sent.
+
+### static `safeRedirect(mixed ...$args): mixed`
+
+Sends the browser elsewhere on the site's own hosts, else to the admin (wp_safe_redirect).
+
+Internals: `answer()` (private, line 140)
 
 
 ## Heartbeat
@@ -3725,7 +3778,7 @@ Internals: `taxonomyTerm()` (private, line 62)
 
 Query arguments added to and taken from an address the way WordPress's
 add_query_arg() and remove_query_arg() do, the current request's address
-when none is given.
+when none is given, and an action's nonce added to one.
 
 Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\CommentPostController`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\PostLinks`, `Minn\Runtime\SiteUrls`
 
@@ -3739,6 +3792,10 @@ false or null one takes the key out.
 ### static `remove(mixed $key, mixed $query = false): mixed`
 
 An address with an argument, or each of a list, taken out (remove_query_arg); an empty list gives back what was given.
+
+### static `withNonce(mixed $actionUrl, mixed $action = -1, mixed $name = '_wpnonce'): string`
+
+An address carrying a nonce for the action (wp_nonce_url), escaped for HTML.
 
 ### static `requestUri(): string`
 
@@ -4814,7 +4871,7 @@ Internals: `present()` (private, line 250), `attributesRun()` (private, line 264
 `final class Minn\Runtime\SiteUrls` · `public/minn/src/Minn/Runtime/SiteUrls.php`
 
 The site's own addresses as WordPress builds them: the home and site
-addresses, the admin's, wp-includes' and the sign-in page's (each with its
+addresses, the admin's, wp-includes', the sign-in and sign-out pages' (each with its
 scheme settled and its filter run), whether the request came over HTTPS,
 the switch that forces the admin onto it, and the trailing slash the
 permalink structure asks for.
@@ -4860,13 +4917,17 @@ An address in wp-includes (includes_url).
 
 The sign-in page (wp_login_url), told where to go after and whether to ask again, as login_url leaves it.
 
+### static `logout(mixed $redirect = ''): string`
+
+The sign-out address (wp_logout_url), its nonce after the action and where to go after, as logout_url leaves it.
+
 ### static `trailing(mixed $url, mixed $type = ''): string`
 
 An address ending as the permalink structure asks (user_trailingslashit):
 with a slash when the rewrite object (or the structure) uses them,
 without one otherwise; then user_trailingslashit.
 
-Internals: `joined()` (private, line 119), `tail()` (private, line 125)
+Internals: `joined()` (private, line 130), `tail()` (private, line 136)
 
 
 ## StoredObjects

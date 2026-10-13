@@ -63,7 +63,7 @@ final class ToolbarMenus
         }
         $user = Handoff::currentUser();
         $profile = self::profileUrl($userId);
-        $avatar = (string) \get_avatar($userId, 28);
+        $avatar = (string) Handoff::avatar($userId, 28);
         $bar->add_node([
             'id' => 'my-account',
             'parent' => 'top-secondary',
@@ -83,11 +83,11 @@ final class ToolbarMenus
         $user = Handoff::currentUser();
         $profile = self::profileUrl($userId);
         $bar->add_group(['parent' => 'my-account', 'id' => 'user-actions']);
-        $card = \get_avatar($userId, 64) . "<span class='display-name'>{$user->display_name}</span>"
+        $card = Handoff::avatar($userId, 64) . "<span class='display-name'>{$user->display_name}</span>"
             . ($user->display_name !== $user->user_login ? "<span class='username'>{$user->user_login}</span>" : '')
             . ($profile !== false ? "<span class='display-name edit-profile'>" . Gettext::text('Edit Profile') . '</span>' : '');
         $bar->add_node(['parent' => 'user-actions', 'id' => 'user-info', 'title' => $card, 'href' => $profile]);
-        $bar->add_node(['parent' => 'user-actions', 'id' => 'logout', 'title' => Gettext::text('Log Out'), 'href' => \wp_logout_url()]);
+        $bar->add_node(['parent' => 'user-actions', 'id' => 'logout', 'title' => Gettext::text('Log Out'), 'href' => SiteUrls::logout()]);
     }
 
     /** The menu button wp-admin's narrow screens show; the front end has none. */
@@ -345,7 +345,7 @@ final class ToolbarMenus
             'parent' => 'top-secondary',
             'id' => 'recovery-mode',
             'title' => Gettext::text('Exit Recovery Mode'),
-            'href' => \wp_nonce_url(QueryArgs::add('action', 'exit_recovery_mode', SiteUrls::login()), 'exit_recovery_mode'),
+            'href' => QueryArgs::withNonce(QueryArgs::add('action', 'exit_recovery_mode', SiteUrls::login()), 'exit_recovery_mode'),
         ]);
     }
 
