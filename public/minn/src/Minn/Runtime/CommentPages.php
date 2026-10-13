@@ -126,8 +126,8 @@ final class CommentPages
         if ($page && Runtime::options()->filtered('page_comments')) {
             $permalink = $pretty
                 ? Url::withTrailingSlash($permalink) . $rewrite->comments_pagination_base . '-' . $page
-                : \add_query_arg('cpage', $page, $permalink);
+                : QueryArgs::add('cpage', $page, $permalink);
         }
-        return $pretty ? \user_trailingslashit($permalink, 'comment') : $permalink;
+        return $pretty ? SiteUrls::trailing($permalink, 'comment') : $permalink;
     }
 }

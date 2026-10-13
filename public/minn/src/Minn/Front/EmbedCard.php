@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\I18n\Gettext;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 
 /**
@@ -67,8 +68,8 @@ final class EmbedCard
     {
         $title = sprintf(
             '<div class="wp-embed-site-title"><a href="%s" target="_top"><img src="%s" width="32" height="32" alt="" class="wp-embed-site-icon" /><span>%s</span></a></div>',
-            Escape::url(\home_url()),
-            Escape::url((string) \get_site_icon_url(32, \includes_url('images/w-logo-gray-white-bg.svg'))),
+            Escape::url(SiteUrls::home()),
+            Escape::url((string) \get_site_icon_url(32, SiteUrls::includes('images/w-logo-gray-white-bg.svg'))),
             Escape::html((string) \get_bloginfo('name')),
         );
         return (string) Runtime::hooks()->filter('embed_site_title_html', [$title]);

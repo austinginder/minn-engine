@@ -188,7 +188,7 @@ final class MenuItemMarks
             'frontPageId' => (int) $options->filtered('page_on_front'),
             'postsPageId' => (int) $options->filtered('page_for_posts'),
             'privacyPageId' => (int) $options->filtered('wp_page_for_privacy_policy'),
-            'homeUrl' => Url::withoutTrailingSlash((string) \home_url()),
+            'homeUrl' => Url::withoutTrailingSlash((string) SiteUrls::home()),
         ];
     }
 

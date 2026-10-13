@@ -15948,6 +15948,20 @@ replace). The style suite's htmlspecialchars exemption named `Minn/Support/Html.
 not exist; it names `Minn/Html.php` now, and the ceiling fell to 12. All 370 probes give identical
 output before and after.
 
+**Batch 5, the site's addresses and query arguments (function calls 878 → 804).** `Runtime\SiteUrls`
+builds the home, site, admin, current-admin, wp-includes and sign-in addresses (`home()`, `site()`,
+`admin()`, `selfAdmin()`, `includes()`, `login()`), each with its scheme settled (`withScheme()`, the
+set_url_scheme filter last) and its own filter run; `secure()` is is_ssl, `forceSslAdmin()` keeps
+the switch for the request, and `trailing()` ends an address as the rewrite object (or the
+permalink structure) asks, then user_trailingslashit. `Runtime\QueryArgs::add()` and `remove()` are
+add_query_arg and remove_query_arg, the request's own address read by `requestUri()`. The server
+variables they read live (a plugin may set HTTPS, the WordPress layer fills in REQUEST_URI) come
+through `Http\Request::serverVariable()`, as superglobals stay in the edge files. The facade's
+functions map onto them; the engine's network calls ask the site's addresses (Minn is one site). The engine's
+calls are rewritten by the tokenizer, so only real calls changed, not names in comments or strings.
+`wp_logout_url` and `wp_nonce_url` wait for the batch that gives replaceable functions their seam
+(the nonce is pluggable). All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

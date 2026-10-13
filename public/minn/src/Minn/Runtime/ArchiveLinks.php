@@ -28,14 +28,14 @@ final class ArchiveLinks
         }
         if ($type->name === 'post') {
             $postsPage = Runtime::options()->filtered('show_on_front') === 'page' ? (int) Runtime::options()->filtered('page_for_posts') : 0;
-            return Runtime::hooks()->filter('post_type_archive_link', [$postsPage > 0 ? \get_permalink($postsPage) : \get_home_url(), $postType]);
+            return Runtime::hooks()->filter('post_type_archive_link', [$postsPage > 0 ? \get_permalink($postsPage) : SiteUrls::home(), $postType]);
         }
         $rewrite = $GLOBALS['wp_rewrite'] ?? null;
         if (Runtime::options()->filtered('permalink_structure') && is_array($type->rewrite) && $rewrite instanceof \WP_Rewrite) {
             $slug = is_string($type->has_archive) ? $type->has_archive : (string) ($type->rewrite['slug'] ?? $postType);
-            $link = \home_url(\user_trailingslashit((empty($type->rewrite['with_front']) ? $rewrite->root : $rewrite->front) . $slug, 'post_type_archive'));
+            $link = SiteUrls::home(SiteUrls::trailing((empty($type->rewrite['with_front']) ? $rewrite->root : $rewrite->front) . $slug, 'post_type_archive'));
         } else {
-            $link = \home_url('?post_type=' . $postType);
+            $link = SiteUrls::home('?post_type=' . $postType);
         }
         return Runtime::hooks()->filter('post_type_archive_link', [$link, $postType]);
     }
@@ -51,9 +51,9 @@ final class ArchiveLinks
         }
         $type = \get_post_type_object($postType);
         if (Runtime::options()->filtered('permalink_structure') && $type && is_array($type->rewrite) && !empty($type->rewrite['feeds'])) {
-            $link = Url::withTrailingSlash((string) $link) . \user_trailingslashit('feed' . ($feed === $default ? '' : '/' . $feed), 'feed');
+            $link = Url::withTrailingSlash((string) $link) . SiteUrls::trailing('feed' . ($feed === $default ? '' : '/' . $feed), 'feed');
         } else {
-            $link = \add_query_arg('feed', $feed, (string) $link);
+            $link = QueryArgs::add('feed', $feed, (string) $link);
         }
         return Runtime::hooks()->filter('post_type_archive_feed_link', [$link, $feed]);
     }

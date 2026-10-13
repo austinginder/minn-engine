@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Content;
 
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
 use Minn\Support\Flag;
@@ -43,7 +44,7 @@ final class MediaShortcodes
         if ($hosted === 'video/vimeo') {
             // The reference rewrites a Vimeo address to its bare form, with loop, for the player.
             $parts = (array) parse_url((string) $atts['src']);
-            $atts['src'] = \add_query_arg('loop', Flag::of($atts['loop']) ? '1' : '0', 'https://' . ($parts['host'] ?? '') . ($parts['path'] ?? ''));
+            $atts['src'] = QueryArgs::add('loop', Flag::of($atts['loop']) ? '1' : '0', 'https://' . ($parts['host'] ?? '') . ($parts['path'] ?? ''));
         }
         $sources = self::sources($atts, $types, $hosted, 'video');
         if (!is_array($sources)) {
@@ -150,7 +151,7 @@ final class MediaShortcodes
                 continue;
             }
             $type = $fallback === 'src' && $hosted !== null ? $hosted : (string) (\wp_check_filetype((string) $atts[$fallback], \wp_get_mime_types())['type'] ?? '');
-            $out .= sprintf('<source type="%s" src="%s" />', $type, Escape::url((string) \add_query_arg('_', $instance, (string) $atts[$fallback])));
+            $out .= sprintf('<source type="%s" src="%s" />', $type, Escape::url((string) QueryArgs::add('_', $instance, (string) $atts[$fallback])));
         }
         return $out;
     }

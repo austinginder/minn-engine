@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 use Minn\Support\Url;
 
@@ -34,9 +36,9 @@ final class PostEmbed
         $data = [
             'version' => '1.0',
             'provider_name' => \get_bloginfo('name'),
-            'provider_url' => \get_home_url(),
+            'provider_url' => SiteUrls::home(),
             'author_name' => \get_bloginfo('name'),
-            'author_url' => \get_home_url(),
+            'author_url' => SiteUrls::home(),
             'title' => \get_the_title($post),
             'type' => 'link',
         ];
@@ -85,7 +87,7 @@ final class PostEmbed
             Escape::attr($secret),
         );
         $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/embed-host.js');
-        $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . \includes_url('js/wp-embed.min.js'));
+        $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . SiteUrls::includes('js/wp-embed.min.js'));
         return (string) Runtime::hooks()->filter('embed_html', [$output, $post, $width, $height]);
     }
 
@@ -98,8 +100,8 @@ final class PostEmbed
         }
         $permalink = (string) \get_permalink($post);
         $url = (string) Runtime::options()->filtered('permalink_structure') !== '' && !str_contains($permalink, '?')
-            ? Url::withTrailingSlash($permalink) . \user_trailingslashit('embed')
-            : \add_query_arg(['embed' => 'true'], $permalink);
+            ? Url::withTrailingSlash($permalink) . SiteUrls::trailing('embed')
+            : QueryArgs::add(['embed' => 'true'], $permalink);
         return (string) Runtime::hooks()->filter('post_embed_url', [$url, $post]);
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Media;
 
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 
 /**
  * The icon a file type is shown with, as wp_mime_type_icon finds it (probe
@@ -56,7 +57,7 @@ final class Icons
             return $cached;
         }
         $coreDir = (string) Runtime::hooks()->filter('icon_dir', [ABSPATH . WPINC . '/images/media']);
-        $dirs = (array) Runtime::hooks()->filter('icon_dirs', [[$coreDir => Runtime::hooks()->filter('icon_dir_uri', [\includes_url('images/media')])]]);
+        $dirs = (array) Runtime::hooks()->filter('icon_dirs', [[$coreDir => Runtime::hooks()->filter('icon_dir_uri', [SiteUrls::includes('images/media')])]]);
         $icons = [];
         foreach ($dirs as $dir => $uri) {
             foreach (self::files((string) $dir, $coreDir, $preferred) as $name => $file) {

@@ -36,6 +36,16 @@ final readonly class Request
     ) {
     }
 
+    /**
+     * A server variable as PHP holds it now, null when unset: it may have
+     * changed since the request was read (a proxy plugin marking HTTPS, the
+     * WordPress layer filling in REQUEST_URI).
+     */
+    public static function serverVariable(string $name): mixed
+    {
+        return $_SERVER[$name] ?? null;
+    }
+
     /** The request PHP received, read once from the superglobals. */
     public static function fromGlobals(): self
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Widgets;
 
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 
 /**
@@ -116,7 +117,7 @@ final class WidgetForms
     {
         $menus = \wp_get_nav_menus();
         $chosen = (int) ($instance['nav_menu'] ?? 0);
-        $out = "\t\t<p class=\"nav-menu-widget-no-menus-message\" " . ($menus === [] ? '' : ' style="display:none" ') . ">\n\t\t\tNo menus have been created yet. <a href=\"" . Escape::attr(\admin_url('nav-menus.php')) . "\">Create some</a>.\t\t</p>\n";
+        $out = "\t\t<p class=\"nav-menu-widget-no-menus-message\" " . ($menus === [] ? '' : ' style="display:none" ') . ">\n\t\t\tNo menus have been created yet. <a href=\"" . Escape::attr(SiteUrls::admin('nav-menus.php')) . "\">Create some</a>.\t\t</p>\n";
         $out .= "\t\t<div class=\"nav-menu-widget-form-controls\" " . ($menus === [] ? 'style="display:none"' : '') . ">\n";
         $out .= sprintf("\t\t\t<p>\n\t\t\t\t<label for=\"%1\$s\">Title:</label>\n\t\t\t\t<input type=\"text\" class=\"widefat\" id=\"%1\$s\" name=\"%2\$s\" value=\"%3\$s\" />\n\t\t\t</p>\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')));
         $options = '';

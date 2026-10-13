@@ -6,7 +6,9 @@ use Minn\Content\Blocks;
 use Minn\Content\Slug;
 use Minn\Content\Texturize;
 use Minn\Json;
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Accents;
 use Minn\Support\Email;
 use Minn\Support\Entities;
@@ -401,40 +403,18 @@ function _get_component_from_parsed_url_array($url_parts, $component = -1)
 
 function set_url_scheme($url, $scheme = null)
 {
-    $adminScheme = is_ssl() || force_ssl_admin() ? 'https' : 'http';
-    $scheme = match ($scheme) {
-        'http', 'https', 'relative' => $scheme,
-        'admin', 'login', 'login_post', 'rpc' => $adminScheme,
-        default => is_ssl() ? 'https' : 'http',
-    };
-    return apply_filters('set_url_scheme', Url::withScheme((string) $url, $scheme), $scheme, $url);
+    return SiteUrls::withScheme($url, $scheme);
 }
 
 /** Whether the admin is forced onto HTTPS; a value given is kept for the request and the previous one returned (probe functions-remaining). */
 function force_ssl_admin($force = null)
 {
-    static $forced = null;
-    $forced ??= defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN;
-    if ($force === null) {
-        return $forced;
-    }
-    $previous = $forced;
-    $forced = (bool) $force;
-    return $previous;
+    return SiteUrls::forceSslAdmin($force);
 }
 
 function add_query_arg(...$args)
 {
-    $current = _minn_request_uri();
-    if (is_array($args[0])) {
-        $uri = count($args) < 2 || $args[1] === false ? $current : (string) $args[1];
-        $new = $args[0];
-    } else {
-        $uri = count($args) < 3 || $args[2] === false ? $current : (string) $args[2];
-        $new = [$args[0] => $args[1] ?? null];
-    }
-    // An empty value leaves its key bare (probe query-args): ?c= reads back as ?c, null leaves the key out.
-    return Url::withQuery($uri, $new, static fn (array $q): array => urlencode_deep($q), static fn (array $q): string => (string) preg_replace('#=(&|$)#', '$1', _minn_build_query($q)));
+    return QueryArgs::add(...$args);
 }
 
 /** @internal keys and values are left as given (probe query-args) */
@@ -445,13 +425,7 @@ function _minn_build_query(array $data, string $prefix = ''): string
 
 function remove_query_arg($key, $query = false)
 {
-    if (is_array($key)) {
-        foreach ($key as $k) {
-            $query = add_query_arg($k, false, $query);
-        }
-        return $query;
-    }
-    return add_query_arg($key, false, $query);
+    return QueryArgs::remove($key, $query);
 }
 
 function wp_list_pluck($input_list, $field, $index_key = null)

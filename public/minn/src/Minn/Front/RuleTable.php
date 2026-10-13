@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Closure;
+use Minn\Runtime\SiteUrls;
 
 /**
  * An address read as WordPress's request parse reads it (suites
@@ -59,7 +60,7 @@ final class RuleTable
     private static function subject(string $path): string
     {
         $subject = trim($path, '/');
-        $home = trim((string) parse_url((string) \home_url(), PHP_URL_PATH), '/');
+        $home = trim((string) parse_url((string) SiteUrls::home(), PHP_URL_PATH), '/');
         if ($home !== '' && ($subject === $home || str_starts_with($subject, $home . '/'))) {
             $subject = trim(substr($subject, strlen($home)), '/');
         }

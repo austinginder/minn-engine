@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 use Minn\Support\Text;
 
@@ -96,7 +98,7 @@ final class ToolbarMenus
     public static function wpMenu(\WP_Admin_Bar $bar): void
     {
         $reads = \current_user_can('read');
-        $about = $reads ? \self_admin_url('about.php') : false;
+        $about = $reads ? SiteUrls::selfAdmin('about.php') : false;
         $bar->add_node([
             'id' => 'wp-logo',
             'title' => self::ICON . '<span class="screen-reader-text">' . Gettext::text('About WordPress') . '</span>',
@@ -106,7 +108,7 @@ final class ToolbarMenus
         ]);
         if ($reads) {
             $bar->add_node(['parent' => 'wp-logo', 'id' => 'about', 'title' => Gettext::text('About WordPress'), 'href' => $about]);
-            $bar->add_node(['parent' => 'wp-logo', 'id' => 'contribute', 'title' => Gettext::text('Get Involved'), 'href' => \self_admin_url('contribute.php')]);
+            $bar->add_node(['parent' => 'wp-logo', 'id' => 'contribute', 'title' => Gettext::text('Get Involved'), 'href' => SiteUrls::selfAdmin('contribute.php')]);
         }
         $external = [
             'wporg' => [Gettext::text('WordPress.org'), Gettext::text('https://wordpress.org/')],
@@ -127,7 +129,7 @@ final class ToolbarMenus
             return;
         }
         $name = (string) \get_bloginfo('name');
-        $name = $name !== '' ? $name : (string) preg_replace('#^(https?://)?(www\.)?#', '', \get_home_url());
+        $name = $name !== '' ? $name : (string) preg_replace('#^(https?://)?(www\.)?#', '', SiteUrls::home());
         $title = Text::htmlExcerpt($name, 40, '&hellip;');
         $meta = ['menu_title' => $title];
         if (Runtime::hooks()->filter('wp_admin_bar_show_site_icons', [true]) && \has_site_icon()) {
@@ -136,17 +138,17 @@ final class ToolbarMenus
             $title = '<img class="site-icon" src="' . Escape::url($small) . '"' . ($large !== $small ? ' srcset="' . Escape::url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;
             $meta['class'] = 'has-site-icon';
         }
-        $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => Runtime::current()->isAdmin || !\current_user_can('read') ? \home_url('/') : \admin_url(), 'meta' => $meta]);
+        $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => Runtime::current()->isAdmin || !\current_user_can('read') ? SiteUrls::home('/') : SiteUrls::admin(), 'meta' => $meta]);
         if (Runtime::current()->isAdmin) {
-            $bar->add_node(['parent' => 'site-name', 'id' => 'view-site', 'title' => Gettext::text('Visit Site'), 'href' => \home_url('/')]);
+            $bar->add_node(['parent' => 'site-name', 'id' => 'view-site', 'title' => Gettext::text('Visit Site'), 'href' => SiteUrls::home('/')]);
             return;
         }
         if (\current_user_can('read')) {
-            $bar->add_node(['parent' => 'site-name', 'id' => 'dashboard', 'title' => Gettext::text('Dashboard'), 'href' => \admin_url()]);
+            $bar->add_node(['parent' => 'site-name', 'id' => 'dashboard', 'title' => Gettext::text('Dashboard'), 'href' => SiteUrls::admin()]);
         }
         self::appearanceMenu($bar);
         if (\current_user_can('activate_plugins')) {
-            $bar->add_node(['parent' => 'site-name', 'id' => 'plugins', 'title' => Gettext::text('Plugins'), 'href' => \admin_url('plugins.php')]);
+            $bar->add_node(['parent' => 'site-name', 'id' => 'plugins', 'title' => Gettext::text('Plugins'), 'href' => SiteUrls::admin('plugins.php')]);
         }
     }
 
@@ -155,7 +157,7 @@ final class ToolbarMenus
     {
         $bar->add_group(['parent' => 'site-name', 'id' => 'appearance']);
         if (\current_user_can('switch_themes')) {
-            $bar->add_node(['parent' => 'appearance', 'id' => 'themes', 'title' => Gettext::text('Themes'), 'href' => \admin_url('themes.php')]);
+            $bar->add_node(['parent' => 'appearance', 'id' => 'themes', 'title' => Gettext::text('Themes'), 'href' => SiteUrls::admin('themes.php')]);
         }
         if (!\current_user_can('edit_theme_options')) {
             return;
@@ -169,7 +171,7 @@ final class ToolbarMenus
         ];
         foreach ($links as $id => [$supported, $title, $page, $meta]) {
             if ($supported) {
-                $bar->add_node(['parent' => 'appearance', 'id' => $id, 'title' => $title, 'href' => \admin_url($page)] + ($meta === [] ? [] : ['meta' => $meta]));
+                $bar->add_node(['parent' => 'appearance', 'id' => $id, 'title' => $title, 'href' => SiteUrls::admin($page)] + ($meta === [] ? [] : ['meta' => $meta]));
             }
         }
     }
@@ -184,7 +186,7 @@ final class ToolbarMenus
         $bar->add_node([
             'id' => 'site-editor',
             'title' => Gettext::text('Edit Site'),
-            'href' => \add_query_arg(['postType' => 'wp_template', 'postId' => $template ?: null, 'canvas' => 'edit'], \admin_url('site-editor.php')),
+            'href' => QueryArgs::add(['postType' => 'wp_template', 'postId' => $template ?: null, 'canvas' => 'edit'], SiteUrls::admin('site-editor.php')),
         ]);
     }
 
@@ -195,8 +197,8 @@ final class ToolbarMenus
             return;
         }
         $request = Runtime::current()->request;
-        $here = (\is_ssl() ? 'https://' : 'http://') . ($request === null ? '' : $request->host . $request->path . $request->queryStringWithout());
-        $bar->add_node(['id' => 'customize', 'title' => Gettext::text('Customize'), 'href' => \add_query_arg('url', urlencode($here), \wp_customize_url()), 'meta' => ['class' => 'hide-if-no-customize']]);
+        $here = (SiteUrls::secure() ? 'https://' : 'http://') . ($request === null ? '' : $request->host . $request->path . $request->queryStringWithout());
+        $bar->add_node(['id' => 'customize', 'title' => Gettext::text('Customize'), 'href' => QueryArgs::add('url', urlencode($here), \wp_customize_url()), 'meta' => ['class' => 'hide-if-no-customize']]);
         Runtime::hooks()->add('wp_before_admin_bar_render', 'wp_customize_support_script');
     }
 
@@ -210,7 +212,7 @@ final class ToolbarMenus
         $count = \number_format_i18n($total);
         $title = self::ICON . '<span class="ab-label" aria-hidden="true">' . $count . '</span>'
             . '<span class="screen-reader-text updates-available-text">' . sprintf(Gettext::plural('%s update available', '%s updates available', $total), $count) . '</span>';
-        $bar->add_node(['id' => 'updates', 'title' => $title, 'href' => \network_admin_url('update-core.php')]);
+        $bar->add_node(['id' => 'updates', 'title' => $title, 'href' => SiteUrls::admin('update-core.php')]);
     }
 
     /** The comments awaiting moderation, for those who edit posts. */
@@ -223,7 +225,7 @@ final class ToolbarMenus
         $count = \number_format_i18n($waiting);
         $title = self::ICON . '<span class="ab-label awaiting-mod pending-count count-' . $waiting . '" aria-hidden="true">' . $count . '</span>'
             . '<span class="screen-reader-text comments-in-moderation-text">' . sprintf(Gettext::plural('%s Comment in moderation', '%s Comments in moderation', $waiting), $count) . '</span>';
-        $bar->add_node(['id' => 'comments', 'title' => $title, 'href' => \admin_url('edit-comments.php')]);
+        $bar->add_node(['id' => 'comments', 'title' => $title, 'href' => SiteUrls::admin('edit-comments.php')]);
     }
 
     /** New: a post, media, a link, a page, each other type shown on the bar, and a user, as far as the user may create them. */
@@ -236,11 +238,11 @@ final class ToolbarMenus
         $bar->add_node([
             'id' => 'new-content',
             'title' => self::ICON . '<span class="ab-label">' . Gettext::inContext('New', 'admin bar menu group label') . '</span>',
-            'href' => \admin_url((string) array_key_first($actions)),
+            'href' => SiteUrls::admin((string) array_key_first($actions)),
             'meta' => ['menu_title' => Gettext::inContext('New', 'admin bar menu group label')],
         ]);
         foreach ($actions as $page => [$title, $id]) {
-            $bar->add_node(['parent' => 'new-content', 'id' => $id, 'title' => $title, 'href' => \admin_url($page)]);
+            $bar->add_node(['parent' => 'new-content', 'id' => $id, 'title' => $title, 'href' => SiteUrls::admin($page)]);
         }
     }
 
@@ -339,7 +341,7 @@ final class ToolbarMenus
             'parent' => 'top-secondary',
             'id' => 'recovery-mode',
             'title' => Gettext::text('Exit Recovery Mode'),
-            'href' => \wp_nonce_url(\add_query_arg('action', 'exit_recovery_mode', \wp_login_url()), 'exit_recovery_mode'),
+            'href' => \wp_nonce_url(QueryArgs::add('action', 'exit_recovery_mode', SiteUrls::login()), 'exit_recovery_mode'),
         ]);
     }
 
@@ -349,7 +351,7 @@ final class ToolbarMenus
         if (Runtime::current()->isAdmin) {
             return;
         }
-        $form = '<form action="' . Escape::url(\home_url('/')) . '" method="get" id="adminbarsearch">'
+        $form = '<form action="' . Escape::url(SiteUrls::home('/')) . '" method="get" id="adminbarsearch">'
             . '<input class="adminbar-input" name="s" id="adminbar-search" type="text" value="" maxlength="150" />'
             . '<label for="adminbar-search" class="screen-reader-text">' . Gettext::text('Search') . '</label>'
             . '<input type="submit" class="adminbar-button" value="' . Gettext::text('Search') . '" />'

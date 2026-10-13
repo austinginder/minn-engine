@@ -355,7 +355,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `submit()` (private, line 43), `refusal()` (private, line 64)
+Internals: `submit()` (private, line 44), `refusal()` (private, line 65)
 
 
 ## CustomLogo
@@ -489,7 +489,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 43)
+Internals: `enclosures()` (private, line 45)
 
 
 ## FeedTemplates
@@ -844,7 +844,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 115)
+Internals: `append()` (private, line 117)
 
 
 ## PostNavigation
@@ -1287,7 +1287,7 @@ fits. Null when the site has no rules (plain permalinks).
 
 - `@return array{request: string, rule: string, query: string, vars: array<string, string>}|null`
 
-Internals: `subject()` (private, line 59), `first()` (private, line 77), `queryOf()` (private, line 102), `pageAt()` (private, line 113)
+Internals: `subject()` (private, line 60), `first()` (private, line 78), `queryOf()` (private, line 103), `pageAt()` (private, line 114)
 
 
 ## SingleAddresses
@@ -1653,7 +1653,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 46), `creatable()` (private, line 248), `editPost()` (private, line 295), `editTerm()` (private, line 305)
+Internals: `profileUrl()` (private, line 48), `creatable()` (private, line 250), `editPost()` (private, line 297), `editTerm()` (private, line 307)
 
 
 ## ToolbarTree

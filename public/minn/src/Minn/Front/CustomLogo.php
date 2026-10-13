@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 
 /**
@@ -37,9 +38,9 @@ final class CustomLogo
             $image = (string) \wp_get_attachment_image($logo, 'full', false, $attrs);
             $html = $unlinked
                 ? sprintf('<span class="custom-logo-link">%s</span>', $image)
-                : sprintf('<a href="%1$s" class="custom-logo-link" rel="home"%2$s>%3$s</a>', Escape::url(\home_url('/')), $front ? ' aria-current="page"' : '', $image);
+                : sprintf('<a href="%1$s" class="custom-logo-link" rel="home"%2$s>%3$s</a>', Escape::url(SiteUrls::home('/')), $front ? ' aria-current="page"' : '', $image);
         } elseif (\is_customize_preview()) {
-            $html = sprintf('<a href="%1$s" class="custom-logo-link" style="display:none;"><img class="custom-logo" alt="" /></a>', Escape::url(\home_url('/')));
+            $html = sprintf('<a href="%1$s" class="custom-logo-link" style="display:none;"><img class="custom-logo" alt="" /></a>', Escape::url(SiteUrls::home('/')));
         }
         return (string) Runtime::hooks()->filter('get_custom_logo', [$html, $blogId]);
     }

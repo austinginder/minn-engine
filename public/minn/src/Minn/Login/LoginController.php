@@ -24,6 +24,7 @@ use Minn\Runtime\Runtime;
 use Minn\Html;
 use Minn\Auth\PasswordReset;
 use Minn\Auth\PortableHash;
+use Minn\Runtime\SiteUrls;
 
 /**
  * Signing in. The page people see is /minn-admin/login: the form, the
@@ -128,7 +129,7 @@ final readonly class LoginController
     private function asked(Request $request): array
     {
         $requested = (string) ($request->query('redirect_to') ?? $request->form['redirect_to'] ?? '');
-        return [$requested, $requested !== '' ? $requested : \admin_url()];
+        return [$requested, $requested !== '' ? $requested : SiteUrls::admin()];
     }
 
     /** The check-your-email page's word, as the reference's: the confirmation link is on its way, or the registration is done. */

@@ -246,7 +246,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 402), `withPageLinks()` (private, line 416), `options()` (private, line 447), `withSchema()` (private, line 464), `withAllow()` (private, line 485)
+Internals: `controllers()` (private, line 74), `engineResponse()` (private, line 403), `withPageLinks()` (private, line 417), `options()` (private, line 448), `withSchema()` (private, line 465), `withAllow()` (private, line 486)
 
 
 ## ApplicationPasswordsController

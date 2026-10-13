@@ -5,7 +5,7 @@
  */
 
 use Minn\Http\MediaType;
-use Minn\Runtime\{DebugMode, Runtime};
+use Minn\Runtime\{DebugMode, Runtime, SiteUrls};
 
 function is_admin()
 {
@@ -108,11 +108,7 @@ function wp_is_xml_request()
 /** Whether the request came over HTTPS; with no request (the command line), what $_SERVER says, as WP-CLI sets it for an https site. */
 function is_ssl()
 {
-    if (Runtime::current()->request !== null) {
-        return Runtime::current()->isSecure();
-    }
-    $https = strtolower((string) ($_SERVER['HTTPS'] ?? ''));
-    return $https === 'on' || $https === '1' || (string) ($_SERVER['SERVER_PORT'] ?? '') === '443';
+    return SiteUrls::secure();
 }
 
 /** Whether the site's locale writes right to left. */

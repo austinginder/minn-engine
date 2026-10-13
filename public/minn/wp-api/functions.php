@@ -4,6 +4,7 @@
 use Minn\Blocks\RenderState;
 use Minn\Runtime\Deferrals;
 use Minn\Runtime\Notices;
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 
 function wp_timezone_string()
@@ -1015,17 +1016,7 @@ function wp_original_referer_field($display = true, $jump_back_to = 'current')
 /** @internal the request URI as the reference sees it */
 function _minn_request_uri(): string
 {
-    // The raw request URI PHP was given, as the reference reads it (probe query-pagination); a runtime built
-    // without one gives its request's path and query.
-    if (isset($_SERVER['REQUEST_URI'])) {
-        return (string) $_SERVER['REQUEST_URI'];
-    }
-    $request = Runtime::current()->request;
-    if ($request === null) {
-        return '';
-    }
-    $query = http_build_query($request->query);
-    return $request->path . ($query === '' ? '' : '?' . $query);
+    return QueryArgs::requestUri();
 }
 
 function wp_get_referer()

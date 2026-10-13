@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
 use Minn\Support\Text;
 use Minn\Support\Url;
@@ -95,15 +97,15 @@ final class FeedTags
         $unattached = $post->post_type === 'attachment' && (int) $post->post_parent === 0;
         if (Runtime::options()->filtered('permalink_structure')) {
             if ($unattached) {
-                $url = \add_query_arg('attachment_id', $postId, \home_url('/feed/') . (\get_default_feed() !== $feed ? "{$feed}/" : ''));
+                $url = QueryArgs::add('attachment_id', $postId, SiteUrls::home('/feed/') . (\get_default_feed() !== $feed ? "{$feed}/" : ''));
             } else {
                 $front = Runtime::options()->filtered('show_on_front') === 'page' && (int) Runtime::options()->filtered('page_on_front') === $postId;
                 $base = Url::withTrailingSlash((string) ($front ? \_get_page_link($postId) : \get_permalink($postId))) . 'feed';
-                $url = \user_trailingslashit($base . (\get_default_feed() !== $feed ? "/{$feed}" : ''), 'single_feed');
+                $url = SiteUrls::trailing($base . (\get_default_feed() !== $feed ? "/{$feed}" : ''), 'single_feed');
             }
         } else {
             $key = $unattached ? 'attachment_id' : ($post->post_type === 'page' ? 'page_id' : 'p');
-            $url = \add_query_arg(['feed' => $feed, $key => $postId], \home_url('/'));
+            $url = QueryArgs::add(['feed' => $feed, $key => $postId], SiteUrls::home('/'));
         }
         return (string) Runtime::hooks()->filter('post_comments_feed_link', [$url]);
     }

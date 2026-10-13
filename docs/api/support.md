@@ -1075,7 +1075,7 @@ a number of words or characters, named references written as numeric
 ones, stray ampersands encoded, whitespace normalized, a path's last part,
 and a callback run over every value of a nested structure.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\QueryArgs`
 
 ### static `trimWords(mixed $text, mixed $count = 55, mixed $more = NULL): string`
 
@@ -1151,7 +1151,7 @@ URL shaping the escaping and query helpers share: the character cleanup
 esc_url applies, bracket encoding outside the authority, and query
 argument merging. Behaviour pinned by contracts/fixtures/api/functions.json.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Upgrade`, `Minn\Support\Escape`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\Upgrade`, `Minn\Support\Escape`
 
 ### static `withTrailingSlash(string $value): string`
 

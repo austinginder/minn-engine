@@ -100,7 +100,7 @@ final class AccountFlows
         $emailError = match (true) {
             $email === '' => ['empty_email', Gettext::text('<strong>Error:</strong> Please type your email address.')],
             !Sanitize::isEmail($email) => ['invalid_email', Gettext::text('<strong>Error:</strong> The email address is not correct.')],
-            (bool) \email_exists($email) => ['email_exists', sprintf(Gettext::text('<strong>Error:</strong> This email address is already registered. <a href="%s">Log in</a> with this address or choose another one.'), \wp_login_url())],
+            (bool) \email_exists($email) => ['email_exists', sprintf(Gettext::text('<strong>Error:</strong> This email address is already registered. <a href="%s">Log in</a> with this address or choose another one.'), SiteUrls::login())],
             default => null,
         };
         if ($emailError !== null) {
@@ -145,7 +145,7 @@ final class AccountFlows
         if ($key instanceof \WP_Error) {
             return;
         }
-        $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . \wp_login_url() . "\r\n";
+        $message = sprintf(Gettext::text('Username: %s'), $user->user_login) . "\r\n\r\n" . Gettext::text('To set your password, visit the following address:') . "\r\n\r\n" . self::resetLink($user, $key) . "\r\n\r\n" . SiteUrls::login() . "\r\n";
         $mail = (array) Runtime::hooks()->filter('wp_new_user_notification_email', [['to' => $user->user_email, 'subject' => Gettext::text('[%s] Login Details'), 'message' => $message, 'headers' => ''], $user, $site]);
         \wp_mail($mail['to'] ?? '', Entities::decode(sprintf((string) ($mail['subject'] ?? ''), $site), ENT_NOQUOTES), (string) ($mail['message'] ?? ''), $mail['headers'] ?? '');
     }
@@ -153,6 +153,6 @@ final class AccountFlows
     /** The link that opens the password form for a user's key. */
     private static function resetLink(\WP_User $user, string $key): string
     {
-        return \network_site_url('wp-login.php?login=' . rawurlencode($user->user_login) . "&key={$key}&action=rp", 'login');
+        return SiteUrls::site('wp-login.php?login=' . rawurlencode($user->user_login) . "&key={$key}&action=rp", 'login');
     }
 }

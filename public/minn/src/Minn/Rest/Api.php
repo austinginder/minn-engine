@@ -26,6 +26,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\RestError;
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Support\Text;
 
@@ -426,13 +427,13 @@ final readonly class Api
             $page = (int) ceil((int) $request->query['offset'] / max(1, (int) ($request->query['per_page'] ?? 10)) + 1);
         }
         // The parameters as the request object holds them (in process, as the caller set them).
-        $base = \add_query_arg(Text::mapDeep(RuntimeRoutes::wpRequest($request)->get_query_params(), 'urlencode'), $this->services->url()->to($request->path));
+        $base = QueryArgs::add(Text::mapDeep(RuntimeRoutes::wpRequest($request)->get_query_params(), 'urlencode'), $this->services->url()->to($request->path));
         $links = [];
         if ($page > 1) {
-            $links[] = '<' . \add_query_arg('page', min($page - 1, $pages), $base) . '>; rel="prev"';
+            $links[] = '<' . QueryArgs::add('page', min($page - 1, $pages), $base) . '>; rel="prev"';
         }
         if ($pages > $page) {
-            $links[] = '<' . \add_query_arg('page', $page + 1, $base) . '>; rel="next"';
+            $links[] = '<' . QueryArgs::add('page', $page + 1, $base) . '>; rel="next"';
         }
         return $links === [] ? $response : $response->withHeader('Link', implode(', ', $links));
     }

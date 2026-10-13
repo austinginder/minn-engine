@@ -36,9 +36,9 @@ final class PostLinks
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $structure = (string) Runtime::hooks()->filter('pre_post_link', [(string) Runtime::options()->filtered('permalink_structure'), $post, $leavename]);
         if ($structure !== '' && !self::plain($post, $flags)) {
-            $link = \user_trailingslashit(\home_url(strtr($structure, self::tokens($post, $flags))), 'single');
+            $link = SiteUrls::trailing(SiteUrls::home(strtr($structure, self::tokens($post, $flags))), 'single');
         } else {
-            $link = \home_url('?p=' . $post->ID);
+            $link = SiteUrls::home('?p=' . $post->ID);
         }
         return (string) Runtime::hooks()->filter('post_link', [$link, $post, $leavename]);
     }
@@ -81,9 +81,9 @@ final class PostLinks
         $leavename = (bool) ($flags & self::LEAVE_NAME);
         $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         if (!$pretty || self::plain($post, $flags)) {
-            $link = \home_url('?page_id=' . $post->ID);
+            $link = SiteUrls::home('?page_id=' . $post->ID);
         } else {
-            $link = \home_url(\user_trailingslashit($leavename ? '%pagename%' : (string) \get_page_uri($post), 'page'));
+            $link = SiteUrls::home(SiteUrls::trailing($leavename ? '%pagename%' : (string) \get_page_uri($post), 'page'));
         }
         return (string) Runtime::hooks()->filter('_get_page_link', [$link, $post->ID]);
     }
@@ -99,13 +99,13 @@ final class PostLinks
             $parentLink = $parent->post_type === 'page' ? self::page($parent, 0) : (string) \get_permalink($parent);
             $name = is_numeric($post->post_name) || str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? 'attachment/' . $post->post_name : (string) $post->post_name;
             if (!str_contains($parentLink, '?')) {
-                $link = \user_trailingslashit(Url::withTrailingSlash($parentLink) . '%postname%');
+                $link = SiteUrls::trailing(Url::withTrailingSlash($parentLink) . '%postname%');
                 $link = $leavename ? $link : str_replace('%postname%', $name, $link);
             }
         } elseif ($pretty && !$leavename) {
-            $link = \home_url(\user_trailingslashit((string) $post->post_name));
+            $link = SiteUrls::home(SiteUrls::trailing((string) $post->post_name));
         }
-        return (string) Runtime::hooks()->filter('attachment_link', [$link !== '' ? $link : \home_url('/?attachment_id=' . $post->ID), $post->ID]);
+        return (string) Runtime::hooks()->filter('attachment_link', [$link !== '' ? $link : SiteUrls::home('/?attachment_id=' . $post->ID), $post->ID]);
     }
 
     /** A plugin type's address by its pattern, by its query var, or by the type and id plainly. */
@@ -119,11 +119,11 @@ final class PostLinks
         $plain = !$sample && self::plain($post, $flags);
         $slug = $type?->hierarchical ? (string) \get_page_uri($post) : (string) $post->post_name;
         if ($struct !== '' && !$plain) {
-            $link = \home_url(\user_trailingslashit($leavename ? $struct : str_replace("%{$post->post_type}%", $slug, $struct)));
+            $link = SiteUrls::home(SiteUrls::trailing($leavename ? $struct : str_replace("%{$post->post_type}%", $slug, $struct)));
         } elseif (!empty($type?->query_var) && !$plain) {
-            $link = \home_url(\add_query_arg((string) $type->query_var, $slug, ''));
+            $link = SiteUrls::home(QueryArgs::add((string) $type->query_var, $slug, ''));
         } else {
-            $link = \home_url(\add_query_arg(['post_type' => $post->post_type, 'p' => $post->ID], ''));
+            $link = SiteUrls::home(QueryArgs::add(['post_type' => $post->post_type, 'p' => $post->ID], ''));
         }
         return (string) Runtime::hooks()->filter('post_type_link', [$link, $post, $leavename, $sample]);
     }

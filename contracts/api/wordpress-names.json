@@ -1,8 +1,8 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 878,
-        "functions": 337,
+        "functionCalls": 804,
+        "functions": 326,
         "hookApi": 0,
         "classReferences": 568,
         "classes": 50,
@@ -11,19 +11,19 @@
     "families": {
         "functions": {
             "wp-includes/post.php": 128,
-            "wp-includes/link-template.php": 75,
             "wp-includes/taxonomy.php": 74,
-            "wp-includes/functions.php": 63,
             "wp-includes/pluggable.php": 55,
             "wp-includes/query.php": 47,
+            "wp-includes/functions.php": 47,
             "wp-includes/capabilities.php": 43,
             "wp-includes/comment.php": 43,
             "wp-includes/theme.php": 32,
-            "wp-includes/general-template.php": 31,
+            "wp-includes/general-template.php": 28,
             "wp-includes/user.php": 26,
             "wp-includes/option.php": 25,
             "wp-includes/rest-api.php": 24,
-            "wp-includes/load.php": 21,
+            "wp-includes/link-template.php": 21,
+            "wp-includes/load.php": 20,
             "wp-includes/feed.php": 20,
             "wp-includes/comment-template.php": 18,
             "wp-includes/post-template.php": 14,
@@ -158,35 +158,6 @@
                 "Minn/Runtime/PostSave.php": 1
             }
         },
-        "home_url": {
-            "uses": 21,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/CustomLogo.php": 2,
-                "Minn/Front/EmbedCard.php": 1,
-                "Minn/Front/FeedTags.php": 2,
-                "Minn/Front/RuleTable.php": 1,
-                "Minn/Front/ToolbarMenus.php": 3,
-                "Minn/Runtime/ArchiveLinks.php": 2,
-                "Minn/Runtime/MenuItemMarks.php": 1,
-                "Minn/Runtime/PostLinks.php": 9
-            }
-        },
-        "add_query_arg": {
-            "uses": 16,
-            "family": "wp-includes/functions.php",
-            "files": {
-                "Minn/Content/MediaShortcodes.php": 2,
-                "Minn/Front/CommentPostController.php": 1,
-                "Minn/Front/FeedTags.php": 2,
-                "Minn/Front/PostEmbed.php": 1,
-                "Minn/Front/ToolbarMenus.php": 3,
-                "Minn/Rest/Api.php": 3,
-                "Minn/Runtime/ArchiveLinks.php": 1,
-                "Minn/Runtime/CommentPages.php": 1,
-                "Minn/Runtime/PostLinks.php": 2
-            }
-        },
         "get_post_type_object": {
             "uses": 16,
             "family": "wp-includes/post.php",
@@ -289,15 +260,6 @@
                 "Minn/Runtime/ThemeSwitch.php": 8
             }
         },
-        "admin_url": {
-            "uses": 11,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 9,
-                "Minn/Login/LoginController.php": 1,
-                "Minn/Widgets/WidgetForms.php": 1
-            }
-        },
         "get_comment": {
             "uses": 11,
             "family": "wp-includes/comment.php",
@@ -317,17 +279,6 @@
                 "Minn/Front/SitemapRequest.php": 7,
                 "Minn/Runtime/CommentPages.php": 2,
                 "Minn/Runtime/PostData.php": 1
-            }
-        },
-        "user_trailingslashit": {
-            "uses": 10,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/FeedTags.php": 1,
-                "Minn/Front/PostEmbed.php": 1,
-                "Minn/Runtime/ArchiveLinks.php": 2,
-                "Minn/Runtime/CommentPages.php": 1,
-                "Minn/Runtime/PostLinks.php": 5
             }
         },
         "get_taxonomy": {
@@ -621,15 +572,6 @@
                 "Minn/Front/FeedTemplates.php": 1
             }
         },
-        "get_home_url": {
-            "uses": 4,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/PostEmbed.php": 2,
-                "Minn/Front/ToolbarMenus.php": 1,
-                "Minn/Runtime/ArchiveLinks.php": 1
-            }
-        },
         "get_metadata": {
             "uses": 4,
             "family": "wp-includes/meta.php",
@@ -882,15 +824,6 @@
                 "Minn/Runtime/Upgrade.php": 1
             }
         },
-        "includes_url": {
-            "uses": 3,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/EmbedCard.php": 1,
-                "Minn/Front/PostEmbed.php": 1,
-                "Minn/Media/Icons.php": 1
-            }
-        },
         "is_multisite": {
             "uses": 3,
             "family": "wp-includes/load.php",
@@ -932,14 +865,6 @@
             "files": {
                 "Minn/Rest/RestMeta.php": 2,
                 "Minn/Runtime/ThemeSupports.php": 1
-            }
-        },
-        "self_admin_url": {
-            "uses": 3,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 2,
-                "Minn/Runtime/PluginRequirements.php": 1
             }
         },
         "set_site_transient": {
@@ -997,14 +922,6 @@
             "files": {
                 "Minn/Runtime/ThemeSwitch.php": 1,
                 "Minn/Runtime/WidgetAreas.php": 2
-            }
-        },
-        "wp_login_url": {
-            "uses": 3,
-            "family": "wp-includes/general-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1,
-                "Minn/Runtime/AccountFlows.php": 2
             }
         },
         "wp_trash_comment": {
@@ -1932,13 +1849,6 @@
                 "Minn/Runtime/PostData.php": 1
             }
         },
-        "is_ssl": {
-            "uses": 1,
-            "family": "wp-includes/load.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "is_uninstallable_plugin": {
             "uses": 1,
             "family": "wp-admin/includes/plugin.php",
@@ -1986,20 +1896,6 @@
             "family": "wp-includes/capabilities.php",
             "files": {
                 "Minn/Runtime/MetaKeys.php": 1
-            }
-        },
-        "network_admin_url": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
-        "network_site_url": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1
             }
         },
         "nocache_headers": {

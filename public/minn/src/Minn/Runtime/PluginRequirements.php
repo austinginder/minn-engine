@@ -68,7 +68,7 @@ final class PluginRequirements
             $name,
             count($named) === 1 ? '1 plugin' : count($named) . ' plugins',
             implode(', ', $named),
-            Escape::url(\self_admin_url('plugins.php')),
+            Escape::url(SiteUrls::selfAdmin('plugins.php')),
         );
         return new Refusal('plugin_missing_dependencies', "<p>{$message}</p>", $unmet);
     }

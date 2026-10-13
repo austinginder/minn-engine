@@ -10,6 +10,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 
 /**
@@ -52,7 +53,7 @@ final readonly class CommentPostController
         $redirect = (string) ($request->form['redirect_to'] ?? '');
         $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
         if (!$consent && \wp_get_comment_status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {
-            $location = \add_query_arg(['unapproved' => $comment->comment_ID, 'moderation-hash' => \wp_hash($comment->comment_date_gmt)], $location);
+            $location = QueryArgs::add(['unapproved' => $comment->comment_ID, 'moderation-hash' => \wp_hash($comment->comment_date_gmt)], $location);
         }
         \wp_safe_redirect(Runtime::hooks()->filter('comment_post_redirect', [$location, $comment]));
         $sent = (array) Runtime::current()->get('redirect', []);

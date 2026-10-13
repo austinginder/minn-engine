@@ -5,57 +5,41 @@ use Minn\Front\Pagination;
 use Minn\Front\PostNavigation;
 use Minn\Media\Uploads;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteUrls;
 
 function get_home_url($blog_id = null, $path = '', $scheme = null)
 {
-    $original = $scheme;
-    $url = (string) get_option('home');
-    if (!in_array($scheme, ['http', 'https', 'relative'], true)) {
-        $scheme = is_ssl() ? 'https' : (parse_url($url, PHP_URL_SCHEME) ?: 'http');
-    }
-    $url = set_url_scheme($url, $scheme);
-    if ($path !== '' && is_string($path) && !str_contains($path, '..')) {
-        $url .= '/' . ltrim($path, '/');
-    }
-    return apply_filters('home_url', $url, $path, $original, $blog_id);
+    return SiteUrls::home($path, $scheme, $blog_id);
 }
 
 function home_url($path = '', $scheme = null)
 {
-    return get_home_url(null, $path, $scheme);
+    return SiteUrls::home($path, $scheme);
 }
 
 function get_site_url($blog_id = null, $path = '', $scheme = null)
 {
-    $url = set_url_scheme((string) get_option('siteurl'), $scheme);
-    if ($path !== '' && is_string($path) && !str_contains($path, '..')) {
-        $url .= '/' . ltrim($path, '/');
-    }
-    return apply_filters('site_url', $url, $path, $scheme, $blog_id);
+    return SiteUrls::site($path, $scheme, $blog_id);
 }
 
 function site_url($path = '', $scheme = null)
 {
-    return get_site_url(null, $path, $scheme);
+    return SiteUrls::site($path, $scheme);
 }
 
 function get_admin_url($blog_id = null, $path = '', $scheme = 'admin')
 {
-    $url = get_site_url($blog_id, 'wp-admin/', $scheme);
-    if ($path !== '' && is_string($path)) {
-        $url .= ltrim($path, '/');
-    }
-    return apply_filters('admin_url', $url, $path, $blog_id, $scheme);
+    return SiteUrls::admin($path, $scheme, $blog_id);
 }
 
 function admin_url($path = '', $scheme = 'admin')
 {
-    return get_admin_url(null, $path, $scheme);
+    return SiteUrls::admin($path, $scheme);
 }
 
 function self_admin_url($path = '', $scheme = 'admin')
 {
-    return apply_filters('self_admin_url', admin_url($path, $scheme), $path, $scheme);
+    return SiteUrls::selfAdmin($path, $scheme);
 }
 
 function network_admin_url($path = '', $scheme = 'admin')
@@ -94,23 +78,12 @@ function content_url($path = '')
 
 function includes_url($path = '', $scheme = null)
 {
-    $url = site_url('/' . WPINC . '/', $scheme);
-    if ($path !== '' && is_string($path)) {
-        $url .= ltrim($path, '/');
-    }
-    return apply_filters('includes_url', $url, $path, $scheme);
+    return SiteUrls::includes($path, $scheme);
 }
 
 function wp_login_url($redirect = '', $force_reauth = false)
 {
-    $url = site_url('wp-login.php', 'login');
-    if (!empty($redirect)) {
-        $url = add_query_arg('redirect_to', urlencode((string) $redirect), $url);
-    }
-    if ($force_reauth) {
-        $url = add_query_arg('reauth', '1', $url);
-    }
-    return apply_filters('login_url', $url, $redirect, $force_reauth);
+    return SiteUrls::login($redirect, $force_reauth);
 }
 
 function wp_logout_url($redirect = '')
