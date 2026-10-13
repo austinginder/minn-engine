@@ -31,7 +31,7 @@ final class UpdateCounts
         $themes = Can::current('update_themes');
         $core = Can::current('update_core');
         foreach (['plugins' => $plugins, 'themes' => $themes] as $kind => $allowed) {
-            $waiting = $allowed ? \get_site_transient("update_{$kind}") : null;
+            $waiting = $allowed ? Transients::getSite("update_{$kind}") : null;
             $counts[$kind] = is_object($waiting) && !empty($waiting->response) ? count((array) $waiting->response) : 0;
         }
         $release = $core ? \get_core_updates(['dismissed' => false]) : [];

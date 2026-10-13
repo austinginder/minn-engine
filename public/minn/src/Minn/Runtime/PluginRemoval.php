@@ -121,21 +121,21 @@ final class PluginRemoval
     {
         if (isset($registered[$file])) {
             unset($registered[$file]);
-            \update_option('uninstall_plugins', $registered);
+            OptionWrites::update('uninstall_plugins', $registered);
         }
     }
 
     /** The updates offered for plugins that are gone. @param array<int, string> $deleted */
     private static function forgetUpdates(array $deleted): void
     {
-        $offered = \get_site_transient('update_plugins');
+        $offered = Transients::getSite('update_plugins');
         if (!is_object($offered) || !isset($offered->response) || !is_array($offered->response)) {
             return;
         }
         $kept = array_diff_key($offered->response, array_flip($deleted));
         if (count($kept) !== count($offered->response)) {
             $offered->response = $kept;
-            \set_site_transient('update_plugins', $offered);
+            Transients::setSite('update_plugins', $offered);
         }
     }
 }

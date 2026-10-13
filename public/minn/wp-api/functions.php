@@ -1092,6 +1092,9 @@ function wp_die($message = '', $title = '', $args = [])
     $callback($message, $title, $args);
 }
 
+// The engine ends a request with a message through Minn\Runtime\Handoff, so the handler plugins choose draws it.
+Minn\Runtime\Handoff::bind(['stop' => static fn (...$args) => wp_die(...$args)]);
+
 /**
  * The timezone menu's order: Etc entries among themselves by their own
  * names (GMT+N falling, UTC between them and the rest, the rest

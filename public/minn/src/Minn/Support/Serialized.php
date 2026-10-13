@@ -263,6 +263,19 @@ final class Serialized
         return $data === 'N;' || preg_match('/^(?:[bid]:.+;|s:\d+:".*";|[aO]:\d+:.+)$/s', $data) === 1;
     }
 
+    /**
+     * A value as maybe_serialize() stores it: an array or object serialized,
+     * and a string that already looks serialized serialized again, so it
+     * reads back as the string it was; anything else as given.
+     */
+    public static function maybeEncode(mixed $data): mixed
+    {
+        if (is_array($data) || is_object($data) || (is_string($data) && self::looksSerialized($data))) {
+            return self::encode($data);
+        }
+        return $data;
+    }
+
     private static function until(string $blob, int &$offset, string $char): string
     {
         $end = strpos($blob, $char, $offset);

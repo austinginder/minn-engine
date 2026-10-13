@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 820,
-        "composes": 2366,
+        "minn": 813,
+        "composes": 2356,
         "leaf": 1024,
-        "noop": 2798,
+        "noop": 2815,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1086,
+        "minnMethods": 1101,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -41998,15 +41998,12 @@
         },
         "add_network_option": {
             "file": "option.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_option",
-                "apply_filters",
-                "do_action",
-                "get_current_network_id"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteOptions::add"
+            ],
+            "composes": []
         },
         "add_object_page": {
             "file": "deadends.php",
@@ -42018,21 +42015,12 @@
         },
         "add_option": {
             "file": "option.php",
-            "lines": 23,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Options::guarded",
-                "Minn\\Runtime\\Runtime::options"
+                "Minn\\Runtime\\OptionWrites::add"
             ],
-            "composes": [
-                "apply_filters",
-                "do_action",
-                "get_option",
-                "maybe_serialize",
-                "sanitize_option",
-                "wp_determine_option_autoload_value",
-                "wp_protect_special_option"
-            ]
+            "composes": []
         },
         "add_option_update_handler": {
             "file": "deadends.php",
@@ -45131,27 +45119,21 @@
         },
         "delete_network_option": {
             "file": "option.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "delete_option",
-                "do_action",
-                "get_current_network_id"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteOptions::delete"
+            ],
+            "composes": []
         },
         "delete_option": {
             "file": "option.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Options::guarded",
-                "Minn\\Runtime\\Runtime::options"
+                "Minn\\Runtime\\OptionWrites::delete"
             ],
-            "composes": [
-                "do_action",
-                "wp_protect_special_option"
-            ]
+            "composes": []
         },
         "delete_plugins": {
             "file": "admin.php",
@@ -45202,13 +45184,12 @@
         },
         "delete_site_transient": {
             "file": "option.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "delete_site_option",
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Transients::deleteSite"
+            ],
+            "composes": []
         },
         "delete_term_meta": {
             "file": "meta.php",
@@ -45234,13 +45215,12 @@
         },
         "delete_transient": {
             "file": "option.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "delete_option",
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Transients::delete"
+            ],
+            "composes": []
         },
         "delete_user_meta": {
             "file": "user.php",
@@ -49826,14 +49806,12 @@
         },
         "get_network_option": {
             "file": "option.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_current_network_id",
-                "get_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteOptions::get"
+            ],
+            "composes": []
         },
         "get_next_comments_link": {
             "file": "comment.php",
@@ -51434,16 +51412,12 @@
         },
         "get_site_transient": {
             "file": "option.php",
-            "lines": 18,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::options"
+                "Minn\\Runtime\\Transients::getSite"
             ],
-            "composes": [
-                "apply_filters",
-                "delete_site_option",
-                "get_site_option"
-            ]
+            "composes": []
         },
         "get_site_url": {
             "file": "link-template.php",
@@ -52717,16 +52691,12 @@
         },
         "get_transient": {
             "file": "option.php",
-            "lines": 15,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::options"
+                "Minn\\Runtime\\Transients::get"
             ],
-            "composes": [
-                "apply_filters",
-                "delete_option",
-                "get_option"
-            ]
+            "composes": []
         },
         "get_translations_for_domain": {
             "file": "l10n.php",
@@ -55376,14 +55346,12 @@
         },
         "maybe_serialize": {
             "file": "option.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\Serialized::encode"
+                "Minn\\Support\\Serialized::maybeEncode"
             ],
-            "composes": [
-                "is_serialized"
-            ]
+            "composes": []
         },
         "maybe_unserialize": {
             "file": "option.php",
@@ -61103,17 +61071,12 @@
         },
         "set_site_transient": {
             "file": "option.php",
-            "lines": 22,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_site_option",
-                "apply_filters",
-                "do_action",
-                "do_action_deprecated",
-                "get_site_option",
-                "update_site_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Transients::setSite"
+            ],
+            "composes": []
         },
         "set_status": {
             "file": "classes/WP_Http.php",
@@ -61138,18 +61101,12 @@
         },
         "set_transient": {
             "file": "option.php",
-            "lines": 35,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_option",
-                "apply_filters",
-                "delete_option",
-                "do_action",
-                "do_action_deprecated",
-                "get_option",
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Transients::set"
+            ],
+            "composes": []
         },
         "set_url_scheme": {
             "file": "formatting.php",
@@ -63194,18 +63151,12 @@
         },
         "update_network_option": {
             "file": "option.php",
-            "lines": 16,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_network_option",
-                "apply_filters",
-                "do_action",
-                "get_current_network_id",
-                "get_network_option",
-                "maybe_serialize",
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\SiteOptions::update"
+            ],
+            "composes": []
         },
         "update_object_term_cache": {
             "file": "taxonomy.php",
@@ -63221,21 +63172,12 @@
         },
         "update_option": {
             "file": "option.php",
-            "lines": 26,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Options::guarded",
-                "Minn\\Runtime\\Runtime::options"
+                "Minn\\Runtime\\OptionWrites::update"
             ],
-            "composes": [
-                "add_option",
-                "apply_filters",
-                "do_action",
-                "get_option",
-                "maybe_serialize",
-                "sanitize_option",
-                "wp_protect_special_option"
-            ]
+            "composes": []
         },
         "update_option_new_admin_email": {
             "file": "deadends.php",
@@ -67772,12 +67714,12 @@
         },
         "wp_determine_option_autoload_value": {
             "file": "option.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\OptionWrites::autoloadFlag"
+            ],
+            "composes": []
         },
         "wp_die": {
             "file": "functions.php",
@@ -74146,14 +74088,12 @@
         },
         "wp_protect_special_option": {
             "file": "option.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "esc_html",
-                "wp_die"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\OptionWrites::protect"
+            ],
+            "composes": []
         },
         "wp_prototype_before_jquery": {
             "file": "script-loader.php",
@@ -76073,10 +76013,10 @@
         },
         "wp_set_option_autoload_values": {
             "file": "option.php",
-            "lines": 7,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::options"
+                "Minn\\Runtime\\OptionWrites::setAutoload"
             ],
             "composes": []
         },

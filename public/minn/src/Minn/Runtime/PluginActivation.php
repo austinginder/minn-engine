@@ -55,7 +55,7 @@ final class PluginActivation
         } else {
             $active[] = $plugin;
             sort($active);
-            \update_option('active_plugins', $active);
+            OptionWrites::update('active_plugins', $active);
         }
         $announce?->action('activated_plugin', [$plugin, $network]);
         $printed = (string) ob_get_clean();
@@ -80,7 +80,7 @@ final class PluginActivation
             $announce?->action("deactivate_{$plugin}", [false]);
             $announce?->action('deactivated_plugin', [$plugin, false]);
         }
-        \update_option('active_plugins', $active);
+        OptionWrites::update('active_plugins', $active);
     }
 
     /** @return list<string> */

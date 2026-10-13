@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\RestError;
+use Minn\Runtime\OptionWrites;
 use Minn\Runtime\RegisteredSettings;
 use Minn\Runtime\Runtime;
 
@@ -69,13 +70,13 @@ final readonly class LiveSettings
                 continue;
             }
             if ($value !== null) {
-                \update_option($args['option_name'], $value);
+                OptionWrites::update($args['option_name'], $value);
                 continue;
             }
             if ($this->schema->validate(Runtime::options()->filtered($args['option_name'], false), $args['schema'], $name) !== true) {
                 throw new RestError('rest_invalid_stored_value', sprintf('The %s property has an invalid stored value, and cannot be updated to null.', $name), 500);
             }
-            \delete_option($args['option_name']);
+            OptionWrites::delete($args['option_name']);
         }
     }
 

@@ -15992,6 +15992,16 @@ avatars and redirects, each bound to its function by the WordPress layer and pas
 given, so each function's own defaults hold. `QueryArgs::withNonce()` is wp_nonce_url and
 `SiteUrls::logout()` is wp_logout_url. All 370 probes give identical output before and after.
 
+**Batch 9, options written and transients (function calls 614 → 589).** `Runtime\OptionWrites` adds,
+updates and deletes options as add_option, update_option and delete_option did (name trimmed,
+alloptions and notoptions stopped, guarded names refused, value sanitized, the actions around each
+change; an unchanged value writes nothing), decides an autoload flag and sets them.
+`Runtime\SiteOptions` keeps the network's options (stored not to autoload, the network hooks around
+them, network 1 when none is named), and `Runtime\Transients` the site's and the network's
+transients. `Support\Serialized::maybeEncode()` is maybe_serialize. Stopping a request at a protected
+option goes through `Handoff::stop()`, which the WordPress layer binds to wp_die, so the handler
+plugins choose still draws the page. All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

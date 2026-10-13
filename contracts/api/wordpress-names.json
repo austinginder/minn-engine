@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 614,
-        "functions": 291,
+        "functionCalls": 589,
+        "functions": 285,
         "hookApi": 0,
         "classReferences": 568,
         "classes": 50,
-        "files": 151
+        "files": 148
     },
     "families": {
         "functions": {
@@ -17,7 +17,6 @@
             "wp-includes/comment.php": 43,
             "wp-includes/theme.php": 32,
             "wp-includes/general-template.php": 27,
-            "wp-includes/option.php": 25,
             "wp-includes/rest-api.php": 24,
             "wp-includes/link-template.php": 21,
             "wp-includes/feed.php": 20,
@@ -188,16 +187,6 @@
                 "Minn/Runtime/TermSave.php": 1
             }
         },
-        "update_option": {
-            "uses": 12,
-            "family": "wp-includes/option.php",
-            "files": {
-                "Minn/Rest/LiveSettings.php": 1,
-                "Minn/Runtime/PluginActivation.php": 2,
-                "Minn/Runtime/PluginRemoval.php": 1,
-                "Minn/Runtime/ThemeSwitch.php": 8
-            }
-        },
         "get_comment": {
             "uses": 11,
             "family": "wp-includes/comment.php",
@@ -365,14 +354,6 @@
                 "Minn/Runtime/CommentForm.php": 1
             }
         },
-        "delete_option": {
-            "uses": 4,
-            "family": "wp-includes/option.php",
-            "files": {
-                "Minn/Rest/LiveSettings.php": 1,
-                "Minn/Runtime/ThemeSwitch.php": 3
-            }
-        },
         "esc_sql": {
             "uses": 4,
             "family": "wp-includes/formatting.php",
@@ -405,15 +386,6 @@
                 "Minn/Runtime/MenuEvents.php": 1,
                 "Minn/Runtime/NavMenu.php": 1,
                 "Minn/Runtime/ThemeSwitch.php": 1
-            }
-        },
-        "get_site_transient": {
-            "uses": 4,
-            "family": "wp-includes/option.php",
-            "files": {
-                "Minn/Ops/Updates.php": 2,
-                "Minn/Runtime/PluginRemoval.php": 1,
-                "Minn/Runtime/UpdateCounts.php": 1
             }
         },
         "get_stylesheet": {
@@ -646,14 +618,6 @@
             "files": {
                 "Minn/Rest/RestMeta.php": 2,
                 "Minn/Runtime/ThemeSupports.php": 1
-            }
-        },
-        "set_site_transient": {
-            "uses": 3,
-            "family": "wp-includes/option.php",
-            "files": {
-                "Minn/Ops/Updates.php": 2,
-                "Minn/Runtime/PluginRemoval.php": 1
             }
         },
         "wp_get_inline_script_tag": {
@@ -1196,13 +1160,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Cron/Cron.php": 1
-            }
-        },
-        "delete_site_transient": {
-            "uses": 1,
-            "family": "wp-includes/option.php",
-            "files": {
-                "Minn/Runtime/ThemeSwitch.php": 1
             }
         },
         "do_feed": {
@@ -2190,13 +2147,6 @@
             "family": "wp-includes/taxonomy.php",
             "files": {
                 "Minn/Runtime/PostEvents.php": 1
-            }
-        },
-        "wp_set_option_autoload_values": {
-            "uses": 1,
-            "family": "wp-includes/option.php",
-            "files": {
-                "Minn/Runtime/ThemeSwitch.php": 1
             }
         },
         "wp_set_post_categories": {

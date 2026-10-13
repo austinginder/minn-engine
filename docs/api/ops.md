@@ -878,7 +878,7 @@ Stylesheet => style.css headers. @return array<string, array<string, string>>
 
 - `@return array<string, array<string, string>>`
 
-Internals: `locales()` (private, line 83), `supplied()` (private, line 211), `saveAuto()` (private, line 346), `pluginHeaders()` (private, line 403), `apply()` (private, line 447), `consume()` (private, line 468), `map()` (private, line 481), `safeUrl()` (private, line 489)
+Internals: `locales()` (private, line 84), `supplied()` (private, line 212), `saveAuto()` (private, line 347), `pluginHeaders()` (private, line 404), `apply()` (private, line 448), `consume()` (private, line 469), `map()` (private, line 482), `safeUrl()` (private, line 490)
 
 
 ## UpgraderRun

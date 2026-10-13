@@ -6,9 +6,12 @@
 
 use Minn\Runtime\OptionSanitizer;
 use Minn\Runtime\Options;
+use Minn\Runtime\OptionWrites;
 use Minn\Runtime\RegisteredSettings;
 use Minn\Runtime\Runtime;
+use Minn\Runtime\SiteOptions;
 use Minn\Runtime\StoredObjects;
+use Minn\Runtime\Transients;
 use Minn\Support\Serialized;
 
 function get_option($option, $default_value = false)
@@ -21,71 +24,27 @@ function get_site_option($option, $default_value = false, $deprecated = true)
     return get_network_option(null, $option, $default_value);
 }
 
-// On a single site the network options are options, stored not to autoload,
-// with the network layer's own hooks around the option calls (probe
-// site-options): pre_site_option_<name> and pre_site_option may answer a
-// read, default_site_option_<name> sets its default and site_option_<name>
-// has the last word; writes are told as add_, update_ and delete_site_option.
+// The network's options are Minn\Runtime\SiteOptions (probe site-options).
 
 function get_network_option($network_id, $option, $default_value = false)
 {
-    $option = (string) $option;
-    // The hooks hear the network asked for, else the current one (probe option-remaining).
-    $network = $network_id ? (int) $network_id : get_current_network_id();
-    $pre = apply_filters("pre_site_option_{$option}", false, $option, $network, $default_value);
-    $pre = apply_filters('pre_site_option', $pre, $option, $network, $default_value);
-    if ($pre !== false) {
-        return $pre;
-    }
-    $default_value = apply_filters("default_site_option_{$option}", $default_value, $option, $network);
-    return apply_filters("site_option_{$option}", get_option($option, $default_value), $option, $network);
+    return SiteOptions::get($option, $default_value, $network_id);
 }
 
 function add_network_option($network_id, $option, $value)
 {
-    $option = (string) $option;
-    $network = $network_id ? (int) $network_id : get_current_network_id();
-    $value = apply_filters("pre_add_site_option_{$option}", $value, $option, $network);
-    if (!add_option($option, $value, '', false)) {
-        return false;
-    }
-    do_action("add_site_option_{$option}", $option, $value, $network);
-    do_action('add_site_option', $option, $value, $network);
-    return true;
+    return SiteOptions::add($option, $value, $network_id);
 }
 
 /** An unchanged value is no update; an option not there yet is added. */
 function update_network_option($network_id, $option, $value)
 {
-    $option = (string) $option;
-    $network = $network_id ? (int) $network_id : get_current_network_id();
-    $old = get_network_option($network_id, $option);
-    $value = apply_filters("pre_update_site_option_{$option}", $value, $old, $option, $network);
-    if ($value === $old || maybe_serialize($value) === maybe_serialize($old)) {
-        return false;
-    }
-    if ($old === false) {
-        return add_network_option($network_id, $option, $value);
-    }
-    if (!update_option($option, $value, false)) {
-        return false;
-    }
-    do_action("update_site_option_{$option}", $option, $value, $old, $network);
-    do_action('update_site_option', $option, $value, $old, $network);
-    return true;
+    return SiteOptions::update($option, $value, $network_id);
 }
 
 function delete_network_option($network_id, $option)
 {
-    $option = (string) $option;
-    $network = $network_id ? (int) $network_id : get_current_network_id();
-    do_action("pre_delete_site_option_{$option}", $option, $network);
-    if (!delete_option($option)) {
-        return false;
-    }
-    do_action("delete_site_option_{$option}", $option, $network);
-    do_action('delete_site_option', $option, $network);
-    return true;
+    return SiteOptions::delete($option, $network_id);
 }
 
 function add_site_option($option, $value)
@@ -105,80 +64,19 @@ function delete_site_option($option)
 
 function add_option($option, $value = '', $deprecated = '', $autoload = null)
 {
-    $option = trim((string) $option);
-    if ($option === '') {
-        return false;
-    }
-    wp_protect_special_option($option);
-    if (Options::guarded($option)) {
-        return false;
-    }
-    $value = sanitize_option($option, $value);
-    // An option is new while it reads as its default; a read that already
-    // found it unset needs no second look.
-    if (!Runtime::options()->knownMissing($option) && apply_filters("default_option_{$option}", false, $option, false) !== get_option($option)) {
-        return false;
-    }
-    // Not given, the flag is decided (an option too big to autoload is stored auto-off, probe option-more).
-    $flag = $autoload === 'auto' ? 'auto' : wp_determine_option_autoload_value($option, $value, maybe_serialize($value), $autoload);
-    do_action('add_option', $option, $value);
-    if (!Runtime::options()->add($option, $value, $flag)) {
-        return false;
-    }
-    do_action("add_option_{$option}", $option, $value);
-    do_action('added_option', $option, $value);
-    return true;
+    return OptionWrites::add($option, $value, $autoload);
 }
 
 
 function update_option($option, $value, $autoload = null)
 {
-    $option = trim((string) $option);
-    if ($option === '') {
-        return false;
-    }
-    wp_protect_special_option($option);
-    if (Options::guarded($option)) {
-        return false;
-    }
-    $value = sanitize_option($option, $value);
-    $old = get_option($option);
-    $value = apply_filters("pre_update_option_{$option}", $value, $old, $option);
-    $value = apply_filters('pre_update_option', $value, $option, $old);
-    // An unchanged value is no update: nothing is written and nobody is told.
-    if ($value === $old || maybe_serialize($value) === maybe_serialize($old)) {
-        return false;
-    }
-    if (apply_filters("default_option_{$option}", false, $option, false) === $old) {
-        return add_option($option, $value, '', $autoload);
-    }
-    do_action('update_option', $option, $old, $value);
-    if (!Runtime::options()->update($option, $value)) {
-        return false;
-    }
-    do_action("update_option_{$option}", $old, $value, $option);
-    do_action('updated_option', $option, $old, $value);
-    return true;
+    return OptionWrites::update($option, $value, $autoload);
 }
 
 
 function delete_option($option)
 {
-    $option = trim((string) $option);
-    if ($option === '') {
-        return false;
-    }
-    wp_protect_special_option($option);
-    if (Options::guarded($option) || !Runtime::options()->exists($option)) {
-        return false;
-    }
-    do_action('delete_option', $option);
-    if (!Runtime::options()->delete($option)) {
-        return false;
-    }
-    do_action("delete_option_{$option}", $option);
-    do_action('deleted_option', $option);
-    return true;
+    return OptionWrites::delete($option);
 }
 
 
@@ -419,134 +317,34 @@ endif;
 
 function get_transient($transient)
 {
-    $transient = (string) $transient;
-    $pre = apply_filters("pre_transient_{$transient}", false, $transient);
-    if ($pre !== false) {
-        return $pre;
-    }
-    // The timeout and the value are read together, one query rather than two.
-    Runtime::options()->prime(["_transient_timeout_{$transient}", "_transient_{$transient}"]);
-    $timeout = get_option("_transient_timeout_{$transient}");
-    if ($timeout !== false && (int) $timeout < time()) {
-        delete_option("_transient_{$transient}");
-        delete_option("_transient_timeout_{$transient}");
-        return false;
-    }
-    $value = get_option("_transient_{$transient}");
-    return apply_filters("transient_{$transient}", $value, $transient);
+    return Transients::get($transient);
 }
 
 function set_transient($transient, $value, $expiration = 0)
 {
-    $transient = (string) $transient;
-    $expiration = (int) $expiration;
-    $value = apply_filters("pre_set_transient_{$transient}", $value, $expiration, $transient);
-    $expiration = (int) apply_filters("expiration_of_transient_{$transient}", $expiration, $value, $transient);
-    $name = "_transient_{$transient}";
-    $timeoutName = "_transient_timeout_{$transient}";
-    if (get_option($name) === false) {
-        $autoload = 'on';
-        if ($expiration !== 0) {
-            $autoload = 'off';
-            add_option($timeoutName, time() + $expiration, '', 'off');
-        }
-        $result = add_option($name, $value, '', $autoload);
-    } else {
-        $update = true;
-        if ($expiration !== 0) {
-            if (get_option($timeoutName) === false) {
-                delete_option($name);
-                add_option($timeoutName, time() + $expiration, '', 'off');
-                $result = add_option($name, $value, '', 'off');
-                $update = false;
-            } else {
-                update_option($timeoutName, time() + $expiration);
-            }
-        }
-        if ($update) {
-            $result = update_option($name, $value);
-        }
-    }
-    if ($result) {
-        do_action("set_transient_{$transient}", $value, $expiration, $transient);
-        do_action('set_transient', $transient, $value, $expiration);
-        do_action_deprecated('setted_transient', [$transient, $value, $expiration], '6.8.0', 'set_transient');
-    }
-    return $result;
+    return Transients::set($transient, $value, $expiration);
 }
 
 function delete_transient($transient)
 {
-    $transient = (string) $transient;
-    do_action("delete_transient_{$transient}", $transient);
-    $result = delete_option("_transient_{$transient}");
-    if ($result) {
-        delete_option("_transient_timeout_{$transient}");
-        do_action('deleted_transient', $transient);
-    }
-    return $result;
+    return Transients::delete($transient);
 }
 
 /** A site transient (probe site-options): the update transients are read with no timeout; an expired one is deleted and reads false. */
 function get_site_transient($transient)
 {
-    $transient = (string) $transient;
-    $pre = apply_filters("pre_site_transient_{$transient}", false, $transient);
-    if ($pre !== false) {
-        return $pre;
-    }
-    $name = "_site_transient_{$transient}";
-    $expired = false;
-    if (!in_array($transient, ['update_core', 'update_plugins', 'update_themes'], true)) {
-        // On a single site the timeout and the value are options, read together: one query rather than two.
-        Runtime::options()->prime(["_site_transient_timeout_{$transient}", $name]);
-        $timeout = get_site_option("_site_transient_timeout_{$transient}");
-        if ($timeout !== false && (int) $timeout < time()) {
-            delete_site_option($name);
-            delete_site_option("_site_transient_timeout_{$transient}");
-            $expired = true;
-        }
-    }
-    return apply_filters("site_transient_{$transient}", $expired ? false : get_site_option($name), $transient);
+    return Transients::getSite($transient);
 }
 
 /** Written as site options, the timeout first; told as set_site_transient_<name> and set_site_transient. */
 function set_site_transient($transient, $value, $expiration = 0)
 {
-    $transient = (string) $transient;
-    $value = apply_filters("pre_set_site_transient_{$transient}", $value, $transient);
-    $expiration = (int) apply_filters("expiration_of_site_transient_{$transient}", (int) $expiration, $value, $transient);
-    $name = "_site_transient_{$transient}";
-    $timeout = "_site_transient_timeout_{$transient}";
-    if (get_site_option($name) === false) {
-        if ($expiration) {
-            add_site_option($timeout, time() + $expiration);
-        }
-        $result = add_site_option($name, $value);
-    } else {
-        if ($expiration) {
-            update_site_option($timeout, time() + $expiration);
-        }
-        $result = update_site_option($name, $value);
-    }
-    if ($result) {
-        do_action("set_site_transient_{$transient}", $value, $expiration, $transient);
-        do_action('set_site_transient', $transient, $value, $expiration);
-        do_action_deprecated('setted_site_transient', [$transient, $value, $expiration], '6.8.0', 'set_site_transient');
-    }
-    return $result;
+    return Transients::setSite($transient, $value, $expiration);
 }
 
 function delete_site_transient($transient)
 {
-    $transient = (string) $transient;
-    do_action("delete_site_transient_{$transient}", $transient);
-    $result = delete_site_option("_site_transient_{$transient}");
-    if ($result) {
-        delete_site_option("_site_transient_timeout_{$transient}");
-        do_action('deleted_site_transient', $transient);
-    }
-    return $result;
+    return Transients::deleteSite($transient);
 }
 
 function is_serialized($data, $strict = true)
@@ -564,13 +362,7 @@ function is_serialized_string($data)
 
 function maybe_serialize($data)
 {
-    if (is_array($data) || is_object($data)) {
-        return Serialized::encode($data);
-    }
-    if (is_serialized($data, false)) {
-        return Serialized::encode($data);
-    }
-    return $data;
+    return Serialized::maybeEncode($data);
 }
 
 function maybe_unserialize($data)
@@ -631,13 +423,7 @@ function wp_set_option_autoload($option, $autoload)
 
 function wp_set_option_autoload_values($options)
 {
-    $results = [];
-    foreach ((array) $options as $name => $autoload) {
-        // Only these mean off; anything else, null and 'auto' among them, means on (probe option-remaining).
-        $on = !in_array($autoload, [false, 'no', 'off', 'auto-off', 0], true);
-        $results[$name] = $on ? Runtime::options()->markAutoload((string) $name) : Runtime::options()->unmarkAutoload((string) $name);
-    }
-    return $results;
+    return OptionWrites::setAutoload($options);
 }
 
 function delete_expired_transients($force_db = false)
@@ -662,9 +448,7 @@ function wp_autoload_values_to_autoload()
 /** Stops with wp_die when asked to touch alloptions or notoptions, the names the option cache keeps for itself. */
 function wp_protect_special_option($option)
 {
-    if ($option === 'alloptions' || $option === 'notoptions') {
-        wp_die(sprintf(__('%s is a protected WP option and may not be modified'), esc_html($option)));
-    }
+    OptionWrites::protect($option);
 }
 
 /** Options keep no cache here to prime. */
@@ -689,24 +473,10 @@ function wp_set_options_autoload($options, $autoload)
     return wp_set_option_autoload_values(array_fill_keys((array) $options, $autoload));
 }
 
-/**
- * The autoload flag an option is stored with (probe option-more): "on" for
- * on, yes or true, "off" for off, no or false; anything else is decided by
- * wp_default_autoload_value (auto-on, auto-off) or left "auto".
- */
+/** The autoload flag an option is stored with (probe option-more). */
 function wp_determine_option_autoload_value($option, $value, $serialized_value, $autoload)
 {
-    if ($autoload === 'on' || $autoload === 'off') {
-        return $autoload;
-    }
-    if ($autoload === true || $autoload === 'yes') {
-        return 'on';
-    }
-    if ($autoload === false || $autoload === 'no') {
-        return 'off';
-    }
-    $decided = apply_filters('wp_default_autoload_value', null, $option, $value, $serialized_value);
-    return is_bool($decided) ? ($decided ? 'auto-on' : 'auto-off') : 'auto';
+    return OptionWrites::autoloadFlag($option, $value, $serialized_value, $autoload);
 }
 
 /** An option whose stored value is longer than wp_max_autoloaded_option_size (150000 bytes) is not autoloaded (on wp_default_autoload_value). */

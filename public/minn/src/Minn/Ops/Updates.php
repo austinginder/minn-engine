@@ -9,6 +9,7 @@ use Minn\Content\Site;
 use Minn\Http;
 use Minn\Json;
 use Minn\RestError;
+use Minn\Runtime\Transients;
 use Minn\Support\FileHeaders;
 use Minn\Runtime\PluginUpdates;
 use Minn\Runtime\Runtime;
@@ -66,7 +67,7 @@ final class Updates
     public function checkForWordPress(string $transient, array $fresh): void
     {
         $state = $fresh === [] ? $this->state() : $this->refresh();
-        $published = \get_site_transient($transient);
+        $published = Transients::getSite($transient);
         if (!is_object($published) || (int) ($published->last_checked ?? 0) !== (int) $state['checked']) {
             $this->publish();
         }
@@ -183,14 +184,14 @@ final class Updates
         foreach ($this->themeHeaders() as $slug => $headers) {
             $themes[$slug] = $headers['Version'];
         }
-        \set_site_transient('update_plugins', (object) [
+        Transients::setSite('update_plugins', (object) [
             'last_checked' => (int) $state['checked'],
             'response' => array_map(static fn (array $offer): object => (object) $offer, $state['plugins']),
             'translations' => [],
             'no_update' => array_map(static fn (array $offer): object => (object) $offer, $state['no_update']),
             'checked' => $this->pluginVersions(),
         ]);
-        \set_site_transient('update_themes', (object) [
+        Transients::setSite('update_themes', (object) [
             'last_checked' => (int) $state['checked'],
             'checked' => $themes,
             'response' => $state['themes'],
@@ -447,7 +448,7 @@ final class Updates
     private function apply(string $kind, string $item, string $package): void
     {
         $bucket = $kind === 'theme' ? 'update_themes' : 'update_plugins';
-        if (!isset(((array) (\get_site_transient($bucket)->response ?? []))[$item])) {
+        if (!isset(((array) (Transients::getSite($bucket)->response ?? []))[$item])) {
             $this->publish();
         }
         $sha256 = (new UpgraderRun($this->packages))->update($kind, $item, $package);

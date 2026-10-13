@@ -35,17 +35,17 @@ final class ThemeSwitch
         \set_theme_mod('sidebars_widgets', ['time' => time(), 'data' => \wp_get_sidebars_widgets()]);
         $locations = \get_theme_mod('nav_menu_locations');
         if ($locations !== false || Runtime::options()->filtered('theme_switch_menu_locations') !== false) {
-            \update_option('theme_switch_menu_locations', $locations, true);
+            OptionWrites::update('theme_switch_menu_locations', $locations, true);
         }
-        \update_option('template', $new->get_template());
-        \update_option('stylesheet', $new->get_stylesheet());
-        \delete_option('template_root');
-        \delete_option('stylesheet_root');
-        \update_option('current_theme', $new->get('Name'));
+        OptionWrites::update('template', $new->get_template());
+        OptionWrites::update('stylesheet', $new->get_stylesheet());
+        OptionWrites::delete('template_root');
+        OptionWrites::delete('stylesheet_root');
+        OptionWrites::update('current_theme', $new->get('Name'));
         \set_theme_mod('wp_classic_sidebars', $GLOBALS['wp_registered_sidebars'] ?? []);
-        \update_option('theme_switched', $old->get_stylesheet());
-        \update_option('theme_switched_via_customizer', false);
-        \wp_set_option_autoload_values(['theme_mods_' . $new->get_stylesheet() => true, 'theme_mods_' . $old->get_stylesheet() => false]);
+        OptionWrites::update('theme_switched', $old->get_stylesheet());
+        OptionWrites::update('theme_switched_via_customizer', false);
+        OptionWrites::setAutoload(['theme_mods_' . $new->get_stylesheet() => true, 'theme_mods_' . $old->get_stylesheet() => false]);
         Runtime::hooks()->action('switch_theme', [$new->get('Name'), $new, $old]);
     }
 
@@ -60,11 +60,11 @@ final class ThemeSwitch
         if (Runtime::options()->filtered('theme_switched_via_customizer')) {
             Runtime::hooks()->remove('after_switch_theme', '_wp_menus_changed');
             Runtime::hooks()->remove('after_switch_theme', '_wp_sidebars_changed');
-            \update_option('theme_switched_via_customizer', false);
+            OptionWrites::update('theme_switched_via_customizer', false);
         }
         Runtime::hooks()->action('after_switch_theme', [$old->exists() ? $old->get('Name') : (string) $stylesheet, $old]);
         \flush_rewrite_rules();
-        \update_option('theme_switched', false);
+        OptionWrites::update('theme_switched', false);
     }
 
     /** _wp_menus_changed: the leaving theme's menu locations mapped onto the arriving theme's. */
@@ -72,7 +72,7 @@ final class ThemeSwitch
     {
         $mapped = self::mapLocations(\get_nav_menu_locations(), Runtime::options()->filtered('theme_switch_menu_locations'));
         \set_theme_mod('nav_menu_locations', $mapped);
-        \delete_option('theme_switch_menu_locations');
+        OptionWrites::delete('theme_switch_menu_locations');
     }
 
     /**
@@ -130,7 +130,7 @@ final class ThemeSwitch
         Runtime::hooks()->action('delete_theme', [$stylesheet]);
         $deleted = $remove !== null ? (bool) $remove($stylesheet) : self::removeFolder($stylesheet);
         Runtime::hooks()->action('deleted_theme', [$stylesheet, $deleted]);
-        \delete_site_transient('update_themes');
+        Transients::deleteSite('update_themes');
         return $deleted;
     }
 

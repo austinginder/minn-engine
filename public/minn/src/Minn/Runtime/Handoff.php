@@ -12,7 +12,8 @@ use LogicException;
  * the last word. WordPress lets a plugin define its own version of the
  * replaceable functions (the current user, users by id or field, hashes,
  * nonces, passwords, mail, avatars, redirects, signing in) before the
- * defaults load, and its user records are that layer's objects; the
+ * defaults load; its user records are that layer's objects, and it ends a
+ * request with a message its own way (handlers plugins choose); the
  * WordPress layer binds each answer here (the replaceable ones once the
  * plugins have had their chance), so a plugin's version answers the engine
  * as it answers WordPress. Arguments pass as given, so each answer's own
@@ -26,7 +27,7 @@ final class Handoff
     /**
      * Binds answers by name: currentUser, signedIn, user, userBy, userRecord,
      * becomeUser, cacheUsers, authenticate, setPassword, password, hash,
-     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect.
+     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop.
      *
      * @param array<string, Closure> $answers
      */
@@ -135,6 +136,12 @@ final class Handoff
     public static function safeRedirect(mixed ...$args): mixed
     {
         return self::answer('safeRedirect', ...$args);
+    }
+
+    /** Ends the request with a message (wp_die), as the handler plugins choose draws it. */
+    public static function stop(mixed ...$args): void
+    {
+        self::answer('stop', ...$args);
     }
 
     private static function answer(string $name, mixed ...$args): mixed

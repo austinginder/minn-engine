@@ -69961,6 +69961,7 @@
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Notices",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Registry",
@@ -86728,6 +86729,7 @@
                 "Minn\\RestError",
                 "Minn\\Runtime\\PluginUpdates",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Transients",
                 "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Serialized"
             ],
@@ -86781,8 +86783,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 46,
-                "end": 53
+                "line": 47,
+                "end": 54
             },
             "cases": [],
             "constants": [
@@ -86880,8 +86882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -86907,8 +86909,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 73
+                    "line": 67,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -86919,8 +86921,8 @@
                     "doc": "The stored answer, refreshed when older than the TTL or absent.",
                     "shapes": [],
                     "params": [],
-                    "line": 97,
-                    "end": 113
+                    "line": 98,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -86931,8 +86933,8 @@
                     "doc": "Asks the directory now, whatever the cache says, and keeps the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 116,
-                    "end": 119
+                    "line": 117,
+                    "end": 120
                 },
                 {
                     "routes": [],
@@ -86943,8 +86945,8 @@
                     "doc": "Asks the directory now and stores the answer.",
                     "shapes": [],
                     "params": [],
-                    "line": 122,
-                    "end": 171
+                    "line": 123,
+                    "end": 172
                 },
                 {
                     "routes": [],
@@ -86955,8 +86957,8 @@
                     "doc": "The offers in WordPress's update transients, update_plugins and\nupdate_themes, in the shape wp_update_plugins and wp_update_themes\nleave there: where plugins, the facade's update helpers and the\nupgraders read them. Written after every check and after an update.",
                     "shapes": [],
                     "params": [],
-                    "line": 179,
-                    "end": 200
+                    "line": 180,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -86969,8 +86971,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 233,
-                    "end": 244
+                    "line": 234,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -86983,8 +86985,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 247,
-                    "end": 258
+                    "line": 248,
+                    "end": 259
                 },
                 {
                     "routes": [],
@@ -86997,8 +86999,8 @@
                         "@return array<string, array{slug: string, icon: string, url: string}>"
                     ],
                     "params": [],
-                    "line": 261,
-                    "end": 279
+                    "line": 262,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -87017,8 +87019,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 282,
-                    "end": 286
+                    "line": 283,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -87037,8 +87039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 289,
-                    "end": 300
+                    "line": 290,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -87057,8 +87059,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 303,
-                    "end": 314
+                    "line": 304,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -87079,8 +87081,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 321
+                    "line": 318,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -87108,8 +87110,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 328,
-                    "end": 331
+                    "line": 329,
+                    "end": 332
                 },
                 {
                     "routes": [],
@@ -87135,8 +87137,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 334,
-                    "end": 337
+                    "line": 335,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -87157,8 +87159,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 386
+                    "line": 364,
+                    "end": 387
                 },
                 {
                     "routes": [],
@@ -87171,8 +87173,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 389,
-                    "end": 396
+                    "line": 390,
+                    "end": 397
                 },
                 {
                     "routes": [],
@@ -87185,8 +87187,8 @@
                         "@return array<string, string>"
                     ],
                     "params": [],
-                    "line": 414,
-                    "end": 421
+                    "line": 415,
+                    "end": 422
                 },
                 {
                     "routes": [],
@@ -87199,8 +87201,8 @@
                         "@return array<string, array<string, string>>"
                     ],
                     "params": [],
-                    "line": 424,
-                    "end": 438
+                    "line": 425,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -87221,8 +87223,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 94
+                    "line": 84,
+                    "end": 95
                 },
                 {
                     "routes": [],
@@ -87244,8 +87246,8 @@
                             "doc": "the previous state"
                         }
                     ],
-                    "line": 211,
-                    "end": 230
+                    "line": 212,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -87281,8 +87283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 355
+                    "line": 347,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -87295,8 +87297,8 @@
                         "@return array<string, array{Name: string, Version: string, UpdateURI: string}>"
                     ],
                     "params": [],
-                    "line": 403,
-                    "end": 411
+                    "line": 404,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -87329,8 +87331,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 447,
-                    "end": 460
+                    "line": 448,
+                    "end": 461
                 },
                 {
                     "routes": [],
@@ -87363,8 +87365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 468,
-                    "end": 478
+                    "line": 469,
+                    "end": 479
                 },
                 {
                     "routes": [],
@@ -87383,8 +87385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 481,
-                    "end": 487
+                    "line": 482,
+                    "end": 488
                 },
                 {
                     "routes": [],
@@ -87403,8 +87405,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 489,
-                    "end": 492
+                    "line": 490,
+                    "end": 493
                 }
             ]
         },
@@ -97722,6 +97724,7 @@
             "uses": [
                 "Minn\\RestError",
                 "Minn\\Rest\\Schema",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\RegisteredSettings",
                 "Minn\\Runtime\\Runtime"
             ],
@@ -97743,8 +97746,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 26
+                "line": 25,
+                "end": 27
             },
             "cases": [],
             "constants": [],
@@ -97771,8 +97774,8 @@
                         "@return array<string, array{name: string, schema: array<string, mixed>, option_name: string}>"
                     ],
                     "params": [],
-                    "line": 33,
-                    "end": 47
+                    "line": 34,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -97785,8 +97788,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 50,
-                    "end": 59
+                    "line": 51,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -97805,8 +97808,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 80
+                    "line": 63,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -97834,8 +97837,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 97
+                    "line": 84,
+                    "end": 98
                 }
             ]
         },
@@ -121821,8 +121824,8 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 125,
-            "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load, and its user records are that layer's objects; the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
+            "lines": 131,
+            "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
             "uses": [],
@@ -121848,6 +121851,7 @@
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostQuery",
@@ -121880,7 +121884,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy, userRecord,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy, userRecord,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -121893,8 +121897,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -121905,8 +121909,8 @@
                     "doc": "The user the request is (wp_get_current_user).",
                     "shapes": [],
                     "params": [],
-                    "line": 39,
-                    "end": 42
+                    "line": 40,
+                    "end": 43
                 },
                 {
                     "routes": [],
@@ -121917,8 +121921,8 @@
                     "doc": "Whether someone is signed in (is_user_logged_in).",
                     "shapes": [],
                     "params": [],
-                    "line": 45,
-                    "end": 48
+                    "line": 46,
+                    "end": 49
                 },
                 {
                     "routes": [],
@@ -121937,8 +121941,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 51,
-                    "end": 54
+                    "line": 52,
+                    "end": 55
                 },
                 {
                     "routes": [],
@@ -121964,8 +121968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 60
+                    "line": 58,
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -121984,8 +121988,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 66
+                    "line": 64,
+                    "end": 67
                 },
                 {
                     "routes": [],
@@ -122004,8 +122008,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 69,
-                    "end": 72
+                    "line": 70,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -122024,8 +122028,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 78
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -122051,8 +122055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 84
+                    "line": 82,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -122078,8 +122082,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 90
+                    "line": 88,
+                    "end": 91
                 },
                 {
                     "routes": [],
@@ -122098,8 +122102,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 93,
-                    "end": 96
+                    "line": 94,
+                    "end": 97
                 },
                 {
                     "routes": [],
@@ -122118,8 +122122,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 102
+                    "line": 100,
+                    "end": 103
                 },
                 {
                     "routes": [],
@@ -122138,8 +122142,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 108
+                    "line": 106,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -122158,8 +122162,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 112,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -122178,8 +122182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -122198,8 +122202,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 126
+                    "line": 124,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -122218,8 +122222,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 132
+                    "line": 130,
+                    "end": 133
                 },
                 {
                     "routes": [],
@@ -122238,8 +122242,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 135,
-                    "end": 138
+                    "line": 136,
+                    "end": 139
+                },
+                {
+                    "routes": [],
+                    "name": "stop",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "stop(mixed ...$args): void",
+                    "doc": "Ends the request with a message (wp_die), as the handler plugins choose draws it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 142,
+                    "end": 145
                 },
                 {
                     "routes": [],
@@ -122265,8 +122289,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 140,
-                    "end": 144
+                    "line": 147,
+                    "end": 151
                 }
             ]
         },
@@ -126596,7 +126620,9 @@
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Sanitize"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\OptionWrites"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -126844,6 +126870,211 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\OptionWrites",
+            "short": "OptionWrites",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/OptionWrites.php",
+            "lines": 131,
+            "doc": "Options written the way add_option(), update_option() and delete_option()\nwrite them: the name trimmed, alloptions and notoptions stopped, the\nguarded ones refused, the value sanitized, and each change heard before\nand after by the actions plugins hook.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\Options",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\LiveSettings",
+                "Minn\\Runtime\\PluginActivation",
+                "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\SiteOptions",
+                "Minn\\Runtime\\ThemeSwitch",
+                "Minn\\Runtime\\Transients"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "add(mixed $option, mixed $value = '', mixed $autoload = NULL): bool",
+                    "doc": "A new option (add_option): refused when it already reads as anything\nbut its default; its autoload flag decided when not given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "autoload",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 48
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $option, mixed $value, mixed $autoload = NULL): bool",
+                    "doc": "An option changed (update_option): the new value through its filters;\nan unchanged one writes nothing and tells nobody; one still at its\ndefault is added.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "autoload",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $option): bool",
+                    "doc": "An option removed (delete_option): false when it was not there.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 102
+                },
+                {
+                    "routes": [],
+                    "name": "protect",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "protect(mixed $option): void",
+                    "doc": "Stops the request at alloptions or notoptions, which nothing may write (wp_protect_special_option).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 105,
+                    "end": 110
+                },
+                {
+                    "routes": [],
+                    "name": "autoloadFlag",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "autoloadFlag(mixed $option, mixed $value, mixed $serialized, mixed $autoload): mixed",
+                    "doc": "The autoload flag an option is stored with (wp_determine_option_autoload_value):\n\"on\" for on, yes or true, \"off\" for off, no or false; anything else is\ndecided by wp_default_autoload_value (auto-on, auto-off) or left \"auto\".",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "serialized",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "autoload",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 130
+                },
+                {
+                    "routes": [],
+                    "name": "setAutoload",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setAutoload(mixed $options): array",
+                    "doc": "Options' autoload flags set (wp_set_option_autoload_values): per option,\nwhether its flag changed. Only false, no, off, auto-off and 0 mean off.",
+                    "shapes": [
+                        "@return array<array-key, bool>"
+                    ],
+                    "params": [
+                        {
+                            "name": "options",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 138,
+                    "end": 146
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\Options",
             "short": "Options",
             "namespace": "Minn\\Runtime",
@@ -126865,6 +127096,7 @@
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Engine",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols"
             ],
@@ -128567,6 +128799,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\Hooks",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\Plugins",
                 "Minn\\Runtime\\Refusal",
@@ -128670,7 +128903,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Transients",
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
@@ -136436,6 +136671,7 @@
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\OptionsGroup",
                 "Minn\\Runtime\\Pages",
@@ -136461,6 +136697,7 @@
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\ScriptModules",
                 "Minn\\Runtime\\Shortcodes",
+                "Minn\\Runtime\\SiteOptions",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermFields",
@@ -136471,6 +136708,7 @@
                 "Minn\\Runtime\\TermWriter",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\ThemeSwitch",
+                "Minn\\Runtime\\Transients",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Runtime\\UserQueryRunner",
@@ -138754,6 +138992,180 @@
                     ],
                     "line": 264,
                     "end": 285
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\SiteOptions",
+            "short": "SiteOptions",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/SiteOptions.php",
+            "lines": 76,
+            "doc": "The network's options, as a single site keeps them: options stored not\nto autoload, with the network layer's own hooks around them, told the\nnetwork asked for (the current one, 1, when none is).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Transients"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "get(mixed $option, mixed $default = false, mixed $networkId = NULL): mixed",
+                    "doc": "A network option (get_network_option, get_site_option):\npre_site_option_{name} and pre_site_option may answer first,\ndefault_site_option_{name} sets its default, site_option_{name} has\nthe last word.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "default",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "networkId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 22,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "add",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "add(mixed $option, mixed $value, mixed $networkId = NULL): bool",
+                    "doc": "A new network option (add_network_option, add_site_option), stored not to autoload.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "networkId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $option, mixed $value, mixed $networkId = NULL): bool",
+                    "doc": "A network option changed (update_network_option, update_site_option); one not there yet is added.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "networkId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 50,
+                    "end": 68
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $option, mixed $networkId = NULL): bool",
+                    "doc": "A network option removed (delete_network_option, delete_site_option).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "option",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "networkId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 71,
+                    "end": 82
+                },
+                {
+                    "routes": [],
+                    "name": "network",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "network(mixed $networkId): int",
+                    "doc": "The network asked for, else the current one: Minn is one network, 1.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "networkId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 88
                 }
             ]
         },
@@ -143366,7 +143778,9 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\Transients",
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
@@ -143562,6 +143976,182 @@
                     ],
                     "line": 161,
                     "end": 164
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\Transients",
+            "short": "Transients",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Transients.php",
+            "lines": 142,
+            "doc": "Values kept for a while, as WordPress keeps them in options: the site's\ntransients (_transient_{name}, with _transient_timeout_{name} when they\nexpire) and the network's (_site_transient_{name}), each read, set and\nremoved through the filters and actions plugins hook. An expired one reads\nas false and is removed as it is read.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteOptions"
+            ],
+            "usedBy": [
+                "Minn\\Ops\\Updates",
+                "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\ThemeSwitch",
+                "Minn\\Runtime\\UpdateCounts"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "get",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "get(mixed $transient): mixed",
+                    "doc": "A transient's value, or false (get_transient).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 17,
+                    "end": 34
+                },
+                {
+                    "routes": [],
+                    "name": "set",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "set(mixed $transient, mixed $value, mixed $expiration = 0): bool",
+                    "doc": "A transient set (set_transient): one that expires is stored not to\nautoload, its timeout beside it; setting an expiry on one that had\nnone stores it again that way.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "expiration",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 78
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $transient): bool",
+                    "doc": "A transient removed (delete_transient), its timeout with it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 81,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "getSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "getSite(mixed $transient): mixed",
+                    "doc": "A network transient's value, or false (get_site_transient); the update offers never expire by their timeout.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "setSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setSite(mixed $transient, mixed $value, mixed $expiration = 0): bool",
+                    "doc": "A network transient set (set_site_transient), its timeout beside it when it expires.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "expiration",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 117,
+                    "end": 141
+                },
+                {
+                    "routes": [],
+                    "name": "deleteSite",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deleteSite(mixed $transient): bool",
+                    "doc": "A network transient removed (delete_site_transient), its timeout with it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "transient",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 144,
+                    "end": 154
                 }
             ]
         },
@@ -144097,6 +144687,7 @@
             "uses": [
                 "Minn\\Auth\\Can",
                 "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Transients",
                 "Minn\\Support\\Escape"
             ],
             "usedBy": [],
@@ -146690,6 +147281,7 @@
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\UpdateCounts",
@@ -150092,7 +150684,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Serialized.php",
-            "lines": 356,
+            "lines": 369,
             "doc": "Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing\nhere executes the blob; each reader scans for the one shape it needs.",
             "implements": [],
             "extends": null,
@@ -150123,8 +150715,10 @@
                 "Minn\\Rest\\PluginsController",
                 "Minn\\Rest\\PostObject",
                 "Minn\\Runtime\\CronTable",
+                "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Options",
                 "Minn\\Runtime\\Recovery",
+                "Minn\\Runtime\\SiteOptions",
                 "Minn\\Support\\SearchReplace"
             ],
             "constructor": null,
@@ -150317,6 +150911,26 @@
                 },
                 {
                     "routes": [],
+                    "name": "maybeEncode",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "maybeEncode(mixed $data): mixed",
+                    "doc": "A value as maybe_serialize() stores it: an array or object serialized,\nand a string that already looks serialized serialized again, so it\nreads back as the string it was; anything else as given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 271,
+                    "end": 277
+                },
+                {
+                    "routes": [],
                     "name": "encode",
                     "static": true,
                     "visibility": "public",
@@ -150332,8 +150946,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 281,
-                    "end": 297
+                    "line": 294,
+                    "end": 310
                 },
                 {
                     "routes": [],
@@ -150352,8 +150966,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 359,
-                    "end": 365
+                    "line": 372,
+                    "end": 378
                 },
                 {
                     "routes": [],
@@ -150612,8 +151226,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 266,
-                    "end": 275
+                    "line": 279,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -150632,8 +151246,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 299,
-                    "end": 329
+                    "line": 312,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -150652,8 +151266,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 339,
-                    "end": 356
+                    "line": 352,
+                    "end": 369
                 }
             ]
         },
