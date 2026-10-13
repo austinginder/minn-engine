@@ -15921,7 +15921,7 @@ rows that are `open` or `austin`.
 | 8834 | Template loading (10-09) | duotone SVG filters | done | `wp_get_global_styles_svg_filters` is real |
 | 8834 | Template loading (10-09) | `wp_map_sidebars_widgets` | done | real in the facade |
 | 9284 | WordPress 7.1.3 (10-09) | `make_absolute_url` resolves some paths differently | done | 2026-10-12, probe `http-absolute-url` |
-| 9284 | WordPress 7.1.3 (10-09) | Minn Admin's comment screen and the stored XSS 7.1.3 fixed | austin | a Minn Admin task, outside this repository |
+| 9284 | WordPress 7.1.3 (10-09) | Minn Admin's comment screen and the stored XSS 7.1.3 fixed | done | "Also checked, Minn Admin's comment screen" (2026-10-11); held again 2026-10-13 against Minn Admin 32d7475c: `$` is `querySelector`, no jQuery, every comment field printed through `esc()` |
 | 9341 | rest-api.php's helpers (10-09) | the engine's own routes answer OPTIONS without a schema | done | 2026-10-12: with their controllers' schemas (probe `rest-options-schema`) |
 | 9496 | The rest of post.php (10-09) | built-in types' labels never filtered | done | 2026-10-12: core types register again on `init` (suite `hook-parity`) |
 | 9569 | The rest of media.php (10-09) | `wp_enqueue_media` | accepted | an editor dead end (Austin's D7) |
