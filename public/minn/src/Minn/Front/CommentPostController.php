@@ -10,6 +10,7 @@ use Minn\Http\Response;
 use Minn\Http\Access;
 use Minn\Http\Policy;
 use Minn\Http\Route;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 
@@ -49,7 +50,7 @@ final readonly class CommentPostController
             return $status > 0 ? self::refusal($comment->get_error_message(), $status) : new Response(200, ['Content-Type' => 'text/html; charset=UTF-8'], '');
         }
         $consent = isset($request->form['wp-comment-cookies-consent']);
-        Runtime::hooks()->action('set_comment_cookies', [$comment, \wp_get_current_user(), $consent]);
+        Runtime::hooks()->action('set_comment_cookies', [$comment, Handoff::currentUser(), $consent]);
         $redirect = (string) ($request->form['redirect_to'] ?? '');
         $location = $redirect === '' ? (string) \get_comment_link($comment) : $redirect . '#comment-' . $comment->comment_ID;
         if (!$consent && \wp_get_comment_status($comment) === 'unapproved' && (string) $comment->comment_author_email !== '') {

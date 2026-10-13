@@ -69,7 +69,7 @@ final readonly class AjaxController
             Runtime::hooks()->add($hook, $callback);
         }
         $output = Runtime::capture('admin_init');
-        $prefix = \is_user_logged_in() ? 'wp_ajax_' : 'wp_ajax_nopriv_';
+        $prefix = Handoff::signedIn() ? 'wp_ajax_' : 'wp_ajax_nopriv_';
         $this->registerCore($prefix);
         $hook = $prefix . $action;
         if (!Runtime::hooks()->has($hook)) {

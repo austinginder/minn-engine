@@ -6,6 +6,7 @@ namespace Minn\Theme;
 
 
 use Minn\Http\Response;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -93,10 +94,10 @@ final class FrontLifecycle
      */
     public static function sendHeaders(\WP $wp): void
     {
-        $headers = \is_user_logged_in() ? \wp_get_nocache_headers() : [];
+        $headers = Handoff::signedIn() ? \wp_get_nocache_headers() : [];
         $status = !empty($wp->query_vars['error']) ? (int) $wp->query_vars['error'] : null;
         $fresh = false;
-        if ($status === 404 && !\is_user_logged_in()) {
+        if ($status === 404 && !Handoff::signedIn()) {
             $headers = array_merge($headers, \wp_get_nocache_headers());
         }
         if ($status === 404 || ($status === null && empty($wp->query_vars['feed']))) {

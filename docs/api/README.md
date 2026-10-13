@@ -6,7 +6,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 |---|---|---|
 | [`Minn`](minn.md) | 8 | the front door, the autoloader, the one database door, the REST error |
 | [`Minn\Admin`](admin.md) | 29 | the minn-admin/v1 namespace and serving the Minn Admin app |
-| [`Minn\Auth`](auth.md) | 19 | passwords, sessions, cookies, nonces, roles and capabilities |
+| [`Minn\Auth`](auth.md) | 20 | passwords, sessions, cookies, nonces, roles and capabilities |
 | [`Minn\Blocks`](blocks.md) | 23 | the block parser and renderer |
 | [`Minn\Blocks\Dynamic`](blocks-dynamic.md) | 8 | dynamic core blocks that render from data |
 | [`Minn\Blocks\Dynamic\Theme`](blocks-dynamic-theme.md) | 6 | the template blocks a block theme composes with |
@@ -26,7 +26,7 @@ The engine's own classes under `public/minn/src/Minn/`, one page per namespace, 
 | [`Minn\Ops`](ops.md) | 18 |  |
 | [`Minn\Query`](query.md) | 10 | shared SQL fragments |
 | [`Minn\Rest`](rest.md) | 85 | the wp/v2 surface: shapes and controllers |
-| [`Minn\Runtime`](runtime.md) | 116 | the WordPress runtime plugins load against |
+| [`Minn\Runtime`](runtime.md) | 117 | the WordPress runtime plugins load against |
 | [`Minn\Support`](support.md) | 35 | escaping, serialized readers, small helpers |
 | [`Minn\Theme`](theme.md) | 41 | the block-theme reader, templates, global styles and the page renderer |
 | [`Minn\Widgets`](widgets.md) | 2 |  |

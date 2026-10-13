@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
+
 /**
  * What WP_Query does with its posts once it has them, as the reference does
  * it (probe wp-query-sql): a single post whose status is not public is
@@ -56,7 +58,7 @@ final class PostQueryResults
         if (!in_array($status, $this->parts->statuses, true)) {
             $query->posts = $this->visible($status) ? $query->posts : [];
         }
-        if ($query->is_preview && $query->posts && \current_user_can('edit_post', $query->posts[0]->ID)) {
+        if ($query->is_preview && $query->posts && Can::current('edit_post', $query->posts[0]->ID)) {
             $query->posts[0] = \get_post(Runtime::hooks()->filterRefArray('the_preview', [$query->posts[0], &$query]));
         }
     }
@@ -68,16 +70,16 @@ final class PostQueryResults
         $first = $query->posts[0];
         $object = Registered::status((string) $status);
         if (!$object) {
-            return \current_user_can('edit_post', $first->ID);
+            return Can::current('edit_post', $first->ID);
         }
         if ($object->public) {
             return true;
         }
-        if (!\is_user_logged_in()) {
+        if (!Handoff::signedIn()) {
             return false;
         }
         if ($object->protected) {
-            if (!\current_user_can('edit_post', $first->ID)) {
+            if (!Can::current('edit_post', $first->ID)) {
                 return false;
             }
             $query->is_preview = true;
@@ -86,7 +88,7 @@ final class PostQueryResults
             }
             return true;
         }
-        return $object->private && \current_user_can('read_post', $first->ID);
+        return $object->private && Can::current('read_post', $first->ID);
     }
 
     /** Sticky posts to the front of the home listing's first page; those it did not find, fetched. @param array<string, mixed> $q */

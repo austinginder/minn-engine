@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
 use Minn\I18n\Gettext;
 use Minn\Support\Escape;
 
@@ -26,9 +27,9 @@ final class UpdateCounts
     public static function forCurrentUser(): array
     {
         $counts = ['plugins' => 0, 'themes' => 0, 'wordpress' => 0, 'translations' => 0];
-        $plugins = \current_user_can('update_plugins');
-        $themes = \current_user_can('update_themes');
-        $core = \current_user_can('update_core');
+        $plugins = Can::current('update_plugins');
+        $themes = Can::current('update_themes');
+        $core = Can::current('update_core');
         foreach (['plugins' => $plugins, 'themes' => $themes] as $kind => $allowed) {
             $waiting = $allowed ? \get_site_transient("update_{$kind}") : null;
             $counts[$kind] = is_object($waiting) && !empty($waiting->response) ? count((array) $waiting->response) : 0;

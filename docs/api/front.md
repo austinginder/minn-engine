@@ -355,7 +355,7 @@ Route: `* /wp-comments-post.php (public)`
 
 The comment form's target.
 
-Internals: `submit()` (private, line 44), `refusal()` (private, line 65)
+Internals: `submit()` (private, line 45), `refusal()` (private, line 66)
 
 
 ## CustomLogo
@@ -844,7 +844,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 117)
+Internals: `append()` (private, line 118)
 
 
 ## PostNavigation
@@ -1653,7 +1653,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 49), `creatable()` (private, line 251), `editPost()` (private, line 298), `editTerm()` (private, line 308)
+Internals: `profileUrl()` (private, line 52), `creatable()` (private, line 254), `editPost()` (private, line 301), `editTerm()` (private, line 311)
 
 
 ## ToolbarTree

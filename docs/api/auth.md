@@ -9,6 +9,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`AuthFailure`](#authfailure) | final readonly class | 26 | Why a request is not authenticated, as the reference's error code: a |
 | [`Authenticated`](#authenticated) | final readonly class | 16 | A validated session: the user row and the raw session token behind it. |
 | [`Authenticator`](#authenticator) | final readonly class | 149 | Resolves the current user two ways. A page load carries the cookie alone; |
+| [`Can`](#can) | final class | 51 | Whether a user may do something, as WordPress decides it: the capability |
 | [`Capabilities`](#capabilities) | final readonly class | 277 | The capability engine: a user's roles from {prefix}capabilities usermeta, |
 | [`Cookie`](#cookie) | final readonly class | 92 | The sign-in cookies: username\|expiration\|token\|hmac, with |
 | [`FastHash`](#fasthash) | final class | 23 | The reference's hash for high-entropy secrets ("$generic$", WordPress 6.8 |
@@ -275,6 +276,39 @@ Whether Basic auth may sign this user in; the runtime's filter has the last word
 ### `login(string $username, string $password): ?Minn\Content\UserRecord`
 
 Username and password to a user row, an outdated hash replaced as the sign-in succeeds; no session is created here.
+
+
+## Can
+
+`final class Minn\Auth\Can` · `public/minn/src/Minn/Auth/Can.php`
+
+Whether a user may do something, as WordPress decides it: the capability
+mapped to the primitive ones it needs (map_meta_cap, a meta key's auth
+filters included), the user's capabilities as user_has_cap leaves them,
+and every primitive one granted. "exist" is always granted and
+"do_not_allow" never.
+
+Used by: `Minn\Front\ToolbarMenus`, `Minn\Rest\Caller`, `Minn\Rest\RestMeta`, `Minn\Runtime\CommentForm`, `Minn\Runtime\FileUpload`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\UpdateCounts`
+
+### static `current(mixed $capability, mixed ...$args): mixed`
+
+Whether the request's user may (current_user_can).
+
+### static `user(mixed $user, mixed $capability, mixed ...$args): mixed`
+
+Whether a user, by record or id, may (user_can), as the record's has_cap answers; anyone not a user is asked as nobody.
+
+### static `check(object $user, mixed $capability, mixed ...$args): bool`
+
+Whether the user record has a capability (WP_User::has_cap): a number
+is the old user level; the primitive ones it maps to must each be set
+in the user's capabilities as user_has_cap leaves them.
+
+### static `map(mixed $capability, mixed $userId, mixed ...$args): mixed`
+
+The primitive capabilities a capability needs for a user (map_meta_cap):
+a meta key's own when it is a meta capability, else the engine's map,
+the first argument read as the object's id; then map_meta_cap.
 
 
 ## Capabilities

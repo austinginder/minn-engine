@@ -57,7 +57,7 @@ final readonly class CommentEvents
     {
         $wpRequest = RuntimeRoutes::wpRequest($request);
         $prepared = array_merge(self::preprocessed($prepared, $wpRequest), ['comment_type' => 'comment']) + ['comment_content' => ''];
-        $user = \wp_get_current_user();
+        $user = Handoff::currentUser();
         $authored = array_filter(array_intersect_key($prepared, array_flip(['user_id', 'comment_author', 'comment_author_email', 'comment_author_url'])));
         if ($user->ID > 0 && $authored === []) {
             $prepared = ['user_id' => $user->ID, 'comment_author' => $user->display_name, 'comment_author_email' => $user->user_email, 'comment_author_url' => $user->user_url] + $prepared;

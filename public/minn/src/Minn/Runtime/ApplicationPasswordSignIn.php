@@ -29,9 +29,9 @@ final class ApplicationPasswordSignIn
         if (!Runtime::hooks()->filter('application_password_is_api_request', [$api])) {
             return $input;
         }
-        $user = \get_user_by('login', $username);
+        $user = Handoff::userBy('login', $username);
         if (!$user && Sanitize::isEmail($username)) {
-            $user = \get_user_by('email', $username);
+            $user = Handoff::userBy('email', $username);
         }
         $error = self::refusal($user, $username);
         if ($error !== null) {
@@ -71,7 +71,7 @@ final class ApplicationPasswordSignIn
         if (!empty($input) || !is_array($auth)) {
             return $input;
         }
-        $user = \get_userdata((int) $auth['user']);
+        $user = Handoff::user((int) $auth['user']);
         $error = self::refusal($user, '');
         // With the feature off for the whole site nothing is tried and nothing announced, so
         // rest_authentication_errors hears no refusal and the request reads as signed out (suite identity).

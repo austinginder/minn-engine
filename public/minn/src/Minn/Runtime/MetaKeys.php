@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
 use Minn\I18n\Gettext;
 
 /**
@@ -136,7 +137,7 @@ final class MetaKeys
             'post' => (string) (\get_post($objectId)?->post_type ?? ''),
             'term' => $term instanceof \WP_Term ? $term->taxonomy : '',
             'comment' => \get_comment($objectId) instanceof \WP_Comment ? 'comment' : '',
-            'user' => \get_userdata($objectId) instanceof \WP_User ? 'user' : '',
+            'user' => Handoff::user($objectId) instanceof \WP_User ? 'user' : '',
             default => '',
         };
         return (string) Runtime::hooks()->filter("get_object_subtype_{$objectType}", [$subtype, $objectId]);
@@ -163,7 +164,7 @@ final class MetaKeys
         if ($subtype === '') {
             return ['do_not_allow'];
         }
-        $caps = \map_meta_cap("edit_{$objectType}", $userId, $objectId);
+        $caps = Can::map("edit_{$objectType}", $userId, $objectId);
         $key = $args[1] ?? false;
         if ($key) {
             $allowed = !\is_protected_meta($key, $objectType);

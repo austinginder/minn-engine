@@ -1,7 +1,10 @@
 <?php
 /** Users, the current user, capabilities, and user meta. */
 
+use Minn\Auth\Can;
 use Minn\Auth\PasswordReset;
+use Minn\Runtime\CurrentUser;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Content\Users;
 
@@ -80,7 +83,7 @@ function wp_validate_application_password($input_user)
 
 function get_current_user_id()
 {
-    return Runtime::booted() ? wp_get_current_user()->ID : 0;
+    return Runtime::booted() ? CurrentUser::id() : 0;
 }
 
 function get_user($user_id)
@@ -104,7 +107,7 @@ function email_exists($email)
 
 function current_user_can($capability, ...$args)
 {
-    return user_can(wp_get_current_user(), $capability, ...$args);
+    return Can::current($capability, ...$args);
 }
 
 function current_user_can_for_site($site_id, $capability, ...$args)
@@ -125,14 +128,11 @@ function user_can_for_site($user, $site_id, $capability, ...$args)
 
 function user_can($user, $capability, ...$args)
 {
-    if (!is_object($user)) {
-        $user = get_userdata($user);
-    }
-    if (!$user || !($user instanceof WP_User)) {
-        $user = new WP_User(0);
-    }
-    return $user->has_cap($capability, ...$args);
+    return Can::user($user, $capability, ...$args);
 }
+
+// The engine's user records are this layer's WP_User; anything else is asked as nobody.
+Handoff::bind(['userRecord' => static fn ($user) => $user instanceof WP_User ? $user : new WP_User(0)]);
 
 function author_can($post, $capability, ...$args)
 {
@@ -145,10 +145,7 @@ function author_can($post, $capability, ...$args)
 
 function map_meta_cap($cap, $user_id, ...$args)
 {
-    // A meta capability asks the key's auth filters as well (probe meta-api).
-    $caps = Minn\Runtime\MetaKeys::capabilities((string) $cap, (int) $user_id, $args)
-        ?? Runtime::current()->capabilities->map((string) $cap, (int) $user_id, isset($args[0]) && is_numeric($args[0]) ? (int) $args[0] : null);
-    return apply_filters('map_meta_cap', $caps, $cap, $user_id, $args);
+    return Can::map($cap, $user_id, ...$args);
 }
 
 function get_role($role)

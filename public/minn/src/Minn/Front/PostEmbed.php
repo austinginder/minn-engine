@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
@@ -42,7 +43,7 @@ final class PostEmbed
             'title' => \get_the_title($post),
             'type' => 'link',
         ];
-        $author = \get_userdata((int) $post->post_author);
+        $author = Handoff::user((int) $post->post_author);
         if ($author instanceof \WP_User) {
             $data['author_name'] = $author->display_name;
             $data['author_url'] = \get_author_posts_url($author->ID);

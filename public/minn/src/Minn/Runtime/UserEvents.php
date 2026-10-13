@@ -49,12 +49,12 @@ final readonly class UserEvents
         if (!is_int($id)) {
             return $quietly();
         }
-        Runtime::hooks()->action('rest_insert_user', [\get_userdata($id), $wpRequest, true]);
+        Runtime::hooks()->action('rest_insert_user', [Handoff::user($id), $wpRequest, true]);
         (new \WP_User($id))->add_role($role);
         RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
-        RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
+        RegisteredFields::update(Handoff::user($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
-        Runtime::hooks()->action('rest_after_insert_user', [\get_userdata($id), $wpRequest, true]);
+        Runtime::hooks()->action('rest_after_insert_user', [Handoff::user($id), $wpRequest, true]);
         return $id;
     }
 
@@ -79,11 +79,11 @@ final readonly class UserEvents
         if ($role !== null) {
             (new \WP_User($id))->set_role($role);
         }
-        Runtime::hooks()->action('rest_insert_user', [\get_userdata($id), $wpRequest, false]);
+        Runtime::hooks()->action('rest_insert_user', [Handoff::user($id), $wpRequest, false]);
         RestMeta::writeFrom($wpRequest, 'user', $id, 'user');
-        RegisteredFields::update(\get_userdata($id), 'user', $wpRequest);
+        RegisteredFields::update(Handoff::user($id), 'user', $wpRequest);
         RegisteredFields::context($wpRequest, 'user');
-        Runtime::hooks()->action('rest_after_insert_user', [\get_userdata($id), $wpRequest, false]);
+        Runtime::hooks()->action('rest_after_insert_user', [Handoff::user($id), $wpRequest, false]);
     }
 
     /**
@@ -99,7 +99,7 @@ final readonly class UserEvents
             $quietly();
             return;
         }
-        $user = \get_userdata($id);
+        $user = Handoff::user($id);
         \wp_delete_user($id, $reassign);
         Runtime::hooks()->action('rest_delete_user', [$user, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
     }

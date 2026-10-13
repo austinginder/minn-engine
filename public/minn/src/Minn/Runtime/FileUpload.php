@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
+
 /**
  * A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in
  * the reference's order (probe upload-filters, contracts/runtime.md
@@ -51,7 +53,7 @@ final class FileUpload
             if (!empty($checked['proper_filename'])) {
                 $file['name'] = (string) $checked['proper_filename'];
             }
-            if ((!$checked['type'] || !$checked['ext']) && !\current_user_can('unfiltered_upload')) {
+            if ((!$checked['type'] || !$checked['ext']) && !Can::current('unfiltered_upload')) {
                 return ['error' => 'Sorry, you are not allowed to upload this file type.'];
             }
             $type = $checked['type'] ? (string) $checked['type'] : $type;

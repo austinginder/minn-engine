@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
 use Minn\Query\Sql;
 use Minn\Support\Sanitize;
 
@@ -117,14 +118,14 @@ final class PostQueryStatus
         if (empty($perm) || $perm !== 'readable') {
             [$listed, $private] = [[...$listed, ...$private], []];
         }
-        $user = \get_current_user_id();
+        $user = CurrentUser::id();
         $wheres = $excluded === [] ? [] : ['(' . implode(' AND ', $excluded) . ')'];
         if ($listed !== []) {
-            $own = $perm === 'editable' && !\current_user_can($this->cap('edit_others_posts'));
+            $own = $perm === 'editable' && !Can::current($this->cap('edit_others_posts'));
             $wheres[] = $own ? "({$t}.post_author = {$user} AND (" . implode(' OR ', $listed) . '))' : '(' . implode(' OR ', $listed) . ')';
         }
         if ($private !== []) {
-            $own = $perm === 'readable' && !\current_user_can($this->cap('read_private_posts'));
+            $own = $perm === 'readable' && !Can::current($this->cap('read_private_posts'));
             $wheres[] = $own ? "({$t}.post_author = {$user} AND (" . implode(' OR ', $private) . '))' : '(' . implode(' OR ', $private) . ')';
         }
         if ($this->parts->statusJoin) {
@@ -169,12 +170,12 @@ final class PostQueryStatus
     private function privateStatuses(string $type): string
     {
         $object = Registered::postType($type);
-        if (!\is_user_logged_in() || !$object instanceof \WP_Post_Type) {
+        if (!Handoff::signedIn() || !$object instanceof \WP_Post_Type) {
             return '';
         }
         $t = $this->parts->table;
-        $user = \get_current_user_id();
-        $readable = \current_user_can($object->cap->read_private_posts);
+        $user = CurrentUser::id();
+        $readable = Can::current($object->cap->read_private_posts);
         $sql = '';
         foreach (Registered::statuses(['private' => true]) as $status) {
             $sql .= $readable ? " \nOR {$t}.post_status = '{$status}'" : " \nOR ({$t}.post_author = {$user} AND {$t}.post_status = '{$status}')";

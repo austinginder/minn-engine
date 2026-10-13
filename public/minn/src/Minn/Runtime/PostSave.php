@@ -125,7 +125,7 @@ final class PostSave
      */
     public static function sanitized(array $postarr): array
     {
-        $postarr = array_merge(self::DEFAULTS, ['post_author' => \get_current_user_id()], $postarr);
+        $postarr = array_merge(self::DEFAULTS, ['post_author' => CurrentUser::id()], $postarr);
         unset($postarr['filter']);
         return (array) \sanitize_post(['ID' => 0] + $postarr, 'db');
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Auth\Can;
 use Minn\RestError;
 use Minn\Runtime\MetaKeys;
 use Minn\Runtime\Runtime;
@@ -162,7 +163,7 @@ final class RestMeta
         if (is_array($old) && count($old) === 1 && self::same($objectType, $subtype, $key, $field, $old[0], $value)) {
             return null;
         }
-        if (!\current_user_can("edit_{$objectType}_meta", $objectId, $key)) {
+        if (!Can::current("edit_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_update', $field['name']);
         }
         return \update_metadata($objectType, $objectId, Slashes::add($key), Slashes::add($value)) ? null : self::failed($key, $field['name']);
@@ -171,7 +172,7 @@ final class RestMeta
     /** A multiple key stored as a list, once the user may edit it. @param array<string, mixed> $field @param array<mixed> $values */
     public static function storeAll(string $objectType, int $objectId, string $subtype, string $key, array $field, array $values): ?\WP_Error
     {
-        if (!\current_user_can("edit_{$objectType}_meta", $objectId, $key)) {
+        if (!Can::current("edit_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_update', $field['name']);
         }
         return self::replaceAll($objectType, $objectId, $subtype, $key, $field, $values);
@@ -214,7 +215,7 @@ final class RestMeta
         if ($field['single'] && \is_wp_error(\rest_validate_value_from_schema(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
             return self::nullStored($field['name']);
         }
-        if (!\current_user_can("delete_{$objectType}_meta", $objectId, $key)) {
+        if (!Can::current("delete_{$objectType}_meta", $objectId, $key)) {
             return self::refused('rest_cannot_delete', $field['name']);
         }
         if (\get_metadata_raw($objectType, $objectId, Slashes::add($key)) === null) {

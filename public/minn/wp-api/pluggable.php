@@ -12,6 +12,7 @@ use Minn\Auth\Password;
 use Minn\Auth\Salts;
 use Minn\Auth\Sessions;
 use Minn\Content\Users;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 use Minn\Support\Url;
 use Minn\Runtime\Avatar;
@@ -723,3 +724,11 @@ function wp_login($username, $password, $deprecated = '')
     return false;
 }
 endif;
+
+// The engine asks for these through Minn\Runtime\Handoff, so a plugin's own version answers it as well.
+Handoff::bind([
+    'currentUser' => static fn () => wp_get_current_user(),
+    'signedIn' => static fn () => is_user_logged_in(),
+    'user' => static fn ($id) => get_userdata($id),
+    'userBy' => static fn ($field, $value) => get_user_by($field, $value),
+]);

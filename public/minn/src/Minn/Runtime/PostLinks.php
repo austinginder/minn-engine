@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
 use Minn\Support\Sanitize;
 use Minn\Support\Url;
 
@@ -55,7 +56,7 @@ final class PostLinks
         if (!($flags & self::LEAVE_NAME)) {
             $tokens += ['%postname%' => (string) $post->post_name, '%pagename%' => (string) $post->post_name];
         }
-        $author = \get_userdata((int) $post->post_author);
+        $author = Handoff::user((int) $post->post_author);
         $tokens['%author%'] = $author ? (string) $author->user_nicename : '';
         $tokens['%category%'] = str_contains((string) Runtime::options()->filtered('permalink_structure'), '%category%') ? self::category($post) : '';
         return $tokens;
@@ -139,7 +140,7 @@ final class PostLinks
         if ((($flags & self::SAMPLE) || ($post->filter ?? '') === 'sample') && !($status->internal ?? false)) {
             return false;
         }
-        return !($status->public ?? false) && !(($status->private ?? false) && \current_user_can('read_post', $post->ID));
+        return !($status->public ?? false) && !(($status->private ?? false) && Can::current('read_post', $post->ID));
     }
 
     /**

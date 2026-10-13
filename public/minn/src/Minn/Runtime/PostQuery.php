@@ -237,7 +237,7 @@ final class PostQuery
         $built = PostSearch::where($t, $q['search_terms'], $columns, is_scalar($prefix) && $prefix ? (string) $prefix : '', !empty($q['exact']) ? '' : '%');
         $q['search_orderby_title'] = $built['titles'];
         // A visitor's search leaves out password-protected posts.
-        return $built['where'] !== '' && !\is_user_logged_in() ? $built['where'] . " AND ({$t}.post_password = '') " : $built['where'];
+        return $built['where'] !== '' && !Handoff::signedIn() ? $built['where'] . " AND ({$t}.post_password = '') " : $built['where'];
     }
 
     /** The search stopwords, translated and filtered. @return list<string> */

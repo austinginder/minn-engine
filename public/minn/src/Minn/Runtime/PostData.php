@@ -37,7 +37,7 @@ final class PostData
         $page = max(1, (int) ($query === null ? \get_query_var('page') : $query->get('page')));
         return [
             'id' => (int) $post->ID,
-            'authordata' => \get_userdata((int) $post->post_author),
+            'authordata' => Handoff::user((int) $post->post_author),
             'currentday' => \mysql2date('d.m.y', $post->post_date, false),
             'currentmonth' => \mysql2date('m', $post->post_date, false),
             'page' => $page,

@@ -286,19 +286,7 @@ class WP_User
 
     public function has_cap($cap, ...$args)
     {
-        if (is_numeric($cap)) {
-            $cap = 'level_' . (int) $cap;
-        }
-        $caps = map_meta_cap($cap, $this->ID, ...$args);
-        $capabilities = apply_filters('user_has_cap', $this->allcaps, $caps, array_merge([$cap, $this->ID], $args), $this);
-        $capabilities['exist'] = true;
-        unset($capabilities['do_not_allow']);
-        foreach ((array) $caps as $required) {
-            if (empty($capabilities[$required])) {
-                return false;
-            }
-        }
-        return true;
+        return \Minn\Auth\Can::check($this, $cap, ...$args);
     }
 
     public function translate_level_to_cap($level)

@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Auth\Authenticated;
 use Minn\Auth\AuthFailure;
 use Minn\Auth\Authenticator;
+use Minn\Auth\Can;
 use Minn\Auth\Capabilities;
 use Minn\Http\Request;
 use Minn\RestError;
@@ -88,7 +89,7 @@ final class Caller
     public function can(string $capability, ?int $postId = null): bool
     {
         if (Runtime::booted()) {
-            return \user_can($this->id(), $capability, ...($postId === null ? [] : [$postId]));
+            return Can::user($this->id(), $capability, ...($postId === null ? [] : [$postId]));
         }
         return $this->capabilities->can($this->id(), $capability, $postId);
     }

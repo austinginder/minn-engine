@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Auth\Can;
 use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
@@ -49,13 +50,13 @@ final class CommentForm
         if ($refusal !== null) {
             return $refusal;
         }
-        $user = \wp_get_current_user();
+        $user = Handoff::currentUser();
         if ($user->exists()) {
             $author = (string) $user->display_name !== '' ? (string) $user->display_name : (string) $user->user_login;
             $email = (string) $user->user_email;
             $url = (string) $user->user_url;
             // An administrator's comment is filtered after all unless the form carried its unfiltered-html nonce.
-            if (\current_user_can('unfiltered_html') && !\wp_verify_nonce((string) ($form['_wp_unfiltered_html_comment'] ?? ''), 'unfiltered-html-comment_' . $postId)) {
+            if (Can::current('unfiltered_html') && !\wp_verify_nonce((string) ($form['_wp_unfiltered_html_comment'] ?? ''), 'unfiltered-html-comment_' . $postId)) {
                 \kses_remove_filters();
                 \kses_init_filters();
             }
@@ -97,14 +98,14 @@ final class CommentForm
             return new \WP_Error('comment_id_not_found');
         }
         $status = (string) \get_post_status($post);
-        if ($status === 'private' && !\current_user_can('read_post', $postId)) {
+        if ($status === 'private' && !Can::current('read_post', $postId)) {
             return new \WP_Error('comment_id_not_found');
         }
         $statusObject = Registered::status($status);
         $refusal = match (true) {
             !\comments_open($postId) => ['comment_closed', 'Sorry, comments are closed for this item.', 403],
             $status === 'trash' => ['comment_on_trash', '', 0],
-            $statusObject === null || (!$statusObject->public && !$statusObject->private) => \current_user_can('read_post', $postId) ? ['comment_on_draft', 'Sorry, comments are not allowed for this item.', 403] : ['comment_on_draft', '', 0],
+            $statusObject === null || (!$statusObject->public && !$statusObject->private) => Can::current('read_post', $postId) ? ['comment_on_draft', 'Sorry, comments are not allowed for this item.', 403] : ['comment_on_draft', '', 0],
             \post_password_required($postId) => ['comment_on_password_protected', '', 0],
             default => null,
         };

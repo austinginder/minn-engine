@@ -629,7 +629,7 @@ same rest_forbidden the reference uses. Returns the caller's id.
 
 401 for an anonymous caller, 403 for one who is signed in but refused.
 
-Internals: `resolve()` (private, line 164)
+Internals: `resolve()` (private, line 165)
 
 
 ## Catalogue
@@ -2274,7 +2274,7 @@ Whether a value sanitizes to what is stored (scalar types compared as the text t
 
 A type's empty value: '' for a string, false, 0, or an empty list.
 
-Internals: `update()` (private, line 147), `replaceAll()` (private, line 187), `refused()` (private, line 237), `failed()` (private, line 243), `nullStored()` (private, line 249), `gathered()` (private, line 256), `request()` (private, line 286)
+Internals: `update()` (private, line 148), `replaceAll()` (private, line 188), `refused()` (private, line 238), `failed()` (private, line 244), `nullStored()` (private, line 250), `gathered()` (private, line 257), `request()` (private, line 287)
 
 
 ## RestUrl
@@ -3893,7 +3893,7 @@ A user as the edit context shows one, through rest_prepare_user when a plugin ho
 
 Gravatar URLs in the sizes the reference emits (sha256 of the email).
 
-Internals: `viewFields()` (private, line 49), `editFields()` (private, line 78)
+Internals: `viewFields()` (private, line 50), `editFields()` (private, line 79)
 
 
 ## UsersController

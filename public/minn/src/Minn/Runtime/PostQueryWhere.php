@@ -239,7 +239,7 @@ final class PostQueryWhere
             $q['author_name'] = $segments[count($segments) - 1] !== '' ? $segments[count($segments) - 1] : $segments[count($segments) - 2];
         }
         $q['author_name'] = Sanitize::title($q['author_name'], '', 'query');
-        $user = \get_user_by('slug', $q['author_name']);
+        $user = Handoff::userBy('slug', $q['author_name']);
         $q['author'] = $user ? $user->ID : false;
         $this->parts->whichauthor .= " AND ({$this->table}.post_author = " . abs((int) ($q['author'])) . ')';
     }

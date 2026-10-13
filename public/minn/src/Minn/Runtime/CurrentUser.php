@@ -16,10 +16,16 @@ use Minn\Content\Reader;
  */
 final class CurrentUser
 {
+    /** The request's user id (get_current_user_id). */
+    public static function id(): mixed
+    {
+        return Handoff::currentUser()->ID;
+    }
+
     /** Settles the request's user and reader; returns the user's id (0 for nobody). */
     public static function settle(Runtime $runtime): int
     {
-        $id = (int) \get_current_user_id();
+        $id = (int) self::id();
         $reader = $runtime->reader;
         if ($id !== $reader->userId) {
             $runtime->identify($id > 0 ? Reader::forUser($id, $runtime->capabilities, $reader->postPassword) : Reader::anonymous($reader->postPassword));

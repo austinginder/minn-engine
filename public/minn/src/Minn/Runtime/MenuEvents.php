@@ -105,7 +105,7 @@ final readonly class MenuEvents
             $count = $menuId > 0 ? count($this->menus->items($menuId)) : null;
             $args['menu-item-position'] = $count === null ? 1 : ($count === 0 ? 0 : $count + 1);
         }
-        $fields = self::fields($args, $menuId, (int) \get_current_user_id());
+        $fields = self::fields($args, $menuId, (int) CurrentUser::id());
         $id = $itemId === 0 ? $this->menus->createItem($fields) : $itemId;
         if ($itemId > 0) {
             $this->menus->updateItem($itemId, $fields);

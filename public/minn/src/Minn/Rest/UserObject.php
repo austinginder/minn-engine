@@ -8,6 +8,7 @@ use Minn\Content\UserRecord;
 use Minn\Content\Users;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Handoff;
 
 /** The wp/v2 user objects: the public view shape and the edit-context shape. */
 final readonly class UserObject
@@ -25,13 +26,13 @@ final readonly class UserObject
     /** A user as the view context shows one, through rest_prepare_user when a plugin hooks it. */
     public function view(UserRecord $u): array
     {
-        return RuntimePrepare::item('rest_prepare_user', $this->viewFields($u), static fn () => \get_userdata($u->id));
+        return RuntimePrepare::item('rest_prepare_user', $this->viewFields($u), static fn () => Handoff::user($u->id));
     }
 
     /** A user as the edit context shows one, through rest_prepare_user when a plugin hooks it. */
     public function edit(UserRecord $u): array
     {
-        return RuntimePrepare::item('rest_prepare_user', $this->editFields($u), static fn () => \get_userdata($u->id));
+        return RuntimePrepare::item('rest_prepare_user', $this->editFields($u), static fn () => Handoff::user($u->id));
     }
 
     /** Gravatar URLs in the sizes the reference emits (sha256 of the email). */

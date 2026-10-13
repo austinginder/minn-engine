@@ -33,12 +33,12 @@ final class AccountFlows
         if ($login === '') {
             $errors->add('empty_username', Gettext::text('<strong>Error:</strong> Please enter a username or email address.'));
         } elseif (str_contains($login, '@')) {
-            $user = \get_user_by('email', $login) ?: \get_user_by('login', $login);
+            $user = Handoff::userBy('email', $login) ?: Handoff::userBy('login', $login);
             if (!$user) {
                 $errors->add('invalid_email', Gettext::text(self::NO_ACCOUNT));
             }
         } else {
-            $user = \get_user_by('login', $login);
+            $user = Handoff::userBy('login', $login);
         }
         $user = Runtime::hooks()->filter('lostpassword_user_data', [$user, $errors]);
         Runtime::hooks()->action('lostpassword_post', [$errors, $user]);
@@ -128,7 +128,7 @@ final class AccountFlows
      */
     public static function newUserNotification(int $userId, mixed $deprecated, string $notify): void
     {
-        $user = \get_userdata($userId);
+        $user = Handoff::user($userId);
         if (!in_array($notify, ['user', 'admin', 'both', ''], true) || !$user instanceof \WP_User) {
             return;
         }

@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 821,
-        "composes": 2370,
+        "minn": 820,
+        "composes": 2368,
         "leaf": 1024,
-        "noop": 2793,
+        "noop": 2796,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1081,
+        "minnMethods": 1084,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -31476,13 +31476,12 @@
         },
         "WP_User::has_cap": {
             "file": "classes/WP_User.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "map_meta_cap"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Auth\\Can::check"
+            ],
+            "composes": []
         },
         "WP_User::has_prop": {
             "file": "classes/WP_User.php",
@@ -44834,11 +44833,10 @@
             "file": "user.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "user_can",
-                "wp_get_current_user"
-            ]
+            "minn": [
+                "Minn\\Auth\\Can::current"
+            ],
+            "composes": []
         },
         "current_user_can_for_blog": {
             "file": "user.php",
@@ -48761,11 +48759,10 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
+                "Minn\\Runtime\\CurrentUser::id",
                 "Minn\\Runtime\\Runtime::booted"
             ],
-            "composes": [
-                "wp_get_current_user"
-            ]
+            "composes": []
         },
         "get_currentuserinfo": {
             "file": "pluggable.php",
@@ -55302,16 +55299,12 @@
         },
         "map_meta_cap": {
             "file": "user.php",
-            "lines": 4,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\MetaKeys::capabilities",
-                "Minn\\Runtime\\Runtime::capabilities->map",
-                "Minn\\Runtime\\Runtime::current"
+                "Minn\\Auth\\Can::map"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "match_domain": {
             "file": "requests/Parts.php",
@@ -63935,12 +63928,12 @@
         },
         "user_can": {
             "file": "user.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_userdata"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Auth\\Can::user"
+            ],
+            "composes": []
         },
         "user_can_access_admin_page": {
             "file": "deadends.php",

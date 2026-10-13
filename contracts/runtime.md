@@ -15973,6 +15973,18 @@ asked. The engine's two `is_multisite()` branches are gone (Minn is one site), a
 longer asks whether a facade function exists once the engine has booted. All 370 probes give identical
 output before and after.
 
+**Batch 7, who may do what (function calls 718 → 637).** `Auth\Can` decides capabilities as the
+facade did: `current()` (current_user_can), `user()` (user_can), `check()` (what `WP_User::has_cap`
+does: a number is a user level, the capability mapped, the user's capabilities as user_has_cap leaves
+them, "exist" always granted and "do_not_allow" never) and `map()` (map_meta_cap, a meta key's auth
+filters first). The current user, users by id or field, and whether someone is signed in come through
+`Runtime\Handoff`, which the WordPress layer binds to wp_get_current_user, get_userdata, get_user_by
+and is_user_logged_in once the plugins have loaded, so a plugin's own version of a replaceable
+function answers the engine as it answers WordPress; it also binds the user record (a WP_User, else
+nobody). `user()` asks the record's own `has_cap`, so a record class that changes it is heard.
+`CurrentUser::id()` is get_current_user_id; the facade keeps its answer of 0 before the runtime is
+up, as no engine path asks then. All 370 probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Minn\Front;
 
+use Minn\Auth\Can;
+use Minn\Runtime\CurrentUser;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
@@ -48,17 +51,17 @@ final class ToolbarMenus
     /** The profile link for the signed-in user, or false when they cannot read. */
     private static function profileUrl(int $userId): string|false
     {
-        return \current_user_can('read') ? \get_edit_profile_url($userId) : false;
+        return Can::current('read') ? \get_edit_profile_url($userId) : false;
     }
 
     /** "Howdy" with the user's name and small avatar, at the right of the bar. */
     public static function myAccountItem(\WP_Admin_Bar $bar): void
     {
-        $userId = \get_current_user_id();
+        $userId = CurrentUser::id();
         if (!$userId) {
             return;
         }
-        $user = \wp_get_current_user();
+        $user = Handoff::currentUser();
         $profile = self::profileUrl($userId);
         $avatar = (string) \get_avatar($userId, 28);
         $bar->add_node([
@@ -73,11 +76,11 @@ final class ToolbarMenus
     /** The account menu: the user's card (larger avatar, name, login when it differs, the profile link) and Log Out. */
     public static function myAccountMenu(\WP_Admin_Bar $bar): void
     {
-        $userId = \get_current_user_id();
+        $userId = CurrentUser::id();
         if (!$userId) {
             return;
         }
-        $user = \wp_get_current_user();
+        $user = Handoff::currentUser();
         $profile = self::profileUrl($userId);
         $bar->add_group(['parent' => 'my-account', 'id' => 'user-actions']);
         $card = \get_avatar($userId, 64) . "<span class='display-name'>{$user->display_name}</span>"
@@ -98,7 +101,7 @@ final class ToolbarMenus
     /** The WordPress logo's menu: About and Get Involved for a reader, then the wordpress.org links beside them. */
     public static function wpMenu(\WP_Admin_Bar $bar): void
     {
-        $reads = \current_user_can('read');
+        $reads = Can::current('read');
         $about = $reads ? SiteUrls::selfAdmin('about.php') : false;
         $bar->add_node([
             'id' => 'wp-logo',
@@ -126,7 +129,7 @@ final class ToolbarMenus
     /** The site's name (with its icon when it has one), then the dashboard, appearance and plugins below it. */
     public static function siteMenu(\WP_Admin_Bar $bar): void
     {
-        if (!\is_user_logged_in() || (!\is_user_member_of_blog() && !\current_user_can('manage_network'))) {
+        if (!Handoff::signedIn() || (!\is_user_member_of_blog() && !Can::current('manage_network'))) {
             return;
         }
         $name = (string) \get_bloginfo('name');
@@ -139,16 +142,16 @@ final class ToolbarMenus
             $title = '<img class="site-icon" src="' . Escape::url($small) . '"' . ($large !== $small ? ' srcset="' . Escape::url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;
             $meta['class'] = 'has-site-icon';
         }
-        $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => Runtime::current()->isAdmin || !\current_user_can('read') ? SiteUrls::home('/') : SiteUrls::admin(), 'meta' => $meta]);
+        $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => Runtime::current()->isAdmin || !Can::current('read') ? SiteUrls::home('/') : SiteUrls::admin(), 'meta' => $meta]);
         if (Runtime::current()->isAdmin) {
             $bar->add_node(['parent' => 'site-name', 'id' => 'view-site', 'title' => Gettext::text('Visit Site'), 'href' => SiteUrls::home('/')]);
             return;
         }
-        if (\current_user_can('read')) {
+        if (Can::current('read')) {
             $bar->add_node(['parent' => 'site-name', 'id' => 'dashboard', 'title' => Gettext::text('Dashboard'), 'href' => SiteUrls::admin()]);
         }
         self::appearanceMenu($bar);
-        if (\current_user_can('activate_plugins')) {
+        if (Can::current('activate_plugins')) {
             $bar->add_node(['parent' => 'site-name', 'id' => 'plugins', 'title' => Gettext::text('Plugins'), 'href' => SiteUrls::admin('plugins.php')]);
         }
     }
@@ -157,10 +160,10 @@ final class ToolbarMenus
     public static function appearanceMenu(\WP_Admin_Bar $bar): void
     {
         $bar->add_group(['parent' => 'site-name', 'id' => 'appearance']);
-        if (\current_user_can('switch_themes')) {
+        if (Can::current('switch_themes')) {
             $bar->add_node(['parent' => 'appearance', 'id' => 'themes', 'title' => Gettext::text('Themes'), 'href' => SiteUrls::admin('themes.php')]);
         }
-        if (!\current_user_can('edit_theme_options')) {
+        if (!Can::current('edit_theme_options')) {
             return;
         }
         $widgets = \current_theme_supports('widgets');
@@ -180,7 +183,7 @@ final class ToolbarMenus
     /** Edit Site under a block theme, opening the template this page was built from when there is one. */
     public static function editSiteMenu(\WP_Admin_Bar $bar): void
     {
-        if (!(bool) Runtime::current()->get('block_theme', true) || !\current_user_can('edit_theme_options') || Runtime::current()->isAdmin) {
+        if (!(bool) Runtime::current()->get('block_theme', true) || !Can::current('edit_theme_options') || Runtime::current()->isAdmin) {
             return;
         }
         $template = $GLOBALS['_wp_current_template_id'] ?? null;
@@ -194,7 +197,7 @@ final class ToolbarMenus
     /** Customize, for a theme the customizer serves (a block theme only once something registers with it). */
     public static function customizeMenu(\WP_Admin_Bar $bar): void
     {
-        if (!\current_user_can('customize') || Runtime::current()->isAdmin || ((bool) Runtime::current()->get('block_theme', true) && !Runtime::hooks()->has('customize_register'))) {
+        if (!Can::current('customize') || Runtime::current()->isAdmin || ((bool) Runtime::current()->get('block_theme', true) && !Runtime::hooks()->has('customize_register'))) {
             return;
         }
         $request = Runtime::current()->request;
@@ -219,7 +222,7 @@ final class ToolbarMenus
     /** The comments awaiting moderation, for those who edit posts. */
     public static function commentsMenu(\WP_Admin_Bar $bar): void
     {
-        if (!\current_user_can('edit_posts')) {
+        if (!Can::current('edit_posts')) {
             return;
         }
         $waiting = (int) \wp_count_comments()->moderated;
@@ -251,26 +254,26 @@ final class ToolbarMenus
     private static function creatable(): array
     {
         $types = (array) Registered::postTypes(['show_in_admin_bar' => true], 'objects');
-        $can = static fn (string $name): bool => isset($types[$name]) && \current_user_can($types[$name]->cap->create_posts);
+        $can = static fn (string $name): bool => isset($types[$name]) && Can::current($types[$name]->cap->create_posts);
         $actions = [];
         if ($can('post')) {
             $actions['post-new.php'] = [$types['post']->labels->name_admin_bar, 'new-post'];
         }
-        if (isset($types['attachment']) && \current_user_can('upload_files')) {
+        if (isset($types['attachment']) && Can::current('upload_files')) {
             $actions['media-new.php'] = [$types['attachment']->labels->name_admin_bar, 'new-media'];
         }
-        if (\current_user_can('manage_links')) {
+        if (Can::current('manage_links')) {
             $actions['link-add.php'] = [Gettext::inContext('Link', 'add new from admin bar'), 'new-link'];
         }
         if ($can('page')) {
             $actions['post-new.php?post_type=page'] = [$types['page']->labels->name_admin_bar, 'new-page'];
         }
         foreach (array_diff_key($types, array_flip(['post', 'attachment', 'page'])) as $name => $type) {
-            if (\current_user_can($type->cap->create_posts)) {
+            if (Can::current($type->cap->create_posts)) {
                 $actions['post-new.php?post_type=' . $name] = [$type->labels->name_admin_bar, $name === 'user' ? 'new-user-content' : 'new-' . $name];
             }
         }
-        if (\current_user_can('create_users')) {
+        if (Can::current('create_users')) {
             $actions['user-new.php'] = [Gettext::inContext('User', 'add new from admin bar'), 'new-user'];
         }
         return $actions;
@@ -286,7 +289,7 @@ final class ToolbarMenus
         [$title, $href] = match (true) {
             !empty($shown->post_type) => self::editPost($shown),
             !empty($shown->taxonomy) => self::editTerm($shown),
-            $shown instanceof \WP_User && \current_user_can('edit_user', $shown->ID) => [Gettext::text('Edit User'), \get_edit_user_link($shown->ID)],
+            $shown instanceof \WP_User && Can::current('edit_user', $shown->ID) => [Gettext::text('Edit User'), \get_edit_user_link($shown->ID)],
             default => [null, null],
         };
         if ($title !== null && $href) {
@@ -298,7 +301,7 @@ final class ToolbarMenus
     private static function editPost(object $post): array
     {
         $type = Registered::postType($post->post_type);
-        if (!$type || !$type->show_in_admin_bar || !\current_user_can('edit_post', $post->ID)) {
+        if (!$type || !$type->show_in_admin_bar || !Can::current('edit_post', $post->ID)) {
             return [null, null];
         }
         return [$type->labels->edit_item, \get_edit_post_link($post->ID)];
@@ -308,7 +311,7 @@ final class ToolbarMenus
     private static function editTerm(object $term): array
     {
         $taxonomy = Registered::taxonomy($term->taxonomy);
-        if (!$taxonomy || !\current_user_can('edit_term', $term->term_id)) {
+        if (!$taxonomy || !Can::current('edit_term', $term->term_id)) {
             return [null, null];
         }
         return [$taxonomy->labels->edit_item, \get_edit_term_link($term)];
