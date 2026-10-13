@@ -31,23 +31,24 @@
         "atOrUnder": 5
     },
     "hooks": {
-        "total": 2545,
-        "proven": 1659,
-        "fired": 1753,
-        "deadend": 719,
+        "total": 2543,
+        "proven": 1717,
+        "fired": 1821,
+        "deadend": 722,
         "different": 0,
-        "missing": 73,
-        "outside": 146,
-        "accounted": 97.1,
-        "provenOfLive": 90.8,
-        "provenWeighted": 95.8
+        "missing": 0,
+        "outside": 148,
+        "accounted": 100,
+        "provenOfLive": 94.2,
+        "provenWeighted": 96.2
     },
     "coverage": {
-        "measured": "2026-10-12",
-        "percent": 73.1,
-        "lines": 31124,
-        "covered": 22761,
+        "measured": "2026-10-13",
+        "percent": 87.6,
+        "lines": 31689,
+        "covered": 27782,
         "parts": [
+            "suites",
             "unit",
             "probes",
             "http"
@@ -56,53 +57,184 @@
     "leanness": {
         "deadNameCeiling": {
             "label": "Dead-name methods",
-            "ceiling": 0
+            "ceiling": 0,
+            "started": 0,
+            "since": "54b4d84d",
+            "rose": false
         },
         "liveCeiling": {
-            "label": "Lifecycle branches (->live())",
-            "ceiling": 20
+            "label": "Lifecycle branches (live() calls)",
+            "ceiling": 20,
+            "started": 20,
+            "since": "54b4d84d",
+            "rose": false
         },
         "optionReadCeiling": {
             "label": "Option reads beside the store",
-            "ceiling": 154
+            "ceiling": 151,
+            "started": 159,
+            "since": "54b4d84d",
+            "rose": false
         },
         "rawOptionWriteCeiling": {
             "label": "Raw option writes",
-            "ceiling": 7
+            "ceiling": 7,
+            "started": 7,
+            "since": "54b4d84d",
+            "rose": false
         },
         "rawMetaWriteCeiling": {
             "label": "Raw meta writes",
-            "ceiling": 9
+            "ceiling": 9,
+            "started": 10,
+            "since": "54b4d84d",
+            "rose": false
         },
         "postRowCeiling": {
             "label": "Hand-built post rows",
-            "ceiling": 8
+            "ceiling": 8,
+            "started": 8,
+            "since": "54b4d84d",
+            "rose": false
         },
         "linkHrefCeiling": {
             "label": "Hand-built REST links",
-            "ceiling": 77
+            "ceiling": 77,
+            "started": 77,
+            "since": "54b4d84d",
+            "rose": false
         },
         "htmlspecialcharsCeiling": {
             "label": "htmlspecialchars outside Html",
-            "ceiling": 14
+            "ceiling": 13,
+            "started": 14,
+            "since": "54b4d84d",
+            "rose": false
         },
         "permalinkCallerCeiling": {
             "label": "Unfiltered permalink callers",
-            "ceiling": 31
+            "ceiling": 30,
+            "started": 31,
+            "since": "54b4d84d",
+            "rose": false
         },
         "bootedCeiling": {
             "label": "Runtime::booted() branches",
-            "ceiling": 75
+            "ceiling": 73,
+            "started": 160,
+            "since": "61614e6f",
+            "rose": false
         },
         "wordpressCallCeiling": {
             "label": "Calls into WordPress-named functions",
-            "ceiling": 1020
+            "ceiling": 1018,
+            "started": 1406,
+            "since": "61614e6f",
+            "rose": false
+        },
+        "longMethodCeiling": {
+            "label": "Methods over eighty lines",
+            "ceiling": 0,
+            "started": 22,
+            "since": "4e68bd89",
+            "rose": false
+        },
+        "bigClassCeiling": {
+            "label": "Classes over six hundred lines",
+            "ceiling": 0,
+            "started": 4,
+            "since": "4e68bd89",
+            "rose": false
+        },
+        "undocumentedCeiling": {
+            "label": "Public methods without a docblock",
+            "ceiling": 0,
+            "started": 933,
+            "since": "f8e5619e",
+            "rose": false
+        },
+        "boolParamCeiling": {
+            "label": "Boolean parameters",
+            "ceiling": 77,
+            "started": 147,
+            "since": "f8e5619e",
+            "rose": false
+        },
+        "wideConstructorCeiling": {
+            "label": "Constructors with six or more parameters",
+            "ceiling": 21,
+            "started": 47,
+            "since": "f8e5619e",
+            "rose": false
+        },
+        "unionCeiling": {
+            "label": "array|PostRecord bridges",
+            "ceiling": 4,
+            "started": 58,
+            "since": "e45b3e37",
+            "rose": false
+        },
+        "bracketCeiling": {
+            "label": "Bracket reads of post columns",
+            "ceiling": 205,
+            "started": 572,
+            "since": "e45b3e37",
+            "rose": false
+        },
+        "userBracketCeiling": {
+            "label": "Bracket reads of user columns",
+            "ceiling": 70,
+            "started": 132,
+            "since": "4dcbd288",
+            "rose": false
+        },
+        "commentBracketCeiling": {
+            "label": "Bracket reads of comment columns",
+            "ceiling": 57,
+            "started": 118,
+            "since": "10543c3e",
+            "rose": false
+        },
+        "rawJsonCeiling": {
+            "label": "Raw json_encode and json_decode calls",
+            "ceiling": 1,
+            "started": 1,
+            "since": "254d5cf8",
+            "rose": false
+        },
+        "bareRouteCeiling": {
+            "label": "Routes without a policy",
+            "ceiling": 6,
+            "started": 157,
+            "since": "71547120",
+            "rose": false
+        },
+        "leafCeiling": {
+            "label": "Facade functions over fifteen lines",
+            "ceiling": 12,
+            "started": 16,
+            "since": "653ceb35",
+            "rose": false
+        },
+        "wporgRequestCeiling": {
+            "label": "wordpress.org request addresses",
+            "ceiling": 0,
+            "started": 13,
+            "since": "bb123265",
+            "rose": false
         }
     },
     "open": {
-        "done": 29,
+        "done": 38,
         "accepted": 11,
-        "open": 9,
-        "austin": 2
+        "austin": 2,
+        "open": 0
+    },
+    "run": {
+        "measured": "2026-10-13",
+        "suites": 88,
+        "green": 88,
+        "checks": 25197,
+        "red": []
     }
 }

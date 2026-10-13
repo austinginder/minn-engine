@@ -18,19 +18,25 @@
  *           back after, and `wp` on the PATH runs WP-CLI under phpdbg for the
  *           test site (tests/tools/coverage-wp.sh). The suites' own verdicts
  *           are not the point here (headers plugin code sends are lost, and
- *           everything is slower); --suites=a,b runs only those.
+ *           everything is slower); --suites=a,b runs only those. phpdbg
+ *           prints a notice on stdout whatever display_errors says, so a
+ *           suite that reads a probe's JSON (html-api, requests) gives no
+ *           verdict here; the probe has run by then, and its lines count.
  *
  * Writes contracts/line-coverage.json (the figure, per part, per file) and
  * prints the total and the least covered files. Each part's lines are kept
  * in the system temp directory, so a later run of some parts counts the
- * others as they last ran (--fresh forgets them).
+ * others as they last ran (--fresh forgets them). With --merge, a part run
+ * again adds to what it ran last instead of replacing it: the way to finish
+ * a suites part a busy machine cut short (--parts=suites --suites=a,b
+ * --merge), with the engine's code unchanged in between.
  *
- * php tests/tools/line-coverage.php [--parts=unit,probes,http,suites] [--suites=a,b] [--files=20] [--fresh]
+ * php tests/tools/line-coverage.php [--parts=unit,probes,http,suites] [--suites=a,b] [--files=20] [--fresh] [--merge]
  */
 
 require __DIR__ . '/../lib.php';
 
-$options = getopt('', ['parts:', 'suites:', 'files:', 'fresh']);
+$options = getopt('', ['parts:', 'suites:', 'files:', 'fresh', 'merge']);
 $parts = array_filter(explode(',', (string) ($options['parts'] ?? 'unit,probes,http,suites')));
 $root = dirname(__DIR__, 2);
 $src = realpath("{$root}/public/minn/src/Minn") . '/';
@@ -141,6 +147,11 @@ $cacheDir = sys_get_temp_dir() . '/minn-line-coverage-parts';
 @mkdir($cacheDir, 0755, true);
 foreach (['unit', 'probes', 'http', 'suites'] as $part) {
     if (isset($byPart[$part])) {
+        if (isset($options['merge']) && is_file("{$cacheDir}/{$part}.json")) {
+            foreach ((array) json_decode((string) file_get_contents("{$cacheDir}/{$part}.json"), true) as $path => $lines) {
+                $byPart[$part][$path] = ($byPart[$part][$path] ?? []) + array_fill_keys((array) $lines, true);
+            }
+        }
         file_put_contents("{$cacheDir}/{$part}.json", json_encode(array_map('array_keys', $byPart[$part])));
     } elseif (!isset($options['fresh']) && is_file("{$cacheDir}/{$part}.json")) {
         $byPart[$part] = array_map(static fn (array $lines): array => array_fill_keys($lines, true), (array) json_decode((string) file_get_contents("{$cacheDir}/{$part}.json"), true));

@@ -5241,7 +5241,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/SiteController.php",
-            "lines": 87,
+            "lines": 90,
             "doc": "The small Settings-view routes of minn-admin/v1: the site logo, the\npermalink structure, the spam queue, and the months the library spans.",
             "implements": [],
             "extends": null,
@@ -5402,7 +5402,7 @@
                         }
                     ],
                     "line": 70,
-                    "end": 81
+                    "end": 84
                 },
                 {
                     "routes": [
@@ -5423,8 +5423,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 101
+                    "line": 88,
+                    "end": 104
                 },
                 {
                     "routes": [
@@ -5445,8 +5445,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 112
+                    "line": 108,
+                    "end": 115
                 },
                 {
                     "routes": [],

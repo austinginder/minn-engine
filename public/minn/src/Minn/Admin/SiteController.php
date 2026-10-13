@@ -73,6 +73,9 @@ final readonly class SiteController
         $structure = $this->permalinks->structure;
         return Reply::answer($request, [
             'structure' => $structure,
+            // What the app's presets put before a structure where the server cannot rewrite addresses (Minn Admin
+            // 2026-10-13): nothing here, the engine answers every path itself.
+            'index_prefix' => '',
             'category_base' => (string) ($this->site->option('category_base') ?? ''),
             'tag_base' => (string) ($this->site->option('tag_base') ?? ''),
             'pretty' => $structure !== '',
