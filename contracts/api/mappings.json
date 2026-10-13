@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 833,
-        "composes": 2393,
-        "leaf": 1030,
-        "noop": 2752,
+        "minn": 831,
+        "composes": 2381,
+        "leaf": 1025,
+        "noop": 2771,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1035,
+        "minnMethods": 1055,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -41547,15 +41547,14 @@
         },
         "_wp_specialchars": {
             "file": "formatting.php",
-            "lines": 9,
+            "lines": 5,
             "kind": "minn",
             "minn": [
                 "Minn\\Support\\Entities::specialchars",
+                "Minn\\Support\\Escape::specialchars",
                 "Minn\\Support\\KsesEntities::known"
             ],
-            "composes": [
-                "wp_kses_normalize_entities"
-            ]
+            "composes": []
         },
         "_wp_theme_json_webfonts_handler": {
             "file": "block-supports-deprecated.php",
@@ -44602,9 +44601,11 @@
         },
         "convert_chars": {
             "file": "formatting.php",
-            "lines": 5,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Text::encodeAmpersands"
+            ],
             "composes": []
         },
         "convert_invalid_entities": {
@@ -45955,12 +45956,12 @@
         },
         "ent2ncr": {
             "file": "formatting.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Text::numericReferences"
+            ],
+            "composes": []
         },
         "entities_decode": {
             "file": "simplepie/Interfaces.php",
@@ -46049,14 +46050,12 @@
         },
         "esc_js": {
             "file": "formatting.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_wp_specialchars",
-                "apply_filters",
-                "wp_check_invalid_utf8"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Escape::js"
+            ],
+            "composes": []
         },
         "esc_sql": {
             "file": "formatting.php",
@@ -46070,28 +46069,21 @@
         },
         "esc_textarea": {
             "file": "formatting.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Escape::textarea"
+            ],
+            "composes": []
         },
         "esc_url": {
             "file": "formatting.php",
-            "lines": 20,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\Url::clean",
-                "Minn\\Support\\Url::encodeBrackets"
+                "Minn\\Support\\Escape::url"
             ],
-            "composes": [
-                "apply_filters",
-                "wp_allowed_protocols",
-                "wp_kses_bad_protocol",
-                "wp_kses_normalize_entities",
-                "wp_parse_url"
-            ]
+            "composes": []
         },
         "esc_url_raw": {
             "file": "formatting.php",
@@ -54080,14 +54072,12 @@
         },
         "is_email": {
             "file": "formatting.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\Email::check"
+                "Minn\\Support\\Sanitize::isEmail"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "is_embed": {
             "file": "query.php",
@@ -55325,9 +55315,11 @@
         },
         "map_deep": {
             "file": "formatting.php",
-            "lines": 12,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Text::mapDeep"
+            ],
             "composes": []
         },
         "map_meta_cap": {
@@ -56097,9 +56089,11 @@
         },
         "normalize_whitespace": {
             "file": "post.php",
-            "lines": 2,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Text::normalizeWhitespace"
+            ],
             "composes": []
         },
         "note_sidebar_being_rendered": {
@@ -60579,14 +60573,12 @@
         },
         "sanitize_email": {
             "file": "formatting.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\Email::sanitize"
+                "Minn\\Support\\Sanitize::email"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "sanitize_file_name": {
             "file": "formatting.php",
@@ -60628,12 +60620,12 @@
         },
         "sanitize_key": {
             "file": "formatting.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Sanitize::key"
+            ],
+            "composes": []
         },
         "sanitize_locale_name": {
             "file": "formatting.php",
@@ -60719,11 +60711,10 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "_sanitize_text_fields",
-                "apply_filters"
-            ]
+            "minn": [
+                "Minn\\Support\\Sanitize::textField"
+            ],
+            "composes": []
         },
         "sanitize_textarea_field": {
             "file": "formatting.php",
@@ -60737,13 +60728,12 @@
         },
         "sanitize_title": {
             "file": "formatting.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "remove_accents"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Sanitize::title"
+            ],
+            "composes": []
         },
         "sanitize_title_for_query": {
             "file": "formatting.php",
@@ -60778,21 +60768,19 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "esc_url"
-            ]
+            "minn": [
+                "Minn\\Support\\Escape::url"
+            ],
+            "composes": []
         },
         "sanitize_user": {
             "file": "formatting.php",
-            "lines": 10,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "remove_accents",
-                "wp_strip_all_tags"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Sanitize::user"
+            ],
+            "composes": []
         },
         "sanitize_user_field": {
             "file": "user.php",
@@ -65609,14 +65597,12 @@
         },
         "wp_allowed_protocols": {
             "file": "kses.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_kses_table",
-                "apply_filters",
-                "did_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\KsesProtocols::allowed"
+            ],
+            "composes": []
         },
         "wp_apply_alignment_support": {
             "file": "block-supports.php",
@@ -65944,7 +65930,9 @@
             "file": "formatting.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Support\\Text::basename"
+            ],
             "composes": []
         },
         "wp_blacklist_check": {
@@ -66428,9 +66416,11 @@
         },
         "wp_check_invalid_utf8": {
             "file": "formatting.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
+            "lines": 4,
+            "kind": "minn",
+            "minn": [
+                "Minn\\Support\\Escape::validUtf8"
+            ],
             "composes": [
                 "wp_scrub_utf8"
             ]
@@ -70972,12 +70962,12 @@
         },
         "wp_html_excerpt": {
             "file": "formatting.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_strip_all_tags"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Text::htmlExcerpt"
+            ],
+            "composes": []
         },
         "wp_html_split": {
             "file": "formatting.php",
@@ -72005,22 +71995,21 @@
         },
         "wp_kses_bad_protocol": {
             "file": "kses.php",
-            "lines": 13,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_kses_bad_protocol_once",
-                "wp_kses_no_null"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\KsesProtocols::strip"
+            ],
+            "composes": []
         },
         "wp_kses_bad_protocol_once": {
             "file": "kses.php",
-            "lines": 20,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "wp_kses_decode_entities"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\KsesProtocols::stripOnce"
+            ],
+            "composes": []
         },
         "wp_kses_bad_protocol_once2": {
             "file": "kses.php",
@@ -72052,9 +72041,11 @@
         },
         "wp_kses_decode_entities": {
             "file": "kses.php",
-            "lines": 2,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Entities::numericAsBytes"
+            ],
             "composes": []
         },
         "wp_kses_hair": {
@@ -72114,9 +72105,12 @@
         },
         "wp_kses_no_null": {
             "file": "kses.php",
-            "lines": 5,
-            "kind": "leaf",
-            "minn": [],
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Kses::withoutControls",
+                "Minn\\Support\\Kses::withoutNulls"
+            ],
             "composes": []
         },
         "wp_kses_normalize_entities": {
@@ -77211,13 +77205,12 @@
         },
         "wp_trim_words": {
             "file": "formatting.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "wp_strip_all_tags"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Support\\Text::trimWords"
+            ],
+            "composes": []
         },
         "wp_trusted_keys": {
             "file": "misc.php",

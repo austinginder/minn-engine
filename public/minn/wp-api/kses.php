@@ -5,6 +5,7 @@ use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
 use Minn\Support\KsesPolicy;
 use Minn\Support\KsesValues;
+use Minn\Support\KsesProtocols;
 
 /** @internal */
 function _minn_kses_table(): array
@@ -30,12 +31,7 @@ function wp_kses_allowed_html($context = '')
 
 function wp_allowed_protocols()
 {
-    // The list follows its filter on every call until wp_loaded starts; from then on the last list computed stands.
-    static $protocols = null;
-    if ($protocols === null || !did_action('wp_loaded')) {
-        $protocols = array_values(array_unique((array) apply_filters('kses_allowed_protocols', _minn_kses_table()['protocols'])));
-    }
-    return $protocols;
+    return KsesProtocols::allowed();
 }
 
 /**
@@ -102,11 +98,7 @@ function wp_filter_nohtml_kses($data)
 
 function wp_kses_no_null($content, $options = null)
 {
-    $content = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', (string) $content);
-    if (($options['slash_zero'] ?? 'remove') !== 'keep') {
-        $content = preg_replace('/\\\\+0+/', '', $content);
-    }
-    return $content;
+    return ($options['slash_zero'] ?? 'remove') === 'keep' ? Kses::withoutControls((string) $content) : Kses::withoutNulls((string) $content);
 }
 
 function wp_kses_normalize_entities($content, $context = 'html')
@@ -116,49 +108,17 @@ function wp_kses_normalize_entities($content, $context = 'html')
 
 function wp_kses_bad_protocol($content, $allowed_protocols)
 {
-    $content = wp_kses_no_null((string) $content);
-    // An address already written as an allowed https:// or http:// one is left as it is (probe kses-remaining).
-    foreach (['https', 'http'] as $scheme) {
-        if (str_starts_with($content, "{$scheme}://") && in_array($scheme, (array) $allowed_protocols, true)) {
-            return $content;
-        }
-    }
-    $iterations = 0;
-    do {
-        $original = $content;
-        $content = wp_kses_bad_protocol_once($content, $allowed_protocols);
-    } while ($original !== $content && ++$iterations < 6);
-    return $original === $content ? $content : '';
+    return KsesProtocols::strip((string) $content, is_array($allowed_protocols) ? $allowed_protocols : (string) $allowed_protocols);
 }
 
 function wp_kses_bad_protocol_once($content, $allowed_protocols, $count = 1)
 {
-    // A decimal colon needs no semicolon unless a digit follows; a hex one does (probe audit-lows).
-    $content = preg_replace('/(&colon;|&#0*58(?:;|(?!\d))|&#x0*3a;)/i', ':', (string) $content);
-    $parts = preg_split('/:|&#0*58(?:;|(?!\d))|&#x0*3a;|&colon;/i', $content, 2);
-    if (isset($parts[1]) && !preg_match('%/\?%', $parts[0])) {
-        $protocol = preg_replace('/[\s\x00-\x20]/', '', wp_kses_decode_entities($parts[0]));
-        $protocol = preg_replace('/[^a-zA-Z0-9-+.]/', '', $protocol);
-        $allowed = false;
-        foreach ((array) $allowed_protocols as $p) {
-            if (strtolower($p) === strtolower($protocol)) {
-                $allowed = true;
-                break;
-            }
-        }
-        // What follows the protocol is trimmed, whichever way it goes (probe kses-remaining).
-        if (!$allowed) {
-            return trim($parts[1]);
-        }
-        return strtolower($protocol) . ':' . trim($parts[1]);
-    }
-    return $content;
+    return KsesProtocols::stripOnce((string) $content, is_array($allowed_protocols) ? $allowed_protocols : (string) $allowed_protocols);
 }
 
 function wp_kses_decode_entities($content)
 {
-    $content = preg_replace_callback('/&#([0-9]+);/', static fn (array $m) => chr((int) $m[1] % 256), (string) $content);
-    return preg_replace_callback('/&#[Xx]([0-9A-Fa-f]+);/', static fn (array $m) => chr(hexdec($m[1]) % 256), $content);
+    return Minn\Support\Entities::numericAsBytes((string) $content);
 }
 
 function wp_kses_split($content, $allowed_html, $allowed_protocols)

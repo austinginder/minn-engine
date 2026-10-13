@@ -10,6 +10,7 @@ use Minn\RestError;
 use Minn\Rest\RegisteredFields;
 use Minn\Rest\RuntimeRoutes;
 use Minn\Rest\RestMeta;
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
 /**
@@ -76,10 +77,10 @@ final readonly class TermEvents
     {
         $prepared = [];
         if (isset($body['name'])) {
-            $prepared['name'] = \sanitize_text_field((string) $body['name']);
+            $prepared['name'] = Sanitize::textField((string) $body['name']);
         }
         if (isset($body['slug'])) {
-            $prepared['slug'] = \sanitize_title((string) $body['slug']);
+            $prepared['slug'] = Sanitize::title((string) $body['slug']);
         }
         if (isset($body['description'])) {
             $prepared['description'] = (string) $body['description'];

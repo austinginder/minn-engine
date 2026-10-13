@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
 use Minn\Support\Escape;
+use Minn\Support\Text;
 
 /**
  * The nodes WordPress puts on the toolbar itself, as the reference adds
@@ -110,7 +111,7 @@ final class ToolbarMenus
         $external = [
             'wporg' => [Gettext::text('WordPress.org'), Gettext::text('https://wordpress.org/')],
             'documentation' => [Gettext::text('Documentation'), Gettext::text('https://wordpress.org/documentation/')],
-            'learn' => [Gettext::text('Learn WordPress'), \esc_url(Gettext::text('https://learn.wordpress.org/'))],
+            'learn' => [Gettext::text('Learn WordPress'), Escape::url(Gettext::text('https://learn.wordpress.org/'))],
             'support-forums' => [Gettext::text('Support'), Gettext::text('https://wordpress.org/support/forums/')],
             'feedback' => [Gettext::text('Feedback'), Gettext::text('https://wordpress.org/support/forum/requests-and-feedback')],
         ];
@@ -127,12 +128,12 @@ final class ToolbarMenus
         }
         $name = (string) \get_bloginfo('name');
         $name = $name !== '' ? $name : (string) preg_replace('#^(https?://)?(www\.)?#', '', \get_home_url());
-        $title = \wp_html_excerpt($name, 40, '&hellip;');
+        $title = Text::htmlExcerpt($name, 40, '&hellip;');
         $meta = ['menu_title' => $title];
         if (Runtime::hooks()->filter('wp_admin_bar_show_site_icons', [true]) && \has_site_icon()) {
             $small = (string) \get_site_icon_url(32);
             $large = (string) \get_site_icon_url(64);
-            $title = '<img class="site-icon" src="' . \esc_url($small) . '"' . ($large !== $small ? ' srcset="' . \esc_url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;
+            $title = '<img class="site-icon" src="' . Escape::url($small) . '"' . ($large !== $small ? ' srcset="' . Escape::url($large) . ' 2x"' : '') . ' alt="" width="20" height="20" />' . $title;
             $meta['class'] = 'has-site-icon';
         }
         $bar->add_node(['id' => 'site-name', 'title' => $title, 'href' => Runtime::current()->isAdmin || !\current_user_can('read') ? \home_url('/') : \admin_url(), 'meta' => $meta]);
@@ -348,7 +349,7 @@ final class ToolbarMenus
         if (Runtime::current()->isAdmin) {
             return;
         }
-        $form = '<form action="' . \esc_url(\home_url('/')) . '" method="get" id="adminbarsearch">'
+        $form = '<form action="' . Escape::url(\home_url('/')) . '" method="get" id="adminbarsearch">'
             . '<input class="adminbar-input" name="s" id="adminbar-search" type="text" value="" maxlength="150" />'
             . '<label for="adminbar-search" class="screen-reader-text">' . Gettext::text('Search') . '</label>'
             . '<input type="submit" class="adminbar-button" value="' . Gettext::text('Search') . '" />'

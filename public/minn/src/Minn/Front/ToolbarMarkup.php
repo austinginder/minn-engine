@@ -57,11 +57,11 @@ final class ToolbarMarkup
         $class = $classes !== '' ? ' class="' . Escape::attr(trim($classes)) . '"' : '';
         $arrow = $opens && !in_array($node->parent, ['root-default', 'top-secondary'], true) ? '<span class="wp-admin-bar-arrow" aria-hidden="true"></span>' : '';
         $out = "<li role='group' id='" . Escape::attr('wp-admin-bar-' . $node->id) . "'{$class}>"
-            . ($linked ? "<a class='ab-item'{$aria} href='" . \esc_url((string) $node->href) . "'" : '<div class="ab-item ab-empty-item"' . $aria);
+            . ($linked ? "<a class='ab-item'{$aria} href='" . Escape::url((string) $node->href) . "'" : '<div class="ab-item ab-empty-item"' . $aria);
         foreach (self::ATTRIBUTES as $attribute) {
             if (!empty($node->meta[$attribute])) {
                 $value = (string) $node->meta[$attribute];
-                $out .= " {$attribute}='" . ($attribute === 'onclick' ? \esc_js($value) : Escape::attr($value)) . "'";
+                $out .= " {$attribute}='" . ($attribute === 'onclick' ? Escape::js($value) : Escape::attr($value)) . "'";
             }
         }
         return $out . '>' . $arrow . $node->title . ($linked ? '</a>' : '</div>');

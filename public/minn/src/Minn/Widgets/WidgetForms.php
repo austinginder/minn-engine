@@ -78,13 +78,13 @@ final class WidgetForms
     public static function customHtml(\WP_Widget $widget, array $instance): string
     {
         return sprintf("\t\t<input id=\"%1\$s\" name=\"%2\$s\" class=\"title sync-input\" type=\"hidden\" value=\"%3\$s\" />\n", self::id($widget, 'title'), self::name($widget, 'title'), Escape::attr((string) ($instance['title'] ?? '')))
-            . sprintf("\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" class=\"content sync-input\" hidden>%3\$s</textarea>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), \esc_textarea((string) ($instance['content'] ?? '')));
+            . sprintf("\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" class=\"content sync-input\" hidden>%3\$s</textarea>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), Escape::textarea((string) ($instance['content'] ?? '')));
     }
 
     /** The block widget: its block markup in a textarea. */
     public static function block(\WP_Widget $widget, array $instance): string
     {
-        return sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">\n\t\t\t\tBlock HTML:\t\t\t</label>\n\t\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" rows=\"6\" cols=\"50\" class=\"widefat code\">%3\$s</textarea>\n\t\t</p>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), \esc_textarea((string) ($instance['content'] ?? '')));
+        return sprintf("\t\t<p>\n\t\t\t<label for=\"%1\$s\">\n\t\t\t\tBlock HTML:\t\t\t</label>\n\t\t\t<textarea id=\"%1\$s\" name=\"%2\$s\" rows=\"6\" cols=\"50\" class=\"widefat code\">%3\$s</textarea>\n\t\t</p>\n\t\t", self::id($widget, 'content'), self::name($widget, 'content'), Escape::textarea((string) ($instance['content'] ?? '')));
     }
 
     /** The text widget in its visual mode: hidden fields the editor syncs (after the indent WP_Widget_Text::form prints first). */
@@ -149,7 +149,7 @@ final class WidgetForms
         // A failed fetch is said first (probe widgets-remaining).
         $out = !empty($args['error']) ? '<p class="widget-error"><strong>RSS Error:</strong> ' . Escape::html(is_object($args['error']) && method_exists($args['error'], 'get_error_message') ? (string) $args['error']->get_error_message() : (string) $args['error']) . '</p>' : '';
         if ($inputs['url']) {
-            $out .= "\t<p><label for=\"rss-url-{$number}\">Enter the RSS feed URL here:</label>\n\t<input class=\"widefat\" id=\"rss-url-{$number}\" name=\"widget-rss[{$number}][url]\" type=\"text\" value=\"" . \esc_url((string) $args['url']) . "\" /></p>\n";
+            $out .= "\t<p><label for=\"rss-url-{$number}\">Enter the RSS feed URL here:</label>\n\t<input class=\"widefat\" id=\"rss-url-{$number}\" name=\"widget-rss[{$number}][url]\" type=\"text\" value=\"" . Escape::url((string) $args['url']) . "\" /></p>\n";
         }
         if ($inputs['title']) {
             $out .= "\t<p><label for=\"rss-title-{$number}\">Give the feed a title (optional):</label>\n\t<input class=\"widefat\" id=\"rss-title-{$number}\" name=\"widget-rss[{$number}][title]\" type=\"text\" value=\"" . Escape::attr((string) $args['title']) . "\" /></p>\n";

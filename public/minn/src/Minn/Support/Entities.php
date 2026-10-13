@@ -90,4 +90,11 @@ final class Entities
     {
         return str_contains($text, '&#1') ? strtr($text, self::windows1252()) : $text;
     }
+
+    /** Numeric character references as the bytes they name, modulo 256 (wp_kses_decode_entities). */
+    public static function numericAsBytes(string $content): string
+    {
+        $content = (string) preg_replace_callback('/&#([0-9]+);/', static fn (array $m): string => chr((int) $m[1] % 256), $content);
+        return (string) preg_replace_callback('/&#[Xx]([0-9A-Fa-f]+);/', static fn (array $m): string => chr((int) hexdec($m[1]) % 256), $content);
+    }
 }

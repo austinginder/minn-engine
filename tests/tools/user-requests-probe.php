@@ -23,7 +23,10 @@ register_shutdown_function(static function () use (&$made): void {
     }
     require_once ABSPATH . 'wp-admin/includes/user.php';
     foreach ($made['users'] as $id) {
-        wp_delete_user($id);
+        // A failed insert casts to user 1: never delete it.
+        if (is_int($id) && $id > 1) {
+            wp_delete_user($id);
+        }
     }
 });
 $ids = [];

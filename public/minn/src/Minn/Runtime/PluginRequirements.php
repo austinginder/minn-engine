@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Escape;
 use Minn\Support\FileHeaders;
 
 /**
@@ -30,7 +31,7 @@ final class PluginRequirements
         $needsPhp = (string) $headers['RequiresPHP'];
         $wpOk = \is_wp_version_compatible($needsWp);
         $phpOk = \is_php_version_compatible($needsPhp);
-        $updatePhp = '<p>' . sprintf('<a href="%s">Learn more about updating PHP</a>.', \esc_url(\wp_get_update_php_url())) . '</p>';
+        $updatePhp = '<p>' . sprintf('<a href="%s">Learn more about updating PHP</a>.', Escape::url(\wp_get_update_php_url())) . '</p>';
         if (!$wpOk && !$phpOk) {
             return new Refusal('plugin_wp_php_incompatible', '<p>' . sprintf('<strong>Error:</strong> Current versions of WordPress (%1$s) and PHP (%2$s) do not meet minimum requirements for %3$s. The plugin requires WordPress %4$s and PHP %5$s.', $wp, PHP_VERSION, $name, $needsWp, $needsPhp) . '</p>' . $updatePhp);
         }
@@ -67,7 +68,7 @@ final class PluginRequirements
             $name,
             count($named) === 1 ? '1 plugin' : count($named) . ' plugins',
             implode(', ', $named),
-            \esc_url(\self_admin_url('plugins.php')),
+            Escape::url(\self_admin_url('plugins.php')),
         );
         return new Refusal('plugin_missing_dependencies', "<p>{$message}</p>", $unmet);
     }

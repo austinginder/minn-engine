@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
 use Minn\Support\Lists;
+use Minn\Support\Text;
 
 /**
  * Classic menu items as the reference serves them to walkers and plugins
@@ -80,7 +81,7 @@ final class NavMenuItems
         };
         $item->target ??= (string) $meta('target');
         $item->attr_title ??= Runtime::hooks()->filter('nav_menu_attr_title', [$item->post_excerpt ?? '']);
-        $item->description ??= Runtime::hooks()->filter('nav_menu_description', [\wp_trim_words((string) ($item->post_content ?? ''), 200)]);
+        $item->description ??= Runtime::hooks()->filter('nav_menu_description', [Text::trimWords((string) ($item->post_content ?? ''), 200)]);
         $item->classes ??= (array) $meta('classes');
         $item->xfn ??= (string) $meta('xfn');
     }

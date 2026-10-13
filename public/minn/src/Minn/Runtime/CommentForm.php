@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
 /**
@@ -125,6 +126,6 @@ final class CommentForm
         if ($email === '' || $author === '') {
             return new \WP_Error('require_name_email', '<strong>Error:</strong> Please fill the required fields.', 200);
         }
-        return \is_email($email) ? null : new \WP_Error('require_valid_email', '<strong>Error:</strong> Please enter a valid email address.', 200);
+        return Sanitize::isEmail($email) ? null : new \WP_Error('require_valid_email', '<strong>Error:</strong> Please enter a valid email address.', 200);
     }
 }

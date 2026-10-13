@@ -105,7 +105,10 @@ $say('tax_input needs the right to assign terms', (static function () use (&$mad
     if (!function_exists('wp_delete_user')) {
         require_once ABSPATH . 'wp-admin/includes/user.php';
     }
-    wp_delete_user($contributor);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($contributor) && $contributor > 1) {
+        wp_delete_user($contributor);
+    }
     foreach ([['zz-ti-tag', 'post_tag'], ['zz-ti-theme', 'wp_theme']] as [$slug, $taxonomy]) {
         $term = get_term_by('slug', $slug, $taxonomy);
         if ($term) {

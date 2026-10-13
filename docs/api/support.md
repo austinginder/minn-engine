@@ -8,29 +8,32 @@ escaping, serialized readers, small helpers
 | [`Backtrace`](#backtrace) | final class | 32 | A call stack named as wp_debug_backtrace_summary names it (probe |
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
-| [`Entities`](#entities) | final class | 82 | HTML special-character encoding with the reference's quote styles and its |
-| [`Escape`](#escape) | final class | 25 | Text made safe for HTML the way WordPress's escapers make it (esc_html, |
+| [`Entities`](#entities) | final class | 89 | HTML special-character encoding with the reference's quote styles and its |
+| [`Escape`](#escape) | final class | 78 | Text made safe the way WordPress's escapers make it, each ending in the |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
 | [`Files`](#files) | final class | 66 | Recursive filesystem work behind WP_Filesystem_Direct: best-effort tree |
 | [`Flag`](#flag) | final class | 11 | A yes or no as WordPress reads one from loose input (wp_validate_boolean). |
 | [`Hierarchy`](#hierarchy) | final class | 52 | Loops in a parent chain, found with two walkers: a slow one that takes one |
 | [`Ip`](#ip) | final class | 22 | Addresses with their identifying tail removed, for logs and analytics that |
-| [`Kses`](#kses) | final class | 509 | The HTML a user without unfiltered_html may store. Tags outside the |
+| [`Kses`](#kses) | final class | 515 | The HTML a user without unfiltered_html may store. Tags outside the |
 | [`KsesAttributes`](#ksesattributes) | final class | 76 | Kses one attribute at a time, for the shortcode pass that runs inside |
 | [`KsesCss`](#ksescss) | final class | 138 | The style attribute as kses keeps it (safecss_filter_attr): each |
 | [`KsesEntities`](#ksesentities) | final class | 30 | The named references kses keeps as written: the list captured from the |
 | [`KsesPolicy`](#ksespolicy) | final readonly class | 115 | What one kses pass allows: the tags, each tag's attributes (allowed |
+| [`KsesProtocols`](#ksesprotocols) | final class | 67 | The protocols an address may use, as kses judges them: the site's list |
 | [`KsesValues`](#ksesvalues) | final class | 38 | The value rules an allowlist attribute may carry, as the reference judges |
 | [`Lists`](#lists) | final class | 190 | List shaping behind the facade's array utilities: arguments over their |
 | [`Locale`](#locale) | final class | 31 | The locale's calendar and number vocabulary as data: the names a site |
 | [`Markers`](#markers) | final class | 59 | The BEGIN/END marker blocks insert_with_markers() maintains in files like |
 | [`Paths`](#paths) | final class | 75 | File-system path and permission spellings. |
+| [`Sanitize`](#sanitize) | final class | 57 | Text made fit to store the way WordPress's sanitizers make it, each ending |
 | [`ScriptTag`](#scripttag) | final class | 69 | Script elements as the reference builds them (probe script-tags): the |
 | [`SearchReplace`](#searchreplace) | final class | 38 | String replace that walks serialized-PHP arrays of scalars without |
 | [`Serialized`](#serialized) | final class | 356 | Tolerant readers for the serialized-PHP blobs WordPress stores. Nothing |
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
+| [`Text`](#text) | final class | 69 | Plain text shaped the way WordPress's formatting helpers shape it: cut to |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
 | [`TimezoneChoice`](#timezonechoice) | final class | 109 | The timezone choices a settings form offers (wp_timezone_choice, probe |
 | [`Url`](#url) | final class | 231 | URL shaping the escaping and query helpers share: the character cleanup |
@@ -48,7 +51,7 @@ locale with spellings of its own (German, Danish, Catalan, Serbian,
 Bosnian) has them, and a string that is not UTF-8 is read as Latin-1.
 Anything the table does not name stays as it is.
 
-Used by: `Minn\Content\Slug`
+Used by: `Minn\Content\Slug`, `Minn\Support\Sanitize`
 
 
 ### static `strip(string $text, string $locale = ''): string`
@@ -104,7 +107,7 @@ why it gave up.
 
 - const `LOCAL_CHARACTER` = `'a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~\\.-'`
 
-Used by: `Minn\Rest\CommentsController`
+Used by: `Minn\Rest\CommentsController`, `Minn\Support\Sanitize`
 
 ### static `check(string $email): ?string`
 
@@ -129,7 +132,7 @@ named or numeric entity stays as it is.
 - const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
 - const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
 
-Used by: `Minn\Runtime\AccountFlows`, `Minn\Support\Escape`, `Minn\Support\Kses`
+Used by: `Minn\Runtime\AccountFlows`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`
 
 ### static `specialchars(string $text, string|int|false $quoteStyle, bool $doubleEncode, callable $knownEntity): string`
 
@@ -145,6 +148,10 @@ The reverse of specialchars: the five characters back, with the quote pairs the 
 
 Windows-1252 numeric references rewritten as the Unicode references they meant.
 
+### static `numericAsBytes(string $content): string`
+
+Numeric character references as the bytes they name, modulo 256 (wp_kses_decode_entities).
+
 Internals: `encodeStrayAmpersands()` (private, line 40), `windows1252()` (private, line 74)
 
 
@@ -152,13 +159,15 @@ Internals: `encodeStrayAmpersands()` (private, line 40), `windows1252()` (privat
 
 `final class Minn\Support\Escape` · `public/minn/src/Minn/Support/Escape.php`
 
-Text made safe for HTML the way WordPress's escapers make it (esc_html,
-esc_attr): invalid UTF-8 emptied, entities already present normalised
-rather than encoded again, the specials and both quotes encoded, then the
-filter plugins hook (esc_html, attribute_escape) handed the result and the
-original.
+Text made safe the way WordPress's escapers make it, each ending in the
+filter plugins hook there, handed the result and the original: for HTML
+(esc_html, esc_attr) invalid UTF-8 emptied, entities already present
+normalised rather than encoded again, the specials and both quotes
+encoded; for a textarea, everything encoded; for an inline script, a
+single-quoted string's specials; and an address (esc_url) cleaned, its
+protocol checked against the allowed ones.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Content\TextFilters`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PageLinks`, `Minn\Front\PostEmbed`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Runtime\NavMenu`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\UpdateCounts`, `Minn\Support\KsesAttributes`, `Minn\Support\Sanitize`, `Minn\Support\ScriptTag`, `Minn\Support\TimezoneChoice`, `Minn\Theme\HeadLinks`, `Minn\Widgets\WidgetForms`
 
 ### static `html(mixed $text): string`
 
@@ -168,7 +177,33 @@ Text for an element's content.
 
 Text for an attribute's value.
 
-Internals: `encoded()` (private, line 30)
+### static `textarea(mixed $text): string`
+
+Text for a textarea (esc_textarea): every special and quote encoded, references included.
+
+### static `js(mixed $text): string`
+
+Text inside a single-quoted script string (esc_js): specials and double quotes encoded, single quotes and newlines escaped.
+
+### static `url(mixed $url, mixed $protocols = NULL, mixed $context = 'display'): string`
+
+An address to print ('display') or to store ('db'): a missing scheme is
+http (https when only https is allowed); for display "&amp;" and "'"
+become references; brackets are encoded; an address on a protocol not
+allowed (the site's, unless a list is given) is empty. Then clean_url,
+handed the address, the original and the context.
+
+### static `validUtf8(string $text): string`
+
+The text when it is valid UTF-8, else nothing (wp_check_invalid_utf8 without stripping).
+
+### static `specialchars(string $text, string|int|false $quotes): string`
+
+The specials encoded in the given quote style (_wp_specialchars),
+references already present normalised the way kses normalises them
+rather than encoded again.
+
+Internals: `encoded()` (private, line 92)
 
 
 ## FileHeaders
@@ -318,7 +353,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
 
 ### static `post(string $html): string`
 
@@ -337,6 +372,10 @@ escaped, block attribute values filtered the same way, then the tags.
 ### static `withoutControls(string $html): string`
 
 The control characters kses removes (tab, newline and carriage return stay).
+
+### static `withoutNulls(string $content): string`
+
+The control characters and backslashed zeros taken out (wp_kses_no_null).
 
 ### static `normalizeEntities(string $html): string`
 
@@ -445,7 +484,7 @@ Whether a URL may be an object's data in post content: an http or https
 URL on the uploads host and port, no credentials, query or fragment,
 whose path ends in ".pdf".
 
-Internals: `cleanValue()` (private, line 132), `run()` (private, line 213), `htmlComment()` (private, line 241), `deepDecode()` (private, line 353), `visible()` (private, line 366), `normalizeText()` (private, line 381), `normalizeAttribute()` (private, line 404), `named()` (private, line 424), `codePoint()` (private, line 431), `attributes()` (private, line 456), `rendered()` (private, line 481), `srcset()` (private, line 519)
+Internals: `cleanValue()` (private, line 138), `run()` (private, line 219), `htmlComment()` (private, line 247), `deepDecode()` (private, line 359), `visible()` (private, line 372), `normalizeText()` (private, line 387), `normalizeAttribute()` (private, line 410), `named()` (private, line 430), `codePoint()` (private, line 437), `attributes()` (private, line 462), `rendered()` (private, line 487), `srcset()` (private, line 525)
 
 
 ## KsesAttributes
@@ -599,6 +638,44 @@ The attributes a tag must keep: lose one and the tag keeps none.
 ### `holdsUri(string $name): bool`
 
 Whether the attribute holds a URI whose scheme must be judged.
+
+
+## KsesProtocols
+
+`final class Minn\Support\KsesProtocols` · `public/minn/src/Minn/Support/KsesProtocols.php`
+
+The protocols an address may use, as kses judges them: the site's list
+(kses_allowed_protocols), and an address with a protocol not on the list
+taken off it, encoded colons and entity-spelled protocols seen through.
+
+Used by: `Minn\Support\Escape`
+
+### static `allowed(): array`
+
+The protocols addresses may use (wp_allowed_protocols): the table's
+list through kses_allowed_protocols, asked again on every call until
+wp_loaded has run, then kept.
+
+- `@return list<string>`
+
+### static `strip(string $content, array|string $protocols): string`
+
+An address with a protocol the list does not allow taken off
+(wp_kses_bad_protocol): null bytes gone; an http or https address left
+as written when that protocol is allowed; otherwise the protocol checked
+again until nothing changes (up to six times), and empty if it never
+settles.
+
+- `@param array<array-key, mixed>|string $protocols`
+
+### static `stripOnce(string $content, array|string $protocols): string`
+
+One pass of the protocol check (wp_kses_bad_protocol_once): encoded
+colons decoded; when what comes before the first colon (and holds no
+"/?") is an allowed protocol it is lower-cased and kept, otherwise taken
+off; either way what follows is trimmed.
+
+- `@param array<array-key, mixed>|string $protocols`
 
 
 ## KsesValues
@@ -799,6 +876,43 @@ Forward slashes only, runs collapsed, a stream wrapper kept, a Windows drive let
 The `ls -l` spelling of a mode: type letter, then rwx for owner, group and world with the setuid, setgid and sticky bits folded in.
 
 
+## Sanitize
+
+`final class Minn\Support\Sanitize` · `public/minn/src/Minn/Support/Sanitize.php`
+
+Text made fit to store the way WordPress's sanitizers make it, each ending
+in the filter plugins hook there, handed the result and what was given: a
+title (accents gone when saving), a key, a line of plain text, a user name,
+an email address and the check of one.
+
+Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Rest\MediaController`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
+
+### static `title(mixed $title, mixed $fallback = '', mixed $context = 'save'): string`
+
+A title as a slug's source (sanitize_title): accents gone when saving; the fallback when the filter leaves nothing.
+
+### static `key(mixed $key): string`
+
+A key (sanitize_key): lower case letters, digits, underscores and dashes only.
+
+### static `textField(mixed $text): string`
+
+One line of plain text (sanitize_text_field): tags, line breaks, extra spaces and stray octets gone; anything but text is empty.
+
+### static `user(mixed $username, mixed $strict = false): string`
+
+A user name (sanitize_user): tags, accents, octets and references gone,
+spaces collapsed; strictly, only letters, digits, spaces and _ . - @.
+
+### static `email(mixed $email): string`
+
+An email address with what may not be in one taken out (sanitize_email), and why when nothing is left.
+
+### static `isEmail(mixed $email): mixed`
+
+The address when it reads as one, else false (is_email), as the filter leaves it.
+
+
 ## ScriptTag
 
 `final class Minn\Support\ScriptTag` · `public/minn/src/Minn/Support/ScriptTag.php`
@@ -952,6 +1066,46 @@ a port only when it is digits. Null when nothing parses.
 - `@return array{0: string, 1: ?int, 2: ?string, 3: bool}|null`
 
 
+## Text
+
+`final class Minn\Support\Text` · `public/minn/src/Minn/Support/Text.php`
+
+Plain text shaped the way WordPress's formatting helpers shape it: cut to
+a number of words or characters, named references written as numeric
+ones, stray ampersands encoded, whitespace normalized, a path's last part,
+and a callback run over every value of a nested structure.
+
+Used by: `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\ToolbarMenus`, `Minn\Rest\Api`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostRevisions`
+
+### static `trimWords(mixed $text, mixed $count = 55, mixed $more = NULL): string`
+
+The text's first words, tags gone, with $more after them when some were cut (wp_trim_words), as the filter leaves it.
+
+### static `htmlExcerpt(mixed $text, mixed $count, mixed $more = NULL): string`
+
+The text's first characters, tags and line breaks gone, with $more after them when some were cut (wp_html_excerpt).
+
+### static `numericReferences(mixed $text): mixed`
+
+Named character references written as numeric ones (ent2ncr), unless pre_ent2ncr answers first.
+
+### static `encodeAmpersands(mixed $content): string`
+
+Ampersands that begin no reference written as &#038; (convert_chars).
+
+### static `normalizeWhitespace(mixed $text): string`
+
+Line breaks as single newlines and runs of spaces and tabs as one space, ends trimmed (normalize_whitespace).
+
+### static `basename(mixed $path, string $suffix = ''): string`
+
+A path's last part, multibyte names intact, without the suffix given (wp_basename).
+
+### static `mapDeep(mixed $value, callable $callback): mixed`
+
+A value with the callback run over every scalar inside it, arrays and objects followed (map_deep).
+
+
 ## Time
 
 `final class Minn\Support\Time` · `public/minn/src/Minn/Support/Time.php`
@@ -997,7 +1151,7 @@ URL shaping the escaping and query helpers share: the character cleanup
 esc_url applies, bracket encoding outside the authority, and query
 argument merging. Behaviour pinned by contracts/fixtures/api/functions.json.
 
-Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Upgrade`
+Used by: `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\PostLinks`, `Minn\Runtime\Upgrade`, `Minn\Support\Escape`
 
 ### static `withTrailingSlash(string $value): string`
 

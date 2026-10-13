@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
+
 /**
  * The heartbeat a signed-in page beats through admin-ajax.php, answered as
  * the reference answers it (suite ajax): the heartbeat nonce checked, and
@@ -23,7 +25,7 @@ final class Heartbeat
     public static function answer(array $post): array
     {
         $state = \wp_verify_nonce((string) ($post['_nonce'] ?? ''), 'heartbeat-nonce');
-        $screen = empty($post['screen_id']) ? 'front' : \sanitize_key((string) $post['screen_id']);
+        $screen = empty($post['screen_id']) ? 'front' : Sanitize::key((string) $post['screen_id']);
         $data = empty($post['data']) ? [] : (array) $post['data'];
         $response = [];
         if ($state !== 1) {

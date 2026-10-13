@@ -164,6 +164,9 @@ if (!function_exists('wp_delete_user')) {
     require_once ABSPATH . 'wp-admin/includes/user.php';
 }
 foreach ($made as $id) {
-    wp_delete_user($id, 1);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($id) && $id > 1) {
+        wp_delete_user($id, 1);
+    }
 }
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

@@ -15,6 +15,7 @@ use Minn\Runtime\Runtime;
 use Minn\Runtime\Pages;
 use Minn\Runtime\PostInsert;
 use Minn\Runtime\PostLookup;
+use Minn\Support\Text;
 
 /** @internal */
 function _minn_posts(): Posts
@@ -967,8 +968,7 @@ function wp_add_footnotes_to_revision($fields)
 /** Whitespace evened out for comparing: trimmed, line breaks as one newline, runs of spaces and tabs as one space. */
 function normalize_whitespace($str)
 {
-    $str = str_replace("\r", "\n", trim((string) $str));
-    return (string) preg_replace(['/\n+/', '/[ \t]+/'], ["\n", ' '], $str);
+    return Text::normalizeWhitespace($str);
 }
 
 /**

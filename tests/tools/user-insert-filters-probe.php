@@ -15,7 +15,10 @@ wp_set_current_user(1);
 foreach (['zzinsertprobe', 'zzinsertchanged', 'zzinsertbad'] as $leftover) {
     $old = get_user_by('login', $leftover);
     if ($old) {
-        wp_delete_user($old->ID, 1);
+        // A failed insert casts to user 1: never delete it.
+        if (is_int($old->ID) && $old->ID > 1) {
+            wp_delete_user($old->ID, 1);
+        }
     }
 }
 $watch = ['sanitize_user', 'validate_username', 'illegal_user_logins', 'pre_user_login', 'pre_user_nicename', 'pre_user_email', 'pre_user_url', 'pre_user_nickname', 'pre_user_first_name', 'pre_user_last_name', 'pre_user_display_name', 'pre_user_description', 'wp_pre_insert_user_data', 'insert_user_meta', 'insert_custom_user_meta', 'user_registration_email'];
@@ -89,6 +92,9 @@ if (is_int($changed)) {
 }
 
 foreach ($made as $id) {
-    wp_delete_user($id, 1);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($id) && $id > 1) {
+        wp_delete_user($id, 1);
+    }
 }
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

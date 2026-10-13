@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Front;
 
 use Minn\Runtime\Runtime;
+use Minn\Support\Sanitize;
 use Minn\Theme\Printed;
 
 /**
@@ -40,8 +41,8 @@ final class SitemapRequest
     /** What the sitemaps server does with the request (render_sitemaps). */
     public static function serve(\WP_Sitemaps $server): void
     {
-        $sitemap = (string) \sanitize_text_field(\get_query_var('sitemap'));
-        $stylesheet = (string) \sanitize_text_field(\get_query_var('sitemap-stylesheet'));
+        $sitemap = (string) Sanitize::textField(\get_query_var('sitemap'));
+        $stylesheet = (string) Sanitize::textField(\get_query_var('sitemap-stylesheet'));
         if ($sitemap === '' && $stylesheet === '') {
             return;
         }
@@ -57,7 +58,7 @@ final class SitemapRequest
             $server->renderer->render_index($server->index->get_sitemap_list());
             throw new Printed();
         }
-        self::page($server, $sitemap, (string) \sanitize_text_field(\get_query_var('sitemap-subtype')));
+        self::page($server, $sitemap, (string) Sanitize::textField(\get_query_var('sitemap-subtype')));
     }
 
     /** One provider's page: printed, or a 404 when the subtype is not the provider's or the page has nothing. */

@@ -1,17 +1,16 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 967,
-        "functions": 355,
+        "functionCalls": 878,
+        "functions": 337,
         "hookApi": 0,
         "classReferences": 568,
         "classes": 50,
-        "files": 166
+        "files": 162
     },
     "families": {
         "functions": {
             "wp-includes/post.php": 128,
-            "wp-includes/formatting.php": 93,
             "wp-includes/link-template.php": 75,
             "wp-includes/taxonomy.php": 74,
             "wp-includes/functions.php": 63,
@@ -39,6 +38,7 @@
             "wp-admin/includes/plugin.php": 5,
             "wp-includes/block-template-utils.php": 5,
             "wp-includes/blocks.php": 5,
+            "wp-includes/formatting.php": 4,
             "wp-includes/script-loader.php": 4,
             "wp-includes/category-template.php": 4,
             "wp-includes/post-thumbnail-template.php": 3,
@@ -131,24 +131,6 @@
                 "Minn/Runtime/PostQueryResults.php": 4,
                 "Minn/Runtime/PostQueryStatus.php": 3,
                 "Minn/Runtime/UpdateCounts.php": 3
-            }
-        },
-        "esc_url": {
-            "uses": 30,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Content/MediaShortcodes.php": 4,
-                "Minn/Front/CustomLogo.php": 2,
-                "Minn/Front/EmbedCard.php": 5,
-                "Minn/Front/FeedTags.php": 2,
-                "Minn/Front/FeedTemplates.php": 5,
-                "Minn/Front/PostEmbed.php": 2,
-                "Minn/Front/ToolbarMarkup.php": 1,
-                "Minn/Front/ToolbarMenus.php": 4,
-                "Minn/Runtime/PluginRequirements.php": 2,
-                "Minn/Support/ScriptTag.php": 1,
-                "Minn/Theme/HeadLinks.php": 1,
-                "Minn/Widgets/WidgetForms.php": 1
             }
         },
         "get_post": {
@@ -248,21 +230,6 @@
                 "Minn/Runtime/PostData.php": 1,
                 "Minn/Runtime/PostLinks.php": 1,
                 "Minn/Runtime/UserEvents.php": 7
-            }
-        },
-        "sanitize_title": {
-            "uses": 14,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Blocks/TemplatePartVariations.php": 1,
-                "Minn/Rest/MediaController.php": 1,
-                "Minn/Runtime/PostInsert.php": 2,
-                "Minn/Runtime/PostLinks.php": 2,
-                "Minn/Runtime/PostSave.php": 1,
-                "Minn/Runtime/TermEvents.php": 1,
-                "Minn/Runtime/TermQueryRunner.php": 1,
-                "Minn/Runtime/TermSave.php": 4,
-                "Minn/Runtime/UserSave.php": 1
             }
         },
         "get_permalink": {
@@ -443,13 +410,6 @@
                 "Minn/Theme/ClassicRenderer.php": 1
             }
         },
-        "ent2ncr": {
-            "uses": 6,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Front/FeedTemplates.php": 6
-            }
-        },
         "get_comments_number": {
             "uses": 6,
             "family": "wp-includes/comment-template.php",
@@ -567,35 +527,6 @@
                 "Minn/Front/EmbedCard.php": 3,
                 "Minn/Front/SitemapController.php": 1,
                 "Minn/Front/SitemapRequest.php": 1
-            }
-        },
-        "is_email": {
-            "uses": 5,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1,
-                "Minn/Runtime/ApplicationPasswordSignIn.php": 2,
-                "Minn/Runtime/CommentForm.php": 1,
-                "Minn/Runtime/OptionSanitizer.php": 1
-            }
-        },
-        "sanitize_key": {
-            "uses": 5,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/Heartbeat.php": 1,
-                "Minn/Runtime/PostQueryStatus.php": 1,
-                "Minn/Runtime/QueryFlags.php": 1,
-                "Minn/Runtime/UserQueryRunner.php": 2
-            }
-        },
-        "sanitize_text_field": {
-            "uses": 5,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Front/SitemapRequest.php": 3,
-                "Minn/Rest/MediaController.php": 1,
-                "Minn/Runtime/TermEvents.php": 1
             }
         },
         "the_post": {
@@ -796,13 +727,6 @@
                 "Minn/Rest/WidgetsController.php": 1
             }
         },
-        "sanitize_title_for_query": {
-            "uses": 4,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/PostQueryWhere.php": 4
-            }
-        },
         "selected": {
             "uses": 4,
             "family": "wp-includes/general-template.php",
@@ -863,14 +787,6 @@
                 "Minn/Query/DateSql.php": 1,
                 "Minn/Runtime/CommentEvents.php": 1,
                 "Minn/Runtime/PostQueryResults.php": 1
-            }
-        },
-        "esc_textarea": {
-            "uses": 3,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Front/EmbedCard.php": 1,
-                "Minn/Widgets/WidgetForms.php": 2
             }
         },
         "feed_content_type": {
@@ -1018,14 +934,6 @@
                 "Minn/Runtime/ThemeSupports.php": 1
             }
         },
-        "sanitize_user": {
-            "uses": 3,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1,
-                "Minn/Runtime/UserSave.php": 2
-            }
-        },
         "self_admin_url": {
             "uses": 3,
             "family": "wp-includes/link-template.php",
@@ -1049,14 +957,6 @@
                 "Minn/Rest/Embed.php": 1,
                 "Minn/Rest/RegisteredFields.php": 1,
                 "Minn/Widgets/WidgetForms.php": 1
-            }
-        },
-        "wp_basename": {
-            "uses": 3,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/PostQueryTax.php": 1,
-                "Minn/Runtime/PostQueryWhere.php": 2
             }
         },
         "wp_get_inline_script_tag": {
@@ -1127,13 +1027,6 @@
             "files": {
                 "Minn/Runtime/CommentQueryRunner.php": 1,
                 "Minn/Runtime/PostQuery.php": 1
-            }
-        },
-        "convert_chars": {
-            "uses": 2,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Front/FeedTags.php": 2
             }
         },
         "delete_metadata": {
@@ -1331,25 +1224,11 @@
                 "Minn/Rest/WidgetsController.php": 1
             }
         },
-        "normalize_whitespace": {
-            "uses": 2,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/PostRevisions.php": 2
-            }
-        },
         "rest_is_field_included": {
             "uses": 2,
             "family": "wp-includes/rest-api.php",
             "files": {
                 "Minn/Rest/RegisteredFields.php": 2
-            }
-        },
-        "sanitize_url": {
-            "uses": 2,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/OptionSanitizer.php": 2
             }
         },
         "shortcode_atts": {
@@ -1687,13 +1566,6 @@
             "family": "wp-includes/user.php",
             "files": {
                 "Minn/Runtime/AccountFlows.php": 1
-            }
-        },
-        "esc_js": {
-            "uses": 1,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Front/ToolbarMarkup.php": 1
             }
         },
         "flush_rewrite_rules": {
@@ -2207,13 +2079,6 @@
                 "Minn/Front/FeedTemplates.php": 1
             }
         },
-        "sanitize_email": {
-            "uses": 1,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/OptionSanitizer.php": 1
-            }
-        },
         "sanitize_meta": {
             "uses": 1,
             "family": "wp-includes/meta.php",
@@ -2268,13 +2133,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Rest/MediaController.php": 1
-            }
-        },
-        "urlencode_deep": {
-            "uses": 1,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Rest/Api.php": 1
             }
         },
         "user_can": {
@@ -2571,13 +2429,6 @@
                 "Minn/Rest/MediaController.php": 1
             }
         },
-        "wp_html_excerpt": {
-            "uses": 1,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "wp_insert_attachment": {
             "uses": 1,
             "family": "wp-includes/post.php",
@@ -2814,13 +2665,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Runtime/PostEvents.php": 1
-            }
-        },
-        "wp_trim_words": {
-            "uses": 1,
-            "family": "wp-includes/formatting.php",
-            "files": {
-                "Minn/Runtime/NavMenuItems.php": 1
             }
         },
         "wp_unique_filename": {

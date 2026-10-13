@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Query\Sql;
 use Minn\Support\Lists;
+use Minn\Support\Sanitize;
 
 /**
  * WP_User_Query as the reference runs it (probe wp-user-query-sql): the
@@ -68,11 +69,11 @@ final class UserQueryRunner
         $users = $this->wpdb->users;
         if (is_array($qv['fields'])) {
             $qv['fields'] = array_intersect(array_unique(array_map('strtolower', $qv['fields'])), self::COLUMNS) ?: ['id'];
-            $fields = implode(',', array_map(static fn (string $f) => "{$users}." . ($f === 'id' ? 'ID' : \sanitize_key($f)), $qv['fields']));
+            $fields = implode(',', array_map(static fn (string $f) => "{$users}." . ($f === 'id' ? 'ID' : Sanitize::key($f)), $qv['fields']));
         } elseif (in_array($qv['fields'], ['all', 'all_with_meta'], true) || !in_array($qv['fields'], self::COLUMNS, true)) {
             $fields = "{$users}.ID";
         } else {
-            $fields = "{$users}." . (strtolower((string) $qv['fields']) === 'id' ? 'ID' : \sanitize_key((string) $qv['fields']));
+            $fields = "{$users}." . (strtolower((string) $qv['fields']) === 'id' ? 'ID' : Sanitize::key((string) $qv['fields']));
         }
         return !empty($qv['count_total']) ? 'SQL_CALC_FOUND_ROWS ' . $fields : $fields;
     }

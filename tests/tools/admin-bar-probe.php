@@ -364,7 +364,10 @@ if (!function_exists('wp_delete_user')) {
     require_once ABSPATH . 'wp-admin/includes/user.php';
 }
 foreach ($made as $id) {
-    wp_delete_user($id);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($id) && $id > 1) {
+        wp_delete_user($id);
+    }
 }
 // Once the page has opened its body the skip link is gone; a phone gets its own class.
 ob_start();

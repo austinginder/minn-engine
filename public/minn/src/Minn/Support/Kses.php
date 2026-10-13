@@ -64,6 +64,12 @@ final class Kses
         return (string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $html);
     }
 
+    /** The control characters and backslashed zeros taken out (wp_kses_no_null). */
+    public static function withoutNulls(string $content): string
+    {
+        return (string) preg_replace('/\\\\+0+/', '', self::withoutControls($content));
+    }
+
     /**
      * Every "&" made a reference, in one pass: a known name or a code point
      * kses accepts stays one (decimal padded to three digits, hex with a
@@ -158,7 +164,7 @@ final class Kses
      */
     public static function allowing(string $content, array|string $allowedHtml, mixed $protocols, ?Closure $tagsFor = null): string
     {
-        $content = self::normalizeEntities((string) preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F]/', '', $content));
+        $content = self::normalizeEntities(self::withoutControls($content));
         $content = (string) Runtime::hooks()->filter('pre_kses', [$content, $allowedHtml, $protocols]);
         $tags = is_string($allowedHtml) ? ($tagsFor === null ? [] : $tagsFor($allowedHtml)) : $allowedHtml;
         $opens = preg_match_all('/<([a-zA-Z][a-zA-Z0-9:-]*)/', $content, $found) > 0

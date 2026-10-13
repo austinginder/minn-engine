@@ -99,7 +99,10 @@ $sweep = static function (): void {
     $user = get_user_by('login', 'zz-hi2-user');
     if ($user) {
         require_once ABSPATH . 'wp-admin/includes/user.php';
-        wp_delete_user($user->ID);
+        // A failed insert casts to user 1: never delete it.
+        if (is_int($user->ID) && $user->ID > 1) {
+            wp_delete_user($user->ID);
+        }
     }
 };
 $sweep();

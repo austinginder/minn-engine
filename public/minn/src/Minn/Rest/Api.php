@@ -27,6 +27,7 @@ use Minn\Http\Response;
 use Minn\Http\Router;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
+use Minn\Support\Text;
 
 /**
  * The REST API: wires the controllers for one request and dispatches a
@@ -425,7 +426,7 @@ final readonly class Api
             $page = (int) ceil((int) $request->query['offset'] / max(1, (int) ($request->query['per_page'] ?? 10)) + 1);
         }
         // The parameters as the request object holds them (in process, as the caller set them).
-        $base = \add_query_arg(\urlencode_deep(RuntimeRoutes::wpRequest($request)->get_query_params()), $this->services->url()->to($request->path));
+        $base = \add_query_arg(Text::mapDeep(RuntimeRoutes::wpRequest($request)->get_query_params(), 'urlencode'), $this->services->url()->to($request->path));
         $links = [];
         if ($page > 1) {
             $links[] = '<' . \add_query_arg('page', min($page - 1, $pages), $base) . '>; rel="prev"';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\I18n\Gettext;
+use Minn\Support\Sanitize;
 
 /**
  * wp_authenticate_application_password as the reference answers it (probe
@@ -29,7 +30,7 @@ final class ApplicationPasswordSignIn
             return $input;
         }
         $user = \get_user_by('login', $username);
-        if (!$user && \is_email($username)) {
+        if (!$user && Sanitize::isEmail($username)) {
             $user = \get_user_by('email', $username);
         }
         $error = self::refusal($user, $username);
@@ -93,7 +94,7 @@ final class ApplicationPasswordSignIn
     private static function refusal(mixed $user, string $username): ?\WP_Error
     {
         return match (true) {
-            !$user instanceof \WP_User && \is_email($username) => new \WP_Error('invalid_email', Gettext::text('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
+            !$user instanceof \WP_User && Sanitize::isEmail($username) => new \WP_Error('invalid_email', Gettext::text('<strong>Error:</strong> Unknown email address. Check again or try your username.')),
             !$user instanceof \WP_User => new \WP_Error('invalid_username', Gettext::text('<strong>Error:</strong> Unknown username. Check again or try your email address.')),
             !\wp_is_application_passwords_available() => new \WP_Error('application_passwords_disabled', Gettext::text('Application passwords are not available.')),
             !\wp_is_application_passwords_available_for_user($user) => new \WP_Error('application_passwords_disabled_for_user', Gettext::text('Application passwords are not available for your account. Please contact the site administrator for assistance.')),

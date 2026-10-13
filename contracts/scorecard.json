@@ -43,12 +43,12 @@
         "provenWeighted": 96.2
     },
     "wordpressNames": {
-        "functionCalls": 1018,
-        "functions": 384,
-        "hookApi": 384,
+        "functionCalls": 967,
+        "functions": 355,
+        "hookApi": 0,
         "classReferences": 568,
         "classes": 50,
-        "files": 168
+        "files": 166
     },
     "coverage": {
         "measured": "2026-10-13",
@@ -135,14 +135,14 @@
         },
         "wordpressCallCeiling": {
             "label": "Calls into WordPress-named functions",
-            "ceiling": 1018,
+            "ceiling": 967,
             "started": 1406,
             "since": "61614e6f",
             "rose": false
         },
         "hookApiCeiling": {
             "label": "Calls into the hook API by its WordPress names",
-            "ceiling": 384,
+            "ceiling": 0,
             "started": 384,
             "since": "bedecc5d",
             "rose": false
@@ -151,7 +151,7 @@
             "label": "References to WordPress classes",
             "ceiling": 568,
             "started": 568,
-            "since": "",
+            "since": "b5bce4eb",
             "rose": false
         },
         "longMethodCeiling": {
@@ -256,7 +256,7 @@
         "measured": "2026-10-13",
         "suites": 91,
         "green": 91,
-        "checks": 25709,
+        "checks": 25724,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -285,12 +285,12 @@
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 111,
-            "lines": 2069,
-            "of": 169771
+            "stretches": 113,
+            "lines": 2083,
+            "of": 169919
         },
         "engine": {
-            "of": 89119,
+            "of": 89321,
             "php": {
                 "strict": {
                     "window": 40,
@@ -317,10 +317,10 @@
             "sequences": 15
         },
         "facade": {
-            "of": 80652,
+            "of": 80598,
             "window": 80,
-            "stretches": 123,
-            "lines": 3170
+            "stretches": 122,
+            "lines": 3151
         }
     }
 }

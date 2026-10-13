@@ -54,7 +54,7 @@ final class MediaShortcodes
         [$atts['width'], $atts['height']] = self::fitted((int) $atts['width'], (int) $atts['height']);
         $library = self::library('video');
         $atts['class'] = Runtime::hooks()->filter('wp_video_shortcode_class', [$atts['class'], $atts]);
-        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => abs((int) ($atts['width'])), 'height' => abs((int) ($atts['height'])), 'poster' => \esc_url((string) $atts['poster']), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
+        $attributes = self::attributes(['class' => $atts['class'], 'id' => sprintf('video-%d-%d', $postId, $instance), 'width' => abs((int) ($atts['width'])), 'height' => abs((int) ($atts['height'])), 'poster' => Escape::url((string) $atts['poster']), 'loop' => Flag::of($atts['loop']), 'autoplay' => Flag::of($atts['autoplay']), 'muted' => Flag::of($atts['muted']), 'preload' => $atts['preload']], ['poster', 'loop', 'autoplay', 'muted', 'preload']);
         $html = '<video ' . $attributes . ' controls="controls">' . self::sourceTags($atts, $sources['order'], $instance, $hosted) . self::fallback($sources['file'], $library) . '</video>';
         $output = sprintf('<div style="%s" class="wp-video">%s</div>', empty($atts['width']) ? '' : sprintf('width: %dpx;', $atts['width']), $html);
         return (string) Runtime::hooks()->filter('wp_video_shortcode', [$output, $atts, $video, $postId, $library]);
@@ -109,7 +109,7 @@ final class MediaShortcodes
         if (!empty($atts['src'])) {
             $ext = strtolower((string) (\wp_check_filetype((string) $atts['src'], \wp_get_mime_types())['ext'] ?? ''));
             if ($hosted === null && !in_array($ext, $types, true)) {
-                return sprintf('<a class="wp-embedded-%s" href="%s">%s</a>', $kind, \esc_url((string) $atts['src']), Escape::html((string) $atts['src']));
+                return sprintf('<a class="wp-embedded-%s" href="%s">%s</a>', $kind, Escape::url((string) $atts['src']), Escape::html((string) $atts['src']));
             }
             $types = ['src', ...$types];
         } elseif (!self::anyOwnFormat($atts, $types)) {
@@ -150,7 +150,7 @@ final class MediaShortcodes
                 continue;
             }
             $type = $fallback === 'src' && $hosted !== null ? $hosted : (string) (\wp_check_filetype((string) $atts[$fallback], \wp_get_mime_types())['type'] ?? '');
-            $out .= sprintf('<source type="%s" src="%s" />', $type, \esc_url((string) \add_query_arg('_', $instance, (string) $atts[$fallback])));
+            $out .= sprintf('<source type="%s" src="%s" />', $type, Escape::url((string) \add_query_arg('_', $instance, (string) $atts[$fallback])));
         }
         return $out;
     }
@@ -189,7 +189,7 @@ final class MediaShortcodes
     /** The link a player without the library falls back to (wp_mediaelement_fallback). */
     private static function fallback(string $file, string $library): string
     {
-        return $library === 'mediaelement' ? (string) Runtime::hooks()->filter('wp_mediaelement_fallback', [sprintf('<a href="%1$s">%1$s</a>', \esc_url($file)), $file]) : '';
+        return $library === 'mediaelement' ? (string) Runtime::hooks()->filter('wp_mediaelement_fallback', [sprintf('<a href="%1$s">%1$s</a>', Escape::url($file)), $file]) : '';
     }
 
     private static function postId(): int

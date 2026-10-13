@@ -35,6 +35,12 @@ final class Html
         return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
 
+    /** Every special and both quotes encoded, references included (an invalid UTF-8 string gives nothing): esc_textarea's encoding. */
+    public static function encodeAll(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    }
+
     /** Text escaped for an attribute value. */
     public static function attr(?string $value): string
     {

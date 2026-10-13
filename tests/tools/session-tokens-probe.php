@@ -51,5 +51,8 @@ remove_filter('session_token_manager', $named);
 if (!function_exists('wp_delete_user')) {
     require_once ABSPATH . 'wp-admin/includes/user.php';
 }
-wp_delete_user($user);
+// A failed insert casts to user 1: never delete it.
+if (is_int($user) && $user > 1) {
+    wp_delete_user($user);
+}
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

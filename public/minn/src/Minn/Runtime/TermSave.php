@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Content\Terms;
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 use Minn\Support\Lists;
 
@@ -56,7 +57,7 @@ final class TermSave
         if ($taken !== null) {
             return $taken;
         }
-        $slug = (string) \wp_unique_term_slug(empty($args['slug']) ? \sanitize_title($name) : (string) $args['slug'], (object) $args);
+        $slug = (string) \wp_unique_term_slug(empty($args['slug']) ? Sanitize::title($name) : (string) $args['slug'], (object) $args);
         $data = self::row(Runtime::hooks()->filter('wp_insert_term_data', [['name' => $name, 'slug' => $slug, 'term_group' => 0], $taxonomy, $args]));
         $terms = new Terms(Runtime::current()->db);
         $termId = $terms->insertRow($data);
@@ -110,7 +111,7 @@ final class TermSave
             return new \WP_Error('missing_parent', 'Parent term does not exist.');
         }
         $asked = empty($args['slug']) ? '' : (string) $args['slug'];
-        $parsed['slug'] = $asked === '' ? \sanitize_title($name) : $asked;
+        $parsed['slug'] = $asked === '' ? Sanitize::title($name) : $asked;
         $parent = (int) Runtime::hooks()->filter('wp_update_term_parent', [$args['parent'], $termId, $taxonomy, $parsed, $args]);
         $slug = self::updatedSlug((string) $parsed['slug'], $asked, $parent, $termId, $args);
         if ($slug instanceof \WP_Error) {
@@ -134,7 +135,7 @@ final class TermSave
         $data = self::row(Runtime::hooks()->filter('wp_update_term_data', [$data, $termId, $taxonomy, $args]));
         $terms->updateRow($termId, $data);
         if ($data['slug'] === '') {
-            $terms->updateRow($termId, ['slug' => \sanitize_title($data['name'], (string) $termId)] + $data);
+            $terms->updateRow($termId, ['slug' => Sanitize::title($data['name'], (string) $termId)] + $data);
         }
         Runtime::hooks()->action('edited_terms', [$termId, $taxonomy, $args]);
         Runtime::hooks()->action('edit_term_taxonomy', [$ttId, $taxonomy, $args]);
@@ -205,7 +206,7 @@ final class TermSave
     private static function slugFromId(Terms $terms, int $termId, string $taxonomy, array $data, array $args): void
     {
         Runtime::hooks()->action('edit_terms', [$termId, $taxonomy, $args]);
-        $terms->updateRow($termId, ['slug' => \sanitize_title('', (string) $termId)] + $data);
+        $terms->updateRow($termId, ['slug' => Sanitize::title('', (string) $termId)] + $data);
         Runtime::hooks()->action('edited_terms', [$termId, $taxonomy, $args]);
     }
 

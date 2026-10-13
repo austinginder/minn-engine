@@ -75,7 +75,7 @@ final class ScriptTag
                 continue;
             }
             $value = in_array(strtolower($name), ['src', 'href'], true)
-                ? \esc_url((string) $value)
+                ? Escape::url((string) $value)
                 : htmlspecialchars((string) $value, ENT_QUOTES | ENT_HTML5 | ENT_SUBSTITUTE, 'UTF-8');
             $out .= ' ' . $name . '="' . $value . '"';
         }

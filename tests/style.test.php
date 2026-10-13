@@ -290,7 +290,7 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // underneath. Both counts only fall; lower a ceiling when you remove some,
 // never raise one.
 $bootedCeiling = 73;
-$wordpressCallCeiling = 967;
+$wordpressCallCeiling = 878;
 // The hook API from src/Minn goes through Runtime::hooks() too: \apply_filters() and \do_action() are the facade's names for it.
 $hookApiCeiling = 0;
 $hookApiCalls = 0;
@@ -446,7 +446,7 @@ $rawOptionWriteCeiling = 7;
 $rawMetaWriteCeiling = 9;
 $postRowCeiling = 8;
 $linkHrefCeiling = 77;
-$htmlspecialcharsCeiling = 13;
+$htmlspecialcharsCeiling = 12;
 $permalinkCallerCeiling = 30;
 $interfaceMethods = ['jsonserialize', 'offsetget', 'offsetset', 'offsetexists', 'offsetunset', 'getiterator', 'count', 'current', 'key', 'next', 'rewind', 'valid'];
 $names = [];
@@ -496,7 +496,7 @@ foreach ($files as $path) {
         $lean['postRow'] += preg_match_all('/\'post_content_filtered\'\s*=>/', $source);
         $lean['linkHref'] += preg_match_all('/\[\'href\'\s*=>/', $source);
         $lean['permalinkCaller'] += preg_match_all('/->forPost\(/', $source);
-        if ($relative !== 'Minn/Support/Html.php') {
+        if ($relative !== 'Minn/Html.php') {
             $lean['htmlspecialchars'] += preg_match_all('/\bhtmlspecialchars\(/', $source);
         }
         $writes = '/(?:INSERT\s+(?:IGNORE\s+)?INTO|UPDATE|DELETE\s+FROM|REPLACE\s+INTO)\s+\{\$[^}]*table\(\'%s\'\)\}/i';
@@ -521,7 +521,7 @@ foreach ($declared as [$name, $relative, $line, $source]) {
     $dead[] = "{$relative}:{$line} {$name}";
 }
 $check("engine: methods nothing calls by name stay at or under {$deadNameCeiling}", count($dead) <= $deadNameCeiling, count($dead) . ': ' . implode(', ', array_slice($dead, 0, 10)));
-foreach (['live' => [$liveCeiling, 'lifecycle branches (->live())'], 'optionRead' => [$optionReadCeiling, 'option reads beside the options store (->option()'], 'rawOptionWrite' => [$rawOptionWriteCeiling, 'raw option writes outside Runtime\Options'], 'rawMetaWrite' => [$rawMetaWriteCeiling, 'raw meta writes outside Runtime\Meta'], 'postRow' => [$postRowCeiling, 'hand-built post rows (post_content_filtered keys)'], 'linkHref' => [$linkHrefCeiling, 'hand-built REST links ([\'href\' => ...])'], 'htmlspecialchars' => [$htmlspecialcharsCeiling, 'htmlspecialchars() calls outside Support\Html'], 'permalinkCaller' => [$permalinkCallerCeiling, 'callers of the unfiltered Permalinks::forPost']] as $key => [$ceiling, $label]) {
+foreach (['live' => [$liveCeiling, 'lifecycle branches (->live())'], 'optionRead' => [$optionReadCeiling, 'option reads beside the options store (->option()'], 'rawOptionWrite' => [$rawOptionWriteCeiling, 'raw option writes outside Runtime\Options'], 'rawMetaWrite' => [$rawMetaWriteCeiling, 'raw meta writes outside Runtime\Meta'], 'postRow' => [$postRowCeiling, 'hand-built post rows (post_content_filtered keys)'], 'linkHref' => [$linkHrefCeiling, 'hand-built REST links ([\'href\' => ...])'], 'htmlspecialchars' => [$htmlspecialcharsCeiling, 'htmlspecialchars() calls outside Minn\Html'], 'permalinkCaller' => [$permalinkCallerCeiling, 'callers of the unfiltered Permalinks::forPost']] as $key => [$ceiling, $label]) {
     $check("engine: {$label} stay at or under {$ceiling}", $lean[$key] <= $ceiling, (string) $lean[$key]);
 }
 

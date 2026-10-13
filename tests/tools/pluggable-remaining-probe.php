@@ -35,7 +35,10 @@ register_shutdown_function(static function () use (&$made, $cronBefore, $moderat
     }
     foreach ($made['users'] as $id) {
         if (is_int($id) && $id > 1) {
-            wp_delete_user($id);
+            // A failed insert casts to user 1: never delete it.
+            if (is_int($id) && $id > 1) {
+                wp_delete_user($id);
+            }
         }
     }
     wp_clear_scheduled_hook('wp_update_user_counts');

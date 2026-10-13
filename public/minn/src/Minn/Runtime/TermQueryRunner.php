@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\Query\Sql;
 use Minn\Support\Lists;
+use Minn\Support\Sanitize;
 
 /**
  * WP_Term_Query::get_terms as the reference runs it (probe
@@ -195,7 +196,7 @@ final class TermQueryRunner
         if (!empty($args['slug']) || (is_string($args['slug']) && $args['slug'] !== '')) {
             $this->where['slug'] = is_array($args['slug'])
                 ? "t.slug IN ('" . implode("', '", array_map('sanitize_title', $args['slug'])) . "')"
-                : "t.slug = '" . \sanitize_title($args['slug']) . "'";
+                : "t.slug = '" . Sanitize::title($args['slug']) . "'";
         }
         if (!empty($args['term_taxonomy_id'])) {
             $this->where['term_taxonomy_id'] = is_array($args['term_taxonomy_id'])

@@ -9,6 +9,7 @@ use Minn\Content\PostSlugs;
 use Minn\Http\Request;
 use Minn\Rest\RuntimeRoutes;
 use Minn\RestError;
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
 /**
@@ -79,7 +80,7 @@ final class PostSave
         $slug = $value('post_name');
         if (!self::keepsSlug($value('post_status'), $type)) {
             // A slug the request did not give is made from the title the filters left.
-            $slug = $slug === '' || (!isset($body['slug']) && $id === 0) ? (string) \sanitize_title($value('post_title')) : $slug;
+            $slug = $slug === '' || (!isset($body['slug']) && $id === 0) ? (string) Sanitize::title($value('post_title')) : $slug;
             $slug = self::slugFilters($slug, $id, $value('post_status'), $type, $parent, $slugs);
         }
         $data = self::data(['post_name' => $slug, 'post_parent' => $parent] + $row, $sanitized, Slashes::add($before === null ? $given : $postarr), $id);

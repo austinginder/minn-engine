@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Query\Sql;
+use Minn\Support\Sanitize;
+use Minn\Support\Text;
 
 /**
  * The WHERE fragments WP_Query writes from its variables, in the reference's
@@ -66,12 +68,12 @@ final class PostQueryWhere
             $this->parts->where .= " AND {$t}.post_title = " . Sql::quote(stripslashes((string) $q['title']));
         }
         if ($q['name'] !== '') {
-            $q['name'] = \sanitize_title_for_query($q['name']);
+            $q['name'] = Sanitize::title($q['name'], '', 'query');
             $this->parts->where .= " AND {$t}.post_name = '" . $q['name'] . "'";
         } elseif ($q['pagename'] !== '') {
             $this->pagename($q);
         } elseif ($q['attachment'] !== '') {
-            $q['attachment'] = \sanitize_title_for_query(\wp_basename($q['attachment']));
+            $q['attachment'] = Sanitize::title(Text::basename($q['attachment']), '', 'query');
             $q['name'] = $q['attachment'];
             $this->parts->where .= " AND {$t}.post_name = '" . $q['attachment'] . "'";
         } elseif (is_array($names = $q['post_name__in']) && $names !== []) {
@@ -142,7 +144,7 @@ final class PostQueryWhere
         if (Runtime::options()->filtered('show_on_front') === 'page' && !empty($postsPage) && $page == $postsPage) {
             return;
         }
-        $q['pagename'] = \sanitize_title_for_query(\wp_basename($q['pagename']));
+        $q['pagename'] = Sanitize::title(Text::basename($q['pagename']), '', 'query');
         $q['name'] = $q['pagename'];
         $this->parts->where .= " AND ({$this->table}.ID = '{$page}')";
         $object = \get_post($page);
@@ -236,7 +238,7 @@ final class PostQueryWhere
             $segments = explode('/', (string) $q['author_name']);
             $q['author_name'] = $segments[count($segments) - 1] !== '' ? $segments[count($segments) - 1] : $segments[count($segments) - 2];
         }
-        $q['author_name'] = \sanitize_title_for_query($q['author_name']);
+        $q['author_name'] = Sanitize::title($q['author_name'], '', 'query');
         $user = \get_user_by('slug', $q['author_name']);
         $q['author'] = $user ? $user->ID : false;
         $this->parts->whichauthor .= " AND ({$this->table}.post_author = " . abs((int) ($q['author'])) . ')';

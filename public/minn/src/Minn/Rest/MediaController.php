@@ -19,6 +19,7 @@ use Minn\Media\Upload;
 use Minn\Media\Writer;
 use Minn\RestError;
 use Minn\Runtime\Runtime;
+use Minn\Support\Sanitize;
 use Minn\Support\Slashes;
 
 /**
@@ -158,7 +159,7 @@ final readonly class MediaController
             $attachment->post_title = PostsWriteController::field($params['title']);
         }
         $meta = \wp_read_image_metadata($file);
-        if (is_array($meta) && !isset($params['title']) && trim((string) $meta['title']) !== '' && !is_numeric(\sanitize_title((string) $meta['title']))) {
+        if (is_array($meta) && !isset($params['title']) && trim((string) $meta['title']) !== '' && !is_numeric(Sanitize::title((string) $meta['title']))) {
             $attachment->post_title = (string) $meta['title'];
         }
         if (is_array($meta) && !isset($params['caption']) && trim((string) $meta['caption']) !== '') {
@@ -218,7 +219,7 @@ final readonly class MediaController
     {
         $events = new PostEvents();
         if (isset($params['alt_text'])) {
-            \update_post_meta($id, '_wp_attachment_image_alt', Slashes::add(\sanitize_text_field((string) $params['alt_text'])));
+            \update_post_meta($id, '_wp_attachment_image_alt', Slashes::add(Sanitize::textField((string) $params['alt_text'])));
         }
         $events->restAfterInsert($id, $request, $before);
         $events->afterInsert($id, $before);

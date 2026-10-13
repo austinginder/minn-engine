@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Support\Slashes;
+use Minn\Support\Text;
 
 /**
  * A post's revisions as the reference's wp_save_post_revision keeps them
@@ -45,7 +46,7 @@ final class PostRevisions
     {
         $changed = false;
         foreach (array_keys(\_wp_post_revision_fields($post)) as $field) {
-            if (\normalize_whitespace((string) $post->{$field}) !== \normalize_whitespace((string) $latest->{$field})) {
+            if (Text::normalizeWhitespace((string) $post->{$field}) !== Text::normalizeWhitespace((string) $latest->{$field})) {
                 $changed = true;
                 break;
             }

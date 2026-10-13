@@ -99,6 +99,9 @@ try {
     $say('a sign-in by email with a phpass hash: signed in, scheme and cost after', [$user instanceof WP_User, substr($after, 0, 7), $cost($after)]);
 } finally {
     require_once ABSPATH . 'wp-admin/includes/user.php';
-    wp_delete_user($id);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($id) && $id > 1) {
+        wp_delete_user($id);
+    }
 }
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

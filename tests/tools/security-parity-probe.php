@@ -50,7 +50,10 @@ register_shutdown_function(static function () use (&$made, $user): void {
     if (!function_exists('wp_delete_user')) {
         require_once ABSPATH . 'wp-admin/includes/user.php';
     }
-    wp_delete_user($user);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($user) && $user > 1) {
+        wp_delete_user($user);
+    }
 });
 // Dated apart, so a search's order never rests on a tie.
 foreach ([['zz_sec_private', 'zz sec private item', '', '2001-03-01'], ['zz_sec_strict', 'zz sec strict item', '', '2001-03-02'], ['post', 'zz sec protected title', 'pw', '2001-03-03']] as [$type, $title, $password, $date]) {

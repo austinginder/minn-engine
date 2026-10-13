@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Closure;
 use Minn\Content\PostWriter;
+use Minn\Support\Sanitize;
 
 /**
  * The decisions behind wp_insert_post: which columns a postarr fills, when
@@ -123,9 +124,9 @@ final readonly class PostInsert
         $title = (string) ($columns['post_title'] ?? $existing['post_title'] ?? '');
         $slug = (string) ($columns['post_name'] ?? $existing['post_name'] ?? '');
         if ($slug === '' && !in_array($status, ['draft', 'pending', 'auto-draft'], true)) {
-            $slug = (string) \sanitize_title($title);
+            $slug = (string) Sanitize::title($title);
         } elseif ($slug !== '' && (!$update || $slug !== (string) $existing['post_name'])) {
-            $slug = (string) \sanitize_title($slug);
+            $slug = (string) Sanitize::title($slug);
         }
         // A pending post from someone who may not publish it keeps no slug (probe insert-defaults); a live
         // post's is made free in its scope by the slug filters that follow.

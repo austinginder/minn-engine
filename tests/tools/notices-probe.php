@@ -25,7 +25,10 @@ add_filter('pre_wp_mail', $catch, 10, 2);
 $stale = get_user_by('login', 'zz-notice');
 if ($stale instanceof WP_User && $stale->user_login === 'zz-notice') {
     require_once ABSPATH . 'wp-admin/includes/user.php';
-    wp_delete_user($stale->ID, 1);
+    // A failed insert casts to user 1: never delete it.
+    if (is_int($stale->ID) && $stale->ID > 1) {
+        wp_delete_user($stale->ID, 1);
+    }
 }
 $id = wp_insert_user(['user_login' => 'zz-notice', 'user_email' => 'zz-notice@minn-engine.localhost', 'user_pass' => 'Old-pass-1!', 'role' => 'author']);
 $mails = [];
@@ -52,6 +55,9 @@ $mails = [];
 wp_update_user(['ID' => $id, 'user_pass' => 'Fourth-4!']);
 $say('send_password_change_email false', $mails);
 require_once ABSPATH . 'wp-admin/includes/user.php';
-wp_delete_user($id, 1);
+// A failed insert casts to user 1: never delete it.
+if (is_int($id) && $id > 1) {
+    wp_delete_user($id, 1);
+}
 
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

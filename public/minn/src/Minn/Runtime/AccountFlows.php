@@ -7,6 +7,7 @@ namespace Minn\Runtime;
 use Minn\Mail\Mailer;
 use Minn\I18n\Gettext;
 use Minn\Support\Entities;
+use Minn\Support\Sanitize;
 
 /**
  * The account functions a sign-in page and plugins call, with the
@@ -83,7 +84,7 @@ final class AccountFlows
     public static function registerNewUser(string $login, string $email): int|\WP_Error
     {
         $errors = new \WP_Error();
-        $name = \sanitize_user($login);
+        $name = Sanitize::user($login);
         $email = (string) Runtime::hooks()->filter('user_registration_email', [$email]);
         $nameError = match (true) {
             $name === '' => ['empty_username', '<strong>Error:</strong> Please enter a username.'],
@@ -98,7 +99,7 @@ final class AccountFlows
         }
         $emailError = match (true) {
             $email === '' => ['empty_email', Gettext::text('<strong>Error:</strong> Please type your email address.')],
-            !\is_email($email) => ['invalid_email', Gettext::text('<strong>Error:</strong> The email address is not correct.')],
+            !Sanitize::isEmail($email) => ['invalid_email', Gettext::text('<strong>Error:</strong> The email address is not correct.')],
             (bool) \email_exists($email) => ['email_exists', sprintf(Gettext::text('<strong>Error:</strong> This email address is already registered. <a href="%s">Log in</a> with this address or choose another one.'), \wp_login_url())],
             default => null,
         };

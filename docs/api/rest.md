@@ -246,7 +246,7 @@ its Allow header lists them (rest_send_allow_header asks).
 
 - `@return list<string>`
 
-Internals: `controllers()` (private, line 72), `engineResponse()` (private, line 401), `withPageLinks()` (private, line 415), `options()` (private, line 446), `withSchema()` (private, line 463), `withAllow()` (private, line 484)
+Internals: `controllers()` (private, line 73), `engineResponse()` (private, line 402), `withPageLinks()` (private, line 416), `options()` (private, line 447), `withSchema()` (private, line 464), `withAllow()` (private, line 485)
 
 
 ## ApplicationPasswordsController
@@ -1369,7 +1369,7 @@ Attachments go to the trash only when MEDIA_TRASH (or
 rest_attachment_trashable) says so; force removes the row, its meta,
 and its files.
 
-Internals: `restDate()` (private, line 47), `storeWithPlugins()` (private, line 125), `insertedWithPlugins()` (private, line 152), `preparedAttachment()` (private, line 193), `finishedWithPlugins()` (private, line 217), `params()` (private, line 233), `attachment()` (private, line 314)
+Internals: `restDate()` (private, line 48), `storeWithPlugins()` (private, line 126), `insertedWithPlugins()` (private, line 153), `preparedAttachment()` (private, line 194), `finishedWithPlugins()` (private, line 218), `params()` (private, line 234), `attachment()` (private, line 315)
 
 
 ## MediaObject

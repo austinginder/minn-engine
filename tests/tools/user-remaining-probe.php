@@ -23,7 +23,10 @@ register_shutdown_function(static function () use (&$made, $userCount, $cronBefo
     require_once ABSPATH . 'wp-admin/includes/user.php';
     foreach ($made as $id) {
         if (is_int($id) && $id > 1) {
-            wp_delete_user($id);
+            // A failed insert casts to user 1: never delete it.
+            if (is_int($id) && $id > 1) {
+                wp_delete_user($id);
+            }
         }
     }
     $userCount === null ? delete_option('user_count') : update_option('user_count', $userCount);

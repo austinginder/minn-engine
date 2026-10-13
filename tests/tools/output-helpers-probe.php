@@ -28,7 +28,10 @@ register_shutdown_function(static function () use (&$made): void {
     }
     foreach ($made['users'] as $id) {
         if (is_int($id) && $id > 0) {
-            wp_delete_user($id);
+            // A failed insert casts to user 1: never delete it.
+            if (is_int($id) && $id > 1) {
+                wp_delete_user($id);
+            }
         }
     }
 });

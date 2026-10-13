@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Blocks;
 
+use Minn\Support\Sanitize;
+
 /**
  * The template part block's variations as the reference builds them (probes
  * rest-block-types, tabs-and-parts): one per area, the general and the
@@ -49,7 +51,7 @@ final class TemplatePartVariations
         foreach ($parts as $part) {
             $attributes = ['slug' => (string) $part->slug, 'theme' => (string) $part->theme, 'area' => (string) $part->area];
             // The reference's description here is true (its REST answer reads "1").
-            $variations[] = ['name' => 'instance_' . \sanitize_title((string) $part->slug), 'title' => (string) $part->title, 'description' => true, 'attributes' => $attributes, 'scope' => ['inserter'], 'icon' => $icons[$part->area] ?? 'layout', 'example' => ['attributes' => $attributes]];
+            $variations[] = ['name' => 'instance_' . Sanitize::title((string) $part->slug), 'title' => (string) $part->title, 'description' => true, 'attributes' => $attributes, 'scope' => ['inserter'], 'icon' => $icons[$part->area] ?? 'layout', 'example' => ['attributes' => $attributes]];
         }
         return $variations;
     }

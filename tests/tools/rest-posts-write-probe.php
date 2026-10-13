@@ -46,7 +46,10 @@ register_shutdown_function(static function () use (&$made, $sticky): void {
     foreach ($made['users'] as $id) {
         if (is_int($id) && $id > 1) {
             require_once ABSPATH . 'wp-admin/includes/user.php';
-            wp_delete_user($id);
+            // A failed insert casts to user 1: never delete it.
+            if (is_int($id) && $id > 1) {
+                wp_delete_user($id);
+            }
         }
     }
     update_option('sticky_posts', $sticky);

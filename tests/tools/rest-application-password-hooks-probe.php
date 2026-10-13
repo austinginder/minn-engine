@@ -70,5 +70,8 @@ $say('delete all', [$status, $hooks]);
 if (!function_exists('wp_delete_user')) {
     require_once ABSPATH . 'wp-admin/includes/user.php';
 }
-wp_delete_user($userId, 1);
+// A failed insert casts to user 1: never delete it.
+if (is_int($userId) && $userId > 1) {
+    wp_delete_user($userId, 1);
+}
 echo json_encode($log, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), "\n";

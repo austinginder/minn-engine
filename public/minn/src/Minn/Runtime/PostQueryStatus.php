@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Query\Sql;
+use Minn\Support\Sanitize;
 
 /**
  * WP_Query's post type and status clause as the reference writes it (probe
@@ -72,7 +73,7 @@ final class PostQueryStatus
             return [" AND {$t}.post_type IN ('" . implode("', '", \esc_sql($this->parts->postType)) . "')", false];
         }
         $type = match (true) {
-            !empty($type) => \sanitize_key((string) $type),
+            !empty($type) => Sanitize::key((string) $type),
             $this->query->is_attachment => 'attachment',
             $this->query->is_page => 'page',
             default => 'post',

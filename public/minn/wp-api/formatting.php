@@ -19,28 +19,24 @@ use Minn\Support\Paths;
 use Minn\Support\Slashes;
 use Minn\Support\Time;
 use Minn\Support\Url;
+use Minn\Support\Sanitize;
+use Minn\Support\Text;
 
 function wp_check_invalid_utf8($text, $strip = false)
 {
     $text = (string) $text;
-    if ($text === '' || preg_match('/^./us', $text) === 1) {
-        return $text;
-    }
+    $valid = Escape::validUtf8($text);
     // Stripping replaces each bad sequence with U+FFFD, as the reference does now (probe formatting-remaining).
-    return $strip ? wp_scrub_utf8($text) : '';
+    return $valid === '' && $text !== '' && $strip ? wp_scrub_utf8($text) : $valid;
 }
 
 function _wp_specialchars($text, $quote_style = ENT_NOQUOTES, $charset = false, $double_encode = false)
 {
     $text = (string) $text;
-    if (!$double_encode && str_contains($text, '&')) {
-        // Pre-existing entities normalize the kses way before the encode
-        // pass: decimal zero-padded to three digits, hex lowercased,
-        // invalid code points and unknown names amp-escaped (&#36; becomes
-        // &#036; the way the reference's screen-reader prices read).
-        $text = wp_kses_normalize_entities($text);
+    if ($double_encode) {
+        return Entities::specialchars($text, $quote_style, true, KsesEntities::known(...));
     }
-    return Entities::specialchars($text, $quote_style, (bool) $double_encode, KsesEntities::known(...));
+    return Escape::specialchars($text, $quote_style);
 }
 
 function esc_html($text)
@@ -55,42 +51,17 @@ function esc_attr($text)
 
 function esc_textarea($text)
 {
-    $safe = htmlspecialchars((string) $text, ENT_QUOTES, 'UTF-8');
-    return apply_filters('esc_textarea', $safe, $text);
+    return Escape::textarea($text);
 }
 
 function esc_js($text)
 {
-    $safe = wp_check_invalid_utf8((string) $text);
-    $safe = _wp_specialchars($safe, ENT_COMPAT);
-    $safe = preg_replace('/&#(x)?0*(?(1)27|39);?/i', "'", stripslashes($safe));
-    $safe = str_replace("\r", '', $safe);
-    $safe = str_replace("\n", '\\n', addslashes($safe));
-    return apply_filters('js_escape', $safe, $text);
+    return Escape::js($text);
 }
 
 function esc_url($url, $protocols = null, $_context = 'display')
 {
-    $original = $url;
-    // An address with no scheme takes http, or https when only https is allowed (probe formatting-remaining).
-    $scheme = is_array($protocols) && !in_array('http', $protocols, true) && in_array('https', $protocols, true) ? 'https' : 'http';
-    $url = Url::clean((string) $url, $scheme);
-    if ($url === '') {
-        return $url;
-    }
-    if ($_context === 'display') {
-        $url = str_replace(['&amp;', "'"], ['&#038;', '&#039;'], wp_kses_normalize_entities($url));
-    }
-    $url = Url::encodeBrackets($url, (array) wp_parse_url($url));
-    if (str_contains($url, ':')) {
-        // An allowed scheme comes back lower-cased (HTTPS:// is https://); one that changes otherwise was refused.
-        $checked = wp_kses_bad_protocol($url, is_array($protocols) ? $protocols : wp_allowed_protocols());
-        if (strcasecmp($checked, $url) !== 0) {
-            return '';
-        }
-        $url = $checked;
-    }
-    return apply_filters('clean_url', $url, $original, $_context);
+    return Escape::url($url, $protocols, $_context);
 }
 
 function esc_url_raw($url, $protocols = null)
@@ -100,7 +71,7 @@ function esc_url_raw($url, $protocols = null)
 
 function sanitize_url($url, $protocols = null)
 {
-    return esc_url($url, $protocols, 'db');
+    return Escape::url($url, $protocols, 'db');
 }
 
 function esc_sql($data)
@@ -131,7 +102,7 @@ function _sanitize_text_fields($str, $keep_newlines = false)
 
 function sanitize_text_field($str)
 {
-    return apply_filters('sanitize_text_field', _sanitize_text_fields($str, false), $str);
+    return Sanitize::textField($str);
 }
 
 function sanitize_textarea_field($str)
@@ -209,10 +180,7 @@ function _wp_json_prepare_data($value)
 
 function sanitize_key($key)
 {
-    $raw = $key;
-    $key = strtolower((string) $key);
-    $key = preg_replace('/[^a-z0-9_\-]/', '', $key);
-    return apply_filters('sanitize_key', $key, $raw);
+    return Sanitize::key($key);
 }
 
 function sanitize_html_class($classname, $fallback = '')
@@ -233,13 +201,7 @@ function remove_accents($text, $locale = '')
 
 function sanitize_title($title, $fallback_title = '', $context = 'save')
 {
-    $raw = (string) $title;
-    $title = $context === 'save' ? remove_accents($raw) : $raw;
-    $title = apply_filters('sanitize_title', $title, $raw, $context);
-    if ($title === '' && $fallback_title !== '') {
-        $title = (string) $fallback_title;
-    }
-    return $title;
+    return Sanitize::title($title, $fallback_title, $context);
 }
 
 function sanitize_title_with_dashes($title, $raw_title = '', $context = 'display')
@@ -296,14 +258,12 @@ function _minn_neutralize_inner_extensions(string $filename): string
 
 function sanitize_email($email)
 {
-    [$clean, $reason] = Email::sanitize((string) $email);
-    return apply_filters('sanitize_email', $clean, (string) $email, $reason);
+    return Sanitize::email($email);
 }
 
 function is_email($email, $deprecated = false)
 {
-    $reason = Email::check((string) $email);
-    return apply_filters('is_email', $reason === null ? (string) $email : false, (string) $email, $reason);
+    return Sanitize::isEmail($email);
 }
 
 function stripslashes_deep($value)
@@ -333,18 +293,7 @@ function addslashes_strings_only($value)
 
 function map_deep($value, $callback)
 {
-    if (is_array($value)) {
-        foreach ($value as $k => $v) {
-            $value[$k] = map_deep($v, $callback);
-        }
-    } elseif (is_object($value)) {
-        foreach (get_object_vars($value) as $k => $v) {
-            $value->{$k} = map_deep($v, $callback);
-        }
-    } else {
-        $value = $callback($value);
-    }
-    return $value;
+    return Text::mapDeep($value, $callback);
 }
 
 function urlencode_deep($value)
@@ -374,7 +323,7 @@ function zeroise($number, $threshold)
 
 function wp_basename($path, $suffix = '')
 {
-    return urldecode(basename(str_replace(['%2F', '%5C'], '/', urlencode((string) $path)), $suffix));
+    return Text::basename($path, (string) $suffix);
 }
 
 function size_format($bytes, $decimals = 0)
@@ -393,29 +342,12 @@ function size_format($bytes, $decimals = 0)
 
 function wp_html_excerpt($str, $count, $more = null)
 {
-    $more ??= '';
-    $str = wp_strip_all_tags((string) $str, true);
-    $excerpt = mb_substr($str, 0, (int) $count, 'UTF-8');
-    if ($excerpt !== $str) {
-        $excerpt = trim($excerpt) . $more;
-    }
-    return $excerpt;
+    return Text::htmlExcerpt($str, $count, $more);
 }
 
 function wp_trim_words($text, $num_words = 55, $more = null)
 {
-    $original = $text;
-    $more ??= '&hellip;';
-    $text = wp_strip_all_tags((string) $text);
-    $text = str_replace("\xC2\xA0", ' ', $text);
-    $words = preg_split("/[\n\r\t ]+/", $text, (int) $num_words + 1, PREG_SPLIT_NO_EMPTY);
-    if (count($words) > (int) $num_words) {
-        array_pop($words);
-        $text = implode(' ', $words) . $more;
-    } else {
-        $text = implode(' ', $words);
-    }
-    return apply_filters('wp_trim_words', $text, $num_words, $more, $original);
+    return Text::trimWords($text, $num_words, $more);
 }
 
 function wptexturize($text, $reset = false)
@@ -640,23 +572,12 @@ function human_time_diff($from, $to = 0)
 
 function ent2ncr($text)
 {
-    $filtered = apply_filters('pre_ent2ncr', null, $text);
-    if ($filtered !== null) {
-        return $filtered;
-    }
-    return preg_replace_callback('/&([a-zA-Z0-9]+);/', static function (array $m): string {
-        $decoded = html_entity_decode($m[0], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        return $decoded === $m[0] ? $m[0] : '&#' . mb_ord($decoded, 'UTF-8') . ';';
-    }, (string) $text);
+    return Text::numericReferences($text);
 }
 
 function convert_chars($content, $deprecated = '')
 {
-    $content = (string) $content;
-    if (!str_contains($content, '&')) {
-        return $content;
-    }
-    return preg_replace('/&(?!(?:#\d+|#[xX][0-9a-fA-F]+|[A-Za-z][A-Za-z0-9]*);)/', '&#038;', $content);
+    return Text::encodeAmpersands($content);
 }
 
 function convert_smilies($text)
@@ -1157,16 +1078,7 @@ function _wp_utf8_encode_fallback($iso_8859_1_text)
 
 function sanitize_user($username, $strict = false)
 {
-    $raw = (string) $username;
-    $username = wp_strip_all_tags($raw);
-    $username = remove_accents($username);
-    $username = preg_replace('|%([a-fA-F0-9][a-fA-F0-9])|', '', $username);
-    $username = preg_replace('/&.+?;/', '', $username);
-    if ($strict) {
-        $username = preg_replace('|[^a-z0-9 _.\-@]|i', '', $username);
-    }
-    $username = trim(preg_replace('|\s+|', ' ', $username));
-    return apply_filters('sanitize_user', $username, $raw, $strict);
+    return Sanitize::user($username, $strict);
 }
 
 /** An ORDER BY that is only column names, each with an optional ASC or DESC, or RAND(); anything else is false. */

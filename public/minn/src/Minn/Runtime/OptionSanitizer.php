@@ -6,6 +6,7 @@ namespace Minn\Runtime;
 
 use Minn\I18n\TranslationFiles;
 use Minn\Support\Escape;
+use Minn\Support\Sanitize;
 
 /**
  * A core option's value cleaned as the reference's sanitize_option cleans
@@ -62,7 +63,7 @@ final class OptionSanitizer
             $option === 'blog_public' => [$value === null ? 1 : (int) $value, null],
             in_array($option, self::STRIPPED, true) => [\wp_kses($text, []), null],
             $option === 'gmt_offset' => [is_numeric($value) ? $value : '', null],
-            in_array($option, ['siteurl', 'home'], true) => preg_match('#http(s?)://(.+)#i', $text) ? [\sanitize_url($text), null] : [$value, self::ERRORS[$option]],
+            in_array($option, ['siteurl', 'home'], true) => preg_match('#http(s?)://(.+)#i', $text) ? [Escape::url($text, null, 'db'), null] : [$value, self::ERRORS[$option]],
             $option === 'ping_sites' => [implode("\n", array_map('sanitize_url', array_filter(array_map('trim', explode("\n", $text))))), null],
             default => self::lists($option, $value),
         };
@@ -87,8 +88,8 @@ final class OptionSanitizer
     /** @return array{0: string, 1: string|null} */
     private static function email(string $value): array
     {
-        $email = (string) \sanitize_email($value);
-        return \is_email($email) ? [$email, null] : [$email, self::EMAIL];
+        $email = (string) Sanitize::email($value);
+        return Sanitize::isEmail($email) ? [$email, null] : [$email, self::EMAIL];
     }
 
     /** A page size: a whole number, 1 when none, a negative one (but -1, all) made positive. */
@@ -102,7 +103,7 @@ final class OptionSanitizer
     /** @return array{0: string, 1: string|null} */
     private static function structure(string $option, string $value): array
     {
-        $value = str_replace('http://', '', (string) \sanitize_url($value));
+        $value = str_replace('http://', '', (string) Escape::url($value, null, 'db'));
         $untagged = $option === 'permalink_structure' && $value !== '' && !preg_match('/%[^\/%]+%/', $value);
         return [$value, $untagged ? self::ERRORS[$option] : null];
     }

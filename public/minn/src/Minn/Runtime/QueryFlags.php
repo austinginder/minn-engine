@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
+
 /**
  * The conditional flags a set of query variables implies (is_single, is_archive,
  * is_home, ...), derived the way the reference's parse step derives them, plus
@@ -145,7 +147,7 @@ final readonly class QueryFlags
             $clean += ['post_status' => is_array($statuses) ? array_map('sanitize_key', $statuses) : preg_replace('|[^a-z0-9_,-]|', '', (string) $statuses)];
         }
         if (!empty($types)) {
-            $clean += ['post_type' => is_array($types) ? array_map('sanitize_key', $types) : \sanitize_key((string) $types)];
+            $clean += ['post_type' => is_array($types) ? array_map('sanitize_key', $types) : Sanitize::key((string) $types)];
         }
         return array_replace($vars, $clean);
     }

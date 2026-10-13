@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Text;
+
 /**
  * The taxonomy side of WP_Query as the reference runs it (probe
  * wp-query-sql): the clauses its variables make (tax_query, taxonomy and
@@ -54,7 +56,7 @@ final class PostQueryTax
     {
         $defaults = ['taxonomy' => $name, 'field' => 'slug'];
         if (!empty($taxonomy->rewrite['hierarchical'])) {
-            $q[$taxonomy->query_var] = \wp_basename($q[$taxonomy->query_var]);
+            $q[$taxonomy->query_var] = Text::basename($q[$taxonomy->query_var]);
         }
         $term = $q[$taxonomy->query_var];
         $term = is_array($term) ? implode(',', $term) : (string) $term;

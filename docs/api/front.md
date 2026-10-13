@@ -489,7 +489,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 42)
+Internals: `enclosures()` (private, line 43)
 
 
 ## FeedTemplates
@@ -514,7 +514,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 60), `rss2()` (private, line 65), `rss2Item()` (private, line 84), `atom()` (private, line 110), `atomEntry()` (private, line 129), `rdf()` (private, line 156), `rdfItem()` (private, line 180), `rss()` (private, line 195), `commentsTitle()` (private, line 213), `commentTitle()` (private, line 225), `current()` (private, line 234), `rss2Comments()` (private, line 241), `rss2Comment()` (private, line 259), `atomComments()` (private, line 273), `atomComment()` (private, line 295)
+Internals: `syndication()` (private, line 62), `rss2()` (private, line 67), `rss2Item()` (private, line 86), `atom()` (private, line 112), `atomEntry()` (private, line 131), `rdf()` (private, line 158), `rdfItem()` (private, line 182), `rss()` (private, line 197), `commentsTitle()` (private, line 215), `commentTitle()` (private, line 227), `current()` (private, line 236), `rss2Comments()` (private, line 243), `rss2Comment()` (private, line 261), `atomComments()` (private, line 275), `atomComment()` (private, line 297)
 
 
 ## FeedWriter
@@ -1428,7 +1428,7 @@ The canonical step: a sitemap asked for by another address is sent to its own.
 
 What the sitemaps server does with the request (render_sitemaps).
 
-Internals: `page()` (private, line 64), `notFound()` (private, line 85)
+Internals: `page()` (private, line 65), `notFound()` (private, line 86)
 
 
 ## SitemapXml
@@ -1653,7 +1653,7 @@ The way out of recovery mode, while the site is in it.
 
 The search box, on the front end.
 
-Internals: `profileUrl()` (private, line 45), `creatable()` (private, line 247), `editPost()` (private, line 294), `editTerm()` (private, line 304)
+Internals: `profileUrl()` (private, line 46), `creatable()` (private, line 248), `editPost()` (private, line 295), `editTerm()` (private, line 305)
 
 
 ## ToolbarTree

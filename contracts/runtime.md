@@ -15934,6 +15934,20 @@ class that owns the method is now `self::`. The object cache functions stay for 
 replaceable functions their seam (an `object-cache.php` drop-in may define them), and
 `reset_password` waits for the users (it takes a `WP_User`). All 370 probes give identical output.
 
+**Batch 4, formatting (function calls 967 → 878).** The escapers, sanitizers and text helpers are
+Minn methods, each ending in its filter as the facade's did: `Support\Escape::url()` (esc_url,
+sanitize_url), `textarea()`, `js()`; `Support\Sanitize::title()`, `key()`, `textField()`,
+`user()`, `email()`, `isEmail()`; `Support\Text::trimWords()`, `htmlExcerpt()`,
+`numericReferences()` (ent2ncr), `encodeAmpersands()` (convert_chars), `normalizeWhitespace()`,
+`basename()`, `mapDeep()`; the protocol check in `Support\KsesProtocols` (`allowed()`, `strip()`,
+`stripOnce()`); `Kses::withoutNulls()`; `Entities::numericAsBytes()`; `Html::encodeAll()`. The facade
+maps onto them. `Text::mapDeep()` runs its callback through `array_map`, so the callback is called
+coercively as WordPress code calls it (`urlencode(1)` is "1"), not under the engine's strict types.
+`esc_sql` waits for the database batch (it goes through the global `$wpdb`, which a drop-in may
+replace). The style suite's htmlspecialchars exemption named `Minn/Support/Html.php`, a file that does
+not exist; it names `Minn/Html.php` now, and the ceiling fell to 12. All 370 probes give identical
+output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

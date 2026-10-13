@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
 use Minn\Support\Url;
 
 /**
@@ -153,10 +154,10 @@ final class PostLinks
         $sample = clone $post;
         if (in_array($sample->post_status, self::UNPUBLISHED, true)) {
             $sample->post_status = 'publish';
-            $sample->post_name = (string) \sanitize_title($sample->post_name !== '' ? $sample->post_name : $sample->post_title, (string) $sample->ID);
+            $sample->post_name = (string) Sanitize::title($sample->post_name !== '' ? $sample->post_name : $sample->post_title, (string) $sample->ID);
         }
         if ($name !== null) {
-            $sample->post_name = (string) \sanitize_title($name !== '' ? $name : (string) $title, (string) $sample->ID);
+            $sample->post_name = (string) Sanitize::title($name !== '' ? $name : (string) $title, (string) $sample->ID);
         }
         $sample->post_name = (string) \wp_unique_post_slug($sample->post_name, $sample->ID, $sample->post_status, $sample->post_type, $sample->post_parent);
         $sample->filter = 'sample';

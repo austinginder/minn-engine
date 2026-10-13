@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Support\Sanitize;
+
 /**
  * An account's fields through the filters the reference's wp_insert_user
  * runs, in its order (probe user-insert-filters, contracts/runtime.md
@@ -28,7 +30,7 @@ final class UserSave
     {
         $given = static fn (string $key): string => isset($userdata[$key]) && is_scalar($userdata[$key]) ? (string) $userdata[$key] : '';
         $stored = static fn (string $key): string => (string) ($existing[$key] ?? '');
-        $login = (string) \sanitize_user($given('user_login') !== '' ? $given('user_login') : $stored('user_login'), true);
+        $login = (string) Sanitize::user($given('user_login') !== '' ? $given('user_login') : $stored('user_login'), true);
         $login = trim((string) Runtime::hooks()->filter('pre_user_login', [$login]));
         if ($existing === null && $login === '') {
             return new Refusal('empty_user_login', 'Cannot create a user with an empty login name.');
@@ -40,7 +42,7 @@ final class UserSave
         if (in_array(strtolower($login), $illegal, true)) {
             return new Refusal('invalid_username', 'Sorry, that username is not allowed.');
         }
-        $nicename = $given('user_nicename') !== '' ? (string) \sanitize_user($given('user_nicename'), true) : (string) \sanitize_title(mb_substr($login, 0, 50));
+        $nicename = $given('user_nicename') !== '' ? (string) Sanitize::user($given('user_nicename'), true) : (string) Sanitize::title(mb_substr($login, 0, 50));
         $nicename = (string) Runtime::hooks()->filter('pre_user_nicename', [$nicename]);
         $email = (string) Runtime::hooks()->filter('pre_user_email', [$given('user_email')]);
         $url = (string) Runtime::hooks()->filter('pre_user_url', [$given('user_url')]);

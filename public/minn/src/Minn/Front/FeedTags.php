@@ -6,6 +6,7 @@ namespace Minn\Front;
 
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
+use Minn\Support\Text;
 use Minn\Support\Url;
 use Minn\Runtime\TermFields;
 
@@ -57,7 +58,7 @@ final class FeedTags
                 continue;
             }
             $type = preg_split('/[ \t]/', trim($lines[2]))[0] ?? '';
-            $out .= Runtime::hooks()->filter('rss_enclosure', ['<enclosure url="' . \esc_url(trim($lines[0])) . '" length="' . abs((int) (trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n"]);
+            $out .= Runtime::hooks()->filter('rss_enclosure', ['<enclosure url="' . Escape::url(trim($lines[0])) . '" length="' . abs((int) (trim($lines[1]))) . '" type="' . Escape::attr($type) . '" />' . "\n"]);
         }
         return $out;
     }
@@ -77,7 +78,7 @@ final class FeedTags
                     $type = trim($line);
                 }
             }
-            $out .= Runtime::hooks()->filter('atom_enclosure', [sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", \esc_url(trim($lines[0])), Escape::attr((string) $length), Escape::attr($type))]);
+            $out .= Runtime::hooks()->filter('atom_enclosure', [sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", Escape::url(trim($lines[0])), Escape::attr((string) $length), Escape::attr($type))]);
         }
         return $out;
     }
@@ -142,7 +143,7 @@ final class FeedTags
         if (!$url) {
             return '';
         }
-        return "\n<image>\n\t<url>" . \convert_chars($url) . "</url>\n\t<title>" . $title . "</title>\n\t<link>" . \get_bloginfo_rss('url')
+        return "\n<image>\n\t<url>" . Text::encodeAmpersands($url) . "</url>\n\t<title>" . $title . "</title>\n\t<link>" . \get_bloginfo_rss('url')
             . "</link>\n\t<width>32</width>\n\t<height>32</height>\n</image> \n";
     }
 
@@ -150,6 +151,6 @@ final class FeedTags
     public static function atomIcon(): string
     {
         $url = \get_site_icon_url(32);
-        return $url ? '<icon>' . \convert_chars($url) . "</icon>\n" : '';
+        return $url ? '<icon>' . Text::encodeAmpersands($url) . "</icon>\n" : '';
     }
 }
