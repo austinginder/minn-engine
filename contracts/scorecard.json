@@ -42,6 +42,13 @@
         "provenOfLive": 94.2,
         "provenWeighted": 96.2
     },
+    "wordpressCalls": {
+        "calls": 1018,
+        "functions": 384,
+        "families": 55,
+        "files": 140,
+        "hookApi": 384
+    },
     "coverage": {
         "measured": "2026-10-13",
         "percent": 87.6,
@@ -130,6 +137,13 @@
             "ceiling": 1018,
             "started": 1406,
             "since": "61614e6f",
+            "rose": false
+        },
+        "hookApiCeiling": {
+            "label": "Calls into the hook API by its WordPress names",
+            "ceiling": 384,
+            "started": 384,
+            "since": "",
             "rose": false
         },
         "longMethodCeiling": {
@@ -284,8 +298,8 @@
             "assets": {
                 "identical": 0,
                 "window": 40,
-                "stretches": 21,
-                "lines": 105
+                "stretches": 23,
+                "lines": 126
             },
             "data": {
                 "strings": 1797,

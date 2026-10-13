@@ -291,6 +291,9 @@ $check("engine: classes over six hundred lines stay at or under {$bigClassCeilin
 // never raise one.
 $bootedCeiling = 73;
 $wordpressCallCeiling = 1018;
+// The hook API from src/Minn goes through Runtime::hooks() too: \apply_filters() and \do_action() are the facade's names for it.
+$hookApiCeiling = 384;
+$hookApiCalls = 0;
 $apiNames = json_decode((string) file_get_contents(dirname(__DIR__) . '/public/minn/data/api-names.json'), true);
 $wordpressFunctions = array_fill_keys(array_map('strtolower', (array) ($apiNames['functions'] ?? [])), true);
 $hookApi = ['apply_filters' => true, 'apply_filters_ref_array' => true, 'apply_filters_deprecated' => true, 'do_action' => true, 'do_action_ref_array' => true, 'do_action_deprecated' => true];
@@ -327,6 +330,9 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
         if (is_array($before) && in_array($before[0], [T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR, T_DOUBLE_COLON, T_FUNCTION, T_NEW], true)) {
             continue;
         }
+        if (isset($hookApi[$name])) {
+            $hookApiCalls++;
+        }
         if (isset($wordpressFunctions[$name]) && !isset($hookApi[$name])) {
             $wordpressCalls++;
             $callersByFile[basename($file->getPathname(), '.php')] = ($callersByFile[basename($file->getPathname(), '.php')] ?? 0) + 1;
@@ -335,6 +341,11 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 }
 arsort($callersByFile);
 $check("engine: Runtime::booted() branches stay at or under {$bootedCeiling}", $booted <= $bootedCeiling, (string) $booted);
+$check("engine: calls into the hook API by its WordPress names stay at or under {$hookApiCeiling}", $hookApiCalls <= $hookApiCeiling, (string) $hookApiCalls);
+// Each of those calls, by function and file, is tracked in contracts/api/wordpress-calls.json (measure 15 of the
+// release gate: 0 before an engine release, Austin 2026-10-13). Regenerate with `php tests/tools/wordpress-calls.php`.
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/wordpress-calls.php') . ' --check', $ignored, $wordpressCallsStale);
+$check('engine: contracts/api/wordpress-calls.json is current', $wordpressCallsStale === 0, 'run php tests/tools/wordpress-calls.php');
 $check("engine: calls into WordPress-named functions (the hook API aside) stay at or under {$wordpressCallCeiling}", $wordpressCalls <= $wordpressCallCeiling, $wordpressCalls . ', most in ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys(array_slice($callersByFile, 0, 5, true)), array_slice($callersByFile, 0, 5, true))));
 
 // Track H: Minn talks to Minn, never to wordpress.org. Every address that has
