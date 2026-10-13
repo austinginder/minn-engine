@@ -12,7 +12,11 @@ namespace Minn\Query;
  */
 final class PostOrder
 {
-    private const KEYS = ['post_name', 'post_author', 'post_date', 'post_title', 'post_modified', 'post_parent', 'post_type', 'name', 'author', 'date', 'title', 'modified', 'parent', 'type', 'ID', 'menu_order', 'comment_count', 'rand', 'post__in', 'post_parent__in', 'post_name__in'];
+    /** The post fields an orderby may name, bare or with their column's post_ prefix. */
+    private const FIELDS = ['name', 'author', 'date', 'title', 'modified', 'parent', 'type'];
+
+    /** The other names an orderby may use. */
+    private const OTHERS = ['ID', 'menu_order', 'comment_count', 'rand', 'post__in', 'post_parent__in', 'post_name__in'];
     private const COLUMNS = ['post_name', 'post_author', 'post_date', 'post_title', 'post_modified', 'post_parent', 'post_type', 'ID', 'menu_order', 'comment_count'];
     private const IN_GIVEN_ORDER = ['post__in', 'post_name__in', 'post_parent__in'];
 
@@ -84,7 +88,7 @@ final class PostOrder
      */
     public static function clause(string $orderby, string $table, array $metaClauses, array $q): string|false
     {
-        $allowed = self::KEYS;
+        $allowed = [...self::FIELDS, ...array_map(static fn (string $field): string => "post_{$field}", self::FIELDS), ...self::OTHERS];
         $primary = [];
         $primaryKey = '';
         if ($metaClauses !== []) {
@@ -92,11 +96,11 @@ final class PostOrder
             $primaryKey = !empty($primary['key']) ? (string) $primary['key'] : '';
             $allowed = [...$allowed, ...array_filter([$primaryKey]), 'meta_value', 'meta_value_num', ...array_map('strval', array_keys($metaClauses))];
         }
-        $seeded = false;
-        if (preg_match('/RAND\(([0-9]+)\)/i', $orderby, $match) === 1) {
-            $orderby = sprintf('RAND(%s)', (int) $match[1]);
+        // RAND(n) is a seeded shuffle; it is allowed as written, its seed made a whole number.
+        $seed = preg_match('/RAND\(([0-9]+)\)/i', $orderby, $match) === 1 ? (int) $match[1] : null;
+        if ($seed !== null) {
+            $orderby = "RAND({$seed})";
             $allowed[] = $orderby;
-            $seeded = true;
         }
         if (!in_array($orderby, $allowed, true)) {
             return false;
@@ -108,7 +112,7 @@ final class PostOrder
             $orderby === 'meta_value_num' => "{$primary['alias']}.meta_value+0",
             in_array($orderby, self::IN_GIVEN_ORDER, true) => self::field($orderby, $table, $q),
             array_key_exists($orderby, $metaClauses) => "CAST({$metaClauses[$orderby]['alias']}.meta_value AS {$metaClauses[$orderby]['cast']})",
-            $seeded => $orderby,
+            $seed !== null => $orderby,
             default => "{$table}.post_" . $orderby,
         };
     }

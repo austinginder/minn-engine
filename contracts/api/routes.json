@@ -1,7 +1,7 @@
 {
     "engine": "0.0.1",
-    "routes": 257,
-    "withPolicy": 251,
+    "routes": 258,
+    "withPolicy": 252,
     "entries": [
         {
             "method": "GET",
@@ -1607,6 +1607,20 @@
             "name": "Minn\\Front\\AssetsController::asset",
             "handler": "Minn\\Front\\AssetsController::asset",
             "summary": "One engine asset file.",
+            "policy": {
+                "access": "Public",
+                "describe": "public"
+            },
+            "args": [],
+            "body": [],
+            "index": true
+        },
+        {
+            "method": "GET",
+            "pattern": "/wp-includes/js/{file:wp-embed(?:-template)?\\.min\\.js}",
+            "name": "Minn\\Front\\AssetsController::embedScript",
+            "handler": "Minn\\Front\\AssetsController::embedScript",
+            "summary": "The engine's embed scripts at the addresses the reference serves its own from.",
             "policy": {
                 "access": "Public",
                 "describe": "public"

@@ -6,9 +6,6 @@
  * cancel link and words the heading as the link says. Cancelling puts the
  * form back where it was. Without this script the links still work: each
  * is an address (?replytocom=) that renders the form for that reply.
- *
- * MIT. Written for Minn from the markup the reply links and the comment
- * form carry; no WordPress code.
  */
 (function () {
 	'use strict';

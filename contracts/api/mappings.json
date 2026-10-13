@@ -67483,7 +67483,7 @@
         },
         "wp_default_scripts": {
             "file": "script-loader.php",
-            "lines": 20,
+            "lines": 24,
             "kind": "minn",
             "minn": [
                 "Minn\\Runtime\\ScriptPack::handles"

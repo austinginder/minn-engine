@@ -15,7 +15,7 @@ the wp/v2 surface: shapes and controllers
 | [`Caller`](#caller) | final class | 149 | Who is making this REST call. Resolved once from the cookie and nonce; |
 | [`Catalogue`](#catalogue) | final class | 70 | The route table read from the classes alone: every #[Route] under |
 | [`ClientSchema`](#clientschema) | final class | 81 | A JSON schema trimmed for a client (probe json-schema): only the keywords |
-| [`CommentListArgs`](#commentlistargs) | final class | 35 | The WP_Comment_Query arguments a comment list request makes, as the |
+| [`CommentListArgs`](#commentlistargs) | final class | 34 | The WP_Comment_Query arguments a comment list request makes, as the |
 | [`CommentObject`](#commentobject) | final readonly class | 87 | The wp/v2 comment object; edit context adds the moderation-desk fields. |
 | [`CommentsController`](#commentscontroller) | final readonly class | 294 | wp/v2/comments: the status tabs with pagination headers, single, |
 | [`Context`](#context) | enum | 18 | The view a REST caller asked for. View is the public shape, edit adds the |
@@ -41,7 +41,7 @@ the wp/v2 surface: shapes and controllers
 | [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 167 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
-| [`PostListArgs`](#postlistargs) | final class | 174 | The WP_Query arguments a post list request makes, as the reference makes |
+| [`PostListArgs`](#postlistargs) | final class | 171 | The WP_Query arguments a post list request makes, as the reference makes |
 | [`PostObject`](#postobject) | final readonly class | 533 | Builds the wp/v2 post and page objects in the reference's shape: the |
 | [`PostsController`](#postscontroller) | final readonly class | 197 | wp/v2 posts and pages, read side. |
 | [`PostsWriteController`](#postswritecontroller) | final readonly class | 518 | wp/v2 posts and pages, write side: create, update, trash, and force |
@@ -61,10 +61,10 @@ the wp/v2 surface: shapes and controllers
 | [`RuntimeEnvelope`](#runtimeenvelope) | final readonly class | 123 | The REST server's filters around one of Minn's own routes, as the |
 | [`RuntimePrepare`](#runtimeprepare) | final class | 145 | An item a REST response carries, through the filter the reference runs |
 | [`RuntimeRoutes`](#runtimeroutes) | final class | 479 | Routes plugin code registered with register_rest_route(), answered |
-| [`Schema`](#schema) | final readonly class | 502 | JSON-schema handling the way the REST API's argument validation does it: |
+| [`Schema`](#schema) | final readonly class | 503 | JSON-schema handling the way the REST API's argument validation does it: |
 | [`SchemaChoices`](#schemachoices) | final readonly class | 136 | anyOf and oneOf the way the REST API's validation judges them (probe |
 | [`SchemaData`](#schemadata) | final class | 12 | REST schemas captured from the reference for the facade's controller |
-| [`SchemaValues`](#schemavalues) | final class | 202 | The value side of JSON Schema, as the reference applies it: what counts |
+| [`SchemaValues`](#schemavalues) | final class | 198 | The value side of JSON Schema, as the reference applies it: what counts |
 | [`SearchController`](#searchcontroller) | final readonly class | 122 | wp/v2 search over published content: id, title, url, type, and the |
 | [`Services`](#services) | final class | 417 | The objects one REST request shares, each made once, on first use, from |
 | [`Settings`](#settings) | final readonly class | 113 | The registered settings the Settings views read and write, mapped to |
@@ -1819,7 +1819,7 @@ rest_query_var-{name}, and the list's orderby names as the query's.
 - `@param array<string, mixed> $args`
 - `@return array<string, mixed>`
 
-Internals: `mimeTypes()` (private, line 103), `sticky()` (private, line 115), `taxonomies()` (private, line 129), `termClause()` (private, line 150), `formats()` (private, line 174)
+Internals: `mimeTypes()` (private, line 100), `sticky()` (private, line 112), `taxonomies()` (private, line 126), `termClause()` (private, line 147), `formats()` (private, line 171)
 
 
 ## PostObject
@@ -2781,7 +2781,7 @@ items and the value as a whole (probe rest-view-config).
 
 The schema with additionalProperties closed on every object.
 
-Internals: `validateInteger()` (private, line 110), `validateString()` (private, line 119), `validateNumber()` (private, line 137), `validateArray()` (private, line 149), `validateObject()` (private, line 175), `validateFormat()` (private, line 218), `validateBounds()` (private, line 230), `enum()` (private, line 267), `wrongType()` (private, line 284)
+Internals: `validateInteger()` (private, line 110), `validateString()` (private, line 119), `validateNumber()` (private, line 137), `validateArray()` (private, line 149), `firstMissing()` (private, line 179), `validateObject()` (private, line 192), `validateFormat()` (private, line 226), `validateBounds()` (private, line 238), `enum()` (private, line 275), `wrongType()` (private, line 292)
 
 
 ## SchemaChoices
@@ -2942,6 +2942,8 @@ Whether a value is a version-4 uuid.
 A comma- or space-separated string as a list.
 
 - `@return list<string>`
+
+Internals: `objectOf()` (private, line 85)
 
 
 ## SearchController

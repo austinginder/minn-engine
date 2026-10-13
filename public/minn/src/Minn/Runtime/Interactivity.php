@@ -416,16 +416,7 @@ final class Interactivity
             'context' => $this->contexts === [] ? [] : (end($this->contexts)[$namespace] ?? []),
             default => null,
         };
-        foreach ($segments as $segment) {
-            if (is_array($current) && array_key_exists($segment, $current)) {
-                $current = $current[$segment];
-            } elseif (is_object($current) && isset($current->$segment)) {
-                $current = $current->$segment;
-            } else {
-                $current = null;
-                break;
-            }
-        }
+        $current = self::follow($current, $segments);
         if ($current instanceof \Closure || (is_array($current) && is_callable($current) && count($current) === 2 && is_object($current[0]))) {
             $saved = $this->namespaces;
             $this->namespaces[] = $namespace;
@@ -534,5 +525,26 @@ final class Interactivity
     private static function camel(string $name): string
     {
         return lcfirst(str_replace('-', '', ucwords($name, '-')));
+    }
+
+    /**
+     * A value reached through a path of keys or properties, or null from the first one that is
+     * not there.
+     *
+     * @param list<string> $names
+     */
+    private static function follow(mixed $value, array $names): mixed
+    {
+        foreach ($names as $name) {
+            $value = match (true) {
+                is_array($value) && array_key_exists($name, $value) => $value[$name],
+                is_object($value) && isset($value->$name) => $value->$name,
+                default => null,
+            };
+            if ($value === null) {
+                return null;
+            }
+        }
+        return $value;
     }
 }

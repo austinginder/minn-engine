@@ -7,7 +7,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`AdminBar`](#adminbar) | final readonly class | 326 | The Minn bar on the public site: the same server-rendered chrome the |
 | [`ArchiveAddresses`](#archiveaddresses) | final readonly class | 97 | The archives an address may stand for, as the reference answers them: |
 | [`Archives`](#archives) | final readonly class | 63 | The archive periods wp_get_archives lists: months, years, days and weeks |
-| [`AssetsController`](#assetscontroller) | final readonly class | 32 | The engine's own static assets, served under a reserved path. |
+| [`AssetsController`](#assetscontroller) | final readonly class | 42 | The engine's own static assets, served under a reserved path. |
 | [`AttachmentAddresses`](#attachmentaddresses) | final readonly class | 80 | The addresses an attachment's page answers to besides those its rules |
 | [`Calendar`](#calendar) | final readonly class | 99 | One month as the calendar widget and block draw it: a table whose caption |
 | [`CalendarLabels`](#calendarlabels) | final readonly class | 44 | The words a calendar prints: weekday names Sunday first, the short form |
@@ -16,7 +16,7 @@ URL resolution, permalinks, feeds, sitemaps and the public page
 | [`CustomLogo`](#customlogo) | final class | 27 | The site logo a theme prints, as get_custom_logo builds it (probe |
 | [`EmbedCard`](#embedcard) | final class | 95 | The parts of a post's embed card the reference's embed template prints, |
 | [`FeedController`](#feedcontroller) | final readonly class | 60 | The feeds, wherever a request asks for one: the feed var of the rule its |
-| [`FeedTags`](#feedtags) | final class | 140 | The template tags a feed is written with that take more than a line, as |
+| [`FeedTags`](#feedtags) | final class | 137 | The template tags a feed is written with that take more than a line, as |
 | [`FeedTemplates`](#feedtemplates) | final class | 295 | The feed templates do_feed_* loads, written from the reference's output |
 | [`FeedWriter`](#feedwriter) | final class | 57 | A feed as it is written: text as given, and what each template tag and |
 | [`FrontController`](#frontcontroller) | final readonly class | 105 | The public site. One catch-all route: resolve the URL, then either |
@@ -182,6 +182,7 @@ Internals: `weekPeriod()` (private, line 57)
 The engine's own static assets, served under a reserved path.
 
 - const `TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript', )`
+- const `EMBED_SCRIPTS` = `array (   'wp-embed.min.js' => 'embed-host.js',   'wp-embed-template.min.js' => 'embed-card.js', )` — The embed scripts, by the reference addresses a page and a card's sourceURL name them at.
 
 Used by: `Minn\Engine`
 
@@ -195,6 +196,12 @@ __construct(string $assetsDir)
 Route: `GET /minn/assets/{path*} (public)`
 
 One engine asset file.
+
+### `embedScript(Minn\Http\Request $request, string $file): Minn\Http\Response`
+
+Route: `GET /wp-includes/js/{file:wp-embed(?:-template)?\.min\.js} (public)`
+
+The engine's embed scripts at the addresses the reference serves its own from.
 
 ### `jquery(Minn\Http\Request $request, string $file): Minn\Http\Response`
 

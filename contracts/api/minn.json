@@ -10119,7 +10119,7 @@
             "namespace": "Minn\\Auth",
             "kind": "final class",
             "file": "public/minn/src/Minn/Auth/PortableHash.php",
-            "lines": 96,
+            "lines": 86,
             "doc": "The portable phpass hash (\"$P$\"), from the published algorithm: an\niteration count character, an eight character salt, and MD5 iterated\nover salt and password, encoded in phpass's own base64 alphabet. The\nreference stores it in the post-password cookie (2^13 iterations, and it\naccepts nothing weaker there), and still verifies it for application\npasswords and reset keys made before its fast hash, which is why both\ndirections of each are accepted. Its pieces are public for phpass's own\nclass, PasswordHash (probe identity-internals): the base64 encoding,\nboth kinds of salt, and the hash with phpass's failure markers.",
             "implements": [],
             "extends": null,
@@ -10315,7 +10315,7 @@
                         }
                     ],
                     "line": 88,
-                    "end": 112
+                    "end": 102
                 }
             ]
         },
@@ -45099,7 +45099,7 @@
             "namespace": "Minn\\Front",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Front/AssetsController.php",
-            "lines": 32,
+            "lines": 42,
             "doc": "The engine's own static assets, served under a reserved path.",
             "implements": [],
             "extends": null,
@@ -45128,8 +45128,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 21
+                "line": 22,
+                "end": 24
             },
             "cases": [],
             "constants": [
@@ -45137,6 +45137,12 @@
                     "name": "TYPES",
                     "value": "array (   'css' => 'text/css',   'js' => 'application/javascript', )",
                     "doc": "",
+                    "visibility": "private"
+                },
+                {
+                    "name": "EMBED_SCRIPTS",
+                    "value": "array (   'wp-embed.min.js' => 'embed-host.js',   'wp-embed-template.min.js' => 'embed-card.js', )",
+                    "doc": "The embed scripts, by the reference addresses a page and a card's sourceURL name them at.",
                     "visibility": "private"
                 }
             ],
@@ -45178,8 +45184,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 25,
-                    "end": 34
+                    "line": 28,
+                    "end": 37
+                },
+                {
+                    "routes": [
+                        "GET /wp-includes/js/{file:wp-embed(?:-template)?\\.min\\.js} (public)"
+                    ],
+                    "name": "embedScript",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "embedScript(Minn\\Http\\Request $request, string $file): Minn\\Http\\Response",
+                    "doc": "The engine's embed scripts at the addresses the reference serves its own from.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "request",
+                            "type": "Minn\\Http\\Request",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 44
                 },
                 {
                     "routes": [
@@ -45207,8 +45242,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 38,
-                    "end": 45
+                    "line": 48,
+                    "end": 55
                 }
             ]
         },
@@ -46395,7 +46430,7 @@
             "namespace": "Minn\\Front",
             "kind": "final class",
             "file": "public/minn/src/Minn/Front/FeedTags.php",
-            "lines": 140,
+            "lines": 137,
             "doc": "The template tags a feed is written with that take more than a line, as\nthe reference answers them in a feed's loop (probe feed-tags): a post's\ncategories and tags in each feed's markup, its enclosures for RSS and\nAtom, the link to its comments feed, the feed's build date, and the site\nicon a feed carries.",
             "implements": [],
             "extends": null,
@@ -46456,7 +46491,7 @@
                     "shapes": [],
                     "params": [],
                     "line": 66,
-                    "end": 86
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -46482,8 +46517,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 111
+                    "line": 86,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -46502,8 +46537,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 137
+                    "line": 115,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -46514,8 +46549,8 @@
                     "doc": "The site icon as an RSS 2.0 image (titled with the feed's title), or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 140,
-                    "end": 150
+                    "line": 137,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -46526,8 +46561,8 @@
                     "doc": "The site icon as an Atom icon, or '' without one.",
                     "shapes": [],
                     "params": [],
-                    "line": 153,
-                    "end": 157
+                    "line": 150,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -69966,7 +70001,7 @@
             "namespace": "Minn\\I18n",
             "kind": "final class",
             "file": "public/minn/src/Minn/I18n/LegacyPluralForms.php",
-            "lines": 173,
+            "lines": 190,
             "doc": "The plural expression reader the old POMO library carries (Plural_Forms),\nkept apart from PluralExpression because plugins see its quirks: it reads\nonly n, whole numbers, parentheses, % and the comparisons, && and ||, and\nthe ternary, skipping spaces and tabs alone. It turns the expression into\npostfix tokens once (operators of equal strength group to the left, the\nternary to the right) and runs them on a stack per number: an operand the\nstack lacks is null, == and != compare strictly, values stay as PHP left\nthem until the answer is cast to an integer, and % is PHP's own, so a zero\ndivisor throws. Every refusal is an Exception with the reference's words\n(probe translation-files).",
             "implements": [],
             "extends": null,
@@ -69982,9 +70017,9 @@
                     "visibility": "private"
                 },
                 {
-                    "name": "PRECEDENCE",
-                    "value": "array (   '%' => 6,   '<' => 5,   '<=' => 5,   '>' => 5,   '>=' => 5,   '==' => 4,   '!=' => 4,   '&&' => 3,   '||' => 2,   '?:' => 1,   '?' => 1,   '(' => 0,   ')' => 0, )",
-                    "doc": "",
+                    "name": "LEVELS",
+                    "value": "array (   0 =>    array (     0 => '(',     1 => ')',   ),   1 =>    array (     0 => '?:',     1 => '?',   ),   2 =>    array (     0 => '||',   ),   3 =>    array (     0 => '&&',   ),   4 =>    array (     0 => '==',     1 => '!=',   ),   5 =>    array (     0 => '<',     1 => '<=',     2 => '>',     3 => '>=',   ),   6 =>    array (     0 => '%',   ), )",
+                    "doc": "The operators by how loosely they bind, loosest first; the parentheses below everything.",
                     "visibility": "private"
                 }
             ],
@@ -70217,6 +70252,20 @@
                     ],
                     "line": 173,
                     "end": 192
+                },
+                {
+                    "routes": [],
+                    "name": "strengths",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "strengths(): array",
+                    "doc": "Each operator's strength: its level's place in LEVELS.",
+                    "shapes": [
+                        "@return array<string, int>"
+                    ],
+                    "params": [],
+                    "line": 199,
+                    "end": 209
                 }
             ]
         },
@@ -81168,7 +81217,7 @@
             "namespace": "Minn\\Media",
             "kind": "final class",
             "file": "public/minn/src/Minn/Media/Sizing.php",
-            "lines": 249,
+            "lines": 263,
             "doc": "The image size arithmetic the media functions share: the crop or scale a\nresize needs, the registered size a requested box picks, and the srcset\ncandidates an image's sizes yield. Behaviour pinned by contracts/fixtures/api/media.json.",
             "implements": [],
             "extends": null,
@@ -81278,7 +81327,7 @@
                         }
                     ],
                     "line": 49,
-                    "end": 74
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -81313,8 +81362,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 85
+                    "line": 91,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -81367,8 +81416,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 146
+                    "line": 109,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -81427,8 +81476,8 @@
                             "doc": "the widest candidate (max_srcset_image_width; 0 for no cap), asked before the folder is checked"
                         }
                     ],
-                    "line": 158,
-                    "end": 203
+                    "line": 172,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -81447,8 +81496,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 216
+                    "line": 220,
+                    "end": 230
                 },
                 {
                     "routes": [],
@@ -81497,8 +81546,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 219,
-                    "end": 239
+                    "line": 233,
+                    "end": 253
                 },
                 {
                     "routes": [],
@@ -81526,8 +81575,51 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 261
+                    "line": 267,
+                    "end": 275
+                },
+                {
+                    "routes": [],
+                    "name": "cropBox",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "cropBox(int $origW, int $origH, int $destW, int $destH): array",
+                    "doc": "A cropped size's box: each side at most the original's, and a side asked as 0 drawn from the\nother in the original's proportion.",
+                    "shapes": [
+                        "@return array{0: int, 1: int}"
+                    ],
+                    "params": [
+                        {
+                            "name": "origW",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "origH",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "destW",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "destH",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 73,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -81553,8 +81645,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 255,
+                    "end": 258
                 }
             ]
         },
@@ -89371,7 +89463,7 @@
             "namespace": "Minn\\Query",
             "kind": "final class",
             "file": "public/minn/src/Minn/Query/PostOrder.php",
-            "lines": 118,
+            "lines": 122,
             "doc": "WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the\nkeys it takes, what each key becomes (a column, a meta value, a FIELD()\nlist, a seeded RAND()), and how a list or a map of keys joins with its\ndirections. A key it does not know is dropped; none left means post_date.",
             "implements": [],
             "extends": null,
@@ -89383,9 +89475,15 @@
             "cases": [],
             "constants": [
                 {
-                    "name": "KEYS",
-                    "value": "array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'name',   8 => 'author',   9 => 'date',   10 => 'title',   11 => 'modified',   12 => 'parent',   13 => 'type',   14 => 'ID',   15 => 'menu_order',   16 => 'comment_count',   17 => 'rand',   18 => 'post__in',   19 => 'post_parent__in',   20 => 'post_name__in', )",
-                    "doc": "",
+                    "name": "FIELDS",
+                    "value": "array (   0 => 'name',   1 => 'author',   2 => 'date',   3 => 'title',   4 => 'modified',   5 => 'parent',   6 => 'type', )",
+                    "doc": "The post fields an orderby may name, bare or with their column's post_ prefix.",
+                    "visibility": "private"
+                },
+                {
+                    "name": "OTHERS",
+                    "value": "array (   0 => 'ID',   1 => 'menu_order',   2 => 'comment_count',   3 => 'rand',   4 => 'post__in',   5 => 'post_parent__in',   6 => 'post_name__in', )",
+                    "doc": "The other names an orderby may use.",
                     "visibility": "private"
                 },
                 {
@@ -89420,8 +89518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 20,
-                    "end": 26
+                    "line": 24,
+                    "end": 30
                 },
                 {
                     "routes": [],
@@ -89457,8 +89555,8 @@
                             "doc": "the meta query's clauses, by name"
                         }
                     ],
-                    "line": 36,
-                    "end": 60
+                    "line": 40,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -89501,8 +89599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 114
+                    "line": 89,
+                    "end": 118
                 },
                 {
                     "routes": [],
@@ -89544,8 +89642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 73
+                    "line": 67,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -89580,8 +89678,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 129
+                    "line": 121,
+                    "end": 133
                 }
             ]
         },
@@ -94103,7 +94201,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/CommentListArgs.php",
-            "lines": 35,
+            "lines": 34,
             "doc": "The WP_Comment_Query arguments a comment list request makes, as the\nreference makes them before rest_comment_query (probe\nrest-comment-lists): each declared parameter the request carries under\nits query name, an empty email and search when none is given, the\norderby name mapped to the query's, the found rows counted, the posts\nloaded, the date bounds as one clause, the offset the page makes when\nnone is given, and ids alone for a HEAD request.",
             "implements": [],
             "extends": null,
@@ -94164,7 +94262,7 @@
                         }
                     ],
                     "line": 28,
-                    "end": 49
+                    "end": 48
                 }
             ]
         },
@@ -100589,7 +100687,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/PostListArgs.php",
-            "lines": 174,
+            "lines": 171,
             "doc": "The WP_Query arguments a post list request makes, as the reference makes\nthem before rest_{type}_query (probe rest-post-lists): each registered\nparameter the request carries under its query name, the date bounds,\nper_page, stickies (only them, or none of them), an exact search, each\ntaxonomy's include and exclude under the request's relation, formats\n(standard as no format at all), the type, and ids alone for a HEAD\nrequest. Then each through rest_query_var-{name}, the orderby names\nmapped to the query's, and stickies left where they fall unless asked.",
             "implements": [],
             "extends": null,
@@ -100671,7 +100769,7 @@
                         }
                     ],
                     "line": 33,
-                    "end": 69
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -100700,8 +100798,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 93
+                    "line": 75,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -100730,8 +100828,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 112
+                    "line": 100,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -100759,8 +100857,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 115,
-                    "end": 126
+                    "line": 112,
+                    "end": 123
                 },
                 {
                     "routes": [],
@@ -100795,8 +100893,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 147
+                    "line": 126,
+                    "end": 144
                 },
                 {
                     "routes": [],
@@ -100824,8 +100922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 164
+                    "line": 147,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -100855,8 +100953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 174,
-                    "end": 191
+                    "line": 171,
+                    "end": 188
                 }
             ]
         },
@@ -107126,7 +107224,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/Schema.php",
-            "lines": 502,
+            "lines": 503,
             "doc": "JSON-schema handling the way the REST API's argument validation does it:\nvalidate a value against a schema (a Refusal names what failed), sanitise\nit into the schema's type, filter a response by context, and the type\ntests the schema vocabulary needs. Behaviour pinned by contracts/fixtures/api/rest.json.",
             "implements": [],
             "extends": null,
@@ -107385,8 +107483,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 358
+                    "line": 298,
+                    "end": 366
                 },
                 {
                     "routes": [],
@@ -107419,8 +107517,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 415
+                    "line": 369,
+                    "end": 416
                 },
                 {
                     "routes": [],
@@ -107453,8 +107551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 426
+                    "line": 419,
+                    "end": 427
                 },
                 {
                     "routes": [],
@@ -107480,8 +107578,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 439,
-                    "end": 474
+                    "line": 440,
+                    "end": 475
                 },
                 {
                     "routes": [],
@@ -107509,8 +107607,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 483,
-                    "end": 501
+                    "line": 484,
+                    "end": 502
                 },
                 {
                     "routes": [],
@@ -107529,8 +107627,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 504,
-                    "end": 517
+                    "line": 505,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -107670,6 +107768,33 @@
                 },
                 {
                     "routes": [],
+                    "name": "firstMissing",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "firstMissing(array $args, array $value): ?string",
+                    "doc": "The first property an object schema requires and the value lacks. A list under 'required'\n(draft 4) wins; without one, each property's own 'required' => true (draft 3) counts.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "array",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 179,
+                    "end": 190
+                },
+                {
+                    "routes": [],
                     "name": "validateObject",
                     "static": false,
                     "visibility": "private",
@@ -107699,8 +107824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 216
+                    "line": 192,
+                    "end": 224
                 },
                 {
                     "routes": [],
@@ -107733,8 +107858,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 228
+                    "line": 226,
+                    "end": 236
                 },
                 {
                     "routes": [],
@@ -107767,8 +107892,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 265
+                    "line": 238,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -107801,8 +107926,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 267,
-                    "end": 282
+                    "line": 275,
+                    "end": 290
                 },
                 {
                     "routes": [],
@@ -107828,8 +107953,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 284,
-                    "end": 287
+                    "line": 292,
+                    "end": 295
                 }
             ]
         },
@@ -108150,7 +108275,7 @@
             "namespace": "Minn\\Rest",
             "kind": "final class",
             "file": "public/minn/src/Minn/Rest/SchemaValues.php",
-            "lines": 202,
+            "lines": 198,
             "doc": "The value side of JSON Schema, as the reference applies it: what counts\nas a boolean, integer, array, or object, the coercions to each, the\ncomparisons and date, colour, and uuid parsers the formats use, and the\ncombining walk anyOf and oneOf share. Schema holds the rules; this holds\nwhat they are applied to.",
             "implements": [],
             "extends": null,
@@ -108284,7 +108409,7 @@
                         }
                     ],
                     "line": 68,
-                    "end": 77
+                    "end": 71
                 },
                 {
                     "routes": [],
@@ -108303,8 +108428,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 92
+                    "line": 74,
+                    "end": 77
                 },
                 {
                     "routes": [],
@@ -108330,8 +108455,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 113
+                    "line": 97,
+                    "end": 115
                 },
                 {
                     "routes": [],
@@ -108357,8 +108482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 116,
-                    "end": 133
+                    "line": 118,
+                    "end": 129
                 },
                 {
                     "routes": [],
@@ -108384,8 +108509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 136,
-                    "end": 144
+                    "line": 132,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -108411,8 +108536,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 147,
-                    "end": 150
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -108431,8 +108556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 153,
-                    "end": 157
+                    "line": 149,
+                    "end": 153
                 },
                 {
                     "routes": [],
@@ -108458,8 +108583,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 169
+                    "line": 156,
+                    "end": 165
                 },
                 {
                     "routes": [],
@@ -108478,8 +108603,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 182
+                    "line": 168,
+                    "end": 178
                 },
                 {
                     "routes": [],
@@ -108505,8 +108630,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 195
+                    "line": 181,
+                    "end": 191
                 },
                 {
                     "routes": [],
@@ -108525,8 +108650,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 198,
-                    "end": 201
+                    "line": 194,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -108545,8 +108670,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 204,
-                    "end": 207
+                    "line": 200,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -108567,8 +108692,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 217
+                    "line": 210,
+                    "end": 213
+                },
+                {
+                    "routes": [],
+                    "name": "objectOf",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "objectOf(mixed $value): ?array",
+                    "doc": "A value as an object's properties: '' is the empty object, a stdClass its properties, a\nJsonSerializable what it serializes to; null when it is no object.",
+                    "shapes": [
+                        "@return array<array-key, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 94
                 }
             ]
         },
@@ -118769,7 +118916,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentPages.php",
-            "lines": 110,
+            "lines": 115,
             "doc": "Which page of a post's comments a comment falls on, and the link that\nopens it there, as the reference works them out (probe comment-pages):\nthe page size from the arguments, the comments_per_page query variable\nor the option (no pages at all when comments are not paged); a reply\ntakes its top-level comment's page while comments are threaded; a page\nis the count of older top-level comments over the page size. The\ndefault page loses its number when the oldest comments come first.",
             "implements": [],
             "extends": null,
@@ -118818,7 +118965,7 @@
                         }
                     ],
                     "line": 30,
-                    "end": 58
+                    "end": 61
                 },
                 {
                     "routes": [],
@@ -118846,8 +118993,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 104
+                    "line": 90,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -118866,8 +119013,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 114
+                    "line": 116,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -118893,8 +119040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 127
+                    "line": 122,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -118922,8 +119069,8 @@
                             "doc": "the count of the top-level comments older than this one, through get_page_of_comment_query_args"
                         }
                     ],
-                    "line": 61,
-                    "end": 78
+                    "line": 64,
+                    "end": 81
                 }
             ]
         },
@@ -120037,7 +120184,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CronTable.php",
-            "lines": 131,
+            "lines": 133,
             "doc": "The cron option's shape, operated on as data: timestamp => hook => key =>\nentry, kept in natural timestamp order. The key is the reference's own\n(a hash of the serialized argument list), so both stacks read one table.",
             "implements": [],
             "extends": null,
@@ -120232,7 +120379,7 @@
                         }
                     ],
                     "line": 70,
-                    "end": 80
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -120260,8 +120407,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 98
+                    "line": 94,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -120296,8 +120443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 114
+                    "line": 112,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -120337,8 +120484,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 124
+                    "line": 124,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -120371,8 +120518,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 130
+                    "line": 134,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -120398,8 +120545,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 133,
-                    "end": 143
+                    "line": 140,
+                    "end": 145
                 }
             ]
         },
@@ -122104,7 +122251,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Interactivity.php",
-            "lines": 522,
+            "lines": 534,
             "doc": "Server-side directive processing for the Interactivity API: the state and\nconfig stores, and the pass that resolves data-wp-bind, data-wp-class,\ndata-wp-style, data-wp-text, and data-wp-each against state and context\nbefore the markup leaves the server. Behaviour pinned by the interactivity\nprobe fixture.",
             "implements": [],
             "extends": null,
@@ -122578,7 +122725,7 @@
                         }
                     ],
                     "line": 395,
-                    "end": 439
+                    "end": 430
                 },
                 {
                     "routes": [],
@@ -122621,8 +122768,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 445,
-                    "end": 476
+                    "line": 436,
+                    "end": 467
                 },
                 {
                     "routes": [],
@@ -122648,8 +122795,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 479,
-                    "end": 505
+                    "line": 470,
+                    "end": 496
                 },
                 {
                     "routes": [],
@@ -122671,8 +122818,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 511,
-                    "end": 518
+                    "line": 502,
+                    "end": 509
                 },
                 {
                     "routes": [],
@@ -122701,8 +122848,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 524,
-                    "end": 527
+                    "line": 515,
+                    "end": 518
                 },
                 {
                     "routes": [],
@@ -122721,8 +122868,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 529,
-                    "end": 532
+                    "line": 520,
+                    "end": 523
                 },
                 {
                     "routes": [],
@@ -122741,8 +122888,37 @@
                             "doc": ""
                         }
                     ],
-                    "line": 534,
-                    "end": 537
+                    "line": 525,
+                    "end": 528
+                },
+                {
+                    "routes": [],
+                    "name": "follow",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "follow(mixed $value, array $names): mixed",
+                    "doc": "A value reached through a path of keys or properties, or null from the first one that is\nnot there.",
+                    "shapes": [
+                        "@param list<string> $names"
+                    ],
+                    "params": [
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "names",
+                            "type": "array",
+                            "shape": "list<string>",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 536,
+                    "end": 549
                 }
             ]
         },
@@ -129540,7 +129716,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostQuery.php",
-            "lines": 393,
+            "lines": 394,
             "doc": "WP_Query::get_posts as the reference runs it (probe wp-query-sql): the\nvariables parsed and handed to pre_get_posts, the clauses written piece by\npiece, every filter a plugin may change them through in the reference's\norder (suppress_filters keeps the ones it keeps), the request split into\nan id query when that is cheaper, the count, a single post's status check\nand preview, sticky posts on the home listing, and the results filters.",
             "implements": [],
             "extends": null,
@@ -129685,8 +129861,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 215,
-                    "end": 240
+                    "line": 216,
+                    "end": 241
                 },
                 {
                     "routes": [],
@@ -129699,8 +129875,8 @@
                         "@return list<string>"
                     ],
                     "params": [],
-                    "line": 243,
-                    "end": 247
+                    "line": 244,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -129756,7 +129932,7 @@
                         }
                     ],
                     "line": 122,
-                    "end": 148
+                    "end": 149
                 },
                 {
                     "routes": [],
@@ -129784,8 +129960,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 151,
-                    "end": 182
+                    "line": 152,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -129806,8 +129982,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 207
+                    "line": 186,
+                    "end": 208
                 },
                 {
                     "routes": [],
@@ -129828,8 +130004,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 250,
-                    "end": 265
+                    "line": 251,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -129850,8 +130026,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 288
+                    "line": 269,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -129879,8 +130055,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 298
+                    "line": 292,
+                    "end": 299
                 },
                 {
                     "routes": [],
@@ -129901,8 +130077,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 314
+                    "line": 302,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -129923,8 +130099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 349
+                    "line": 318,
+                    "end": 350
                 },
                 {
                     "routes": [],
@@ -129945,8 +130121,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 352,
-                    "end": 371
+                    "line": 353,
+                    "end": 372
                 },
                 {
                     "routes": [],
@@ -129981,8 +130157,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 374,
-                    "end": 392
+                    "line": 375,
+                    "end": 393
                 },
                 {
                     "routes": [],
@@ -130003,8 +130179,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 395,
-                    "end": 411
+                    "line": 396,
+                    "end": 412
                 }
             ]
         },
@@ -130279,7 +130455,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PostQueryResults.php",
-            "lines": 111,
+            "lines": 113,
             "doc": "What WP_Query does with its posts once it has them, as the reference does\nit (probe wp-query-sql): a single post whose status is not public is\ndropped unless the reader may see it (a draft its editor may preview, with\nthe_preview); sticky posts move to the front of the home listing's first\npage, the ones it did not find fetched by a nested query; the_posts; and\nthe post objects, count and current post set.",
             "implements": [],
             "extends": null,
@@ -130357,7 +130533,7 @@
                         }
                     ],
                     "line": 22,
-                    "end": 41
+                    "end": 40
                 },
                 {
                     "routes": [],
@@ -130368,8 +130544,8 @@
                     "doc": "A single post the reader may not see is dropped; a draft its editor may edit is a preview.",
                     "shapes": [],
                     "params": [],
-                    "line": 44,
-                    "end": 63
+                    "line": 43,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -130388,8 +130564,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 91
+                    "line": 65,
+                    "end": 90
                 },
                 {
                     "routes": [],
@@ -130410,8 +130586,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 124
+                    "line": 93,
+                    "end": 126
                 }
             ]
         },
@@ -141108,7 +141284,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/TreeWalk.php",
-            "lines": 179,
+            "lines": 182,
             "doc": "The Walker contract's traversal: elements keyed by the walker's\ndb_fields parent/id pair, displayed depth-first through the walker's\nfour element methods, whole or a page of top-level elements at a time\n(probe comment-walker). The facade Walker delegates here; subclasses\noverride the element methods (or display_element itself, as\nWalker_Comment does to keep replies past the depth limit at their\nparent's level) and the dispatch stays virtual.",
             "implements": [],
             "extends": null,
@@ -141346,7 +141522,7 @@
                         }
                     ],
                     "line": 133,
-                    "end": 153
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -141382,8 +141558,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 176
+                    "line": 165,
+                    "end": 179
                 },
                 {
                     "routes": [],
@@ -141423,8 +141599,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 179,
-                    "end": 183
+                    "line": 182,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -141466,8 +141642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 186,
-                    "end": 193
+                    "line": 189,
+                    "end": 196
                 }
             ]
         },
@@ -143994,7 +144170,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/Entities.php",
-            "lines": 77,
+            "lines": 82,
             "doc": "HTML special-character encoding with the reference's quote styles and its\n\"do not double encode\" rule: an ampersand that already starts a known\nnamed or numeric entity stays as it is.",
             "implements": [],
             "extends": null,
@@ -144023,12 +144199,6 @@
                     "name": "SINGLE_QUOTES",
                     "value": "array (   '&#039;' => '\\'',   '&#x27;' => '\\'',   '&#39;' => '\\'',   '&apos;' => '\\'', )",
                     "doc": "",
-                    "visibility": "private"
-                },
-                {
-                    "name": "WINDOWS_1252",
-                    "value": "array (   '&#128;' => '&#8364;',   '&#129;' => '',   '&#130;' => '&#8218;',   '&#131;' => '&#402;',   '&#132;' => '&#8222;',   '&#133;' => '&#8230;',   '&#134;' => '&#8224;',   '&#135;' => '&#8225;',   '&#136;' => '&#710;',   '&#137;' => '&#8240;',   '&#138;' => '&#352;',   '&#139;' => '&#8249;',   '&#140;' => '&#338;',   '&#141;' => '',   '&#142;' => '&#381;',   '&#143;' => '',   '&#144;' => '',   '&#145;' => '&#8216;',   '&#146;' => '&#8217;',   '&#147;' => '&#8220;',   '&#148;' => '&#8221;',   '&#149;' => '&#8226;',   '&#150;' => '&#8211;',   '&#151;' => '&#8212;',   '&#152;' => '&#732;',   '&#153;' => '&#8482;',   '&#154;' => '&#353;',   '&#155;' => '&#8250;',   '&#156;' => '&#339;',   '&#157;' => '',   '&#158;' => '&#382;',   '&#159;' => '&#376;', )",
-                    "doc": "Decimal references 128 to 159 name Windows-1252 characters, not the C1\ncontrols Unicode puts there; each becomes the reference to the Unicode\ncharacter it meant, and the five codes Windows-1252 leaves unassigned\nare removed. Only the exact unpadded decimal spelling is touched.",
                     "visibility": "private"
                 }
             ],
@@ -144121,8 +144291,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -144150,6 +144320,20 @@
                     ],
                     "line": 40,
                     "end": 45
+                },
+                {
+                    "routes": [],
+                    "name": "windows1252",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "windows1252(): array",
+                    "doc": "Decimal references 128 to 159 name Windows-1252 characters, not the C1\ncontrols Unicode puts there; each becomes the reference to the Unicode\ncharacter it meant, and a code Windows-1252 leaves unassigned is\nremoved. Only the exact unpadded decimal spelling is touched.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [],
+                    "line": 74,
+                    "end": 86
                 }
             ]
         },
@@ -147878,7 +148062,7 @@
             "namespace": "Minn\\Support",
             "kind": "final class",
             "file": "public/minn/src/Minn/Support/TimezoneChoice.php",
-            "lines": 98,
+            "lines": 109,
             "doc": "The timezone choices a settings form offers (wp_timezone_choice, probe\nplaceholder-helpers): the zones of each continent, cities in natural\norder (a zone with three parts reads \"City - Sub-city\"), then UTC, then\nthe offsets set by hand. \"Select a city\" leads when nothing is chosen, and\na real zone outside the list (an old name, Etc/) leads when it is the one\nchosen. Each choice is a line of its own.",
             "implements": [],
             "extends": null,
@@ -147893,12 +148077,6 @@
                     "name": "CONTINENTS",
                     "value": "array (   0 => 'Africa',   1 => 'America',   2 => 'Antarctica',   3 => 'Arctic',   4 => 'Asia',   5 => 'Atlantic',   6 => 'Australia',   7 => 'Europe',   8 => 'Indian',   9 => 'Pacific', )",
                     "doc": "",
-                    "visibility": "private"
-                },
-                {
-                    "name": "OFFSETS",
-                    "value": "array (   0 => -12,   1 => -11.5,   2 => -11,   3 => -10.5,   4 => -10,   5 => -9.5,   6 => -9,   7 => -8.5,   8 => -8,   9 => -7.5,   10 => -7,   11 => -6.5,   12 => -6,   13 => -5.5,   14 => -5,   15 => -4.5,   16 => -4,   17 => -3.5,   18 => -3,   19 => -2.5,   20 => -2,   21 => -1.5,   22 => -1,   23 => -0.5,   24 => 0,   25 => 0.5,   26 => 1,   27 => 1.5,   28 => 2,   29 => 2.5,   30 => 3,   31 => 3.5,   32 => 4,   33 => 4.5,   34 => 5,   35 => 5.5,   36 => 5.75,   37 => 6,   38 => 6.5,   39 => 7,   40 => 7.5,   41 => 8,   42 => 8.5,   43 => 8.75,   44 => 9,   45 => 9.5,   46 => 10,   47 => 10.5,   48 => 11,   49 => 11.5,   50 => 12,   51 => 12.75,   52 => 13,   53 => 13.75,   54 => 14, )",
-                    "doc": "The offsets offered by hand, in hours.",
                     "visibility": "private"
                 }
             ],
@@ -147930,8 +148108,8 @@
                             "doc": "a text in a text domain, translated"
                         }
                     ],
-                    "line": 27,
-                    "end": 52
+                    "line": 25,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -147952,8 +148130,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 74
+                    "line": 58,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -147975,8 +148153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 87
+                    "line": 78,
+                    "end": 85
                 },
                 {
                     "routes": [],
@@ -148004,8 +148182,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 94
+                    "line": 88,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -148026,8 +148204,22 @@
                             "doc": ""
                         }
                     ],
-                    "line": 97,
-                    "end": 105
+                    "line": 95,
+                    "end": 103
+                },
+                {
+                    "routes": [],
+                    "name": "offsets",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "offsets(): array",
+                    "doc": "The offsets offered by hand, in hours, lowest first: every half hour from -12 to +12, the\nthree-quarter hours some zones keep, and the hours past +12 up to +14.",
+                    "shapes": [
+                        "@return list<float|int>"
+                    ],
+                    "params": [],
+                    "line": 111,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -148060,8 +148252,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 119,
+                    "end": 122
                 }
             ]
         },

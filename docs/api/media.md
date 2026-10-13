@@ -12,7 +12,7 @@ uploads, image sizes and attachment metadata
 | [`Kind`](#kind) | final class | 79 | Whether an attachment is an image, audio, video, or a given extension, judged by its MIME type first and its file extension second. |
 | [`Metadata`](#metadata) | final class | 112 | The _wp_attachment_metadata blob: parsed by scanning for the shapes it |
 | [`PhotoMeta`](#photometa) | final class | 165 | A photo's own description, read as the reference's wp_read_image_metadata |
-| [`Sizing`](#sizing) | final class | 249 | The image size arithmetic the media functions share: the crop or scale a |
+| [`Sizing`](#sizing) | final class | 263 | The image size arithmetic the media functions share: the crop or scale a |
 | [`Upload`](#upload) | final readonly class | 89 | One file arriving for the library, on either transport: a multipart |
 | [`Uploads`](#uploads) | final readonly class | 135 | The uploads directory: paths, URLs, the allowed types, and landing a file. |
 | [`WebpInfo`](#webpinfo) | final class | 24 | A WebP file's size and kind from its first 40 bytes, as wp_get_webp_info |
@@ -349,7 +349,7 @@ image-downsize).
 
 - `@return array{0: string, 1: int, 2: int}|null the file's name, width and height`
 
-Internals: `join()` (private, line 241)
+Internals: `cropBox()` (private, line 73), `join()` (private, line 255)
 
 
 ## Upload

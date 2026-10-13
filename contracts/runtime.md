@@ -4139,8 +4139,8 @@ The engine already printed oEmbed discovery links pointing at
   version, the site as provider, the author (or else the site), the title,
   and through the default `oembed_response_data` filter the rich markup.
   That markup is a blockquote, a sandboxed iframe of the post's `/embed/`
-  page with a fresh secret, and the sizing script (`assets/wp-embed.min.js`,
-  captured). The width is held between 200 and 600 and the height is a 16:9
+  page with a fresh secret, and the sizing script (`assets/embed-host.js`).
+  The width is held between 200 and 600 and the height is a 16:9
   share of it, at least 200. Anything else is "Not Found". `format=xml` is
   served as XML on the way out (`RuntimeRoutes::serve`, the reference's
   `_oembed_rest_pre_serve_request`, skipped as a hook the engine does itself).

@@ -8,7 +8,7 @@ escaping, serialized readers, small helpers
 | [`Backtrace`](#backtrace) | final class | 32 | A call stack named as wp_debug_backtrace_summary names it (probe |
 | [`DirectoryListing`](#directorylisting) | final class | 34 | Walks a directory the way the filesystem API lists it: named entries, dot entries skipped, hidden ones optional, recursion optional. |
 | [`Email`](#email) | final class | 69 | The address rules the reference applies: a local part from a fixed |
-| [`Entities`](#entities) | final class | 77 | HTML special-character encoding with the reference's quote styles and its |
+| [`Entities`](#entities) | final class | 82 | HTML special-character encoding with the reference's quote styles and its |
 | [`Escape`](#escape) | final class | 25 | Text made safe for HTML the way WordPress's escapers make it (esc_html, |
 | [`FileHeaders`](#fileheaders) | final class | 27 | Header values from a plugin or theme file. The labels (Plugin Name, |
 | [`FileTree`](#filetree) | final class | 70 | Whole-directory reads and copies. The engine's own installer, the update |
@@ -32,7 +32,7 @@ escaping, serialized readers, small helpers
 | [`Slashes`](#slashes) | final class | 32 | Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash): |
 | [`SqlTable`](#sqltable) | final class | 63 | The table a SQL statement is about, as wpdb::get_table_from_query reports |
 | [`Time`](#time) | final class | 21 | Human-scale spans: a number of seconds as the largest whole unit it fills, rounded, never below one. |
-| [`TimezoneChoice`](#timezonechoice) | final class | 98 | The timezone choices a settings form offers (wp_timezone_choice, probe |
+| [`TimezoneChoice`](#timezonechoice) | final class | 109 | The timezone choices a settings form offers (wp_timezone_choice, probe |
 | [`Url`](#url) | final class | 231 | URL shaping the escaping and query helpers share: the character cleanup |
 | [`Utf8`](#utf8) | final class | 154 | UTF-8 as the reference reads it. Well-formed means no overlong forms, |
 | [`WebServer`](#webserver) | final class | 8 | What the SERVER_SOFTWARE string says about the web server in front of the site. |
@@ -128,10 +128,6 @@ named or numeric entity stays as it is.
 - const `DECODE` = `array (   '&amp;' => '&',   '&#038;' => '&',   '&#x26;' => '&',   '&lt;' => '<',   '&#060;' => '<',   '&#x3C;' => '<',   '&gt;' => '>',   '&#062;' => '>',   '&#x3E;' => '>', )`
 - const `DOUBLE_QUOTES` = `array (   '&quot;' => '"',   '&#034;' => '"',   '&#x22;' => '"', )`
 - const `SINGLE_QUOTES` = `array (   '&#039;' => '\'',   '&#x27;' => '\'',   '&#39;' => '\'',   '&apos;' => '\'', )`
-- const `WINDOWS_1252` = `array (   '&#128;' => '&#8364;',   '&#129;' => '',   '&#130;' => '&#8218;',   '&#131;' => '&#402;',   '&#132;' => '&#8222;',   '&#133;' => '&#8230;',   '&#134;' => '&#8224;',   '&#135;' => '&#8225;',   '&#136;' => '&#710;',   '&#137;' => '&#8240;',   '&#138;' => '&#352;',   '&#139;' => '&#8249;',   '&#140;' => '&#338;',   '&#141;' => '',   '&#142;' => '&#381;',   '&#143;' => '',   '&#144;' => '',   '&#145;' => '&#8216;',   '&#146;' => '&#8217;',   '&#147;' => '&#8220;',   '&#148;' => '&#8221;',   '&#149;' => '&#8226;',   '&#150;' => '&#8211;',   '&#151;' => '&#8212;',   '&#152;' => '&#732;',   '&#153;' => '&#8482;',   '&#154;' => '&#353;',   '&#155;' => '&#8250;',   '&#156;' => '&#339;',   '&#157;' => '',   '&#158;' => '&#382;',   '&#159;' => '&#376;', )` — Decimal references 128 to 159 name Windows-1252 characters, not the C1
-controls Unicode puts there; each becomes the reference to the Unicode
-character it meant, and the five codes Windows-1252 leaves unassigned
-are removed. Only the exact unpadded decimal spelling is touched.
 
 Used by: `Minn\Runtime\AccountFlows`, `Minn\Support\Escape`, `Minn\Support\Kses`
 
@@ -149,7 +145,7 @@ The reverse of specialchars: the five characters back, with the quote pairs the 
 
 Windows-1252 numeric references rewritten as the Unicode references they meant.
 
-Internals: `encodeStrayAmpersands()` (private, line 40)
+Internals: `encodeStrayAmpersands()` (private, line 40), `windows1252()` (private, line 74)
 
 
 ## Escape
@@ -966,7 +962,6 @@ a real zone outside the list (an old name, Etc/) leads when it is the one
 chosen. Each choice is a line of its own.
 
 - const `CONTINENTS` = `array (   0 => 'Africa',   1 => 'America',   2 => 'Antarctica',   3 => 'Arctic',   4 => 'Asia',   5 => 'Atlantic',   6 => 'Australia',   7 => 'Europe',   8 => 'Indian',   9 => 'Pacific', )`
-- const `OFFSETS` = `array (   0 => -12,   1 => -11.5,   2 => -11,   3 => -10.5,   4 => -10,   5 => -9.5,   6 => -9,   7 => -8.5,   8 => -8,   9 => -7.5,   10 => -7,   11 => -6.5,   12 => -6,   13 => -5.5,   14 => -5,   15 => -4.5,   16 => -4,   17 => -3.5,   18 => -3,   19 => -2.5,   20 => -2,   21 => -1.5,   22 => -1,   23 => -0.5,   24 => 0,   25 => 0.5,   26 => 1,   27 => 1.5,   28 => 2,   29 => 2.5,   30 => 3,   31 => 3.5,   32 => 4,   33 => 4.5,   34 => 5,   35 => 5.5,   36 => 5.75,   37 => 6,   38 => 6.5,   39 => 7,   40 => 7.5,   41 => 8,   42 => 8.5,   43 => 8.75,   44 => 9,   45 => 9.5,   46 => 10,   47 => 10.5,   48 => 11,   49 => 11.5,   50 => 12,   51 => 12.75,   52 => 13,   53 => 13.75,   54 => 14, )` — The offsets offered by hand, in hours.
 
 ### static `html(string $selected, Closure $translate): string`
 
@@ -974,7 +969,7 @@ The choices as option lines, the chosen zone marked.
 
 - `@param \Closure(string, string): string $translate a text in a text domain, translated`
 
-Internals: `zones()` (private, line 60), `groups()` (private, line 80), `outsideList()` (private, line 90), `offset()` (private, line 97), `option()` (private, line 108)
+Internals: `zones()` (private, line 58), `groups()` (private, line 78), `outsideList()` (private, line 88), `offset()` (private, line 95), `offsets()` (private, line 111), `option()` (private, line 119)
 
 
 ## Url

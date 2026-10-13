@@ -56,9 +56,10 @@ $mask = static function ($value) use (&$mask, $host) {
     if (!is_string($value)) {
         return $value;
     }
-    // An embed's secret is drawn at random; its script is the same file on both stacks, compared by length (its sourceURL without the scheme WP-CLI forces).
+    // An embed's secret is drawn at random; its script is each stack's own, so only the address its sourceURL names is compared
+    // (without the scheme WP-CLI forces).
     $value = (string) preg_replace('/(secret=|data-secret=")[A-Za-z0-9]{10}/', '$1{secret}', str_replace($host, '{host}', $value));
-    return (string) preg_replace_callback('#<script>(.*?)</script>#s', static fn ($m) => '<script>{' . strlen((string) preg_replace('#sourceURL=https?://#', 'sourceURL=', $m[1])) . ' bytes}</script>', $value);
+    return (string) preg_replace_callback('#<script>(.*?)</script>#s', static fn ($m) => '<script>{script}' . (preg_match('#//\# sourceURL=(?:https?://)?(\S+)#', $m[1], $source) === 1 ? " sourceURL={$source[1]}" : '') . '</script>', $value);
 };
 $answer = static function ($response) use ($mask) {
     if (is_wp_error($response)) {

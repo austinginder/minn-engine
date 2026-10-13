@@ -35,18 +35,21 @@ final class CommentPages
         }
         $args = Lists::args($args, self::DEFAULTS);
         $original = $args;
-        if (Runtime::options()->filtered('page_comments')) {
-            $args['per_page'] = $args['per_page'] === '' ? \get_query_var('comments_per_page') : $args['per_page'];
-            $args['per_page'] = $args['per_page'] === '' ? Runtime::options()->filtered('comments_per_page') : $args['per_page'];
+        $options = Runtime::options();
+        // Paged comments take the page size from the query, then from the setting.
+        if ($options->filtered('page_comments') && $args['per_page'] === '') {
+            $args['per_page'] = \get_query_var('comments_per_page');
+            if ($args['per_page'] === '') {
+                $args['per_page'] = $options->filtered('comments_per_page');
+            }
         }
         if (empty($args['per_page'])) {
-            $args['per_page'] = 0;
-            $args['page'] = 0;
+            [$args['per_page'], $args['page']] = [0, 0];
         }
         $page = 1;
         if ($args['per_page'] >= 1) {
             if ($args['max_depth'] === '') {
-                $args['max_depth'] = Runtime::options()->filtered('thread_comments') ? Runtime::options()->filtered('thread_comments_depth') : -1;
+                $args['max_depth'] = $options->filtered('thread_comments') ? $options->filtered('thread_comments_depth') : -1;
             }
             if ($args['max_depth'] > 1 && (int) $comment->comment_parent !== 0) {
                 return self::pageOf($comment->comment_parent, $args);
@@ -89,18 +92,20 @@ final class CommentPages
         if ($args['cpage'] !== null) {
             return $args['cpage'];
         }
-        if ($args['per_page'] === '' && Runtime::options()->filtered('page_comments')) {
-            $args['per_page'] = Runtime::options()->filtered('comments_per_page');
+        $options = Runtime::options();
+        if ($args['per_page'] === '' && $options->filtered('page_comments')) {
+            $args['per_page'] = $options->filtered('comments_per_page');
         }
+        // Unpaged comments all sit on one page.
         if (empty($args['per_page'])) {
-            $args['per_page'] = 0;
-            $args['page'] = 0;
+            [$args['per_page'], $args['page']] = [0, 0];
         }
-        $page = $args['page'];
-        if ($page === '' || $page === null) {
-            $page = !empty($GLOBALS['in_comment_loop']) ? \get_query_var('cpage') : \get_page_of_comment($comment?->comment_ID, $args);
-        }
-        return Runtime::options()->filtered('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;
+        $page = match (true) {
+            !in_array($args['page'], ['', null], true) => $args['page'],
+            !empty($GLOBALS['in_comment_loop']) => \get_query_var('cpage'),
+            default => \get_page_of_comment($comment?->comment_ID, $args),
+        };
+        return $options->filtered('default_comments_page') === 'oldest' && $page === 1 ? '' : $page;
     }
 
     /**

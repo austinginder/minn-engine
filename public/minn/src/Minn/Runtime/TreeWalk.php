@@ -136,20 +136,23 @@ final class TreeWalk
             return;
         }
         $id = $element->{$walker->db_fields['id']} ?? 0;
-        $walker->has_children = !empty($children[$id]);
-        if (isset($args[0]) && is_array($args[0])) {
+        $kids = $children[$id] ?? [];
+        $walker->has_children = !empty($kids);
+        if (is_array($args[0] ?? null)) {
             $args[0]['has_children'] = $walker->has_children;
         }
-        $walker->start_el($output, $element, $depth, ...array_values($args));
-        if ($walker->has_children && ($maxDepth === 0 || $maxDepth > $depth + 1)) {
-            $walker->start_lvl($output, $depth, ...array_values($args));
-            foreach ($children[$id] as $child) {
-                $walker->display_element($child, $children, $maxDepth, $depth + 1, $args, $output);
+        $extra = array_values($args);
+        $walker->start_el($output, $element, $depth, ...$extra);
+        // The children nest while the depth limit allows (0 is no limit); past it they wait in the list.
+        if ($walker->has_children && ($maxDepth === 0 || $depth + 1 < $maxDepth)) {
+            $walker->start_lvl($output, $depth, ...$extra);
+            foreach ($kids as $kid) {
+                $walker->display_element($kid, $children, $maxDepth, $depth + 1, $args, $output);
             }
             unset($children[$id]);
-            $walker->end_lvl($output, $depth, ...array_values($args));
+            $walker->end_lvl($output, $depth, ...$extra);
         }
-        $walker->end_el($output, $element, $depth, ...array_values($args));
+        $walker->end_el($output, $element, $depth, ...$extra);
     }
 
     /**

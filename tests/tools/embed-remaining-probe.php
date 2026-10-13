@@ -48,6 +48,9 @@ $mask = static function ($value) use (&$mask, &$ids, $host) {
     }
     $value = (string) preg_replace('#https?://' . preg_quote($host, '#') . '#', '{site}', $value);
     $value = (string) preg_replace('/(secret=|data-secret=(?:&quot;|["\'])|#\?secret=)[A-Za-z0-9]{10}/', '$1{secret}', $value);
+    // The inline embed scripts (also as the sharing dialog quotes them) and the card stylesheet are each
+    // stack's own: their tags are compared, not their text.
+    $value = (string) preg_replace(['#(<script\b[^>]*>).*?(</script>)#s', '#(&lt;script\b.*?&gt;).*?(&lt;/script&gt;)#s', '#(<style\b[^>]*>).*?(</style>)#s'], ['$1{script}$2', '$1{script}$2', '$1{style}$2'], $value);
     $value = (string) preg_replace('/(wp-embed-share-[a-z]+-[a-z]+-\d+-)\d+/', '$1{random}', $value);
     foreach ($ids as $id => $label) {
         $value = (string) preg_replace('/(?<![0-9a-z])' . $id . '(?![0-9a-z])/i', '{' . $label . '}', $value);

@@ -394,6 +394,10 @@ function wp_default_scripts($scripts)
     $scripts->add('comment-reply', '/minn/assets/comment-reply.js', [], MINN_ENGINE_VERSION);
     $scripts->add_data('comment-reply', 'strategy', 'async');
     $scripts->add_data('comment-reply', 'fetchpriority', 'low');
+    // A page that embeds one of the site's posts sizes the card's frame with it (wp_maybe_enqueue_oembed_host_js queues it), deferred
+    // and at the address the reference loads it from, where the engine serves its own script (Front\AssetsController::embedScript).
+    $scripts->add('wp-embed', '/wp-includes/js/wp-embed.min.js', [], false);
+    $scripts->add_data('wp-embed', 'strategy', 'defer');
     $contentDir = defined('WP_CONTENT_DIR') ? WP_CONTENT_DIR : ABSPATH . 'wp-content';
     foreach (Minn\Runtime\ScriptPack::handles($contentDir) as $handle => $row) {
         if (!wp_script_is($handle, 'registered')) {

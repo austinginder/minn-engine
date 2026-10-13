@@ -12,7 +12,9 @@
  * post features), an address that embeds nothing,
  * the ?embed= form and the addresses that move. Each is compared on
  * status, redirect and X-WP-embed, the whole page (hosts, the sharing
- * dialog's random ids and the embed secret masked; the reference's emoji
+ * dialog's random ids and the embed secret masked, and the text of the
+ * card's stylesheet and scripts, which tests/browser/embeds.test.js and
+ * embed-card.test.js compare by what they do; the reference's emoji
  * plumbing and per-block stylesheets set aside, as on every engine page),
  * and what the plugin heard. The suite's posts, images and run live only
  * while it runs.
@@ -101,7 +103,11 @@ $ask = static function (string $stack, string $path, string $mode) use ($stacks,
         '/(wp-embed-share-(?:tab|description)-(?:wordpress|html)-\d+)-\d+/',
         '/(data-secret=&quot;|#\?secret=)[A-Za-z0-9]{10}/',
         '/([?&]ver=)[0-9.]+/',
-    ], ['', '', '', '', '$1-R', '$1S', '$1X'], $hosts(substr($raw, $size)));
+        // The card's stylesheet and script, and the host script its embed code quotes, are each stack's own.
+        '#(<style id="wp-embed-template-inline-css">).*?(</style>)#s',
+        '#(<script>).*?(</script>)#s',
+        '#(&lt;script&gt;).*?(&lt;/script&gt;)#s',
+    ], ['', '', '', '', '$1-R', '$1S', '$1X', '$1{style}$2', '$1{script}$2', '$1{script}$2'], $hosts(substr($raw, $size)));
     $log = "{$stacks[$stack][1]}/minn-embed/{$run}.log";
     $heard = is_file($log) ? array_values(array_filter(explode("\n", (string) file_get_contents($log)))) : [];
     @unlink($log);

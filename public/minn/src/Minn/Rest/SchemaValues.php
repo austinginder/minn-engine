@@ -67,28 +67,30 @@ final class SchemaValues
     /** Whether a value reads as an object. */
     public static function isObject(mixed $value): bool
     {
-        if ($value === '' || $value instanceof stdClass) {
-            return true;
-        }
-        if ($value instanceof JsonSerializable) {
-            $value = $value->jsonSerialize();
-        }
-        return is_array($value);
+        return self::objectOf($value) !== null;
     }
 
     /** The object a value reads as, as an array. */
     public static function toObject(mixed $value): array
     {
-        if ($value === '') {
-            return [];
-        }
-        if ($value instanceof stdClass) {
-            return (array) $value;
-        }
-        if ($value instanceof JsonSerializable) {
-            $value = $value->jsonSerialize();
-        }
-        return is_array($value) ? $value : [];
+        return self::objectOf($value) ?? [];
+    }
+
+    /**
+     * A value as an object's properties: '' is the empty object, a stdClass its properties, a
+     * JsonSerializable what it serializes to; null when it is no object.
+     *
+     * @return array<array-key, mixed>|null
+     */
+    private static function objectOf(mixed $value): ?array
+    {
+        $value = match (true) {
+            $value === '' => [],
+            $value instanceof stdClass => (array) $value,
+            $value instanceof JsonSerializable => $value->jsonSerialize(),
+            default => $value,
+        };
+        return is_array($value) ? $value : null;
     }
 
     /** The first of the schema's types, in the order it lists them, that the value reads as (an empty string is a string when that is allowed); '' when none. */
@@ -116,15 +118,9 @@ final class SchemaValues
     public static function valuesEqual(mixed $a, mixed $b): bool
     {
         if (is_array($a) && is_array($b)) {
-            if (count($a) !== count($b)) {
-                return false;
-            }
-            foreach ($a as $index => $value) {
-                if (!isset($b[$index]) || !self::valuesEqual($value, $b[$index])) {
-                    return false;
-                }
-            }
-            return true;
+            // Same size, and every entry of one set and equal under the same key in the other.
+            $differs = static fn (mixed $value, int|string $key): bool => !isset($b[$key]) || !self::valuesEqual($value, $b[$key]);
+            return count($a) === count($b) && array_filter($a, $differs, ARRAY_FILTER_USE_BOTH) === [];
         }
         if ((is_int($a) && is_float($b)) || (is_float($a) && is_int($b))) {
             return (float) $a === (float) $b;
@@ -159,10 +155,10 @@ final class SchemaValues
     /** The first array's entries whose keys the second has too, at every level where both hold an array. */
     public static function intersectKeys(array $first, array $second): array
     {
-        $kept = array_intersect_key($first, $second);
-        foreach ($kept as $key => $value) {
-            if (is_array($value) && is_array($second[$key])) {
-                $kept[$key] = self::intersectKeys($value, $second[$key]);
+        $kept = [];
+        foreach ($first as $key => $value) {
+            if (array_key_exists($key, $second)) {
+                $kept[$key] = is_array($value) && is_array($second[$key]) ? self::intersectKeys($value, $second[$key]) : $value;
             }
         }
         return $kept;

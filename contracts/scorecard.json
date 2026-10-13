@@ -232,9 +232,9 @@
     },
     "run": {
         "measured": "2026-10-13",
-        "suites": 89,
-        "green": 89,
-        "checks": 25375,
+        "suites": 91,
+        "green": 91,
+        "checks": 25709,
         "red": [],
         "engineWarnings": 0,
         "warningKinds": []
@@ -256,21 +256,49 @@
             "unknown": 0
         },
         "hygiene": {
-            "localFacts": 3,
+            "localFacts": 5,
             "hits": 0
         }
     },
     "clones": {
         "duplicated": {
             "window": 100,
-            "stretches": 112,
-            "lines": 2082,
-            "engineLines": 169682
+            "stretches": 111,
+            "lines": 2069,
+            "of": 169771
         },
-        "wordpress": {
+        "engine": {
+            "of": 89119,
+            "php": {
+                "strict": {
+                    "window": 40,
+                    "stretches": 0,
+                    "lines": 0
+                },
+                "sensitive": {
+                    "window": 30,
+                    "stretches": 58,
+                    "lines": 241
+                }
+            },
+            "assets": {
+                "identical": 0,
+                "window": 40,
+                "stretches": 21,
+                "lines": 105
+            },
+            "data": {
+                "strings": 1797,
+                "of": 1837,
+                "files": 20
+            },
+            "sequences": 15
+        },
+        "facade": {
+            "of": 80652,
             "window": 80,
-            "stretches": 127,
-            "lines": 3215
+            "stretches": 123,
+            "lines": 3170
         }
     }
 }

@@ -16,8 +16,6 @@ final class TimezoneChoice
 {
     private const CONTINENTS = ['Africa', 'America', 'Antarctica', 'Arctic', 'Asia', 'Atlantic', 'Australia', 'Europe', 'Indian', 'Pacific'];
 
-    /** The offsets offered by hand, in hours. */
-    private const OFFSETS = [-12, -11.5, -11, -10.5, -10, -9.5, -9, -8.5, -8, -7.5, -7, -6.5, -6, -5.5, -5, -4.5, -4, -3.5, -3, -2.5, -2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 5.75, 6, 6.5, 7, 7.5, 8, 8.5, 8.75, 9, 9.5, 10, 10.5, 11, 11.5, 12, 12.75, 13, 13.75, 14];
 
     /**
      * The choices as option lines, the chosen zone marked.
@@ -43,7 +41,7 @@ final class TimezoneChoice
         $utc = $translate('UTC', 'default');
         array_push($lines, '<optgroup label="' . Escape::attr($utc) . '" dir="auto">', self::option('UTC', $utc, $selected), '</optgroup>');
         $lines[] = '<optgroup label="' . Escape::attr($translate('Manual Offsets', 'default')) . '" dir="auto">';
-        foreach (self::OFFSETS as $offset) {
+        foreach (self::offsets() as $offset) {
             [$value, $label] = self::offset($offset);
             $lines[] = self::option($value, $label, $selected);
         }
@@ -102,6 +100,19 @@ final class TimezoneChoice
         $minutes = (int) round(($hours - $whole) * 60);
         $number = $hours == $whole ? (string) $whole : (string) $hours;
         return ["UTC{$sign}{$number}", "UTC{$sign}{$whole}" . ($minutes === 0 ? '' : ':' . $minutes)];
+    }
+
+    /**
+     * The offsets offered by hand, in hours, lowest first: every half hour from -12 to +12, the
+     * three-quarter hours some zones keep, and the hours past +12 up to +14.
+     *
+     * @return list<float|int>
+     */
+    private static function offsets(): array
+    {
+        $offsets = [...array_map(static fn (int $halves): float|int => $halves / 2, range(-24, 24)), 5.75, 8.75, 12.75, 13, 13.75, 14];
+        sort($offsets);
+        return $offsets;
     }
 
     /** One choice, marked when it is the chosen zone. */

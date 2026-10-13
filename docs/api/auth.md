@@ -16,7 +16,7 @@ passwords, sessions, cookies, nonces, roles and capabilities
 | [`Nonce`](#nonce) | final class | 46 | The wp_rest nonce: ten characters of HMAC-md5(tick\|wp_rest\|uid\|token) |
 | [`Password`](#password) | final class | 71 | The stored password scheme. A modern "$wp$2y$..." value is bcrypt over |
 | [`PasswordReset`](#passwordreset) | final readonly class | 78 | Password reset keys in the reference's storage shape: user_activation_key |
-| [`PortableHash`](#portablehash) | final class | 96 | The portable phpass hash ("$P$"), from the published algorithm: an |
+| [`PortableHash`](#portablehash) | final class | 86 | The portable phpass hash ("$P$"), from the published algorithm: an |
 | [`RegisteredCaps`](#registeredcaps) | final class | 24 | The capability names a plugin's post type or taxonomy registered, read |
 | [`Roles`](#roles) | final class | 68 | Role definitions from the site's {prefix}user_roles option, parsed by a |
 | [`Salts`](#salts) | final class | 41 | The site's own secret material, read from the constants wp-config.php |

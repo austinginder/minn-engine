@@ -28,10 +28,9 @@ final class CommentListArgs
     public static function of(\WP_REST_Request $wp, array $registered, string $method): array
     {
         $args = [];
-        foreach (self::MAPPINGS as $param => $var) {
-            if (isset($registered[$param], $wp[$param])) {
-                $args[$var] = $wp[$param];
-            }
+        $given = static fn (string $param): bool => isset($registered[$param], $wp[$param]);
+        foreach (array_filter(self::MAPPINGS, $given, ARRAY_FILTER_USE_KEY) as $param => $var) {
+            $args[$var] = $wp[$param];
         }
         $args += ['author_email' => '', 'search' => ''];
         $args['orderby'] = self::ORDERBY[(string) $wp['orderby']] ?? 'comment_date_gmt';

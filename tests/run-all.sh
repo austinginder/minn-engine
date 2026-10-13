@@ -94,6 +94,10 @@ if [ -d browser/node_modules ]; then
 	node browser/interactivity.test.js || failed=1
 	printf "\n=== browser: interactive blocks (dev site) ===\n"
 	node browser/interactive-blocks.test.js || failed=1
+	printf "\n=== browser: embeds (dev site) ===\n"
+	node browser/embeds.test.js || failed=1
+	printf "\n=== browser: embed card (dev site) ===\n"
+	node browser/embed-card.test.js || failed=1
 fi
 
 printf '\n'

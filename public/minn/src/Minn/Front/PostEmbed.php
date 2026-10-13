@@ -84,7 +84,7 @@ final class PostEmbed
             Escape::attr(sprintf('&#8220;%1$s&#8221; &#8212; %2$s', $title, \get_bloginfo('name'))),
             Escape::attr($secret),
         );
-        $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/wp-embed.min.js');
+        $script = (string) file_get_contents(MINN_ENGINE_DIR . '/assets/embed-host.js');
         $output .= \wp_get_inline_script_tag($script . "\n//# sourceURL=" . \includes_url('js/wp-embed.min.js'));
         return (string) \apply_filters('embed_html', $output, $post, $width, $height);
     }

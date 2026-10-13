@@ -68,16 +68,13 @@ final class FeedTags
         $out = '';
         $mimes = \get_allowed_mime_types();
         foreach (self::enclosures() as $lines) {
-            $length = 0;
-            $type = '';
-            foreach ([1, 2] as $at) {
-                if (!isset($lines[$at])) {
-                    continue;
-                }
-                if (is_numeric($lines[$at])) {
-                    $length = trim($lines[$at]);
-                } elseif (in_array($lines[$at], $mimes, true)) {
-                    $type = trim($lines[$at]);
+            [$length, $type] = [0, ''];
+            // The lines after the address hold the length and the type, in either order.
+            foreach (array_slice($lines, 1, 2) as $line) {
+                if (is_numeric($line)) {
+                    $length = trim($line);
+                } elseif (in_array($line, $mimes, true)) {
+                    $type = trim($line);
                 }
             }
             $out .= \apply_filters('atom_enclosure', sprintf("<link href=\"%s\" rel=\"enclosure\" length=\"%d\" type=\"%s\" />\n", \esc_url(trim($lines[0])), Escape::attr((string) $length), Escape::attr($type)));

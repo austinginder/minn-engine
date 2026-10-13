@@ -22,8 +22,8 @@ final class LegacyPluralForms
 {
     private const OP_CHARS = '|&><!=%?:';
 
-    /** @var array<string, int> operator strength; ( and ) sit below everything */
-    private const PRECEDENCE = ['%' => 6, '<' => 5, '<=' => 5, '>' => 5, '>=' => 5, '==' => 4, '!=' => 4, '&&' => 3, '||' => 2, '?:' => 1, '?' => 1, '(' => 0, ')' => 0];
+    /** The operators by how loosely they bind, loosest first; the parentheses below everything. */
+    private const LEVELS = [['(', ')'], ['?:', '?'], ['||'], ['&&'], ['==', '!='], ['<', '<=', '>', '>='], ['%']];
 
     /**
      * The expression as postfix tokens: ['var'], ['value', int] or ['op', string].
@@ -116,17 +116,17 @@ final class LegacyPluralForms
     private static function operator(string $expression, int $at, array &$output, array &$stack): int
     {
         $pair = substr($expression, $at, 2);
-        $operator = isset(self::PRECEDENCE[$pair]) ? $pair : $expression[$at];
+        $operator = isset(self::strengths()[$pair]) ? $pair : $expression[$at];
         if ($operator === ':') {
             self::closeTernary($output, $stack);
             return 1;
         }
-        if (!isset(self::PRECEDENCE[$operator])) {
+        if (!isset(self::strengths()[$operator])) {
             throw new Exception(sprintf('Unknown operator "%s"', $operator));
         }
         // Equal strength groups to the left, except the ternary, which groups to the right.
-        $strength = self::PRECEDENCE[$operator];
-        while ($stack !== [] && (self::PRECEDENCE[end($stack)] > $strength || (self::PRECEDENCE[end($stack)] === $strength && $operator !== '?'))) {
+        $strength = self::strengths()[$operator];
+        while ($stack !== [] && (self::strengths()[end($stack)] > $strength || (self::strengths()[end($stack)] === $strength && $operator !== '?'))) {
             $output[] = ['op', array_pop($stack)];
         }
         $stack[] = $operator;
@@ -189,5 +189,22 @@ final class LegacyPluralForms
             '||' => $left || $right,
             default => throw new Exception(sprintf('Unknown operator "%s"', $operator)),
         };
+    }
+
+    /**
+     * Each operator's strength: its level's place in LEVELS.
+     *
+     * @return array<string, int>
+     */
+    private static function strengths(): array
+    {
+        static $strengths = null;
+        if ($strengths === null) {
+            $strengths = [];
+            foreach (self::LEVELS as $strength => $operators) {
+                $strengths += array_fill_keys($operators, $strength);
+            }
+        }
+        return $strengths;
     }
 }

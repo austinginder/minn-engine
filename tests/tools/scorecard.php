@@ -199,5 +199,7 @@ printf("leanness: %d ratchets, %d risen; run %s\n",
     $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')') . (isset($run['engineWarnings']) ? ", {$run['engineWarnings']} engine warnings" : ''));
 printf("gate: %s\n", !is_array($gate) ? 'gate-scan.php failed' : sprintf('%d calls into stubbed dead ends, %d unproven dead ends written by hand, PHP %s floor (%d lint failures, %d names only newer PHP has), %d hygiene hits',
     $gate['deadEndCalls'], $gate['deadEndsByHand'], $gate['floor']['version'], $gate['floor']['lintFailures'], $gate['floor']['unknown'], $gate['hygiene']['hits']));
-printf("clones: %s\n", !is_array($clones) ? 'clone-scan.php failed' : sprintf('%d duplicated engine lines; %s',
-    $clones['duplicated']['lines'], $clones['wordpress'] === null ? 'no reference to compare' : "{$clones['wordpress']['lines']} lines identical to the reference's source"));
+printf("clones: %s\n", !is_array($clones) ? 'clone-scan.php failed' : sprintf('%d duplicated lines; %s',
+    $clones['duplicated']['lines'], $clones['engine'] === null ? 'no reference to compare' : sprintf("engine PHP shares %d lines with the reference (%d at %d tokens), assets %d identical files and %d lines, data %d strings; facade %d lines",
+        $clones['engine']['php']['strict']['lines'], $clones['engine']['php']['sensitive']['lines'], $clones['engine']['php']['sensitive']['window'],
+        $clones['engine']['assets']['identical'], $clones['engine']['assets']['lines'], $clones['engine']['data']['strings'], $clones['facade']['lines'])));

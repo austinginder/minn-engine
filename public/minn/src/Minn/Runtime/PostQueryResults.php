@@ -27,16 +27,15 @@ final class PostQueryResults
         if (!$q['suppress_filters']) {
             $query->posts = \apply_filters_ref_array('the_posts', [$query->posts, &$query]);
         }
-        if ($query->posts) {
+        if (!$query->posts) {
+            [$query->post_count, $query->posts] = [0, []];
+        } else {
             $query->post_count = count($query->posts);
             $query->posts = array_map('get_post', $query->posts);
             if ($q['cache_results']) {
                 \update_post_caches($query->posts, $this->parts->postType, $q['update_post_term_cache'], $q['update_post_meta_cache']);
             }
             $query->post = reset($query->posts);
-        } else {
-            $query->post_count = 0;
-            $query->posts = [];
         }
     }
 
@@ -98,17 +97,20 @@ final class PostQueryResults
         if (!$query->is_home || $this->parts->page > 1 || !is_array($sticky) || $sticky === [] || $q['ignore_sticky_posts'] || !is_array($query->posts)) {
             return;
         }
-        $offset = 0;
-        $count = count($query->posts);
-        for ($i = 0; $i < $count; $i++) {
-            if (in_array($query->posts[$i]->ID, $sticky, true)) {
-                $post = $query->posts[$i];
-                array_splice($query->posts, $i, 1);
-                array_splice($query->posts, $offset, 0, [$post]);
-                $offset++;
-                unset($sticky[array_search($post->ID, $sticky, true)]);
+        // The stickies found go to the front in the order found; the rest keep theirs.
+        $front = [];
+        $rest = [];
+        foreach ($query->posts as $post) {
+            $at = array_search($post->ID, $sticky, true);
+            if ($at === false) {
+                $rest[] = $post;
+                continue;
             }
+            $front[] = $post;
+            unset($sticky[$at]);
         }
+        $query->posts = [...$front, ...$rest];
+        $offset = count($front);
         ['post__not_in' => $excluded] = $q + ['post__not_in' => []];
         if ($sticky !== [] && !empty($excluded)) {
             $sticky = array_diff($sticky, (array) $excluded);
@@ -116,10 +118,10 @@ final class PostQueryResults
         if ($sticky === []) {
             return;
         }
-        $found = \get_posts(['post__in' => $sticky, 'post_type' => $this->parts->postType, 'post_status' => 'publish', 'posts_per_page' => count($sticky), 'suppress_filters' => $q['suppress_filters'], 'cache_results' => $q['cache_results'], 'update_post_meta_cache' => $q['update_post_meta_cache'], 'update_post_term_cache' => $q['update_post_term_cache'], 'lazy_load_term_meta' => $q['lazy_load_term_meta']]);
-        foreach ($found as $post) {
-            array_splice($query->posts, $offset, 0, [$post]);
-            $offset++;
-        }
+        // The missing stickies, published, fetched with this query's filter and cache settings.
+        $settings = ['suppress_filters', 'cache_results', 'update_post_meta_cache', 'update_post_term_cache', 'lazy_load_term_meta'];
+        $found = \get_posts(['post__in' => $sticky, 'post_type' => $this->parts->postType, 'post_status' => 'publish', 'posts_per_page' => count($sticky)]
+            + array_combine($settings, array_map(static fn (string $setting): mixed => $q[$setting], $settings)));
+        array_splice($query->posts, $offset, 0, $found);
     }
 }

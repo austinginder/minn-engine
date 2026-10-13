@@ -10,7 +10,7 @@ shared SQL fragments
 | [`MetaSql`](#metasql) | final class | 291 | The JOIN and WHERE fragments of a meta query in the reference's shape: |
 | [`MimeWhere`](#mimewhere) | final class | 36 | wp_post_mime_type_where as the reference writes it (probe wp-query-sql): |
 | [`NetworkSql`](#networksql) | final class | 257 | The SQL WP_Site_Query and WP_Network_Query build from their variables |
-| [`PostOrder`](#postorder) | final class | 118 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
+| [`PostOrder`](#postorder) | final class | 122 | WP_Query's ORDER BY as the reference writes it (probe wp-query-sql): the |
 | [`PostSearch`](#postsearch) | final class | 118 | WP_Query's search as the reference writes it (probe wp-query-sql): the |
 | [`Sql`](#sql) | final class | 42 | Literal quoting for the SQL fragments the query classes hand to plugins, |
 | [`TaxSql`](#taxsql) | final class | 197 | The JOIN and WHERE fragments of a taxonomy query in the reference's |
@@ -393,7 +393,8 @@ keys it takes, what each key becomes (a column, a meta value, a FIELD()
 list, a seeded RAND()), and how a list or a map of keys joins with its
 directions. A key it does not know is dropped; none left means post_date.
 
-- const `KEYS` = `array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'name',   8 => 'author',   9 => 'date',   10 => 'title',   11 => 'modified',   12 => 'parent',   13 => 'type',   14 => 'ID',   15 => 'menu_order',   16 => 'comment_count',   17 => 'rand',   18 => 'post__in',   19 => 'post_parent__in',   20 => 'post_name__in', )`
+- const `FIELDS` = `array (   0 => 'name',   1 => 'author',   2 => 'date',   3 => 'title',   4 => 'modified',   5 => 'parent',   6 => 'type', )` — The post fields an orderby may name, bare or with their column's post_ prefix.
+- const `OTHERS` = `array (   0 => 'ID',   1 => 'menu_order',   2 => 'comment_count',   3 => 'rand',   4 => 'post__in',   5 => 'post_parent__in',   6 => 'post_name__in', )` — The other names an orderby may use.
 - const `COLUMNS` = `array (   0 => 'post_name',   1 => 'post_author',   2 => 'post_date',   3 => 'post_title',   4 => 'post_modified',   5 => 'post_parent',   6 => 'post_type',   7 => 'ID',   8 => 'menu_order',   9 => 'comment_count', )`
 - const `IN_GIVEN_ORDER` = `array (   0 => 'post__in',   1 => 'post_name__in',   2 => 'post_parent__in', )`
 
@@ -423,7 +424,7 @@ the order given.
 - `@param array<array-key, array<string, mixed>> $metaClauses`
 - `@param array<string, mixed> $q`
 
-Internals: `map()` (private, line 63), `field()` (private, line 117)
+Internals: `map()` (private, line 67), `field()` (private, line 121)
 
 
 ## PostSearch

@@ -1,7 +1,7 @@
 <?php
 /**
  * The AI client: the SDK pieces and the WordPress adapters in wp-api/ai-client/,
- * loaded the first time anything names one (Austin, D5: written clean-room).
+ * loaded the first time anything names one.
  */
 
 spl_autoload_register(static function (string $class): void {

@@ -69,12 +69,19 @@ final class CronTable
     /** The table with one event removed. */
     public static function remove(array $crons, int $timestamp, string $hook, string $key): array
     {
-        unset($crons[$timestamp][$hook][$key]);
-        if (empty($crons[$timestamp][$hook])) {
-            unset($crons[$timestamp][$hook]);
+        // The event goes, then its hook if no event is left, then its timestamp if no hook is left.
+        $hooks = $crons[$timestamp] ?? [];
+        $events = $hooks[$hook] ?? [];
+        unset($events[$key]);
+        if (empty($events)) {
+            unset($hooks[$hook]);
+        } else {
+            $hooks[$hook] = $events;
         }
-        if (empty($crons[$timestamp])) {
+        if (empty($hooks)) {
             unset($crons[$timestamp]);
+        } else {
+            $crons[$timestamp] = $hooks;
         }
         return $crons;
     }
@@ -132,13 +139,8 @@ final class CronTable
     /** The timestamps at or before now, in order. */
     public static function due(array $crons, int $now): array
     {
-        $due = [];
-        foreach ($crons as $timestamp => $hooks) {
-            if ($timestamp > $now) {
-                break;
-            }
-            $due[$timestamp] = $hooks;
-        }
-        return $due;
+        // Everything before the first timestamp still to come.
+        $later = array_search(true, array_map(static fn (int|string $timestamp): bool => $timestamp > $now, array_keys($crons)), true);
+        return $later === false ? $crons : array_slice($crons, 0, $later, true);
     }
 }

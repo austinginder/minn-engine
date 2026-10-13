@@ -25,14 +25,14 @@ the WordPress runtime plugins load against
 | [`CommentEvents`](#commentevents) | final readonly class | 254 | What the reference's REST comments controller tells plugins, for the |
 | [`CommentFeedQuery`](#commentfeedquery) | final class | 50 | The comments a comments feed's main query carries, as the reference |
 | [`CommentForm`](#commentform) | final class | 107 | The comment form's submission with plugins loaded |
-| [`CommentPages`](#commentpages) | final class | 110 | Which page of a post's comments a comment falls on, and the link that |
+| [`CommentPages`](#commentpages) | final class | 115 | Which page of a post's comments a comment falls on, and the link that |
 | [`CommentQuery`](#commentquery) | final readonly class | 28 | The approval breakdown wp_count_comments reports (comment lists run through WP_Comment_Query and Minn\Runtime\CommentQueryRunner). |
 | [`CommentQueryRunner`](#commentqueryrunner) | final class | 131 | WP_Comment_Query as the reference runs it (probe wp-comment-query-sql): |
 | [`CommentQueryWhere`](#commentquerywhere) | final class | 196 | WP_Comment_Query's WHERE pieces and the posts join, in the reference's |
 | [`CommentThreads`](#commentthreads) | final class | 68 | A threaded or flat comment query's descendants as the reference fills |
 | [`Connectors`](#connectors) | final class | 221 | The connectors registry: the external services a site talks to (AI |
 | [`Constants`](#constants) | final class | 91 | The constants plugin code expects: the fixed set from data/constants.json |
-| [`CronTable`](#crontable) | final class | 131 | The cron option's shape, operated on as data: timestamp => hook => key => |
+| [`CronTable`](#crontable) | final class | 133 | The cron option's shape, operated on as data: timestamp => hook => key => |
 | [`CurrentUser`](#currentuser) | final class | 13 | Who the request is, as the reference settles it before init: the user |
 | [`DbDelta`](#dbdelta) | final readonly class | 125 | dbDelta as the reference does it: a CREATE TABLE statement creates the |
 | [`DebugMode`](#debugmode) | final class | 104 | PHP's error settings from the debug constants, as the reference's boot |
@@ -42,7 +42,7 @@ the WordPress runtime plugins load against
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 354 | The hook registry plugin code registers into and the engine fires. |
-| [`Interactivity`](#interactivity) | final class | 522 | Server-side directive processing for the Interactivity API: the state and |
+| [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
 | [`MenuEvents`](#menuevents) | final readonly class | 225 | Menus and their items saved as the reference saves them, telling |
 | [`MenuItemMarks`](#menuitemmarks) | final class | 203 | The classes and current flags the reference gives a menu's items for the |
 | [`Meta`](#meta) | final readonly class | 242 | The four meta tables behind get_metadata and friends: reads by object, and the row-level writes the update and delete rules need. |
@@ -70,9 +70,9 @@ the WordPress runtime plugins load against
 | [`PostInsert`](#postinsert) | final readonly class | 168 | The decisions behind wp_insert_post: which columns a postarr fills, when |
 | [`PostLinks`](#postlinks) | final class | 151 | Post addresses as the reference's link functions build them (probe |
 | [`PostLookup`](#postlookup) | final readonly class | 134 | The post reads plugin code asks for by shape: a page by title, revisions, counts. |
-| [`PostQuery`](#postquery) | final class | 393 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
+| [`PostQuery`](#postquery) | final class | 394 | WP_Query::get_posts as the reference runs it (probe wp-query-sql): the |
 | [`PostQueryParts`](#postqueryparts) | final class | 56 | The pieces of one WP_Query run as the reference builds them and hands |
-| [`PostQueryResults`](#postqueryresults) | final class | 111 | What WP_Query does with its posts once it has them, as the reference does |
+| [`PostQueryResults`](#postqueryresults) | final class | 113 | What WP_Query does with its posts once it has them, as the reference does |
 | [`PostQueryStatus`](#postquerystatus) | final class | 165 | WP_Query's post type and status clause as the reference writes it (probe |
 | [`PostQueryTax`](#postquerytax) | final class | 193 | The taxonomy side of WP_Query as the reference runs it (probe |
 | [`PostQueryWhere`](#postquerywhere) | final class | 264 | The WHERE fragments WP_Query writes from its variables, in the reference's |
@@ -105,7 +105,7 @@ the WordPress runtime plugins load against
 | [`TermWriter`](#termwriter) | final readonly class | 157 | The decisions behind wp_delete_term and the object-term relationships: |
 | [`ThemeSupports`](#themesupports) | final class | 183 | What a theme supports, as add_theme_support keeps it (probe rest-themes): |
 | [`ThemeSwitch`](#themeswitch) | final class | 145 | Switching the theme as the reference does it, in two halves. The switch |
-| [`TreeWalk`](#treewalk) | final class | 179 | The Walker contract's traversal: elements keyed by the walker's |
+| [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 150 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 31 | The updates waiting, as wp_get_update_data counts them for the user |
 | [`Upgrade`](#upgrade) | final class | 349 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
@@ -1079,7 +1079,7 @@ oldest comments come first.
 
 A post's link opened at a page of its comments, as pretty or plain links write it.
 
-Internals: `olderQuery()` (private, line 61)
+Internals: `olderQuery()` (private, line 64)
 
 
 ## CommentQuery
@@ -1828,7 +1828,7 @@ The element whose directives are being evaluated.
 
 HTML with its directives resolved on the server.
 
-Internals: `namespace()` (private, line 144), `tokenize()` (private, line 155), `walk()` (private, line 215), `applyDirectives()` (private, line 277), `bind()` (private, line 339), `interactiveNamespace()` (private, line 365), `pushContext()` (private, line 378), `evaluate()` (private, line 395), `expandEach()` (private, line 445), `markChildren()` (private, line 479), `attributeMap()` (private, line 511), `relative()` (private, line 524), `escape()` (private, line 529), `camel()` (private, line 534)
+Internals: `namespace()` (private, line 144), `tokenize()` (private, line 155), `walk()` (private, line 215), `applyDirectives()` (private, line 277), `bind()` (private, line 339), `interactiveNamespace()` (private, line 365), `pushContext()` (private, line 378), `evaluate()` (private, line 395), `expandEach()` (private, line 436), `markChildren()` (private, line 470), `attributeMap()` (private, line 502), `relative()` (private, line 515), `escape()` (private, line 520), `camel()` (private, line 525), `follow()` (private, line 536)
 
 
 ## MenuEvents
@@ -3238,7 +3238,7 @@ The search stopwords, translated and filtered. @return list<string>
 
 - `@return list<string>`
 
-Internals: `prepare()` (private, line 51), `defaults()` (private, line 69), `pageSize()` (private, line 122), `clauses()` (private, line 151), `taxonomies()` (private, line 185), `searchOrder()` (private, line 250), `filtered()` (private, line 268), `through()` (private, line 291), `paging()` (private, line 301), `execute()` (private, line 317), `idsOnly()` (private, line 352), `select()` (private, line 374), `foundPosts()` (private, line 395)
+Internals: `prepare()` (private, line 51), `defaults()` (private, line 69), `pageSize()` (private, line 122), `clauses()` (private, line 152), `taxonomies()` (private, line 186), `searchOrder()` (private, line 251), `filtered()` (private, line 269), `through()` (private, line 292), `paging()` (private, line 302), `execute()` (private, line 318), `idsOnly()` (private, line 353), `select()` (private, line 375), `foundPosts()` (private, line 396)
 
 
 ## PostQueryParts
@@ -3316,7 +3316,7 @@ Settles the posts a query found: status check, stickies, the_posts, then the cou
 
 - `@param array<string, mixed> $q`
 
-Internals: `singleStatus()` (private, line 44), `visible()` (private, line 66), `stickies()` (private, line 94)
+Internals: `singleStatus()` (private, line 43), `visible()` (private, line 65), `stickies()` (private, line 93)
 
 
 ## PostQueryStatus
@@ -5384,7 +5384,7 @@ in the list for the walker (or the orphans) to place.
 
 - `@param array<int|string, mixed> $children`
 
-Internals: `buckets()` (private, line 162), `alone()` (private, line 179), `orphans()` (private, line 186)
+Internals: `buckets()` (private, line 165), `alone()` (private, line 182), `orphans()` (private, line 189)
 
 
 ## TypeProps

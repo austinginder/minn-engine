@@ -172,24 +172,32 @@ final readonly class Schema
         return null;
     }
 
+    /**
+     * The first property an object schema requires and the value lacks. A list under 'required'
+     * (draft 4) wins; without one, each property's own 'required' => true (draft 3) counts.
+     */
+    private static function firstMissing(array $args, array $value): ?string
+    {
+        $required = is_array($args['required'] ?? null)
+            ? $args['required']
+            : array_keys(array_filter(is_array($args['properties'] ?? null) ? $args['properties'] : [], static fn (mixed $property): bool => is_array($property) && ($property['required'] ?? null) === true));
+        foreach ($required as $name) {
+            if (!array_key_exists($name, $value)) {
+                return (string) $name;
+            }
+        }
+        return null;
+    }
+
     private function validateObject(mixed $value, array $args, string $param): ?Refusal
     {
         if (!SchemaValues::isObject($value)) {
             return $this->wrongType($param, 'object');
         }
         $value = SchemaValues::toObject($value);
-        if (isset($args['required']) && is_array($args['required'])) {
-            foreach ($args['required'] as $name) {
-                if (!array_key_exists($name, $value)) {
-                    return new Refusal('rest_property_required', sprintf('%1$s is a required property of %2$s.', $name, $param));
-                }
-            }
-        } elseif (isset($args['properties'])) {
-            foreach ($args['properties'] as $name => $property) {
-                if (isset($property['required']) && $property['required'] === true && !array_key_exists($name, $value)) {
-                    return new Refusal('rest_property_required', sprintf('%1$s is a required property of %2$s.', $name, $param));
-                }
-            }
+        $missing = self::firstMissing($args, $value);
+        if ($missing !== null) {
+            return new Refusal('rest_property_required', sprintf('%1$s is a required property of %2$s.', $missing, $param));
         }
         foreach ($value as $property => $v) {
             $schema = $args['properties'][$property] ?? SchemaValues::patternProperty((string) $property, $args);
@@ -371,23 +379,16 @@ final readonly class Schema
             return $data;
         }
         $types = (array) ($schema['type'] ?? []);
-        $isArray = in_array('array', $types, true);
-        $isObject = in_array('object', $types, true);
-        if ($isArray && $isObject) {
-            if (SchemaValues::isArray($data)) {
-                $isObject = false;
-            } else {
-                $isArray = false;
-            }
-        }
-        $additional = $isObject && isset($schema['additionalProperties']) && is_array($schema['additionalProperties']) ? $schema['additionalProperties'] : null;
+        // A schema typed both ways reads the data as whichever it is.
+        $isArray = in_array('array', $types, true) && (!in_array('object', $types, true) || SchemaValues::isArray($data));
+        $isObject = !$isArray && in_array('object', $types, true);
+        $additional = $isObject && is_array($schema['additionalProperties'] ?? null) ? $schema['additionalProperties'] : null;
         foreach ($data as $key => $value) {
-            $check = [];
-            if ($isArray) {
-                $check = $schema['items'] ?? [];
-            } elseif ($isObject) {
-                $check = $schema['properties'][$key] ?? SchemaValues::patternProperty((string) $key, $schema) ?? $additional ?? [];
-            }
+            $check = match (true) {
+                $isArray => $schema['items'] ?? [],
+                $isObject => $schema['properties'][$key] ?? SchemaValues::patternProperty((string) $key, $schema) ?? $additional ?? [],
+                default => [],
+            };
             if (!isset($check['context'])) {
                 continue;
             }

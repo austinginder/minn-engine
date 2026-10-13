@@ -1,6 +1,34 @@
 /*! Minn Engine wp-url | MIT | The wp.url helpers over the browser's URL parser. */
 (function (global) {
 	function getQueryString(url) { var m = /\?([^#]*)/.exec(String(url)); return m && m[1] ? m[1] : undefined; }
+	/** What follows a URL's scheme and its colon; undefined for text with whitespace, or with no scheme before a slash. */
+	function afterScheme(url) {
+		var text = String(url), colon = text.indexOf(':');
+		if (/\s/.test(text) || colon < 1 || text.slice(0, colon).indexOf('/') !== -1) { return undefined; }
+		return text.slice(colon + 1);
+	}
+	/** Where a host part ends: at the first slash, # or ?, or at the end. */
+	function endOfHost(rest) { var end = rest.search(/[\/#?]/); return end === -1 ? rest.length : end; }
+	/** The host (and port) after the scheme, once up to three slashes are skipped. */
+	function getAuthority(url) {
+		var rest = afterScheme(url);
+		if (rest === undefined) { return undefined; }
+		var slashes = /^\/*/.exec(rest)[0].length;
+		if (slashes > 3) { return undefined; }
+		rest = rest.slice(slashes);
+		var host = rest.slice(0, endOfHost(rest));
+		return host === '' ? undefined : host;
+	}
+	/** The path after the host's slash, up to any query or fragment; a host must follow // or the colon directly. */
+	function getPath(url) {
+		var rest = afterScheme(url);
+		if (rest === undefined) { return undefined; }
+		if (rest.slice(0, 2) === '//') { rest = rest.slice(2); }
+		var end = endOfHost(rest);
+		if (end === 0 || rest.charAt(end) !== '/') { return undefined; }
+		var path = rest.slice(end + 1).split(/[#?]/)[0];
+		return path === '' ? undefined : path;
+	}
 	function buildQueryString(data) {
 		var parts = [];
 		(function walk(value, prefix) {
@@ -52,9 +80,9 @@
 		isEmail: function (v) { return /^(mailto:)?[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(String(v)); },
 		getProtocol: function (url) { var m = /^([^\s:]+:)/.exec(String(url)); return m ? m[1] : undefined; },
 		isValidProtocol: function (p) { return !!p && /^[a-z\-.\+]+[0-9]*:$/i.test(p); },
-		getAuthority: function (url) { var m = /^[^\/\s:]+:(?:\/\/)?\/?([^\/\s#?]+)[\/#?]{0,1}\S*$/.exec(String(url)); return m ? m[1] : undefined; },
+		getAuthority: getAuthority,
 		isValidAuthority: function (a) { return !!a && /^[^\s#?]+$/.test(a); },
-		getPath: function (url) { var m = /^[^\/\s:]+:(?:\/\/)?[^\/\s#?]+[\/]([^\s#?]+)[#?]{0,1}\S*$/.exec(String(url)); return m ? m[1] : undefined; },
+		getPath: getPath,
 		isValidPath: function (p) { return !!p && /^[^\s#?]+$/.test(p); },
 		getQueryString: getQueryString,
 		buildQueryString: buildQueryString,

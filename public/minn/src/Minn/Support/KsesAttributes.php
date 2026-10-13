@@ -63,15 +63,15 @@ final class KsesAttributes
         if ($value === null) {
             return $rules !== null && KsesValues::satisfies('', 'y', $rules) ? $lead . $core . $trail : '';
         }
-        $quote = $value === '' ? '' : $value[0];
-        if ($quote === '"' || $quote === "'") {
-            if (strlen($value) < 2 || !str_ends_with($value, $quote)) {
+        // A quoted value must close with the quote it opens with; an unquoted one is given double quotes.
+        $quote = in_array($value[0] ?? '', ['"', "'"], true) ? $value[0] : null;
+        if ($quote !== null) {
+            if (strlen($value) < 2 || $value[-1] !== $quote) {
                 return '';
             }
             $value = substr($value, 1, -1);
-        } else {
-            $quote = '"';
         }
+        $quote ??= '"';
         $value = Escape::attr($value);
         if ($policy->holdsUri(strtolower($name))) {
             $value = Kses::attributeUrl($value, $policy->schemes);

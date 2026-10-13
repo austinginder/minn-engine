@@ -32,22 +32,19 @@ final class PostListArgs
      */
     public static function of(\WP_REST_Request $request, array $registered, string $type): array
     {
+        $given = static fn (string $param): bool => isset($registered[$param], $request[$param]);
         $args = [];
-        foreach (self::MAPPINGS as $param => $var) {
-            if (isset($registered[$param], $request[$param])) {
-                $args[$var] = $request[$param];
-            }
+        foreach (array_filter(self::MAPPINGS, $given, ARRAY_FILTER_USE_KEY) as $param => $var) {
+            $args[$var] = $request[$param];
         }
-        $args['date_query'] = [];
-        foreach (self::DATES as [$param, $bound, $column]) {
-            if (isset($registered[$param], $request[$param])) {
-                $args['date_query'][] = [$bound => $request[$param], 'column' => $column];
-            }
-        }
+        $args['date_query'] = array_map(
+            static fn (array $date): array => [$date[1] => $request[$date[0]], 'column' => $date[2]],
+            array_values(array_filter(self::DATES, static fn (array $date): bool => $given($date[0]))),
+        );
         if (isset($registered['per_page'])) {
             $args['posts_per_page'] = $request['per_page'];
         }
-        if (isset($registered['sticky'], $request['sticky'])) {
+        if ($given('sticky')) {
             $args = self::sticky($args, (bool) $request['sticky']);
         }
         if (!empty($args[self::IN])) {

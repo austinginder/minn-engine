@@ -156,7 +156,11 @@ $say('the ones that do nothing now', [
     $call(static fn () => wlwmanifest_link()), $call(static fn () => wp_print_auto_sizes_contain_css_fix()), $call(static fn () => the_block_template_skip_link()),
 ]);
 
-$say('styles printed the old way', [$call(static fn () => print_emoji_styles()), $call(static fn () => print_emoji_styles()), $call(static fn () => print_embed_styles())]);
+// The embed card's stylesheet is each stack's own: its tag is compared, not its text.
+$styleTags = static function ($value) use (&$styleTags) {
+    return is_array($value) ? array_map($styleTags, $value) : (is_string($value) ? (string) preg_replace('#(<style\b[^>]*>).*?(</style>)#s', '$1{style}$2', $value) : $value);
+};
+$say('styles printed the old way', [$call(static fn () => print_emoji_styles()), $call(static fn () => print_emoji_styles()), $styleTags($call(static fn () => print_embed_styles()))]);
 
 $say('theme support taken away', [$call(static fn () => remove_custom_background()), $call(static fn () => remove_custom_image_header()), current_theme_supports('custom-background'), current_theme_supports('custom-header')]);
 

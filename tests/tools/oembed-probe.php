@@ -6,7 +6,9 @@
  * else, and oembed/1.0/proxy fetching another site's embed for the editor
  * (who may ask, the provider address it fetches, the iframe titled, the
  * answer cached, the site's own address answered locally). Embed secrets
- * are random and masked; the provider is faked through pre_http_request.
+ * are random and masked, and so is the text of the inline host script (each
+ * stack's own; its tag is compared). The provider is faked through
+ * pre_http_request.
  * Same protocol as api-probe.php; dispatched in process; its cache entries
  * and posts go at the end.
  */
@@ -22,7 +24,7 @@ $mask = static function ($value) use (&$mask) {
     if (is_array($value) || is_object($value)) {
         return array_map($mask, (array) $value);
     }
-    return is_string($value) ? (string) preg_replace('/secret(=|="|%3D)[A-Za-z0-9]{10}/', 'secret$1{secret}', $value) : $value;
+    return is_string($value) ? (string) preg_replace(['/secret(=|="|%3D)[A-Za-z0-9]{10}/', '#(<script\b[^>]*>).*?(</script>)#s'], ['secret$1{secret}', '$1{script}$2'], $value) : $value;
 };
 $published = get_posts(['numberposts' => 1, 'post_status' => 'publish', 'orderby' => 'ID', 'order' => 'ASC'])[0];
 $url = get_permalink($published);

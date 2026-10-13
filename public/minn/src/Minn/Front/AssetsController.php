@@ -16,6 +16,9 @@ final readonly class AssetsController
 {
     private const TYPES = ['css' => 'text/css', 'js' => 'application/javascript'];
 
+    /** The embed scripts, by the reference addresses a page and a card's sourceURL name them at. */
+    private const EMBED_SCRIPTS = ['wp-embed.min.js' => 'embed-host.js', 'wp-embed-template.min.js' => 'embed-card.js'];
+
     public function __construct(private string $assetsDir)
     {
     }
@@ -31,6 +34,13 @@ final readonly class AssetsController
             return new Response(404);
         }
         return new Response(200, ['Content-Type' => self::TYPES[$ext], 'Cache-Control' => 'public, max-age=300'], (string) file_get_contents($full));
+    }
+
+    /** The engine's embed scripts at the addresses the reference serves its own from. */
+    #[Route(Method::Get, '/wp-includes/js/{file:wp-embed(?:-template)?\.min\.js}', policy: new Policy(Access::Public))]
+    public function embedScript(Request $request, string $file): Response
+    {
+        return new Response(200, ['Content-Type' => self::TYPES['js'], 'Cache-Control' => 'public, max-age=86400'], (string) file_get_contents($this->assetsDir . '/' . self::EMBED_SCRIPTS[$file]));
     }
 
     /** The MIT libraries the engine ships, served at the paths the reference registers them under. */

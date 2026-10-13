@@ -139,12 +139,13 @@ final class PostQuery
             $q['posts_per_page'] = !empty($q['posts_per_rss']) ? $q['posts_per_rss'] : Runtime::options()->filtered('posts_per_rss');
             $q['nopaging'] = false;
         }
-        $q['posts_per_page'] = (int) $q['posts_per_page'];
-        if ($q['posts_per_page'] < -1) {
-            $q['posts_per_page'] = abs($q['posts_per_page']);
-        } elseif ($q['posts_per_page'] === 0) {
-            $q['posts_per_page'] = 1;
-        }
+        // A number below -1 counts as its size, and 0 as one; -1 is every post.
+        $perPage = (int) $q['posts_per_page'];
+        $q['posts_per_page'] = match (true) {
+            $perPage < -1 => abs($perPage),
+            $perPage === 0 => 1,
+            default => $perPage,
+        };
     }
 
     /** Writes the clauses, in the reference's order. @param array<string, mixed> $q */
@@ -361,11 +362,11 @@ final class PostQuery
         $query->posts ??= $this->wpdb->get_results($query->request);
         $query->post_count = count($query->posts);
         $this->foundPosts($q);
+        // The rows' ids as numbers, and each one's parent by id.
         $parents = [];
-        foreach ($query->posts as $key => $post) {
-            $query->posts[$key]->ID = (int) $post->ID;
-            $query->posts[$key]->post_parent = (int) $post->post_parent;
-            $parents[(int) $post->ID] = (int) $post->post_parent;
+        foreach ($query->posts as $row) {
+            [$row->ID, $row->post_parent] = [(int) $row->ID, (int) $row->post_parent];
+            $parents[$row->ID] = $row->post_parent;
         }
         return $parents;
     }

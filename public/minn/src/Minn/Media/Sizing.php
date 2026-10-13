@@ -48,29 +48,38 @@ final class Sizing
      */
     public static function resize(int $origW, int $origH, int $destW, int $destH, bool $crop, Closure $constrain): ?array
     {
-        if (($destW <= 0 || $destW > $origW) && ($destH <= 0 || $destH > $origH)) {
+        $beyond = static fn (int $asked, int $has): bool => $asked <= 0 || $asked > $has;
+        if ($beyond($destW, $origW) && $beyond($destH, $origH)) {
             return null;
         }
-        if ($crop) {
-            $ratio = $origW / $origH;
-            $newW = min($destW, $origW);
-            $newH = min($destH, $origH);
-            if (!$newW) {
-                $newW = (int) round($newH * $ratio);
-            }
-            if (!$newH) {
-                $newH = (int) round($newW / $ratio);
-            }
-            $sizeRatio = max($newW / $origW, $newH / $origH);
-            $cropW = (int) round($newW / $sizeRatio);
-            $cropH = (int) round($newH / $sizeRatio);
-            $sx = (int) floor(($origW - $cropW) / 2);
-            $sy = (int) floor(($origH - $cropH) / 2);
-        } else {
-            [$cropW, $cropH, $sx, $sy] = [$origW, $origH, 0, 0];
-            [$newW, $newH] = $constrain($origW, $origH, $destW, $destH);
+        if (!$crop) {
+            [$width, $height] = $constrain($origW, $origH, $destW, $destH);
+            return [0, 0, 0, 0, (int) $width, (int) $height, $origW, $origH];
         }
-        return [0, 0, $sx, $sy, (int) $newW, (int) $newH, (int) $cropW, (int) $cropH];
+        [$width, $height] = self::cropBox($origW, $origH, $destW, $destH);
+        // The part of the original that is kept: the box's shape, as large as the original allows, centred.
+        $scale = max($width / $origW, $height / $origH);
+        $keptW = (int) round($width / $scale);
+        $keptH = (int) round($height / $scale);
+        return [0, 0, (int) floor(($origW - $keptW) / 2), (int) floor(($origH - $keptH) / 2), $width, $height, $keptW, $keptH];
+    }
+
+    /**
+     * A cropped size's box: each side at most the original's, and a side asked as 0 drawn from the
+     * other in the original's proportion.
+     *
+     * @return array{0: int, 1: int}
+     */
+    private static function cropBox(int $origW, int $origH, int $destW, int $destH): array
+    {
+        $width = min($destW, $origW);
+        $height = min($destH, $origH);
+        $proportion = $origW / $origH;
+        return match (0) {
+            $width => [(int) round($height * $proportion), $height],
+            $height => [$width, (int) round($width / $proportion)],
+            default => [$width, $height],
+        };
     }
 
     /**
@@ -104,23 +113,28 @@ final class Sizing
         }
         $data = [];
         if (is_array($size)) {
-            if (!isset($meta['file']) && isset($meta['sizes']['full'])) {
-                $meta['height'] = $meta['sizes']['full']['height'];
-                $meta['width'] = $meta['sizes']['full']['width'];
+            // Metadata without a file of its own (a PDF's previews) takes its measure from the 'full' size.
+            $full = isset($meta['file']) ? null : ($meta['sizes']['full'] ?? null);
+            if ($full !== null) {
+                $meta = ['width' => $full['width'], 'height' => $full['height']] + $meta;
             }
+            $original = !empty($meta['width']) && !empty($meta['height']) ? [(int) $meta['width'], (int) $meta['height']] : null;
+            $asked = [(int) $size[0], (int) $size[1]];
+            // A larger size counts only in the requested proportion (the original's when a side is 0).
+            $shape = in_array(0, $asked, true) ? [(int) ($meta['width'] ?? 0), (int) ($meta['height'] ?? 0)] : $asked;
             $candidates = [];
             foreach ($meta['sizes'] as $row) {
-                if (!empty($meta['width']) && !empty($meta['height']) && (int) $row['width'] === (int) $meta['width'] && (int) $row['height'] === (int) $meta['height']) {
+                $measure = [(int) $row['width'], (int) $row['height']];
+                if ($measure === $original) {
                     continue;
                 }
-                if ((int) $row['width'] === (int) $size[0] && (int) $row['height'] === (int) $size[1]) {
+                // A size of exactly the asked box ends the search; it is also the smallest.
+                $exact = $measure === $asked;
+                if ($exact || ($row['width'] >= $size[0] && $row['height'] >= $size[1] && $matchesRatio(...$measure, ...$shape))) {
                     $candidates[$row['width'] * $row['height']] = $row;
-                    break;
                 }
-                // A larger size counts only in the requested proportion (the original's when a side is 0).
-                $box = (int) $size[0] === 0 || (int) $size[1] === 0 ? [(int) ($meta['width'] ?? 0), (int) ($meta['height'] ?? 0)] : [(int) $size[0], (int) $size[1]];
-                if ($row['width'] >= $size[0] && $row['height'] >= $size[1] && $matchesRatio((int) $row['width'], (int) $row['height'], ...$box)) {
-                    $candidates[$row['width'] * $row['height']] = $row;
+                if ($exact) {
+                    break;
                 }
             }
             if ($candidates !== []) {

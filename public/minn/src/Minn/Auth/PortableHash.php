@@ -88,26 +88,16 @@ final class PortableHash
     public static function encode(string $input, int $count): string
     {
         $output = '';
-        $i = 0;
-        do {
-            $value = ord($input[$i++]);
-            $output .= self::ALPHABET[$value & 0x3f];
-            if ($i < $count) {
-                $value |= ord($input[$i]) << 8;
+        foreach (str_split(substr($input, 0, $count), 3) as $group) {
+            // Up to three bytes, the first lowest, read six bits at a time: one character more than bytes.
+            $bits = 0;
+            foreach (str_split($group) as $place => $byte) {
+                $bits |= ord($byte) << (8 * $place);
             }
-            $output .= self::ALPHABET[($value >> 6) & 0x3f];
-            if ($i++ >= $count) {
-                break;
+            for ($sixth = 0; $sixth <= strlen($group); $sixth++) {
+                $output .= self::ALPHABET[($bits >> (6 * $sixth)) & 0x3f];
             }
-            if ($i < $count) {
-                $value |= ord($input[$i]) << 16;
-            }
-            $output .= self::ALPHABET[($value >> 12) & 0x3f];
-            if ($i++ >= $count) {
-                break;
-            }
-            $output .= self::ALPHABET[($value >> 18) & 0x3f];
-        } while ($i < $count);
+        }
         return $output;
     }
 }
