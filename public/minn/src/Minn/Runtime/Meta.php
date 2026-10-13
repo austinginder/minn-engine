@@ -89,7 +89,7 @@ final readonly class Meta
         $cache = [];
         $missing = [];
         foreach ($objectIds as $objectId) {
-            $cached = \wp_cache_get($objectId, "{$type}_meta", false, $found);
+            $cached = Handoff::cacheGet($objectId, "{$type}_meta", false, $found);
             if ($found) {
                 $cache[$objectId] = $cached;
             } else {
@@ -104,7 +104,7 @@ final readonly class Meta
                 $missing[(int) $row['object_id']][(string) $row['meta_key']][] = (string) $row['meta_value'];
             }
             foreach ($missing as $objectId => $meta) {
-                \wp_cache_set($objectId, $meta, "{$type}_meta");
+                Handoff::cacheSet($objectId, $meta, "{$type}_meta");
                 RowCache::put("{$type}_meta", $objectId, $meta);
                 $cache[$objectId] = $meta;
             }

@@ -15,6 +15,7 @@ use Minn\Http\Router;
 use Minn\Json;
 use Minn\Objects\Errors;
 use Minn\RestError;
+use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -123,7 +124,7 @@ final readonly class BatchController
         }
         $wpRequest->set_attributes((array) $matched[1]);
         $valid = $wpRequest->has_valid_params();
-        if (!\is_wp_error($valid)) {
+        if (!Records::isError($valid)) {
             return null;
         }
         $response = \rest_convert_error_to_response($valid);

@@ -43,7 +43,7 @@ final class CommentForm
         $content = $text('comment');
         $parent = abs((int) ($text('comment_parent')));
         if ($parent > 0) {
-            $replied = \get_comment($parent);
+            $replied = Records::comment($parent);
             if (!$replied instanceof Comment || (string) $replied->comment_approved === '0') {
                 Runtime::hooks()->action('comment_reply_to_unapproved_comment', [$postId, $parent]);
                 return Handoff::newError('comment_reply_to_unapproved_comment', 'Sorry, replies to unapproved comments are not allowed.', 403);
@@ -81,21 +81,21 @@ final class CommentForm
             return Handoff::newError('require_valid_comment', '<strong>Error:</strong> Please type your comment text.', 200);
         }
         $lengths = \wp_check_comment_data_max_lengths($data);
-        if (\is_wp_error($lengths)) {
+        if (Records::isError($lengths)) {
             return $lengths;
         }
         $id = \wp_new_comment(Slashes::add($data), true);
-        if (\is_wp_error($id)) {
+        if (Records::isError($id)) {
             return $id;
         }
-        $comment = $id ? \get_comment($id) : null;
+        $comment = $id ? Records::comment($id) : null;
         return $comment instanceof Comment ? $comment : Handoff::newError('comment_save_error', '<strong>Error:</strong> The comment could not be saved. Please try again later.', 500);
     }
 
     /** Why the post takes no comment, or null after pre_comment_on_post when it does. */
     private static function postRefusal(int $postId): ?Errors
     {
-        $post = \get_post($postId);
+        $post = Records::post($postId);
         if ($post === null || (string) $post->comment_status === '') {
             Runtime::hooks()->action('comment_id_not_found', [$postId]);
             return Handoff::newError('comment_id_not_found');

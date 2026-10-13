@@ -8,6 +8,7 @@ use Minn\Objects\Post;
 use Minn\Objects\User;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -29,7 +30,7 @@ final class PostEmbed
     /** get_oembed_response_data: the data, or false when the post cannot be embedded. @return array<string, mixed>|false */
     public static function data(mixed $post, int $width): array|false
     {
-        $post = \get_post($post);
+        $post = Records::post($post);
         if (!$post instanceof Post || !\is_post_publicly_viewable($post)) {
             return false;
         }
@@ -74,7 +75,7 @@ final class PostEmbed
     /** get_post_embed_html: the blockquote, the iframe and its script, through embed_html; false for no post. */
     public static function html(int $width, int $height, mixed $post): string|false
     {
-        $post = \get_post($post);
+        $post = Records::post($post);
         if (!$post instanceof Post) {
             return false;
         }
@@ -97,7 +98,7 @@ final class PostEmbed
     /** get_post_embed_url: the post's /embed/ address (?embed=true without pretty links), through post_embed_url. */
     public static function url(mixed $post): string|false
     {
-        $post = \get_post($post);
+        $post = Records::post($post);
         if (!$post instanceof Post) {
             return false;
         }

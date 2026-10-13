@@ -32,7 +32,7 @@ final class Handoff
     /**
      * Binds answers by name: currentUser, signedIn, user, userBy,
      * becomeUser, cacheUsers, authenticate, setPassword, password, hash,
-     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, and the record
+     * createNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, cacheGet, cacheSet, cacheDelete, and the record
      * factories newError, newPost, postInstance, newTerm, newComment,
      * commentInstance, newUser.
      *
@@ -143,6 +143,25 @@ final class Handoff
     public static function stop(mixed ...$args): void
     {
         self::answer('stop', ...$args);
+    }
+
+    /** A value from the object cache (wp_cache_get), $found told whether it was there. */
+    public static function cacheGet(mixed $key, mixed $group = '', mixed $force = false, mixed &$found = null): mixed
+    {
+        $answer = self::$answers['cacheGet'] ?? throw new LogicException('Nothing answers cacheGet yet: the WordPress layer binds it as it loads.');
+        return $answer($key, $group, $force, $found);
+    }
+
+    /** A value stored in the object cache (wp_cache_set). */
+    public static function cacheSet(mixed ...$args): mixed
+    {
+        return self::answer('cacheSet', ...$args);
+    }
+
+    /** A value removed from the object cache (wp_cache_delete). */
+    public static function cacheDelete(mixed ...$args): mixed
+    {
+        return self::answer('cacheDelete', ...$args);
     }
 
     /** A list of errors, the first given (new WP_Error). */

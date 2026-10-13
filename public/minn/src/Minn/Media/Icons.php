@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Media;
 
 use Minn\Objects\Post;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 
@@ -29,7 +30,7 @@ final class Icons
         $postId = 0;
         $names = [];
         if (is_numeric($mime)) {
-            $post = \get_post((int) $mime);
+            $post = Records::post((int) $mime);
             $postId = $post instanceof Post ? $post->ID : 0;
             $ext = $postId > 0 ? strtolower((string) pathinfo((string) \get_attached_file($postId), PATHINFO_EXTENSION)) : '';
             $names = $ext === '' ? [] : array_filter([$ext, FileTypes::kindOf($ext)]);

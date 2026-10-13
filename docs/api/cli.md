@@ -239,7 +239,7 @@ Lists available cron schedules.
 
 Tests the WP Cron spawning system and reports the results.
 
-Internals: `scheduled()` (private, line 245), `eventArgs()` (private, line 260), `duration()` (private, line 267), `relative()` (private, line 289)
+Internals: `scheduled()` (private, line 246), `eventArgs()` (private, line 261), `duration()` (private, line 268), `relative()` (private, line 290)
 
 
 ## DirectorySearch

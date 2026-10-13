@@ -8,6 +8,7 @@ use Minn\Content\CommentRecord;
 use Minn\Content\Comments;
 use Minn\Content\Posts;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
 /** The wp/v2 comment object; edit context adds the moderation-desk fields. */
@@ -26,7 +27,7 @@ final readonly class CommentObject
     /** A comment in the context asked for, through rest_prepare_comment when a plugin hooks it. */
     public function build(CommentRecord $c, Context $context): array
     {
-        return RuntimePrepare::item('rest_prepare_comment', $this->buildFields($c, $context), static fn () => \get_comment($c->id));
+        return RuntimePrepare::item('rest_prepare_comment', $this->buildFields($c, $context), static fn () => Records::comment($c->id));
     }
 
     /** The REST URL builder. */
@@ -43,7 +44,7 @@ final readonly class CommentObject
         $postId = $c->postId;
         $post = $this->posts->find($postId);
         // The content passes comment_text, as the reference renders it.
-        $rendered = (string) Runtime::hooks()->filter('comment_text', [$c->content, \get_comment($c->id), []]);
+        $rendered = (string) Runtime::hooks()->filter('comment_text', [$c->content, Records::comment($c->id), []]);
 
         $object = [
             'id' => $id,

@@ -30,7 +30,7 @@ final class CommentPages
      */
     public static function pageOf(mixed $commentId, array $args): ?int
     {
-        $comment = \get_comment($commentId);
+        $comment = Records::comment($commentId);
         if (!$comment instanceof Comment) {
             return null;
         }

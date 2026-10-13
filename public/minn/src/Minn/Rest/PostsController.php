@@ -18,6 +18,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Objects\Post;
 use Minn\RestError;
+use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 
@@ -134,7 +135,7 @@ final readonly class PostsController
             return true;
         }
         if ($post->post_status === 'inherit' && $post->post_parent > 0) {
-            $parent = \get_post($post->post_parent);
+            $parent = Records::post($post->post_parent);
             if ($parent instanceof Post) {
                 return $this->readable($parent);
             }

@@ -1251,11 +1251,7 @@ function _scalar_wp_die_handler($message = '', $title = '', $args = [])
 
 function is_wp_error($thing)
 {
-    $is = $thing instanceof WP_Error;
-    if ($is) {
-        do_action('is_wp_error_instance', $thing);
-    }
-    return $is;
+    return Minn\Runtime\Records::isError($thing);
 }
 
 /** The notice arguments an admin screen strips from its address once shown, through removable_query_args. */

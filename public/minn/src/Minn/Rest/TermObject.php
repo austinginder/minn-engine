@@ -10,6 +10,7 @@ use Minn\Http\RouteMiss;
 use Minn\Content\TermRecord;
 use Minn\Db;
 use Minn\Front\Permalinks;
+use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
 
 /** The wp/v2 category and tag objects. */
@@ -34,7 +35,7 @@ final readonly class TermObject
     public function view(TermRecord $term, string $restBase): array
     {
         $taxonomy = (string) (self::config($restBase)['taxonomy'] ?? $restBase);
-        return RuntimePrepare::item('rest_prepare_' . $taxonomy, $this->viewFields($term, $restBase), static fn () => \get_term($term->id, $taxonomy));
+        return RuntimePrepare::item('rest_prepare_' . $taxonomy, $this->viewFields($term, $restBase), static fn () => Records::term($term->id, $taxonomy));
     }
 
     /** The REST URL builder. */

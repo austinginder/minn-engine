@@ -2,14 +2,14 @@
     "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 810,
-        "composes": 2348,
+        "minn": 808,
+        "composes": 2346,
         "leaf": 1023,
-        "noop": 2827,
+        "noop": 2831,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1118,
+        "minnMethods": 1121,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -48274,15 +48274,12 @@
         },
         "get_comment": {
             "file": "comment.php",
-            "lines": 24,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Comments::find"
+                "Minn\\Runtime\\Records::comment"
             ],
-            "composes": [
-                "_minn_comments",
-                "apply_filters"
-            ]
+            "composes": []
         },
         "get_comment_ID": {
             "file": "comment.php",
@@ -50321,17 +50318,12 @@
         },
         "get_post": {
             "file": "post.php",
-            "lines": 37,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\Posts::find"
+                "Minn\\Runtime\\Records::post"
             ],
-            "composes": [
-                "_minn_posts",
-                "post",
-                "wp_cache_get",
-                "wp_cache_set"
-            ]
+            "composes": []
         },
         "get_post_ancestors": {
             "file": "post.php",
@@ -51712,16 +51704,12 @@
         },
         "get_term": {
             "file": "taxonomy.php",
-            "lines": 32,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "_minn_term_numbers",
-                "_minn_term_row",
-                "apply_filters",
-                "taxonomy_exists"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Records::term"
+            ],
+            "composes": []
         },
         "get_term_by": {
             "file": "taxonomy.php",
@@ -54785,12 +54773,12 @@
         },
         "is_wp_error": {
             "file": "functions.php",
-            "lines": 5,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Records::isError"
+            ],
+            "composes": []
         },
         "is_wp_version_compatible": {
             "file": "load.php",

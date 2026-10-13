@@ -38,7 +38,7 @@ final class TermSave
     public static function insert(mixed $term, string $taxonomy, array $args): array|Errors
     {
         $term = Runtime::hooks()->filter('pre_insert_term', [$term, $taxonomy, $args]);
-        if (\is_wp_error($term)) {
+        if (Records::isError($term)) {
             return $term;
         }
         if ($term === 0) {
@@ -93,8 +93,8 @@ final class TermSave
      */
     public static function update(int $termId, string $taxonomy, array $changes): array|Errors
     {
-        $term = \get_term($termId, $taxonomy);
-        if (\is_wp_error($term)) {
+        $term = Records::term($termId, $taxonomy);
+        if (Records::isError($term)) {
             return $term;
         }
         if (!$term instanceof Term) {

@@ -116,7 +116,7 @@ final readonly class TermEvents
             $quietly();
             return;
         }
-        $term = \get_term($termId, $taxonomy);
+        $term = Records::term($termId, $taxonomy);
         \wp_delete_term($termId, $taxonomy);
         Runtime::hooks()->action("rest_delete_{$taxonomy}", [$term, new \WP_REST_Response($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
@@ -128,10 +128,10 @@ final readonly class TermEvents
             return;
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        Runtime::hooks()->action("rest_insert_{$taxonomy}", [\get_term($termId, $taxonomy), $wpRequest, $verb === 'create']);
+        Runtime::hooks()->action("rest_insert_{$taxonomy}", [Records::term($termId, $taxonomy), $wpRequest, $verb === 'create']);
         RestMeta::writeFrom($wpRequest, 'term', $termId, $taxonomy);
-        RegisteredFields::update(\get_term($termId, $taxonomy), $taxonomy, $wpRequest);
+        RegisteredFields::update(Records::term($termId, $taxonomy), $taxonomy, $wpRequest);
         RegisteredFields::context($wpRequest, $taxonomy);
-        Runtime::hooks()->action("rest_after_insert_{$taxonomy}", [\get_term($termId, $taxonomy), $wpRequest, $verb === 'create']);
+        Runtime::hooks()->action("rest_after_insert_{$taxonomy}", [Records::term($termId, $taxonomy), $wpRequest, $verb === 'create']);
     }
 }

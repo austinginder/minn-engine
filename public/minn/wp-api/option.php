@@ -315,6 +315,13 @@ function wp_cache_close()
 }
 endif;
 
+// The engine asks the object cache through Minn\Runtime\Handoff, so a drop-in's functions answer it.
+Minn\Runtime\Handoff::bind([
+    'cacheGet' => static fn ($key, $group = '', $force = false, &$found = null) => wp_cache_get($key, $group, $force, $found),
+    'cacheSet' => static fn (...$args) => wp_cache_set(...$args),
+    'cacheDelete' => static fn (...$args) => wp_cache_delete(...$args),
+]);
+
 function get_transient($transient)
 {
     return Transients::get($transient);

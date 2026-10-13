@@ -52,43 +52,7 @@ function _minn_post_writer(): PostWriter
 
 function get_post($post = null, $output = OBJECT, $filter = 'raw')
 {
-    if ($post === null || $post === 0 || $post === '' || $post === false) {
-        // Only the global post: once a caller clears it there is no current post (probe link-template-remaining).
-        $post = $GLOBALS['post'] ?? null;
-        if ($post === null) {
-            return null;
-        }
-    }
-    if ($post instanceof WP_Post) {
-        $object = $post;
-    } elseif ($post instanceof Minn\Content\PostRecord) {
-        $object = new WP_Post((object) $post->row());
-    } elseif (is_object($post) && isset($post->ID)) {
-        $object = new WP_Post($post);
-    } elseif (is_array($post) && isset($post['ID'])) {
-        $object = new WP_Post((object) $post);
-    } else {
-        // Each caller gets its own copy: what one plugin changes on its post, the next get_post() does not see.
-        $cached = wp_cache_get((int) $post, 'posts', false, $found);
-        if ($found && is_object($cached)) {
-            $object = $cached instanceof WP_Post ? clone $cached : new WP_Post($cached);
-        } else {
-            $row = (int) $post > 0 ? _minn_posts()->find((int) $post) : null;
-            if ($row === null) {
-                return null;
-            }
-            $object = new WP_Post((object) $row->row());
-            wp_cache_set((int) $post, clone $object, 'posts');
-        }
-    }
-    $object = $object->filter($filter === null || $filter === '' ? 'raw' : (string) $filter);
-    if ($output === ARRAY_A) {
-        return $object->to_array();
-    }
-    if ($output === ARRAY_N) {
-        return array_values($object->to_array());
-    }
-    return $object;
+    return Minn\Runtime\Records::post($post, $output, $filter);
 }
 
 function clean_post_cache($post)

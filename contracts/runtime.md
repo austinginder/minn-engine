@@ -16024,6 +16024,16 @@ check answers as before. `Auth\Can` now asks the record itself whether it is a u
 binding of batch 7 is gone). The facade's classes gain one interface each, which only reflection sees.
 All 370 probes give identical output before and after.
 
+**Batch 12, finding the records (function calls 554 → 486).** `Runtime\Records` finds and shapes
+posts, terms and comments as get_post, get_term and get_comment did: the one being read when none is
+named, an object as given, one made from a row or an object, else by id (a post through a copy of the
+cached one, so what one plugin changes the next reader does not see; a term's numbers as integers and
+its two filters told its own taxonomy; a comment's fields as the database's text), then an object, an
+associative array or a list as asked. `isError()` is is_wp_error. The object cache goes through
+`Handoff::cacheGet()`, `cacheSet()` and `cacheDelete()`, bound to the wp_cache functions so an
+object-cache.php drop-in answers. The facade maps onto them. All 370 probes give identical output
+before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

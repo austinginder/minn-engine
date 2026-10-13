@@ -147,7 +147,7 @@ final class PostQueryWhere
         $q['pagename'] = Sanitize::title(Text::basename($q['pagename']), '', 'query');
         $q['name'] = $q['pagename'];
         $this->parts->where .= " AND ({$this->table}.ID = '{$page}')";
-        $object = \get_post($page);
+        $object = Records::post($page);
         if (is_object($object) && $object->post_type === 'attachment') {
             $this->query->is_attachment = true;
             $this->query->is_page = true;

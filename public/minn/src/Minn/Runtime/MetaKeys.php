@@ -135,11 +135,11 @@ final class MetaKeys
     /** The object's subtype: a post's type, a term's taxonomy, comment or user while they exist; '' otherwise. */
     public static function subtype(string $objectType, int $objectId): string
     {
-        $term = $objectType === 'term' ? \get_term($objectId) : null;
+        $term = $objectType === 'term' ? Records::term($objectId) : null;
         $subtype = match ($objectType) {
-            'post' => (string) (\get_post($objectId)?->post_type ?? ''),
+            'post' => (string) (Records::post($objectId)?->post_type ?? ''),
             'term' => $term instanceof Term ? $term->taxonomy : '',
-            'comment' => \get_comment($objectId) instanceof Comment ? 'comment' : '',
+            'comment' => Records::comment($objectId) instanceof Comment ? 'comment' : '',
             'user' => Handoff::user($objectId) instanceof User ? 'user' : '',
             default => '',
         };
@@ -207,6 +207,6 @@ final class MetaKeys
         if (is_array($args['show_in_rest']) && isset($args['show_in_rest']['schema']) && is_array($args['show_in_rest']['schema'])) {
             $schema = array_merge($schema, $args['show_in_rest']['schema']);
         }
-        return !\is_wp_error(\rest_validate_value_from_schema($args['default'], $schema));
+        return !Records::isError(\rest_validate_value_from_schema($args['default'], $schema));
     }
 }

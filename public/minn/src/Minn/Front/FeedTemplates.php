@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Closure;
 use Minn\I18n\Gettext;
 use Minn\Objects\Post;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteTime;
 use Minn\Support\Escape;
@@ -187,7 +188,7 @@ final class FeedTemplates
             ->put("\">\n\t<title>")->tag('the_title_rss')
             ->put("</title>\n\t<link>")->tag('the_permalink_rss')
             ->put("</link>\n\n\t<dc:creator><![CDATA[")->cdata('the_author')
-            ->put("]]></dc:creator>\n\t<dc:date>", (string) SiteTime::fromStored('Y-m-d\TH:i:s\Z', (string) \get_post()->post_date_gmt, false), "</dc:date>\n\t")
+            ->put("]]></dc:creator>\n\t<dc:date>", (string) SiteTime::fromStored('Y-m-d\TH:i:s\Z', (string) Records::post()->post_date_gmt, false), "</dc:date>\n\t")
             ->tag('the_category_rss', 'rdf')
             ->put("\n\t\t\t<description><![CDATA[")->cdata('the_excerpt_rss')->put("]]></description>\n");
         if (!Runtime::options()->filtered('rss_use_excerpt')) {
@@ -238,7 +239,7 @@ final class FeedTemplates
     private static function current(): array
     {
         $comment = $GLOBALS['comment'];
-        $GLOBALS['post'] = \get_post((int) $comment->comment_post_ID);
+        $GLOBALS['post'] = Records::post((int) $comment->comment_post_ID);
         return [$comment, $GLOBALS['post']];
     }
 

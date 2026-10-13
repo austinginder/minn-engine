@@ -9,6 +9,7 @@ use Minn\Content\Blocks;
 use Minn\Content\PostRecord;
 use Minn\Objects\Post;
 use Minn\Runtime\Handoff;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
 /**
@@ -54,7 +55,7 @@ final class RenderedFields
 
     private static function withPost(PostRecord $p, Closure $render): mixed
     {
-        $post = \get_post($p->id);
+        $post = Records::post($p->id);
         if (!$post instanceof Post) {
             return $render(Handoff::newPost((object) ['ID' => $p->id, 'post_title' => $p->title, 'post_content' => $p->content, 'post_excerpt' => $p->excerpt]));
         }

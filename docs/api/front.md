@@ -489,7 +489,7 @@ The site icon as an RSS 2.0 image (titled with the feed's title), or '' without 
 
 The site icon as an Atom icon, or '' without one.
 
-Internals: `enclosures()` (private, line 47)
+Internals: `enclosures()` (private, line 48)
 
 
 ## FeedTemplates
@@ -514,7 +514,7 @@ rdf, rss), between wp_before_load_template and wp_after_load_template.
 
 - `@param Closure(string): void $send sends a header line (the Content-Type)`
 
-Internals: `syndication()` (private, line 64), `rss2()` (private, line 69), `rss2Item()` (private, line 88), `atom()` (private, line 114), `atomEntry()` (private, line 133), `rdf()` (private, line 160), `rdfItem()` (private, line 184), `rss()` (private, line 199), `commentsTitle()` (private, line 217), `commentTitle()` (private, line 229), `current()` (private, line 238), `rss2Comments()` (private, line 245), `rss2Comment()` (private, line 263), `atomComments()` (private, line 277), `atomComment()` (private, line 299)
+Internals: `syndication()` (private, line 65), `rss2()` (private, line 70), `rss2Item()` (private, line 89), `atom()` (private, line 115), `atomEntry()` (private, line 134), `rdf()` (private, line 161), `rdfItem()` (private, line 185), `rss()` (private, line 200), `commentsTitle()` (private, line 218), `commentTitle()` (private, line 230), `current()` (private, line 239), `rss2Comments()` (private, line 246), `rss2Comment()` (private, line 264), `atomComments()` (private, line 278), `atomComment()` (private, line 300)
 
 
 ## FeedWriter
@@ -844,7 +844,7 @@ _oembed_create_xml: the data as an oembed document (or under the root given), ne
 
 - `@param array<string, mixed> $data`
 
-Internals: `append()` (private, line 120)
+Internals: `append()` (private, line 121)
 
 
 ## PostNavigation

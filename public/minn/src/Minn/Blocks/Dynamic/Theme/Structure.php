@@ -12,6 +12,7 @@ use Minn\Content\Site;
 use Minn\Front\Kind;
 use Minn\Front\Permalinks;
 use Minn\Runtime\BlockHooks;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Html;
 use Minn\Theme\Templates;
@@ -72,7 +73,7 @@ final readonly class Structure
         }
         $id = (string) $block->attr('theme', \get_stylesheet()) . '//' . $slug;
         match ($source) {
-            'post' => Runtime::hooks()->action('render_block_core_template_part_post', [$id, $block->attrs, \get_post((int) $where), $markup]),
+            'post' => Runtime::hooks()->action('render_block_core_template_part_post', [$id, $block->attrs, Records::post((int) $where), $markup]),
             'file' => Runtime::hooks()->action('render_block_core_template_part_file', [$id, $block->attrs, $where, $markup]),
             default => Runtime::hooks()->action('render_block_core_template_part_none', [$id, $block->attrs, '']),
         };

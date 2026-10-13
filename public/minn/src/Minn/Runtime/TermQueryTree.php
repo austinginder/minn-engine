@@ -32,7 +32,7 @@ final class TermQueryTree
     {
         $terms = [];
         foreach ($rows as $key => $row) {
-            $term = \get_term(is_object($row) && property_exists($row, 'term_id') ? $row->term_id : $row);
+            $term = Records::term(is_object($row) && property_exists($row, 'term_id') ? $row->term_id : $row);
             if (!$term instanceof Term) {
                 continue;
             }
@@ -128,7 +128,7 @@ final class TermQueryTree
             return true;
         }
         foreach ((array) \get_term_children($term->term_id, $term->taxonomy) as $child) {
-            $child = \get_term($child, $term->taxonomy);
+            $child = Records::term($child, $term->taxonomy);
             if ($child instanceof Term && $child->count) {
                 return true;
             }

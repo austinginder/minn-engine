@@ -13,6 +13,7 @@ use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\Objects\Post;
 use Minn\RestError;
+use Minn\Runtime\Records;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 
@@ -83,7 +84,7 @@ final readonly class BlockRendererController
     private function permit(int $postId): void
     {
         if ($postId > 0) {
-            if (!\get_post($postId) instanceof Post || !$this->caller->can('edit_post', $postId)) {
+            if (!Records::post($postId) instanceof Post || !$this->caller->can('edit_post', $postId)) {
                 throw $this->caller->refuse('block_cannot_read', 'Sorry, you are not allowed to read blocks of this post.');
             }
             return;
@@ -100,7 +101,7 @@ final readonly class BlockRendererController
         $outerRuntime = Runtime::current()->get('post');
         $context = [];
         if ($postId > 0) {
-            $GLOBALS['post'] = \get_post($postId);
+            $GLOBALS['post'] = Records::post($postId);
             \setup_postdata($GLOBALS['post']);
             $context = ['postId' => $postId, 'postType' => \get_post_type($postId)];
         }

@@ -7,6 +7,7 @@ namespace Minn\Rest;
 use Minn\Auth\RegisteredCaps;
 use Minn\Objects\Post;
 use Minn\Objects\Term;
+use Minn\Runtime\Records;
 use Minn\Runtime\Registered;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\TermEvents;
@@ -55,7 +56,7 @@ final readonly class TermsController
         }
         $post = isset($wp['post']) ? (int) $wp['post'] : 0;
         if (isset($wp['post'])) {
-            $target = \get_post($post);
+            $target = Records::post($post);
             if ($target === null) {
                 throw new RestError('rest_post_invalid_id', 'Invalid post ID.', 400);
             }

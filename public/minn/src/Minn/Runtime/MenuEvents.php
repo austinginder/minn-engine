@@ -146,7 +146,7 @@ final readonly class MenuEvents
     /** A menu deleted over REST: deleteMenu(), then rest_delete_nav_menu with the menu as it was and the response. @param array<string, mixed> $previous */
     public function restDeleteMenu(int $menuId, array $previous, Request $request): void
     {
-        $term = \get_term($menuId, 'nav_menu');
+        $term = Records::term($menuId, 'nav_menu');
         $this->deleteMenu($menuId);
         Runtime::hooks()->action('rest_delete_nav_menu', [$term, new \WP_REST_Response(['deleted' => true, 'previous' => $previous], 200), RuntimeRoutes::wpRequest($request)]);
     }

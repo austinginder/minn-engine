@@ -385,7 +385,7 @@ Route: `POST /batch/v1 (public)`
 
 The requests answered in turn.
 
-Internals: `refusal()` (private, line 89), `invalid()` (private, line 107), `claims()` (private, line 134), `batchablePath()` (private, line 144), `subRequest()` (private, line 162), `error()` (private, line 180), `envelope()` (private, line 186)
+Internals: `refusal()` (private, line 90), `invalid()` (private, line 108), `claims()` (private, line 135), `batchablePath()` (private, line 145), `subRequest()` (private, line 163), `error()` (private, line 181), `envelope()` (private, line 187)
 
 
 ## BatchRequest
@@ -435,7 +435,7 @@ Route: `POST /wp/v2/block-renderer/{name:[a-z0-9-]+/[a-z0-9-]+} (public)`
 
 The block's markup, as {"rendered": "..."}.
 
-Internals: `refuseInvalid()` (private, line 65), `permit()` (private, line 83), `rendered()` (private, line 97)
+Internals: `refuseInvalid()` (private, line 66), `permit()` (private, line 84), `rendered()` (private, line 98)
 
 
 ## BlockTypesController
@@ -745,7 +745,7 @@ A comment in the context asked for, through rest_prepare_comment when a plugin h
 
 The REST URL builder.
 
-Internals: `buildFields()` (private, line 39)
+Internals: `buildFields()` (private, line 40)
 
 
 ## CommentsController
@@ -1933,7 +1933,7 @@ One post of any type, with the reference's read rules.
 
 A viewable type's single post points at its page on the site.
 
-Internals: `totals()` (private, line 108), `readable()` (private, line 127), `visibleStatuses()` (private, line 150)
+Internals: `totals()` (private, line 109), `readable()` (private, line 128), `visibleStatuses()` (private, line 151)
 
 
 ## PostsWriteController
@@ -2145,7 +2145,7 @@ stock and type): the filter's answer without repeats, in order.
 - `@param list<string> $classes`
 - `@return list<string>`
 
-Internals: `withPost()` (private, line 55)
+Internals: `withPost()` (private, line 56)
 
 
 ## Reply
@@ -2274,7 +2274,7 @@ Whether a value sanitizes to what is stored (scalar types compared as the text t
 
 A type's empty value: '' for a string, false, 0, or an empty list.
 
-Internals: `update()` (private, line 150), `replaceAll()` (private, line 190), `refused()` (private, line 240), `failed()` (private, line 246), `nullStored()` (private, line 252), `gathered()` (private, line 259), `request()` (private, line 289)
+Internals: `update()` (private, line 151), `replaceAll()` (private, line 191), `refused()` (private, line 241), `failed()` (private, line 247), `nullStored()` (private, line 253), `gathered()` (private, line 260), `request()` (private, line 290)
 
 
 ## RestUrl
@@ -2519,7 +2519,7 @@ __construct(Minn\Rest\Types $types)
 
 The route's answer with the server's filters around it, or as the route gives it when no plugin can hear.
 
-Internals: `plain()` (private, line 75), `run()` (private, line 87), `routeName()` (private, line 97), `handler()` (private, line 115), `defaults()` (private, line 130), `typed()` (private, line 148)
+Internals: `plain()` (private, line 76), `run()` (private, line 88), `routeName()` (private, line 98), `handler()` (private, line 116), `defaults()` (private, line 131), `typed()` (private, line 149)
 
 
 ## RuntimePrepare
@@ -2576,7 +2576,7 @@ One item through a rest_prepare filter.
 - `@param \Closure(): mixed $described the object the item describes, fetched only when a plugin listens`
 - `@return array<string, mixed>`
 
-Internals: `hookedBlocks()` (private, line 77), `withHookedBlocks()` (private, line 114), `objectType()` (private, line 155)
+Internals: `hookedBlocks()` (private, line 78), `withHookedBlocks()` (private, line 115), `objectType()` (private, line 156)
 
 
 ## RuntimeRoutes
@@ -3610,7 +3610,7 @@ Used by: `Minn\Rest\TermsController`
 
 A term as get_term hands it back.
 
-Internals: `record()` (private, line 31)
+Internals: `record()` (private, line 32)
 
 
 ## TermListArgs
@@ -3674,7 +3674,7 @@ first type it belongs to.
 
 - `@return array{taxonomy: string, has_parent: bool, post_arg: string, post_base: string}|null`
 
-Internals: `viewFields()` (private, line 80), `allowedVerbs()` (private, line 113)
+Internals: `viewFields()` (private, line 81), `allowedVerbs()` (private, line 114)
 
 
 ## TermsController
@@ -3735,7 +3735,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 157), `termsReadable()` (private, line 211)
+Internals: `requireParent()` (private, line 158), `termsReadable()` (private, line 212)
 
 
 ## Types

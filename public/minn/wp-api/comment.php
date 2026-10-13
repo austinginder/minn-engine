@@ -27,30 +27,7 @@ function wp_create_initial_comment_meta()
 
 function get_comment($comment = null, $output = OBJECT)
 {
-    // Any empty id means the comment being read, not "no comment".
-    if (empty($comment)) {
-        $comment = $GLOBALS['comment'] ?? null;
-    }
-    if ($comment instanceof WP_Comment) {
-        $object = $comment;
-    } elseif (is_object($comment) && isset($comment->comment_ID)) {
-        $object = new WP_Comment($comment);
-    } else {
-        $row = (int) $comment > 0 ? _minn_comments()->find((int) $comment) : null;
-        if ($row === null) {
-            return null;
-        }
-        // A stored comment's fields are text, as the database hands them over.
-        $object = new WP_Comment((object) array_map(static fn ($value) => is_int($value) || is_float($value) ? (string) $value : $value, $row->row()));
-    }
-    $object = apply_filters('get_comment', $object);
-    if ($output === ARRAY_A) {
-        return $object->to_array();
-    }
-    if ($output === ARRAY_N) {
-        return array_values($object->to_array());
-    }
-    return $object;
+    return Minn\Runtime\Records::comment($comment, $output);
 }
 
 function get_comments($args = '')

@@ -13,6 +13,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Objects\Errors;
 use Minn\RestError;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
 /**
@@ -56,14 +57,14 @@ final readonly class RuntimeEnvelope implements Envelope
         }
         $response = $invalid === null ? null : RuntimeRoutes::toWpError($invalid);
         $response = Runtime::hooks()->filter('rest_request_before_callbacks', [$response, $handler, $wpRequest]);
-        if (!\is_wp_error($response) && $refusal !== null) {
+        if (!Records::isError($response) && $refusal !== null) {
             $response = RuntimeRoutes::toWpError($refusal);
         }
-        if (!\is_wp_error($response)) {
+        if (!Records::isError($response)) {
             $answer = Runtime::hooks()->filter('rest_dispatch_request', [null, $wpRequest, $route, $handler]);
             $response = $answer ?? self::run($invoke);
             // A core write answers in the edit context, and says so on the request plugins see next (a HEAD is a read).
-            if ($answer === null && !in_array($request->method, [Method::Get, Method::Head], true) && str_starts_with($route, '/wp/v2/') && $route !== '/wp/v2/settings' && !\is_wp_error($response)) {
+            if ($answer === null && !in_array($request->method, [Method::Get, Method::Head], true) && str_starts_with($route, '/wp/v2/') && $route !== '/wp/v2/settings' && !Records::isError($response)) {
                 $wpRequest->set_param('context', 'edit');
             }
         }

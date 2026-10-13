@@ -9,6 +9,7 @@ use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MetaKeys;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\I18n\Gettext;
 use Minn\Support\Slashes;
@@ -143,14 +144,14 @@ final class RestMeta
         if ($value === '' && in_array($schema['type'] ?? null, ['boolean', 'integer', 'number'], true)) {
             $value = self::emptyValue((string) $schema['type']);
         }
-        return \is_wp_error(\rest_validate_value_from_schema($value, $schema)) ? null : \rest_sanitize_value_from_schema($value, $schema);
+        return Records::isError(\rest_validate_value_from_schema($value, $schema)) ? null : \rest_sanitize_value_from_schema($value, $schema);
     }
 
     /** @param array<string, mixed> $field */
     private static function update(string $objectType, int $objectId, string $subtype, string $key, array $field, mixed $value): ?Errors
     {
         $valid = \rest_validate_value_from_schema($value, $field['schema'], 'meta.' . $field['name']);
-        if (\is_wp_error($valid)) {
+        if (Records::isError($valid)) {
             $valid->add_data(['status' => 400]);
             return $valid;
         }
@@ -214,7 +215,7 @@ final class RestMeta
     /** A key deleted once the user may delete it (a single key's invalid stored value refuses null). @param array<string, mixed> $field */
     public static function delete(string $objectType, int $objectId, string $key, array $field): ?Errors
     {
-        if ($field['single'] && \is_wp_error(\rest_validate_value_from_schema(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
+        if ($field['single'] && Records::isError(\rest_validate_value_from_schema(\get_metadata($objectType, $objectId, $key, true), $field['schema']))) {
             return self::nullStored($field['name']);
         }
         if (!Can::current("delete_{$objectType}_meta", $objectId, $key)) {

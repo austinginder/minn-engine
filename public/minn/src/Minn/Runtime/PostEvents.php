@@ -146,7 +146,7 @@ final readonly class PostEvents
     public function afterInsert(int $id, ?PostRecord $before): void
     {
         if ($this->live()) {
-            \wp_after_insert_post(\get_post($id), $before !== null, self::wpPost($before));
+            \wp_after_insert_post(Records::post($id), $before !== null, self::wpPost($before));
         }
     }
 
@@ -164,7 +164,7 @@ final readonly class PostEvents
         if (!$this->live()) {
             return;
         }
-        $post = \get_post($id);
+        $post = Records::post($id);
         if ($post === null) {
             return;
         }

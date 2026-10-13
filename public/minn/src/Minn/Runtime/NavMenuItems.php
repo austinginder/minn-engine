@@ -91,7 +91,7 @@ final class NavMenuItems
     private static function pointsAtPost(object $item): void
     {
         $type = Registered::postType((string) $item->object);
-        $original = \get_post((int) $item->object_id);
+        $original = Records::post((int) $item->object_id);
         $item->type_label = $type ? $type->labels->singular_name : (string) $item->object;
         if ($original && $original->post_status !== 'publish' && ($status = Registered::status($original->post_status))) {
             $item->type_label = $status->label;
@@ -108,10 +108,10 @@ final class NavMenuItems
     private static function pointsAtTerm(object $item): void
     {
         $taxonomy = Registered::taxonomy((string) $item->object);
-        $term = \get_term((int) $item->object_id, (string) $item->object);
+        $term = Records::term((int) $item->object_id, (string) $item->object);
         $item->type_label = $taxonomy ? $taxonomy->labels->singular_name : (string) $item->object;
         $link = $term instanceof Term ? \get_term_link($term, (string) $item->object) : '';
-        if (!$taxonomy || !$term instanceof Term || \is_wp_error($link)) {
+        if (!$taxonomy || !$term instanceof Term || Records::isError($link)) {
             $item->_invalid = true;
         }
         $item->url = is_string($link) ? $link : '';

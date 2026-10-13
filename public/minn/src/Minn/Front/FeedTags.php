@@ -7,6 +7,7 @@ namespace Minn\Front;
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
 use Minn\Runtime\QueryArgs;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -92,7 +93,7 @@ final class FeedTags
     {
         $postId = $postId ?: (int) \get_the_ID();
         $feed = $feed !== '' ? $feed : \get_default_feed();
-        $post = \get_post($postId);
+        $post = Records::post($postId);
         if (!$post instanceof Post) {
             return '';
         }

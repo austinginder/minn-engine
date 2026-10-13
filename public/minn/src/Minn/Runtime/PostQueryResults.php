@@ -59,7 +59,7 @@ final class PostQueryResults
             $query->posts = $this->visible($status) ? $query->posts : [];
         }
         if ($query->is_preview && $query->posts && Can::current('edit_post', $query->posts[0]->ID)) {
-            $query->posts[0] = \get_post(Runtime::hooks()->filterRefArray('the_preview', [$query->posts[0], &$query]));
+            $query->posts[0] = Records::post(Runtime::hooks()->filterRefArray('the_preview', [$query->posts[0], &$query]));
         }
     }
 

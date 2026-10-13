@@ -70,7 +70,7 @@ final class PostLinks
         $categories = \get_the_category($post->ID);
         usort($categories, static fn ($a, $b) => (int) $a->term_id <=> (int) $b->term_id);
         $chosen = $categories === [] ? null : Runtime::hooks()->filter('post_link_category', [$categories[0], $categories, $post]);
-        $chosen = $chosen instanceof Term ? $chosen : \get_term((int) Runtime::options()->filtered('default_category'), 'category');
+        $chosen = $chosen instanceof Term ? $chosen : Records::term((int) Runtime::options()->filtered('default_category'), 'category');
         if (!$chosen instanceof Term) {
             return '';
         }
@@ -95,7 +95,7 @@ final class PostLinks
     public static function attachment(Post $post, int $flags): string
     {
         $leavename = (bool) ($flags & self::LEAVE_NAME);
-        $parent = (int) $post->post_parent > 0 && (int) $post->post_parent !== (int) $post->ID ? \get_post((int) $post->post_parent) : null;
+        $parent = (int) $post->post_parent > 0 && (int) $post->post_parent !== (int) $post->ID ? Records::post((int) $post->post_parent) : null;
         $pretty = (string) Runtime::options()->filtered('permalink_structure') !== '';
         $link = '';
         if ($pretty && $parent instanceof Post && in_array($parent->post_type, Registered::postTypes(), true)) {

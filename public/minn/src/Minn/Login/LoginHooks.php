@@ -52,7 +52,7 @@ final readonly class LoginHooks
      */
     public function signedIn(UserRecord $user): void
     {
-        \wp_cache_delete($user->id, 'user_meta');
+        Handoff::cacheDelete($user->id, 'user_meta');
         Runtime::hooks()->action('wp_login', [$user->login, Handoff::newUser($user->id)]);
     }
 

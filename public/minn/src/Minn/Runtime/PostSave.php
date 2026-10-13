@@ -114,7 +114,7 @@ final class PostSave
     /** The post as stored, its columns by name. @return array<string, mixed> */
     private static function stored(int $id): array
     {
-        return \get_post($id)->to_array();
+        return Records::post($id)->to_array();
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Minn\Content\TermRecord;
 use Minn\Objects\Term;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
 /**
@@ -23,7 +24,7 @@ final class TermFilters
         if (!Runtime::booted() || (!Runtime::hooks()->has('get_term') && !Runtime::hooks()->has("get_{$taxonomy}"))) {
             return $term;
         }
-        $object = \get_term($term->id, $taxonomy);
+        $object = Records::term($term->id, $taxonomy);
         return $object instanceof Term ? self::record($object, $term) : $term;
     }
 

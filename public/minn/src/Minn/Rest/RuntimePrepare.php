@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\Errors;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 
 /**
@@ -59,7 +60,7 @@ final class RuntimePrepare
      */
     public static function postItem(string $filter, array $item, int $postId, string $type): array
     {
-        return self::item($filter, $item, static fn () => \get_post($postId), $type);
+        return self::item($filter, $item, static fn () => Records::post($postId), $type);
     }
 
     /**

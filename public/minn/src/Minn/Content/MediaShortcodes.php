@@ -7,6 +7,7 @@ namespace Minn\Content;
 use Minn\Media\FileTypes;
 use Minn\Objects\Post;
 use Minn\Runtime\QueryArgs;
+use Minn\Runtime\Records;
 use Minn\Runtime\Runtime;
 use Minn\Support\Escape;
 use Minn\Support\Flag;
@@ -89,7 +90,7 @@ final class MediaShortcodes
     /** get_attached_media: the post's attachments of a kind ("video", "audio", a MIME type), as the reference's children query finds them. */
     public static function attached(string $type, mixed $post): array
     {
-        $post = \get_post($post);
+        $post = Records::post($post);
         if (!$post) {
             return [];
         }
@@ -197,7 +198,7 @@ final class MediaShortcodes
 
     private static function postId(): int
     {
-        return \get_post() ? (int) \get_the_ID() : 0;
+        return Records::post() ? (int) \get_the_ID() : 0;
     }
 
     /** The shortcode's instance number this request, counted whether or not a plugin takes it over. */

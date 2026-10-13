@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Runtime\Records;
 use WP_CLI;
 use WP_CLI\Formatter;
 
@@ -149,7 +150,7 @@ final class CronCommand
         $result = $recurrence === ''
             ? \wp_schedule_single_event($timestamp, $hook, $eventArgs)
             : \wp_schedule_event($timestamp, $recurrence, $hook, $eventArgs);
-        if ($result === false || \is_wp_error($result)) {
+        if ($result === false || Records::isError($result)) {
             WP_CLI::error('Event not scheduled.');
         }
         WP_CLI::success("Scheduled event with hook '{$hook}' for " . gmdate('Y-m-d H:i:s', $timestamp) . ' GMT.');

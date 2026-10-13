@@ -211,7 +211,7 @@ a type that is empty) is the default icon.
 
 The icon's address for a type or an attachment id.
 
-Internals: `map()` (private, line 54), `files()` (private, line 73)
+Internals: `map()` (private, line 55), `files()` (private, line 74)
 
 
 ## ImageMime

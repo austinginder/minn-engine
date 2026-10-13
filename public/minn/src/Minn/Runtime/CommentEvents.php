@@ -261,11 +261,11 @@ final readonly class CommentEvents
             return;
         }
         $wpRequest = RuntimeRoutes::wpRequest($request);
-        Runtime::hooks()->action('rest_insert_comment', [\get_comment($id), $wpRequest, $before === null]);
+        Runtime::hooks()->action('rest_insert_comment', [Records::comment($id), $wpRequest, $before === null]);
         RestMeta::writeFrom($wpRequest, 'comment', $id, 'comment');
-        RegisteredFields::update(\get_comment($id), 'comment', $wpRequest);
+        RegisteredFields::update(Records::comment($id), 'comment', $wpRequest);
         RegisteredFields::context($wpRequest, 'comment');
-        Runtime::hooks()->action('rest_after_insert_comment', [\get_comment($id), $wpRequest, $before === null]);
+        Runtime::hooks()->action('rest_after_insert_comment', [Records::comment($id), $wpRequest, $before === null]);
     }
 
     /** rest_delete_comment, after a trash or a delete, with the comment as it was and the response. @param array<string, mixed> $data */

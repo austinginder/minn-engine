@@ -201,38 +201,7 @@ function _minn_term_numbers(WP_Term $term): WP_Term
 
 function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
 {
-    if (empty($term)) {
-        return new WP_Error('invalid_term', 'Empty Term.');
-    }
-    if ($taxonomy !== '' && !taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    if ($term instanceof WP_Term) {
-        $object = $term;
-    } elseif (is_object($term)) {
-        $object = _minn_term_numbers(new WP_Term($term));
-    } else {
-        $row = _minn_term_row((int) $term, $taxonomy === '' ? null : (string) $taxonomy);
-        if ($row === null) {
-            return null;
-        }
-        $object = _minn_term_numbers(new WP_Term((object) $row));
-    }
-    // The filter is told the term's own taxonomy, whether or not the caller named one.
-    $object = apply_filters('get_term', $object, (string) $object->taxonomy);
-    $object = apply_filters("get_{$object->taxonomy}", $object, $object->taxonomy);
-    // Plugins' filters see the raw term; then it is put in the context asked for, on a copy of a term the caller handed in.
-    if ($filter !== 'raw' && $object instanceof WP_Term) {
-        $object = $object === $term ? clone $object : $object;
-        $object->filter((string) $filter);
-    }
-    if ($output === ARRAY_A) {
-        return $object->to_array();
-    }
-    if ($output === ARRAY_N) {
-        return array_values($object->to_array());
-    }
-    return $object;
+    return Minn\Runtime\Records::term($term, $taxonomy, $output, $filter);
 }
 
 function get_term_by($field, $value, $taxonomy = '', $output = OBJECT, $filter = 'raw')

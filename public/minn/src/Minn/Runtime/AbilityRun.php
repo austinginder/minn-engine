@@ -26,7 +26,7 @@ final class AbilityRun
             return $input === null ? true : Handoff::newError('ability_missing_input_schema', sprintf('Ability "%s" does not define an input schema required to validate the provided input.', $name));
         }
         $valid = \rest_validate_value_from_schema($input, $schema, 'input');
-        return \is_wp_error($valid) ? Handoff::newError('ability_invalid_input', sprintf('Ability "%1$s" has invalid input. Reason: %2$s', $name, $valid->get_error_message())) : true;
+        return Records::isError($valid) ? Handoff::newError('ability_invalid_input', sprintf('Ability "%1$s" has invalid input. Reason: %2$s', $name, $valid->get_error_message())) : true;
     }
 
     /** True, or the error a permission answer other than true becomes (an error it returns is reported as a notice). */
@@ -42,6 +42,6 @@ final class AbilityRun
     public static function output(string $name, array $schema, mixed $output): true|Errors
     {
         $fits = $schema === [] ? true : \rest_validate_value_from_schema($output, $schema, 'output');
-        return \is_wp_error($fits) ? Handoff::newError('ability_invalid_output', sprintf('Ability "%1$s" has invalid output. Reason: %2$s', $name, $fits->get_error_message())) : true;
+        return Records::isError($fits) ? Handoff::newError('ability_invalid_output', sprintf('Ability "%1$s" has invalid output. Reason: %2$s', $name, $fits->get_error_message())) : true;
     }
 }
