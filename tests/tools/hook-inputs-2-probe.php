@@ -154,7 +154,8 @@ $run('a block widget, nothing in it', static fn () => $widget('WP_Widget_Block',
 $run('the archives widget', static fn () => $widget('WP_Widget_Archives', []));
 add_theme_support('html5', ['navigation-widgets']);
 $run('the archives widget, html5 navigation', static fn () => $widget('WP_Widget_Archives', ['title' => 'Zz <b>Archives</b>']));
-$run('the meta widget, html5 navigation', static fn () => $widget('WP_Widget_Meta', []));
+// The log-out link's nonce changes with the clock: shown as {nonce}.
+$run('the meta widget, html5 navigation', static fn () => preg_replace('/_wpnonce=[0-9a-f]{10}/', '_wpnonce={nonce}', (string) $widget('WP_Widget_Meta', [])));
 $run('the categories widget, html5 navigation', static fn () => $widget('WP_Widget_Categories', ['title' => ' <em>Zz</em> "Cats" & co ']));
 $run('the categories widget as a dropdown', static fn () => $widget('WP_Widget_Categories', ['dropdown' => 1]));
 $run('the pages widget, html5 navigation', static fn () => $widget('WP_Widget_Pages', []));

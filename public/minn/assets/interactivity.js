@@ -582,10 +582,20 @@ function init(root = document.body) {
 	for (const child of [...root.children]) hydrate(child, null);
 }
 
-if (document.readyState === 'loading') {
-	document.addEventListener('DOMContentLoaded', () => init());
+// Hydration waits for DOMContentLoaded, which comes after every module script has run, so each view module's store is
+// there before its init directives are evaluated; a runtime imported after the page loaded hydrates at once.
+let started = false;
+const start = () => {
+	if (!started) {
+		started = true;
+		init();
+	}
+};
+if (document.readyState === 'complete') {
+	queueMicrotask(start);
 } else {
-	queueMicrotask(() => init());
+	document.addEventListener('DOMContentLoaded', start);
+	window.addEventListener('load', start);
 }
 
 export { init as hydrate };

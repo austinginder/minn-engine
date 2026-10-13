@@ -15753,6 +15753,62 @@ Probes `audit-lows` (34 rows), `rest-options-schema`, `namespaced-type`,
   and JSON links with RSD, generator, canonical, short link and site icon,
   each removable by name.
 
+## The interactive blocks work in the browser (2026-10-12)
+
+Suite `interactive-blocks` (browser, in run-all) builds a page of tabs, two
+accordions, an image with the lightbox and a playlist of two tones
+(`tests/fixtures/audio`), drives it on both stacks step by step and
+compares each step's state. The reference is read at its own host
+(`wp.minn.localhost`): through `ref.` its module addresses name the
+engine's host, so its view modules never load there.
+
+- **The runtime hydrates on DOMContentLoaded.** It hydrated in a microtask
+  right after its own module ran, before the view modules had registered
+  their stores, so every `data-wp-init` callback found nothing and never
+  ran again. DOMContentLoaded comes after every module script; a runtime
+  imported later hydrates at once.
+- **Tabs** (`tabs-view.js`): the chosen tab is `aria-selected` with a
+  tabindex of 0 and the rest -1; its panel shows. The arrow keys move the
+  focus along the tabs, round from either end, and Home and End to the
+  ends; Up and Down do nothing; a click (Enter, Space) chooses. A page
+  opened at a panel's address shows that panel.
+- **Accordion** (`accordion-view.js`): a closed panel is
+  `hidden="until-found"`, so find in page opens it (`beforematch`). One
+  that opens one item at a time closes the rest, the item open to begin
+  with among them. A page opened at an item's panel address opens it.
+- **Image lightbox.** The engine's own image renderer opened no lightbox:
+  it now asks the runtime to finish each image block
+  (`Renderer::finishImagesWith`), which opens it when the image's setting
+  (or the theme's) enables it and the image links nowhere, before the
+  image's loading attributes as the reference orders them. The figure and
+  the overlay match the reference's markup; `core/image` config carries
+  the overlay's labels, and the view module is queued. `image-view.js`:
+  open, the overlay is a modal dialog labelled for its image, takes the
+  focus and leaves the rest of the page inert; Escape, a click on it or
+  its close button close it and hand the focus back to the trigger; the
+  selection clears, so the labels and the image go with it. Galleries step
+  with the buttons and the arrow keys.
+- **Playlist** (`playlist-view.js`, queued with the block): a waveform
+  player of the reference's structure (its play button, a slider with its
+  value and label, bars drawn from the decoded audio, the title, artist
+  and time) over the track list; a track's button plays it, pauses it
+  when it plays, and the player's button does the same; a track that ends
+  hands over to the next.
+- **Styles.** `blocks.css` had none for these blocks: the tab list,
+  accordion toggles, the player and track list, and the lightbox's trigger
+  and overlay now have the structure they need, their colours the theme's.
+- **A block's selector** (`wp_get_block_css_selector`, and so every
+  theme.json build) uses the block's own class unfiltered, as the
+  reference's does: `block_default_classname` is not asked there (a
+  lightbox's settings read built one per image).
+- **`block_default_classname`** is asked as the reference asks it: by
+  each dynamic core block the engine renders that renders something (the
+  query pagination links even when they do not; never the RSS,
+  widget-group, tabs and accordion blocks), with the block's full name,
+  and a class a plugin gives replaces the block's own on its wrapper.
+- Still stubs, as their blocks render no directives on the engine:
+  `search-view.js`, `file-view.js`, `query-view.js` and `form-view.js`.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -15809,7 +15865,7 @@ rows that are `open` or `austin`.
 | 12449 | Attachments controller (10-11) | sideload, finalize and post-process | done | real, routes listed; probe `rest-attachments-sideload` |
 | 12449 | Attachments controller (10-11) | a network's upload space check | accepted | multisite, which a single site never loads |
 | 13590 | Icon block, term template (10-11) | the playlist block | done | "The playlist block (2026-10-11)" |
-| 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module (and, found 2026-10-12, so are the tabs, accordion and image lightbox ones, whose blocks render their directives) | open | |
+| 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module (and, found 2026-10-12, so are the tabs, accordion and image lightbox ones, whose blocks render their directives) | done | 2026-10-12: "The interactive blocks work in the browser" (suite `interactive-blocks`) |
 | 14006 | Imagick editor (10-11) | what `image_strip_meta` removes from a JPEG | accepted | profiles ImageMagick can write survive; the engine strips only names outside that set |
 | 14984 | An outside audit (10-11) | dead ends as a `__call` table, the DKIM key name, splitting this file | accepted | reasons given there |
 | 14984 | An outside audit (10-11) | release key rotation; the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |

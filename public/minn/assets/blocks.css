@@ -364,3 +364,59 @@ html.has-modal-open { overflow: hidden; }
 	border: 0; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0;
 	position: absolute !important; width: 1px; word-wrap: normal !important;
 }
+
+/* Tabs: the list's buttons as tabs, the chosen one underlined; panels show as their tab is chosen (the view module). */
+.wp-block-tab-list { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 1em; }
+.wp-block-tab-list button { background: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; color: inherit; cursor: pointer; font: inherit; margin: 0; padding: 0.5em 1.2em; }
+.wp-block-tab-list button[aria-selected="true"] { border-bottom-color: currentColor; }
+.wp-block-tab-list button:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+.wp-block-tab-panel[hidden] { display: none; }
+
+/* Accordion: each heading's toggle is the whole heading line; a closed panel stays findable (hidden="until-found"). */
+.wp-block-accordion-heading { margin: 0; }
+.wp-block-accordion-heading__toggle { align-items: center; background: none; border: 0; color: inherit; cursor: pointer; display: flex; font: inherit; gap: 1em; justify-content: space-between; letter-spacing: inherit; margin: 0; padding: 0.5em 0; text-align: inherit; text-transform: inherit; width: 100%; }
+.wp-block-accordion-heading__toggle-title { flex: 1; }
+.wp-block-accordion-panel[hidden]:not([hidden="until-found"]) { display: none; }
+.wp-block-accordion-item > .wp-block-accordion-panel[hidden] { margin-block-start: 0; }
+
+/* Playlist: the waveform player (a play button beside the drawn track, the title and time under it), then the tracks. */
+.wp-block-playlist { margin-left: 0; margin-right: 0; }
+.wp-block-playlist .waveform-track { display: flex; align-items: stretch; }
+.wp-block-playlist .waveform-btn { align-items: center; background: currentColor; border: 0; border-radius: 0; cursor: pointer; display: flex; flex: 0 0 100px; height: 100px; justify-content: center; margin: 0; padding: 0; }
+.wp-block-playlist .waveform-btn svg { fill: var(--wp--preset--color--base, #fff); height: 36px; width: 36px; }
+.wp-block-playlist .waveform-btn .waveform-icon-pause { display: none; }
+.wp-block-playlist .waveform-container { cursor: pointer; flex: 1; min-width: 0; position: relative; }
+.wp-block-playlist .waveform-container canvas { display: block; }
+.wp-block-playlist .waveform-markers, .wp-block-playlist .waveform-loading, .wp-block-playlist .waveform-hover-time { display: none; }
+.wp-block-playlist .waveform-info { align-items: center; display: flex; gap: 1rem; justify-content: space-between; padding: 0.5em 0; }
+.wp-block-playlist .waveform-text { display: flex; flex-direction: column; }
+.wp-block-playlist .waveform-title { font-weight: 500; }
+.wp-block-playlist .waveform-artist { opacity: 0.7; }
+.wp-block-playlist__tracklist { list-style: none; margin: 0; padding: 0; }
+.wp-block-playlist-track__button { align-items: center; background: none; border: 0; color: inherit; cursor: pointer; display: flex; font: inherit; gap: 1em; padding: 0.5em 0.6em; text-align: start; width: 100%; }
+.wp-block-playlist-track__button[aria-current="true"] { background: rgb(0 0 0 / 0.1); }
+.wp-block-playlist-track__content { display: flex; flex: 1; flex-direction: column; }
+.wp-block-playlist-track__artist { font-size: 0.85em; opacity: 0.7; }
+.wp-block-playlist-track__length { font-size: 0.85em; opacity: 0.7; }
+.wp-block-playlist-track__image { height: 48px; object-fit: cover; width: 48px; }
+
+/* Image lightbox: the trigger shows on the image as it is hovered or focused; the overlay covers the window while open. */
+.wp-lightbox-container { display: flex; flex-direction: column; position: relative; }
+.wp-lightbox-container img { cursor: zoom-in; }
+.wp-lightbox-container button.lightbox-trigger { align-items: center; background-color: rgb(90 90 90 / 0.25); border: 0; border-radius: 4px; cursor: zoom-in; display: flex; height: 20px; justify-content: center; opacity: 0; padding: 0; position: absolute; right: 16px; top: 16px; width: 20px; z-index: 100; }
+.wp-lightbox-container:hover button.lightbox-trigger, .wp-lightbox-container button.lightbox-trigger:focus { opacity: 1; }
+.wp-lightbox-overlay { box-sizing: border-box; cursor: zoom-out; height: 100vh; left: 0; overflow: hidden; position: fixed; top: 0; visibility: hidden; width: 100%; z-index: 100000; }
+.wp-lightbox-overlay.active { visibility: visible; }
+.wp-lightbox-overlay [hidden] { display: none !important; }
+.wp-lightbox-overlay .scrim { height: 100%; left: 0; opacity: 0.9; position: absolute; top: 0; width: 100%; z-index: 1; }
+.wp-lightbox-overlay .lightbox-image-container { height: var(--wp--lightbox-container-height); left: 50%; overflow: hidden; position: absolute; top: 50%; transform: translate(-50%, -50%); width: var(--wp--lightbox-container-width); z-index: 2; }
+.wp-lightbox-overlay .lightbox-image-container figure { height: 100%; margin: 0; width: 100%; }
+.wp-lightbox-overlay .lightbox-image-container img { height: var(--wp--lightbox-image-height); max-width: none; width: var(--wp--lightbox-image-width); }
+.wp-lightbox-overlay.active .lightbox-image-container, .wp-lightbox-overlay.active .scrim { animation: minn-lightbox-in 0.25s ease-out both; }
+.wp-lightbox-overlay .wp-lightbox-close-button, .wp-lightbox-overlay .wp-lightbox-navigation-button { align-items: center; background: none; border: 0; cursor: pointer; display: flex; justify-content: center; min-height: 40px; min-width: 40px; padding: 0; position: absolute; z-index: 3; }
+.wp-lightbox-overlay .wp-lightbox-close-button { right: 20px; top: 20px; }
+.wp-lightbox-overlay .wp-lightbox-navigation-button { top: 50%; transform: translateY(-50%); }
+.wp-lightbox-overlay .wp-lightbox-navigation-button-prev { left: 20px; }
+.wp-lightbox-overlay .wp-lightbox-navigation-button-next { right: 20px; }
+@keyframes minn-lightbox-in { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .wp-lightbox-overlay.active .lightbox-image-container, .wp-lightbox-overlay.active .scrim { animation: none; } }

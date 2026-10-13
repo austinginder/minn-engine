@@ -19,7 +19,7 @@ the block parser and renderer
 | [`Parser`](#parser) | final class | 114 | Parses block markup into a tree. The grammar is the delimiter comment: |
 | [`QueryVars`](#queryvars) | final class | 122 | The query variables a Query Loop block's context asks for, the way the |
 | [`RenderState`](#renderstate) | final class | 350 | Per-request rendering state, owned by the renderer. The reference numbers |
-| [`Renderer`](#renderer) | final class | 405 | Renders a block tree the way the reference renders post_content: |
+| [`Renderer`](#renderer) | final class | 449 | Renders a block tree the way the reference renders post_content: |
 | [`Selector`](#selector) | final class | 43 | The CSS selector a block type declares for its root or for one feature, from its `selectors` map or the older per-support keys. |
 | [`Serializer`](#serializer) | final class | 46 | Parsed blocks back to markup. A core block is written by its short name; |
 | [`States`](#states) | final class | 160 | Block state styles (a block's style[":hover"] and the like, probe |
@@ -860,6 +860,9 @@ in place, then the per-block render-time additions (layout classes, the
 paragraph class, image attributes, gallery ids, style-variation
 counters), and finally texturize over the whole.
 
+- const `CLASSNAME_ALWAYS` = `array (   0 => 'core/query-pagination-next',   1 => 'core/query-pagination-numbers',   2 => 'core/query-pagination-previous', )` — The dynamic core blocks that ask block_default_classname even when they render nothing (generatedClass()).
+- const `CLASSNAME_NEVER` = `array (   0 => 'core/rss',   1 => 'core/widget-group',   2 => 'core/tabs',   3 => 'core/tab-list',   4 => 'core/tab-panel',   5 => 'core/accordion',   6 => 'core/accordion-item', )` — The dynamic core blocks that never ask it (the tabs and accordion blocks edit their saved markup instead).
+
 Used by: `Minn\Blocks\Dynamic\Archives`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Search`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\SyncedPattern`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Content\Blocks`, `Minn\Runtime\Runtime`, `Minn\Theme\PageRenderer`
 
 ```php
@@ -941,6 +944,14 @@ block being rendered, so enqueue_empty_block_content_assets is not
 asked for it (its inner blocks are), as the reference asks it only in
 a block's render (probe plugin-surface2).
 
+### `finishImagesWith(callable $finish): void`
+
+What the runtime does to an image block's markup once the engine has
+rendered it: the lightbox, when the image's settings or the theme's ask
+for one.
+
+- `@param callable(string, Block): string $finish`
+
 ### `handContext(array $context): void`
 
 The context render_block_context already gave the next block, when
@@ -983,7 +994,7 @@ plugin's callback took over. It applies the block supports it knows
 itself (layout, element styles); the facade's render_block filters do
 the rest, and all of them for any other block.
 
-Internals: `renderWith()` (private, line 212), `elementsClass()` (private, line 387), `renderNamed()` (private, line 393), `decorate()` (private, line 418), `gallery()` (private, line 440)
+Internals: `renderWith()` (private, line 218), `generatedClass()` (private, line 411), `elementsClass()` (private, line 426), `renderNamed()` (private, line 432), `decorate()` (private, line 460), `gallery()` (private, line 484)
 
 
 ## Selector

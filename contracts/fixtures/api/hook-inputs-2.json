@@ -374,7 +374,7 @@
                     ]
                 ]
             ],
-            "result": "<section class=\"widget widget_meta\"><h2 class=\"widgettitle\">Meta</h2><nav aria-label=\"Meta\">\n\t\t<ul>\n\t\t\t<li><a href=\"{home}/wp-admin/\">Site Admin</a></li>\t\t\t<li><a href=\"{home}/wp-login.php?action=logout&#038;_wpnonce=821ad40622\">Log out</a></li>\n\t\t\t<li><a href=\"{home}/feed/\">Entries feed</a></li>\n\t\t\t<li><a href=\"{home}/comments/feed/\">Comments feed</a></li>\n\n\t\t\t<li><a href=\"https://wordpress.org/\">WordPress.org</a></li>\n\t\t</ul>\n\n\t\t</nav></section>"
+            "result": "<section class=\"widget widget_meta\"><h2 class=\"widgettitle\">Meta</h2><nav aria-label=\"Meta\">\n\t\t<ul>\n\t\t\t<li><a href=\"{home}/wp-admin/\">Site Admin</a></li>\t\t\t<li><a href=\"{home}/wp-login.php?action=logout&#038;_wpnonce={nonce}\">Log out</a></li>\n\t\t\t<li><a href=\"{home}/feed/\">Entries feed</a></li>\n\t\t\t<li><a href=\"{home}/comments/feed/\">Comments feed</a></li>\n\n\t\t\t<li><a href=\"https://wordpress.org/\">WordPress.org</a></li>\n\t\t</ul>\n\n\t\t</nav></section>"
         }
     ],
     [

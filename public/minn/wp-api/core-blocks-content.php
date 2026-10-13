@@ -283,6 +283,9 @@ function block_core_image_render_lightbox($block_content, $block, $block_instanc
         $tags->set_attribute($name, $value);
     }
     _minn_image_lightbox_state($id, (array) ($block['attrs'] ?? []), $figure, $image, $block_instance instanceof WP_Block ? $block_instance->context : []);
+    // The overlay's own labels, and its view module.
+    wp_interactivity_config('core/image', ['defaultAriaLabel' => __('Enlarged image'), 'closeButtonText' => __('Close'), 'prevButtonText' => __('Previous'), 'nextButtonText' => __('Next')]);
+    wp_enqueue_script_module('@wordpress/block-library/image/view');
     if (!has_action('wp_footer', 'block_core_image_print_lightbox_overlay')) {
         add_action('wp_footer', 'block_core_image_print_lightbox_overlay');
     }

@@ -523,6 +523,7 @@ function _minn_playlist(array $attributes, string $content, array $tracks): stri
         $state["track-{$index}"] = _minn_playlist_track_state($track);
     }
     wp_interactivity_state('core/playlist', ['playlists' => [$id => ['tracks' => $state]]]);
+    wp_enqueue_script_module('@wordpress/block-library/playlist/view');
     $tags = new WP_HTML_Tag_Processor($content);
     _minn_set_attributes($tags, ['tag_name' => 'figure'], ['data-wp-interactive' => 'core/playlist', 'data-wp-context' => wp_json_encode(['playlistId' => $id, 'currentId' => 'track-0', 'isPlaying' => false, 'tracks' => array_keys($state), 'waveformStyle' => $attributes['waveformStyle'] ?? 'bars', 'showPlayButtonArtwork' => (bool) ($attributes['showPlayButtonArtwork'] ?? false), 'labelPauseTrack' => __('Pause'), 'labelSelectTrack' => __('Play')])]);
     for ($index = 0; $tags->next_tag(['tag_name' => 'button', 'class_name' => 'wp-block-playlist-track__button']); $index++) {
@@ -1407,6 +1408,7 @@ function register_block_core_site_icon_setting()
 /** @internal registers the facade's block renderers with the engine's renderer */
 function _minn_register_block_renderers(MinnRenderer $renderer): void
 {
+    $renderer->finishImagesWith('_minn_image_lightbox_finish');
     $renderers = [
         'core/categories' => '_minn_block_categories',
         'core/post-author' => '_minn_block_post_author',
@@ -1544,6 +1546,21 @@ function _minn_block_term_template(MinnBlock $block, MinnRenderer $renderer): st
         $items .= _minn_term_item($term, $renderer->providing(['termId' => $term->term_id, 'taxonomy' => $term->taxonomy], static fn (): string => _minn_inner_html($block, $renderer)));
     }
     return $items === '' ? '' : _minn_laid_out($block, Wrapper::open('ul', 'wp-block-term-template', $block) . $items . '</ul>');
+}
+
+/**
+ * @internal an image block in a page opened in the lightbox, as the
+ * reference's image renders it: when its own lightbox setting (or the
+ * theme's for images) is enabled and it links nowhere
+ */
+function _minn_image_lightbox_finish(string $html, MinnBlock $block): string
+{
+    $settings = block_core_image_get_lightbox_settings(['attrs' => $block->attrs]);
+    $links = (string) ($block->attrs['linkDestination'] ?? 'none') !== 'none' || preg_match('/<a\b/i', $html) === 1;
+    if (!is_array($settings) || ($settings['enabled'] ?? false) !== true || $links) {
+        return $html;
+    }
+    return block_core_image_render_lightbox($html, ['blockName' => 'core/image', 'attrs' => $block->attrs], null);
 }
 
 /**

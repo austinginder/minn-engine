@@ -1,14 +1,14 @@
 {
-    "generated": "2026-10-12",
+    "generated": "2026-10-13",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
         "minn": 832,
-        "composes": 2404,
+        "composes": 2405,
         "leaf": 1030,
         "noop": 2740,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8700,
+        "functions": 8701,
         "minnMethods": 1026,
         "leafLinesOver15": 12
     },
@@ -37213,6 +37213,16 @@
                 "wp_style_engine_get_styles"
             ]
         },
+        "_minn_image_lightbox_finish": {
+            "file": "core-blocks.php",
+            "lines": 6,
+            "kind": "composes",
+            "minn": [],
+            "composes": [
+                "block_core_image_get_lightbox_settings",
+                "block_core_image_render_lightbox"
+            ]
+        },
         "_minn_image_lightbox_state": {
             "file": "core-blocks-content.php",
             "lines": 19,
@@ -37784,7 +37794,7 @@
         },
         "_minn_playlist": {
             "file": "core-blocks.php",
-            "lines": 17,
+            "lines": 18,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -37793,6 +37803,7 @@
                 "_minn_playlist_track_state",
                 "_minn_set_attributes",
                 "esc_attr__",
+                "wp_enqueue_script_module",
                 "wp_interactivity_state",
                 "wp_json_encode",
                 "wp_unique_id"
@@ -38167,7 +38178,7 @@
         },
         "_minn_register_block_renderers": {
             "file": "core-blocks.php",
-            "lines": 36,
+            "lines": 37,
             "kind": "composes",
             "minn": [],
             "composes": [
@@ -43059,13 +43070,16 @@
         },
         "block_core_image_render_lightbox": {
             "file": "core-blocks-content.php",
-            "lines": 22,
+            "lines": 25,
             "kind": "composes",
             "minn": [],
             "composes": [
+                "__",
                 "_minn_image_lightbox_state",
                 "add_action",
                 "has_action",
+                "wp_enqueue_script_module",
+                "wp_interactivity_config",
                 "wp_json_encode"
             ]
         },
@@ -69129,18 +69143,16 @@
         },
         "wp_get_block_css_selector": {
             "file": "blocks.php",
-            "lines": 4,
+            "lines": 7,
             "kind": "minn",
             "minn": [
                 "Minn\\Blocks\\Selector::resolve"
             ],
-            "composes": [
-                "wp_get_block_default_classname"
-            ]
+            "composes": []
         },
         "wp_get_block_default_classname": {
             "file": "blocks.php",
-            "lines": 4,
+            "lines": 2,
             "kind": "composes",
             "minn": [],
             "composes": [

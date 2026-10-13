@@ -359,12 +359,11 @@ function block_has_support($block_type, $feature, $default_value = false)
     return $block_support === true || is_array($block_support);
 }
 
+/** A block's own class, wp-block- and its name (core's without its namespace), through block_default_classname with the full name. */
 function wp_get_block_default_classname($block_name)
 {
-    if (str_starts_with((string) $block_name, 'core/')) {
-        $block_name = substr((string) $block_name, 5);
-    }
-    return apply_filters('block_default_classname', 'wp-block-' . str_replace('/', '-', (string) $block_name), $block_name);
+    $name = (string) $block_name;
+    return apply_filters('block_default_classname', 'wp-block-' . str_replace('/', '-', str_starts_with($name, 'core/') ? substr($name, 5) : $name), $block_name);
 }
 
 function wp_apply_generated_classname_support($block_type)
@@ -381,7 +380,10 @@ function wp_get_block_css_selector($block_type, $target = 'root', $fallback = fa
     if (!$block_type instanceof WP_Block_Type) {
         return null;
     }
-    return Selector::resolve((array) ($block_type->selectors ?: []), (array) ($block_type->supports ?: []), $target, (bool) $fallback, wp_get_block_default_classname($block_type->name));
+    // The block's own class as the reference forms it here: unfiltered (block_default_classname is not asked).
+    $name = (string) $block_type->name;
+    $class = 'wp-block-' . str_replace('/', '-', str_starts_with($name, 'core/') ? substr($name, 5) : $name);
+    return Selector::resolve((array) ($block_type->selectors ?: []), (array) ($block_type->supports ?: []), $target, (bool) $fallback, $class);
 }
 
 /**

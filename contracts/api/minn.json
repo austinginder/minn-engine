@@ -19533,7 +19533,7 @@
             "namespace": "Minn\\Blocks",
             "kind": "final class",
             "file": "public/minn/src/Minn/Blocks/Renderer.php",
-            "lines": 405,
+            "lines": 449,
             "doc": "Renders a block tree the way the reference renders post_content:\ndelimiters gone, each block's own HTML kept with inner blocks rendered\nin place, then the per-block render-time additions (layout classes, the\nparagraph class, image attributes, gallery ids, style-variation\ncounters), and finally texturize over the whole.",
             "implements": [],
             "extends": null,
@@ -19604,11 +19604,24 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 87,
-                "end": 92
+                "line": 93,
+                "end": 98
             },
             "cases": [],
-            "constants": [],
+            "constants": [
+                {
+                    "name": "CLASSNAME_ALWAYS",
+                    "value": "array (   0 => 'core/query-pagination-next',   1 => 'core/query-pagination-numbers',   2 => 'core/query-pagination-previous', )",
+                    "doc": "The dynamic core blocks that ask block_default_classname even when they render nothing (generatedClass()).",
+                    "visibility": "private"
+                },
+                {
+                    "name": "CLASSNAME_NEVER",
+                    "value": "array (   0 => 'core/rss',   1 => 'core/widget-group',   2 => 'core/tabs',   3 => 'core/tab-list',   4 => 'core/tab-panel',   5 => 'core/accordion',   6 => 'core/accordion-item', )",
+                    "doc": "The dynamic core blocks that never ask it (the tabs and accordion blocks edit their saved markup instead).",
+                    "visibility": "private"
+                }
+            ],
             "properties": [
                 {
                     "name": "dynamic",
@@ -19643,6 +19656,15 @@
                     "readonly": false,
                     "static": false,
                     "doc": "Whether the next block renders as its render callback called alone would (renderNativeAsCallback()).",
+                    "visibility": "private",
+                    "promoted": false
+                },
+                {
+                    "name": "imageFinish",
+                    "type": "mixed",
+                    "readonly": false,
+                    "static": false,
+                    "doc": "",
                     "visibility": "private",
                     "promoted": false
                 },
@@ -19738,8 +19760,8 @@
                     "doc": "The per-request rendering state: counters, containers, variations, the images seen.",
                     "shapes": [],
                     "params": [],
-                    "line": 95,
-                    "end": 98
+                    "line": 101,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -19750,8 +19772,8 @@
                     "doc": "What is being rendered.",
                     "shapes": [],
                     "params": [],
-                    "line": 101,
-                    "end": 104
+                    "line": 107,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -19770,8 +19792,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 110
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -19782,8 +19804,8 @@
                     "doc": "The image tag builder.",
                     "shapes": [],
                     "params": [],
-                    "line": 113,
-                    "end": 116
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -19802,8 +19824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 119,
-                    "end": 161
+                    "line": 125,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -19831,8 +19853,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 177
+                    "line": 176,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -19860,8 +19882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 185,
-                    "end": 188
+                    "line": 191,
+                    "end": 194
                 },
                 {
                     "routes": [],
@@ -19880,8 +19902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 196,
-                    "end": 210
+                    "line": 202,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -19900,8 +19922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 222,
-                    "end": 225
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -19922,8 +19944,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 232,
-                    "end": 239
+                    "line": 238,
+                    "end": 245
                 },
                 {
                     "routes": [],
@@ -19942,8 +19964,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 254
+                    "line": 252,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -19962,8 +19984,30 @@
                             "doc": ""
                         }
                     ],
-                    "line": 262,
-                    "end": 270
+                    "line": 268,
+                    "end": 276
+                },
+                {
+                    "routes": [],
+                    "name": "finishImagesWith",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "finishImagesWith(callable $finish): void",
+                    "doc": "What the runtime does to an image block's markup once the engine has\nrendered it: the lightbox, when the image's settings or the theme's ask\nfor one.",
+                    "shapes": [
+                        "@param callable(string, Block): string $finish"
+                    ],
+                    "params": [
+                        {
+                            "name": "finish",
+                            "type": "callable",
+                            "shape": "callable(string, Block): string",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 285,
+                    "end": 288
                 },
                 {
                     "routes": [],
@@ -19984,8 +20028,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 283
+                    "line": 298,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -19998,8 +20042,8 @@
                         "@return array<string, mixed>|null"
                     ],
                     "params": [],
-                    "line": 292,
-                    "end": 295
+                    "line": 310,
+                    "end": 313
                 },
                 {
                     "routes": [],
@@ -20018,8 +20062,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 298,
-                    "end": 349
+                    "line": 316,
+                    "end": 367
                 },
                 {
                     "routes": [],
@@ -20032,8 +20076,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 358,
-                    "end": 362
+                    "line": 376,
+                    "end": 380
                 },
                 {
                     "routes": [],
@@ -20061,8 +20105,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 373
+                    "line": 383,
+                    "end": 391
                 },
                 {
                     "routes": [],
@@ -20081,8 +20125,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 381,
-                    "end": 384
+                    "line": 399,
+                    "end": 402
                 },
                 {
                     "routes": [],
@@ -20108,8 +20152,35 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 219
+                    "line": 218,
+                    "end": 225
+                },
+                {
+                    "routes": [],
+                    "name": "generatedClass",
+                    "static": false,
+                    "visibility": "private",
+                    "signature": "generatedClass(Minn\\Blocks\\Block $block, string $html): string",
+                    "doc": "A dynamic core block's own class through block_default_classname, as\nthe reference asks it while the block takes its wrapper attributes:\nfor a block that renders something (the query pagination links even\nwhen they do not; the RSS and widget-group blocks never), and a class\na plugin changes replaces the block's on its wrapper.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "block",
+                            "type": "Minn\\Blocks\\Block",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "html",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 411,
+                    "end": 423
                 },
                 {
                     "routes": [],
@@ -20128,8 +20199,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 387,
-                    "end": 390
+                    "line": 426,
+                    "end": 429
                 },
                 {
                     "routes": [],
@@ -20157,8 +20228,8 @@
                             "doc": "the bound attributes' values, put into a static block's HTML"
                         }
                     ],
-                    "line": 393,
-                    "end": 416
+                    "line": 432,
+                    "end": 458
                 },
                 {
                     "routes": [],
@@ -20198,8 +20269,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 418,
-                    "end": 438
+                    "line": 460,
+                    "end": 482
                 },
                 {
                     "routes": [],
@@ -20210,8 +20281,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 440,
-                    "end": 445
+                    "line": 484,
+                    "end": 489
                 }
             ]
         },

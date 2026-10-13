@@ -71,10 +71,16 @@ final class Renderer
     private array $dynamic = [];
     /** @var array<string, callable> the engine's own renderers, kept when a plugin's callback takes a block over */
     private array $native = [];
+    /** The dynamic core blocks that ask block_default_classname even when they render nothing (generatedClass()). */
+    private const CLASSNAME_ALWAYS = ['core/query-pagination-next', 'core/query-pagination-numbers', 'core/query-pagination-previous'];
+    /** The dynamic core blocks that never ask it (the tabs and accordion blocks edit their saved markup instead). */
+    private const CLASSNAME_NEVER = ['core/rss', 'core/widget-group', 'core/tabs', 'core/tab-list', 'core/tab-panel', 'core/accordion', 'core/accordion-item'];
     /** Whether the next block renders without the block filters around it (renderNativeUnfiltered()). */
     private bool $unfiltered = false;
     /** Whether the next block renders as its render callback called alone would (renderNativeAsCallback()). */
     private bool $asCallback = false;
+    /** @var (callable(string, Block): string)|null what the runtime does to an image block once it is rendered (its lightbox) */
+    private $imageFinish = null;
     /** @var array<string, mixed>|null the context render_block_context gave the next block (handContext()) */
     private ?array $handed = null;
     /** @var array<string, mixed>|null that context, for the block that has just started to render (ownContext()) */
@@ -270,6 +276,18 @@ final class Renderer
     }
 
     /**
+     * What the runtime does to an image block's markup once the engine has
+     * rendered it: the lightbox, when the image's settings or the theme's ask
+     * for one.
+     *
+     * @param callable(string, Block): string $finish
+     */
+    public function finishImagesWith(callable $finish): void
+    {
+        $this->imageFinish = $finish;
+    }
+
+    /**
      * The context render_block_context already gave the next block, when
      * render_block() or a WP_Block renders it: a block that provides its
      * own context (a tabs block's id) reads it with ownContext() rather
@@ -383,6 +401,27 @@ final class Renderer
         return str_starts_with($name, 'core/') && ($this->dynamic[$name] ?? null) === ($this->native[$name] ?? null);
     }
 
+    /**
+     * A dynamic core block's own class through block_default_classname, as
+     * the reference asks it while the block takes its wrapper attributes:
+     * for a block that renders something (the query pagination links even
+     * when they do not; the RSS and widget-group blocks never), and a class
+     * a plugin changes replaces the block's on its wrapper.
+     */
+    private function generatedClass(Block $block, string $html): string
+    {
+        $always = in_array($block->name, self::CLASSNAME_ALWAYS, true);
+        if (($html === '' && !$always) || in_array($block->name, self::CLASSNAME_NEVER, true) || (CoreBlocks::supports((string) $block->name)['className'] ?? true) === false) {
+            return $html;
+        }
+        $default = 'wp-block-' . substr((string) $block->name, 5);
+        $class = (string) Runtime::hooks()->filter('block_default_classname', [$default, $block->name]);
+        if ($class === $default || $html === '') {
+            return $html;
+        }
+        return (string) preg_replace('/^(\s*<[a-z][^>]*?\sclass="(?:[^"]*\s)?)' . preg_quote($default, '/') . '(?=[\s"])/', '${1}' . $class, $html, 1);
+    }
+
     /** A core block's wp-elements-N class, its rules recorded, when the engine renders it itself. */
     private function elementsClass(Block $block): ?string
     {
@@ -401,8 +440,11 @@ final class Renderer
             $out = ($this->dynamic[$block->name])($block, $this);
             $this->state->setPendingElements($outer);
             $this->state->setPendingVariation($outerVariation);
+            if (str_starts_with($block->name, 'core/')) {
+                return $this->rendersNatively($block->name) ? $this->generatedClass($block, $out) : $out;
+            }
             // A plugin's block gets the content image treatment the reference applies to the_content.
-            return str_starts_with($block->name, 'core/') ? $out : $this->images->enrichPlugin($out);
+            return $this->images->enrichPlugin($out);
         }
         // A parent's element styles and style variation number before its children's.
         $elements = $this->elementsClass($block);
@@ -428,7 +470,9 @@ final class Renderer
             'core/group', 'core/columns', 'core/column', 'core/quote', 'core/details', 'core/buttons', 'core/accordion-panel' => Html::addClasses($html, Layout::classes($block->name, $block->attrs)),
             'core/gallery' => $this->images->enrichGallery(Html::addClasses($html, ['wp-block-gallery-' . self::gallery(), 'is-layout-flex', 'wp-block-gallery-is-layout-flex'])),
             'core/cover' => Html::addClasses($this->images->enrich($html), Layout::classes($block->name, $block->attrs), 'wp-block-cover__inner-container'),
-            'core/image', 'core/media-text' => $this->images->enrich($html),
+            // The lightbox goes on before the image's loading attributes, as the reference adds them (to the front of the tag) after it.
+            'core/image' => $this->images->enrich($this->imageFinish === null ? $html : ($this->imageFinish)($html, $block)),
+            'core/media-text' => $this->images->enrich($html),
             // Third-party blocks pass through as stored; their images still
             // count toward the page's loading rules, as the reference's
             // content filter sees them.

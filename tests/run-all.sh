@@ -92,6 +92,8 @@ if [ -d browser/node_modules ]; then
 	node browser/admin-views.test.js || failed=1
 	printf "\n=== browser: interactivity (dogfood) ===\n"
 	node browser/interactivity.test.js || failed=1
+	printf "\n=== browser: interactive blocks (dev site) ===\n"
+	node browser/interactive-blocks.test.js || failed=1
 fi
 
 printf '\n'
