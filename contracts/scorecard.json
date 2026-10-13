@@ -42,12 +42,13 @@
         "provenOfLive": 94.2,
         "provenWeighted": 96.2
     },
-    "wordpressCalls": {
-        "calls": 1018,
+    "wordpressNames": {
+        "functionCalls": 1018,
         "functions": 384,
-        "families": 55,
-        "files": 140,
-        "hookApi": 384
+        "hookApi": 384,
+        "classReferences": 568,
+        "classes": 50,
+        "files": 168
     },
     "coverage": {
         "measured": "2026-10-13",
@@ -143,6 +144,13 @@
             "label": "Calls into the hook API by its WordPress names",
             "ceiling": 384,
             "started": 384,
+            "since": "bedecc5d",
+            "rose": false
+        },
+        "wordpressClassCeiling": {
+            "label": "References to WordPress classes",
+            "ceiling": 568,
+            "started": 568,
             "since": "",
             "rose": false
         },

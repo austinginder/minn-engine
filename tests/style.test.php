@@ -342,10 +342,15 @@ foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, Fil
 arsort($callersByFile);
 $check("engine: Runtime::booted() branches stay at or under {$bootedCeiling}", $booted <= $bootedCeiling, (string) $booted);
 $check("engine: calls into the hook API by its WordPress names stay at or under {$hookApiCeiling}", $hookApiCalls <= $hookApiCeiling, (string) $hookApiCalls);
-// Each of those calls, by function and file, is tracked in contracts/api/wordpress-calls.json (measure 15 of the
-// release gate: 0 before an engine release, Austin 2026-10-13). Regenerate with `php tests/tools/wordpress-calls.php`.
-exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/wordpress-calls.php') . ' --check', $ignored, $wordpressCallsStale);
-$check('engine: contracts/api/wordpress-calls.json is current', $wordpressCallsStale === 0, 'run php tests/tools/wordpress-calls.php');
+// Each of those calls, and every WordPress class src/Minn names, is tracked by function, class and file in
+// contracts/api/wordpress-names.json (measure 15 of the release gate: all 0 before an engine release, Austin 2026-10-13:
+// Minn is a clean slate). Regenerate with `php tests/tools/wordpress-names.php`. The class count is read from that list,
+// which this check keeps current.
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/wordpress-names.php') . ' --check', $ignored, $wordpressNamesStale);
+$check('engine: contracts/api/wordpress-names.json is current', $wordpressNamesStale === 0, 'run php tests/tools/wordpress-names.php');
+$wordpressClassCeiling = 568;
+$wordpressClassReferences = (int) ((json_decode((string) file_get_contents(dirname(__DIR__) . '/contracts/api/wordpress-names.json'), true)['summary'] ?? [])['classReferences'] ?? PHP_INT_MAX);
+$check("engine: references to WordPress classes stay at or under {$wordpressClassCeiling}", $wordpressClassReferences <= $wordpressClassCeiling, (string) $wordpressClassReferences);
 $check("engine: calls into WordPress-named functions (the hook API aside) stay at or under {$wordpressCallCeiling}", $wordpressCalls <= $wordpressCallCeiling, $wordpressCalls . ', most in ' . implode(', ', array_map(static fn ($file, $n) => "{$file} {$n}", array_keys(array_slice($callersByFile, 0, 5, true)), array_slice($callersByFile, 0, 5, true))));
 
 // Track H: Minn talks to Minn, never to wordpress.org. Every address that has
