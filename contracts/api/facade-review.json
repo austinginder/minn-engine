@@ -1778,6 +1778,724 @@
                 "body": "20a0ba6b9ebd"
             }
         },
+        "media.php": {
+            "_minn_attachment_sizes_as_asked": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "called from Rest\\MediaController, the engine reaching back into the facade; suspending sizes and conversion around metadata generation is engine work",
+                "body": "b4a21256e87a"
+            },
+            "_minn_attachment_sources": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PostGalleries",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the unique attachment URLs for a gallery's ids",
+                "body": "cb2fcfe3923a"
+            },
+            "_minn_av_instance": {
+                "verdict": "delegate",
+                "to": "Minn\\Content\\MediaShortcodes::instance",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "an exact copy of the private MediaShortcodes::instance counter with the same av_instance_ keys; open that method and call it",
+                "body": "6efd9c1199b3"
+            },
+            "_minn_block_galleries": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PostGalleries",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "walks the block tree for gallery blocks, old and new format, as markup or ids and sources",
+                "body": "aa2a0361b020"
+            },
+            "_minn_gallery_attachments": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the gallery's attachment query (include, or the parent's children less exclude)",
+                "body": "d97866e232df"
+            },
+            "_minn_gallery_item": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "picks the link or image per the link attribute and builds the item's orientation and caption",
+                "body": "1577d78cd275"
+            },
+            "_minn_image_scaled": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the scaled-copy step of the subsize algorithm (resize, EXIF rotate, save as -scaled)",
+                "body": "c28c71a70c9a"
+            },
+            "_minn_image_sources": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PostGalleries",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "extracts the unique src values from gallery markup",
+                "body": "1efbc21799e5"
+            },
+            "_minn_image_upright": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the rotate-or-convert step of the subsize algorithm",
+                "body": "40ea5a13beb4"
+            },
+            "_minn_media_attach": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the shared step that names, inserts and generates metadata for a stored file",
+                "doubt": "an ID in post_data is not unset, so it can overwrite an existing attachment, which WordPress prevents",
+                "body": "9a15b37ca664"
+            },
+            "_minn_missing_pdf_sizes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "called from Rest\\MediaObject; the fallback sizes a PDF lacks are subsize logic",
+                "body": "999e2bac387c"
+            },
+            "_minn_pdf_previews": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "renders the -pdf.jpg preview, stores it as full and makes the fallback sizes from it",
+                "doubt": "renders the preview even when no fallback size is registered (WordPress then skips the editor) and forces every fallback size uncropped, not only thumbnail",
+                "body": "d161b4559d9d"
+            },
+            "_minn_playlist_attachments": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the playlist's attachment query (include, or the readable parent's children)",
+                "body": "941d9b3dc281"
+            },
+            "_minn_playlist_track": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "gates": [
+                    "unprobed",
+                    "refs"
+                ],
+                "why": "builds a track's data from the attachment, its metadata and thumbnail by rules",
+                "body": "4de2f7b50b06"
+            },
+            "_minn_refuses_unsupported_image": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Upload",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the unsupported-image upload refusal, called from Rest\\MediaController and the REST class; belongs beside Upload::refusal",
+                "body": "6a16479b7734"
+            },
+            "_minn_shortcode_galleries": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PostGalleries",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "runs each [gallery] shortcode with the post's id and collects markup or attributes and sources",
+                "body": "12369e65d2e5"
+            },
+            "_wp_add_additional_image_sizes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the two big sizes through add_image_size, as a plugin would, so they land in $_wp_additional_image_sizes where plugins look",
+                "body": "2eb01af36865"
+            },
+            "_wp_get_attachment_relative_path": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Uploads",
+                "why": "path parsing, including the pre-2.7 wp-content/uploads strip; beside the other upload path helpers",
+                "body": "786798e2780c"
+            },
+            "_wp_image_editor_choose": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEditors",
+                "why": "filters the editor class list and picks the first that passes test, type and method checks; a selection rule the engine can run over class names",
+                "doubt": "ignores output_mime_type where WordPress prefers an editor that also writes the output type, and the cache entry and key it reads are never used",
+                "body": "c6521610103a"
+            },
+            "_wp_image_meta_replace_original": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "rewrites the attached file and the meta's size, file and original_image fields; stored-data shape the engine owns",
+                "body": "8623c9cd5f7b"
+            },
+            "_wp_make_subsizes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "orders the missing sizes, rotates once and saves the meta after each size; the subsize loop",
+                "doubt": "only medium and large go first where WordPress also puts thumbnail and medium_large ahead, and an editor without make_subsize gets no multi_resize fallback",
+                "body": "a8c5dbeda8b6"
+            },
+            "_wp_post_thumbnail_class_filter": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a named filter callback that appends wp-post-image to the attributes it is handed; nothing for the engine to own",
+                "body": "153d2fed3b23"
+            },
+            "add_image_size": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "writes the size into $_wp_additional_image_sizes, the global plugins read and hash; the engine already reads its sizes from there",
+                "body": "d572a8fd8b9f"
+            },
+            "attachment_url_to_postid": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "turns the URL into an uploads-relative path (scheme swap, base strip) and looks it up; the lookup is already PostLookup::attachmentIdByFile",
+                "doubt": "the attachment_url_to_postid filter gets 0 for no match where WordPress passes null",
+                "body": "9543b15bebd6"
+            },
+            "delete_post_thumbnail": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post then delete_post_meta on _thumbnail_id",
+                "body": "3eed8727a12e"
+            },
+            "file_is_displayable_image": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageMime",
+                "why": "reads the header and checks the type against the displayable list; a file rule for the engine",
+                "doubt": "the file_is_displayable_image filter never fires and AVIF is missing from the displayable types",
+                "body": "199b63608003"
+            },
+            "file_is_valid_image": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageMime",
+                "why": "reads the file's image header; the engine already sniffs files with getimagesize in ImageMime",
+                "body": "b9489022b4f8"
+            },
+            "gallery_shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "why": "the [gallery] shortcode: ids, attributes, post_gallery, the attachment query, items and style before Gallery::render; shortcode behaviour beside [video] and [audio]",
+                "doubt": "no is_feed branch, shortcode_atts_gallery fires before post_gallery, caption ids count per item instead of using the gallery's instance, and images get no aria-describedby",
+                "body": "c52a403336b3"
+            },
+            "get_adjacent_image_link": {
+                "verdict": "move",
+                "to": "Minn\\Front\\PostNavigation",
+                "why": "queries the sibling images, finds the neighbour (an outsider counting as last) and builds its link with the filter",
+                "body": "42f62a0ff2e5"
+            },
+            "get_compat_media_markup": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentModel",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "builds the compat form markup from the attachment fields; markup by rules for the modal model",
+                "doubt": "attachment_fields_to_edit gets [] instead of the default fields, and only fields carrying their own tr are rendered",
+                "body": "a6a192213cad"
+            },
+            "get_image_tag": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "builds the editor's img element (class by align, size and id, title, dimensions) with its filters; markup by rules beside AttachmentImages::image",
+                "body": "53d6bac35236"
+            },
+            "get_media_embedded_in_content": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "why": "filters the allowed media tags and extracts them from content with its own regex; a content parser the engine should own",
+                "body": "49626dcbee1c"
+            },
+            "get_post_galleries": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PostGalleries",
+                "why": "finds the shortcode and block galleries in a post and shapes them as markup or data, with its filter; a content parser",
+                "body": "8ebc13733485"
+            },
+            "get_post_galleries_images": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_galleries as data, plucking each src list",
+                "body": "2d3b0d738e5b"
+            },
+            "get_post_gallery": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_galleries, its first entry, then its own get_post_gallery filter",
+                "body": "58fc897ec61c"
+            },
+            "get_post_gallery_images": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_gallery as data and its src list, empty for none",
+                "body": "358a1d11c397"
+            },
+            "get_the_post_thumbnail": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_thumbnail_id and wp_get_attachment_image wrapped in its own post_thumbnail_size, begin and end fetch actions and post_thumbnail_html, which plugins hook",
+                "body": "36c7e2c89ea0"
+            },
+            "get_the_post_thumbnail_caption": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_thumbnail_id then wp_get_attachment_caption, empty string for none",
+                "body": "cdd7c1fdf141"
+            },
+            "get_the_post_thumbnail_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_thumbnail_id and wp_get_attachment_image_url, then its own post_thumbnail_url filter",
+                "body": "467d27ac94ee"
+            },
+            "image_add_caption": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "why": "cleans the caption, strips the align class and builds the [caption] shortcode by rules, with its filters",
+                "body": "7f138a71a0da"
+            },
+            "image_make_intermediate_size": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_image_editor, then the editor's own resize and save, each a method a plugin's editor may override",
+                "body": "752df3dfc410"
+            },
+            "image_resize": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then the current editor API (wp_get_image_editor and the editor's own methods)",
+                "body": "2c3eeaff6b22"
+            },
+            "image_resize_dimensions": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "the guards, image_resize_dimensions and wp_image_resize_identical_dimensions filters wrap Sizing::resize the way AttachmentImages::constrain wraps Sizing::constrain",
+                "body": "436e6f014153"
+            },
+            "img_caption_shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "why": "the [caption] shortcode: splits the caption from the content, filters, works out ids, width and class and builds figure or div markup",
+                "doubt": "a caption attribute with HTML is not passed through wp_kses, caption_id is not sanitized, and the non-HTML5 form never adds aria-describedby to the img",
+                "body": "a5637058f4cd"
+            },
+            "is_local_attachment": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "home_url checks, then url_to_postid and get_post, whose filters plugins hook",
+                "body": "84db0a074096"
+            },
+            "media_handle_sideload": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "stores the file, turns an error into a WP_Error and creates the attachment; the creation flow belongs beside Attachments::insert",
+                "doubt": "the parent post's date never reaches wp_handle_sideload, so the file lands in the current month folder, and the EXIF title and caption are not used",
+                "body": "8f33a7c2c21b"
+            },
+            "media_handle_upload": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "takes the request's file, picks the upload time from the parent post and creates the attachment; engine upload flow",
+                "doubt": "reads the engine's request files, not $_FILES as plugins may have changed it, and the title comes from the stored file name, not the sanitized original name or the EXIF title",
+                "body": "540731c51c55"
+            },
+            "media_sideload_image": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "downloads, sideloads, cleans up on failure and answers by return type; an engine flow with a markup shape at the end",
+                "doubt": "no image_sideload_extensions check (WordPress refuses a non-image URL with 'Invalid image URL.') and no _source_url meta is stored",
+                "body": "1db8e5a3a8ad"
+            },
+            "remove_image_size": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "removes the entry from $_wp_additional_image_sizes, the global plugins read; the global itself is the point",
+                "body": "3a879b088d11"
+            },
+            "set_post_thumbnail": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post, wp_get_attachment_image and update or delete_post_meta, whose meta hooks plugins watch; the only rule is that a non-image clears it",
+                "body": "fa28967d6f8c"
+            },
+            "the_post_thumbnail_url": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "echoes get_the_post_thumbnail_url's address, escaped, when there is one",
+                "body": "37d3152eb2d4"
+            },
+            "wp_add_crossorigin_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ClientProcessing",
+                "why": "walks the markup and adds crossorigin to off-site scripts, links and media by rules; engine markup work that Minn\\Html\\Tags can do",
+                "body": "b311f4826663"
+            },
+            "wp_create_image_subsizes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "builds the image meta, applies the big-image threshold or rotation, saves it and makes the sizes; the subsize algorithm",
+                "doubt": "the big_image_size_threshold applies to PNGs too, which WordPress leaves unscaled",
+                "body": "a16d1f8f989b"
+            },
+            "wp_exif_date2ts": {
+                "verdict": "move",
+                "to": "Minn\\Media\\PhotoMeta",
+                "why": "EXIF date parsing; PhotoMeta has its own private exifTime (read as UTC), one owner for both",
+                "body": "98b4cb9089b8"
+            },
+            "wp_exif_frac2dec": {
+                "verdict": "move",
+                "to": "Minn\\Media\\PhotoMeta",
+                "why": "EXIF fraction parsing; PhotoMeta has its own looser private fraction, one owner for both",
+                "body": "91044a6931a3"
+            },
+            "wp_generate_attachment_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "dispatches by type to subsizes, the media readers or PDF previews and adds the file size; Handoff::attachmentMetadata asks the layer for what should be the engine's",
+                "doubt": "(array) of a reader's false is [false], not empty, so a failing video or audio reader leaves a 0 => false entry instead of the file size",
+                "body": "1a36273da0db"
+            },
+            "wp_get_attachment_caption": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post, an attachment check and the wp_get_attachment_caption filter over the post's excerpt",
+                "body": "3875240b3376"
+            },
+            "wp_get_attachment_id3_keys": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "the per-context table of audio and video metadata labels with its filter",
+                "body": "b092a185f344"
+            },
+            "wp_get_attachment_image_sizes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_attachment_image_src, wp_get_attachment_metadata and wp_calculate_image_sizes chained with guards",
+                "doubt": "returns false when no metadata is stored, though wp_calculate_image_sizes needs only the width WordPress already has",
+                "body": "4096076c6d13"
+            },
+            "wp_get_attachment_image_srcset": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_attachment_image_src, wp_get_attachment_metadata and wp_calculate_image_srcset chained with guards",
+                "doubt": "a non-array image_meta or none stored returns false before wp_calculate_image_srcset and its wp_calculate_image_srcset_meta filter run; WordPress passes it on",
+                "body": "0119411505b7"
+            },
+            "wp_get_attachment_image_url": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\AttachmentImages::src",
+                "why": "AttachmentImages::src is the whole job, its filter included; the facade only takes the first entry or false",
+                "body": "cb3cc652f723"
+            },
+            "wp_get_attachment_link": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "picks the link text (text, image, title, file name), filters the attributes and builds the anchor; markup by rules beside AttachmentImages::image",
+                "doubt": "'Missing Attachment' is returned untranslated, and an attachment with no file URL is not treated as missing",
+                "body": "f7bb78a6e77b"
+            },
+            "wp_get_attachment_thumb_url": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_attachment_image_url at the thumbnail size, then its own wp_get_attachment_thumb_url filter; no rule of its own",
+                "body": "99502f6c4b2c"
+            },
+            "wp_get_avif_info": {
+                "verdict": "move",
+                "to": "Minn\\Media\\AvifInfo",
+                "why": "reads the file's first megabyte for AvifInfo::read; the file read belongs in the engine as a file-taking entry point",
+                "body": "025d4808eb4a"
+            },
+            "wp_get_image_editor": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_check_filetype, wp_get_image_editor_output_format and _wp_image_editor_choose, then constructs and loads the editor class a plugin may have chosen",
+                "doubt": "an unknown type sets mime_type to '' instead of leaving it unset, so every editor refuses where WordPress lets the editor detect the type",
+                "body": "0d647e470373"
+            },
+            "wp_get_image_editor_output_format": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEditors",
+                "why": "the default HEIC and HEIF to JPEG map with its filter is an engine table",
+                "body": "871f01d5a949"
+            },
+            "wp_get_image_encode_quality": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEditors",
+                "why": "the default quality per type and the wp_editor_set_quality and jpeg_quality filters around it are encoding rules the engine should own",
+                "body": "14cea4e2f982"
+            },
+            "wp_get_loading_attr_default": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "deprecated, but carries its own context rules for header parts and main-loop content against the image budget, beside loadingAttributes",
+                "doubt": "no false for the template context, nor for wp_get_attachment_image or the_post_thumbnail inside the_content or before the main loop",
+                "body": "8d9aebc59f5e"
+            },
+            "wp_get_missing_image_subsizes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "why": "measures the original and works out which registered sizes fit and are absent; subsize logic",
+                "doubt": "uses the raw size table instead of wp_get_registered_image_subsizes and its own fit test instead of image_resize_dimensions (height-only and crop sizes differ); empty metadata gives none where WordPress gives every registered size",
+                "body": "67644da4f239"
+            },
+            "wp_get_original_image_path": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "the original_image rule (join the stored name to the attached file's folder) plus its filter, beside Attachments::file",
+                "body": "533eb731dd74"
+            },
+            "wp_get_original_image_url": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "the same original_image rule against the attachment URL, beside Attachments::url",
+                "body": "bee46bd17e7e"
+            },
+            "wp_get_registered_image_subsizes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "builds the subsize table from the engine's sizes and normalises width, height and crop; belongs beside AttachmentImages::sizes",
+                "doubt": "a 0x0 size is kept where WordPress skips it, and a name added only through intermediate_image_sizes is dropped where WordPress reads its {name}_size_w/h options",
+                "body": "2e6d962b6f46"
+            },
+            "wp_getimagesize": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageMime",
+                "gates": [
+                    "refs"
+                ],
+                "why": "reads the image header from the file; file reading the engine already does in ImageMime and Canvas",
+                "doubt": "no fallback to the WebP, AVIF and HEIC header readers when getimagesize cannot parse the file, and a 0x0 result is returned as is",
+                "body": "f5140e5a09ed"
+            },
+            "wp_handle_sideload": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\FileUpload::handle",
+                "gates": [
+                    "refs"
+                ],
+                "why": "FileUpload::handle does the whole sideload; the array cast on the by-reference file and the overrides check are argument conversion",
+                "body": "f48c6c6747bf"
+            },
+            "wp_handle_upload": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\FileUpload::handle",
+                "gates": [
+                    "refs",
+                    "unprobed"
+                ],
+                "why": "FileUpload::handle does the whole upload; the array cast on the by-reference file and the overrides check are argument conversion",
+                "body": "92aae9a1de35"
+            },
+            "wp_high_priority_element_flag": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "maps the API's true, false or other argument onto RenderState's reopen and close, then returns its flag",
+                "body": "f418d5d82911"
+            },
+            "wp_iframe_tag_add_loading_attr": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "the iframe loading rule with its filter; ImageTags::lazyFrame already applies an unfiltered copy of it",
+                "doubt": "an iframe with data-secret (an oEmbed with fallback content) is lazy-loaded, which WordPress skips",
+                "body": "0ef951301579"
+            },
+            "wp_image_add_srcset_and_sizes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "parses src, width and height from the tag, checks the edit hash and rewrites the img with srcset and sizes; ImageTags does the same for content images",
+                "body": "22da7fc5a512"
+            },
+            "wp_image_file_matches_image_meta": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Metadata",
+                "why": "Metadata::namesFile decides it; the type guards and the filter around its answer belong with it",
+                "body": "f6b8af886eda"
+            },
+            "wp_image_src_get_dimensions": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "matches a src to the full size or a stored size in the metadata and filters the answer; dimension lookup beside AttachmentImages::sizeFromMeta",
+                "doubt": "the filter receives the src rewritten from https to http, and the full size matches only an equal basename where WordPress accepts a src that contains it",
+                "body": "c27f2b79fa4b"
+            },
+            "wp_imagecreatetruecolor": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "why": "creates a GD canvas with alpha kept, as Canvas::open already sets up its images",
+                "body": "c21acb341bf9"
+            },
+            "wp_img_tag_add_auto_sizes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "the sizes=auto rule for lazy images with a width; ImageTags::autoSized already applies a looser copy of it, one owner for both",
+                "body": "691d8c186bab"
+            },
+            "wp_img_tag_add_loading_attr": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "deprecated, but checks the tag's src and dimensions, filters the value and writes the loading attribute into the markup itself",
+                "body": "c1af200da6b8"
+            },
+            "wp_img_tag_add_loading_optimization_attrs": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "reads the tag's attributes, asks for the optimization, filters decoding and loading and splices each into the img; content tag rewriting ImageTags does",
+                "body": "20a3081760e5"
+            },
+            "wp_img_tag_add_srcset_and_sizes_attr": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "its own wp_img_tag_add_srcset_and_sizes_attr filter, then wp_image_add_srcset_and_sizes with the stored metadata",
+                "body": "3fc0236757b5"
+            },
+            "wp_img_tag_add_width_and_height_attr": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "parses the src, looks the dimensions up in the metadata and writes width and height into the tag; content tag rewriting",
+                "doubt": "the src keeps its query string, an inline style width does not rescale the dimensions, and any truthy filter result counts where WordPress requires true",
+                "body": "d43b3444cd71"
+            },
+            "wp_is_client_side_media_processing_enabled": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ClientProcessing",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the secure-context rule (SSL or a localhost host from $_SERVER) behind the filter is engine behaviour",
+                "body": "75d9da3ef764"
+            },
+            "wp_load_image": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "why": "deprecated, but reads and decodes the file itself (memory raise, GD decode, error strings) rather than calling wp_get_image_editor",
+                "body": "90cfa7959033"
+            },
+            "wp_make_content_images_responsive": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_filter_content_tags",
+                "body": "599f44639a04"
+            },
+            "wp_match_mime_types": {
+                "verdict": "delegate",
+                "to": "Minn\\Media\\Kind::matchWildcards",
+                "why": "Kind::matchWildcards does the matching; splitting the comma lists into string arrays is argument conversion",
+                "body": "1b5935d487b4"
+            },
+            "wp_maybe_add_fetchpriority_high_attr": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "the fetchpriority decision (a caller's high closes the flag, lazy never gets it, else earned by size) beside earnedPriority and asked",
+                "body": "c8ae6738df42"
+            },
+            "wp_maybe_generate_attachment_metadata": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Attachments",
+                "why": "decides when missing metadata is generated and stores it",
+                "doubt": "no wp_generating_att_{id} transient lock and no check that _wp_attachment_metadata is absent, so concurrent requests can generate twice",
+                "body": "8684e254dea3"
+            },
+            "wp_media_personal_data_exporter": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "pages through the user's uploads and builds export items; beside PersonalData::item",
+                "doubt": "attachments without a URL are still exported and the email address is not trimmed",
+                "body": "e50620da99cf"
+            },
+            "wp_omit_loading_attr_threshold": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentImages",
+                "why": "static state holding the filtered eager-image budget; engine state the loading rules should read",
+                "doubt": "the engine's loading budget (AttachmentImages::byPlace, Blocks\\ImageTags::loadingPrefix) hard-codes three and never reads this filter",
+                "body": "f5daa52d2266"
+            },
+            "wp_playlist_scripts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "enqueues the playlist style and script and hooks the templates, all through public functions by name",
+                "body": "10328560de74"
+            },
+            "wp_playlist_shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Content\\MediaShortcodes",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the [playlist] shortcode: ids, override filter, attributes, feed output, size from $content_width and the track data; beside [video] and [audio]",
+                "body": "422500dcb0f2"
+            },
+            "wp_prepare_attachment_for_js": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\AttachmentModel",
+                "why": "assembles the media modal's attachment model (author, file size, orientation, sizes) with its filters; data built by rules",
+                "doubt": "nonces and editLink are always false where WordPress fills them for a user who can edit, and uploadedToLink, uploadedToTitle and the audio and video length fields are absent",
+                "body": "8cbf65523fd2"
+            },
+            "wp_register_media_personal_data_exporter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adds the media exporter, named by its public callback, to the list it is handed",
+                "body": "904b05366d3f"
+            },
+            "wp_stream_image": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the image_editor_save_pre filter, then the editor's own stream method, which a plugin's editor may override",
+                "doubt": "a GD image (the deprecated path) returns false instead of being streamed through image_save_pre",
+                "body": "8874be7211cf"
+            },
+            "wp_update_image_subsizes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ImageSubsizes",
+                "why": "creates every size or only the missing ones, refilters and stores the meta; the update half of the subsize algorithm",
+                "body": "65ad86a16518"
+            }
+        },
         "meta.php": {
             "_get_meta_table": {
                 "verdict": "keep",
