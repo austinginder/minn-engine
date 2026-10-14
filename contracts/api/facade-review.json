@@ -1294,6 +1294,55 @@
                 "body": "cd3e7585b21b"
             }
         },
+        "defaults/abilities.php": {
+            "_minn_ability_fields": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CoreAbilities",
+                "why": "narrows an ability's answer to the fields asked for",
+                "body": "8d9864d90e5b"
+            },
+            "_minn_ability_get_environment_info": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CoreAbilities",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the environment ability's answer, the database server read through the global $wpdb today",
+                "body": "784ffed314e7"
+            },
+            "_minn_ability_get_site_info": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CoreAbilities",
+                "why": "the site information ability's answer",
+                "body": "ffc42be548e3"
+            },
+            "_minn_ability_get_user_info": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CoreAbilities",
+                "why": "the user information ability's answer for the signed-in user",
+                "body": "3d585c2d5000"
+            },
+            "wp_register_core_abilities": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CoreAbilities",
+                "why": "the three core abilities' definitions (schemas, labels, annotations) are engine data, best kept in a data file the engine registers from as core-block-patterns.json is; registering through wp_register_ability stays",
+                "body": "62dad188bb5d"
+            },
+            "wp_register_core_ability_categories": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers the two core categories through wp_register_ability_category, as a plugin would",
+                "body": "bb2173c40efc"
+            }
+        },
+        "defaults/interactivity.php": {
+            "_minn_block_is_interactive": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Supports",
+                "why": "whether a block's type declares interactivity support",
+                "body": "8f90fa0f4828"
+            }
+        },
         "embed.php": {
             "_minn_oembed_secured": {
                 "verdict": "move",
