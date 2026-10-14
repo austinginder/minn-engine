@@ -16135,6 +16135,16 @@ cron_unschedule_event_error). Each step keeps the pre_ filter that may answer fi
 booted guard. The comparison again leaves out the http-transports probe; the other probes give
 identical output before and after.
 
+**Batch 22, sidebars and menu locations (function calls 286 → 271).** `Runtime\WidgetAreas` now reads
+and writes the stored sidebars: `stored()` (the option without its array version, as sidebars_widgets
+leaves it), `store()` (at array version 3), `current()` (every registered sidebar present and the
+widgets that lost theirs inactive, stored; before widgets_init the stored ones with the registered
+areas filled in empty) and `isRegistered()`. `NavMenu::locations()` is the menu set for each of the
+theme's locations, and `NavMenuItems::prepare()` makes a menu item ready to print unless
+pre_wp_setup_nav_menu_item answers first. The REST sidebars, widgets and menus controllers, the menu
+events and the theme switch call them directly; the facade maps onto them. The http-transports probe
+stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

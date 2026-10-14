@@ -27,7 +27,14 @@ use Minn\Support\Text;
  */
 final class NavMenuItems
 {
-    /** wp_setup_nav_menu_item: the item dressed, whatever it was, then the filter. */
+    /** A menu item made ready to print (wp_setup_nav_menu_item), unless pre_wp_setup_nav_menu_item answers first. */
+    public static function prepare(mixed $item): mixed
+    {
+        $pre = Runtime::hooks()->filter('pre_wp_setup_nav_menu_item', [null, $item]);
+        return $pre !== null ? $pre : self::setUp($item);
+    }
+
+    /** The item dressed, whatever it was, then the filter (what wp_setup_nav_menu_item does past its pre filter). */
     public static function setUp(mixed $item): mixed
     {
         if (is_object($item) && isset($item->post_type)) {

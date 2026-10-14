@@ -1545,7 +1545,7 @@ Route: `GET /wp/v2/menu-locations/{location:[\w-]+} (cap edit_theme_options; or 
 
 One menu location.
 
-Internals: `locationItem()` (private, line 249), `argsFrom()` (private, line 273), `titleFrom()` (private, line 296), `urlFrom()` (private, line 306), `refuse()` (private, line 316), `plain()` (private, line 326)
+Internals: `locationItem()` (private, line 250), `argsFrom()` (private, line 274), `titleFrom()` (private, line 297), `urlFrom()` (private, line 307), `refuse()` (private, line 317), `plain()` (private, line 327)
 
 
 ## NavigationController

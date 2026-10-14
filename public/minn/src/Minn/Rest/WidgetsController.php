@@ -50,7 +50,7 @@ final readonly class WidgetsController
         $only = (string) ($request->query['sidebar'] ?? '');
         $context = Context::of($request);
         $out = [];
-        foreach (\retrieve_widgets() as $sidebar => $widgets) {
+        foreach (WidgetAreas::current() as $sidebar => $widgets) {
             if ($only !== '' && $only !== (string) $sidebar) {
                 continue;
             }

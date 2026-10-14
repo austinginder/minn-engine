@@ -65,7 +65,7 @@ function unregister_sidebar($sidebar_id)
 
 function is_registered_sidebar($sidebar_id)
 {
-    return isset($GLOBALS['wp_registered_sidebars'][$sidebar_id]);
+    return Minn\Runtime\WidgetAreas::isRegistered($sidebar_id);
 }
 
 function wp_register_sidebar_widget($id, $name, $output_callback, $options = [], ...$params)
@@ -156,16 +156,12 @@ function wp_unregister_widget_control($id)
 
 function wp_get_sidebars_widgets($deprecated = true)
 {
-    $sidebars = get_option('sidebars_widgets', []);
-    $sidebars = is_array($sidebars) ? $sidebars : [];
-    unset($sidebars['array_version']);
-    return apply_filters('sidebars_widgets', $sidebars);
+    return Minn\Runtime\WidgetAreas::stored($deprecated);
 }
 
 function wp_set_sidebars_widgets($sidebars_widgets)
 {
-    $sidebars_widgets['array_version'] = 3;
-    update_option('sidebars_widgets', $sidebars_widgets);
+    Minn\Runtime\WidgetAreas::store($sidebars_widgets);
 }
 
 function is_active_sidebar($index)
@@ -510,14 +506,7 @@ function wp_check_widget_editor_deps()
  */
 function retrieve_widgets($theme_changed = false)
 {
-    $stored = wp_get_sidebars_widgets();
-    $areas = array_keys($GLOBALS['wp_registered_sidebars'] ?? []);
-    if (!did_action('widgets_init')) {
-        return $stored + ['wp_inactive_widgets' => []] + array_fill_keys($areas, []);
-    }
-    $sidebars = WidgetAreas::retrieve($stored, $areas, array_keys($GLOBALS['wp_registered_widgets'] ?? []));
-    wp_set_sidebars_widgets($sidebars);
-    return $sidebars;
+    return Minn\Runtime\WidgetAreas::current($theme_changed);
 }
 
 /** The old theme's widget lists fitted to the registered sidebars, the theme's stored inactive widgets as the fallback (Minn\Runtime\WidgetAreas::map, probe sidebars-mapping). */

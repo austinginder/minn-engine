@@ -14,6 +14,7 @@ use Minn\Http\Response;
 use Minn\Http\Policy;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\NavMenu;
 use Minn\Runtime\Refusal;
 use Minn\Runtime\Runtime;
 use Minn\Support\Kses;
@@ -248,7 +249,7 @@ final readonly class MenusController
     /** A location, the menu assigned to it (0 for none), and links to it and its menu when that exists. @return array<string, mixed> */
     private function locationItem(string $name, string $description): array
     {
-        $menu = (int) (\get_nav_menu_locations()[$name] ?? 0);
+        $menu = (int) (NavMenu::locations()[$name] ?? 0);
         $links = [
             'self' => [['href' => $this->url->to('/wp/v2/menu-locations/' . $name), 'targetHints' => ['allow' => ['GET']]]],
             'collection' => [['href' => $this->url->to('/wp/v2/menu-locations')]],

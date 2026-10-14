@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 787,
-        "composes": 2303,
+        "minn": 785,
+        "composes": 2300,
         "leaf": 1019,
-        "noop": 2899,
+        "noop": 2904,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1224,
+        "minnMethods": 1228,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -49732,12 +49732,12 @@
         },
         "get_nav_menu_locations": {
             "file": "theme.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_theme_mod"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\NavMenu::locations"
+            ],
+            "composes": []
         },
         "get_network_option": {
             "file": "option.php",
@@ -54431,7 +54431,9 @@
             "file": "widgets.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\WidgetAreas::isRegistered"
+            ],
             "composes": []
         },
         "is_remote_uri": {
@@ -60357,16 +60359,12 @@
         },
         "retrieve_widgets": {
             "file": "widgets.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\WidgetAreas::retrieve"
+                "Minn\\Runtime\\WidgetAreas::current"
             ],
-            "composes": [
-                "did_action",
-                "wp_get_sidebars_widgets",
-                "wp_set_sidebars_widgets"
-            ]
+            "composes": []
         },
         "revoke_super_admin": {
             "file": "admin.php",
@@ -70221,13 +70219,12 @@
         },
         "wp_get_sidebars_widgets": {
             "file": "widgets.php",
-            "lines": 4,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\WidgetAreas::stored"
+            ],
+            "composes": []
         },
         "wp_get_single_post": {
             "file": "deprecated.php",
@@ -76042,12 +76039,12 @@
         },
         "wp_set_sidebars_widgets": {
             "file": "widgets.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "update_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\WidgetAreas::store"
+            ],
+            "composes": []
         },
         "wp_set_template_globals": {
             "file": "template.php",
@@ -76100,14 +76097,12 @@
         },
         "wp_setup_nav_menu_item": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\NavMenuItems::setUp"
+                "Minn\\Runtime\\NavMenuItems::prepare"
             ],
-            "composes": [
-                "apply_filters"
-            ]
+            "composes": []
         },
         "wp_setup_widgets_block_editor": {
             "file": "theme.php",

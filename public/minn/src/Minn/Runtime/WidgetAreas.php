@@ -10,10 +10,57 @@ namespace Minn\Runtime;
  * by id (the inactive widgets are a sidebar too, with a name and nothing
  * else), finding and moving a widget between sidebars, one widget rendered
  * in its sidebar as dynamic_sidebar renders each (an unregistered widget
- * renders nothing), and the sidebars with every registered one present.
+ * renders nothing), and the sidebars with every registered one present;
+ * the stored sidebars read and written, and which are registered.
  */
 final class WidgetAreas
 {
+    /**
+     * The stored sidebars and their widgets (wp_get_sidebars_widgets), as
+     * sidebars_widgets leaves them.
+     *
+     * @return array<string, mixed>
+     */
+    public static function stored(mixed $deprecated = true): mixed
+    {
+        $sidebars = Runtime::options()->filtered('sidebars_widgets', []);
+        $sidebars = is_array($sidebars) ? $sidebars : [];
+        unset($sidebars['array_version']);
+        return Runtime::hooks()->filter('sidebars_widgets', [$sidebars]);
+    }
+
+    /** The sidebars stored (wp_set_sidebars_widgets), at array version 3. */
+    public static function store(mixed $sidebars): void
+    {
+        $sidebars['array_version'] = 3;
+        OptionWrites::update('sidebars_widgets', $sidebars);
+    }
+
+    /**
+     * The sidebars with every registered one present and the widgets that
+     * lost theirs inactive (retrieve_widgets), stored; before widgets_init,
+     * the stored ones with the registered areas filled in empty.
+     *
+     * @return array<string, mixed>
+     */
+    public static function current(mixed $themeChanged = false): array
+    {
+        $stored = self::stored();
+        $areas = array_keys($GLOBALS['wp_registered_sidebars'] ?? []);
+        if (Runtime::hooks()->actionsDone('widgets_init') === 0) {
+            return $stored + ['wp_inactive_widgets' => []] + array_fill_keys($areas, []);
+        }
+        $sidebars = self::retrieve($stored, $areas, array_keys($GLOBALS['wp_registered_widgets'] ?? []));
+        self::store($sidebars);
+        return $sidebars;
+    }
+
+    /** Whether a sidebar is registered (is_registered_sidebar). */
+    public static function isRegistered(mixed $id): bool
+    {
+        return isset($GLOBALS['wp_registered_sidebars'][$id]);
+    }
+
     public const INACTIVE = 'wp_inactive_widgets';
 
     /** wp_parse_widget_id: ['id_base' => ..., 'number' => n], or the id alone as its base. @return array{id_base: string, number?: int} */
@@ -34,7 +81,7 @@ final class WidgetAreas
     /** wp_find_widgets_sidebar: the sidebar holding a widget, or null. */
     public static function find(string $widgetId): ?string
     {
-        foreach (\wp_get_sidebars_widgets() as $sidebar => $widgets) {
+        foreach (self::stored() as $sidebar => $widgets) {
             if (in_array($widgetId, (array) $widgets, true)) {
                 return (string) $sidebar;
             }
@@ -45,14 +92,14 @@ final class WidgetAreas
     /** wp_assign_widget_to_sidebar: out of every sidebar, then onto the end of one ('' leaves it in none). */
     public static function assign(string $widgetId, string $sidebarId): void
     {
-        $sidebars = \wp_get_sidebars_widgets();
+        $sidebars = self::stored();
         foreach ($sidebars as $sidebar => $widgets) {
             $sidebars[$sidebar] = array_values(array_filter((array) $widgets, static fn ($id) => $id !== $widgetId));
         }
         if ($sidebarId !== '') {
             $sidebars[$sidebarId][] = $widgetId;
         }
-        \wp_set_sidebars_widgets($sidebars);
+        self::store($sidebars);
     }
 
     /** wp_render_widget: a registered widget as its sidebar wraps it, through dynamic_sidebar_params; '' otherwise. */

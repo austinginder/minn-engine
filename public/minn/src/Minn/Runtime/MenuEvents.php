@@ -75,7 +75,7 @@ final readonly class MenuEvents
             (new PostEvents())->deleteForGood($item->id);
         }
         \wp_delete_term($menuId, 'nav_menu');
-        $locations = \get_nav_menu_locations();
+        $locations = NavMenu::locations();
         $kept = array_filter($locations, static fn ($assigned) => (int) $assigned !== $menuId);
         if (count($kept) !== count($locations)) {
             ThemeMods::set('nav_menu_locations', $kept);

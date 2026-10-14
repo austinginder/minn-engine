@@ -229,8 +229,7 @@ function get_registered_nav_menus()
 
 function get_nav_menu_locations()
 {
-    $locations = get_theme_mod('nav_menu_locations');
-    return is_array($locations) ? $locations : [];
+    return Minn\Runtime\NavMenu::locations();
 }
 
 /** Whether a registered location has a menu assigned, through has_nav_menu (probe nav-menu-remaining). */

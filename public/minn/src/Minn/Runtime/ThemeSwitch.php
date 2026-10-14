@@ -33,7 +33,7 @@ final class ThemeSwitch
     {
         $old = Themes::theme();
         $new = Themes::theme($stylesheet);
-        ThemeMods::set('sidebars_widgets', ['time' => time(), 'data' => \wp_get_sidebars_widgets()]);
+        ThemeMods::set('sidebars_widgets', ['time' => time(), 'data' => WidgetAreas::stored()]);
         $locations = ThemeMods::get('nav_menu_locations');
         if ($locations !== false || Runtime::options()->filtered('theme_switch_menu_locations') !== false) {
             OptionWrites::update('theme_switch_menu_locations', $locations, true);
@@ -71,7 +71,7 @@ final class ThemeSwitch
     /** _wp_menus_changed: the leaving theme's menu locations mapped onto the arriving theme's. */
     public static function menusChanged(): void
     {
-        $mapped = self::mapLocations(\get_nav_menu_locations(), Runtime::options()->filtered('theme_switch_menu_locations'));
+        $mapped = self::mapLocations(NavMenu::locations(), Runtime::options()->filtered('theme_switch_menu_locations'));
         ThemeMods::set('nav_menu_locations', $mapped);
         OptionWrites::delete('theme_switch_menu_locations');
     }

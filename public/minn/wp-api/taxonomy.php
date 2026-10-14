@@ -969,8 +969,7 @@ function is_nav_menu_item($menu_item_id = 0)
 /** A menu item, post or term dressed with the fields walkers read (Runtime\NavMenuItems). */
 function wp_setup_nav_menu_item($menu_item)
 {
-    $pre = apply_filters('pre_wp_setup_nav_menu_item', null, $menu_item);
-    return $pre !== null ? $pre : Minn\Runtime\NavMenuItems::setUp($menu_item);
+    return Minn\Runtime\NavMenuItems::prepare($menu_item);
 }
 
 function is_object_in_taxonomy($object_type, $taxonomy)

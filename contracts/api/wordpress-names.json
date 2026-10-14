@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 286,
-        "functions": 194,
+        "functionCalls": 271,
+        "functions": 188,
         "hookApi": 0,
         "classReferences": 151,
         "classes": 32,
-        "files": 109
+        "files": 106
     },
     "families": {
         "functions": {
@@ -15,12 +15,11 @@
             "wp-includes/comment.php": 32,
             "wp-includes/general-template.php": 18,
             "wp-includes/user.php": 16,
-            "wp-includes/widgets.php": 12,
-            "wp-includes/nav-menu.php": 11,
             "wp-includes/functions.php": 11,
             "wp-includes/feed.php": 10,
             "wp-includes/link-template.php": 7,
             "wp-includes/revision.php": 7,
+            "wp-includes/nav-menu.php": 6,
             "wp-includes/kses.php": 6,
             "wp-includes/template.php": 5,
             "wp-admin/includes/plugin.php": 5,
@@ -41,6 +40,7 @@
             "wp-includes/author-template.php": 2,
             "wp-includes/http.php": 2,
             "wp-includes/load.php": 2,
+            "wp-includes/widgets.php": 2,
             "wp-admin/includes/image.php": 2,
             "wp-includes/update.php": 2,
             "wp-includes/embed.php": 1,
@@ -135,24 +135,6 @@
                 "Minn/Front/FeedTemplates.php": 1
             }
         },
-        "get_nav_menu_locations": {
-            "uses": 4,
-            "family": "wp-includes/nav-menu.php",
-            "files": {
-                "Minn/Rest/MenusController.php": 1,
-                "Minn/Runtime/MenuEvents.php": 1,
-                "Minn/Runtime/NavMenu.php": 1,
-                "Minn/Runtime/ThemeSwitch.php": 1
-            }
-        },
-        "retrieve_widgets": {
-            "uses": 4,
-            "family": "wp-includes/widgets.php",
-            "files": {
-                "Minn/Rest/SidebarsController.php": 3,
-                "Minn/Rest/WidgetsController.php": 1
-            }
-        },
         "status_header": {
             "uses": 4,
             "family": "wp-includes/functions.php",
@@ -232,14 +214,6 @@
                 "Minn/Rest/TermsController.php": 1,
                 "Minn/Runtime/MenuItemMarks.php": 1,
                 "Minn/Runtime/ObjectTerms.php": 1
-            }
-        },
-        "wp_get_sidebars_widgets": {
-            "uses": 3,
-            "family": "wp-includes/widgets.php",
-            "files": {
-                "Minn/Runtime/ThemeSwitch.php": 1,
-                "Minn/Runtime/WidgetAreas.php": 2
             }
         },
         "wp_trash_comment": {
@@ -511,14 +485,6 @@
             "family": "wp-includes/plugin.php",
             "files": {
                 "Minn/Runtime/PluginRemoval.php": 2
-            }
-        },
-        "wp_set_sidebars_widgets": {
-            "uses": 2,
-            "family": "wp-includes/widgets.php",
-            "files": {
-                "Minn/Rest/SidebarsController.php": 1,
-                "Minn/Runtime/WidgetAreas.php": 1
             }
         },
         "wp_spam_comment": {
@@ -905,13 +871,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Front/PostEmbed.php": 1
-            }
-        },
-        "is_registered_sidebar": {
-            "uses": 1,
-            "family": "wp-includes/widgets.php",
-            "files": {
-                "Minn/Rest/SidebarsController.php": 1
             }
         },
         "is_uninstallable_plugin": {
@@ -1395,13 +1354,6 @@
             "family": "wp-includes/post.php",
             "files": {
                 "Minn/Runtime/PostEvents.php": 1
-            }
-        },
-        "wp_setup_nav_menu_item": {
-            "uses": 1,
-            "family": "wp-includes/nav-menu.php",
-            "files": {
-                "Minn/Rest/MenuItemObject.php": 1
             }
         },
         "wp_timezone": {

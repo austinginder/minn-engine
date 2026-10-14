@@ -53,8 +53,8 @@ the WordPress runtime plugins load against
 | [`MetaData`](#metadata) | final class | 229 | Metadata as WordPress's meta functions read and write it, for posts, |
 | [`MetaKeys`](#metakeys) | final class | 187 | The meta keys code registers, kept where the reference keeps them |
 | [`MetaTypes`](#metatypes) | final class | 21 | Meta types a plugin brought, by the table it named on $wpdb as |
-| [`NavMenu`](#navmenu) | final class | 88 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
-| [`NavMenuItems`](#navmenuitems) | final class | 154 | Classic menu items as the reference serves them to walkers and plugins |
+| [`NavMenu`](#navmenu) | final class | 99 | wp_nav_menu()'s menu: the one the arguments name, its items marked for |
+| [`NavMenuItems`](#navmenuitems) | final class | 161 | Classic menu items as the reference serves them to walkers and plugins |
 | [`Notices`](#notices) | final class | 96 | The debugging notices plugins and the engine raise: a deprecated function, |
 | [`OEmbed`](#oembed) | final class | 114 | oEmbed as data: provider matching against the wildcard table, response parsing, and the markup an oEmbed payload becomes. |
 | [`ObjectCache`](#objectcache) | final class | 63 | The per-request object cache behind wp_cache_*: groups of keys, nothing persistent. |
@@ -133,7 +133,7 @@ the WordPress runtime plugins load against
 | [`UserQueryRunner`](#userqueryrunner) | final class | 229 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 74 | An account's fields through the filters the reference's wp_insert_user |
 | [`VersionCheck`](#versioncheck) | final class | 27 | Whether the WordPress version Minn reports and the PHP it runs on meet a |
-| [`WidgetAreas`](#widgetareas) | final class | 184 | The widgets helper functions as the reference answers them (probe |
+| [`WidgetAreas`](#widgetareas) | final class | 230 | The widgets helper functions as the reference answers them (probe |
 
 ## Abilities
 
@@ -2594,6 +2594,14 @@ The full table name of a registered meta type, or null.
 wp_nav_menu()'s menu: the one the arguments name, its items marked for
 the page in view (MenuItemMarks), walked, wrapped in the container.
 
+Used by: `Minn\Rest\MenusController`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\ThemeSwitch`
+
+
+### static `locations(): array`
+
+The menu set for each of the theme's locations (get_nav_menu_locations).
+
+- `@return array<string, mixed>`
 
 ### static `build(object $args): string|false|null`
 
@@ -2601,7 +2609,7 @@ The whole menu for wp_nav_menu(): resolve, fetch, decorate, walk,
 wrap, filter. Null when there is no menu (the caller's fallback
 runs); false when the items filtered away to nothing.
 
-Internals: `menuForArgs()` (private, line 51), `wrapId()` (private, line 69), `container()` (private, line 84)
+Internals: `menuForArgs()` (private, line 62), `wrapId()` (private, line 80), `container()` (private, line 95)
 
 
 ## NavMenuItems
@@ -2623,9 +2631,15 @@ sets each up, drops the invalid ones outside the admin, and for ARRAY_A
 output sorts them by the output key and numbers that key from 1, all
 before its filter.
 
+Used by: `Minn\Rest\MenuItemObject`
+
+### static `prepare(mixed $item): mixed`
+
+A menu item made ready to print (wp_setup_nav_menu_item), unless pre_wp_setup_nav_menu_item answers first.
+
 ### static `setUp(mixed $item): mixed`
 
-wp_setup_nav_menu_item: the item dressed, whatever it was, then the filter.
+The item dressed, whatever it was, then the filter (what wp_setup_nav_menu_item does past its pre filter).
 
 ### static `forMenu(Minn\Objects\Term $menu, array $args): array`
 
@@ -2634,7 +2648,7 @@ wp_get_nav_menu_items for a menu found.
 - `@param array<string, mixed> $args`
 - `@return array<int, object>`
 
-Internals: `menuItem()` (private, line 68), `pointsAtPost()` (private, line 91), `pointsAtTerm()` (private, line 108), `pointsAtArchive()` (private, line 122), `custom()` (private, line 134), `post()` (private, line 142), `term()` (private, line 161)
+Internals: `menuItem()` (private, line 75), `pointsAtPost()` (private, line 98), `pointsAtTerm()` (private, line 115), `pointsAtArchive()` (private, line 129), `custom()` (private, line 141), `post()` (private, line 149), `term()` (private, line 168)
 
 
 ## Notices
@@ -2827,7 +2841,7 @@ write them: the name trimmed, alloptions and notoptions stopped, the
 guarded ones refused, the value sanitized, and each change heard before
 and after by the actions plugins hook.
 
-Used by: `Minn\Rest\LiveSettings`, `Minn\Runtime\CronEvents`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Transients`
+Used by: `Minn\Rest\LiveSettings`, `Minn\Runtime\CronEvents`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Transients`, `Minn\Runtime\WidgetAreas`
 
 ### static `add(mixed $option, mixed $value = '', mixed $autoload = NULL): bool`
 
@@ -6133,7 +6147,7 @@ them: read through theme_mod_{name}, a default with %s naming the
 theme's folders, written through pre_set_theme_mod_{name}, and removed one
 by one or all at once.
 
-Used by: `Minn\Front\CustomLogo`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\ThemeSwitch`, `Minn\Theme\ClassicRenderer`
+Used by: `Minn\Front\CustomLogo`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\NavMenu`, `Minn\Runtime\ThemeSwitch`, `Minn\Theme\ClassicRenderer`
 
 ### static `all(): array`
 
@@ -6854,12 +6868,36 @@ widget-helpers): a widget id split into its base and number, a sidebar
 by id (the inactive widgets are a sidebar too, with a name and nothing
 else), finding and moving a widget between sidebars, one widget rendered
 in its sidebar as dynamic_sidebar renders each (an unregistered widget
-renders nothing), and the sidebars with every registered one present.
+renders nothing), and the sidebars with every registered one present;
+the stored sidebars read and written, and which are registered.
 
 - const `INACTIVE` = `'wp_inactive_widgets'`
 - const `MAPPING_GROUPS` = `array (   0 =>    array (     0 => 'sidebar',     1 => 'primary',     2 => 'main',     3 => 'right',   ),   1 =>    array (     0 => 'second',     1 => 'left',   ),   2 =>    array (     0 => 'sidebar-2',     1 => 'footer',     2 => 'bottom',   ),   3 =>    array (     0 => 'header',     1 => 'top',   ), )` — The id fragments a theme switch matches sidebars by, group by group (probe sidebars-mapping).
 
-Used by: `Minn\Rest\SidebarsController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`
+Used by: `Minn\Rest\SidebarsController`, `Minn\Rest\WidgetObject`, `Minn\Rest\WidgetsController`, `Minn\Runtime\ThemeSwitch`
+
+### static `stored(mixed $deprecated = true): mixed`
+
+The stored sidebars and their widgets (wp_get_sidebars_widgets), as
+sidebars_widgets leaves them.
+
+- `@return array<string, mixed>`
+
+### static `store(mixed $sidebars): void`
+
+The sidebars stored (wp_set_sidebars_widgets), at array version 3.
+
+### static `current(mixed $themeChanged = false): array`
+
+The sidebars with every registered one present and the widgets that
+lost theirs inactive (retrieve_widgets), stored; before widgets_init,
+the stored ones with the registered areas filled in empty.
+
+- `@return array<string, mixed>`
+
+### static `isRegistered(mixed $id): bool`
+
+Whether a sidebar is registered (is_registered_sidebar).
 
 ### static `parse(string $id): array`
 
@@ -6920,5 +6958,5 @@ registered and placed nowhere come back, keys kept.
 - `@param list<string> $registered the registered widgets`
 - `@return array<string, array<array-key, mixed>>`
 
-Internals: `inGroup()` (private, line 176), `unmentioned()` (private, line 193)
+Internals: `inGroup()` (private, line 223), `unmentioned()` (private, line 240)
 

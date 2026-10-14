@@ -12,6 +12,17 @@ use Minn\Support\Escape;
  */
 final class NavMenu
 {
+    /**
+     * The menu set for each of the theme's locations (get_nav_menu_locations).
+     *
+     * @return array<string, mixed>
+     */
+    public static function locations(): array
+    {
+        $locations = ThemeMods::get('nav_menu_locations');
+        return is_array($locations) ? $locations : [];
+    }
+
     /** @var list<string> the ul ids already used on this page, so a repeated menu counts up */
     private static array $usedIds = [];
 
@@ -52,7 +63,7 @@ final class NavMenu
     {
         $menu = \wp_get_nav_menu_object($args->menu);
         if (!$menu && $args->theme_location) {
-            $locations = \get_nav_menu_locations();
+            $locations = self::locations();
             return isset($locations[$args->theme_location]) ? \wp_get_nav_menu_object($locations[$args->theme_location]) : false;
         }
         if (!$menu && !$args->theme_location) {

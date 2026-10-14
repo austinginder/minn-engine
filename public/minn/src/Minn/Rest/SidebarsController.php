@@ -48,7 +48,7 @@ final readonly class SidebarsController
         self::ready();
         $manages = $this->caller->can('edit_theme_options');
         $out = [];
-        foreach (array_keys(\retrieve_widgets()) as $id) {
+        foreach (array_keys(WidgetAreas::current()) as $id) {
             $sidebar = WidgetAreas::sidebar((string) $id);
             if ($sidebar !== null && ($manages || !empty($sidebar['show_in_rest']))) {
                 $out[] = $this->item((string) $id);
@@ -83,14 +83,14 @@ final readonly class SidebarsController
         $body = $request->json();
         if (isset($body['widgets']) && is_array($body['widgets'])) {
             $wanted = array_values(array_map(static fn ($w) => is_array($w) ? (string) ($w['id'] ?? '') : (string) $w, $body['widgets']));
-            $sidebars = \retrieve_widgets();
+            $sidebars = WidgetAreas::current();
             $dropped = array_diff((array) ($sidebars[$id] ?? []), $wanted);
             foreach ($sidebars as $other => $widgets) {
                 $sidebars[$other] = array_values(array_diff((array) $widgets, $wanted));
             }
             $sidebars[$id] = $wanted;
             $sidebars[WidgetAreas::INACTIVE] = array_values(array_merge($sidebars[WidgetAreas::INACTIVE] ?? [], $dropped));
-            \wp_set_sidebars_widgets($sidebars);
+            WidgetAreas::store($sidebars);
         }
         return Reply::item($this->item($id), Fields::fromQuery($request->query));
     }
@@ -186,8 +186,8 @@ final readonly class SidebarsController
             'after_widget' => (string) ($sidebar['after_widget'] ?? ''),
             'before_title' => (string) ($sidebar['before_title'] ?? ''),
             'after_title' => (string) ($sidebar['after_title'] ?? ''),
-            'status' => $id !== WidgetAreas::INACTIVE && \is_registered_sidebar($id) && !(bool) Runtime::current()->get('block_theme', true) ? 'active' : 'inactive',
-            'widgets' => array_values(array_filter((array) (\retrieve_widgets()[$id] ?? []), static fn ($widget) => isset($registered[$widget]))),
+            'status' => $id !== WidgetAreas::INACTIVE && WidgetAreas::isRegistered($id) && !(bool) Runtime::current()->get('block_theme', true) ? 'active' : 'inactive',
+            'widgets' => array_values(array_filter((array) (WidgetAreas::current()[$id] ?? []), static fn ($widget) => isset($registered[$widget]))),
             '_links' => [
                 'collection' => [['href' => $this->url->to('/wp/v2/sidebars')]],
                 'self' => [['href' => $this->url->to('/wp/v2/sidebars/' . $id), 'targetHints' => ['allow' => ['GET', 'POST', 'PUT', 'PATCH']]]],
