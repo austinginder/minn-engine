@@ -29,45 +29,12 @@ final class WP_Theme_JSON_Resolver
     /** A theme's user styles post as an array, made when asked and missing; [] when there is none. */
     public static function get_user_data_from_wp_global_styles($theme, $create_post = false, $post_status_filter = ['publish'])
     {
-        $stylesheet = $theme instanceof WP_Theme ? $theme->get_stylesheet() : (string) $theme;
-        $found = get_posts([
-            'post_type' => 'wp_global_styles',
-            'post_status' => $post_status_filter,
-            'numberposts' => 1,
-            'orderby' => 'ID',
-            'order' => 'DESC',
-            'tax_query' => [['taxonomy' => 'wp_theme', 'field' => 'slug', 'terms' => $stylesheet]],
-        ]);
-        if ($found !== []) {
-            return get_object_vars($found[0]);
-        }
-        if (!$create_post || $stylesheet !== get_stylesheet()) {
-            return [];
-        }
-        $id = self::get_user_global_styles_post_id();
-        return $id > 0 ? get_object_vars(get_post($id)) : [];
+        return Minn\Runtime\UserStylesPost::data($theme, $create_post, $post_status_filter);
     }
 
     public static function get_user_global_styles_post_id(): int
     {
-        $stylesheet = get_stylesheet();
-        $found = self::get_user_data_from_wp_global_styles($stylesheet);
-        if ($found !== []) {
-            return (int) $found['ID'];
-        }
-        $id = (int) wp_insert_post([
-            'post_type' => 'wp_global_styles',
-            'post_status' => 'publish',
-            'post_title' => 'Custom Styles',
-            'post_name' => 'wp-global-styles-' . $stylesheet,
-            'post_content' => '{"version": 3, "isGlobalStylesUserThemeJSON": true }',
-            'comment_status' => 'closed',
-            'ping_status' => 'closed',
-        ]);
-        if ($id > 0) {
-            wp_set_post_terms($id, [$stylesheet], 'wp_theme');
-        }
-        return $id;
+        return Minn\Runtime\UserStylesPost::id();
     }
 
     /** Forgets what was worked out: the blocks each origin saw; files read stay read (the engine works the filtered layers out per set of filters, so nothing else goes stale). */

@@ -157,6 +157,7 @@ the WordPress runtime plugins load against
 | [`UserQueryRoles`](#userqueryroles) | final class | 91 | A user query's roles and capabilities as the meta clauses the reference |
 | [`UserQueryRunner`](#userqueryrunner) | final class | 229 | WP_User_Query as the reference runs it (probe wp-user-query-sql): the |
 | [`UserSave`](#usersave) | final class | 74 | An account's fields through the filters the reference's wp_insert_user |
+| [`UserStylesPost`](#userstylespost) | final class | 53 | A theme's user styles post as WordPress's theme.json resolver finds and |
 | [`UserWrites`](#userwrites) | final class | 354 | Accounts written as WordPress's user functions write them: an account |
 | [`VersionCheck`](#versioncheck) | final class | 27 | Whether the WordPress version Minn reports and the PHP it runs on meet a |
 | [`WidgetAreas`](#widgetareas) | final class | 271 | The widgets helper functions as the reference answers them (probe |
@@ -5142,7 +5143,7 @@ viewed, when posts last changed, posts by query arguments and a post's
 children and categories, the SQL that limits a query to what an author
 may read, and the caches primed for a list of posts.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Rest\BlockRendererController`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\UserOrder`, `Minn\Theme\FeedHeaders`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\PostEmbed`, `Minn\Front\RuleTable`, `Minn\Rest\BlockRendererController`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserStylesPost`, `Minn\Theme\FeedHeaders`
 
 ### static `pageUri(mixed $page = 0): mixed`
 
@@ -5503,7 +5504,7 @@ hangs off it, its terms and categories set, made sticky or not; each step
 with the actions the reference fires in its order, and the cached rows
 let go.
 
-Used by: `Minn\Cron\Cron`, `Minn\Rest\MediaController`, `Minn\Runtime\Attachments`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Cron\Cron`, `Minn\Rest\MediaController`, `Minn\Runtime\Attachments`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\UserStylesPost`, `Minn\Runtime\UserWrites`
 
 ### static `insert(mixed $postarr, mixed $wpError = false, mixed $fireAfterHooks = true): mixed`
 
@@ -5710,7 +5711,7 @@ id (or the one being read), made from a row or an object, and given back
 as the object, an associative array (ARRAY_A) or a list (ARRAY_N); and
 whether a value is a list of errors.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Cli\CronCommand`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\CommentObject`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Cli\CronCommand`, `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\CommentObject`, `Minn\Rest\PostsController`, `Minn\Rest\RenderedFields`, `Minn\Rest\RestMeta`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\TermFilters`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Runtime\AbilityRun`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\CronEvents`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserStylesPost`, `Minn\Runtime\UserWrites`
 
 ### static `post(mixed $post = NULL, mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed`
 
@@ -8116,7 +8117,7 @@ disk and its address, each active theme's folder and its address, a theme
 by its folder, every installed theme, and the extra roots plugins
 register.
 
-Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`
+Used by: `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserStylesPost`
 
 ### static `stylesheet(): mixed`
 
@@ -8704,6 +8705,29 @@ update is one whose userdata names an ID.
 - `@param array<string, mixed> $meta`
 - `@param array<string, mixed> $userdata`
 - `@return array<string, mixed>`
+
+
+## UserStylesPost
+
+`final class Minn\Runtime\UserStylesPost` · `public/minn/src/Minn/Runtime/UserStylesPost.php`
+
+A theme's user styles post as WordPress's theme.json resolver finds and
+makes it: the newest wp_global_styles post tied to the theme by its
+wp_theme term, made for the active theme when it is missing.
+
+Used by: `Minn\Rest\InstalledThemesController`
+
+### static `data(mixed $theme, mixed $createPost = false, mixed $statuses = array (   0 => 'publish', )): array`
+
+A theme's user styles post as an array
+(WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles), made
+when asked and missing for the active theme; [] when there is none.
+
+- `@return array<string, mixed>`
+
+### static `id(): int`
+
+The active theme's user styles post id (WP_Theme_JSON_Resolver::get_user_global_styles_post_id), the post made when it is missing.
 
 
 ## UserWrites

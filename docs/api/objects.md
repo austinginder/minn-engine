@@ -305,7 +305,7 @@ headers, folders, templates and files. The engine knows these objects by
 this mark and makes them through Runtime\Handoff, so it never names the
 WordPress layer's class.
 
-Used by: `Minn\Rest\Api`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\Handoff`, `Minn\Runtime\Themes`
+Used by: `Minn\Rest\Api`, `Minn\Rest\InstalledThemesController`, `Minn\Runtime\Handoff`, `Minn\Runtime\Themes`, `Minn\Runtime\UserStylesPost`
 
 
 ## ThemeJsonLayer

@@ -19,6 +19,7 @@ use Minn\Runtime\Runtime;
 use Minn\Runtime\TemplateFiles;
 use Minn\Runtime\Themes;
 use Minn\Runtime\ThemeSupports;
+use Minn\Runtime\UserStylesPost;
 use Minn\Support\Lists;
 
 /**
@@ -135,7 +136,7 @@ final readonly class InstalledThemesController
             'collection' => [['href' => $this->url->to('/wp/v2/themes')]],
         ];
         // The active theme's user styles are made when missing; another theme links to its own only when it has some.
-        $styles = $active ? \WP_Theme_JSON_Resolver::get_user_global_styles_post_id() : (int) (\WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles($stylesheet)['ID'] ?? 0);
+        $styles = $active ? UserStylesPost::id() : (int) (UserStylesPost::data($stylesheet)['ID'] ?? 0);
         if ($styles > 0) {
             $links['wp:user-global-styles'] = [['href' => $this->url->to('/wp/v2/global-styles/' . $styles)]];
         }

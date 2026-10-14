@@ -16350,6 +16350,13 @@ crashed comparison run had left in the uploads folder (removed by name), a Cove 
 browser suites, and the two reds the environment makes (the changelog read from GitHub, the post_date tie).
 The http-transports probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 45, the user styles post.** `Runtime\UserStylesPost` finds and makes a theme's user styles post
+(WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles, get_user_global_styles_post_id); the installed
+themes controller and the WordPress layer's resolver call it. WordPress class references in src reach 0, so
+measure 15 is 0: no WordPress function calls, hook calls by WordPress names, or WordPress class references in
+src/Minn. The http-transports probe stays out of the comparison; the other probes give identical output
+before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

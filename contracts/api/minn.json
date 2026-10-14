@@ -84009,7 +84009,8 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Rest\\InstalledThemesController",
                 "Minn\\Runtime\\Handoff",
-                "Minn\\Runtime\\Themes"
+                "Minn\\Runtime\\Themes",
+                "Minn\\Runtime\\UserStylesPost"
             ],
             "constructor": null,
             "cases": [],
@@ -99029,6 +99030,7 @@
                 "Minn\\Runtime\\TemplateFiles",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Themes",
+                "Minn\\Runtime\\UserStylesPost",
                 "Minn\\Support\\Lists"
             ],
             "usedBy": [
@@ -99055,8 +99057,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 39,
-                "end": 41
+                "line": 40,
+                "end": 42
             },
             "cases": [],
             "constants": [
@@ -99107,8 +99109,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 45,
-                    "end": 61
+                    "line": 46,
+                    "end": 62
                 },
                 {
                     "routes": [
@@ -99136,8 +99138,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 65,
-                    "end": 79
+                    "line": 66,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -99165,8 +99167,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 126
+                    "line": 96,
+                    "end": 127
                 },
                 {
                     "routes": [],
@@ -99187,8 +99189,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 82,
-                    "end": 86
+                    "line": 83,
+                    "end": 87
                 },
                 {
                     "routes": [],
@@ -99209,8 +99211,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 129,
-                    "end": 149
+                    "line": 130,
+                    "end": 150
                 },
                 {
                     "routes": [],
@@ -99221,8 +99223,8 @@
                     "doc": "May list the installed themes.",
                     "shapes": [],
                     "params": [],
-                    "line": 152,
-                    "end": 155
+                    "line": 153,
+                    "end": 156
                 },
                 {
                     "routes": [],
@@ -99233,8 +99235,8 @@
                     "doc": "May read the active theme: anyone who lists themes, or edits a type shown in REST.",
                     "shapes": [],
                     "params": [],
-                    "line": 158,
-                    "end": 161
+                    "line": 159,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -99253,8 +99255,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 166
+                    "line": 164,
+                    "end": 167
                 },
                 {
                     "routes": [],
@@ -99265,8 +99267,8 @@
                     "doc": "A theme's supports come from its own code: without the runtime there is no answer to give.",
                     "shapes": [],
                     "params": [],
-                    "line": 169,
-                    "end": 174
+                    "line": 170,
+                    "end": 175
                 }
             ]
         },
@@ -142265,6 +142267,7 @@
                 "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\UserOrder",
+                "Minn\\Runtime\\UserStylesPost",
                 "Minn\\Theme\\FeedHeaders"
             ],
             "constructor": null,
@@ -144113,6 +144116,7 @@
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\PostRevisions",
+                "Minn\\Runtime\\UserStylesPost",
                 "Minn\\Runtime\\UserWrites"
             ],
             "constructor": null,
@@ -145565,6 +145569,7 @@
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermTags",
                 "Minn\\Runtime\\TermWrites",
+                "Minn\\Runtime\\UserStylesPost",
                 "Minn\\Runtime\\UserWrites"
             ],
             "constructor": null,
@@ -158176,7 +158181,8 @@
                 "Minn\\Runtime\\SiteInfo",
                 "Minn\\Runtime\\ThemeMods",
                 "Minn\\Runtime\\ThemeSwitch",
-                "Minn\\Runtime\\Upgrade"
+                "Minn\\Runtime\\Upgrade",
+                "Minn\\Runtime\\UserStylesPost"
             ],
             "constructor": null,
             "cases": [],
@@ -161214,6 +161220,81 @@
                     ],
                     "line": 85,
                     "end": 92
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\UserStylesPost",
+            "short": "UserStylesPost",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/UserStylesPost.php",
+            "lines": 53,
+            "doc": "A theme's user styles post as WordPress's theme.json resolver finds and\nmakes it: the newest wp_global_styles post tied to the theme by its\nwp_theme term, made for the active theme when it is missing.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Objects\\Theme",
+                "Minn\\Runtime\\PostReads",
+                "Minn\\Runtime\\PostWrites",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Themes"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\InstalledThemesController"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "data",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "data(mixed $theme, mixed $createPost = false, mixed $statuses = array (   0 => 'publish', )): array",
+                    "doc": "A theme's user styles post as an array\n(WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles), made\nwhen asked and missing for the active theme; [] when there is none.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [
+                        {
+                            "name": "theme",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "createPost",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "statuses",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array (   0 => 'publish', )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 42
+                },
+                {
+                    "routes": [],
+                    "name": "id",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "id(): int",
+                    "doc": "The active theme's user styles post id (WP_Theme_JSON_Resolver::get_user_global_styles_post_id), the post made when it is missing.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 45,
+                    "end": 65
                 }
             ]
         },

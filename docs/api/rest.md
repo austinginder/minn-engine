@@ -1242,7 +1242,7 @@ through here); the request is what the supports' callbacks are handed.
 
 - `@return array<string, mixed>`
 
-Internals: `item()` (private, line 82), `links()` (private, line 129), `viewsThemes()` (private, line 152), `viewsActive()` (private, line 158), `status()` (private, line 163), `requireRuntime()` (private, line 169)
+Internals: `item()` (private, line 83), `links()` (private, line 130), `viewsThemes()` (private, line 153), `viewsActive()` (private, line 159), `status()` (private, line 164), `requireRuntime()` (private, line 170)
 
 
 ## Links
