@@ -2347,6 +2347,883 @@
                 "body": "33f843da6a61"
             }
         },
+        "core-blocks-content.php": {
+            "_minn_image_lightbox_state": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageLightbox",
+                "why": "the image's lightbox metadata (full size source, srcset, classes, styles, labels) in the core/image state; lightbox rendering data",
+                "body": "9fb19fdc40af"
+            },
+            "apply_block_core_search_border_style": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "gates": [
+                    "refs"
+                ],
+                "why": "puts one side's border property on the wrapper for a button inside, else on the button and the input, through referenced lists; search style rules",
+                "body": "7cd1e51d5340"
+            },
+            "apply_block_core_search_border_styles": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "gates": [
+                    "refs"
+                ],
+                "why": "the whole border property then each side, placed by the button's position into referenced style lists; search style rules",
+                "body": "588f74d23663"
+            },
+            "block_core_archives_build_dropdown_script": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Archives",
+                "why": "the archives dropdown's navigation script with its id and home URL as JSON in an inline script tag; Archives renders no dropdown yet",
+                "body": "b3f57797c4c1"
+            },
+            "block_core_comment_template_render_comments": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "renders each comment through the template's blocks with its id as context, nests replies when threaded and wraps each in its classed li; Comments::list does the same job",
+                "doubt": "comment_class is asked after the replies render, shifting the odd and even counters, and the global $comment_depth (depth classes, the thread depth limit) is never set",
+                "body": "d435fa6af617"
+            },
+            "block_core_details_set_img_fetchpriority_low": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "sets fetchpriority low on every image inside a details block; an image loading rule, the same body as block_core_navigation_set_overlay_image_fetch_priority",
+                "body": "2d81b53d8d69"
+            },
+            "block_core_gallery_data_id_backcompatibility": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "copies each inner image's id into a data-id attribute on the parsed gallery; ImageTags::enrichGallery adds the same data-id to the rendered markup",
+                "body": "cb9f4836e447"
+            },
+            "block_core_gallery_dynamic_image_link_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Gallery",
+                "why": "the link a dynamic gallery image takes (its file or attachment page, a new tab with noopener) by the gallery's settings; gallery rendering rules",
+                "body": "4fb9a674e86d"
+            },
+            "block_core_gallery_get_column_gap_value": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Gallery",
+                "why": "the left side of a gap with sides, a preset as its custom property, else the fallback; a gallery rule beside Layout::gapCss, which already turns gap presets into properties",
+                "body": "78dabc28cfdb"
+            },
+            "block_core_gallery_render_context": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Gallery",
+                "why": "gives a gallery's images a fresh gallery id as context; the engine's renderer numbers galleries itself (Renderer::gallery)",
+                "body": "f977a5f09114"
+            },
+            "block_core_gallery_render_dynamic_image": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Gallery",
+                "why": "renders a dynamic gallery image at its size, numbers it by data-id and wraps it in its link and figure; gallery image markup by rules",
+                "body": "3f9c77c78535"
+            },
+            "block_core_image_print_lightbox_overlay": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageLightbox",
+                "why": "reads the theme's text and background colours, turns presets into properties and prints the overlay template with them; the overlay rule, its echo staying as the wrapper",
+                "body": "c08de18a9315"
+            },
+            "block_core_image_render_lightbox": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageLightbox",
+                "why": "adds the lightbox directives to the figure and image, stores its metadata and config, hooks the overlay and inserts the trigger button; image finishing the engine applies through finishImagesWith",
+                "body": "997df8c607dd"
+            },
+            "block_core_latest_posts_migrate_categories": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\LatestPosts",
+                "why": "rewrites a latest posts block's old single category id into the list form; block data migration for the latest posts renderer",
+                "body": "6bb7db0f1284"
+            },
+            "block_core_paragraph_add_class": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "why": "adds wp-block-paragraph to a paragraph's first p; Renderer::decorate already adds it to a paragraph's first element",
+                "body": "ff7a2599ba48"
+            },
+            "block_core_post_terms_build_variations": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Variations",
+                "why": "one post terms variation per public REST taxonomy but post formats, category the default; block variation data, as TemplatePartVariations builds for parts",
+                "body": "fa6118ea7fef"
+            },
+            "block_core_social_link_get_color_classes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\SocialLinks",
+                "why": "the icon colour and background preset classes from context, led by a space; SocialLinks::link builds the same classes from its parent",
+                "body": "71d0ea3fe1ab"
+            },
+            "block_core_social_link_get_icon": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\SocialLinks",
+                "why": "a service's icon from the services data, or the share icon for one it does not know; SocialLinks::link applies the same fallback from its own icon data",
+                "body": "05ff054c6f17"
+            },
+            "classnames_for_block_core_search": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "why": "the search block's position, icon button and hidden field classes from its attributes; the engine's Search renderer writes its own copy of these classes",
+                "doubt": "no wp-block-search__text-button for a text button, which the engine's Search renderer and WordPress both add",
+                "body": "f505fc869df0"
+            },
+            "comments_block_form_defaults": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "under a block theme, swaps the comment form's submit button and field for block-styled ones; Comments::commentForm holds the same defaults as a closure",
+                "body": "82b4675881ec"
+            },
+            "enqueue_legacy_post_comments_block_styles": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "enqueues the legacy post comments styles once, behind a static flag, when block assets load per block and not in REST; per-request asset state",
+                "body": "a5c538f332a8"
+            },
+            "get_block_core_post_featured_image_overlay_element_markup": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "builds the featured image overlay span from the dim ratio, overlay colour or gradient and border; PostBlocks::featuredImage renders no overlay yet",
+                "body": "726c371262e2"
+            },
+            "get_border_color_classes_for_block_core_search": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "why": "the named border colour class or the custom has-border-color flag; search class rules",
+                "body": "aabe2967dbde"
+            },
+            "get_color_classes_for_block_core_search": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "why": "the button's has-text-color, has-background and named colour and gradient classes; Search already writes the named ones itself",
+                "body": "7bd67a56b57f"
+            },
+            "get_typography_classes_for_block_core_search": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "why": "the font size and family preset classes from the attributes; Search already writes the family class itself",
+                "body": "547b036dafc0"
+            },
+            "get_typography_styles_for_block_core_search": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "why": "the custom typography as declarations, the font size made fluid; search style rules",
+                "body": "b9ce90629b56"
+            },
+            "post_comments_form_block_form_defaults": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "under a block theme, the block-styled submit button (without the submit class placeholder) and field; Comments::commentForm adds these exact defaults already",
+                "body": "bd6ca53dacfe"
+            },
+            "register_legacy_post_comments_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\CoreBlocks",
+                "why": "unregisters and registers core/post-comments from a hand-written definition; block type data the engine already registers from its block data at boot",
+                "doubt": "the definition does not pass through block_type_metadata as WordPress's does",
+                "body": "47e641d1ed41"
+            },
+            "styles_for_block_core_search": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Search",
+                "why": "assembles the input, button, wrapper and label style attributes from width, border, radius, colours and typography; style rules the Search renderer does not apply yet",
+                "body": "e2ef49827ded"
+            },
+            "wp_latest_comments_draft_or_post_title": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\LatestComments",
+                "why": "a comment's post title escaped, or (no title); LatestComments prints the raw title without that fallback",
+                "doubt": "a title of 0 is kept, where WordPress's empty() check gives (no title)",
+                "body": "a22bb2351dd8"
+            }
+        },
+        "core-blocks-navigation.php": {
+            "_minn_context_submenu_visibility": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "always, click or hover from a submenu's context; the navigation family's rule",
+                "body": "4f295653c7d0"
+            },
+            "_minn_navigation_colors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "has-text-color, has-background and the named colour classes, or the custom colour inline; Navigation's presetClasses and submenuColours hold the same rule privately",
+                "body": "f419a8bcff2f"
+            },
+            "_minn_navigation_overlay_colors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "the overlay colour classes and styles from a source's overlay keys; Navigation::overlayColors computes the classes itself",
+                "body": "2ff695f4c42d"
+            },
+            "_minn_page_list_item": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "a page's opening li with its current, ancestor, child and visibility classes and its link or toggle button; page list markup by rules",
+                "body": "43c28628293a"
+            },
+            "block_core_home_link_build_li_wrapper_attributes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "block_core_home_link_build_css_colors then get_block_wrapper_attributes with the navigation item class; chains public functions with no rule of its own",
+                "body": "1a9f47ecab9c"
+            },
+            "block_core_navigation_add_directives_to_overlay_close": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "puts the close-on-click directive on each overlay close button; navigation interactivity markup",
+                "body": "464caa49f4da"
+            },
+            "block_core_navigation_add_directives_to_submenu": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "walks the markup putting Navigation::submenuDirectives on items with children and the toggle and focus directives on their buttons and lists; the engine's submenu wiring done again over a tag processor",
+                "body": "d3f9a33978d5"
+            },
+            "block_core_navigation_block_tree_has_block_type": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "searches a WP_Block tree for a block type without descending into the skipped types; a recursive tree walk the navigation family owns",
+                "body": "2b1542433765"
+            },
+            "block_core_navigation_build_css_colors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "a navigation's main and overlay colour classes and styles from its attributes; the navigation renderer's colour rule",
+                "body": "3fb3eb708f5f"
+            },
+            "block_core_navigation_from_block_get_post_ids": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "a block's inner links' post ids, then its own when it links to a post; the Navigation::linkedPosts rule",
+                "body": "28bd9d798a08"
+            },
+            "block_core_navigation_get_classic_menu_fallback": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "chooses the classic menu a navigation falls back to (a menu location, else the newest); Menus::fallbackBlocks chooses the first by name instead, one rule for both",
+                "doubt": "WordPress tries the primary location, then a menu whose slug is primary, then the newest; the main and menu-1 locations are not among its checks",
+                "body": "a3266deb2cac"
+            },
+            "block_core_navigation_get_classic_menu_fallback_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "reads a classic menu's items, marks them by context, groups them by parent and serializes them as navigation blocks; menu conversion",
+                "body": "8ace57f84830"
+            },
+            "block_core_navigation_get_fallback_blocks": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "the newest navigation menu's non-empty blocks, else a page list, through block_core_navigation_render_fallback; the engine renderer keeps its own, different fallback",
+                "doubt": "WordPress's fallback makes a navigation from a classic menu when none is published, and gives no page list while core/page-list is unregistered",
+                "body": "058e0a6d3b07"
+            },
+            "block_core_navigation_get_layout_custom_property_declarations": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "maps a layout's justification, orientation and wrap into the navigation's custom properties; layout rules for the navigation renderer",
+                "body": "daadf8c6fc54"
+            },
+            "block_core_navigation_get_most_recently_published_navigation": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "the newest published wp_navigation post; Navigation::menuPost runs the same query privately",
+                "doubt": "get_posts suppresses the query filters, where WordPress runs a plain WP_Query plugins can filter",
+                "body": "ee99e24eb74f"
+            },
+            "block_core_navigation_get_post_ids": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "gathers the post ids a block list's links point to at any depth; Navigation::linkedPosts does the same over engine blocks",
+                "doubt": "repeated ids are kept, where WordPress returns them unique",
+                "body": "4b69c3b53b18"
+            },
+            "block_core_navigation_get_submenu_visibility": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "submenuVisibility, hover turned into click when submenus open on click; a navigation rule the engine renderer reads only as openSubmenusOnClick",
+                "body": "131c5f931a7d"
+            },
+            "block_core_navigation_link_build_css_colors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "a link's colour classes and styles from its navigation's context, the overlay keys inside a submenu; navigation colour rules",
+                "doubt": "a submenu without overlay colours does not fall back to the main ones, the style.color fallback is missing, and a named colour wins where WordPress checks the custom one first",
+                "body": "eff3c40393ae"
+            },
+            "block_core_navigation_link_build_css_font_sizes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "the font size preset class from context, else the custom size made fluid inline; navigation link style rules",
+                "body": "3a256ae6dec0"
+            },
+            "block_core_navigation_link_build_variations": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Variations",
+                "why": "one variation per post type and taxonomy shown in nav menus; block variation data",
+                "doubt": "WordPress lists the built-in post types and taxonomies before any custom ones; here a custom post type comes before the categories",
+                "body": "1f291a119175"
+            },
+            "block_core_navigation_link_maybe_urldecode": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "decodes a link once when one of its query values is still encoded after parsing; a URL rule the navigation link renderer applies",
+                "body": "75f3c688c04e"
+            },
+            "block_core_navigation_maybe_use_classic_menu_fallback": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "converts the fallback classic menu into a published wp_navigation post and returns it; writing a post from menu data is engine behaviour",
+                "doubt": "a classic menu with no items still becomes a navigation post, where WordPress stops when the converted blocks are empty",
+                "body": "3b0d11431f3d"
+            },
+            "block_core_navigation_overlay_html_has_close_block": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "scans overlay markup for a button with the overlay close class; a navigation overlay check",
+                "body": "c6e661917a4b"
+            },
+            "block_core_navigation_parse_blocks_from_menu_items": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Menus",
+                "why": "turns menu items into navigation link blocks with Menus::linkAttributes, making a submenu of an item with children and serializing its inner blocks; Menus::toBlock covers only the flat case",
+                "body": "f7f8f86a34ab"
+            },
+            "block_core_navigation_set_overlay_image_fetch_priority": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageTags",
+                "why": "sets fetchpriority low on every image in an overlay; the same image loading rule as block_core_details_set_img_fetchpriority_low, one owner for both",
+                "body": "d21786d73505"
+            },
+            "block_core_navigation_typographic_presets_backcompatibility": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "turns a navigation's old var:preset typography values into plain values on the parsed block; block data migration for the navigation",
+                "doubt": "a textDecoration of strikethrough is not turned into line-through as WordPress does",
+                "body": "96b60bd98d9b"
+            },
+            "block_core_page_list_build_css_colors": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "a page list's colours and overlay colours from its navigation's context; Navigation::submenuColours holds the overlay half",
+                "doubt": "the context's style.color text and background are not read, which WordPress falls back to after the named and picked colours",
+                "body": "b4b90886ca66"
+            },
+            "block_core_page_list_nest_pages": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "nests pages under their parents by key, recursively; Navigation::pageItems walks the same tree",
+                "body": "3a9e84f829b7"
+            },
+            "block_core_page_list_render_nested_page_list": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "renders nested pages as items with their submenus and overlay colours, recursing by depth; Navigation::pageItems renders the page list itself",
+                "doubt": "the front page's menu-item-home class (which pageItems adds) and the (no title) fallback are missing",
+                "body": "6ffe6fd02948"
+            },
+            "block_core_shared_navigation_item_should_render": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "a link to a post renders only while the post is published; Navigation::linkable holds the engine's version of the rule",
+                "doubt": "render_block_core_navigation_link_allowed_post_status is never asked (linkable asks it), and a link typed post or page without kind post-type is not checked",
+                "body": "94b3774dc249"
+            },
+            "build_variation_for_navigation_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Variations",
+                "why": "a link variation for a post type or taxonomy: its name, its own item link label and description against core's defaults, the tag and post format cases; block variation data",
+                "body": "f5467f48711a"
+            }
+        },
+        "core-blocks.php": {
+            "_delete_custom_logo_on_remove_site_logo": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ThemeMods",
+                "why": "removes the custom_logo theme mod when site_logo is deleted, unhooking and rehooking the reverse sync to avoid a loop; the sync belongs with one engine owner",
+                "doubt": "WordPress guards the loop with the global $_ignore_site_logo_changes, which this never raises, and the theme mods delete hook stays live",
+                "body": "c58506604acf"
+            },
+            "_delete_site_logo_on_remove_custom_logo": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ThemeMods",
+                "why": "deletes the site_logo option when an update of the theme mods drops custom_logo; a stored data sync rule",
+                "body": "4a148bcd5634"
+            },
+            "_delete_site_logo_on_remove_custom_logo_on_setup_theme": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks the two sync callbacks onto the active theme's theme mods option actions with add_action by name; wiring with no rule of its own",
+                "body": "32af7e2d158e"
+            },
+            "_delete_site_logo_on_remove_theme_mods": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ThemeMods",
+                "why": "deletes the site_logo option when the theme mods go, if the theme supports custom logos; a stored data sync rule",
+                "body": "62afb2867621"
+            },
+            "_minn_after_tag": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tags",
+                "why": "splices text in after the first tag of a name using the engine tag scanner's token span; an insertion helper that belongs on the scanner",
+                "body": "8e3e9866685c"
+            },
+            "_minn_as_rendered": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets WP_Block_Supports::$block_to_render around a render so get_block_wrapper_attributes reads this block, restoring it after; the facade static plugins' wrapper calls read",
+                "body": "540c619b9556"
+            },
+            "_minn_block_breadcrumbs": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the trail with Home, filters it, renders the list with the current item and the separator property, swapping WP_Block_Supports::$block_to_render for the wrapper; the breadcrumbs renderer",
+                "body": "1ae932fd0f1e"
+            },
+            "_minn_block_calendar": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Calendar",
+                "gates": [
+                    "globals"
+                ],
+                "why": "swaps the global month and year for the block's when the permalinks can link them, renders get_calendar and restores them; the calendar renderer",
+                "doubt": "with no published posts WordPress hides the calendar (a notice for a logged-in reader), and it puts the colour classes and styles on the table rather than the wrapper",
+                "body": "38574848ee7e"
+            },
+            "_minn_block_categories": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Categories",
+                "why": "numbers each block with a static counter and renders the categories as wp_list_categories or a labelled dropdown with its script; a block renderer with request state",
+                "body": "fc6d0c90b2bd"
+            },
+            "_minn_block_comment_edit_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "the edit link for the comment in scope inside the engine's wrapper with its alignment class; a comment block renderer",
+                "body": "c83f72c3ac83"
+            },
+            "_minn_block_comments_pagination": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "provides the arrow to its links, renders them and wraps them in a labelled nav with layout classes, nothing when empty; the comments pagination renderer",
+                "body": "1a14a6e4a069"
+            },
+            "_minn_block_footnotes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "the shown post's footnotes in the engine's ol wrapper, style first; a post block renderer",
+                "body": "2ac20495c4c2"
+            },
+            "_minn_block_home_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Navigation",
+                "why": "the home link item with its label, the home URL and aria-current on the front page; the navigation family renders its other links",
+                "doubt": "the navigation's colours, the item's wrapper attributes (block_core_home_link_build_li_wrapper_attributes) and a custom class are not applied",
+                "body": "5a1de815caa0"
+            },
+            "_minn_block_loginout": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Loginout",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the current URL from $_SERVER and shows the login or logout link, or the login form, in a logged-in or logged-out wrapper; a block renderer",
+                "doubt": "the has-login-form class WordPress adds beside logged-out when the form shows is missing",
+                "body": "bab85f80a048"
+            },
+            "_minn_block_playlist": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Playlist",
+                "why": "provides the playlist's artist and image settings, renders its tracks and passes their attributes on; the playlist renderer",
+                "body": "5e4ba940ead5"
+            },
+            "_minn_block_playlist_track": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Playlist",
+                "why": "renders a track through its facade callback with a WP_Block made from the playlist's context; the track renderer the engine should hold",
+                "body": "553513f43e03"
+            },
+            "_minn_block_post_author": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "builds the author block from the post's author: avatar, byline, name linked when asked and bio by its settings; a post block renderer",
+                "doubt": "with no post in context WordPress shows the queried author (an author archive); here nothing",
+                "body": "83bc7d3fc069"
+            },
+            "_minn_block_post_author_biography": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "the post author's description in the block wrapper, nothing when empty; a post block renderer",
+                "doubt": "with no post in context WordPress falls back to the queried author; here nothing",
+                "body": "895da7e5c69d"
+            },
+            "_minn_block_post_comments_count": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "the post's comment count in the block wrapper; beside Comments::count, which filters the same number",
+                "body": "88f1ac40ebfd"
+            },
+            "_minn_block_post_comments_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "picks the No comments or N comments text and its target (the form or the comments), hiding it when closed and empty; comment block markup by rules",
+                "doubt": "a password-protected post still gets its link, which WordPress leaves out, and the has-link-color marker is not asked for",
+                "body": "6e27b62ba1bb"
+            },
+            "_minn_block_post_time_to_read": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "counts the post's words and shows a minutes range, a single minute count or the word count by display mode; a post block renderer",
+                "doubt": "always counts words, where WordPress counts by the locale's word count type (characters for some languages)",
+                "body": "8fc047b1db5d"
+            },
+            "_minn_block_read_more": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "a link to the post with the block's text or Read more and the title for screen readers; a post block renderer",
+                "doubt": "the content attribute is printed without wp_kses_post and the justifyContent is-justified class is not added, both of which WordPress does",
+                "body": "7c496d462be0"
+            },
+            "_minn_block_site_logo": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "why": "the logo linked by default in a wrapper built by hand (default size, alignment, custom class, block class); site logo rendering for Structure",
+                "body": "c761bc3d7f8c"
+            },
+            "_minn_block_tabs": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Tabs",
+                "why": "takes the tabs context already handed or computes it, provides it to the panels and renders the tabs region; the tabs renderer",
+                "body": "e91ecc9ec1a8"
+            },
+            "_minn_block_term_template": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+                "why": "renders the inner blocks once per term with the term provided, wrapped in the engine's ul; the term template renderer",
+                "body": "798aafe5038a"
+            },
+            "_minn_block_terms_query": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+                "why": "reads the terms query with the block type's default and provides it to the blocks inside; terms query rendering",
+                "body": "c921fa3a5893"
+            },
+            "_minn_block_widget_group": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\WidgetGroup",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads the global sidebar being rendered for its title markup (an h2 elsewhere) and renders the inner blocks in the group div; a block renderer over sidebar state",
+                "body": "bd67de0d2331"
+            },
+            "_minn_breadcrumbs_date_items": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "gates": [
+                    "globals"
+                ],
+                "why": "parses m, or the year, month and day query vars, into linked crumbs with the month's name from the global $wp_locale; breadcrumbs rules",
+                "body": "b4039f1a5031"
+            },
+            "_minn_breadcrumbs_term_items": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "the queried term's ancestors, then the term; breadcrumbs rules",
+                "body": "f18be7b7df07"
+            },
+            "_minn_breadcrumbs_trail": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "chooses the trail after Home: the search text, a singular post's ancestors or terms and title, or the archive crumbs; breadcrumbs rules",
+                "body": "d3a51564bf10"
+            },
+            "_minn_comment_edit_anchor": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "checks edit_comment and builds the Edit anchor with the block's target; comment block markup by rules",
+                "body": "51852baedad6"
+            },
+            "_minn_comment_page_context": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "builds a pagination link's context from the post shown and the provided block context; comments pagination state",
+                "body": "0b355816976b"
+            },
+            "_minn_comments_pagination_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "picks the older or newer label and arrow, builds the comment query vars and asks for the link with the wrapper filtered in; the comments pagination renderer beside Comments::query",
+                "body": "846e036ea0d9"
+            },
+            "_minn_comments_pagination_numbers": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "runs the comment query for its page count and wraps paginate_comments_links in the block's div; comments pagination markup",
+                "body": "017d5a4391cd"
+            },
+            "_minn_footnote_items": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "reads and decodes the post's footnotes meta and builds each note's list item with its back link, skipping protected posts; stored data turned into markup",
+                "body": "6c496e2b997d"
+            },
+            "_minn_icon_style": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Icon",
+                "why": "maps the icon block's preset and custom colours, border, width and padding into style engine input; the icon renderer's style rule",
+                "body": "c116b047f109"
+            },
+            "_minn_icon_svg": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Icon",
+                "why": "looks the icon up, names it or hides it from assistive technology, adds its colour classes, flips and the style engine's css plus rotation; markup by rules",
+                "body": "e91c75d56d15"
+            },
+            "_minn_image_lightbox_finish": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\ImageLightbox",
+                "why": "decides from the image's or the theme's lightbox setting and its link whether to render the lightbox; the image finishing rule Renderer::finishImagesWith calls",
+                "body": "d4755ee81d40"
+            },
+            "_minn_inner_html": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "why": "renders a block's inner blocks into its saved chunks; the loop Renderer::renderNamed and several engine renderers repeat, worth one public method",
+                "body": "65a33179aabd"
+            },
+            "_minn_minutes_to_read": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "rounds the minutes to at least one, or to a four fifths to six fifths range with the high end above the low, and words it; the time to read rule",
+                "body": "5af35a8cf7b8"
+            },
+            "_minn_playlist": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Playlist",
+                "why": "keeps the tracks with an attachment, stores them in the core/playlist state, wires the figure and track buttons and inserts the waveform player; playlist rendering",
+                "body": "8d4f78dcfe5e"
+            },
+            "_minn_playlist_track_state": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Playlist",
+                "why": "a track's state entry: its fields, the title fallback and the artist and album label; data the playlist renderer builds",
+                "body": "88f6b057719a"
+            },
+            "_minn_query_pagination_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "why": "a previous or next link with its label (or an aria-label when hidden) and the chosen arrow on the right side; the markup QueryBlocks::pagination already writes",
+                "body": "eae759933f56"
+            },
+            "_minn_query_pagination_state": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads the global page and main query, or the request's query-N-page, and runs the block's query for its capped page count; loop state the engine's QueryBlocks already tracks",
+                "doubt": "following the main query the block's pages cap is ignored, where WordPress caps the main query's page count with it too",
+                "body": "c2925a846bf6"
+            },
+            "_minn_register_block_renderers": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Renderer",
+                "why": "the table of facade renderers registered with the engine's renderer on minn_block_renderers; once they move, Renderer::forDb registers them as it does its own families",
+                "body": "29e13b41020f"
+            },
+            "_minn_set_attributes": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tags",
+                "why": "advances a tag processor to the next matching tag and sets several attributes on it; a markup editing step that belongs on the engine's tag scanner",
+                "body": "a00ce8b48382"
+            },
+            "_minn_site_logo_markup": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "why": "resizes the logo image through a temporary filter, then strips or retargets its link by the block's settings; logo rendering over the engine's CustomLogo",
+                "doubt": "the height is rounded where WordPress casts it to an integer (66.7 gives 67 here, 66 there)",
+                "body": "1307978557e0"
+            },
+            "_minn_tab_list": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Tabs",
+                "why": "labels a tab list and wires each button to its panel id with the tabs directives; tab block markup by rules",
+                "body": "cb06002723ba"
+            },
+            "_minn_tab_panel": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Tabs",
+                "why": "numbers a tabs block's panels with a static counter and gives each its id, label and hidden binding; per-request render state and markup rules for the engine",
+                "doubt": "the static count is never reset, so an anchored tabs block rendered twice in one request numbers its panels on from the first pass and they stop matching its tab list",
+                "body": "3a6e35265658"
+            },
+            "_minn_tabs": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Tabs",
+                "why": "puts the tabs region's directives and context on the markup, stores its panel ids in the core/tabs state and enqueues the view module; the tabs renderer",
+                "body": "fe9cdc4dff52"
+            },
+            "_minn_term_template_terms": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+                "why": "turns a terms query into get_terms arguments (include order, top level unless nested, hide empty) and keeps the WP_Term results; the term template's query rule",
+                "body": "12fdb2f1a1f3"
+            },
+            "_override_custom_logo_theme_mod": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ThemeMods",
+                "why": "reads the site_logo option and lets it stand in for the custom_logo theme mod when set; a stored data rule for the theme mods owner",
+                "body": "bd6161d0ae38"
+            },
+            "_sync_custom_logo_to_site_logo": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ThemeMods",
+                "why": "writes or deletes the site_logo option as the custom logo theme mod is set; keeping two stored values in step is engine behaviour",
+                "body": "68ab8d4789f4"
+            },
+            "block_core_accordion_item_render": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Accordion",
+                "why": "wires an accordion item's markup for the Interactivity API (a fresh id, its context, the toggle and panel aria links) by rules; an accordion renderer the engine should own",
+                "body": "5b294f54a9ad"
+            },
+            "block_core_breadcrumbs_create_item": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "a crumb with its label, linked to the listing's first page when paged; the breadcrumbs trail rules",
+                "body": "799158ec3d23"
+            },
+            "block_core_breadcrumbs_get_archive_breadcrumbs": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "chooses date, author, term or post type crumbs from the main query's conditionals and adds the page crumb when paged; breadcrumbs rules",
+                "body": "d6509f6b1bf7"
+            },
+            "block_core_breadcrumbs_get_post_title": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "a post's title, or (no title), for a crumb; part of the breadcrumbs trail rules",
+                "body": "0b46b738cc5b"
+            },
+            "block_core_breadcrumbs_get_term_ancestors_items": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "walks a term's ancestors root first into linked crumbs; breadcrumbs trail building",
+                "body": "ce821b608cb4"
+            },
+            "block_core_breadcrumbs_get_terms_breadcrumbs": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Breadcrumbs",
+                "why": "picks the taxonomy (the filtered setting when usable, else the first usable one holding terms) and the term, then its ancestors; breadcrumbs selection rules with their filter",
+                "body": "d82ff6a544dc"
+            },
+            "block_core_post_time_to_read_word_count": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "strips tags and comments, drops entities and punctuation and counts words or characters by regex; a text counting algorithm the time to read renderer owns",
+                "body": "dd2be010d9e2"
+            },
+            "block_core_tabs_generate_tabs_list": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Tabs",
+                "why": "finds the tab-panels container and lists each panel's anchor or its numbered tab id; the tabs block's id rule",
+                "body": "dcbec779330e"
+            },
+            "block_core_tabs_provide_context": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Tabs",
+                "why": "gives a tabs block's inner blocks its id (anchor or a fresh tabs_ id) and its panel ids on render_block_context; context the tabs renderer should provide",
+                "body": "278fbebd0be5"
+            },
+            "build_dropdown_script_block_core_categories": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Categories",
+                "why": "builds the dropdown's navigation script with its id and home URL as JSON in an inline script tag; markup the categories renderer emits",
+                "body": "5978cafe6ff9"
+            },
+            "render_block_core_accordion": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Accordion",
+                "why": "adds the accordion's interactive region and autoclose context, its isOpen derived state and its view module; an accordion renderer",
+                "body": "db8704f5207c"
+            },
+            "render_block_core_comment_edit_link": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Comments",
+                "why": "the comment edit link block: nothing without a comment in context, else the link in a wrapper aligned by textAlign; belongs with the engine's comment blocks",
+                "body": "dbaa2f19d2a9"
+            },
+            "render_block_core_footnotes": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\PostBlocks",
+                "why": "the footnotes block: the post's notes in an ol with the block's wrapper, nothing without them; a post block renderer",
+                "body": "460f04934b77"
+            },
+            "render_block_core_icon": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Icon",
+                "why": "the icon block: its drawing in the block wrapper, nothing for an unknown icon; a block renderer over the icon registry",
+                "body": "44bd088da04c"
+            },
+            "render_block_core_legacy_widget": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\LegacyWidget",
+                "gates": [
+                    "globals"
+                ],
+                "why": "renders a widget by id, or finds a widget class by id base in the global factory, verifies the signed instance and buffers the_widget; a block renderer over the engine's widget areas",
+                "doubt": "the_widget is not given the widget_id and widget_name args WordPress passes from the widget object",
+                "body": "16b13cc42573"
+            },
+            "render_block_core_playlist": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Playlist",
+                "why": "collects the playlist's track attributes from its parsed inner blocks and hands them to the playlist markup; the playlist renderer",
+                "body": "0c8d8d530c8c"
+            },
+            "render_block_core_playlist_track": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Playlist",
+                "why": "builds a track's button markup (image unless the playlist hides it, title, artist, length, play label); a block renderer by rules",
+                "body": "f9ef5737716c"
+            },
+            "render_block_core_query_pagination_next": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "why": "decides whether the next link shows from the pagination state and builds its URL for the main or the block's own query; QueryBlocks renders these links inline today",
+                "body": "ff95d8687114"
+            },
+            "render_block_core_query_pagination_numbers": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "why": "builds paginate_links arguments (mid size, the block's own page parameter, the cst argument) and wraps the links; QueryBlocks::numbers draws the inherited case already",
+                "body": "9e508255263d"
+            },
+            "render_block_core_query_pagination_previous": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
+                "why": "the previous link's show rule (main query past page one, own query up to its last page) and its URL; pagination rendering QueryBlocks holds",
+                "body": "a769cdb369a2"
+            },
+            "render_block_core_site_logo": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\Structure",
+                "why": "the site logo block: the logo markup in a wrapper marked is-default-size without a width; Structure leaves the logo to the facade today",
+                "body": "99e712654b67"
+            },
+            "render_block_core_term_template": {
+                "verdict": "move",
+                "to": "Minn\\Blocks\\Dynamic\\Theme\\TermBlocks",
+                "why": "renders the template's inner blocks once per queried term with that term as context, each in its list item; a term block renderer",
+                "body": "d612617d75ce"
+            }
+        },
         "cron.php": {
             "_minn_cron_failed": {
                 "verdict": "move",
