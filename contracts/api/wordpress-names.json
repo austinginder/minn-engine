@@ -4,9 +4,9 @@
         "functionCalls": 156,
         "functions": 127,
         "hookApi": 0,
-        "classReferences": 74,
-        "classes": 27,
-        "files": 73
+        "classReferences": 42,
+        "classes": 19,
+        "files": 66
     },
     "families": {
         "functions": {
@@ -54,19 +54,12 @@
             "wp-includes/vars.php": 1
         },
         "classes": {
-            "wp-admin/includes/class-wp-upgrader.php": 13,
             "wp-includes/class-wp-block-type.php": 8,
-            "wp-includes/class-wp-application-passwords.php": 6,
             "wp-includes/class-wp-block.php": 6,
             "wp-includes/class-wp-block-type-registry.php": 4,
             "wp-includes/class-wp-theme-json-data.php": 4,
-            "wp-admin/includes/class-wp-ajax-upgrader-skin.php": 3,
-            "wp-includes/class-wp-session-tokens.php": 3,
-            "wp-admin/includes/class-plugin-upgrader.php": 2,
-            "wp-admin/includes/class-theme-upgrader.php": 2,
             "wp-includes/class-wp.php": 2,
             "wp-includes/class-wp-block-patterns-registry.php": 2,
-            "wp-includes/class-wp-locale.php": 2,
             "wp-includes/sitemaps/class-wp-sitemaps.php": 2,
             "wp-includes/class-wp-theme-json-resolver.php": 2,
             "wp-includes/class-wp-dependency.php": 2,
@@ -79,7 +72,6 @@
             "wp-includes/html-api/class-wp-html-tag-processor.php": 1,
             "wp-includes/sitemaps/class-wp-sitemaps-provider.php": 1,
             "wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php": 1,
-            "wp-includes/class-wp-textdomain-registry.php": 1,
             "wp-includes/class-wp-theme-json.php": 1
         }
     },
@@ -991,29 +983,12 @@
         }
     },
     "classes": {
-        "WP_Upgrader": {
-            "uses": 13,
-            "family": "wp-admin/includes/class-wp-upgrader.php",
-            "files": {
-                "Minn/Ops/UpgraderRun.php": 2,
-                "Minn/Runtime/Upgrade.php": 11
-            }
-        },
         "WP_Block_Type": {
             "uses": 8,
             "family": "wp-includes/class-wp-block-type.php",
             "files": {
                 "Minn/Rest/BlockRendererController.php": 4,
                 "Minn/Rest/BlockTypesController.php": 4
-            }
-        },
-        "WP_Application_Passwords": {
-            "uses": 6,
-            "family": "wp-includes/class-wp-application-passwords.php",
-            "files": {
-                "Minn/Rest/ApplicationPasswordsController.php": 2,
-                "Minn/Runtime/ApplicationPasswordEvents.php": 3,
-                "Minn/Runtime/ApplicationPasswordSignIn.php": 1
             }
         },
         "WP_Block": {
@@ -1043,35 +1018,6 @@
                 "Minn/Theme/ThemeJsonData.php": 4
             }
         },
-        "WP_Ajax_Upgrader_Skin": {
-            "uses": 3,
-            "family": "wp-admin/includes/class-wp-ajax-upgrader-skin.php",
-            "files": {
-                "Minn/Ops/UpgraderRun.php": 3
-            }
-        },
-        "WP_Session_Tokens": {
-            "uses": 3,
-            "family": "wp-includes/class-wp-session-tokens.php",
-            "files": {
-                "Minn/Auth/AuthCookies.php": 1,
-                "Minn/Auth/SignIn.php": 2
-            }
-        },
-        "Plugin_Upgrader": {
-            "uses": 2,
-            "family": "wp-admin/includes/class-plugin-upgrader.php",
-            "files": {
-                "Minn/Ops/UpgraderRun.php": 2
-            }
-        },
-        "Theme_Upgrader": {
-            "uses": 2,
-            "family": "wp-admin/includes/class-theme-upgrader.php",
-            "files": {
-                "Minn/Ops/UpgraderRun.php": 2
-            }
-        },
         "WP": {
             "uses": 2,
             "family": "wp-includes/class-wp.php",
@@ -1084,14 +1030,6 @@
             "family": "wp-includes/class-wp-block-patterns-registry.php",
             "files": {
                 "Minn/Runtime/BlockHooks.php": 2
-            }
-        },
-        "WP_Locale": {
-            "uses": 2,
-            "family": "wp-includes/class-wp-locale.php",
-            "files": {
-                "Minn/I18n/SiteLanguage.php": 1,
-                "Minn/Runtime/Runtime.php": 1
             }
         },
         "WP_Sitemaps": {
@@ -1176,13 +1114,6 @@
             "family": "wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php",
             "files": {
                 "Minn/Front/SitemapRequest.php": 1
-            }
-        },
-        "WP_Textdomain_Registry": {
-            "uses": 1,
-            "family": "wp-includes/class-wp-textdomain-registry.php",
-            "files": {
-                "Minn/Runtime/Runtime.php": 1
             }
         },
         "WP_Theme_JSON": {

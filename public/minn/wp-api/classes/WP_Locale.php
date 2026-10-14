@@ -10,7 +10,7 @@ use Minn\Support\Locale as MinnLocale;
  * every string passes through the translation filters on the way out.
  */
 #[AllowDynamicProperties]
-class WP_Locale
+class WP_Locale implements \Minn\Objects\SiteLocale
 {
     public $weekday = [];
     public $weekday_initial = [];

@@ -146,11 +146,11 @@ final class Runtime
         _minn_rewrite();
         \_minn_require_wp_db($runtime->contentDir());
         \_minn_start_object_cache();
-        $GLOBALS['wp_textdomain_registry'] = new \WP_Textdomain_Registry();
+        $GLOBALS['wp_textdomain_registry'] = Handoff::newTextdomainRegistry();
         // Plugin code reads the locale's names off the global directly
         // (WooCommerce's block settings want weekday_abbrev), so it is
         // bound with the runtime, not built on first use.
-        $GLOBALS['wp_locale'] = new \WP_Locale();
+        $GLOBALS['wp_locale'] = Handoff::newLocale();
         \_minn_locale_switcher();
         // The theme folder registered as the reference registers it while loading.
         Themes::registerDirectory(Themes::root());

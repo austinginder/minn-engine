@@ -20,6 +20,7 @@ use Minn\Http\Route;
 use Minn\Objects\Errors;
 use Minn\RestError;
 use Minn\Runtime\ApplicationPasswordEvents;
+use Minn\Runtime\ApplicationPasswordRecords;
 
 /**
  * wp/v2/users/{id}/application-passwords: list, create, rename, delete,
@@ -78,7 +79,7 @@ final readonly class ApplicationPasswordsController
     public function deleteAll(Request $request, string $userId): Response
     {
         $user = $this->subject($request, $userId, 'rest_cannot_delete_application_passwords', 'Sorry, you are not allowed to delete application passwords for this user.');
-        $count = (int) \WP_Application_Passwords::delete_all_application_passwords($user->id);
+        $count = (int) ApplicationPasswordRecords::deleteAll($user->id);
         return Reply::item(['deleted' => true, 'count' => $count], null);
     }
 
@@ -131,7 +132,7 @@ final readonly class ApplicationPasswordsController
         // The answer is prepared before the password goes, as the reference prepares it.
         $item = $this->item($user, $record);
         unset($item['_links']);
-        \WP_Application_Passwords::delete_application_password($user->id, (string) $record['uuid']);
+        ApplicationPasswordRecords::delete($user->id, (string) $record['uuid']);
         return Reply::item(['deleted' => true, 'previous' => $item], null);
     }
 

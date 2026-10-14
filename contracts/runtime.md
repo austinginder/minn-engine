@@ -16207,6 +16207,16 @@ it from the registration row as before. The marks are named for what they are wh
 already has the WordPress name's short form (Front\AdminBar). The http-transports probe stays out of the
 comparison; the other probes give identical output before and after.
 
+**Batch 29, application passwords, sessions, the locale and the upgraders (class references down by 32).**
+`Runtime\ApplicationPasswordRecords` keeps a user's application passwords as the WordPress layer's
+WP_Application_Passwords did (`create()`, `all()`, `find()`, `nameExists()`, `update()`, `recordUsage()`,
+`delete()`, `deleteAll()`, `inUse()`), and that class now maps onto it. Sessions, the locale and the
+upgraders carry `Minn\Objects` marks (`SessionTokens`, `SiteLocale`, `Upgrader`, `UpgraderSkin`) and are made
+through `Handoff` (`sessionTokens()`, `newLocale()`, `newTextdomainRegistry()`, `newUpgrader()` by kind,
+`newUpgraderSkin()`). Full run 30 (after batch 28) was green once permalinks, blocks and theme, red while neither stack answered
+any request, were run again on their own. The http-transports probe stays out of the comparison; the other probes give identical
+output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

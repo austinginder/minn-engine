@@ -7,6 +7,7 @@ namespace Minn\Auth;
 use Minn\Content\UserRecord;
 use Minn\Http\Request;
 use Minn\Http\Response;
+use Minn\Runtime\Handoff;
 
 /**
  * The door itself: what a sign-in surface needs beyond checking a
@@ -62,14 +63,14 @@ final readonly class SignIn
     /** Ends one session and clears the cookies from the response, unless send_auth_cookies says not to (AuthCookies::clearing). */
     public function end(Response $response, Authenticated $session): Response
     {
-        \WP_Session_Tokens::get_instance($session->id())->destroy($session->token);
+        Handoff::sessionTokens($session->id())->destroy($session->token);
         return $this->cookies->clearing() ? $this->cookies->clear($response) : $response;
     }
 
     /** Ends every session of a user (a password reset) and clears the cookies from the response. */
     public function endAll(Response $response, int $userId): Response
     {
-        \WP_Session_Tokens::get_instance($userId)->destroy_all();
+        Handoff::sessionTokens($userId)->destroy_all();
         return $this->cookies->clear($response);
     }
 

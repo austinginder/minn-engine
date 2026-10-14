@@ -9,7 +9,7 @@
  * meta, which the engine's own sign-in reads (Minn\Auth\Sessions).
  */
 #[AllowDynamicProperties]
-abstract class WP_Session_Tokens
+abstract class WP_Session_Tokens implements \Minn\Objects\SessionTokens
 {
     protected $user_id;
 

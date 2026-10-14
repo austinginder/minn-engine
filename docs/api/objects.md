@@ -15,11 +15,15 @@
 | [`RestResponse`](#restresponse) | interface | 3 | A REST response as the WordPress layer hands it to plugins |
 | [`RestServer`](#restserver) | interface | 3 | The REST server as the WordPress layer hands it to plugins |
 | [`Rewrite`](#rewrite) | interface | 3 | The rewrite object as the WordPress layer hands it to plugins |
+| [`SessionTokens`](#sessiontokens) | interface | 3 | A user's sessions as the WordPress layer hands them to plugins |
+| [`SiteLocale`](#sitelocale) | interface | 3 | The site's locale as the WordPress layer hands it to plugins |
 | [`Taxonomy`](#taxonomy) | interface | 3 | A registered taxonomy as the WordPress layer hands it to plugins |
 | [`Term`](#term) | interface | 3 | A term as the WordPress layer hands it to plugins (WP_Term). The engine |
 | [`TermsQuery`](#termsquery) | interface | 3 | A terms query as the WordPress layer hands it to plugins (WP_Term_Query). |
 | [`Theme`](#theme) | interface | 3 | A theme as the WordPress layer hands it to plugins (WP_Theme): its |
 | [`Toolbar`](#toolbar) | interface | 3 | The toolbar as the WordPress layer hands it to plugins (WP_Admin_Bar): |
+| [`Upgrader`](#upgrader) | interface | 3 | An upgrader as the WordPress layer hands it to plugins (WP_Upgrader and |
+| [`UpgraderSkin`](#upgraderskin) | interface | 3 | What an upgrader reports through (WP_Upgrader_Skin and its kinds): the |
 | [`User`](#user) | interface | 3 | A user as the WordPress layer hands it to plugins (WP_User). The engine |
 | [`UsersQuery`](#usersquery) | interface | 3 | A users query as the WordPress layer hands it to plugins (WP_User_Query). |
 | [`Widget`](#widget) | interface | 3 | A widget as the WordPress layer hands it to plugins (WP_Widget): its id |
@@ -154,6 +158,31 @@ mark, so it never names the WordPress layer's class.
 Used by: `Minn\Front\RuleTable`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentPages`, `Minn\Runtime\RewriteRules`
 
 
+## SessionTokens
+
+`interface Minn\Objects\SessionTokens` · `public/minn/src/Minn/Objects/SessionTokens.php`
+
+A user's sessions as the WordPress layer hands them to plugins
+(WP_Session_Tokens, or the manager session_token_manager names): made,
+read, verified and ended. The engine knows them by this mark and asks
+for them through Runtime\Handoff, so it never names the WordPress
+layer's class.
+
+Used by: `Minn\Runtime\Handoff`
+
+
+## SiteLocale
+
+`interface Minn\Objects\SiteLocale` · `public/minn/src/Minn/Objects/SiteLocale.php`
+
+The site's locale as the WordPress layer hands it to plugins
+(WP_Locale): the names of weekdays and months, the number format and the
+text direction. The engine knows it by this mark and makes it through
+Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\I18n\SiteLanguage`, `Minn\Runtime\Handoff`
+
+
 ## Taxonomy
 
 `interface Minn\Objects\Taxonomy` · `public/minn/src/Minn/Objects/Taxonomy.php`
@@ -209,6 +238,30 @@ the nodes and groups a menu callback adds. The engine knows it by this
 mark, so it never names the WordPress layer's class.
 
 Used by: `Minn\Front\ToolbarMenus`
+
+
+## Upgrader
+
+`interface Minn\Objects\Upgrader` · `public/minn/src/Minn/Objects/Upgrader.php`
+
+An upgrader as the WordPress layer hands it to plugins (WP_Upgrader and
+the plugin and theme upgraders): it fetches, unpacks and installs a
+package. The engine knows these objects by this mark and makes them
+through Runtime\Handoff, so it never names the WordPress layer's class.
+
+Used by: `Minn\Ops\UpgraderRun`, `Minn\Runtime\Handoff`, `Minn\Runtime\Upgrade`
+
+
+## UpgraderSkin
+
+`interface Minn\Objects\UpgraderSkin` · `public/minn/src/Minn/Objects/UpgraderSkin.php`
+
+What an upgrader reports through (WP_Upgrader_Skin and its kinds): the
+feedback and errors of an install or update. The engine knows these
+objects by this mark and makes them through Runtime\Handoff, so it never
+names the WordPress layer's class.
+
+Used by: `Minn\Ops\UpgraderRun`, `Minn\Runtime\Handoff`
 
 
 ## User

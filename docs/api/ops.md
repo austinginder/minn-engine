@@ -923,5 +923,5 @@ theme (folder), as Minn Admin does on WordPress: a plugin through
 bulk_upgrade, a theme through upgrade. The sha256 of the package, ''
 when it did not come from the service.
 
-Internals: `guarded()` (private, line 77), `refusal()` (private, line 108), `taken()` (private, line 128)
+Internals: `guarded()` (private, line 79), `refusal()` (private, line 110), `taken()` (private, line 130)
 

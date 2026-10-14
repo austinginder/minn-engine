@@ -14,10 +14,14 @@ use Minn\Objects\PostType;
 use Minn\Objects\Query;
 use Minn\Objects\RestRequest;
 use Minn\Objects\RestResponse;
+use Minn\Objects\SessionTokens;
+use Minn\Objects\SiteLocale;
 use Minn\Objects\Taxonomy;
 use Minn\Objects\Term;
 use Minn\Objects\Theme;
 use Minn\Objects\TermsQuery;
+use Minn\Objects\Upgrader;
+use Minn\Objects\UpgraderSkin;
 use Minn\Objects\User;
 use Minn\Objects\UsersQuery;
 
@@ -47,7 +51,8 @@ final class Handoff
      * newCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,
      * and the REST ones newRestRequest, restRequestFromUrl, newRestResponse,
      * restController, newTheme, and the empty registered-type objects
-     * blankPostType and blankTaxonomy.
+     * blankPostType and blankTaxonomy, a user's sessionTokens, the locale's
+     * newLocale and newTextdomainRegistry, and newUpgrader and newUpgraderSkin.
      *
      * @param array<string, Closure> $answers
      */
@@ -295,6 +300,36 @@ final class Handoff
     public static function blankTaxonomy(): Taxonomy
     {
         return self::answer('blankTaxonomy');
+    }
+
+    /** A user's sessions (WP_Session_Tokens::get_instance), through the manager session_token_manager names. */
+    public static function sessionTokens(mixed $userId): SessionTokens
+    {
+        return self::answer('sessionTokens', $userId);
+    }
+
+    /** The site's locale: its names, number format and direction (new WP_Locale). */
+    public static function newLocale(): SiteLocale
+    {
+        return self::answer('newLocale');
+    }
+
+    /** Where each text domain's translations are found (new WP_Textdomain_Registry). */
+    public static function newTextdomainRegistry(): object
+    {
+        return self::answer('newTextdomainRegistry');
+    }
+
+    /** An upgrader for plugins, or for themes when the kind is "theme", reporting through the skin. */
+    public static function newUpgrader(mixed $kind, mixed $skin): Upgrader
+    {
+        return self::answer('newUpgrader', $kind, $skin);
+    }
+
+    /** The skin an upgrader reports through when no screen shows it (new WP_Ajax_Upgrader_Skin). */
+    public static function newUpgraderSkin(mixed ...$args): UpgraderSkin
+    {
+        return self::answer('newUpgraderSkin', ...$args);
     }
 
     /** A theme by its folder and root (new WP_Theme). */

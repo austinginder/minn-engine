@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\I18n;
 
 use Minn\Html;
+use Minn\Objects\SiteLocale;
 use Minn\Runtime\Runtime;
 
 /**
@@ -41,7 +42,7 @@ final class SiteLanguage
     public static function isRtl(): bool
     {
         $locale = $GLOBALS['wp_locale'] ?? null;
-        return $locale instanceof \WP_Locale && $locale->is_rtl();
+        return $locale instanceof SiteLocale && $locale->is_rtl();
     }
 
     /** The html element's dir and lang attributes (lang for html, xml:lang for xhtml or a non-HTML html_type). */

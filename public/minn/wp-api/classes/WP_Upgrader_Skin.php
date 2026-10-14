@@ -11,7 +11,7 @@
  * no wp-admin. One file, so each class finds its parent already declared.
  */
 #[AllowDynamicProperties]
-class WP_Upgrader_Skin
+class WP_Upgrader_Skin implements \Minn\Objects\UpgraderSkin
 {
     public $upgrader;
     public $done_header = false;

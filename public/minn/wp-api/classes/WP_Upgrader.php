@@ -11,7 +11,7 @@ use Minn\Runtime\Upgrade;
  * class finds its parent already declared.
  */
 #[AllowDynamicProperties]
-class WP_Upgrader
+class WP_Upgrader implements \Minn\Objects\Upgrader
 {
     public $strings = [];
     public $skin = null;

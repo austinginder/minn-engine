@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Runtime;
 
 use Minn\Objects\Errors;
+use Minn\Objects\Upgrader;
 use Minn\Support\Files;
 use Minn\Support\Url;
 
@@ -33,7 +34,7 @@ final class Upgrade
     private const RUN = ['package' => '', 'destination' => '', 'clear_destination' => false, 'clear_working' => true, 'abort_if_destination_exists' => true, 'is_multi' => false, 'hook_extra' => []];
 
     /** WP_Upgrader::run; false when the filesystem cannot be reached. */
-    public static function run(\WP_Upgrader $upgrader, array $options): mixed
+    public static function run(Upgrader $upgrader, array $options): mixed
     {
         $hooks = Runtime::hooks();
         $options = (array) $hooks->filter('upgrader_package_options', [array_merge(self::RUN, $options)]);
@@ -87,7 +88,7 @@ final class Upgrade
      * @param array{directories: list<string>, maintenance: bool, prepare: \Closure(string): array{0: string, 1: array}, clean: \Closure(): void, complete: array} $how
      * @return array<string, mixed>|false
      */
-    public static function bulk(\WP_Upgrader $upgrader, array $items, array $offers, array $how): array|false
+    public static function bulk(Upgrader $upgrader, array $items, array $offers, array $how): array|false
     {
         $skin = $upgrader->skin;
         $skin->header();
@@ -134,7 +135,7 @@ final class Upgrade
      * walked by the symbol gate at its next check), and the result offered
      * to upgrader_post_install.
      */
-    public static function install(\WP_Upgrader $upgrader, array $args): array|Errors
+    public static function install(Upgrader $upgrader, array $args): array|Errors
     {
         $args = array_merge(['source' => '', 'destination' => '', 'clear_destination' => false, 'clear_working' => false, 'abort_if_destination_exists' => true, 'hook_extra' => []], $args);
         $working = rtrim((string) $args['source'], '/');
@@ -192,7 +193,7 @@ final class Upgrade
      * the package unzipped into a folder named for it, and an archive that
      * will not open refused in the upgrader's words with the reader's reason.
      */
-    public static function unpack(\WP_Upgrader $upgrader, string $package): string|Errors
+    public static function unpack(Upgrader $upgrader, string $package): string|Errors
     {
         $upgrader->skin->feedback('unpack_package');
         $folder = WP_CONTENT_DIR . '/upgrade';
@@ -211,7 +212,7 @@ final class Upgrade
     }
 
     /** WP_Upgrader::clear_destination: whatever is at the destination removed; true when nothing is left there. */
-    public static function clear(\WP_Upgrader $upgrader, string $remote): bool|Errors
+    public static function clear(Upgrader $upgrader, string $remote): bool|Errors
     {
         if (!file_exists($remote) && !is_link($remote)) {
             return true;
@@ -220,14 +221,14 @@ final class Upgrade
     }
 
     /** Maintenance mode on, as a bulk update of active plugins turns it on: the .maintenance file the front door reads. */
-    public static function maintenanceOn(\WP_Upgrader $upgrader): void
+    public static function maintenanceOn(Upgrader $upgrader): void
     {
         $upgrader->skin->feedback('maintenance_start');
         file_put_contents(ABSPATH . '.maintenance', '<?php $upgrading = ' . time() . '; ?>');
     }
 
     /** Maintenance mode off; said only when it was on. */
-    public static function maintenanceOff(\WP_Upgrader $upgrader): void
+    public static function maintenanceOff(Upgrader $upgrader): void
     {
         if (is_file(ABSPATH . '.maintenance')) {
             $upgrader->skin->feedback('maintenance_end');
@@ -245,7 +246,7 @@ final class Upgrade
     }
 
     /** Clears the destination (an update's copy set aside first), or refuses when something is there and must not be replaced. */
-    private static function clearOrRefuse(\WP_Upgrader $upgrader, string $remote, array $args): bool|Errors
+    private static function clearOrRefuse(Upgrader $upgrader, string $remote, array $args): bool|Errors
     {
         $extra = (array) $args['hook_extra'];
         if (!$args['clear_destination']) {
@@ -266,7 +267,7 @@ final class Upgrade
     }
 
     /** The source moved (or, across filesystems, copied) to the destination; an existing destination is merged into. */
-    private static function move(string $source, string $remote, \WP_Upgrader $upgrader): bool|Errors
+    private static function move(string $source, string $remote, Upgrader $upgrader): bool|Errors
     {
         if (!file_exists($remote) && @rename($source, $remote)) {
             return true;
@@ -291,7 +292,7 @@ final class Upgrade
     }
 
     /** The run's outcome told to the skin; an update's set-aside copy put back on failure, removed on success. */
-    private static function report(\WP_Upgrader $upgrader, mixed $result, array $extra): void
+    private static function report(Upgrader $upgrader, mixed $result, array $extra): void
     {
         $skin = $upgrader->skin;
         $backup = (array) ($extra['temp_backup'] ?? []);
@@ -309,7 +310,7 @@ final class Upgrade
     }
 
     /** Moves an update's current copy to the backup folder (one left there by an earlier pass is replaced). */
-    private static function setAside(\WP_Upgrader $upgrader, array $backup): true|Errors
+    private static function setAside(Upgrader $upgrader, array $backup): true|Errors
     {
         $from = self::backedUp($backup, 'from');
         if ($from === null || !file_exists($from)) {

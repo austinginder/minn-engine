@@ -7335,6 +7335,7 @@
                 "Minn\\Rest\\ApplicationPasswordsController",
                 "Minn\\Rest\\Services",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn"
             ],
             "constructor": {
@@ -7727,6 +7728,7 @@
                 "Minn\\Content\\UserRecord",
                 "Minn\\Db",
                 "Minn\\Http\\Response",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -7754,8 +7756,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 24,
-                "end": 28
+                "line": 25,
+                "end": 29
             },
             "cases": [],
             "constants": [
@@ -7802,8 +7804,8 @@
                     "doc": "The hash suffixed onto every cookie name: md5 of the siteurl option.",
                     "shapes": [],
                     "params": [],
-                    "line": 31,
-                    "end": 34
+                    "line": 32,
+                    "end": 35
                 },
                 {
                     "routes": [],
@@ -7852,8 +7854,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 65
+                    "line": 50,
+                    "end": 66
                 },
                 {
                     "routes": [],
@@ -7881,8 +7883,8 @@
                             "doc": "from settle()"
                         }
                     ],
-                    "line": 74,
-                    "end": 87
+                    "line": 75,
+                    "end": 88
                 },
                 {
                     "routes": [],
@@ -7893,8 +7895,8 @@
                     "doc": "Whether signing out clears the cookies: clear_auth_cookie told, then\nsend_auth_cookies asked with no cookie in hand, as the reference asks\nthem (suite login-hooks).",
                     "shapes": [],
                     "params": [],
-                    "line": 94,
-                    "end": 98
+                    "line": 95,
+                    "end": 99
                 },
                 {
                     "routes": [],
@@ -7913,8 +7915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 101,
-                    "end": 115
+                    "line": 102,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -7954,8 +7956,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 123
+                    "line": 119,
+                    "end": 124
                 }
             ]
         },
@@ -11240,7 +11242,8 @@
                 "Minn\\Auth\\LoginThrottle",
                 "Minn\\Content\\UserRecord",
                 "Minn\\Http\\Request",
-                "Minn\\Http\\Response"
+                "Minn\\Http\\Response",
+                "Minn\\Runtime\\Handoff"
             ],
             "usedBy": [
                 "Minn\\Engine",
@@ -11267,8 +11270,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 19,
-                "end": 23
+                "line": 20,
+                "end": 24
             },
             "cases": [],
             "constants": [],
@@ -11310,8 +11313,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 26,
-                    "end": 29
+                    "line": 27,
+                    "end": 30
                 },
                 {
                     "routes": [],
@@ -11330,8 +11333,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 32,
-                    "end": 35
+                    "line": 33,
+                    "end": 36
                 },
                 {
                     "routes": [],
@@ -11342,8 +11345,8 @@
                     "doc": "The cookie-name hash the sign-in cookies, the postpass cookie, and the reset cookie share.",
                     "shapes": [],
                     "params": [],
-                    "line": 38,
-                    "end": 41
+                    "line": 39,
+                    "end": 42
                 },
                 {
                     "routes": [],
@@ -11376,8 +11379,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 44,
-                    "end": 47
+                    "line": 45,
+                    "end": 48
                 },
                 {
                     "routes": [],
@@ -11410,8 +11413,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 53
+                    "line": 51,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -11437,8 +11440,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 63,
-                    "end": 67
+                    "line": 64,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -11464,8 +11467,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 74
+                    "line": 71,
+                    "end": 75
                 },
                 {
                     "routes": [],
@@ -11484,8 +11487,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 80
+                    "line": 78,
+                    "end": 81
                 },
                 {
                     "routes": [],
@@ -11525,8 +11528,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 60
+                    "line": 57,
+                    "end": 61
                 }
             ]
         },
@@ -38879,6 +38882,7 @@
                 "Minn\\Rest\\Services",
                 "Minn\\Rest\\UserObject",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn"
             ],
             "constructor": {
@@ -70232,6 +70236,7 @@
                 "Minn\\Query\\TaxSql",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
@@ -71843,6 +71848,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Html",
+                "Minn\\Objects\\SiteLocale",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -71864,8 +71870,8 @@
                     "doc": "The locale in force (get_locale).",
                     "shapes": [],
                     "params": [],
-                    "line": 19,
-                    "end": 31
+                    "line": 20,
+                    "end": 32
                 },
                 {
                     "routes": [],
@@ -71876,8 +71882,8 @@
                     "doc": "The language tag pages carry: the locale with a hyphen, plain \"en\" read as en_US.",
                     "shapes": [],
                     "params": [],
-                    "line": 34,
-                    "end": 38
+                    "line": 35,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -71888,8 +71894,8 @@
                     "doc": "Whether the site's language is written right to left (is_rtl).",
                     "shapes": [],
                     "params": [],
-                    "line": 41,
-                    "end": 45
+                    "line": 42,
+                    "end": 46
                 },
                 {
                     "routes": [],
@@ -71908,8 +71914,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 63
+                    "line": 49,
+                    "end": 64
                 }
             ]
         },
@@ -83390,6 +83396,47 @@
             "methods": []
         },
         {
+            "name": "Minn\\Objects\\SessionTokens",
+            "short": "SessionTokens",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/SessionTokens.php",
+            "lines": 3,
+            "doc": "A user's sessions as the WordPress layer hands them to plugins\n(WP_Session_Tokens, or the manager session_token_manager names): made,\nread, verified and ended. The engine knows them by this mark and asks\nfor them through Runtime\\Handoff, so it never names the WordPress\nlayer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Runtime\\Handoff"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\SiteLocale",
+            "short": "SiteLocale",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/SiteLocale.php",
+            "lines": 3,
+            "doc": "The site's locale as the WordPress layer hands it to plugins\n(WP_Locale): the names of weekdays and months, the number format and the\ntext direction. The engine knows it by this mark and makes it through\nRuntime\\Handoff, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\I18n\\SiteLanguage",
+                "Minn\\Runtime\\Handoff"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
             "name": "Minn\\Objects\\Taxonomy",
             "short": "Taxonomy",
             "namespace": "Minn\\Objects",
@@ -83502,6 +83549,49 @@
             "uses": [],
             "usedBy": [
                 "Minn\\Front\\ToolbarMenus"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\Upgrader",
+            "short": "Upgrader",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/Upgrader.php",
+            "lines": 3,
+            "doc": "An upgrader as the WordPress layer hands it to plugins (WP_Upgrader and\nthe plugin and theme upgraders): it fetches, unpacks and installs a\npackage. The engine knows these objects by this mark and makes them\nthrough Runtime\\Handoff, so it never names the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Ops\\UpgraderRun",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Upgrade"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": []
+        },
+        {
+            "name": "Minn\\Objects\\UpgraderSkin",
+            "short": "UpgraderSkin",
+            "namespace": "Minn\\Objects",
+            "kind": "interface",
+            "file": "public/minn/src/Minn/Objects/UpgraderSkin.php",
+            "lines": 3,
+            "doc": "What an upgrader reports through (WP_Upgrader_Skin and its kinds): the\nfeedback and errors of an install or update. The engine knows these\nobjects by this mark and makes them through Runtime\\Handoff, so it never\nnames the WordPress layer's class.",
+            "implements": [],
+            "extends": null,
+            "uses": [],
+            "usedBy": [
+                "Minn\\Ops\\UpgraderRun",
+                "Minn\\Runtime\\Handoff"
             ],
             "constructor": null,
             "cases": [],
@@ -88453,6 +88543,8 @@
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\Upgrader",
+                "Minn\\Objects\\UpgraderSkin",
                 "Minn\\Ops\\Archive",
                 "Minn\\Ops\\Directory",
                 "Minn\\Ops\\Packages",
@@ -88478,8 +88570,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 30,
-                "end": 32
+                "line": 32,
+                "end": 34
             },
             "cases": [],
             "constants": [],
@@ -88529,8 +88621,8 @@
                             "doc": "the upgrader's install arguments"
                         }
                     ],
-                    "line": 42,
-                    "end": 52
+                    "line": 44,
+                    "end": 54
                 },
                 {
                     "routes": [],
@@ -88563,8 +88655,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 70
+                    "line": 62,
+                    "end": 72
                 },
                 {
                     "routes": [],
@@ -88597,15 +88689,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 77,
-                    "end": 105
+                    "line": 79,
+                    "end": 107
                 },
                 {
                     "routes": [],
                     "name": "refusal",
                     "static": false,
                     "visibility": "private",
-                    "signature": "refusal(string $kind, WP_Ajax_Upgrader_Skin $skin, mixed $answer, WP_Upgrader $upgrader): Minn\\RestError",
+                    "signature": "refusal(string $kind, Minn\\Objects\\UpgraderSkin $skin, mixed $answer, Minn\\Objects\\Upgrader $upgrader): Minn\\RestError",
                     "doc": "The upgrader's refusal in the engine's words: a taken folder says what is there and what came.",
                     "shapes": [],
                     "params": [
@@ -88618,7 +88710,7 @@
                         },
                         {
                             "name": "skin",
-                            "type": "WP_Ajax_Upgrader_Skin",
+                            "type": "Minn\\Objects\\UpgraderSkin",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -88632,21 +88724,21 @@
                         },
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 125
+                    "line": 110,
+                    "end": 127
                 },
                 {
                     "routes": [],
                     "name": "taken",
                     "static": false,
                     "visibility": "private",
-                    "signature": "taken(string $kind, string $destination, WP_Upgrader $upgrader): Minn\\RestError",
+                    "signature": "taken(string $kind, string $destination, Minn\\Objects\\Upgrader $upgrader): Minn\\RestError",
                     "doc": "The refusal for a folder already taken, naming what is there and what the package holds.",
                     "shapes": [],
                     "params": [
@@ -88666,14 +88758,14 @@
                         },
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 139
+                    "line": 130,
+                    "end": 141
                 }
             ]
         },
@@ -93053,7 +93145,8 @@
                 "Minn\\Rest\\RuntimePrepare",
                 "Minn\\Rest\\RuntimeRoutes",
                 "Minn\\Rest\\Schema",
-                "Minn\\Runtime\\ApplicationPasswordEvents"
+                "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\ApplicationPasswordRecords"
             ],
             "usedBy": [
                 "Minn\\Rest\\Api"
@@ -93107,8 +93200,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 36,
-                "end": 44
+                "line": 37,
+                "end": 45
             },
             "cases": [],
             "constants": [
@@ -93208,8 +93301,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 53
+                    "line": 49,
+                    "end": 54
                 },
                 {
                     "routes": [
@@ -93237,8 +93330,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 57,
-                    "end": 74
+                    "line": 58,
+                    "end": 75
                 },
                 {
                     "routes": [
@@ -93266,8 +93359,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 83
+                    "line": 79,
+                    "end": 84
                 },
                 {
                     "routes": [
@@ -93295,8 +93388,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 87,
-                    "end": 96
+                    "line": 88,
+                    "end": 97
                 },
                 {
                     "routes": [
@@ -93331,8 +93424,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 104
+                    "line": 101,
+                    "end": 105
                 },
                 {
                     "routes": [
@@ -93369,8 +93462,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 123
+                    "line": 111,
+                    "end": 124
                 },
                 {
                     "routes": [
@@ -93405,8 +93498,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 127,
-                    "end": 136
+                    "line": 128,
+                    "end": 137
                 },
                 {
                     "routes": [],
@@ -93448,8 +93541,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 139,
-                    "end": 160
+                    "line": 140,
+                    "end": 161
                 },
                 {
                     "routes": [],
@@ -93477,8 +93570,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 163,
-                    "end": 170
+                    "line": 164,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -93511,8 +93604,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 172,
-                    "end": 179
+                    "line": 173,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -93547,8 +93640,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 182,
-                    "end": 196
+                    "line": 183,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -93567,8 +93660,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 206
+                    "line": 200,
+                    "end": 207
                 }
             ]
         },
@@ -117533,6 +117626,7 @@
                 "Minn\\Auth\\ApplicationPasswords",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\RestRequest",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Slashes"
             ],
@@ -117657,6 +117751,291 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\ApplicationPasswordRecords",
+            "short": "ApplicationPasswordRecords",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/ApplicationPasswordRecords.php",
+            "lines": 102,
+            "doc": "A user's application passwords as WordPress's API keeps them\n(WP_Application_Passwords), over the engine's store\n(Minn\\Auth\\ApplicationPasswords, the reference's format): made, found,\nrenamed, used, removed one by one or all together, with the reference's\nanswers and actions.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\ApplicationPasswords",
+                "Minn\\Content\\Users",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteOptions",
+                "Minn\\Support\\Sanitize"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\ApplicationPasswordsController",
+                "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\ApplicationPasswordSignIn"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "IN_USE",
+                    "value": "'using_application_passwords'",
+                    "doc": "The site option saying any password was made.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "inUse",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "inUse(): bool",
+                    "doc": "Whether any user has made an application password (is_in_use).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 25,
+                    "end": 28
+                },
+                {
+                    "routes": [],
+                    "name": "create",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "create(mixed $userId, mixed $args = array ( )): mixed",
+                    "doc": "A new password for the user (create_new_application_password): [the\npassword, its record], or the reference's error for a nameless one.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 47
+                },
+                {
+                    "routes": [],
+                    "name": "all",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "all(mixed $userId): array",
+                    "doc": "A user's passwords (get_user_application_passwords).",
+                    "shapes": [
+                        "@return list<array<string, mixed>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 54,
+                    "end": 57
+                },
+                {
+                    "routes": [],
+                    "name": "find",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "find(mixed $userId, mixed $uuid): ?array",
+                    "doc": "One of a user's passwords by its uuid (get_user_application_password), or null.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uuid",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 60,
+                    "end": 63
+                },
+                {
+                    "routes": [],
+                    "name": "nameExists",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "nameExists(mixed $userId, mixed $name): bool",
+                    "doc": "Whether one of a user's passwords has the name (application_name_exists_for_user).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "name",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 66,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $userId, mixed $uuid, mixed $update = array ( )): mixed",
+                    "doc": "A password renamed, the only field the reference changes (update_application_password): true, or its not-found error.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uuid",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "update",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 80
+                },
+                {
+                    "routes": [],
+                    "name": "recordUsage",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "recordUsage(mixed $userId, mixed $uuid): mixed",
+                    "doc": "A use recorded, when and from where (record_application_password_usage): true, or the not-found error.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uuid",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 83,
+                    "end": 87
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $userId, mixed $uuid): mixed",
+                    "doc": "A password removed (delete_application_password): true, or the not-found error.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "uuid",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 90,
+                    "end": 98
+                },
+                {
+                    "routes": [],
+                    "name": "deleteAll",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deleteAll(mixed $userId): int",
+                    "doc": "Every password of the user removed, each told to wp_delete_application_password (delete_all_application_passwords); how many went.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 101,
+                    "end": 109
+                },
+                {
+                    "routes": [],
+                    "name": "notFound",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "notFound(): mixed",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 111,
+                    "end": 114
+                },
+                {
+                    "routes": [],
+                    "name": "store",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "store(): Minn\\Auth\\ApplicationPasswords",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 116,
+                    "end": 119
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\ApplicationPasswordSignIn",
             "short": "ApplicationPasswordSignIn",
             "namespace": "Minn\\Runtime",
@@ -117672,6 +118051,7 @@
                 "Minn\\I18n\\Gettext",
                 "Minn\\Objects\\Errors",
                 "Minn\\Objects\\User",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Sanitize"
@@ -124629,7 +125009,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 276,
+            "lines": 307,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -124642,15 +125022,21 @@
                 "Minn\\Objects\\Query",
                 "Minn\\Objects\\RestRequest",
                 "Minn\\Objects\\RestResponse",
+                "Minn\\Objects\\SessionTokens",
+                "Minn\\Objects\\SiteLocale",
                 "Minn\\Objects\\Taxonomy",
                 "Minn\\Objects\\Term",
                 "Minn\\Objects\\TermsQuery",
                 "Minn\\Objects\\Theme",
+                "Minn\\Objects\\Upgrader",
+                "Minn\\Objects\\UpgraderSkin",
                 "Minn\\Objects\\User",
                 "Minn\\Objects\\UsersQuery"
             ],
             "usedBy": [
+                "Minn\\Auth\\AuthCookies",
                 "Minn\\Auth\\Can",
+                "Minn\\Auth\\SignIn",
                 "Minn\\Blocks\\Dynamic\\Theme\\Comments",
                 "Minn\\Blocks\\Dynamic\\Theme\\QueryBlocks",
                 "Minn\\Content\\PasswordGate",
@@ -124687,6 +125073,7 @@
                 "Minn\\Runtime\\AbilityRun",
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\AjaxController",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentEvents",
@@ -124720,6 +125107,7 @@
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
+                "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
@@ -124755,7 +125143,7 @@
                     "static": true,
                     "visibility": "public",
                     "signature": "bind(array $answers): void",
-                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy.",
+                    "doc": "Binds answers by name: currentUser, signedIn, user, userBy,\nbecomeUser, cacheUsers, authenticate, setPassword, password, hash,\ncreateNonce, verifyNonce, mail, avatar, redirect, safeRedirect, stop, escSql, cacheGet, cacheSet, cacheDelete, and the record\nfactories newError, newPost, postInstance, newTerm, newComment,\ncommentInstance, newUser, and the query factories newQuery,\nnewCommentQuery, newUserQuery, newTermQuery, newMetaQuery, newDateQuery,\nand the REST ones newRestRequest, restRequestFromUrl, newRestResponse,\nrestController, newTheme, and the empty registered-type objects\nblankPostType and blankTaxonomy, a user's sessionTokens, the locale's\nnewLocale and newTextdomainRegistry, and newUpgrader and newUpgraderSkin.",
                     "shapes": [
                         "@param array<string, Closure> $answers"
                     ],
@@ -124768,8 +125156,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 54,
-                    "end": 57
+                    "line": 59,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -124780,8 +125168,8 @@
                     "doc": "The user the request is (wp_get_current_user).",
                     "shapes": [],
                     "params": [],
-                    "line": 60,
-                    "end": 63
+                    "line": 65,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -124792,8 +125180,8 @@
                     "doc": "Whether someone is signed in (is_user_logged_in).",
                     "shapes": [],
                     "params": [],
-                    "line": 66,
-                    "end": 69
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -124812,8 +125200,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 72,
-                    "end": 75
+                    "line": 77,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -124839,8 +125227,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 81
+                    "line": 83,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -124859,8 +125247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 84,
-                    "end": 87
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -124879,8 +125267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -124906,8 +125294,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 99
+                    "line": 101,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -124933,8 +125321,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 105
+                    "line": 107,
+                    "end": 110
                 },
                 {
                     "routes": [],
@@ -124953,8 +125341,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 108,
-                    "end": 111
+                    "line": 113,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -124973,8 +125361,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 114,
-                    "end": 117
+                    "line": 119,
+                    "end": 122
                 },
                 {
                     "routes": [],
@@ -124993,8 +125381,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 120,
-                    "end": 123
+                    "line": 125,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -125013,8 +125401,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 126,
-                    "end": 129
+                    "line": 131,
+                    "end": 134
                 },
                 {
                     "routes": [],
@@ -125033,8 +125421,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 132,
-                    "end": 135
+                    "line": 137,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -125053,8 +125441,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 141
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -125073,8 +125461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 144,
-                    "end": 147
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -125093,8 +125481,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 150,
-                    "end": 153
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -125113,8 +125501,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 156,
-                    "end": 159
+                    "line": 161,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -125154,8 +125542,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 162,
-                    "end": 166
+                    "line": 167,
+                    "end": 171
                 },
                 {
                     "routes": [],
@@ -125174,8 +125562,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 169,
-                    "end": 172
+                    "line": 174,
+                    "end": 177
                 },
                 {
                     "routes": [],
@@ -125194,8 +125582,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 178
+                    "line": 180,
+                    "end": 183
                 },
                 {
                     "routes": [],
@@ -125214,8 +125602,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 184
+                    "line": 186,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -125234,8 +125622,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 190
+                    "line": 192,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -125254,8 +125642,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 193,
-                    "end": 196
+                    "line": 198,
+                    "end": 201
                 },
                 {
                     "routes": [],
@@ -125274,8 +125662,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 199,
-                    "end": 202
+                    "line": 204,
+                    "end": 207
                 },
                 {
                     "routes": [],
@@ -125294,8 +125682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 205,
-                    "end": 208
+                    "line": 210,
+                    "end": 213
                 },
                 {
                     "routes": [],
@@ -125314,8 +125702,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 214
+                    "line": 216,
+                    "end": 219
                 },
                 {
                     "routes": [],
@@ -125334,8 +125722,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 222,
+                    "end": 225
                 },
                 {
                     "routes": [],
@@ -125354,8 +125742,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 228,
+                    "end": 231
                 },
                 {
                     "routes": [],
@@ -125374,8 +125762,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 229,
-                    "end": 232
+                    "line": 234,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -125394,8 +125782,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 235,
-                    "end": 238
+                    "line": 240,
+                    "end": 243
                 },
                 {
                     "routes": [],
@@ -125414,8 +125802,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 241,
-                    "end": 244
+                    "line": 246,
+                    "end": 249
                 },
                 {
                     "routes": [],
@@ -125434,8 +125822,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 247,
-                    "end": 250
+                    "line": 252,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -125454,8 +125842,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 253,
-                    "end": 256
+                    "line": 258,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -125474,8 +125862,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 264,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -125494,8 +125882,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 265,
-                    "end": 268
+                    "line": 270,
+                    "end": 273
                 },
                 {
                     "routes": [],
@@ -125514,8 +125902,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 274
+                    "line": 276,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -125534,8 +125922,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 277,
-                    "end": 280
+                    "line": 282,
+                    "end": 285
                 },
                 {
                     "routes": [],
@@ -125561,8 +125949,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 283,
-                    "end": 286
+                    "line": 288,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -125573,8 +125961,8 @@
                     "doc": "A post type's object with nothing set yet, for the registry to fill (WP_Post_Type, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 289,
-                    "end": 292
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -125585,8 +125973,99 @@
                     "doc": "A taxonomy's object with nothing set yet, for the registry to fill (WP_Taxonomy, built without its constructor).",
                     "shapes": [],
                     "params": [],
-                    "line": 295,
-                    "end": 298
+                    "line": 300,
+                    "end": 303
+                },
+                {
+                    "routes": [],
+                    "name": "sessionTokens",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "sessionTokens(mixed $userId): Minn\\Objects\\SessionTokens",
+                    "doc": "A user's sessions (WP_Session_Tokens::get_instance), through the manager session_token_manager names.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 306,
+                    "end": 309
+                },
+                {
+                    "routes": [],
+                    "name": "newLocale",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newLocale(): Minn\\Objects\\SiteLocale",
+                    "doc": "The site's locale: its names, number format and direction (new WP_Locale).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 312,
+                    "end": 315
+                },
+                {
+                    "routes": [],
+                    "name": "newTextdomainRegistry",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newTextdomainRegistry(): object",
+                    "doc": "Where each text domain's translations are found (new WP_Textdomain_Registry).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 318,
+                    "end": 321
+                },
+                {
+                    "routes": [],
+                    "name": "newUpgrader",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newUpgrader(mixed $kind, mixed $skin): Minn\\Objects\\Upgrader",
+                    "doc": "An upgrader for plugins, or for themes when the kind is \"theme\", reporting through the skin.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "kind",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "skin",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 324,
+                    "end": 327
+                },
+                {
+                    "routes": [],
+                    "name": "newUpgraderSkin",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "newUpgraderSkin(mixed ...$args): Minn\\Objects\\UpgraderSkin",
+                    "doc": "The skin an upgrader reports through when no screen shows it (new WP_Ajax_Upgrader_Skin).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 330,
+                    "end": 333
                 },
                 {
                     "routes": [],
@@ -125605,8 +126084,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 301,
-                    "end": 304
+                    "line": 336,
+                    "end": 339
                 },
                 {
                     "routes": [],
@@ -125632,8 +126111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 306,
-                    "end": 310
+                    "line": 341,
+                    "end": 345
                 }
             ]
         },
@@ -142425,6 +142904,7 @@
                 "Minn\\Runtime\\BlockTemplates",
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\EarlyFilters",
+                "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Hooks",
                 "Minn\\Runtime\\Interactivity",
                 "Minn\\Runtime\\ObjectCache",
@@ -142549,6 +143029,7 @@
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\AjaxController",
                 "Minn\\Runtime\\ApplicationPasswordEvents",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\BlockFilters",
@@ -145032,6 +145513,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\Transients"
             ],
             "constructor": null,
@@ -152498,6 +152980,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Objects\\Errors",
+                "Minn\\Objects\\Upgrader",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols",
@@ -152523,13 +153006,13 @@
                     "name": "run",
                     "static": true,
                     "visibility": "public",
-                    "signature": "run(WP_Upgrader $upgrader, array $options): mixed",
+                    "signature": "run(Minn\\Objects\\Upgrader $upgrader, array $options): mixed",
                     "doc": "WP_Upgrader::run; false when the filesystem cannot be reached.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152542,15 +153025,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 36,
-                    "end": 75
+                    "line": 37,
+                    "end": 76
                 },
                 {
                     "routes": [],
                     "name": "bulk",
                     "static": true,
                     "visibility": "public",
-                    "signature": "bulk(WP_Upgrader $upgrader, array $items, array $offers, array $how): array|false",
+                    "signature": "bulk(Minn\\Objects\\Upgrader $upgrader, array $items, array $offers, array $how): array|false",
                     "doc": "The bulk pass of Plugin_Upgrader and Theme_Upgrader: the skin opened,\nmaintenance mode on when an active item is replaced, each item with an\noffer run as one of many (one without is up to date, answered true),\nthe pass stopped when the filesystem refuses, then maintenance off, the\nupdate cache cleaned, upgrader_process_complete told the whole list,\nand the skin closed. False when the filesystem cannot be reached.",
                     "shapes": [
                         "@param list<string> $items plugin files or theme folders",
@@ -152561,7 +153044,7 @@
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152588,21 +153071,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 127
+                    "line": 91,
+                    "end": 128
                 },
                 {
                     "routes": [],
                     "name": "install",
                     "static": true,
                     "visibility": "public",
-                    "signature": "install(WP_Upgrader $upgrader, array $args): Minn\\Objects\\Errors|array",
+                    "signature": "install(Minn\\Objects\\Upgrader $upgrader, array $args): Minn\\Objects\\Errors|array",
                     "doc": "WP_Upgrader::install_package: the unpacked folder chosen (its one\nfolder, or the working folder when it holds several things), offered\nto upgrader_pre_install and upgrader_source_selection, the destination\ncleared or refused when something is there, the folder moved in (and\nwalked by the symbol gate at its next check), and the result offered\nto upgrader_post_install.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152615,21 +153098,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 187
+                    "line": 138,
+                    "end": 188
                 },
                 {
                     "routes": [],
                     "name": "unpack",
                     "static": true,
                     "visibility": "public",
-                    "signature": "unpack(WP_Upgrader $upgrader, string $package): Minn\\Objects\\Errors|string",
+                    "signature": "unpack(Minn\\Objects\\Upgrader $upgrader, string $package): Minn\\Objects\\Errors|string",
                     "doc": "WP_Upgrader::unpack_package, without the package's deletion (the\ncaller's): the upgrade folder emptied of what earlier passes left,\nthe package unzipped into a folder named for it, and an archive that\nwill not open refused in the upgrader's words with the reader's reason.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152642,21 +153125,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 211
+                    "line": 196,
+                    "end": 212
                 },
                 {
                     "routes": [],
                     "name": "clear",
                     "static": true,
                     "visibility": "public",
-                    "signature": "clear(WP_Upgrader $upgrader, string $remote): Minn\\Objects\\Errors|bool",
+                    "signature": "clear(Minn\\Objects\\Upgrader $upgrader, string $remote): Minn\\Objects\\Errors|bool",
                     "doc": "WP_Upgrader::clear_destination: whatever is at the destination removed; true when nothing is left there.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152669,48 +153152,48 @@
                             "doc": ""
                         }
                     ],
-                    "line": 214,
-                    "end": 220
+                    "line": 215,
+                    "end": 221
                 },
                 {
                     "routes": [],
                     "name": "maintenanceOn",
                     "static": true,
                     "visibility": "public",
-                    "signature": "maintenanceOn(WP_Upgrader $upgrader): void",
+                    "signature": "maintenanceOn(Minn\\Objects\\Upgrader $upgrader): void",
                     "doc": "Maintenance mode on, as a bulk update of active plugins turns it on: the .maintenance file the front door reads.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 227
+                    "line": 224,
+                    "end": 228
                 },
                 {
                     "routes": [],
                     "name": "maintenanceOff",
                     "static": true,
                     "visibility": "public",
-                    "signature": "maintenanceOff(WP_Upgrader $upgrader): void",
+                    "signature": "maintenanceOff(Minn\\Objects\\Upgrader $upgrader): void",
                     "doc": "Maintenance mode off; said only when it was on.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 230,
-                    "end": 236
+                    "line": 231,
+                    "end": 237
                 },
                 {
                     "routes": [],
@@ -152736,21 +153219,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 239,
-                    "end": 245
+                    "line": 240,
+                    "end": 246
                 },
                 {
                     "routes": [],
                     "name": "clearOrRefuse",
                     "static": true,
                     "visibility": "private",
-                    "signature": "clearOrRefuse(WP_Upgrader $upgrader, string $remote, array $args): Minn\\Objects\\Errors|bool",
+                    "signature": "clearOrRefuse(Minn\\Objects\\Upgrader $upgrader, string $remote, array $args): Minn\\Objects\\Errors|bool",
                     "doc": "Clears the destination (an update's copy set aside first), or refuses when something is there and must not be replaced.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152770,15 +153253,15 @@
                             "doc": ""
                         }
                     ],
-                    "line": 248,
-                    "end": 266
+                    "line": 249,
+                    "end": 267
                 },
                 {
                     "routes": [],
                     "name": "move",
                     "static": true,
                     "visibility": "private",
-                    "signature": "move(string $source, string $remote, WP_Upgrader $upgrader): Minn\\Objects\\Errors|bool",
+                    "signature": "move(string $source, string $remote, Minn\\Objects\\Upgrader $upgrader): Minn\\Objects\\Errors|bool",
                     "doc": "The source moved (or, across filesystems, copied) to the destination; an existing destination is merged into.",
                     "shapes": [],
                     "params": [
@@ -152798,14 +153281,14 @@
                         },
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
                         }
                     ],
-                    "line": 269,
-                    "end": 278
+                    "line": 270,
+                    "end": 279
                 },
                 {
                     "routes": [],
@@ -152831,21 +153314,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 280,
-                    "end": 291
+                    "line": 281,
+                    "end": 292
                 },
                 {
                     "routes": [],
                     "name": "report",
                     "static": true,
                     "visibility": "private",
-                    "signature": "report(WP_Upgrader $upgrader, mixed $result, array $extra): void",
+                    "signature": "report(Minn\\Objects\\Upgrader $upgrader, mixed $result, array $extra): void",
                     "doc": "The run's outcome told to the skin; an update's set-aside copy put back on failure, removed on success.",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152865,21 +153348,21 @@
                             "doc": ""
                         }
                     ],
-                    "line": 294,
-                    "end": 309
+                    "line": 295,
+                    "end": 310
                 },
                 {
                     "routes": [],
                     "name": "setAside",
                     "static": true,
                     "visibility": "private",
-                    "signature": "setAside(WP_Upgrader $upgrader, array $backup): Minn\\Objects\\Errors|true",
+                    "signature": "setAside(Minn\\Objects\\Upgrader $upgrader, array $backup): Minn\\Objects\\Errors|true",
                     "doc": "Moves an update's current copy to the backup folder (one left there by an earlier pass is replaced).",
                     "shapes": [],
                     "params": [
                         {
                             "name": "upgrader",
-                            "type": "WP_Upgrader",
+                            "type": "Minn\\Objects\\Upgrader",
                             "shape": "",
                             "default": null,
                             "doc": ""
@@ -152892,8 +153375,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 312,
-                    "end": 323
+                    "line": 313,
+                    "end": 324
                 },
                 {
                     "routes": [],
@@ -152912,8 +153395,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 325,
-                    "end": 335
+                    "line": 326,
+                    "end": 336
                 },
                 {
                     "routes": [],
@@ -152932,8 +153415,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 337,
-                    "end": 343
+                    "line": 338,
+                    "end": 344
                 },
                 {
                     "routes": [],
@@ -152959,8 +153442,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 346,
-                    "end": 355
+                    "line": 347,
+                    "end": 356
                 },
                 {
                     "routes": [],
@@ -152981,8 +153464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 363,
-                    "end": 377
+                    "line": 364,
+                    "end": 378
                 }
             ]
         },
@@ -158330,6 +158813,7 @@
                 "Minn\\Rest\\MediaController",
                 "Minn\\Rest\\SiteSchema",
                 "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\ApplicationPasswordRecords",
                 "Minn\\Runtime\\ApplicationPasswordSignIn",
                 "Minn\\Runtime\\CommentForm",
                 "Minn\\Runtime\\Heartbeat",

@@ -30,7 +30,7 @@ final class ApplicationPasswordEvents
     {
         $fields = array_intersect_key($body, ['name' => true]) + (empty($body['app_id']) ? [] : ['app_id' => $body['app_id']]);
         $prepared = self::prepared($fields, $request);
-        $made = \WP_Application_Passwords::create_new_application_password($userId, Slashes::add((array) $prepared));
+        $made = ApplicationPasswordRecords::create($userId, Slashes::add((array) $prepared));
         if ($made instanceof Errors) {
             return $made;
         }
@@ -48,11 +48,11 @@ final class ApplicationPasswordEvents
     public static function update(int $userId, string $uuid, array $body, RestRequest $request): array|Errors
     {
         $prepared = self::prepared(array_intersect_key($body, ['name' => true]), $request);
-        $updated = \WP_Application_Passwords::update_application_password($userId, $uuid, Slashes::add((array) $prepared));
+        $updated = ApplicationPasswordRecords::update($userId, $uuid, Slashes::add((array) $prepared));
         if ($updated instanceof Errors) {
             return $updated;
         }
-        $item = (array) \WP_Application_Passwords::get_user_application_password($userId, $uuid);
+        $item = (array) ApplicationPasswordRecords::find($userId, $uuid);
         Runtime::hooks()->action('rest_after_insert_application_password', [$item, $request, false]);
         return $item;
     }

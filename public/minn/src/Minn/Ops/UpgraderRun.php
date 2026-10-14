@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Minn\Ops;
 
 use Minn\Objects\Errors;
+use Minn\Objects\Upgrader;
+use Minn\Objects\UpgraderSkin;
 use Minn\RestError;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
@@ -41,8 +43,8 @@ final readonly class UpgraderRun
      */
     public function install(string $kind, string $package, array $args = []): array
     {
-        $skin = new \WP_Ajax_Upgrader_Skin();
-        $upgrader = $kind === 'theme' ? new \Theme_Upgrader($skin) : new \Plugin_Upgrader($skin);
+        $skin = Handoff::newUpgraderSkin();
+        $upgrader = Handoff::newUpgrader($kind, $skin);
         $sha256 = '';
         $answer = $this->guarded($package, $sha256, static fn () => $upgrader->install($package, $args));
         if ($answer !== true) {
@@ -59,8 +61,8 @@ final readonly class UpgraderRun
      */
     public function update(string $kind, string $item, string $package): string
     {
-        $skin = new \WP_Ajax_Upgrader_Skin();
-        $upgrader = $kind === 'theme' ? new \Theme_Upgrader($skin) : new \Plugin_Upgrader($skin);
+        $skin = Handoff::newUpgraderSkin();
+        $upgrader = Handoff::newUpgrader($kind, $skin);
         $sha256 = '';
         $answer = $this->guarded($package, $sha256, static fn () => $kind === 'theme' ? $upgrader->upgrade($item) : ($upgrader->bulk_upgrade([$item])[$item] ?? false));
         if ($answer === false || $answer === null || $answer instanceof Errors) {
@@ -105,7 +107,7 @@ final readonly class UpgraderRun
     }
 
     /** The upgrader's refusal in the engine's words: a taken folder says what is there and what came. */
-    private function refusal(string $kind, \WP_Ajax_Upgrader_Skin $skin, mixed $answer, \WP_Upgrader $upgrader): RestError
+    private function refusal(string $kind, UpgraderSkin $skin, mixed $answer, Upgrader $upgrader): RestError
     {
         $error = $answer instanceof Errors ? $answer : ($skin->result instanceof Errors ? $skin->result : $skin->get_errors());
         $code = $error instanceof Errors ? (string) $error->get_error_code() : '';
@@ -125,7 +127,7 @@ final readonly class UpgraderRun
     }
 
     /** The refusal for a folder already taken, naming what is there and what the package holds. */
-    private function taken(string $kind, string $destination, \WP_Upgrader $upgrader): RestError
+    private function taken(string $kind, string $destination, Upgrader $upgrader): RestError
     {
         $new = $kind === 'theme' ? ($upgrader->new_theme_data ?? []) : ($upgrader->new_plugin_data ?? []);
         $current = $this->packages->identity(rtrim($destination, '/'), $kind);

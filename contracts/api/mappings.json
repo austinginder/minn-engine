@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 747,
-        "composes": 2256,
+        "minn": 746,
+        "composes": 2252,
         "leaf": 1016,
-        "noop": 2983,
+        "noop": 2986,
         "placeholder": 0,
         "deadend": 1772,
-        "functions": 8696,
-        "minnMethods": 1277,
+        "functions": 8694,
+        "minnMethods": 1285,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -7366,7 +7366,9 @@
             "file": "classes/WP_Application_Passwords.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::nameExists"
+            ],
             "composes": []
         },
         "WP_Application_Passwords::check_password": {
@@ -7390,46 +7392,47 @@
         },
         "WP_Application_Passwords::create_new_application_password": {
             "file": "classes/WP_Application_Passwords.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "do_action",
-                "sanitize_text_field",
-                "update_site_option"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::create"
+            ],
+            "composes": []
         },
         "WP_Application_Passwords::delete_all_application_passwords": {
             "file": "classes/WP_Application_Passwords.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::deleteAll"
+            ],
+            "composes": []
         },
         "WP_Application_Passwords::delete_application_password": {
             "file": "classes/WP_Application_Passwords.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::delete"
+            ],
+            "composes": []
         },
         "WP_Application_Passwords::get_user_application_password": {
             "file": "classes/WP_Application_Passwords.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::find"
+            ],
             "composes": []
         },
         "WP_Application_Passwords::get_user_application_passwords": {
             "file": "classes/WP_Application_Passwords.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::all"
+            ],
             "composes": []
         },
         "WP_Application_Passwords::hash_password": {
@@ -7445,27 +7448,17 @@
             "file": "classes/WP_Application_Passwords.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "get_site_option"
-            ]
-        },
-        "WP_Application_Passwords::notFound": {
-            "file": "classes/WP_Application_Passwords.php",
-            "lines": 1,
-            "kind": "noop",
-            "minn": [],
-            "composes": [
-                "__"
-            ]
+            "minn": [
+                "Minn\\Runtime\\ApplicationPasswordRecords::inUse"
+            ],
+            "composes": []
         },
         "WP_Application_Passwords::record_application_password_usage": {
             "file": "classes/WP_Application_Passwords.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::request"
+                "Minn\\Runtime\\ApplicationPasswordRecords::recordUsage"
             ],
             "composes": []
         },
@@ -7478,27 +7471,14 @@
                 "update_user_meta"
             ]
         },
-        "WP_Application_Passwords::store": {
+        "WP_Application_Passwords::update_application_password": {
             "file": "classes/WP_Application_Passwords.php",
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Auth\\ApplicationPasswords::__construct",
-                "Minn\\Content\\Users::__construct",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::db"
+                "Minn\\Runtime\\ApplicationPasswordRecords::update"
             ],
             "composes": []
-        },
-        "WP_Application_Passwords::update_application_password": {
-            "file": "classes/WP_Application_Passwords.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "do_action",
-                "sanitize_text_field"
-            ]
         },
         "WP_Application_Passwords_List_Table::column_created": {
             "file": "classes/deadends/DeadEnds.php",

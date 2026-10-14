@@ -780,3 +780,12 @@ Minn\Runtime\Handoff::bind([
     'blankPostType' => static fn () => (new ReflectionClass(WP_Post_Type::class))->newInstanceWithoutConstructor(),
     'blankTaxonomy' => static fn () => (new ReflectionClass(WP_Taxonomy::class))->newInstanceWithoutConstructor(),
 ]);
+
+// Sessions, the locale and the upgraders, made through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind([
+    'sessionTokens' => static fn ($user_id) => WP_Session_Tokens::get_instance($user_id),
+    'newLocale' => static fn () => new WP_Locale(),
+    'newTextdomainRegistry' => static fn () => new WP_Textdomain_Registry(),
+    'newUpgrader' => static fn ($kind, $skin) => $kind === 'theme' ? new Theme_Upgrader($skin) : new Plugin_Upgrader($skin),
+    'newUpgraderSkin' => static fn (...$args) => new WP_Ajax_Upgrader_Skin(...$args),
+]);

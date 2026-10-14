@@ -317,7 +317,7 @@ Route: `DELETE /wp/v2/users/{user_id:(?:[\d]+|me)}/application-passwords/{uuid:[
 
 Removes one.
 
-Internals: `subject()` (private, line 139), `existing()` (private, line 163), `validate()` (private, line 172), `item()` (private, line 182), `when()` (private, line 199)
+Internals: `subject()` (private, line 140), `existing()` (private, line 164), `validate()` (private, line 173), `item()` (private, line 183), `when()` (private, line 200)
 
 
 ## ArgCheck

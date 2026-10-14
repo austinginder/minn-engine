@@ -39,7 +39,7 @@ phpass (WordPress before 6.8, and the engine before this) and $wp$.
 
 - const `META` = `'_application_passwords'`
 
-Used by: `Minn\Auth\Authenticator`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Services`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordSignIn`
+Used by: `Minn\Auth\Authenticator`, `Minn\Rest\ApplicationPasswordsController`, `Minn\Rest\Services`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`
 
 ```php
 __construct(Minn\Content\Users $users)
@@ -881,7 +881,7 @@ Ends every session of a user (a password reset) and clears the cookies from the 
 
 The response with the sign-in cookies cleared.
 
-Internals: `open()` (private, line 56)
+Internals: `open()` (private, line 57)
 
 
 ## TypeCapabilities

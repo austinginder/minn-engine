@@ -7,6 +7,7 @@ namespace Minn\Auth;
 use Minn\Content\UserRecord;
 use Minn\Db;
 use Minn\Http\Response;
+use Minn\Runtime\Handoff;
 use Minn\Runtime\Runtime;
 
 /**
@@ -54,7 +55,7 @@ final readonly class AuthCookies
         $secure = (bool) Runtime::hooks()->filter('secure_auth_cookie', [$secure, $user->id]);
         $secureLoggedIn = (bool) Runtime::hooks()->filter('secure_logged_in_cookie', [$secure && $https, $user->id, $secure]);
         // The session is made as WordPress makes it, so session_token_manager and attach_session_information have their say.
-        $token = $token !== '' ? $token : \WP_Session_Tokens::get_instance($user->id)->create($expiration);
+        $token = $token !== '' ? $token : Handoff::sessionTokens($user->id)->create($expiration);
         $scheme = $secure ? 'secure_auth' : 'auth';
         $auth = self::mint($user, $expiration, $token, $scheme);
         $loggedIn = self::mint($user, $expiration, $token, 'logged_in');

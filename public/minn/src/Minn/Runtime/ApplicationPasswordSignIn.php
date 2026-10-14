@@ -53,7 +53,7 @@ final class ApplicationPasswordSignIn
             Runtime::hooks()->action('application_password_failed_authentication', [$errors]);
             return $errors;
         }
-        \WP_Application_Passwords::record_application_password_usage($user->ID, $item['uuid']);
+        ApplicationPasswordRecords::recordUsage($user->ID, $item['uuid']);
         Runtime::hooks()->action('application_password_did_authenticate', [$user, $item]);
         return $user;
     }
