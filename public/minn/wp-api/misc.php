@@ -501,14 +501,7 @@ function get_preview_post_link($post = null, $query_args = [], $preview_link = '
 
 function wp_delete_object_term_relationships($object_id, $taxonomies)
 {
-    $object_id = (int) $object_id;
-    foreach ((array) $taxonomies as $taxonomy) {
-        $term_ids = wp_get_object_terms($object_id, $taxonomy, ['fields' => 'ids']);
-        if (is_wp_error($term_ids) || $term_ids === []) {
-            continue;
-        }
-        wp_remove_object_terms($object_id, array_map('intval', $term_ids), $taxonomy);
-    }
+    Minn\Runtime\TermWrites::deleteObjectRelationships($object_id, $taxonomies);
 }
 
 function wp_get_custom_css_post($stylesheet = '')

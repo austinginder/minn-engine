@@ -1216,7 +1216,7 @@ and format side effects, and revision snapshots.
 - const `ZERO_DATE` = `'0000-00-00 00:00:00'`
 - const `LENGTHS` = `array (   'post_status' => 20,   'comment_status' => 20,   'ping_status' => 20,   'post_password' => 255,   'post_name' => 200,   'guid' => 255,   'post_type' => 20,   'post_mime_type' => 100, )` — The posts table's short text columns, cut to fit as the reference's database layer cuts them.
 
-Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)
@@ -1394,7 +1394,7 @@ Internals: `fit()` (private, line 178), `announceSticky()` (private, line 279), 
 Reads over the posts table. A post comes back as a PostRecord; a listing
 is the main query's (WP_Query); rendering and escaping happen elsewhere.
 
-Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostReads`, `Minn\Runtime\Records`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\RenderController`, `Minn\Admin\SiteController`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Content\PostWriter`, `Minn\Content\SiteIcon`, `Minn\Cron\Cron`, `Minn\Engine`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Archives`, `Minn\Front\AttachmentAddresses`, `Minn\Front\Permalinks`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleAddresses`, `Minn\Front\SingleQueries`, `Minn\Rest\BlocksController`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\MediaController`, `Minn\Rest\MediaObject`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredPostFields`, `Minn\Rest\RevisionsController`, `Minn\Rest\Services`, `Minn\Rest\Subjects`, `Minn\Rest\TemplateObject`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostReads`, `Minn\Runtime\Records`, `Minn\Runtime\TermWrites`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\PageRenderer`, `Minn\Theme\QueryClasses`, `Minn\Theme\Templates`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)
@@ -1996,7 +1996,7 @@ Records are read-only; writes go through the repository.
 
 `final readonly class Minn\Content\Terms` · `public/minn/src/Minn/Content/Terms.php`
 
-Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\TermBlocks`, `Minn\Blocks\Renderer`, `Minn\Content\Menus`, `Minn\Front\ArchiveAddresses`, `Minn\Front\Permalinks`, `Minn\Front\QueryMoves`, `Minn\Front\Resolver`, `Minn\Front\SingleAddresses`, `Minn\Rest\Services`, `Minn\Rest\TermsController`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db)

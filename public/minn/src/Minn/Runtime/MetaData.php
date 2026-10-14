@@ -227,6 +227,63 @@ final class MetaData
         return Runtime::hooks()->filter("get_user_option_{$option}", [$result, $option, Handoff::user($user)]);
     }
 
+    /**
+     * One meta row by its id (get_metadata_by_mid): an object under the
+     * table's own column names, the value decoded, unless
+     * get_{type}_metadata_by_mid answers first; false when there is none.
+     */
+    public static function byMid(mixed $type, mixed $metaId): mixed
+    {
+        if (!self::table((string) $type) || !is_numeric($metaId) || (int) $metaId <= 0) {
+            return false;
+        }
+        $check = Runtime::hooks()->filter("get_{$type}_metadata_by_mid", [null, (int) $metaId]);
+        if ($check !== null) {
+            return $check;
+        }
+        $row = self::rows()->byId((string) $type, (int) $metaId);
+        if ($row === null) {
+            return false;
+        }
+        $row['meta_value'] = StoredObjects::maybeDecode($row['meta_value']);
+        return (object) $row;
+    }
+
+    /**
+     * One meta row removed by its id (delete_metadata_by_mid), with the
+     * delete actions for that row (posts and comments also told by their
+     * older names, with the row id alone), unless
+     * delete_{type}_metadata_by_mid answers first.
+     */
+    public static function deleteByMid(mixed $type, mixed $metaId): bool
+    {
+        $meta = self::byMid($type, $metaId);
+        if ($meta === false) {
+            return false;
+        }
+        $hooks = Runtime::hooks();
+        $check = $hooks->filter("delete_{$type}_metadata_by_mid", [null, $metaId]);
+        if ($check !== null) {
+            return (bool) $check;
+        }
+        $rows = self::rows();
+        [$column] = $rows->columns((string) $type);
+        $objectId = (int) $meta->{$column};
+        $args = [[(int) $metaId], $objectId, $meta->meta_key, $meta->meta_value];
+        $older = in_array($type, ['post', 'comment'], true);
+        $hooks->action("delete_{$type}_meta", $args);
+        if ($older) {
+            $hooks->action("delete_{$type}meta", [(int) $metaId]);
+        }
+        $rows->deleteRows((string) $type, [(int) $metaId]);
+        Handoff::cacheDelete($objectId, $type . '_meta');
+        $hooks->action("deleted_{$type}_meta", $args);
+        if ($older) {
+            $hooks->action("deleted_{$type}meta", [(int) $metaId]);
+        }
+        return true;
+    }
+
     /** A post's meta (get_post_meta). */
     public static function ofPost(mixed $postId, mixed $key = '', mixed $single = false): mixed
     {
@@ -263,5 +320,10 @@ final class MetaData
         if ($type === 'post') {
             Runtime::hooks()->action("{$verb}_postmeta", $legacy);
         }
+    }
+
+    private static function rows(): Meta
+    {
+        return new Meta(Runtime::current()->db);
     }
 }

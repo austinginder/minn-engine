@@ -40,7 +40,7 @@ final readonly class TermEvents
     public function restCreate(string $taxonomy, array $body, Request $request): int
     {
         $prepared = self::prepared($taxonomy, $body, $request);
-        $made = \wp_insert_term(Slashes::add($prepared['name'] ?? null), $taxonomy, Slashes::add($prepared));
+        $made = TermWrites::insert(Slashes::add($prepared['name'] ?? null), $taxonomy, Slashes::add($prepared));
         if ($made instanceof Errors) {
             throw self::refusal($made);
         }
@@ -60,7 +60,7 @@ final readonly class TermEvents
         if ($prepared === []) {
             return;
         }
-        $changed = \wp_update_term($termId, $taxonomy, Slashes::add($prepared));
+        $changed = TermWrites::update($termId, $taxonomy, Slashes::add($prepared));
         if ($changed instanceof Errors) {
             throw self::refusal($changed);
         }
@@ -117,7 +117,7 @@ final readonly class TermEvents
             return;
         }
         $term = Records::term($termId, $taxonomy);
-        \wp_delete_term($termId, $taxonomy);
+        TermWrites::delete($termId, $taxonomy);
         Runtime::hooks()->action("rest_delete_{$taxonomy}", [$term, Handoff::newRestResponse($data, 200), RuntimeRoutes::wpRequest($request)]);
     }
 

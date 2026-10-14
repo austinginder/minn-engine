@@ -59,7 +59,7 @@ final class TermSave
         if ($taken !== null) {
             return $taken;
         }
-        $slug = (string) \wp_unique_term_slug(empty($args['slug']) ? Sanitize::title($name) : (string) $args['slug'], (object) $args);
+        $slug = (string) TermWrites::uniqueSlug(empty($args['slug']) ? Sanitize::title($name) : (string) $args['slug'], (object) $args);
         $data = self::row(Runtime::hooks()->filter('wp_insert_term_data', [['name' => $name, 'slug' => $slug, 'term_group' => 0], $taxonomy, $args]));
         $terms = new Terms(Runtime::current()->db);
         $termId = $terms->insertRow($data);
@@ -193,7 +193,7 @@ final class TermSave
             return $slug;
         }
         if ($asked === '' || $parent !== (int) $holder->parent) {
-            return (string) \wp_unique_term_slug($slug, (object) $args);
+            return (string) TermWrites::uniqueSlug($slug, (object) $args);
         }
         return Handoff::newError('duplicate_term_slug', sprintf('The slug &#8220;%s&#8221; is already in use by another term.', $slug));
     }

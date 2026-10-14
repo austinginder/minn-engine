@@ -59,7 +59,7 @@ final readonly class MenuEvents
         if (!$created && $named) {
             $args += ['description' => '', 'slug' => ''];
         }
-        $saved = $created ? \wp_insert_term($name, 'nav_menu', $args) : \wp_update_term($menuId, 'nav_menu', $args);
+        $saved = $created ? TermWrites::insert($name, 'nav_menu', $args) : TermWrites::update($menuId, 'nav_menu', $args);
         if ($saved instanceof Errors) {
             return $saved;
         }
@@ -74,7 +74,7 @@ final readonly class MenuEvents
         foreach ($this->menus->items($menuId) as $item) {
             (new PostEvents())->deleteForGood($item->id);
         }
-        \wp_delete_term($menuId, 'nav_menu');
+        TermWrites::delete($menuId, 'nav_menu');
         $locations = NavMenu::locations();
         $kept = array_filter($locations, static fn ($assigned) => (int) $assigned !== $menuId);
         if (count($kept) !== count($locations)) {

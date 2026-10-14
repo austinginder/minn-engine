@@ -94,7 +94,7 @@ final readonly class PostEvents
         }
         $registered = RegisteredType::of($type);
         foreach (PostWriter::requestedTerms($body, $registered?->taxonomies()) as $taxonomy => $termIds) {
-            \wp_set_object_terms($id, $termIds, $taxonomy);
+            TermWrites::setObjectTerms($id, $termIds, $taxonomy);
         }
     }
 

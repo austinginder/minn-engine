@@ -16189,6 +16189,15 @@ the comment author tags; `MainQuery::searchQuery()` the search terms. Full run 2
 green throughout. The http-transports probe stays out of the comparison; the other probes give
 identical output before and after.
 
+**Batch 27, term writes (function calls 166 → 156).** `Runtime\TermWrites` writes terms as the facade's
+taxonomy functions did: `insert()` and `update()` (an unknown taxonomy refused, then Runtime\TermSave),
+`delete()` (a taxonomy's default term kept, the children moved up, the meta removed row by row, objects
+left without a category given the default), `uniqueSlug()`, `updateCount()` and `updateCountNow()` (the
+taxonomy's own callback, else `countPublished()` for post types or `countAll()`), `setObjectTerms()`,
+`removeObjectTerms()` and `deleteObjectRelationships()`. `MetaData::byMid()` and `deleteByMid()` read and
+remove a meta row by its id, with that row's actions. The http-transports probe stays out of the
+comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

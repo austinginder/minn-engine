@@ -20,7 +20,7 @@ final class Deferrals
         $now = self::flip('defer_term_counting', $defer);
         if ($defer === false) {
             foreach ((array) Runtime::current()->get('deferred_term_counts', []) as $taxonomy => $terms) {
-                \wp_update_term_count_now(array_keys($terms), (string) $taxonomy);
+                TermWrites::updateCountNow(array_keys($terms), (string) $taxonomy);
             }
             Runtime::current()->set('deferred_term_counts', []);
         }

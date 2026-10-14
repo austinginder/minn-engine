@@ -225,19 +225,7 @@ function _minn_meta_action(string $verb, string $meta_type, array $args, array $
 /** One meta row by its id: an object under the table's own column names, the value decoded; false when there is none. */
 function get_metadata_by_mid($meta_type, $meta_id)
 {
-    if (!_minn_meta_table((string) $meta_type) || !is_numeric($meta_id) || (int) $meta_id <= 0) {
-        return false;
-    }
-    $check = apply_filters("get_{$meta_type}_metadata_by_mid", null, (int) $meta_id);
-    if ($check !== null) {
-        return $check;
-    }
-    $row = _minn_meta()->byId((string) $meta_type, (int) $meta_id);
-    if ($row === null) {
-        return false;
-    }
-    $row['meta_value'] = maybe_unserialize($row['meta_value']);
-    return (object) $row;
+    return Minn\Runtime\MetaData::byMid($meta_type, $meta_id);
 }
 
 /** Rewrites one meta row by its id, its key too when one is given, with the update actions for that row. */
@@ -266,30 +254,7 @@ function update_metadata_by_mid($meta_type, $meta_id, $meta_value, $meta_key = f
 /** Removes one meta row by its id, with the delete actions for that row. */
 function delete_metadata_by_mid($meta_type, $meta_id)
 {
-    $meta = get_metadata_by_mid($meta_type, $meta_id);
-    if ($meta === false) {
-        return false;
-    }
-    $check = apply_filters("delete_{$meta_type}_metadata_by_mid", null, $meta_id);
-    if ($check !== null) {
-        return (bool) $check;
-    }
-    [$column] = _minn_meta()->columns((string) $meta_type);
-    $object_id = (int) $meta->{$column};
-    $args = [[(int) $meta_id], $object_id, $meta->meta_key, $meta->meta_value];
-    // Posts and comments are also told by their older names, with the row id alone (probe hook-inputs).
-    $older = in_array($meta_type, ['post', 'comment'], true);
-    do_action("delete_{$meta_type}_meta", ...$args);
-    if ($older) {
-        do_action("delete_{$meta_type}meta", (int) $meta_id);
-    }
-    _minn_meta()->deleteRows((string) $meta_type, [(int) $meta_id]);
-    wp_cache_delete($object_id, $meta_type . '_meta');
-    do_action("deleted_{$meta_type}_meta", ...$args);
-    if ($older) {
-        do_action("deleted_{$meta_type}meta", (int) $meta_id);
-    }
-    return true;
+    return Minn\Runtime\MetaData::deleteByMid($meta_type, $meta_id);
 }
 
 /** A key is protected when its first printable character is an underscore; is_protected_meta may say otherwise. */

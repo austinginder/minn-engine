@@ -32781,6 +32781,7 @@
                 "Minn\\Runtime\\PostEvents",
                 "Minn\\Runtime\\PostInsert",
                 "Minn\\Runtime\\TermWriter",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\TemplateWriter",
                 "Minn\\Theme\\UserStyles"
             ],
@@ -33897,6 +33898,7 @@
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\ClassicRenderer",
                 "Minn\\Theme\\PageRenderer",
                 "Minn\\Theme\\QueryClasses",
@@ -37146,6 +37148,7 @@
                 "Minn\\Rest\\TermsController",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermWriter",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\TemplateWriter",
                 "Minn\\Theme\\UserStyles"
             ],
@@ -70236,6 +70239,7 @@
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
                 "Minn\\Runtime\\TermLookup",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UpdateCounts",
                 "Minn\\Runtime\\VersionCheck",
                 "Minn\\Theme\\ArchiveTitle",
@@ -83356,6 +83360,7 @@
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Theme\\QueryClasses"
             ],
             "constructor": null,
@@ -123992,10 +123997,12 @@
             "extends": null,
             "uses": [
                 "Minn\\Runtime\\CommentWrites",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermWrites"
             ],
             "usedBy": [
-                "Minn\\Runtime\\CommentWrites"
+                "Minn\\Runtime\\CommentWrites",
+                "Minn\\Runtime\\TermWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -124589,6 +124596,7 @@
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Themes",
                 "Minn\\Runtime\\Upgrade",
@@ -127133,6 +127141,7 @@
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeMods"
             ],
             "usedBy": [],
@@ -127782,7 +127791,8 @@
                 "Minn\\Runtime\\MetaTypes"
             ],
             "usedBy": [
-                "Minn\\Runtime\\MetaData"
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\TermWrites"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db)",
@@ -128382,7 +128392,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/MetaData.php",
-            "lines": 251,
+            "lines": 313,
             "doc": "Metadata as WordPress's meta functions read and write it, for posts,\nterms, comments, users and any type a plugin's table names: read through\nget_{type}_metadata and the object cache (a value its default when unset),\nwritten and removed with the filters that may answer first and the actions\naround each change (post meta also told as postmeta), values sanitized and\nstored serialized.",
             "implements": [],
             "extends": null,
@@ -128410,7 +128420,8 @@
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostFields",
                 "Minn\\Runtime\\PostReads",
-                "Minn\\Runtime\\PostTags"
+                "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\TermWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -128844,6 +128855,60 @@
                 },
                 {
                     "routes": [],
+                    "name": "byMid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "byMid(mixed $type, mixed $metaId): mixed",
+                    "doc": "One meta row by its id (get_metadata_by_mid): an object under the\ntable's own column names, the value decoded, unless\nget_{type}_metadata_by_mid answers first; false when there is none.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 235,
+                    "end": 250
+                },
+                {
+                    "routes": [],
+                    "name": "deleteByMid",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deleteByMid(mixed $type, mixed $metaId): bool",
+                    "doc": "One meta row removed by its id (delete_metadata_by_mid), with the\ndelete actions for that row (posts and comments also told by their\nolder names, with the row id alone), unless\ndelete_{type}_metadata_by_mid answers first.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "metaId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 258,
+                    "end": 285
+                },
+                {
+                    "routes": [],
                     "name": "ofPost",
                     "static": true,
                     "visibility": "public",
@@ -128873,8 +128938,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 234
+                    "line": 288,
+                    "end": 291
                 },
                 {
                     "routes": [],
@@ -128914,8 +128979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 237,
-                    "end": 240
+                    "line": 294,
+                    "end": 297
                 },
                 {
                     "routes": [],
@@ -128955,8 +129020,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 246
+                    "line": 300,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -128975,8 +129040,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 249,
-                    "end": 252
+                    "line": 306,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -128987,8 +129052,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 254,
-                    "end": 257
+                    "line": 311,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -129028,8 +129093,20 @@
                             "doc": ""
                         }
                     ],
-                    "line": 260,
-                    "end": 266
+                    "line": 317,
+                    "end": 323
+                },
+                {
+                    "routes": [],
+                    "name": "rows",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "rows(): Minn\\Runtime\\Meta",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 325,
+                    "end": 328
                 }
             ]
         },
@@ -133906,7 +133983,8 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\Records",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermWrites"
             ],
             "usedBy": [
                 "Minn\\Rest\\MediaController",
@@ -139432,7 +139510,8 @@
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
-                "Minn\\Runtime\\TermSave"
+                "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -140186,6 +140265,7 @@
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Theme\\FrontLifecycle",
                 "Minn\\Widgets\\WidgetForms"
@@ -142382,6 +142462,7 @@
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\TermWriter",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeMods",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\ThemeSwitch",
@@ -147052,6 +147133,7 @@
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Slashes"
             ],
@@ -147554,7 +147636,8 @@
                 "Minn\\Runtime\\PostReads",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
-                "Minn\\Runtime\\TermSave"
+                "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites"
             ],
             "constructor": null,
             "cases": [],
@@ -148201,7 +148284,8 @@
             "usedBy": [
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\TermLookup",
-                "Minn\\Runtime\\TermWriter"
+                "Minn\\Runtime\\TermWriter",
+                "Minn\\Runtime\\TermWrites"
             ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Closure $slug)",
@@ -149387,11 +149471,14 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermFields",
                 "Minn\\Runtime\\TermLookup",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Support\\Lists",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Slashes"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\TermWrites"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [
@@ -149709,7 +149796,9 @@
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermQuery"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\TermWrites"
+            ],
             "constructor": {
                 "signature": "__construct(Minn\\Db $db, Minn\\Content\\Terms $terms, Minn\\Runtime\\TermQuery $query, Minn\\Content\\PostWriter $posts)",
                 "doc": "",
@@ -150082,6 +150171,474 @@
                     ],
                     "line": 171,
                     "end": 174
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\TermWrites",
+            "short": "TermWrites",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermWrites.php",
+            "lines": 268,
+            "doc": "Terms written as WordPress's taxonomy functions write them: a term made,\nchanged and deleted (its children moved up and its default kept), a slug\nno other term holds, an object's terms set, and the terms' counts kept\nthrough the taxonomy's own callback; each step with the actions the\nreference fires in its order.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\PostWriter",
+                "Minn\\Content\\Posts",
+                "Minn\\Content\\Terms",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Objects\\Term",
+                "Minn\\Runtime\\Deferrals",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\Meta",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermLookup",
+                "Minn\\Runtime\\TermQuery",
+                "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWriter",
+                "Minn\\Support\\Lists",
+                "Minn\\Support\\Sanitize"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\Deferrals",
+                "Minn\\Runtime\\MenuEvents",
+                "Minn\\Runtime\\PostEvents",
+                "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermSave"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "insert",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "insert(mixed $term, mixed $taxonomy, mixed $args = array ( )): mixed",
+                    "doc": "A new term (wp_insert_term), its fields through their filters in the reference's order (Runtime\\TermSave).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 25,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "update",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "update(mixed $termId, mixed $taxonomy, mixed $args = array ( )): mixed",
+                    "doc": "A term changed (wp_update_term), its fields through their filters in the reference's order (Runtime\\TermSave).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 40
+                },
+                {
+                    "routes": [],
+                    "name": "delete",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "delete(mixed $term, mixed $taxonomy, mixed $args = array ( )): mixed",
+                    "doc": "A term deleted (wp_delete_term): a taxonomy's default term stays (0);\nits children move up to its parent, its meta goes row by row, objects\nleft without a category fall back to the default one; false for an\nunknown term or taxonomy.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 48,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "uniqueSlug",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "uniqueSlug(mixed $slug, mixed $term): mixed",
+                    "doc": "A slug no other term of the taxonomy holds (wp_unique_term_slug): one\ntaken in the taxonomy gets its parents' slugs added, nearest first,\nuntil it is free (wp_unique_term_slug_is_bad_slug decides whether it\nwas taken), then \"-2\", \"-3\" past any term holding it in any taxonomy.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 87,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "updateCount",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updateCount(mixed $terms, mixed $taxonomy, mixed $deferred = false): bool",
+                    "doc": "Terms counted (wp_update_term_count): put off while counting is\ndeferred; asked with $deferred, what was put off is counted now.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deferred",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 113,
+                    "end": 123
+                },
+                {
+                    "routes": [],
+                    "name": "updateCountNow",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "updateCountNow(mixed $terms, mixed $taxonomy): bool",
+                    "doc": "Terms counted now by term_taxonomy id (wp_update_term_count_now)\nthrough the taxonomy's count callback, then their caches let go. With\nno callback of its own, a taxonomy of post types counts published\nposts; one of other objects counts them all.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 131,
+                    "end": 148
+                },
+                {
+                    "routes": [],
+                    "name": "countPublished",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "countPublished(mixed $terms, mixed $taxonomy): void",
+                    "doc": "The published objects behind each term_taxonomy id counted (_update_post_term_count); which statuses count is the plugins' to widen.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 151,
+                    "end": 168
+                },
+                {
+                    "routes": [],
+                    "name": "countAll",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "countAll(mixed $terms, mixed $taxonomy): void",
+                    "doc": "Every object behind each term_taxonomy id counted, posts or not (_update_generic_term_count).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 171,
+                    "end": 182
+                },
+                {
+                    "routes": [],
+                    "name": "setObjectTerms",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "setObjectTerms(mixed $objectId, mixed $terms, mixed $taxonomy, mixed $append = false): mixed",
+                    "doc": "An object's terms set (wp_set_object_terms), a term named but not\nthere yet made; added to the ones it had when asked to append. The\nterm_taxonomy ids, or the error making one gave.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "append",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 189,
+                    "end": 217
+                },
+                {
+                    "routes": [],
+                    "name": "removeObjectTerms",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "removeObjectTerms(mixed $objectId, mixed $terms, mixed $taxonomy): mixed",
+                    "doc": "Terms taken off an object (wp_remove_object_terms), the ones left counted again; the error for an unknown taxonomy.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 220,
+                    "end": 233
+                },
+                {
+                    "routes": [],
+                    "name": "deleteObjectRelationships",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "deleteObjectRelationships(mixed $objectId, mixed $taxonomies): void",
+                    "doc": "Every term of the taxonomies taken off an object (wp_delete_object_term_relationships).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 236,
+                    "end": 246
+                },
+                {
+                    "routes": [],
+                    "name": "slugUnderParents",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "slugUnderParents(string $slug, object $term): string",
+                    "doc": "A taken slug with the term's parents' slugs added, nearest first, until no term holds it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "slug",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "term",
+                            "type": "object",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 249,
+                    "end": 265
+                },
+                {
+                    "routes": [],
+                    "name": "moveChildren",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "moveChildren(Minn\\Objects\\Term $term, string $taxonomy): void",
+                    "doc": "What plugins are told as a deleted term's children move up to its parent (the move itself is the term writer's).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "Minn\\Objects\\Term",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 268,
+                    "end": 276
+                },
+                {
+                    "routes": [],
+                    "name": "query",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "query(): Minn\\Runtime\\TermQuery",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 278,
+                    "end": 281
+                },
+                {
+                    "routes": [],
+                    "name": "writer",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "writer(): Minn\\Runtime\\TermWriter",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 283,
+                    "end": 288
                 }
             ]
         },
@@ -156935,6 +157492,7 @@
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UserOrder",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Theme\\HeadLinks"
@@ -157630,6 +158188,7 @@
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
+                "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\UserQueryRunner",
                 "Minn\\Runtime\\UserSave"
             ],

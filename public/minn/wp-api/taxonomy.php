@@ -354,47 +354,12 @@ function wp_get_object_terms($object_ids, $taxonomies, $args = [])
 
 function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false)
 {
-    $object_id = (int) $object_id;
-    if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    $terms = array_values(array_filter(array_map(static fn ($t) => is_string($t) ? trim($t) : $t, (array) $terms), static fn ($t) => $t !== '' && $t !== null));
-    $ttIds = [];
-    foreach ($terms as $term) {
-        $info = term_exists($term, $taxonomy);
-        if (!$info) {
-            if (is_int($term)) {
-                continue;
-            }
-            $info = wp_insert_term((string) $term, $taxonomy);
-            if (is_wp_error($info)) {
-                return $info;
-            }
-        }
-        $ttIds[] = $info['term_taxonomy_id'];
-    }
-    $old = wp_get_object_terms($object_id, $taxonomy, ['fields' => 'tt_ids', 'orderby' => 'none']);
-    $old = is_wp_error($old) ? [] : array_map('intval', $old);
-    $keep = $append ? array_values(array_unique([...$old, ...array_map('intval', $ttIds)])) : array_map('intval', $ttIds);
-    _minn_term_writer()->relate($object_id, $keep, $old, (string) $taxonomy, static fn (array $tt_ids) => wp_update_term_count($tt_ids, (string) $taxonomy));
-    wp_cache_delete($object_id, 'post_meta');
-    do_action('set_object_terms', $object_id, $terms, $ttIds, $taxonomy, $append, $old);
-    return $ttIds;
+    return Minn\Runtime\TermWrites::setObjectTerms($object_id, $terms, $taxonomy, $append);
 }
 
 function wp_remove_object_terms($object_id, $terms, $taxonomy)
 {
-    if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    $ttIds = [];
-    foreach ((array) $terms as $term) {
-        $info = term_exists($term, $taxonomy);
-        if ($info) {
-            $ttIds[] = (int) $info['term_taxonomy_id'];
-        }
-    }
-    return _minn_term_writer()->unrelate((int) $object_id, $ttIds, (string) $taxonomy, static fn (array $tt_ids) => wp_update_term_count($tt_ids, (string) $taxonomy));
+    return Minn\Runtime\TermWrites::removeObjectTerms($object_id, $terms, $taxonomy);
 }
 
 function wp_add_object_terms($object_id, $terms, $taxonomy)
@@ -479,50 +444,18 @@ function in_category($category, $post = null)
 /** A new term, its fields through their filters in the reference's order (Runtime\TermSave). */
 function wp_insert_term($term, $taxonomy, $args = [])
 {
-    if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    return TermSave::insert($term, (string) $taxonomy, (array) $args);
+    return Minn\Runtime\TermWrites::insert($term, $taxonomy, $args);
 }
 
 /** A term changed, its fields through their filters in the reference's order (Runtime\TermSave). */
 function wp_update_term($term_id, $taxonomy, $args = [])
 {
-    if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    return TermSave::update((int) $term_id, (string) $taxonomy, (array) $args);
+    return Minn\Runtime\TermWrites::update($term_id, $taxonomy, $args);
 }
 
 function wp_delete_term($term, $taxonomy, $args = [])
 {
-    if (!taxonomy_exists($taxonomy)) {
-        return false;
-    }
-    $object = get_term((int) $term, $taxonomy);
-    if (!$object instanceof WP_Term) {
-        return false;
-    }
-    $default = (int) get_option('default_category');
-    // A taxonomy's default term stays, as the default category does (probe taxonomy-default-term).
-    if (($taxonomy === 'category' && $object->term_id === $default) || $object->term_id === (int) get_option("default_term_{$taxonomy}")) {
-        return 0;
-    }
-    $args = wp_parse_args($args, ['default' => null, 'force_default' => false]);
-    $row = _minn_term_row($object->term_id, (string) $taxonomy) ?? $object->to_array();
-    do_action('pre_delete_term', $object->term_id, $taxonomy);
-    if (is_taxonomy_hierarchical($taxonomy)) {
-        _minn_term_children_move($object, (string) $taxonomy);
-    }
-    foreach (_minn_meta()->rowsOf('term', $object->term_id) as $meta) {
-        delete_metadata_by_mid('term', $meta['meta_id']);
-    }
-    $objects = array_map('strval', _minn_term_writer()->delete($row, (string) $taxonomy, is_taxonomy_hierarchical($taxonomy), $taxonomy === 'category' ? $default : (int) ($args['default'] ?? 0)));
-    do_action('deleted_term_taxonomy', $object->term_taxonomy_id);
-    clean_term_cache($object->term_id, $taxonomy);
-    do_action('delete_term', $object->term_id, $object->term_taxonomy_id, $taxonomy, $object, $objects);
-    do_action("delete_{$taxonomy}", $object->term_id, $object->term_taxonomy_id, $object, $objects);
-    return true;
+    return Minn\Runtime\TermWrites::delete($term, $taxonomy, $args);
 }
 
 function wp_delete_category($cat_id)
@@ -677,31 +610,13 @@ function clean_object_term_cache($object_ids, $object_type)
 
 function wp_update_term_count($terms, $taxonomy, $do_deferred = false)
 {
-    if ($do_deferred) {
-        return Deferrals::terms(false);
-    }
-    $terms = array_values(array_filter(array_map('intval', (array) $terms)));
-    if ($terms === []) {
-        return false;
-    }
-    // While counting is deferred the recount waits for wp_defer_term_counting(false).
-    return Deferrals::putOffTerms($terms, (string) $taxonomy) || wp_update_term_count_now($terms, $taxonomy);
+    return Minn\Runtime\TermWrites::updateCount($terms, $taxonomy, $do_deferred);
 }
 
 /** Recounts terms by term_taxonomy id through the taxonomy's count callback, then lets their caches go. */
 function wp_update_term_count_now($terms, $taxonomy)
 {
-    $terms = array_values(array_unique(array_map('intval', (array) $terms)));
-    $tax = get_taxonomy($taxonomy);
-    if (!$tax) {
-        return false;
-    }
-    // With no callback of its own, a taxonomy of post types counts published posts; one of links or other objects counts them all.
-    $callback = is_callable($tax->update_count_callback ?? '') ? $tax->update_count_callback
-        : (array_filter((array) $tax->object_type, static fn ($type) => post_type_exists(explode(':', (string) $type)[0])) !== [] ? '_update_post_term_count' : '_update_generic_term_count');
-    call_user_func($callback, $terms, $tax);
-    clean_term_cache(_minn_term_writer()->termIdsOf($terms), (string) $taxonomy, false);
-    return true;
+    return Minn\Runtime\TermWrites::updateCountNow($terms, $taxonomy);
 }
 
 /** Whether term counts are put off (Runtime\Deferrals); turning it off counts what was. */
@@ -831,43 +746,7 @@ function is_object_in_taxonomy($object_type, $taxonomy)
  */
 function wp_unique_term_slug($slug, $term)
 {
-    $term = (object) $term;
-    $original = (string) $slug;
-    $taxonomy = (string) ($term->taxonomy ?? '');
-    $taken = term_exists($original) !== null && get_term_by('slug', $original, $taxonomy) !== false;
-    $slug = $taken ? _minn_term_slug_under_parents($original, $term) : $original;
-    if (apply_filters('wp_unique_term_slug_is_bad_slug', $taken, $original, $term)) {
-        $query = _minn_term_query();
-        $except = (int) ($term->term_id ?? 0);
-        if ($query->slugTaken($slug, $except)) {
-            $base = $slug;
-            for ($n = 2; $query->slugTaken("{$base}-{$n}", $except); $n++) {
-            }
-            $slug = "{$base}-{$n}";
-        }
-    } else {
-        $slug = $original;
-    }
-    return apply_filters('wp_unique_term_slug', $slug, $term, $original);
-}
-
-/** @internal a taken slug with the term's parents' slugs added, nearest first, until no term holds it */
-function _minn_term_slug_under_parents(string $slug, object $term): string
-{
-    $taxonomy = (string) ($term->taxonomy ?? '');
-    $parentId = is_taxonomy_hierarchical($taxonomy) ? (int) ($term->parent ?? 0) : 0;
-    while ($parentId > 0) {
-        $parent = get_term($parentId, $taxonomy);
-        if (!$parent instanceof WP_Term) {
-            break;
-        }
-        $slug .= '-' . $parent->slug;
-        if (term_exists($slug) === null) {
-            break;
-        }
-        $parentId = (int) $parent->parent;
-    }
-    return $slug;
+    return Minn\Runtime\TermWrites::uniqueSlug($slug, $term);
 }
 
 /** The default on wp_update_term_parent: no term may sit under itself, however far down; such a parent becomes 0. */
@@ -888,33 +767,13 @@ function wp_check_term_hierarchy_for_loops($parent_term, $term_id, $taxonomy)
 /** Recounts the published objects behind each term_taxonomy id. */
 function _update_post_term_count($terms, $taxonomy)
 {
-    $taxonomy = is_object($taxonomy) ? $taxonomy : get_taxonomy((string) $taxonomy);
-    $name = $taxonomy ? (string) $taxonomy->name : '';
-    if ($name === '') {
-        return null;
-    }
-    // Which statuses count is the plugins' to widen (probe hook-inputs).
-    $statuses = array_values(array_map('strval', (array) apply_filters('update_post_term_count_statuses', ['publish'], $taxonomy)));
-    foreach (array_map('intval', (array) $terms) as $tt_id) {
-        $count = _minn_term_writer()->publishedCount($tt_id, $statuses);
-        do_action('update_term_count', $tt_id, $name, $count);
-        do_action('edit_term_taxonomy', $tt_id, $name, []);
-        _minn_term_writer()->storeCount($tt_id, $count);
-        do_action('edited_term_taxonomy', $tt_id, $name, []);
-    }
-    return null;
+    Minn\Runtime\TermWrites::countPublished($terms, $taxonomy);
 }
 
 /** Recounts every object behind each term_taxonomy id, posts or not. */
 function _update_generic_term_count($terms, $taxonomy)
 {
-    $name = is_object($taxonomy) ? (string) $taxonomy->name : (string) $taxonomy;
-    foreach (array_map('intval', (array) $terms) as $tt_id) {
-        $count = _minn_term_writer()->relationshipCount($tt_id);
-        do_action('edit_term_taxonomy', $tt_id, $name);
-        _minn_term_writer()->storeCount($tt_id, $count);
-        do_action('edited_term_taxonomy', $tt_id, $name);
-    }
+    Minn\Runtime\TermWrites::countAll($terms, $taxonomy);
 }
 
 /** The default on transition_post_status: a post that changes status changes its terms' published counts. */
@@ -1505,17 +1364,6 @@ function _wp_auto_add_pages_to_menu($new_status, $old_status, $post)
             _minn_menus()->appendPage((int) $menu_id, (int) $post->ID, get_current_user_id());
         }
     }
-}
-
-/** @internal What the reference tells plugins as a deleted term's children move up to its parent (the move itself is the term writer's). */
-function _minn_term_children_move(WP_Term $term, string $taxonomy): void
-{
-    $children = get_terms(['taxonomy' => $taxonomy, 'parent' => $term->term_id, 'hide_empty' => false, 'fields' => 'all']);
-    $children = is_array($children) ? $children : [];
-    $tt_ids = array_map(static fn ($child) => (int) $child->term_taxonomy_id, $children);
-    do_action('edit_term_taxonomies', $tt_ids);
-    clean_term_cache(array_map(static fn ($child) => (int) $child->term_id, $children), $taxonomy);
-    do_action('edited_term_taxonomies', $tt_ids);
 }
 
 /** The term a shared term was split into, from the _split_terms record a pre-4.2 site may carry; false when none. */
