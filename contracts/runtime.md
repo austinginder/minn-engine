@@ -16145,6 +16145,17 @@ pre_wp_setup_nav_menu_item answers first. The REST sidebars, widgets and menus c
 events and the theme switch call them directly; the facade maps onto them. The http-transports probe
 stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 23, term lookups (function calls 271 → 240).** `Runtime\TermLookup` answers what the
+facade's taxonomy reads did: `terms()` (get_terms), `by()`, `exists()`, `hierarchy()`,
+`descendants()` and `children()`, `objectTerms()`, `field()`, `count()`, `link()` (and `queryLink()`
+for a term without pretty permalinks), `ancestors()` and `postAncestors()`, `cleanCache()` and
+`cleanTaxonomy()`. `NavMenu::menus()`, `menu()` and `items()` are the menu lookups. The term query
+no longer calls `_prime_term_caches`, which had nothing to prime (terms are read straight from the
+database). Full run 28 (after batch 22) was green once the api suite was run again on its own: its one
+red was the wp-query-sql row "parents in their order", whose top-level posts tie on the FIELD()
+order, so the database may give them in either order. The http-transports probe stays out of the
+comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

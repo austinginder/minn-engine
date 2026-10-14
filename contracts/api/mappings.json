@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 785,
-        "composes": 2300,
+        "minn": 777,
+        "composes": 2290,
         "leaf": 1019,
-        "noop": 2904,
+        "noop": 2922,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8702,
-        "minnMethods": 1228,
+        "minnMethods": 1239,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -35170,28 +35170,21 @@
         },
         "_get_term_children": {
             "file": "taxonomy.php",
-            "lines": 29,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_get_term_hierarchy",
-                "get_term",
-                "is_wp_error"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::descendants"
+            ],
+            "composes": []
         },
         "_get_term_hierarchy": {
             "file": "taxonomy.php",
-            "lines": 11,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\TermQuery::hierarchy"
+                "Minn\\Runtime\\TermLookup::hierarchy"
             ],
-            "composes": [
-                "_minn_term_query",
-                "get_option",
-                "is_taxonomy_hierarchical",
-                "update_option"
-            ]
+            "composes": []
         },
         "_get_widget_id_base": {
             "file": "widgets.php",
@@ -38842,13 +38835,12 @@
         },
         "_minn_term_query_link": {
             "file": "taxonomy.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_taxonomy",
-                "home_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::queryLink"
+            ],
+            "composes": []
         },
         "_minn_term_row": {
             "file": "taxonomy.php",
@@ -44071,30 +44063,21 @@
         },
         "clean_taxonomy_cache": {
             "file": "taxonomy.php",
-            "lines": 6,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_get_term_hierarchy",
-                "delete_option",
-                "do_action",
-                "wp_cache_delete",
-                "wp_cache_set_terms_last_changed"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::cleanTaxonomy"
+            ],
+            "composes": []
         },
         "clean_term_cache": {
             "file": "taxonomy.php",
-            "lines": 16,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\RowCache::forget"
+                "Minn\\Runtime\\TermLookup::cleanCache"
             ],
-            "composes": [
-                "clean_taxonomy_cache",
-                "do_action",
-                "get_term",
-                "wp_cache_delete"
-            ]
+            "composes": []
         },
         "clean_url": {
             "file": "formatting.php",
@@ -47321,16 +47304,12 @@
         },
         "get_ancestors": {
             "file": "post.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_post_ancestors",
-                "get_term",
-                "post_type_exists",
-                "taxonomy_exists"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::ancestors"
+            ],
+            "composes": []
         },
         "get_approved_comments": {
             "file": "comment.php",
@@ -50260,12 +50239,12 @@
         },
         "get_post_ancestors": {
             "file": "post.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_post"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::postAncestors"
+            ],
+            "composes": []
         },
         "get_post_class": {
             "file": "post.php",
@@ -51637,31 +51616,21 @@
         },
         "get_term_by": {
             "file": "taxonomy.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\TermQuery::find"
+                "Minn\\Runtime\\TermLookup::by"
             ],
-            "composes": [
-                "_minn_term_query",
-                "get_term",
-                "sanitize_term_field",
-                "taxonomy_exists",
-                "wp_unslash"
-            ]
+            "composes": []
         },
         "get_term_children": {
             "file": "taxonomy.php",
-            "lines": 4,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\TermQuery::children"
+                "Minn\\Runtime\\TermLookup::children"
             ],
-            "composes": [
-                "__",
-                "_minn_term_query",
-                "taxonomy_exists"
-            ]
+            "composes": []
         },
         "get_term_feed_link": {
             "file": "link-template.php",
@@ -51681,35 +51650,21 @@
         },
         "get_term_field": {
             "file": "taxonomy.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_term",
-                "sanitize_term_field"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::field"
+            ],
+            "composes": []
         },
         "get_term_link": {
             "file": "taxonomy.php",
-            "lines": 36,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Content\\TermRecord::fromRow",
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::forTerm",
-                "Minn\\Runtime\\Runtime::get"
+                "Minn\\Runtime\\TermLookup::link"
             ],
-            "composes": [
-                "_minn_term_query_link",
-                "_minn_term_row",
-                "apply_filters",
-                "get_ancestors",
-                "get_term",
-                "get_term_by",
-                "home_url",
-                "is_taxonomy_hierarchical",
-                "user_trailingslashit"
-            ]
+            "composes": []
         },
         "get_term_meta": {
             "file": "meta.php",
@@ -51748,15 +51703,12 @@
         },
         "get_terms": {
             "file": "taxonomy.php",
-            "lines": 25,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "__",
-                "apply_filters",
-                "taxonomy_exists",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::terms"
+            ],
+            "composes": []
         },
         "get_terms_to_edit": {
             "file": "taxonomy.php",
@@ -61601,21 +61553,12 @@
         },
         "term_exists": {
             "file": "taxonomy.php",
-            "lines": 33,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\TermQuery::exists"
+                "Minn\\Runtime\\TermLookup::exists"
             ],
-            "composes": [
-                "_minn_term_lookup",
-                "_minn_term_query",
-                "apply_filters",
-                "get_term",
-                "get_terms",
-                "is_wp_error",
-                "sanitize_title",
-                "wp_unslash"
-            ]
+            "composes": []
         },
         "term_is_ancestor_of": {
             "file": "taxonomy.php",
@@ -66695,13 +66638,12 @@
         },
         "wp_count_terms": {
             "file": "comment.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_terms",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\TermLookup::count"
+            ],
+            "composes": []
         },
         "wp_create_block_style_variation_instance_name": {
             "file": "block-supports-deprecated.php",
@@ -69753,14 +69695,12 @@
         },
         "wp_get_nav_menu_items": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\NavMenuItems::forMenu"
+                "Minn\\Runtime\\NavMenu::items"
             ],
-            "composes": [
-                "wp_get_nav_menu_object"
-            ]
+            "composes": []
         },
         "wp_get_nav_menu_name": {
             "file": "theme.php",
@@ -69776,14 +69716,12 @@
         },
         "wp_get_nav_menu_object": {
             "file": "taxonomy.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_term",
-                "get_term_by"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\NavMenu::menu"
+            ],
+            "composes": []
         },
         "wp_get_nav_menu_to_edit": {
             "file": "deadends.php",
@@ -69795,15 +69733,12 @@
         },
         "wp_get_nav_menus": {
             "file": "taxonomy.php",
-            "lines": 2,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_terms",
-                "is_wp_error",
-                "wp_parse_args"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\NavMenu::menus"
+            ],
+            "composes": []
         },
         "wp_get_nocache_headers": {
             "file": "functions.php",
@@ -69824,18 +69759,12 @@
         },
         "wp_get_object_terms": {
             "file": "taxonomy.php",
-            "lines": 18,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\ObjectTerms::byTaxonomyArgs"
+                "Minn\\Runtime\\TermLookup::objectTerms"
             ],
-            "composes": [
-                "__",
-                "apply_filters",
-                "get_terms",
-                "taxonomy_exists",
-                "wp_parse_args"
-            ]
+            "composes": []
         },
         "wp_get_options_connectors_menu_items": {
             "file": "deadends.php",

@@ -60,8 +60,8 @@ final class TermQueryTree
         $hierarchical = (bool) $args['hierarchical'];
         if ($args['child_of']) {
             foreach ($this->taxonomies as $taxonomy) {
-                if (\_get_term_hierarchy($taxonomy) !== []) {
-                    $terms = \_get_term_children((int) $args['child_of'], $terms, $taxonomy);
+                if (TermLookup::hierarchy($taxonomy) !== []) {
+                    $terms = TermLookup::descendants((int) $args['child_of'], $terms, $taxonomy);
                 }
             }
         }
@@ -87,7 +87,7 @@ final class TermQueryTree
      */
     public static function pad(array &$terms, string $taxonomy): void
     {
-        if (!Registered::hierarchicalTaxonomy($taxonomy) || \_get_term_hierarchy($taxonomy) === [] || $terms === []) {
+        if (!Registered::hierarchicalTaxonomy($taxonomy) || TermLookup::hierarchy($taxonomy) === [] || $terms === []) {
             return;
         }
         $byId = [];
@@ -127,7 +127,7 @@ final class TermQueryTree
         if ($term->count) {
             return true;
         }
-        foreach ((array) \get_term_children($term->term_id, $term->taxonomy) as $child) {
+        foreach ((array) TermLookup::children($term->term_id, $term->taxonomy) as $child) {
             $child = Records::term($child, $term->taxonomy);
             if ($child instanceof Term && $child->count) {
                 return true;

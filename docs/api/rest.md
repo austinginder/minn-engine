@@ -3807,7 +3807,7 @@ What creating a term needs (probe rest-plugin-caps): a plugin's
 taxonomy, its edit_terms when hierarchical and its assign_terms when
 flat; categories, manage_categories; the others, edit_posts.
 
-Internals: `requireParent()` (private, line 158), `termsReadable()` (private, line 212)
+Internals: `requireParent()` (private, line 159), `termsReadable()` (private, line 213)
 
 
 ## Types

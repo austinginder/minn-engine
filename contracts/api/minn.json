@@ -35605,6 +35605,7 @@
                 "Minn\\Runtime\\CommentQueryRunner",
                 "Minn\\Runtime\\Meta",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQuery",
                 "Minn\\Theme\\Templates"
             ],
@@ -36761,6 +36762,7 @@
                 "Minn\\Rest\\TermFilters",
                 "Minn\\Rest\\TermObject",
                 "Minn\\Rest\\TermsController",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermWriter"
             ],
             "constructor": {
@@ -70209,6 +70211,7 @@
                 "Minn\\Runtime\\PostQuery",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registry",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\UpdateCounts",
                 "Minn\\Runtime\\VersionCheck",
                 "Minn\\Theme\\ArchiveTitle",
@@ -83308,9 +83311,11 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Theme\\QueryClasses"
@@ -114018,6 +114023,7 @@
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
@@ -114067,8 +114073,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 39
+                "line": 33,
+                "end": 40
             },
             "cases": [],
             "constants": [],
@@ -114146,8 +114152,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 85
+                    "line": 49,
+                    "end": 86
                 },
                 {
                     "routes": [
@@ -114182,8 +114188,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 106
+                    "line": 90,
+                    "end": 107
                 },
                 {
                     "routes": [
@@ -114212,8 +114218,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 131
+                    "line": 112,
+                    "end": 132
                 },
                 {
                     "routes": [
@@ -114250,8 +114256,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 155
+                    "line": 138,
+                    "end": 156
                 },
                 {
                     "routes": [
@@ -114286,8 +114292,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 167,
-                    "end": 188
+                    "line": 168,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -114306,8 +114312,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 195,
-                    "end": 202
+                    "line": 196,
+                    "end": 203
                 },
                 {
                     "routes": [],
@@ -114333,8 +114339,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 158,
-                    "end": 163
+                    "line": 159,
+                    "end": 164
                 },
                 {
                     "routes": [],
@@ -114362,8 +114368,8 @@
                             "doc": "the taxonomy's post types"
                         }
                     ],
-                    "line": 212,
-                    "end": 221
+                    "line": 213,
+                    "end": 222
                 }
             ]
         },
@@ -123785,6 +123791,7 @@
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
                 "Minn\\Runtime\\ThemeSupports",
@@ -126702,6 +126709,7 @@
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Support\\Url"
             ],
             "usedBy": [
@@ -128601,20 +128609,26 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/NavMenu.php",
-            "lines": 99,
+            "lines": 126,
             "doc": "wp_nav_menu()'s menu: the one the arguments name, its items marked for\nthe page in view (MenuItemMarks), walked, wrapped in the container.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Objects\\Term",
                 "Minn\\Runtime\\MenuItemMarks",
+                "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\ThemeMods",
-                "Minn\\Support\\Escape"
+                "Minn\\Support\\Escape",
+                "Minn\\Support\\Lists"
             ],
             "usedBy": [
                 "Minn\\Rest\\MenusController",
                 "Minn\\Runtime\\MenuEvents",
-                "Minn\\Runtime\\ThemeSwitch"
+                "Minn\\Runtime\\ThemeSwitch",
+                "Minn\\Widgets\\WidgetForms"
             ],
             "constructor": null,
             "cases": [],
@@ -128633,6 +128647,73 @@
             "methods": [
                 {
                     "routes": [],
+                    "name": "menus",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "menus(mixed $args = array ( )): mixed",
+                    "doc": "Every menu (wp_get_nav_menus): the nav_menu terms by name, empty ones too, as wp_get_nav_menus leaves them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 16,
+                    "end": 20
+                },
+                {
+                    "routes": [],
+                    "name": "menu",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "menu(mixed $menu): mixed",
+                    "doc": "A menu by its term, id, slug or name (wp_get_nav_menu_object), or false, as the filter leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "menu",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 23,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "items",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "items(mixed $menu, mixed $args = array ( )): mixed",
+                    "doc": "A menu's items (wp_get_nav_menu_items), or false for no menu.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "menu",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 36,
+                    "end": 40
+                },
+                {
+                    "routes": [],
                     "name": "locations",
                     "static": true,
                     "visibility": "public",
@@ -128642,8 +128723,8 @@
                         "@return array<string, mixed>"
                     ],
                     "params": [],
-                    "line": 20,
-                    "end": 24
+                    "line": 47,
+                    "end": 51
                 },
                 {
                     "routes": [],
@@ -128662,8 +128743,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 34,
-                    "end": 59
+                    "line": 61,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -128682,8 +128763,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 77
+                    "line": 89,
+                    "end": 104
                 },
                 {
                     "routes": [],
@@ -128709,8 +128790,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 80,
-                    "end": 92
+                    "line": 107,
+                    "end": 119
                 },
                 {
                     "routes": [],
@@ -128743,8 +128824,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 95,
-                    "end": 110
+                    "line": 122,
+                    "end": 137
                 }
             ]
         },
@@ -128767,11 +128848,13 @@
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Support\\Lists",
                 "Minn\\Support\\Text"
             ],
             "usedBy": [
-                "Minn\\Rest\\MenuItemObject"
+                "Minn\\Rest\\MenuItemObject",
+                "Minn\\Runtime\\NavMenu"
             ],
             "constructor": null,
             "cases": [],
@@ -129664,9 +129747,12 @@
             "implements": [],
             "extends": null,
             "uses": [
-                "Minn\\Runtime\\Registered"
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\TermLookup"
             ],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Runtime\\TermLookup"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -130003,6 +130089,7 @@
                 "Minn\\Runtime\\PluginActivation",
                 "Minn\\Runtime\\PluginRemoval",
                 "Minn\\Runtime\\SiteOptions",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\ThemeMods",
                 "Minn\\Runtime\\ThemeSwitch",
                 "Minn\\Runtime\\Transients",
@@ -135614,6 +135701,7 @@
                 "Minn\\Objects\\Query",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\TermFields",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Text"
             ],
@@ -137577,6 +137665,7 @@
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
+                "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Runtime\\PostEvents",
@@ -137587,6 +137676,7 @@
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave"
             ],
@@ -138336,6 +138426,7 @@
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\RewriteRules",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Runtime\\TermSave",
@@ -140521,6 +140612,7 @@
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Runtime\\TermEvents",
                 "Minn\\Runtime\\TermFields",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermQueryTree",
@@ -143172,6 +143264,7 @@
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PostLinks",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\Themes",
                 "Minn\\Widgets\\WidgetForms"
             ],
@@ -145306,6 +145399,7 @@
             "usedBy": [
                 "Minn\\Front\\FeedTags",
                 "Minn\\Runtime\\PostQueryTax",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave"
             ],
@@ -145500,6 +145594,560 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\TermLookup",
+            "short": "TermLookup",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/TermLookup.php",
+            "lines": 365,
+            "doc": "Terms looked up as WordPress's taxonomy functions find them: a list by\nquery arguments, one by a field, whether one exists, a taxonomy's\nhierarchy, an object's terms, a term's address and one of its fields, its\nchildren and ancestors, how many there are, and the caches cleaned after\na change; each with the filters plugins hook there.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Content\\RowCache",
+                "Minn\\Content\\TermRecord",
+                "Minn\\I18n\\Gettext",
+                "Minn\\Objects\\Term",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\ObjectTerms",
+                "Minn\\Runtime\\OptionWrites",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\TermFields",
+                "Minn\\Runtime\\TermQuery",
+                "Minn\\Support\\Lists",
+                "Minn\\Support\\Sanitize",
+                "Minn\\Support\\Slashes"
+            ],
+            "usedBy": [
+                "Minn\\Rest\\TermsController",
+                "Minn\\Runtime\\MenuItemMarks",
+                "Minn\\Runtime\\NavMenu",
+                "Minn\\Runtime\\NavMenuItems",
+                "Minn\\Runtime\\ObjectTerms",
+                "Minn\\Runtime\\PostQueryTax",
+                "Minn\\Runtime\\TermQueryRunner",
+                "Minn\\Runtime\\TermQueryTree",
+                "Minn\\Runtime\\TermSave"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "terms",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "terms(mixed $args = array ( ), mixed $deprecated = ''): mixed",
+                    "doc": "Terms by query arguments (get_terms), or the old ($taxonomy, $args)\nshape; an error for an unknown taxonomy; get_terms filters the list\nunless suppressed (a count never).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 29,
+                    "end": 56
+                },
+                {
+                    "routes": [],
+                    "name": "by",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "by(mixed $field, mixed $value, mixed $taxonomy = '', mixed $output = 'OBJECT', mixed $filter = 'raw'): mixed",
+                    "doc": "A term by slug, name, id or term_taxonomy_id (get_term_by), or false.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "value",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "output",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'OBJECT'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "filter",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'raw'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 59,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "exists",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "exists(mixed $term, mixed $taxonomy = '', mixed $parent = NULL): mixed",
+                    "doc": "Whether a term exists (term_exists): its id (and term_taxonomy_id when a\ntaxonomy is named), or null. Lookup arguments a plugin changes through\nterm_exists_default_query_args are run as a terms query, by slug then\nby name.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 77,
+                    "end": 108
+                },
+                {
+                    "routes": [],
+                    "name": "hierarchy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "hierarchy(mixed $taxonomy): array",
+                    "doc": "A hierarchical taxonomy's parents and their children (_get_term_hierarchy),\nbuilt from the terms and kept in {taxonomy}_children when not kept yet.",
+                    "shapes": [
+                        "@return array<int, list<int>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 116,
+                    "end": 128
+                },
+                {
+                    "routes": [],
+                    "name": "descendants",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "descendants(mixed $termId, mixed $terms, mixed $taxonomy, mixed $ancestors = array ( )): mixed",
+                    "doc": "Terms below a term among those given (_get_term_children), following\nonly the terms the stored hierarchy says have children; ids for ids.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "terms",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "ancestors",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 134,
+                    "end": 164
+                },
+                {
+                    "routes": [],
+                    "name": "children",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "children(mixed $termId, mixed $taxonomy): mixed",
+                    "doc": "Every term below a term (get_term_children), an error for an unknown taxonomy.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "termId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 167,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "objectTerms",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "objectTerms(mixed $objectIds, mixed $taxonomies, mixed $args = array ( )): mixed",
+                    "doc": "The terms of objects in taxonomies (wp_get_object_terms), as\nwp_get_object_terms_args shapes the query and get_object_terms and\nwp_get_object_terms leave the list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "objectIds",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomies",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 180,
+                    "end": 200
+                },
+                {
+                    "routes": [],
+                    "name": "field",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "field(mixed $field, mixed $term, mixed $taxonomy = '', mixed $context = 'display'): mixed",
+                    "doc": "One of a term's fields in a context (get_term_field): empty when the term has no such field.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "field",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'display'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 203,
+                    "end": 213
+                },
+                {
+                    "routes": [],
+                    "name": "count",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "count(mixed $args = array ( ), mixed $deprecated = ''): mixed",
+                    "doc": "How many terms match (wp_count_terms), the old ($taxonomy, $args) shape\nread too; empty terms counted.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "args",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 219,
+                    "end": 229
+                },
+                {
+                    "routes": [],
+                    "name": "link",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "link(mixed $term, mixed $taxonomy = ''): mixed",
+                    "doc": "A term's address (get_term_link): by its taxonomy's link structure\nthrough pre_term_link, a changed one filled with its slug (its\nancestors' first when the taxonomy nests), by query without one; then\ntag_link or category_link, and term_link. An error for no term.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 237,
+                    "end": 272
+                },
+                {
+                    "routes": [],
+                    "name": "ancestors",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "ancestors(mixed $objectId = 0, mixed $objectType = '', mixed $resourceType = ''): mixed",
+                    "doc": "An object's ancestors (get_ancestors): a term's parents up the\ntaxonomy, or a post's up its type; as get_ancestors leaves them.",
+                    "shapes": [
+                        "@return array<int, int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "objectId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "resourceType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 280,
+                    "end": 300
+                },
+                {
+                    "routes": [],
+                    "name": "postAncestors",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "postAncestors(mixed $post): array",
+                    "doc": "A post's parents up to the top (get_post_ancestors), a loop broken.",
+                    "shapes": [
+                        "@return list<int>"
+                    ],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 307,
+                    "end": 321
+                },
+                {
+                    "routes": [],
+                    "name": "cleanCache",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cleanCache(mixed $ids, mixed $taxonomy = '', mixed $cleanTaxonomy = true): void",
+                    "doc": "Terms forgotten after a change (clean_term_cache): each term's cache,\nits taxonomy's (unless asked not to), then clean_term_cache; with no\ntaxonomy named, each term's own.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "ids",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "cleanTaxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 328,
+                    "end": 346
+                },
+                {
+                    "routes": [],
+                    "name": "cleanTaxonomy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "cleanTaxonomy(mixed $taxonomy): void",
+                    "doc": "A taxonomy's caches cleaned (clean_taxonomy_cache): its hierarchy rebuilt, the terms' last change moved.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 349,
+                    "end": 357
+                },
+                {
+                    "routes": [],
+                    "name": "queryLink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "queryLink(Minn\\Objects\\Term $term): string",
+                    "doc": "A term's address by query: ?cat= for a category, the taxonomy's query var, else taxonomy and term.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "Minn\\Objects\\Term",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 360,
+                    "end": 368
+                },
+                {
+                    "routes": [],
+                    "name": "lookup",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "lookup(string $term, ?string $taxonomy, ?int $parent): ?array",
+                    "doc": "A term by slug, then by name, under a parent when one is named. @return array<string, mixed>|null",
+                    "shapes": [
+                        "@return array<string, mixed>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "parent",
+                            "type": "?int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 371,
+                    "end": 380
+                },
+                {
+                    "routes": [],
+                    "name": "query",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "query(): Minn\\Runtime\\TermQuery",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [],
+                    "line": 382,
+                    "end": 385
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\TermOrder",
             "short": "TermOrder",
             "namespace": "Minn\\Runtime",
@@ -145628,6 +146276,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermWriter"
             ],
             "constructor": {
@@ -146210,7 +146859,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/TermQueryRunner.php",
-            "lines": 255,
+            "lines": 254,
             "doc": "WP_Term_Query::get_terms as the reference runs it (probe\nwp-term-query-sql): the variables parsed and handed to pre_get_terms,\nget_terms_args, the WHERE pieces (taxonomies, inclusions, exclusions with\nexcluded trees and childless terms through list_terms_exclusions, names,\nslugs, term taxonomy ids, likes, objects, parent, counts, search, meta),\nthe order through get_terms_orderby, the fields through get_terms_fields,\nall of it through terms_clauses, terms_pre_query, and the results shaped\nby TermQueryTree (children, padded counts, the empty hidden, the page).",
             "implements": [],
             "extends": null,
@@ -146221,6 +146870,7 @@
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermFields",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryTree",
                 "Minn\\Support\\Lists",
@@ -146285,7 +146935,7 @@
                         }
                     ],
                     "line": 35,
-                    "end": 69
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -146307,8 +146957,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 87
+                    "line": 77,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -146329,8 +146979,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 90,
-                    "end": 93
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -146360,8 +147010,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 118
+                    "line": 103,
+                    "end": 117
                 },
                 {
                     "routes": [],
@@ -146389,8 +147039,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 121,
-                    "end": 129
+                    "line": 120,
+                    "end": 128
                 },
                 {
                     "routes": [],
@@ -146411,8 +147061,8 @@
                             "doc": "@return array{0: string, 1: string}"
                         }
                     ],
-                    "line": 132,
-                    "end": 140
+                    "line": 131,
+                    "end": 139
                 },
                 {
                     "routes": [],
@@ -146440,8 +147090,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 143,
-                    "end": 167
+                    "line": 142,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -146469,8 +147119,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 170,
-                    "end": 188
+                    "line": 169,
+                    "end": 187
                 },
                 {
                     "routes": [],
@@ -146498,8 +147148,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 191,
-                    "end": 207
+                    "line": 190,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -146520,8 +147170,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 210,
-                    "end": 218
+                    "line": 209,
+                    "end": 217
                 },
                 {
                     "routes": [],
@@ -146564,8 +147214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 227,
-                    "end": 253
+                    "line": 226,
+                    "end": 252
                 },
                 {
                     "routes": [],
@@ -146586,8 +147236,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 263
+                    "line": 255,
+                    "end": 262
                 },
                 {
                     "routes": [],
@@ -146600,8 +147250,8 @@
                         "@return array{0: string, 1: string}"
                     ],
                     "params": [],
-                    "line": 266,
-                    "end": 275
+                    "line": 265,
+                    "end": 274
                 }
             ]
         },
@@ -146619,7 +147269,8 @@
                 "Minn\\Objects\\Term",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\Registered",
-                "Minn\\Runtime\\Runtime"
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\TermLookup"
             ],
             "usedBy": [
                 "Minn\\Runtime\\TermQueryRunner"
@@ -146811,6 +147462,7 @@
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\TermFields",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Support\\Lists",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Support\\Slashes"
@@ -154333,9 +154985,11 @@
                 "Minn\\Rest\\RegisteredFields",
                 "Minn\\Runtime\\CommentPages",
                 "Minn\\Runtime\\CommentQueryWhere",
+                "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\NavMenuItems",
                 "Minn\\Runtime\\Pages",
                 "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
@@ -155030,6 +155684,7 @@
                 "Minn\\Runtime\\QueryFlags",
                 "Minn\\Runtime\\Records",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermOrder",
                 "Minn\\Runtime\\TermQueryRunner",
                 "Minn\\Runtime\\TermSave",
@@ -156073,6 +156728,7 @@
                 "Minn\\Runtime\\PostRevisions",
                 "Minn\\Runtime\\PostSave",
                 "Minn\\Runtime\\TermEvents",
+                "Minn\\Runtime\\TermLookup",
                 "Minn\\Runtime\\TermSave"
             ],
             "constructor": null,
@@ -166307,6 +166963,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Html",
+                "Minn\\Runtime\\NavMenu",
                 "Minn\\Runtime\\Registered",
                 "Minn\\Runtime\\SiteUrls",
                 "Minn\\Support\\Escape"
@@ -166341,8 +166998,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 22,
-                    "end": 30
+                    "line": 23,
+                    "end": 31
                 },
                 {
                     "routes": [],
@@ -166368,8 +167025,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 36
+                    "line": 34,
+                    "end": 37
                 },
                 {
                     "routes": [],
@@ -166395,8 +167052,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 39,
-                    "end": 49
+                    "line": 40,
+                    "end": 50
                 },
                 {
                     "routes": [],
@@ -166422,8 +167079,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 56
+                    "line": 53,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -166449,8 +167106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 59,
-                    "end": 64
+                    "line": 60,
+                    "end": 65
                 },
                 {
                     "routes": [],
@@ -166476,8 +167133,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 67,
-                    "end": 72
+                    "line": 68,
+                    "end": 73
                 },
                 {
                     "routes": [],
@@ -166503,8 +167160,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 78
+                    "line": 76,
+                    "end": 79
                 },
                 {
                     "routes": [],
@@ -166530,8 +167187,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 81,
-                    "end": 85
+                    "line": 82,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -166557,8 +167214,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 91
+                    "line": 89,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -166584,8 +167241,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 101
+                    "line": 95,
+                    "end": 102
                 },
                 {
                     "routes": [],
@@ -166611,8 +167268,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 104,
-                    "end": 115
+                    "line": 105,
+                    "end": 116
                 },
                 {
                     "routes": [],
@@ -166638,8 +167295,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 118,
-                    "end": 131
+                    "line": 119,
+                    "end": 132
                 },
                 {
                     "routes": [],
@@ -166668,8 +167325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 174
+                    "line": 143,
+                    "end": 175
                 },
                 {
                     "routes": [],
@@ -166709,8 +167366,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 181,
-                    "end": 199
+                    "line": 182,
+                    "end": 200
                 },
                 {
                     "routes": [],
@@ -166743,8 +167400,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 205
+                    "line": 203,
+                    "end": 206
                 },
                 {
                     "routes": [],
@@ -166777,8 +167434,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 210
+                    "line": 208,
+                    "end": 211
                 },
                 {
                     "routes": [],
@@ -166804,8 +167461,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 212,
-                    "end": 215
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -166831,8 +167488,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 217,
-                    "end": 220
+                    "line": 218,
+                    "end": 221
                 }
             ]
         },

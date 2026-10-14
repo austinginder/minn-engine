@@ -352,14 +352,7 @@ function _minn_comment_restore($comment_id, string $before, string $after): bool
 
 function wp_count_terms($args = [], $deprecated = '')
 {
-    if (!is_array($args) || (is_array($args) && !isset($args['taxonomy']) && !empty($deprecated))) {
-        $legacy = is_array($deprecated) ? $deprecated : [];
-        $legacy['taxonomy'] = $args;
-        $args = $legacy;
-    }
-    $args = wp_parse_args($args, ['hide_empty' => false]);
-    $args['fields'] = 'count';
-    return get_terms($args);
+    return Minn\Runtime\TermLookup::count($args, $deprecated);
 }
 
 function get_comment_author($comment_id = 0)

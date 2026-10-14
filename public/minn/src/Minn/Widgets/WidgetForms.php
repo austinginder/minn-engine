@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Widgets;
 
 use Minn\Html;
+use Minn\Runtime\NavMenu;
 use Minn\Runtime\Registered;
 use Minn\Runtime\SiteUrls;
 use Minn\Support\Escape;
@@ -117,7 +118,7 @@ final class WidgetForms
     /** The navigation menu widget: a note when there are no menus, else the title and the menu to show. */
     public static function navMenu(\WP_Widget $widget, array $instance): string
     {
-        $menus = \wp_get_nav_menus();
+        $menus = NavMenu::menus();
         $chosen = (int) ($instance['nav_menu'] ?? 0);
         $out = "\t\t<p class=\"nav-menu-widget-no-menus-message\" " . ($menus === [] ? '' : ' style="display:none" ') . ">\n\t\t\tNo menus have been created yet. <a href=\"" . Escape::attr(SiteUrls::admin('nav-menus.php')) . "\">Create some</a>.\t\t</p>\n";
         $out .= "\t\t<div class=\"nav-menu-widget-form-controls\" " . ($menus === [] ? 'style="display:none"' : '') . ">\n";

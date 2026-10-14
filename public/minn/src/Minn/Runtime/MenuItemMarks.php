@@ -209,7 +209,7 @@ final class MenuItemMarks
             if (empty(Runtime::registry()->taxonomy((string) $taxonomy)['hierarchical'])) {
                 continue;
             }
-            $ids = \wp_get_object_terms([(int) $post->ID], [(string) $taxonomy], ['fields' => 'ids']);
+            $ids = TermLookup::objectTerms([(int) $post->ID], [(string) $taxonomy], ['fields' => 'ids']);
             foreach (is_array($ids) ? $ids : [] as $id) {
                 $terms[] = (int) $id;
                 $ancestors[(string) $taxonomy] = [...$ancestors[(string) $taxonomy] ?? [], (int) $id, ...self::ancestors((int) $id, (string) $taxonomy, 'taxonomy')];
@@ -221,7 +221,7 @@ final class MenuItemMarks
     /** @return list<int> */
     private static function ancestors(int $id, string $type, string $kind): array
     {
-        return array_map('intval', (array) \get_ancestors($id, $type, $kind));
+        return array_map('intval', (array) TermLookup::ancestors($id, $type, $kind));
     }
 
     private static function currentUrl(): string

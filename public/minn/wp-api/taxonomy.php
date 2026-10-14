@@ -206,14 +206,7 @@ function get_term($term, $taxonomy = '', $output = OBJECT, $filter = 'raw')
 
 function get_term_by($field, $value, $taxonomy = '', $output = OBJECT, $filter = 'raw')
 {
-    if ($taxonomy !== '' && !taxonomy_exists($taxonomy) && $field !== 'term_taxonomy_id') {
-        return false;
-    }
-    if ($field === 'name') {
-        $value = wp_unslash((string) sanitize_term_field('name', $value, 0, $taxonomy === '' ? false : (string) $taxonomy, 'db'));
-    }
-    $found = _minn_term_query()->find((string) $field, $value, $taxonomy === '' ? null : (string) $taxonomy);
-    return $found === null ? false : get_term($found['term_id'], $found['taxonomy'], $output, $filter);
+    return Minn\Runtime\TermLookup::by($field, $value, $taxonomy, $output, $filter);
 }
 
 /**
@@ -225,39 +218,7 @@ function get_term_by($field, $value, $taxonomy = '', $output = OBJECT, $filter =
  */
 function term_exists($term, $taxonomy = '', $parent_term = null)
 {
-    if ($term === null || $term === '' || $term === 0) {
-        return null;
-    }
-    $tax = $taxonomy === '' || $taxonomy === null ? null : (string) $taxonomy;
-    // The lookup's arguments through term_exists_default_query_args (probe filter-inputs-2): as they come back
-    // unchanged the engine's own lookup answers; changed, get_terms() runs them, by slug, then by name.
-    $defaults = ['get' => 'all', 'fields' => 'all', 'number' => 1, 'update_term_meta_cache' => false, 'order' => 'ASC', 'orderby' => 'term_id', 'suppress_filter' => true]
-        + ($tax === null ? [] : ['taxonomy' => $tax] + ($parent_term === null ? [] : ['parent' => (int) $parent_term]));
-    $query = (array) apply_filters('term_exists_default_query_args', $defaults, $term, $taxonomy, $parent_term);
-    if ($query !== $defaults) {
-        $terms = is_int($term) ? get_terms(['include' => [$term]] + $query) : get_terms(['slug' => sanitize_title((string) $term)] + $query);
-        if (!is_int($term) && (empty($terms) || is_wp_error($terms))) {
-            $terms = get_terms(['name' => trim(wp_unslash((string) $term))] + $query);
-        }
-        $first = is_array($terms) ? (array_values($terms)[0] ?? null) : null;
-        if (!$first instanceof WP_Term) {
-            return null;
-        }
-        return $tax === null ? (string) $first->term_id : ['term_id' => (string) $first->term_id, 'term_taxonomy_id' => (string) $first->term_taxonomy_id];
-    }
-    if (is_int($term)) {
-        $found = _minn_term_query()->exists($term, $tax, null);
-    } else {
-        $found = _minn_term_lookup(trim(wp_unslash((string) $term)), $tax, $parent_term === null || $tax === null ? null : (int) $parent_term);
-    }
-    if ($found === null) {
-        return null;
-    }
-    if ($tax !== null) {
-        // The reference reads the term it found as a term, so get_term and get_{taxonomy} hear it.
-        get_term((int) $found['term_id'], $tax);
-    }
-    return $tax === null ? (string) $found['term_id'] : ['term_id' => (string) $found['term_id'], 'term_taxonomy_id' => (string) $found['term_taxonomy_id']];
+    return Minn\Runtime\TermLookup::exists($term, $taxonomy, $parent_term);
 }
 
 /** @internal term_exists() for a string: the slug it makes, then the name as saved */
@@ -274,31 +235,7 @@ function _minn_term_lookup(string $term, ?string $taxonomy, ?int $parent): ?arra
 
 function get_terms($args = [], $deprecated = '')
 {
-    $query = new WP_Term_Query();
-    // The legacy shape ($taxonomy, $args): a second argument, or a first that shares no key with the defaults.
-    $parsed = wp_parse_args($args);
-    $legacy = $deprecated || array_intersect_key($query->query_var_defaults, (array) $parsed) === [];
-    if ($legacy) {
-        $taxonomies = (array) $args;
-        $args = wp_parse_args($deprecated, ['suppress_filter' => false]);
-        $args['taxonomy'] = $taxonomies;
-    } else {
-        $args = wp_parse_args($args, ['suppress_filter' => false]);
-        $args['taxonomy'] = isset($args['taxonomy']) ? (array) $args['taxonomy'] : null;
-    }
-    foreach ((array) $args['taxonomy'] as $taxonomy) {
-        if (!taxonomy_exists($taxonomy)) {
-            return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-        }
-    }
-    $suppress = $args['suppress_filter'];
-    unset($args['suppress_filter']);
-    $terms = $query->query($args);
-    // A count is not filtered, as the reference has never filtered it.
-    if (!is_array($terms) || $suppress) {
-        return $terms;
-    }
-    return apply_filters('get_terms', $terms, $query->query_vars['taxonomy'], $query->query_vars, $query);
+    return Minn\Runtime\TermLookup::terms($args, $deprecated);
 }
 
 /** Categories (or another taxonomy's terms, through get_categories_taxonomy) as get_terms finds them, each given the old category fields. */
@@ -386,42 +323,7 @@ function _make_cat_compat(&$category)
 
 function get_term_link($term, $taxonomy = '')
 {
-    if (!$term instanceof WP_Term) {
-        if (is_int($term)) {
-            $term = get_term($term, $taxonomy);
-        } else {
-            $term = get_term_by('slug', $term, $taxonomy);
-        }
-    }
-    if (!$term instanceof WP_Term) {
-        return new WP_Error('invalid_term', 'Empty Term.');
-    }
-    $permalinks = Runtime::current()->get('permalinks');
-    $row = Minn\Content\TermRecord::fromRow(_minn_term_row($term->term_id, $term->taxonomy) ?? $term->to_array());
-    $link = $permalinks === null ? home_url('/?' . $term->taxonomy . '=' . $term->slug) : $permalinks->forTerm($row);
-    // The taxonomy's link structure through pre_term_link (probe filter-inputs-2); one a plugin changed is filled
-    // with the term's slug, its ancestors' first when the taxonomy nests.
-    $structure = isset($GLOBALS['wp_rewrite']) ? (string) $GLOBALS['wp_rewrite']->get_extra_permastruct($term->taxonomy) : '';
-    $changed = (string) apply_filters('pre_term_link', $structure, $term);
-    if ($changed !== $structure && $changed !== '') {
-        $slug = $term->slug;
-        if (is_taxonomy_hierarchical($term->taxonomy)) {
-            foreach (get_ancestors($term->term_id, $term->taxonomy, 'taxonomy') as $ancestor) {
-                $parent = get_term($ancestor, $term->taxonomy);
-                $slug = $parent instanceof WP_Term ? $parent->slug . '/' . $slug : $slug;
-            }
-        }
-        $link = home_url(user_trailingslashit(str_replace("%{$term->taxonomy}%", $slug, $changed), 'category'));
-    } elseif ($changed === '' && isset($GLOBALS['wp_rewrite']) && $GLOBALS['wp_rewrite']->using_permalinks()) {
-        // A taxonomy with no link structure (one removed at runtime, probe format-links) links by query, as under plain permalinks.
-        $link = _minn_term_query_link($term);
-    }
-    if ($term->taxonomy === 'post_tag') {
-        $link = apply_filters('tag_link', $link, $term->term_id);
-    } elseif ($term->taxonomy === 'category') {
-        $link = apply_filters('category_link', $link, $term->term_id);
-    }
-    return apply_filters('term_link', $link, $term, $term->taxonomy);
+    return Minn\Runtime\TermLookup::link($term, $taxonomy);
 }
 
 /**
@@ -430,12 +332,7 @@ function get_term_link($term, $taxonomy = '')
  */
 function _minn_term_query_link(WP_Term $term): string
 {
-    if ($term->taxonomy === 'category') {
-        return home_url('?cat=' . $term->term_id);
-    }
-    $object = get_taxonomy($term->taxonomy);
-    $var = $object instanceof WP_Taxonomy ? (string) $object->query_var : '';
-    return home_url($var !== '' ? "?{$var}={$term->slug}" : "?taxonomy={$term->taxonomy}&term={$term->slug}");
+    return Minn\Runtime\TermLookup::queryLink($term);
 }
 
 function get_category_link($category)
@@ -452,24 +349,7 @@ function get_tag_link($tag)
 
 function wp_get_object_terms($object_ids, $taxonomies, $args = [])
 {
-    if (empty($object_ids) || empty($taxonomies)) {
-        return [];
-    }
-    $taxonomies = (array) $taxonomies;
-    foreach ($taxonomies as $taxonomy) {
-        if (!taxonomy_exists($taxonomy)) {
-            return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-        }
-    }
-    $object_ids = array_map('intval', (array) $object_ids);
-    $args = apply_filters('wp_get_object_terms_args', wp_parse_args($args, ['update_term_meta_cache' => false]), $object_ids, $taxonomies);
-    [$terms, $taxonomies, $args] = Minn\Runtime\ObjectTerms::byTaxonomyArgs($object_ids, $taxonomies, $args);
-    if ($taxonomies !== []) {
-        $rest = get_terms($args);
-        $terms = !empty($args['fields']) && str_starts_with((string) $args['fields'], 'id=>') ? $terms + (array) $rest : array_merge($terms, (array) $rest);
-    }
-    $terms = apply_filters('get_object_terms', $terms, $object_ids, $taxonomies, $args);
-    return apply_filters('wp_get_object_terms', $terms, implode(',', $object_ids), "'" . implode("', '", array_map('esc_sql', $taxonomies)) . "'", $args);
+    return Minn\Runtime\TermLookup::objectTerms($object_ids, $taxonomies, $args);
 }
 
 function wp_set_object_terms($object_id, $terms, $taxonomy, $append = false)
@@ -760,10 +640,7 @@ function get_tags_to_edit($post_id, $taxonomy = 'post_tag')
 
 function get_term_children($term_id, $taxonomy)
 {
-    if (!taxonomy_exists($taxonomy)) {
-        return new WP_Error('invalid_taxonomy', __('Invalid taxonomy.'));
-    }
-    return _minn_term_query()->children((int) $term_id, (string) $taxonomy);
+    return Minn\Runtime\TermLookup::children($term_id, $taxonomy);
 }
 
 function get_objects_in_term($term_ids, $taxonomies, $args = [])
@@ -786,22 +663,7 @@ function get_post_taxonomies($post = 0)
 
 function clean_term_cache($ids, $taxonomy = '', $clean_taxonomy = true)
 {
-    Minn\Content\RowCache::forget('post_terms');
-    $ids = (array) $ids;
-    foreach ($ids as $id) {
-        wp_cache_delete((int) $id, 'terms');
-        wp_cache_delete((int) $id, 'term_meta');
-    }
-    if ($taxonomy === '') {
-        foreach (array_unique(array_filter(array_map(static fn ($id) => get_term((int) $id)->taxonomy ?? null, $ids))) as $owner) {
-            clean_term_cache($ids, $owner, $clean_taxonomy);
-        }
-        return;
-    }
-    if ($clean_taxonomy) {
-        clean_taxonomy_cache($taxonomy);
-    }
-    do_action('clean_term_cache', $ids, $taxonomy, $clean_taxonomy);
+    Minn\Runtime\TermLookup::cleanCache($ids, $taxonomy, $clean_taxonomy);
 }
 
 function clean_object_term_cache($object_ids, $object_type)
@@ -851,14 +713,7 @@ function wp_defer_term_counting($defer = null)
 /** A field of a term in a context (display by default); '' for a field it does not have. */
 function get_term_field($field, $term, $taxonomy = '', $context = 'display')
 {
-    $term = get_term($term, $taxonomy);
-    if (!$term instanceof WP_Term) {
-        return $term ?? '';
-    }
-    if (!isset($term->{$field})) {
-        return '';
-    }
-    return sanitize_term_field((string) $field, $term->{$field}, $term->term_id, $term->taxonomy, (string) $context);
+    return Minn\Runtime\TermLookup::field($field, $term, $taxonomy, $context);
 }
 
 /** Each field of a term (object or array) in a context, through the field filters; the term says which context it is in. */
@@ -931,21 +786,12 @@ function category_description($category = 0)
 
 function wp_get_nav_menus($args = [])
 {
-    $terms = get_terms(wp_parse_args($args, ['taxonomy' => 'nav_menu', 'hide_empty' => false, 'orderby' => 'name']));
-    return is_wp_error($terms) ? [] : apply_filters('wp_get_nav_menus', $terms, $args);
+    return Minn\Runtime\NavMenu::menus($args);
 }
 
 function wp_get_nav_menu_object($menu)
 {
-    $object = false;
-    if ($menu instanceof WP_Term) {
-        $object = $menu;
-    } elseif ($menu) {
-        $found = is_numeric($menu) ? get_term((int) $menu, 'nav_menu') : (get_term_by('slug', (string) $menu, 'nav_menu') ?: get_term_by('name', (string) $menu, 'nav_menu'));
-        $object = $found instanceof WP_Term ? $found : false;
-    }
-    // Asked whether a menu was found or not (probe hook-inputs).
-    return apply_filters('wp_get_nav_menu_object', $object, $menu);
+    return Minn\Runtime\NavMenu::menu($menu);
 }
 
 function is_nav_menu($menu)
@@ -956,8 +802,7 @@ function is_nav_menu($menu)
 /** A menu's items, set up as walkers read them (Runtime\NavMenuItems); false for no menu. */
 function wp_get_nav_menu_items($menu, $args = [])
 {
-    $menu = wp_get_nav_menu_object($menu);
-    return $menu ? Minn\Runtime\NavMenuItems::forMenu($menu, (array) $args) : false;
+    return Minn\Runtime\NavMenu::items($menu, $args);
 }
 
 /** Whether a post is a menu item; an error is not. */
@@ -1330,35 +1175,7 @@ function wp_dropdown_categories($args = '')
 /** Every descendant of one term within the caller's own list (ids or term objects), preorder; ancestors guard against loops. */
 function _get_term_children($term_id, $terms, $taxonomy, &$ancestors = [])
 {
-    // The stored hierarchy says which terms have children; only those are followed (probe taxonomy-remaining).
-    if (empty($terms)) {
-        return [];
-    }
-    $term_id = (int) $term_id;
-    $has_children = _get_term_hierarchy((string) $taxonomy);
-    if ($term_id !== 0 && !isset($has_children[$term_id])) {
-        return [];
-    }
-    if ($ancestors === []) {
-        $ancestors[$term_id] = 1;
-    }
-    $list = [];
-    foreach ((array) $terms as $term) {
-        $given_id = !is_object($term);
-        $term = $given_id ? get_term($term, (string) $taxonomy) : $term;
-        if (is_wp_error($term)) {
-            return $term;
-        }
-        if (!is_object($term) || isset($ancestors[(int) $term->term_id]) || (int) $term->parent !== $term_id) {
-            continue;
-        }
-        $list[] = $given_id ? (int) $term->term_id : $term;
-        if (isset($has_children[(int) $term->term_id])) {
-            $ancestors[(int) $term->term_id] = 1;
-            $list = array_merge($list, (array) _get_term_children((int) $term->term_id, $terms, $taxonomy, $ancestors));
-        }
-    }
-    return $list;
+    return Minn\Runtime\TermLookup::descendants($term_id, $terms, $taxonomy, $ancestors);
 }
 
 /** Whether the object has one of the terms (ids, slugs, or names), or any term of the taxonomy at all. */
@@ -1554,28 +1371,13 @@ function _minn_menu_events(): Minn\Runtime\MenuEvents
 
 function _get_term_hierarchy($taxonomy)
 {
-    if (!is_taxonomy_hierarchical($taxonomy)) {
-        return [];
-    }
-    $children = get_option("{$taxonomy}_children");
-    if (is_array($children)) {
-        return $children;
-    }
-    // Built from the terms and kept, as the reference keeps it.
-    $children = _minn_term_query()->hierarchy((string) $taxonomy);
-    update_option("{$taxonomy}_children", $children);
-    return $children;
+    return Minn\Runtime\TermLookup::hierarchy($taxonomy);
 }
 
 /** Lets go of what a taxonomy keeps about all its terms: the children map is dropped and built again. */
 function clean_taxonomy_cache($taxonomy)
 {
-    wp_cache_delete('all_ids', $taxonomy);
-    wp_cache_delete('get', $taxonomy);
-    delete_option("{$taxonomy}_children");
-    _get_term_hierarchy($taxonomy);
-    do_action('clean_taxonomy_cache', $taxonomy);
-    wp_cache_set_terms_last_changed();
+    Minn\Runtime\TermLookup::cleanTaxonomy($taxonomy);
 }
 
 function term_is_ancestor_of($term1, $term2, $taxonomy)

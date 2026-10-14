@@ -715,7 +715,7 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\Registered`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\Registered`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\HeadLinks`
 
 ### static `args(mixed $args, mixed $defaults = array ( )): array`
 
@@ -893,7 +893,7 @@ in the filter plugins hook there, handed the result and what was given: a
 title (accents gone when saving), a key, a line of plain text, a user name,
 an email address and the check of one.
 
-Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
+Used by: `Minn\Blocks\TemplatePartVariations`, `Minn\Front\SitemapRequest`, `Minn\Login\LoginHooks`, `Minn\Query\PostOrder`, `Minn\Rest\MediaController`, `Minn\Rest\SiteSchema`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\CommentForm`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostSave`, `Minn\Runtime\QueryFlags`, `Minn\Runtime\Records`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`
 
 ### static `title(mixed $title, mixed $fallback = '', mixed $context = 'save'): string`
 
@@ -1057,7 +1057,7 @@ Magic-quote slashes the way WordPress keeps them (wp_slash, wp_unslash):
 added to or stripped from every string inside a value, arrays and
 objects walked all the way down, anything else left as it is.
 
-Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`
+Used by: `Minn\Rest\MediaController`, `Minn\Rest\RestMeta`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentForm`, `Minn\Runtime\MetaData`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermSave`
 
 ### static `add(mixed $value): mixed`
 

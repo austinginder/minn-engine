@@ -24,6 +24,7 @@ use Minn\Http\Request;
 use Minn\Http\Response;
 use Minn\Http\Route;
 use Minn\RestError;
+use Minn\Runtime\TermLookup;
 use Minn\Support\Kses;
 
 /** wp/v2 categories, tags, and pattern categories: list, single, and the create/update/delete the taxonomy admin drives. */
@@ -66,10 +67,10 @@ final readonly class TermsController
         }
         $registered = (array) Runtime::hooks()->filter("rest_{$taxonomy}_collection_params", [$params, $object]);
         $args = (array) Runtime::hooks()->filter("rest_{$taxonomy}_query", [TermListArgs::of($wp, $registered, $taxonomy, $request->method->value), $wp]);
-        $found = empty($args['post']) ? \get_terms($args) : \wp_get_object_terms($args['post'], $taxonomy, $args);
+        $found = empty($args['post']) ? TermLookup::terms($args) : TermLookup::objectTerms($args['post'], $taxonomy, $args);
         $count = empty($args['post']) ? $args : ['object_ids' => $args['post']] + $args;
         unset($count['number'], $count['offset']);
-        $total = (int) \wp_count_terms($count);
+        $total = (int) TermLookup::count($count);
         $perPage = (int) ($args['number'] ?? 0);
         $pages = $perPage > 0 ? (int) ceil($total / $perPage) : 0;
         if ($request->method === Method::Head) {

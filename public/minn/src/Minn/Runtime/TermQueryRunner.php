@@ -62,7 +62,6 @@ final class TermQueryRunner
         if (empty($rows)) {
             return $query->terms = [];
         }
-        \_prime_term_caches(array_map(static fn ($row) => (int) $row->term_id, $rows), false);
         $tree = new TermQueryTree($taxonomies);
         $terms = $tree->settle(TermQueryTree::populate($rows), $args);
         return $query->terms = TermQueryTree::format($terms, (string) $args['fields']);
@@ -121,7 +120,7 @@ final class TermQueryRunner
     private function inHierarchy(int $parent, array $taxonomies): bool
     {
         foreach ($taxonomies as $taxonomy) {
-            if (isset(\_get_term_hierarchy($taxonomy)[$parent])) {
+            if (isset(TermLookup::hierarchy($taxonomy)[$parent])) {
                 return true;
             }
         }
@@ -173,7 +172,7 @@ final class TermQueryRunner
         $exclusions = [];
         $tree = $included || empty($args['exclude_tree']) ? [] : Lists::ids($args['exclude_tree']);
         foreach ($tree as $trunk) {
-            $exclusions = [...$exclusions, ...(array) \get_terms(['taxonomy' => reset($taxonomies), 'child_of' => (int) $trunk, 'fields' => 'ids', 'hide_empty' => 0])];
+            $exclusions = [...$exclusions, ...(array) TermLookup::terms(['taxonomy' => reset($taxonomies), 'child_of' => (int) $trunk, 'fields' => 'ids', 'hide_empty' => 0])];
         }
         $exclusions = [...$tree, ...$exclusions];
         if (!$included && !empty($args['exclude'])) {
@@ -181,7 +180,7 @@ final class TermQueryRunner
         }
         if ($args['childless']) {
             foreach ($taxonomies as $taxonomy) {
-                $exclusions = [...array_keys(\_get_term_hierarchy($taxonomy)), ...$exclusions];
+                $exclusions = [...array_keys(TermLookup::hierarchy($taxonomy)), ...$exclusions];
             }
         }
         return $exclusions === [] ? '' : 't.term_id NOT IN (' . implode(',', array_map('intval', $exclusions)) . ')';

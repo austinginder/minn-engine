@@ -349,40 +349,12 @@ function the_time($format = '')
 
 function get_post_ancestors($post)
 {
-    $post = get_post($post);
-    if ($post === null || (int) $post->post_parent === 0 || (int) $post->post_parent === (int) $post->ID) {
-        return [];
-    }
-    $ancestors = [];
-    $id = (int) $post->post_parent;
-    while ($id > 0 && !in_array($id, $ancestors, true)) {
-        $ancestors[] = $id;
-        $parent = get_post($id);
-        $id = $parent === null ? 0 : (int) $parent->post_parent;
-    }
-    return $ancestors;
+    return Minn\Runtime\TermLookup::postAncestors($post);
 }
 
 function get_ancestors($object_id = 0, $object_type = '', $resource_type = '')
 {
-    $object_id = (int) $object_id;
-    if ($object_id === 0) {
-        return apply_filters('get_ancestors', [], $object_id, $object_type, $resource_type);
-    }
-    if ($resource_type === '') {
-        $resource_type = taxonomy_exists($object_type) ? 'taxonomy' : (post_type_exists($object_type) ? 'post_type' : '');
-    }
-    $ancestors = [];
-    if ($resource_type === 'taxonomy') {
-        $term = get_term($object_id, $object_type);
-        while ($term instanceof WP_Term && $term->parent > 0 && !in_array($term->parent, $ancestors, true)) {
-            $ancestors[] = $term->parent;
-            $term = get_term($term->parent, $object_type);
-        }
-    } elseif ($resource_type === 'post_type') {
-        $ancestors = get_post_ancestors($object_id);
-    }
-    return apply_filters('get_ancestors', $ancestors, $object_id, $object_type, $resource_type);
+    return Minn\Runtime\TermLookup::ancestors($object_id, $object_type, $resource_type);
 }
 
 function wp_get_post_parent_id($post = null)

@@ -28,7 +28,7 @@ final class ObjectTerms
                 $own = Registered::taxonomy($taxonomy)->args ?? null;
                 if (is_array($own) && array_merge($args, $own) != $args) {
                     unset($taxonomies[$index]);
-                    $terms = array_merge($terms, (array) \wp_get_object_terms($objectIds, $taxonomy, array_merge($args, $own)));
+                    $terms = array_merge($terms, (array) TermLookup::objectTerms($objectIds, $taxonomy, array_merge($args, $own)));
                 }
             }
         } else {

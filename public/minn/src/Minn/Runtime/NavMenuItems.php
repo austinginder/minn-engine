@@ -117,7 +117,7 @@ final class NavMenuItems
         $taxonomy = Registered::taxonomy((string) $item->object);
         $term = Records::term((int) $item->object_id, (string) $item->object);
         $item->type_label = $taxonomy ? $taxonomy->labels->singular_name : (string) $item->object;
-        $link = $term instanceof Term ? \get_term_link($term, (string) $item->object) : '';
+        $link = $term instanceof Term ? TermLookup::link($term, (string) $item->object) : '';
         if (!$taxonomy || !$term instanceof Term || Records::isError($link)) {
             $item->_invalid = true;
         }
@@ -168,7 +168,7 @@ final class NavMenuItems
     private static function term(object $item): void
     {
         $taxonomy = Registered::taxonomy((string) $item->taxonomy);
-        $link = \get_term_link($item, (string) $item->taxonomy);
+        $link = TermLookup::link($item, (string) $item->taxonomy);
         $item->ID = (int) $item->term_id;
         $item->db_id = 0;
         $item->menu_item_parent = 0;
@@ -181,7 +181,7 @@ final class NavMenuItems
         $item->url = is_string($link) ? $link : '';
         $item->target = '';
         $item->attr_title = '';
-        $item->description = \get_term_field('description', (int) $item->term_id, (string) $item->taxonomy);
+        $item->description = TermLookup::field('description', (int) $item->term_id, (string) $item->taxonomy);
         $item->classes = [];
         $item->xfn = '';
     }

@@ -199,7 +199,7 @@ final class PostQueryTax
             if (empty($items['terms'][0]) || !in_array($taxonomy, ['category', 'post_tag'], true)) {
                 continue;
             }
-            $term = \get_term_by($items['field'], $items['terms'][0], $taxonomy);
+            $term = TermLookup::by($items['field'], $items['terms'][0], $taxonomy);
             if ($term && $taxonomy === 'category') {
                 $query->set('cat', $term->term_id);
                 $query->set('category_name', $term->slug);

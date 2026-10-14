@@ -12,6 +12,33 @@ use Minn\Support\Escape;
  */
 final class NavMenu
 {
+    /** Every menu (wp_get_nav_menus): the nav_menu terms by name, empty ones too, as wp_get_nav_menus leaves them. */
+    public static function menus(mixed $args = []): mixed
+    {
+        $terms = TermLookup::terms(\Minn\Support\Lists::args($args, ['taxonomy' => 'nav_menu', 'hide_empty' => false, 'orderby' => 'name']));
+        return Records::isError($terms) ? [] : Runtime::hooks()->filter('wp_get_nav_menus', [$terms, $args]);
+    }
+
+    /** A menu by its term, id, slug or name (wp_get_nav_menu_object), or false, as the filter leaves it. */
+    public static function menu(mixed $menu): mixed
+    {
+        $object = false;
+        if ($menu instanceof \Minn\Objects\Term) {
+            $object = $menu;
+        } elseif ($menu) {
+            $found = is_numeric($menu) ? Records::term((int) $menu, 'nav_menu') : (TermLookup::by('slug', (string) $menu, 'nav_menu') ?: TermLookup::by('name', (string) $menu, 'nav_menu'));
+            $object = $found instanceof \Minn\Objects\Term ? $found : false;
+        }
+        return Runtime::hooks()->filter('wp_get_nav_menu_object', [$object, $menu]);
+    }
+
+    /** A menu's items (wp_get_nav_menu_items), or false for no menu. */
+    public static function items(mixed $menu, mixed $args = []): mixed
+    {
+        $menu = self::menu($menu);
+        return $menu ? NavMenuItems::forMenu($menu, (array) $args) : false;
+    }
+
     /**
      * The menu set for each of the theme's locations (get_nav_menu_locations).
      *
@@ -34,7 +61,7 @@ final class NavMenu
     public static function build(object $args): string|false|null
     {
         $menu = self::menuForArgs($args);
-        $items = $menu ? \wp_get_nav_menu_items($menu->term_id, ['update_post_term_cache' => false]) : false;
+        $items = $menu ? self::items($menu->term_id, ['update_post_term_cache' => false]) : false;
         if (!$menu || !$items) {
             return null;
         }
@@ -61,14 +88,14 @@ final class NavMenu
     /** The menu the args name: by menu, by assigned location, else the first menu that has items. */
     private static function menuForArgs(object $args): object|false
     {
-        $menu = \wp_get_nav_menu_object($args->menu);
+        $menu = self::menu($args->menu);
         if (!$menu && $args->theme_location) {
             $locations = self::locations();
-            return isset($locations[$args->theme_location]) ? \wp_get_nav_menu_object($locations[$args->theme_location]) : false;
+            return isset($locations[$args->theme_location]) ? self::menu($locations[$args->theme_location]) : false;
         }
         if (!$menu && !$args->theme_location) {
-            foreach (\wp_get_nav_menus() as $candidate) {
-                if (\wp_get_nav_menu_items($candidate->term_id, ['update_post_term_cache' => false])) {
+            foreach (self::menus() as $candidate) {
+                if (self::items($candidate->term_id, ['update_post_term_cache' => false])) {
                     return $candidate;
                 }
             }

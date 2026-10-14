@@ -48,7 +48,7 @@ final class TermSave
             return Handoff::newError('empty_term_name', 'A name is required for this term.');
         }
         $args = Lists::args($args, self::DEFAULTS);
-        if ((int) $args['parent'] > 0 && \term_exists((int) $args['parent']) === null) {
+        if ((int) $args['parent'] > 0 && TermLookup::exists((int) $args['parent']) === null) {
             return Handoff::newError('missing_parent', 'Parent term does not exist.');
         }
         $args['name'] = $term;
@@ -71,13 +71,13 @@ final class TermSave
         $duplicate = Runtime::hooks()->filter('wp_insert_term_duplicate_term_check', [null, $term, $taxonomy, $args, $ttId]);
         if (is_object($duplicate) && isset($duplicate->term_id)) {
             $terms->dropRows($termId, $ttId);
-            \clean_term_cache((int) $duplicate->term_id, $taxonomy);
+            TermLookup::cleanCache((int) $duplicate->term_id, $taxonomy);
             return ['term_id' => (int) $duplicate->term_id, 'term_taxonomy_id' => (int) ($duplicate->term_taxonomy_id ?? 0)];
         }
         Runtime::hooks()->action('create_term', [$termId, $ttId, $taxonomy, $args]);
         Runtime::hooks()->action("create_{$taxonomy}", [$termId, $ttId, $args]);
         $termId = (int) Runtime::hooks()->filter('term_id_filter', [$termId, $ttId, $args]);
-        \clean_term_cache($termId, $taxonomy);
+        TermLookup::cleanCache($termId, $taxonomy);
         Runtime::hooks()->action('created_term', [$termId, $ttId, $taxonomy, $args]);
         Runtime::hooks()->action("created_{$taxonomy}", [$termId, $ttId, $args]);
         Runtime::hooks()->action('saved_term', [$termId, $ttId, $taxonomy, false, $args]);
@@ -109,7 +109,7 @@ final class TermSave
         if (trim($name) === '') {
             return Handoff::newError('empty_term_name', 'A name is required for this term.');
         }
-        if ((int) $parsed['parent'] > 0 && \term_exists((int) $parsed['parent']) === null) {
+        if ((int) $parsed['parent'] > 0 && TermLookup::exists((int) $parsed['parent']) === null) {
             return Handoff::newError('missing_parent', 'Parent term does not exist.');
         }
         $asked = empty($args['slug']) ? '' : (string) $args['slug'];
@@ -146,7 +146,7 @@ final class TermSave
         Runtime::hooks()->action('edit_term', [$termId, $ttId, $taxonomy, $args]);
         Runtime::hooks()->action("edit_{$taxonomy}", [$termId, $ttId, $args]);
         $termId = (int) Runtime::hooks()->filter('term_id_filter', [$termId, $ttId, $args]);
-        \clean_term_cache($termId, $taxonomy);
+        TermLookup::cleanCache($termId, $taxonomy);
         Runtime::hooks()->action('edited_term', [$termId, $ttId, $taxonomy, $args]);
         Runtime::hooks()->action("edited_{$taxonomy}", [$termId, $ttId, $args]);
         Runtime::hooks()->action('saved_term', [$termId, $ttId, $taxonomy, true, $args]);
@@ -164,7 +164,7 @@ final class TermSave
      */
     private static function nameTaken(string $name, string $taxonomy, array $args): ?Errors
     {
-        $matches = \get_terms(['taxonomy' => $taxonomy, 'name' => $name, 'hide_empty' => false, 'parent' => $args['parent'], 'update_term_meta_cache' => false]);
+        $matches = TermLookup::terms(['taxonomy' => $taxonomy, 'name' => $name, 'hide_empty' => false, 'parent' => $args['parent'], 'update_term_meta_cache' => false]);
         $match = is_array($matches) ? ($matches[0] ?? null) : null;
         if (!$match instanceof Term) {
             return null;
@@ -188,7 +188,7 @@ final class TermSave
      */
     private static function updatedSlug(string $slug, string $asked, int $parent, int $termId, array $args): string|Errors
     {
-        $holder = \get_term_by('slug', $slug, (string) $args['taxonomy']);
+        $holder = TermLookup::by('slug', $slug, (string) $args['taxonomy']);
         if (!$holder instanceof Term || (int) $holder->term_id === $termId) {
             return $slug;
         }

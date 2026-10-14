@@ -1,25 +1,24 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 271,
-        "functions": 188,
+        "functionCalls": 240,
+        "functions": 172,
         "hookApi": 0,
         "classReferences": 151,
         "classes": 32,
-        "files": 106
+        "files": 100
     },
     "families": {
         "functions": {
             "wp-includes/post.php": 42,
-            "wp-includes/taxonomy.php": 35,
             "wp-includes/comment.php": 32,
             "wp-includes/general-template.php": 18,
             "wp-includes/user.php": 16,
             "wp-includes/functions.php": 11,
             "wp-includes/feed.php": 10,
+            "wp-includes/taxonomy.php": 10,
             "wp-includes/link-template.php": 7,
             "wp-includes/revision.php": 7,
-            "wp-includes/nav-menu.php": 6,
             "wp-includes/kses.php": 6,
             "wp-includes/template.php": 5,
             "wp-admin/includes/plugin.php": 5,
@@ -119,14 +118,6 @@
                 "Minn/Runtime/CommentEvents.php": 5
             }
         },
-        "_get_term_hierarchy": {
-            "uses": 4,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/TermQueryRunner.php": 2,
-                "Minn/Runtime/TermQueryTree.php": 2
-            }
-        },
         "get_bloginfo_rss": {
             "uses": 4,
             "family": "wp-includes/feed.php",
@@ -141,13 +132,6 @@
             "files": {
                 "Minn/Front/SitemapRequest.php": 1,
                 "Minn/Theme/FrontLifecycle.php": 3
-            }
-        },
-        "clean_term_cache": {
-            "uses": 3,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/TermSave.php": 3
             }
         },
         "get_comment_author_rss": {
@@ -181,15 +165,6 @@
                 "Minn/Runtime/PostLinks.php": 3
             }
         },
-        "get_terms": {
-            "uses": 3,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Rest/TermsController.php": 1,
-                "Minn/Runtime/TermQueryRunner.php": 1,
-                "Minn/Runtime/TermSave.php": 1
-            }
-        },
         "load_template": {
             "uses": 3,
             "family": "wp-includes/template.php",
@@ -205,15 +180,6 @@
             "files": {
                 "Minn/Front/PostEmbed.php": 1,
                 "Minn/Runtime/ScriptModules.php": 2
-            }
-        },
-        "wp_get_object_terms": {
-            "uses": 3,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Rest/TermsController.php": 1,
-                "Minn/Runtime/MenuItemMarks.php": 1,
-                "Minn/Runtime/ObjectTerms.php": 1
             }
         },
         "wp_trash_comment": {
@@ -328,21 +294,6 @@
                 "Minn/Rest/PostObject.php": 1
             }
         },
-        "get_term_by": {
-            "uses": 2,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/PostQueryTax.php": 1,
-                "Minn/Runtime/TermSave.php": 1
-            }
-        },
-        "get_term_link": {
-            "uses": 2,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/NavMenuItems.php": 2
-            }
-        },
         "get_the_category": {
             "uses": 2,
             "family": "wp-includes/category-template.php",
@@ -371,13 +322,6 @@
             "family": "wp-includes/shortcodes.php",
             "files": {
                 "Minn/Content/MediaShortcodes.php": 2
-            }
-        },
-        "term_exists": {
-            "uses": 2,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/TermSave.php": 2
             }
         },
         "username_exists": {
@@ -434,28 +378,6 @@
             "files": {
                 "Minn/Front/CommentPostController.php": 1,
                 "Minn/Runtime/CommentEvents.php": 1
-            }
-        },
-        "wp_get_nav_menu_items": {
-            "uses": 2,
-            "family": "wp-includes/nav-menu.php",
-            "files": {
-                "Minn/Runtime/NavMenu.php": 2
-            }
-        },
-        "wp_get_nav_menu_object": {
-            "uses": 2,
-            "family": "wp-includes/nav-menu.php",
-            "files": {
-                "Minn/Runtime/NavMenu.php": 2
-            }
-        },
-        "wp_get_nav_menus": {
-            "uses": 2,
-            "family": "wp-includes/nav-menu.php",
-            "files": {
-                "Minn/Runtime/NavMenu.php": 1,
-                "Minn/Widgets/WidgetForms.php": 1
             }
         },
         "wp_get_post_revisions": {
@@ -516,25 +438,11 @@
                 "Minn/Runtime/TermEvents.php": 1
             }
         },
-        "_get_term_children": {
-            "uses": 1,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/TermQueryTree.php": 1
-            }
-        },
         "_oembed_create_xml": {
             "uses": 1,
             "family": "wp-includes/embed.php",
             "files": {
                 "Minn/Rest/RuntimeRoutes.php": 1
-            }
-        },
-        "_prime_term_caches": {
-            "uses": 1,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/TermQueryRunner.php": 1
             }
         },
         "_wp_post_revision_data": {
@@ -626,13 +534,6 @@
             "family": "wp-includes/block-template-utils.php",
             "files": {
                 "Minn/Rest/InstalledThemesController.php": 1
-            }
-        },
-        "get_ancestors": {
-            "uses": 1,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/MenuItemMarks.php": 1
             }
         },
         "get_attached_file": {
@@ -801,20 +702,6 @@
             "family": "wp-includes/block-template-utils.php",
             "files": {
                 "Minn/Rest/TemplatesController.php": 1
-            }
-        },
-        "get_term_children": {
-            "uses": 1,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/TermQueryTree.php": 1
-            }
-        },
-        "get_term_field": {
-            "uses": 1,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Runtime/NavMenuItems.php": 1
             }
         },
         "get_the_author_meta": {
@@ -1011,13 +898,6 @@
             "family": "wp-includes/comment.php",
             "files": {
                 "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
-        "wp_count_terms": {
-            "uses": 1,
-            "family": "wp-includes/taxonomy.php",
-            "files": {
-                "Minn/Rest/TermsController.php": 1
             }
         },
         "wp_create_initial_comment_meta": {
