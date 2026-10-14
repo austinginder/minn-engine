@@ -2625,6 +2625,136 @@
                 "body": "b02d80b1daa9"
             }
         },
+        "classes/WP_Filesystem.php": {
+            "WP_Filesystem_Base::find_folder": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "normalises the folder and asks $this->is_dir, the method each filesystem class answers",
+                "body": "1f9554b8d4d4"
+            },
+            "WP_Filesystem_Direct::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the method name and an empty WP_Error as the object fields",
+                "body": "27285b3638c8"
+            },
+            "WP_Filesystem_Direct::chgrp": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a group change, recursive over $this->dirlist with $this->chgrp at each entry",
+                "body": "db7307b78c1d"
+            },
+            "WP_Filesystem_Direct::chmod": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the default mode by file or folder, then a single or recursive change",
+                "body": "91a002161128"
+            },
+            "WP_Filesystem_Direct::chown": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "an owner change, recursive over $this->dirlist with $this->chown at each entry",
+                "body": "70bfadcff396"
+            },
+            "WP_Filesystem_Direct::copy": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a copy refusing to overwrite unless asked, then $this->chmod",
+                "body": "17c908a21368"
+            },
+            "WP_Filesystem_Direct::delete": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "deletes a file, an empty folder, or a tree through Files::deleteTree",
+                "body": "b23c404bb522"
+            },
+            "WP_Filesystem_Direct::dirlist": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\DirectoryListing::read",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the engine lists the folder; the entry fields come from this object's own methods, passed in",
+                "body": "9d8dc3860d24"
+            },
+            "WP_Filesystem_Direct::group": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a file group name by posix lookup, the gid without posix",
+                "body": "6fcdd428b70f"
+            },
+            "WP_Filesystem_Direct::mkdir": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "makes a folder with the default mode, then $this->chmod, chown and chgrp",
+                "body": "04b16a30e9d4"
+            },
+            "WP_Filesystem_Direct::move": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a rename, else copy and delete, with the overwrite rules; its $this-> calls stay at their points",
+                "body": "faa70b53b285"
+            },
+            "WP_Filesystem_Direct::owner": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a file owner name by posix lookup, the uid without posix",
+                "body": "a1d611012db3"
+            },
+            "WP_Filesystem_Direct::put_contents": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a binary-safe write that checks every byte went out, then $this->chmod at its point",
+                "body": "77480e908adf"
+            },
+            "WP_Filesystem_Direct::touch": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Files",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "touch with now for unset times",
+                "body": "ac5a92503191"
+            }
+        },
+        "classes/WP_HTTP_Proxy.php": {
+            "WP_HTTP_Proxy::send_through_proxy": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Proxy",
+                "why": "the proxy bypass rule (its filter, localhost and the site host, WP_PROXY_BYPASS_HOSTS with wildcards)",
+                "body": "5df755a39711"
+            }
+        },
         "classes/WP_Hook.php": {
             "WP_Hook::add_filter": {
                 "verdict": "keep",
@@ -2703,6 +2833,573 @@
                 "reason": "contract",
                 "why": "removes from the object's callbacks table, shared with the engine by reference for a bound hook",
                 "body": "01e0d7600e48"
+            }
+        },
+        "classes/WP_Http.php": {
+            "WP_HTTP_Requests_Response::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the Requests response and file name as the object fields",
+                "body": "105d54e34a05"
+            },
+            "WP_HTTP_Requests_Response::get_cookies": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the Requests response cookies as WP_Http_Cookie objects",
+                "body": "f43910afeae3"
+            },
+            "WP_HTTP_Requests_Response::get_headers": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the Requests response headers as the API's case-insensitive dictionary",
+                "body": "c0974be5167d"
+            },
+            "WP_HTTP_Requests_Response::header": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sets or replaces a header on the wrapped Requests response",
+                "body": "8f5fb559eb4d"
+            },
+            "WP_HTTP_Response::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets data, status and headers through $this-> setters, which WP_REST_Response and plugins extend",
+                "body": "5ffea81ee289"
+            },
+            "WP_HTTP_Response::header": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets or appends a header in the object's headers",
+                "body": "ea4947496079"
+            },
+            "WP_Http::_get_first_available_transport": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "the first usable transport of http_api_transports",
+                "body": "df4396239f51"
+            },
+            "WP_Http::block_request": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "the WP_HTTP_BLOCK_EXTERNAL rule: local requests by their filter, WP_ACCESSIBLE_HOSTS with wildcards",
+                "body": "97c9b4058edf"
+            },
+            "WP_Http::browser_redirect_compatibility": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "gates": [
+                    "refs"
+                ],
+                "why": "turns a 302 into a GET as browsers do; a Requests redirect hook",
+                "body": "4a7364b2e2ee"
+            },
+            "WP_Http::buildCookieHeader": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "gates": [
+                    "refs"
+                ],
+                "why": "turns the request cookies into objects and the Cookie header",
+                "body": "c37e160eb631"
+            },
+            "WP_Http::handle_redirects": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "follows a transport response's redirect (the count, a POST to GET for 302 and 303, the absolute location)",
+                "body": "b70c9fb11250"
+            },
+            "WP_Http::make_absolute_url": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Url",
+                "why": "resolves a relative address against a base, dot segments collapsed",
+                "body": "d36b91b7ad98"
+            },
+            "WP_Http::normalize_cookies": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "WordPress cookies and scalar values as a Requests cookie jar",
+                "body": "21ed2879b7c8"
+            },
+            "WP_Http::processHeaders": {
+                "verdict": "delegate",
+                "to": "Minn\\Http\\LegacyHeaders::read",
+                "why": "the engine reads the headers; wrapping its cookies as WP_Http_Cookie is the call's shape",
+                "body": "3ba6ccf763cf"
+            },
+            "WP_Http::processResponse": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "splits a raw response into headers and body",
+                "body": "98022e277b2d"
+            },
+            "WP_Http::refusal": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "refuses an address that is not http or https with a host, or one blocked",
+                "body": "1fb5d94d3c59"
+            },
+            "WP_Http::request": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the request pipeline: defaults and their filters, pre_http_request, the URL checks and refusal, the send, http_api_debug and http_response",
+                "body": "f151c44c4bef"
+            },
+            "WP_Http::request_headers": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "request headers from a string or an array",
+                "body": "aef589c69bc6"
+            },
+            "WP_Http::request_options": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "the transport options: redirect hooks, timeouts, redirects, size limit, cookies, verification, data format, proxy",
+                "body": "b991dc4756b9"
+            },
+            "WP_Http::validate_redirects": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "refuses a redirect target wp_http_validate_url refuses, through the Requests exception",
+                "body": "01f7962b4994"
+            },
+            "WP_Http_Cookie::__construct": {
+                "verdict": "move",
+                "to": "Minn\\Http\\CookieText",
+                "why": "fills a cookie from a header (parsed by CookieText, defaults from the requested address) or an array",
+                "body": "f68b2f9b9ad4"
+            },
+            "WP_Http_Cookie::test": {
+                "verdict": "move",
+                "to": "Minn\\Http\\CookieText",
+                "why": "whether a cookie applies to an address by expiry, port, path and domain",
+                "body": "63ed4f7eb455"
+            }
+        },
+        "classes/WP_Http_Curl.php": {
+            "WP_Http_Curl::request": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "the curl transport over the engine's sender: its filters, the http_api_curl action, the streaming file and the answer",
+                "body": "456733579452"
+            },
+            "WP_Http_Curl::test": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "whether curl can serve the request (ssl included), then use_curl_transport",
+                "body": "d32a5b10a2c4"
+            }
+        },
+        "classes/WP_Http_Encoding.php": {
+            "WP_Http_Encoding::accept_encoding": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Encoding",
+                "why": "the Accept-Encoding value by what can be decoded, with its filter",
+                "body": "d46c1c66e9bd"
+            },
+            "WP_Http_Encoding::decompress": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Encoding",
+                "why": "tries each decompressor in turn, the data as given when none works",
+                "body": "179ccc3816f7"
+            },
+            "WP_Http_Encoding::should_decode": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Encoding",
+                "why": "whether a response carries a content encoding",
+                "body": "dfa8cfe321dc"
+            }
+        },
+        "classes/WP_Http_Streams.php": {
+            "WP_Http_Streams::minn_read": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "reads the socket until the end, a timeout or the response size limit",
+                "body": "535f62d7d895"
+            },
+            "WP_Http_Streams::minn_request_text": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "the raw request text: line, host, agent, headers, connection close, body",
+                "body": "e1a5c731f12f"
+            },
+            "WP_Http_Streams::request": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "the streams transport: socket, certificate check, request text, reading and the answer",
+                "body": "93a3574002f3"
+            },
+            "WP_Http_Streams::test": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "whether streams can serve the request (openssl for ssl), then use_streams_transport",
+                "body": "403d118c90fb"
+            },
+            "WP_Http_Streams::verify_ssl_certificate": {
+                "verdict": "move",
+                "to": "Minn\\Http",
+                "why": "checks a stream's peer certificate against the host",
+                "body": "9ab404905325"
+            }
+        },
+        "classes/WP_Image_Editor.php": {
+            "WP_Image_Editor::generate_filename": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEditors",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a sized file name in the image's or a given folder",
+                "body": "1fda651fe450"
+            },
+            "WP_Image_Editor::get_extension": {
+                "verdict": "move",
+                "to": "Minn\\Media\\FileTypes",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the first extension of a type from the MIME table",
+                "body": "16ddff11af0d"
+            },
+            "WP_Image_Editor::get_mime_type": {
+                "verdict": "move",
+                "to": "Minn\\Media\\FileTypes",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a type for an extension from the MIME table",
+                "body": "bb863117768b"
+            },
+            "WP_Image_Editor::get_output_format": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEditors",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the output type, extension and file name (the map, support, default type filter) and the quality reset",
+                "body": "14ab5f046985"
+            },
+            "WP_Image_Editor::get_suffix": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the width-x-height suffix from $this->get_size",
+                "body": "bfe7b2d85bc7"
+            },
+            "WP_Image_Editor::make_image": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "makes the folder through wp_mkdir_p and calls the writer",
+                "body": "78750685d698"
+            },
+            "WP_Image_Editor::make_subsize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "one size through $this->resize and save, the state restored",
+                "body": "93223383f3a8"
+            },
+            "WP_Image_Editor::maybe_exif_rotate": {
+                "verdict": "move",
+                "to": "Minn\\Media\\PhotoMeta",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads the orientation (its filter) and maps it to a rotation and mirror; $this->rotate and flip stay at their points",
+                "body": "d42c1515aaf6"
+            },
+            "WP_Image_Editor::set_quality": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImageEditors",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the quality rule (encode quality by type and size, the default when out of range, zero as one)",
+                "body": "6e4c30d044d5"
+            },
+            "WP_Image_Editor::update_size": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the size property editors read",
+                "body": "af1eb3715ffc"
+            },
+            "WP_Image_Editor_GD::_resize": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the box from image_resize_dimensions resampled on the canvas",
+                "body": "99d0b5b7b556"
+            },
+            "WP_Image_Editor_GD::_save": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "writes the canvas in the output format, quality and progressive filter, and answers its metadata",
+                "body": "2b9cd1db14e9"
+            },
+            "WP_Image_Editor_GD::adopt": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "takes a canvas and its size",
+                "body": "db3852d421b0"
+            },
+            "WP_Image_Editor_GD::crop": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the crop size checks, then the canvas crop",
+                "body": "068257e597d6"
+            },
+            "WP_Image_Editor_GD::flip": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "flips a copy of the canvas by axis",
+                "body": "c4d35ebd46d3"
+            },
+            "WP_Image_Editor_GD::load": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "opens the file as a canvas with its type, then $this->set_quality",
+                "body": "3eefb9f92e16"
+            },
+            "WP_Image_Editor_GD::multi_resize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each size through $this->resize and _save, the original canvas and size put back",
+                "body": "2dbbc0573578"
+            },
+            "WP_Image_Editor_GD::resize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->_resize, the canvas adopted, then set_quality",
+                "body": "bcbc9b9c53d2"
+            },
+            "WP_Image_Editor_GD::restore": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's state and the canvas",
+                "body": "a9eef267c4ee"
+            },
+            "WP_Image_Editor_GD::rotate": {
+                "verdict": "delegate",
+                "to": "Minn\\Media\\Canvas::rotate",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the canvas rotates; the refusal and adopting the result are the call's shape",
+                "body": "ffbf32e4e2b3"
+            },
+            "WP_Image_Editor_GD::save": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->_save, then the file and type kept",
+                "body": "ef2c3c07fcb4"
+            },
+            "WP_Image_Editor_GD::stream": {
+                "verdict": "move",
+                "to": "Minn\\Media\\Canvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "sends the canvas in a type with its header",
+                "body": "0797ae74f15f"
+            }
+        },
+        "classes/WP_Image_Editor_Imagick.php": {
+            "WP_Image_Editor_Imagick::__destruct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "frees the Imagick object",
+                "body": "2c8f61a4c18e"
+            },
+            "WP_Image_Editor_Imagick::_save": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "writes the image in the output format and quality (progressive by its filter) and answers its metadata",
+                "body": "82b7fac7eaac"
+            },
+            "WP_Image_Editor_Imagick::crop": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the Imagick crop and page reset, scaled when a destination is given",
+                "body": "0f19a1e126d2"
+            },
+            "WP_Image_Editor_Imagick::flip": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the Imagick flip and flop",
+                "body": "770ed3be8093"
+            },
+            "WP_Image_Editor_Imagick::load": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads the file (a PDF's first page), its type and palette, then $this->update_size and set_quality",
+                "body": "c3e83c090cfb"
+            },
+            "WP_Image_Editor_Imagick::make_subsize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "one size through $this->resize and _save, the image put back after",
+                "body": "3b70a70177b3"
+            },
+            "WP_Image_Editor_Imagick::maybe_exif_rotate": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's rotation, then the Imagick orientation reset",
+                "body": "c370966ee394"
+            },
+            "WP_Image_Editor_Imagick::multi_resize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each size through $this->resize and _save, the image put back after",
+                "body": "f72f0915aa7a"
+            },
+            "WP_Image_Editor_Imagick::pdf_load_source": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads a PDF's first page and removes its alpha",
+                "body": "cdebac0651b8"
+            },
+            "WP_Image_Editor_Imagick::pdf_setup": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the PDF resolution and first-page source",
+                "body": "a9a173cedbe6"
+            },
+            "WP_Image_Editor_Imagick::put_back": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "frees the resized image and restores the original and its state",
+                "body": "89c73898f18f"
+            },
+            "WP_Image_Editor_Imagick::remove_pdf_alpha_channel": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a PDF page on white without alpha",
+                "body": "c0e2309fcc71"
+            },
+            "WP_Image_Editor_Imagick::resize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the box from image_resize_dimensions, then $this->crop or thumbnail_image, update_size and set_quality, the points editors override",
+                "body": "1415d39dea0d"
+            },
+            "WP_Image_Editor_Imagick::restore": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's state and the quality",
+                "body": "f8cd5fd4ea80"
+            },
+            "WP_Image_Editor_Imagick::rotate": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the Imagick rotation and page reset",
+                "body": "3458c25bc5bd"
+            },
+            "WP_Image_Editor_Imagick::save": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->_save, then the file, type and format kept",
+                "body": "b8a46ceb24f2"
+            },
+            "WP_Image_Editor_Imagick::set_imagick_time_limit": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and null",
+                "body": "88c97f023da5"
+            },
+            "WP_Image_Editor_Imagick::set_quality": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's quality, then onto the Imagick object",
+                "body": "637414f1a0e7"
+            },
+            "WP_Image_Editor_Imagick::stream": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "sends the image in a type with its header",
+                "body": "ac675cd9a0e0"
+            },
+            "WP_Image_Editor_Imagick::strip_meta": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "removes every profile but the kept ones",
+                "body": "941998541183"
+            },
+            "WP_Image_Editor_Imagick::supports_mime_type": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "whether Imagick reads a type's format",
+                "body": "03e2a35143b8"
+            },
+            "WP_Image_Editor_Imagick::thumbnail_image": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the Imagick resize (filter, meta strip filter, png chunks and palette, bit depth filter)",
+                "body": "51f95955fd49"
+            },
+            "WP_Image_Editor_Imagick::update_size": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the Imagick geometry for missing sizes, then the parent",
+                "body": "9e1d71d240f1"
+            },
+            "WP_Image_Editor_Imagick::write_image": {
+                "verdict": "move",
+                "to": "Minn\\Media\\ImagickCanvas",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "writes to a stream or a folder made for it",
+                "body": "5de6ee2b4114"
             }
         },
         "classes/WP_MatchesMapRegex.php": {
