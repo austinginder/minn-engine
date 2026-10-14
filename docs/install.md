@@ -1,8 +1,9 @@
 # Install and eject
 
 The engine goes into an existing WordPress webroot in one command and comes
-back out in one command. Nothing it does touches `wp-config.php`, `wp-content/`,
-or the database's content.
+back out in one command. Nothing it does touches `wp-config.php` or the
+database's content. The one thing it adds to `wp-content/` is Minn Admin, as
+the plugin `wp-content/plugins/minn-admin` (below), which stays after an eject.
 
 On a host, from the directory that contains `wp-config.php`:
 
@@ -88,16 +89,27 @@ the fallback). The engine itself loads `wp-config.php` normally for CLI and web.
    first, so a web request for it shows nothing, and eject acts only on a
    record that names its own webroot.
 
-Static CSS and JS are served from inside `minn/` (`minn/admin/assets/`,
-`minn/assets/`). Hosts that 404 missing `.js`/`.css` find those files on
+Static CSS and JS are served from inside `minn/` (`minn/assets/`) and from
+the Minn Admin copy the engine serves (`wp-content/plugins/minn-admin/assets/`,
+or `minn/admin/assets/`). Hosts that 404 missing `.js`/`.css` find those files on
 disk at `/minn/...`, so they do not need extra copies at the webroot.
 
 `.htaccess`, `wp-content/`, and `wp-config.php` stay where they are. The copy skips
 `.git`, `node_modules`, `tests`, and `docs` inside the engine and the admin bundle.
-Minn Admin is served from `minn/admin` (the app's `minn-admin.php` plus `assets/`).
-A development engine often has that path as a symlink; a deploy copies the
-directory in. Without it, `/minn-admin/` answers 500 "The Minn Admin app is not
-linked into this engine."
+
+**Minn Admin.** The release carries the Minn Admin release of its build, whole,
+at `minn/admin`. The first request a new engine version serves lays it into
+`wp-content/plugins/minn-admin` (`Admin\AdminPlugin`): into an empty place,
+where it is also activated; over an older copy, whose active state is kept;
+never over a copy as new or newer, a symlink or a git checkout. The engine
+serves that plugin copy when it is at least its own version and asks for no
+newer engine (a `Requires Minn:` header), and its own `minn/admin` otherwise,
+including while the plugin folder is missing. Minn Admin's own updates keep
+the plugin current between engine releases. Deactivating the plugin switches
+the admin off; deleting it is refused while the engine runs the site. A
+development engine often has `minn/admin` as a symlink: it never lays anything
+and serves the link. Without any copy, `/minn-admin/` answers 500 "The Minn
+Admin app is not linked into this engine."
 
 **Opcode cache.** `index.php` and `wp-settings.php` keep their paths but change
 contents, so a PHP opcode cache can serve the previous version until it revalidates
@@ -114,11 +126,15 @@ Removes the shape files, any leftover copies from an earlier installer
 `wp-includes/` and `wp-admin/` (shape files plus require placeholders), and
 `minn/` (a symlink is unlinked, a copy deleted), moves every parked entry
 back, and removes the park when it is empty. The tree is the one install
-found, byte for byte (`tests/install.test.php` proves it on a scratch webroot).
+found, byte for byte (`tests/install.test.php` proves it on a scratch webroot),
+apart from Minn Admin's plugin folder: it stays in `wp-content/plugins`, so
+WordPress keeps its admin.
 
-The engine's only footprint in the database is its sign-in throttle rows
-(`wp_options`, `minn_login_throttle_*`); everything else it writes is in the shapes
-WordPress writes.
+The engine's own records in the database are options named `minn_*` in
+`wp_options` (the sign-in throttle, update checks, the version that last laid
+Minn Admin, and the like), which eject leaves behind and WordPress ignores;
+everything else it writes is in the shapes WordPress writes, Minn Admin's entry
+in `active_plugins` included.
 
 ## Update
 
