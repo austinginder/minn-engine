@@ -4200,6 +4200,1209 @@
                 "body": "ac89c8e24cb0"
             }
         },
+        "classes/WP_REST_Abilities_V1_Categories_Controller.php": {
+            "WP_REST_Abilities_V1_Categories_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the category through the public ability functions, a missing one the 404 WP_Error, a found one through $this->prepare_item_for_response",
+                "body": "4e1e8f9e979f"
+            },
+            "WP_REST_Abilities_V1_Categories_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a page of wp_get_ability_categories() through $this->prepare_item_for_response, answered by $this->paged; the slice is the only rule",
+                "body": "a90bc0b1684e"
+            },
+            "WP_REST_Abilities_V1_Categories_Controller::paged": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Api",
+                "why": "sets the total and page count headers and the prev and next Link headers from the query; Api::withPageLinks builds the same links for the engine's lists, and the abilities list controller repeats this body",
+                "body": "5ee2cf63a069"
+            },
+            "WP_REST_Abilities_V1_Categories_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the category's own getters as the item, filtered by context, with its self, collection and abilities links when the fields take links",
+                "body": "4140521360b8"
+            },
+            "WP_REST_Abilities_V1_Categories_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list and single category routes, every callback and the schema a $this method subclasses override",
+                "body": "b0701311f2ee"
+            }
+        },
+        "classes/WP_REST_Abilities_V1_List_Controller.php": {
+            "WP_REST_Abilities_V1_List_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the ability through the public functions; a missing one, or one not shown in REST, is the 404 WP_Error",
+                "body": "2c65a7a7adb6"
+            },
+            "WP_REST_Abilities_V1_List_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the abilities $this->listed keeps, a page of them through $this->prepare_item_for_response, answered by $this->paged",
+                "body": "958017685109"
+            },
+            "WP_REST_Abilities_V1_List_Controller::listed": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "why": "the list filter (shown in REST, the category and namespace asked for, the meta filter); a query over the abilities the engine's registry holds",
+                "body": "20efaa6a9c4c"
+            },
+            "WP_REST_Abilities_V1_List_Controller::matches": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Abilities",
+                "why": "the recursive meta match a list filter asks for, nested arrays key by key and values strictly; it goes with listed()",
+                "body": "fb4427097720"
+            },
+            "WP_REST_Abilities_V1_List_Controller::paged": {
+                "verdict": "remove",
+                "why": "an exact duplicate of WP_REST_Abilities_V1_Categories_Controller::paged, a Minn helper no plugin calls; the one Api method serves both controllers",
+                "body": "5ee2cf63a069"
+            },
+            "WP_REST_Abilities_V1_List_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the ability's own getters as the item, filtered by context, with its self, collection and run links when the fields take links",
+                "body": "191ce9b42b75"
+            },
+            "WP_REST_Abilities_V1_List_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list and single ability routes, every callback and the schema a $this method subclasses override",
+                "body": "fe0de0a3d70d"
+            }
+        },
+        "classes/WP_REST_Block_Pattern_Categories_Controller.php": {
+            "WP_REST_Block_Pattern_Categories_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and base subclasses and the route registration read",
+                "body": "2dc38ab5fff8"
+            },
+            "WP_REST_Block_Pattern_Categories_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured schema cached in $this->schema, with the fields plugins register added",
+                "body": "5108ee295b0f"
+            },
+            "WP_REST_Block_Pattern_Categories_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "walks the pattern category registry plugins fill through $this->prepare_item_for_response and $this->prepare_response_for_collection",
+                "body": "e55d4cd44828"
+            },
+            "WP_REST_Block_Pattern_Categories_Controller::get_items_permissions_check": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\Caller::editsAnyRestType",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "edit_posts, or the edit_posts of any type shown in REST, is Caller::editsAnyRestType; the WP_Error refusal is the wrapper",
+                "body": "b3a7b08538bd"
+            },
+            "WP_REST_Block_Pattern_Categories_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the registered category's name, label and description as the fields ask, with the additional fields and the context filter",
+                "body": "28cc517ae689"
+            }
+        },
+        "classes/WP_REST_Block_Types_Controller.php": {
+            "WP_REST_Block_Types_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace, the base and the two registries subclasses read through $this",
+                "body": "54f8f1270ea1"
+            },
+            "WP_REST_Block_Types_Controller::check_read_permission": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\Caller::editsAnyRestType",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "edit_posts or any REST type's edit_posts is Caller::editsAnyRestType, which BlockTypesController::requireViewer asks too; the WP_Error is the wrapper",
+                "body": "39ab9fe6d208"
+            },
+            "WP_REST_Block_Types_Controller::get_block": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "looks the name up in $this->block_registry, a miss being the 404 WP_Error",
+                "body": "10dcdcb44cfe"
+            },
+            "WP_REST_Block_Types_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_block, then $this->prepare_item_for_response",
+                "body": "9d8f1c926dc7"
+            },
+            "WP_REST_Block_Types_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->check_read_permission, then $this->get_block for the asked name, both points subclasses override",
+                "body": "bd6dce3acfe0"
+            },
+            "WP_REST_Block_Types_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured schema cached in $this->schema, with the fields plugins register added",
+                "body": "265c7c833a9e"
+            },
+            "WP_REST_Block_Types_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "walks $this->block_registry through $this->prepare_item_for_response, the namespace route keeping its own blocks",
+                "body": "96d34ac809d5"
+            },
+            "WP_REST_Block_Types_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's BlockTypesController::fields cut to the fields asked, with the additional fields, the context filter, $this->prepare_links and rest_prepare_block_type",
+                "body": "a222dadf391f"
+            },
+            "WP_REST_Block_Types_Controller::prepare_links": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\BlockTypesController::links",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the collection, self, up and (for a dynamic block) render-block links are the private BlockTypesController::links; expanding its curie and dropping the target hints is result conversion",
+                "body": "d7e961fe761b"
+            },
+            "WP_REST_Block_Types_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list, namespace and single routes, every callback and the schema a $this method subclasses override",
+                "body": "6fcd4eb290e7"
+            }
+        },
+        "classes/WP_REST_Controller.php": {
+            "WP_REST_Controller::add_additional_fields_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "adds the schemas of the plugin fields $this->get_additional_fields() gives for the schema's title",
+                "body": "34d5942d1dfa"
+            },
+            "WP_REST_Controller::add_additional_fields_to_object": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the template method: $this->get_additional_fields() and $this->get_fields_for_response() pick the plugin fields whose get callbacks fill the item",
+                "body": "343e0f5c1148"
+            },
+            "WP_REST_Controller::filter_response_by_context": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_item_schema(), which subclasses define, handed to rest_filter_response_by_context",
+                "body": "fdc1afe03e37"
+            },
+            "WP_REST_Controller::get_additional_fields": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads the global $wp_rest_additional_fields register_rest_field fills, for the controller's object type",
+                "body": "a82400f1c281"
+            },
+            "WP_REST_Controller::get_context_param": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RouteArgs",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the context argument with every context the item schema names, unique and reverse sorted; route argument building for RouteArgs, the $this->get_item_schema() call staying",
+                "doubt": "the description skips __(), so a translated site serves it untranslated",
+                "body": "e900929c1aed"
+            },
+            "WP_REST_Controller::get_fields_for_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Fields",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the schema's fields shown in the request's context plus the plugin fields and _links, cut by _fields; Fields::select already holds the cut, the context rule belongs beside it, the $this-> schema calls staying",
+                "doubt": "never adds _embedded when the request has _embed, so _fields naming _embedded drops the links an embed needs",
+                "body": "39fb9d14d842"
+            },
+            "WP_REST_Controller::get_object_type": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the title of $this->get_item_schema(), which subclasses define",
+                "body": "005d543e83b5"
+            },
+            "WP_REST_Controller::get_public_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_item_schema() without each property's arg_options, which are not public",
+                "body": "31d59100b8b6"
+            },
+            "WP_REST_Controller::prepare_response_for_collection": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a response's data with its compact links, as a collection holds an item",
+                "body": "b9473c60d1f3"
+            },
+            "WP_REST_Controller::update_additional_fields_for_object": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs the update callback of each plugin field the request names, from $this->get_additional_fields(), the first WP_Error answering",
+                "body": "b3b14bbe8fca"
+            }
+        },
+        "classes/WP_REST_Menus_Controller.php": {
+            "WP_REST_Menus_Controller::check_has_read_only_access": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the rest_menu_read_access filter, then current_user_can by name for edit_theme_options or edit_posts, refused with the reference's WP_Error",
+                "body": "3b7d8124d7c5"
+            },
+            "WP_REST_Menus_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's create, then $this->minn_settled for the new menu's locations and auto add",
+                "body": "fb99ec552a28"
+            },
+            "WP_REST_Menus_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's term check, then $this->check_has_read_only_access, both points subclasses override",
+                "body": "3190ed2eda3a"
+            },
+            "WP_REST_Menus_Controller::get_item_schema": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\TermSchema",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the menu schema from the parent's id, description, name, slug and meta, the captured menu properties and a locations check against the registered ones; schema rules for the engine, cached in $this->schema",
+                "body": "c993786d8a4d"
+            },
+            "WP_REST_Menus_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's terms check, then $this->check_has_read_only_access, both points subclasses override",
+                "body": "0a1d8e08a6e8"
+            },
+            "WP_REST_Menus_Controller::get_menu_auto_add": {
+                "verdict": "delegate",
+                "to": "Minn\\Content\\Menus::autoAdd",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "whether nav_menu_options lists the menu for auto add is Content\\Menus::autoAdd",
+                "body": "dd2678621e9c"
+            },
+            "WP_REST_Menus_Controller::get_term": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's term as the nav menu object, its auto_add from $this->get_menu_auto_add",
+                "body": "508aaa756c4c"
+            },
+            "WP_REST_Menus_Controller::handle_auto_add": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\MenuEvents",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "adds or drops the menu in the stored nav_menu_options auto_add list and fires wp_update_nav_menu; a menu write beside MenuEvents' other menu saves",
+                "body": "905461672663"
+            },
+            "WP_REST_Menus_Controller::handle_locations": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\MenuEvents",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "checks the asked locations against the registered ones and rewrites the nav_menu_locations theme mod, freeing the menu's others; MenuEvents already rewrites that mod when a menu is deleted",
+                "body": "f273a00e17e9"
+            },
+            "WP_REST_Menus_Controller::minn_expanded_links": {
+                "verdict": "remove",
+                "why": "the same body as WP_REST_Posts_Controller::minn_links_for_response under another name, a Minn helper no plugin calls; the one RuntimeRoutes method serves this controller too",
+                "body": "8874de33768a"
+            },
+            "WP_REST_Menus_Controller::minn_settled": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->handle_locations and $this->handle_auto_add, then the menu again through $this->prepare_item_for_response with the first answer's status and headers",
+                "body": "72aaba0b709d"
+            },
+            "WP_REST_Menus_Controller::prepare_item_for_database": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's prepared term with the menu-name the menu functions take, when the schema has a name",
+                "body": "83568dadac86"
+            },
+            "WP_REST_Menus_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's MenuObject view cut to the fields asked and filtered by context, its links expanded onto the response",
+                "body": "79bc65a46c3f"
+            },
+            "WP_REST_Menus_Controller::prepare_links": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's menu links in prepare_links form: one link a relation, the post type and location relations as lists",
+                "body": "36d3a3e5e359"
+            },
+            "WP_REST_Menus_Controller::update_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's update, then $this->minn_settled for the menu's locations and auto add",
+                "body": "0837bf015dc0"
+            }
+        },
+        "classes/WP_REST_Meta_Fields.php": {
+            "WP_REST_Meta_Fields::default_additional_properties_to_false": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then rest_default_additional_properties_to_false",
+                "body": "6258060f0b9c"
+            },
+            "WP_REST_Meta_Fields::get_field_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each field of $this->get_registered_fields() under its REST name in the meta object's schema, checked by $this->check_meta_is_array",
+                "body": "e10970772c40"
+            },
+            "WP_REST_Meta_Fields::get_value": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "walks $this->get_registered_fields(), which subclasses override, reading each key through RestMeta::value",
+                "doubt": "values go through RestMeta::value, not $this->prepare_value_for_response, so a subclass that overrides it is never asked",
+                "body": "e15eb42782ce"
+            },
+            "WP_REST_Meta_Fields::register_field": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then register_rest_field with this object's callbacks and schema",
+                "body": "17fdd9cba60c"
+            },
+            "WP_REST_Meta_Fields::update_value": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "RestMeta::errors writes the meta; its refusals become one WP_Error, the first with the rest merged in, or null when there are none",
+                "doubt": "writes through RestMeta::errors, so subclass overrides of get_registered_fields, update_meta_value, update_multi_meta_value and delete_meta_value are never called",
+                "body": "80eaba4e980b"
+            }
+        },
+        "classes/WP_REST_Plugins_Controller.php": {
+            "WP_REST_Plugins_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and base subclasses and the route registration read",
+                "body": "7ed46cee785f"
+            },
+            "WP_REST_Plugins_Controller::check_read_permission": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "is_multisite, current_user_can and is_network_only_plugin by name: a network-only plugin is the network administrator's to read",
+                "body": "14a4de27fb1d"
+            },
+            "WP_REST_Plugins_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's install route does the work; its refusal becomes a WP_Error and its answer the item through $this->prepare_item_for_response, a 201 with its Location",
+                "body": "c617091713c1"
+            },
+            "WP_REST_Plugins_Controller::create_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "install_plugins by name, and activate_plugins when the new plugin is to be active, each refused with the reference's WP_Error",
+                "body": "b672ded072cb"
+            },
+            "WP_REST_Plugins_Controller::delete_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "refuses an active plugin, asks $this->is_filesystem_available, shapes the plugin before delete_plugins and answers it as previous",
+                "body": "12ef9aacc067"
+            },
+            "WP_REST_Plugins_Controller::delete_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "activate_plugins and delete_plugins by name, then $this->get_plugin_data and $this->check_read_permission",
+                "body": "f5754c8154df"
+            },
+            "WP_REST_Plugins_Controller::does_plugin_match_request": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PluginsController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the list's search (in any header, tags stripped, case kept) and status filter; PluginsController::list already filters by status, the $this->get_plugin_status call staying",
+                "body": "7cf9a3582e55"
+            },
+            "WP_REST_Plugins_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_plugin_data, then $this->prepare_item_for_response",
+                "body": "892c6847c2a7"
+            },
+            "WP_REST_Plugins_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "activate_plugins by name, then $this->get_plugin_data and $this->check_read_permission",
+                "body": "eefa3562d397"
+            },
+            "WP_REST_Plugins_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured plugin schema cached in $this->schema, network-active added to the statuses on a network",
+                "body": "d5f19527d1c1"
+            },
+            "WP_REST_Plugins_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every installed plugin $this->does_plugin_match_request keeps, through $this->prepare_item_for_response",
+                "doubt": "does not skip the plugins $this->check_read_permission refuses, so on a network a network-only plugin is listed to a site administrator",
+                "body": "28a9a901e794"
+            },
+            "WP_REST_Plugins_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "current_user_can('activate_plugins') by name, refused with the reference's WP_Error",
+                "body": "3a0e532a2b08"
+            },
+            "WP_REST_Plugins_Controller::get_plugin_data": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_plugins by name, a missing plugin the 404 WP_Error, its file added as _file",
+                "body": "c3eb4c7a5a69"
+            },
+            "WP_REST_Plugins_Controller::get_plugin_status": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "is_plugin_active_for_network and is_plugin_active by name",
+                "body": "0d6b667a05c0"
+            },
+            "WP_REST_Plugins_Controller::handle_plugin_status": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deactivate_plugins or activate_plugin by name, an activation error given status 500",
+                "doubt": "misses the reference's rest_network_only_plugin refusal for a network-only plugin activated per site, and treats active over network-active as a fresh activation",
+                "body": "5650d8373180"
+            },
+            "WP_REST_Plugins_Controller::is_filesystem_available": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_filesystem_method by name, anything but direct refused with the reference's 500",
+                "doubt": "stored filesystem credentials (request_filesystem_credentials) are not tried before refusing",
+                "body": "c7d7a124a206"
+            },
+            "WP_REST_Plugins_Controller::plugin_status_permission_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "current_user_can by name for the change asked: managing network plugins, activating or deactivating this one",
+                "body": "8c7d07871928"
+            },
+            "WP_REST_Plugins_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's PluginsController::shape for the plugin's headers, its links from $this->prepare_links when the fields take links, then rest_prepare_plugin",
+                "body": "a444dc7171f6"
+            },
+            "WP_REST_Plugins_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the plugins routes, their callbacks, argument callbacks and schema as $this methods subclasses override",
+                "body": "691864f6a296"
+            },
+            "WP_REST_Plugins_Controller::update_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_plugin_data, $this->get_plugin_status and $this->handle_plugin_status for a change, the additional fields, then the plugin in the edit context",
+                "body": "69f8021df4b2"
+            },
+            "WP_REST_Plugins_Controller::update_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "activate_plugins by name, then $this->get_plugin_data, $this->check_read_permission and $this->plugin_status_permission_check",
+                "doubt": "runs the status permission check even when the asked status is the current one, where the reference checks only a change",
+                "body": "b498d2afdebb"
+            }
+        },
+        "classes/WP_REST_Post_Format_Search_Handler.php": {
+            "WP_REST_Post_Format_Search_Handler::prepare_item": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the fields asked from get_post_format_string and get_post_format_link by name",
+                "body": "6a09d3c1cf35"
+            },
+            "WP_REST_Post_Format_Search_Handler::search_items": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SearchController",
+                "why": "runs the search through rest_post_format_search_query, matches the format labels and pages the slugs; a search the engine's SearchController should answer beside its post search",
+                "doubt": "matches the search against the label only, where the reference also matches the slug, and lists formats in term order rather than get_post_format_strings order",
+                "body": "171a4d8c7549"
+            }
+        },
+        "classes/WP_REST_Post_Types_Controller.php": {
+            "WP_REST_Post_Types_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and base subclasses and the route registration read",
+                "body": "22792e536edf"
+            },
+            "WP_REST_Post_Types_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the type by name, refused as the reference refuses (unknown, not in REST, edit context without edit_posts), then $this->prepare_item_for_response",
+                "body": "578ff04e14a0"
+            },
+            "WP_REST_Post_Types_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured schema cached in $this->schema, with the fields plugins register added",
+                "body": "102e97f8ba74"
+            },
+            "WP_REST_Post_Types_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every REST type through $this->prepare_item_for_response keyed by name, the edit context skipping the types the user cannot edit",
+                "body": "63096d7746a9"
+            },
+            "WP_REST_Post_Types_Controller::get_items_permissions_check": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\Caller::editsAnyRestType",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the edit context needs the caller to edit some REST type, which Caller::editsAnyRestType answers; the context test and the WP_Error are the wrapper",
+                "body": "236bd7f079b1"
+            },
+            "WP_REST_Post_Types_Controller::prepare_item_for_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Types",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "maps the type object to its REST item (visibility, viewable, supports, REST taxonomies, base and namespace fallbacks); Types builds the same item for its registry, the fields, context filter, links and rest_prepare_post_type staying as the wrapper",
+                "body": "b7710383fc3c"
+            },
+            "WP_REST_Post_Types_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list and single type routes, every callback and the schema a $this method subclasses override",
+                "body": "cfaf90f102a9"
+            }
+        },
+        "classes/WP_REST_Posts_Controller.php": {
+            "WP_REST_Posts_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets post_type, rest_base, namespace and the meta fields object subclasses read, the base and namespace taken from the type object as the reference takes them",
+                "body": "d1369c6604cc"
+            },
+            "WP_REST_Posts_Controller::can_access_password_content": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostObject",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "whether a request unlocks a protected post's content (the edit context with edit_post, or the matching password); a content rule for where the engine renders protected posts",
+                "body": "13481e7b51e2"
+            },
+            "WP_REST_Posts_Controller::check_assign_terms_permission": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\PostsWriteController::checkAssignTerms",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "every existing term the request lists must pass assign_term: the private PostsWriteController::checkAssignTerms, its refusal read as false",
+                "body": "3d617d73af5e"
+            },
+            "WP_REST_Posts_Controller::check_create_permission": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->check_is_post_type_allowed, then the type's create_posts by name",
+                "body": "aecdea7967ac"
+            },
+            "WP_REST_Posts_Controller::check_is_post_type_allowed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post_type_object by name, then its show_in_rest flag",
+                "body": "ca447c438254"
+            },
+            "WP_REST_Posts_Controller::check_password_required": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "answers post_password_required from the passwords this controller saw pass ($this->password_check_passed), else the edit_post right",
+                "body": "96aece4cca15"
+            },
+            "WP_REST_Posts_Controller::check_read_permission": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\PostsController::readable",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "published, read_post, a public status, or an inherit status read through its parent: the private PostsController::readable; the $this->check_is_post_type_allowed test and the recursion through $this stay",
+                "body": "334c6cefcf23"
+            },
+            "WP_REST_Posts_Controller::check_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the template must be the post's own or one wp_get_theme()->get_page_templates offers, through the public theme calls and their filters",
+                "body": "c6e2be2ad395"
+            },
+            "WP_REST_Posts_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine writes the post; a refusal becomes a WP_Error, the answer the post through $this->prepare_item_for_response in the edit context, a 201 with its Location",
+                "body": "546d1670de04"
+            },
+            "WP_REST_Posts_Controller::create_item_permissions_check": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsWriteController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the create rules (no id, another author, sticky, create_posts) PostsWriteController::serveCreate applies; the $this->check_assign_terms_permission call stays where it is",
+                "doubt": "lets publish_posts alone make a post sticky, where the engine's PostsWriteController::checkStickyChange asks edit_others_posts (rest-sticky, 7.1.3)",
+                "body": "ee44cf2522ae"
+            },
+            "WP_REST_Posts_Controller::delete_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine trashes or deletes the post; the answer is the trashed post, or the view it had as previous, through $this->prepare_item_for_response",
+                "body": "9f0cfa9ddcfb"
+            },
+            "WP_REST_Posts_Controller::delete_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_post, then $this->check_delete_permission",
+                "body": "1cd2a9090881"
+            },
+            "WP_REST_Posts_Controller::get_available_actions": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostObject",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the edit context's action relations by the caller's caps (publish, unfiltered HTML, sticky, author, each taxonomy's create and assign); PostObject::editLinks decides the same actions",
+                "body": "ad272f9915c5"
+            },
+            "WP_REST_Posts_Controller::get_collection_params": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the engine's PostCollectionParams::built over the parent's parameters, the status bound to $this->sanitize_post_statuses, then rest_{type}_collection_params",
+                "body": "077ffff6fd66"
+            },
+            "WP_REST_Posts_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_post and $this->prepare_item_for_response, with the alternate Link for a viewable type",
+                "body": "391caad0a810"
+            },
+            "WP_REST_Posts_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_post, $this->check_update_permission for the edit context, the password test, then $this->check_read_permission, each a point subclasses override",
+                "body": "c8ac045bfc28"
+            },
+            "WP_REST_Posts_Controller::get_item_schema": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostSchema",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the type's item schema (fields by its supports, the status and format enums, a property per REST taxonomy, the links) then rest_{type}_item_schema; the type rules PostCollectionParams applies to lists, for the item",
+                "body": "d7ec594a39cb"
+            },
+            "WP_REST_Posts_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's list (or the menu items route) gives the ids; each post goes through $this->prepare_item_for_response, a refusal becomes a WP_Error and the paging headers are copied",
+                "body": "58f3744fe2d2"
+            },
+            "WP_REST_Posts_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the edit context asks current_user_can for the type's edit_posts by name, refused with rest_forbidden_context",
+                "body": "14ec33c5b227"
+            },
+            "WP_REST_Posts_Controller::get_post": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the post by id when it is of this type, anything else the reference's 404 WP_Error",
+                "body": "df2f6028de31"
+            },
+            "WP_REST_Posts_Controller::get_schema_links": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostSchema",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the targetSchema action links by the type (publish, unfiltered HTML, sticky, author, each taxonomy's assign and create); schema rules beside the item schema",
+                "body": "f22329643021"
+            },
+            "WP_REST_Posts_Controller::handle_featured_media": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "set_post_thumbnail or delete_post_thumbnail by name, a refused id the reference's 400 WP_Error",
+                "body": "24d3f5dde90d"
+            },
+            "WP_REST_Posts_Controller::handle_status_param": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsWriteController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "which statuses need publish_posts, and an unknown one falling back to draft; PostsWriteController::statusColumns holds the same status rules",
+                "body": "905fe2bed22b"
+            },
+            "WP_REST_Posts_Controller::handle_template": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "update_post_meta by name for _wp_page_template, an unknown template cleared when asked to validate",
+                "body": "c5de5b65cae7"
+            },
+            "WP_REST_Posts_Controller::handle_terms": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\PostEvents::applyTerms",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "sets the terms of each REST taxonomy the request names, the whole of PostEvents::applyTerms; returning the first WP_Error is the wrapper",
+                "body": "748f89e4bed4"
+            },
+            "WP_REST_Posts_Controller::minn_bound": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\SchemaData",
+                "why": "binds a captured definition's @this:method markers to the controller; the marker is SchemaData's convention, and the terms, comments and users controllers repeat this body, so one SchemaData method serves all four",
+                "body": "9e4f54dc450b"
+            },
+            "WP_REST_Posts_Controller::minn_engine_write": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\Api",
+                "why": "picks the engine's route or, for a type under its own namespace, Api::writePost, then decodes the answer into its body or a WP_Error; which door serves a type is Api's to know",
+                "body": "5bbc50dce347"
+            },
+            "WP_REST_Posts_Controller::minn_links_for_response": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\RuntimeRoutes",
+                "why": "expands the engine's compact links into add_links form without target hints, as the private RuntimeRoutes::expand does; the terms, menus and attachments controllers repeat this loop, so one RuntimeRoutes method serves them all",
+                "body": "d9305f2343ff"
+            },
+            "WP_REST_Posts_Controller::minn_prepared_access": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsWriteController",
+                "why": "the password with its sticky conflict, the parent checked, menu order and the comment and ping status; the checks PostsWriteController makes on a write",
+                "body": "d1bc990633a0"
+            },
+            "WP_REST_Posts_Controller::minn_prepared_settings": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsWriteController",
+                "why": "the status through handle_status_param and the dates, slug and author checked and set; column building PostsWriteController already does for its writes",
+                "body": "7cf3761a268a"
+            },
+            "WP_REST_Posts_Controller::minn_rest_taxonomies": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\RegisteredType::taxonomies",
+                "why": "the type's REST taxonomies keyed by REST base are RegisteredType::taxonomies; turning the names into taxonomy objects is result conversion",
+                "body": "42d0685a3fbb"
+            },
+            "WP_REST_Posts_Controller::minn_schema_fields": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostSchema",
+                "why": "which item fields a type has by its public, hierarchical and supports settings; it goes with the item schema",
+                "body": "0846fbe85890"
+            },
+            "WP_REST_Posts_Controller::prepare_date_response": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "mysql_to_rfc3339 by name: the local date when given, null for the zero GMT date",
+                "body": "efacd4dc402a"
+            },
+            "WP_REST_Posts_Controller::prepare_item_for_database": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsWriteController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds and checks the post to save from the request by the schema's fields, then rest_pre_insert_{type}; PostsWriteController builds the same columns from the body",
+                "body": "747694eb5069"
+            },
+            "WP_REST_Posts_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sets the global $post, takes the engine's PostObject view or edit view, cuts it to the fields asked, filters by context and expands its links onto the response",
+                "doubt": "never asks can_access_password_content, and check_password_required is hooked only in the edit context, so a correct ?password= in view may leave the content protected",
+                "body": "8f641f510d98"
+            },
+            "WP_REST_Posts_Controller::prepare_items_query": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\PostListArgs::queryVars",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "each argument through rest_query_var-{key}, stickies ignored and the REST orderby names mapped: PostListArgs::queryVars does the same for the engine's lists",
+                "body": "ed355cef4aa7"
+            },
+            "WP_REST_Posts_Controller::prepare_links": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's post links in prepare_links form: one link a relation, the term links a list",
+                "body": "1f9d58c0ac9e"
+            },
+            "WP_REST_Posts_Controller::prepare_tax_query": {
+                "verdict": "remove",
+                "why": "a private placeholder nothing calls (private, so no plugin can either); the engine's PostListArgs::taxonomies builds the tax query the lists use, and compat-status skips private methods",
+                "body": "437b252a9633"
+            },
+            "WP_REST_Posts_Controller::prepare_taxonomy_limit_schema": {
+                "verdict": "remove",
+                "why": "a private placeholder nothing calls (private, so no plugin can either); PostCollectionParams::taxonomies builds the taxonomy filter parameters, and compat-status skips private methods",
+                "body": "c99447c7ea61"
+            },
+            "WP_REST_Posts_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list and single routes with $this callbacks, the single read taking excerpt_length and password when $this->get_item_schema() has those fields",
+                "body": "66c45b8f3f70"
+            },
+            "WP_REST_Posts_Controller::sanitize_post_statuses": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "each status beyond the default needs edit_posts (read_private_posts for private) and a valid value; PostsController::visibleStatuses holds the same rule for the engine's lists",
+                "body": "c96314b357ef"
+            },
+            "WP_REST_Posts_Controller::update_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine writes the post; a refusal becomes a WP_Error, the answer the post through $this->prepare_item_for_response in the edit context",
+                "body": "3a3bfbab53ab"
+            },
+            "WP_REST_Posts_Controller::update_item_permissions_check": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\PostsWriteController",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the update rules (edit_post, another author, sticky) PostsWriteController::serveUpdate applies; the $this->get_post, $this->check_update_permission and $this->check_assign_terms_permission calls stay",
+                "doubt": "lets publish_posts alone make a post sticky, where the engine's PostsWriteController::checkStickyChange asks edit_others_posts (rest-sticky, 7.1.3)",
+                "body": "b8eaac0b5980"
+            }
+        },
+        "classes/WP_REST_Settings_Controller.php": {
+            "WP_REST_Settings_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and base subclasses and the route registration read",
+                "body": "5a25f6e0652b"
+            },
+            "WP_REST_Settings_Controller::get_item": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\LiveSettings::payload",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "rest_pre_get_setting, else the option with its default, then the schema fit, for each REST setting: LiveSettings::payload's read; $this->get_registered_options and $this->prepare_value are the points subclasses override",
+                "body": "48b47a40c07f"
+            },
+            "WP_REST_Settings_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a property per $this->get_registered_options() entry, bound to $this->sanitize_callback, cached in $this->schema",
+                "body": "221f8d2c4b14"
+            },
+            "WP_REST_Settings_Controller::get_registered_options": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\LiveSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the REST settings from the registered ones, their schemas filled from the registration, the types allowlisted and objects closed; LiveSettings::shown builds the same list without the allowlist and the closing",
+                "body": "11f19b28cc09"
+            },
+            "WP_REST_Settings_Controller::prepare_value": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "rest_validate_value_from_schema then rest_sanitize_value_from_schema by name, a refused value reading as null",
+                "body": "62943177cfb1"
+            },
+            "WP_REST_Settings_Controller::sanitize_callback": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "null passes (it deletes the setting); anything else through rest_parse_request_arg by name",
+                "body": "093a967f013a"
+            },
+            "WP_REST_Settings_Controller::set_additional_properties_to_false": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: the notice, then rest_default_additional_properties_to_false",
+                "body": "bf424c77a892"
+            },
+            "WP_REST_Settings_Controller::update_item": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\LiveSettings::store",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "rest_pre_update_setting, then update_option, or delete_option refused for an unfit stored value, for each setting named: LiveSettings::store's write; answering through $this->get_item stays",
+                "body": "d67ed852c29d"
+            }
+        },
+        "classes/WP_REST_Terms_Controller.php": {
+            "WP_REST_Terms_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets taxonomy, rest_base, namespace and the meta fields object subclasses read, the base and namespace taken from the taxonomy object as the reference takes them",
+                "body": "24051ec317b0"
+            },
+            "WP_REST_Terms_Controller::check_is_taxonomy_allowed": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_taxonomy by name, then its show_in_rest flag",
+                "body": "201689cea107"
+            },
+            "WP_REST_Terms_Controller::check_read_terms_permission_for_post": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\TermsController::termsReadable",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "whether a post's terms may be listed is the private TermsController::termsReadable",
+                "doubt": "asks the post type controller's check_read_permission rather than the reference's rule, and never refuses a post whose type is outside the taxonomy",
+                "body": "42c780cd77be"
+            },
+            "WP_REST_Terms_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's create route makes the term; a refusal becomes a WP_Error, the answer the term through $this->prepare_item_for_response, a 201 with its Location",
+                "body": "7fa0edfb2eff"
+            },
+            "WP_REST_Terms_Controller::create_item_permissions_check": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\TermsController::createCapability",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the cap creating takes (edit_terms when hierarchical, assign_terms when flat) is TermsController::createCapability; $this->check_is_taxonomy_allowed and the WP_Error stay as the wrapper",
+                "body": "4a4435e2f2b7"
+            },
+            "WP_REST_Terms_Controller::delete_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine deletes the term; the answer is the term as it was, shaped through $this->prepare_item_for_response before it goes",
+                "body": "e05dac30b0a4"
+            },
+            "WP_REST_Terms_Controller::delete_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_term, then delete_term by name",
+                "body": "385811a0047b"
+            },
+            "WP_REST_Terms_Controller::get_collection_params": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\TermCollectionParams::for",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "Args::TERMS with a parent or an offset by the taxonomy's nesting is TermCollectionParams::for; the parent's parameters, the context default and rest_{taxonomy}_collection_params stay as the wrapper",
+                "body": "4033d746d6d8"
+            },
+            "WP_REST_Terms_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_term, then $this->prepare_item_for_response",
+                "body": "0b8cc9083d74"
+            },
+            "WP_REST_Terms_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_term, then edit_term by name for the edit context",
+                "body": "c3406dab0098"
+            },
+            "WP_REST_Terms_Controller::get_item_schema": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\TermSchema",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the taxonomy's item schema from the captured properties (a parent only when hierarchical), the taxonomy enum, the meta schema and the tag title; schema rules for the engine, cached in $this->schema",
+                "body": "c3451ad5fb3a"
+            },
+            "WP_REST_Terms_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's term list gives the ids; each term goes through $this->prepare_item_for_response and the paging headers are copied",
+                "body": "e952b1f8b8f1"
+            },
+            "WP_REST_Terms_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->check_is_taxonomy_allowed, the post through $this->check_read_terms_permission_for_post, then edit_terms by name for the edit context",
+                "body": "6a4ca3993b96"
+            },
+            "WP_REST_Terms_Controller::get_term": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the term by id in this taxonomy, anything else the reference's 404 WP_Error",
+                "body": "29891d325107"
+            },
+            "WP_REST_Terms_Controller::minn_bound": {
+                "verdict": "remove",
+                "why": "an exact duplicate of WP_REST_Posts_Controller::minn_bound, a Minn helper no plugin calls; the one SchemaData method serves this controller too",
+                "body": "9e4f54dc450b"
+            },
+            "WP_REST_Terms_Controller::minn_engine": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "calls the engine's route for the term and turns its answer into the decoded body, or its refusal into a WP_Error",
+                "body": "5f584c7887af"
+            },
+            "WP_REST_Terms_Controller::minn_links_for_response": {
+                "verdict": "remove",
+                "why": "an exact duplicate of WP_REST_Posts_Controller::minn_links_for_response, a Minn helper no plugin calls; the one RuntimeRoutes method serves this controller too",
+                "body": "d9305f2343ff"
+            },
+            "WP_REST_Terms_Controller::prepare_item_for_database": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the request's name, slug, description and parent as the term object the term functions take, then rest_pre_insert_{taxonomy}",
+                "doubt": "leaves out the taxonomy field the reference copies when the schema has one",
+                "body": "a975262a1999"
+            },
+            "WP_REST_Terms_Controller::prepare_item_for_response": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's TermObject view cut to the fields asked and filtered by context, its links expanded onto the response",
+                "body": "9c9b4414f18e"
+            },
+            "WP_REST_Terms_Controller::prepare_links": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's term links in prepare_links form: one link a relation, the post type links a list",
+                "body": "99fe2efc7aa6"
+            },
+            "WP_REST_Terms_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list and single routes with $this callbacks, argument sets and the schema subclasses override",
+                "body": "2f0d16cc946c"
+            },
+            "WP_REST_Terms_Controller::update_item": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine updates the term; a refusal becomes a WP_Error, the answer the term through $this->prepare_item_for_response in the edit context",
+                "body": "b51df1634a0b"
+            },
+            "WP_REST_Terms_Controller::update_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_term, then edit_term by name",
+                "body": "cf91f7a3ba70"
+            }
+        },
+        "classes/WP_REST_Widgets_Controller.php": {
+            "WP_REST_Widgets_Controller::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the namespace and base subclasses and the route registration read",
+                "body": "7adbd12909b1"
+            },
+            "WP_REST_Widgets_Controller::create_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->save_widget, wp_assign_widget_to_sidebar by name, then the widget through $this->prepare_item_for_response as a 201",
+                "body": "2776626d0203"
+            },
+            "WP_REST_Widgets_Controller::delete_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\WidgetsController",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "a forced delete drops the widget's stored instance and unassigns it, as WidgetsController::delete does; the prepare calls and the delete_widget and rest_delete_widget actions stay where the reference fires them",
+                "doubt": "a forced delete edits a WP_Widget's settings directly and never runs the registered update callback with delete_widget posted, so a widget that is not a WP_Widget keeps its settings",
+                "body": "4f93cb303aff"
+            },
+            "WP_REST_Widgets_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->retrieve_widgets and wp_find_widgets_sidebar by name, a missing widget the 404 WP_Error, then $this->prepare_item_for_response",
+                "body": "8bf1143c222b"
+            },
+            "WP_REST_Widgets_Controller::get_item_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->retrieve_widgets, the widget's sidebar through $this->check_read_sidebar_permission, else $this->permissions_check",
+                "body": "776908e74338"
+            },
+            "WP_REST_Widgets_Controller::get_item_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the captured widget schema with a form_data sanitize callback (wp_parse_str), cached in $this->schema",
+                "body": "76952ac376ad"
+            },
+            "WP_REST_Widgets_Controller::get_items": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "each widget of each sidebar the caller may read (or of the one asked) through $this->prepare_item_for_response, after $this->retrieve_widgets",
+                "body": "3c47505b01c0"
+            },
+            "WP_REST_Widgets_Controller::get_items_permissions_check": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->retrieve_widgets, then any sidebar $this->check_read_sidebar_permission opens, else $this->permissions_check",
+                "body": "9bba7513e965"
+            },
+            "WP_REST_Widgets_Controller::minn_new_instance": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\WidgetsController::newInstance",
+                "why": "the new settings from raw, from encoded and hashed, or from the form's fields are the private WidgetsController::newInstance; its refusals as WP_Errors are the wrapper",
+                "body": "f88ef03ed782"
+            },
+            "WP_REST_Widgets_Controller::permissions_check": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "current_user_can('edit_theme_options') by name, refused with the reference's WP_Error",
+                "body": "66d111183fbe"
+            },
+            "WP_REST_Widgets_Controller::prepare_item_for_response": {
+                "verdict": "delegate",
+                "to": "Minn\\Rest\\WidgetObject::view",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "the widget item (rendered markup, form, signed instance) is WidgetObject::view's; the fields asked, the context filter, the links and rest_prepare_widget on the response are the wrapper",
+                "doubt": "an empty raw instance comes back as an empty list, where the reference sends an empty object",
+                "body": "fb67c66b8cf7"
+            },
+            "WP_REST_Widgets_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the list and single routes with $this callbacks, argument sets and the schema subclasses override",
+                "body": "db3b6e8f49be"
+            },
+            "WP_REST_Widgets_Controller::retrieve_widgets": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs retrieve_widgets once per controller, remembered in $this->widgets_retrieved",
+                "body": "d5eb0d5f718c"
+            },
+            "WP_REST_Widgets_Controller::save_widget": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\WidgetsController",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "resolves the widget id and number (next_widget_id_number for a new one), runs the widget's update through widget_update_callback, saves and registers it, then rest_after_save_widget; WidgetsController::saveInstance holds the same save",
+                "doubt": "a widget that is not a WP_Widget is never saved: its registered update callback is not run with the form data as the reference runs it",
+                "body": "d3621ad10a0d"
+            },
+            "WP_REST_Widgets_Controller::update_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "finds the widget's sidebar, saves through $this->save_widget when settings are given, moves it when another sidebar is asked, answers through $this->prepare_item_for_response",
+                "body": "58bfdaf860c1"
+            }
+        },
         "classes/WP_Tax_Query.php": {
             "WP_Tax_Query::__construct": {
                 "verdict": "keep",
