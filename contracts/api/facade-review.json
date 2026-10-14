@@ -7163,6 +7163,537 @@
                 "body": "569fbd647543"
             }
         },
+        "classes/WP_Widget_Archives.php": {
+            "WP_Widget_Archives::dropdown": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "why": "a private helper building the archive dropdown's label, select, the option label by archive type and its navigation script",
+                "body": "19e24290b2f1"
+            },
+            "WP_Widget_Archives::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned, count and dropdown flags as 1 or 0",
+                "body": "f573572a6f05"
+            },
+            "WP_Widget_Archives::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the archives widget's markup: title filter, then the dropdown or a nav-wrapped list from wp_get_archives with its args filter",
+                "body": "ea01a4ae5c2f"
+            }
+        },
+        "classes/WP_Widget_Block.php": {
+            "WP_Widget_Block::dynamic_classname": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\BlockWidget",
+                "why": "parses the content and filters the class BlockWidget::classNameFor picks; the filter belongs beside the mapping",
+                "body": "4785f8571be5"
+            },
+            "WP_Widget_Block::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the content kept raw for unfiltered_html users and kses'd otherwise over the old instance",
+                "body": "f99b89151d82"
+            },
+            "WP_Widget_Block::widget": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills the default instance, swaps the wrapper's base class for $this->dynamic_classname and echoes the widget_block_content filter",
+                "body": "f13b0cdd2508"
+            }
+        },
+        "classes/WP_Widget_Calendar.php": {
+            "WP_Widget_Calendar::form": {
+                "verdict": "delegate",
+                "to": "Minn\\Widgets\\WidgetForms::titleOnly",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "hand-writes the same title field WidgetForms::titleOnly prints for the search and meta widgets",
+                "body": "2d1439238742"
+            },
+            "WP_Widget_Calendar::update": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the old instance with its title through sanitize_text_field by name, nothing else to decide",
+                "body": "a6e83fc10d08"
+            },
+            "WP_Widget_Calendar::widget": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_calendar's output in the widget's before and after markup and the filtered title, the first instance's wrap carrying the calendar_wrap id",
+                "body": "e62f27792c90"
+            }
+        },
+        "classes/WP_Widget_Categories.php": {
+            "WP_Widget_Categories::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned, count, hierarchical and dropdown flags as 1 or 0",
+                "body": "4bb63626ce40"
+            },
+            "WP_Widget_Categories::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the categories widget's markup: a dropdown form with its first-instance id, filter and submit script, or a nav-wrapped wp_list_categories list with its filter",
+                "body": "8d6039b13dc9"
+            }
+        },
+        "classes/WP_Widget_Custom_HTML.php": {
+            "WP_Widget_Custom_HTML::_filter_gallery_shortcode_attrs": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the same gallery rule as WP_Widget_Text::_filter_gallery_shortcode_attrs, one owner for both",
+                "doubt": "gallery_shortcode's defaults always carry an id, so ??= never fires through the filter; the reference sets -1 off singular views when id and include are both empty",
+                "body": "88d6d93c2e8b"
+            },
+            "WP_Widget_Custom_HTML::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned, the content kept raw for unfiltered_html users and kses'd otherwise",
+                "body": "4de892e1b97c"
+            },
+            "WP_Widget_Custom_HTML::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "adds widget_text to the wrapper's class, runs widget_text then widget_custom_html_content and wraps the content in the textwidget div",
+                "doubt": "widget_text is handed the instance itself where the reference passes a text-widget-shaped copy (text, filter and visual false); the gallery attrs filter and global $post swap are absent",
+                "body": "2384fb180650"
+            }
+        },
+        "classes/WP_Widget_Links.php": {
+            "WP_Widget_Links::form": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetForms",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the links form's defaults, the limit display rule and the link category lookup fed to WidgetForms::links, which should gather them itself",
+                "body": "b7f52344d60b"
+            },
+            "WP_Widget_Links::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the four checkboxes as 1 or 0, orderby from its whitelist or name, category and limit as numbers (-1 for none)",
+                "body": "c31e70fa9c67"
+            },
+            "WP_Widget_Links::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "maps the instance onto wp_list_bookmarks arguments by rules (the wrapper id placeholder, rating sorts descending, display defaults) with its filter",
+                "body": "1158badb6a1f"
+            }
+        },
+        "classes/WP_Widget_Media.php": {
+            "WP_Widget_Media::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills the media widget's option defaults and merges the default labels into l10n around the parent constructor; subclasses read and extend both",
+                "body": "9ce8bd474851"
+            },
+            "WP_Widget_Media::form": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetForms",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "prints one hidden input per schema property by rule, beside the other core forms; get_field_name and get_field_id stay $this-> calls",
+                "body": "6e065e4caf5e"
+            },
+            "WP_Widget_Media::is_attachment_with_mime_type": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post and wp_attachment_is by name behind the empty and attachment post type guards; the engine's Attachments::is has neither guard",
+                "body": "eee1278f40a3"
+            },
+            "WP_Widget_Media::sanitize_token_list": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Sanitize",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "splits a class token list on whitespace, runs each through sanitize_html_class and drops duplicates; the image schema names it as a $this callback, so the method stays as the wrapper",
+                "body": "ee1a07970fb0"
+            },
+            "WP_Widget_Media::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\MediaWidgets",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "validates and sanitizes each posted field against the instance schema (the empty boolean rule, rest validation and sanitizing, the field's sanitize callback) over the old instance; $this->get_instance_schema stays the source",
+                "body": "f07e7104bd0a"
+            },
+            "WP_Widget_Media::widget": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the media template method: schema defaults, its instance filter, then has_content and render_media through $this->, which every media subclass overrides",
+                "body": "29bdf9952413"
+            }
+        },
+        "classes/WP_Widget_Media_Audio.php": {
+            "WP_Widget_Media_Audio::get_instance_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the audio widget's own schema fields, one per audio extension, merged over the parent's filtered schema; subclasses override and extend it",
+                "body": "8d674c182a03"
+            },
+            "WP_Widget_Media_Audio::render_media": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the attachment's address or the instance URL handed to wp_audio_shortcode by name, through the schema defaults and is_attachment_with_mime_type",
+                "body": "789db4af576b"
+            }
+        },
+        "classes/WP_Widget_Media_Gallery.php": {
+            "WP_Widget_Media_Gallery::has_content": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\MediaWidgets",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "decides whether a gallery instance has anything to show",
+                "doubt": "the reference needs ids non-empty and every id an attachment; this takes any ids, or the parent's attachment_id or url, as content",
+                "body": "514749142c96"
+            },
+            "WP_Widget_Media_Gallery::render_media": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the instance mapped onto gallery_shortcode's attributes (link from link_type, random order) and the shortcode by name",
+                "body": "ecace70e018e"
+            }
+        },
+        "classes/WP_Widget_Media_Image.php": {
+            "WP_Widget_Media_Image::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the image widget through the parent constructor and merges the image labels into the l10n property the media scripts and subclasses read",
+                "body": "a167f2ea4dc1"
+            },
+            "WP_Widget_Media_Image::attachmentImage": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\MediaWidgets",
+                "why": "a private helper holding the attached image's caption, class, title, alt and size rules and its tag through wp_get_attachment_image",
+                "doubt": "the caption width always comes from the found image source; the reference uses the instance width for a custom size and the named size's width from the attachment metadata",
+                "body": "592f91f63098"
+            },
+            "WP_Widget_Media_Image::linked": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\MediaWidgets",
+                "why": "a private helper wrapping the image in a link with its class, rel and new tab attributes by rules",
+                "body": "e5d3a2e4e46a"
+            },
+            "WP_Widget_Media_Image::render_media": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\MediaWidgets",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the image widget's markup by rules (attachment or URL image, the link by link type, the caption shortcode); get_instance_schema and is_attachment_with_mime_type stay $this-> calls where they are",
+                "doubt": "the URL image gets fixed decoding async and loading lazy, where the reference takes them from wp_get_loading_optimization_attributes and its filter",
+                "body": "c1849f4c1687"
+            }
+        },
+        "classes/WP_Widget_Media_Video.php": {
+            "WP_Widget_Media_Video::get_instance_schema": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the video widget's own schema fields, one per video extension, merged over the parent's filtered schema; subclasses override and extend it",
+                "body": "26798785e790"
+            },
+            "WP_Widget_Media_Video::inject_video_max_width_style": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "the same fixed-size strip as the text widget's method, applied to the shortcode or oEmbed markup",
+                "body": "51a3b75a2615"
+            },
+            "WP_Widget_Media_Video::render_media": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\MediaWidgets",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "picks the video shortcode for an attachment or a YouTube or Vimeo address, else oEmbed, hooking its own max-width method around the shortcode",
+                "body": "e290f35346be"
+            }
+        },
+        "classes/WP_Widget_Meta.php": {
+            "WP_Widget_Meta::update": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the old instance with its title through sanitize_text_field by name, nothing else to decide",
+                "body": "a6e83fc10d08"
+            },
+            "WP_Widget_Meta::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the meta list (register, log in or out, the two feeds, the powered-by filter) inside the nav wrapper",
+                "doubt": "the reference fires the wp_meta action after the powered-by item, where plugins add list items; it is missing",
+                "body": "cc6123cc0b53"
+            }
+        },
+        "classes/WP_Widget_Nav_Menu.php": {
+            "WP_Nav_Menu_Widget::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a fresh instance holding the cleaned title and the menu id only when given",
+                "body": "63f6857528b3"
+            },
+            "WP_Nav_Menu_Widget::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "loads the chosen menu, filters the title and builds wp_nav_menu arguments by the navigation format (nav container and aria label for html5) with its filter",
+                "body": "45404dadd0ce"
+            }
+        },
+        "classes/WP_Widget_Pages.php": {
+            "WP_Widget_Pages::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title and exclude cleaned, sortby from its whitelist or menu_order",
+                "body": "9474ccd88fb9"
+            },
+            "WP_Widget_Pages::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the sort column rule (menu order then title), wp_list_pages with its filter, nothing when empty, then the nav-wrapped list",
+                "body": "86263a84181f"
+            }
+        },
+        "classes/WP_Widget_RSS.php": {
+            "WP_Widget_RSS::form": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the RSS form defaults for an empty instance and the widget number, then wp_widget_rss_form by name",
+                "body": "8f2e421ac9cf"
+            },
+            "WP_Widget_RSS::update": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the changed-address test, then wp_widget_rss_process by name",
+                "body": "b3c59c246001"
+            },
+            "WP_Widget_RSS::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\RssWidget",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "cleans the feed address, fetches the feed, builds the title with the feed icon link and its two filters, then the nav wrapper around wp_widget_rss_output",
+                "doubt": "the reference refuses an address equal to the site or home URL, trims leading text before http and falls back to the feed description for an empty title; the feedburner rewrite here rebuilds the same URL",
+                "body": "2cebbeaf45e3"
+            }
+        },
+        "classes/WP_Widget_Recent_Comments.php": {
+            "WP_Widget_Recent_Comments::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers the widget and hooks its own recent_comments_style to wp_head while the widget is active or previewed",
+                "doubt": "the reference also sets alt_option_name to widget_recent_comments, which get_settings falls back to",
+                "body": "0f75eddf934c"
+            },
+            "WP_Widget_Recent_Comments::recent_comments_style": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "prints the recent comments style when the theme supports widgets and its filter allows, the type attribute by html5 style support",
+                "body": "2d85c56d5146"
+            },
+            "WP_Widget_Recent_Comments::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned and the number as a whole number, 5 when absent",
+                "body": "cabe72103deb"
+            },
+            "WP_Widget_Recent_Comments::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "queries recent approved comments with its args filter, numbers the list id per page with static state and builds each item's markup inside the nav wrapper",
+                "body": "ec4b65f031a4"
+            }
+        },
+        "classes/WP_Widget_Recent_Posts.php": {
+            "WP_Widget_Recent_Posts::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned, number as an integer, show_date as a boolean",
+                "body": "15dc9169e5e6"
+            },
+            "WP_Widget_Recent_Posts::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "queries recent posts with its args filter and builds the nav-wrapped list markup with aria-current, a title fallback and the optional date",
+                "doubt": "an untitled post shows its ID where the reference shows (no title), and the link skips the_permalink's filter and esc_url",
+                "body": "c5bceb07076c"
+            }
+        },
+        "classes/WP_Widget_Search.php": {
+            "WP_Widget_Search::update": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the old instance with its title through sanitize_text_field by name, nothing else to decide",
+                "body": "a6e83fc10d08"
+            },
+            "WP_Widget_Search::widget": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps get_search_form in the widget's before and after markup with the filtered title",
+                "body": "d046547c9179"
+            }
+        },
+        "classes/WP_Widget_Tag_Cloud.php": {
+            "WP_Widget_Tag_Cloud::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned, count as 1 or 0, the taxonomy unslashed",
+                "doubt": "the reference starts from an empty instance, so keys only the old instance held are dropped; this keeps them",
+                "body": "055ab24f865c"
+            },
+            "WP_Widget_Tag_Cloud::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the tag cloud with its args filter, nothing when empty, the default title from the taxonomy label, and the nav and tagcloud wrappers; _get_current_taxonomy stays a $this-> call",
+                "body": "e50ddbb8d925"
+            }
+        },
+        "classes/WP_Widget_Text.php": {
+            "WP_Widget_Text::_filter_gallery_shortcode_attrs": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the rule that a gallery in a widget belongs to no post (id -1)",
+                "doubt": "gallery_shortcode's defaults always carry an id (0 or the post's), so ??= never fires through the filter; the reference sets -1 off singular views when id and include are both empty",
+                "body": "88d6d93c2e8b"
+            },
+            "WP_Widget_Text::_register_one": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's registration, then the registered flag the class keeps",
+                "body": "368e52309228"
+            },
+            "WP_Widget_Text::form": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetForms",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "runs the_editor_content on the text and prints the leading indent before WidgetForms::text; both belong inside WidgetForms::text",
+                "body": "fa1aa1cda5c1"
+            },
+            "WP_Widget_Text::inject_video_max_width_style": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "drops a video tag's fixed width and height and turns a pixel width into 100%; the same rule as the video widget's method, one owner for both",
+                "body": "aef0d2c83886"
+            },
+            "WP_Widget_Text::is_legacy_instance": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "decides whether a text instance is legacy from its visual and filter fields",
+                "doubt": "every instance without visual or filter content counts as legacy; the reference also treats empty text, and text with no line breaks, comments or markup outside its safe list, as visual",
+                "body": "e152ff4c8f73"
+            },
+            "WP_Widget_Text::update": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetSettings",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the title cleaned, the text kept raw for unfiltered_html users and kses'd otherwise, the filter and visual flags",
+                "doubt": "the reference also turns filter content (the 4.8.0 shape) into visual and forces filter true on a visual instance",
+                "body": "25ae029ec67c"
+            },
+            "WP_Widget_Text::widget": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "chooses visual or legacy filtering, runs widget_text, widget_text_content or wpautop, strips fixed video sizes and wraps the textwidget markup; is_legacy_instance and inject_video_max_width_style stay $this-> calls",
+                "doubt": "the mode comes from is_legacy_instance where the reference reads visual with filter (or filter content); legacy text misses the reference's do_shortcode pass, and the gallery attrs filter and global $post swap are absent",
+                "body": "2d7df6760aa3"
+            }
+        },
         "classes/Walker.php": {
             "Walker::display_element": {
                 "verdict": "delegate",
