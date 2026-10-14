@@ -7632,6 +7632,330 @@
                 "body": "d440edafb180"
             }
         },
+        "pluggable.php": {
+            "_minn_admin_https_address": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Redirects",
+                "why": "decides through secure_auth_redirect whether an admin request over http goes to https and builds that address",
+                "body": "e7ca19571f38"
+            },
+            "_minn_password_settings": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Password",
+                "why": "the wp_hash_password_algorithm and wp_hash_password_options filters that Password::hash and needsRehash take as arguments",
+                "body": "60696229ed91"
+            },
+            "auth_redirect": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the https detour, wp_validate_auth_cookie (pluggable) under auth_redirect_scheme and the auth_redirect action, else nocache_headers and wp_redirect to wp_login_url, then exit",
+                "doubt": "on a served request wp_validate_auth_cookie answers from the logged_in session whatever the scheme, so the logged_in cookie alone passes where WordPress requires the auth or secure_auth cookie; the use_ssl user option detour is also missing",
+                "body": "51f7affeb88a"
+            },
+            "cache_users": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Users",
+                "gates": [
+                    "pluggable",
+                    "globals"
+                ],
+                "why": "reads the uncached user rows by SQL through the global $wpdb and primes them with update_user_caches and the meta cache; the row read is the engine's, the cache calls stay by name",
+                "body": "374594c613c3"
+            },
+            "check_admin_referer": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_verify_nonce (pluggable) on the $_REQUEST field, the check_admin_referer action and wp_nonce_ays on failure",
+                "doubt": "nothing dies after wp_nonce_ays, so a wp_die handler that returns lets a caller that ignores the result go on; the -1 action's doing-it-wrong notice is also missing",
+                "body": "8da74ec72c0e"
+            },
+            "check_ajax_referer": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "picks the nonce from $_REQUEST, asks wp_verify_nonce (pluggable), fires check_ajax_referer and stops on failure",
+                "doubt": "outside ajax WordPress ends with die('-1'), while wp_die here may return through a handler; a set but empty query_arg falls through to _ajax_nonce where WordPress stops at it",
+                "body": "e6f0dba3a6b3"
+            },
+            "get_avatar": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Avatar",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "merges the defaults, honours pre_get_avatar and show_avatars, asks get_avatar_data and builds the img markup with its classes and 2x srcset, then the get_avatar filter",
+                "body": "c425dacffef2"
+            },
+            "get_currentuserinfo": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_get_current_user",
+                "body": "34512bdc46a0"
+            },
+            "get_user_by": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "WP_User::get_data_by, then a WP_User built from the row, false for none",
+                "body": "a81f2a2c948c"
+            },
+            "get_user_by_email": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_user_by email",
+                "body": "cb59c7e22217"
+            },
+            "get_userdatabylogin": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then get_user_by login",
+                "body": "b3bff325d386"
+            },
+            "set_current_user": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_set_current_user",
+                "body": "40bfaf1fc99b"
+            },
+            "wp_authenticate": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "sanitize_user and trim, the authenticate filter chain, a default refusal and wp_login_failed except for empty fields, as the API's own sign-in",
+                "body": "71ba3d3f6e6c"
+            },
+            "wp_check_password": {
+                "verdict": "delegate",
+                "to": "Minn\\Auth\\Password::verify",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "Password::verify, then the check_password filter on its answer",
+                "body": "22f69245b11f"
+            },
+            "wp_clear_auth_cookie": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\AuthCookies",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "asks AuthCookies::clearing, then expires the five sign-in cookies with setcookie; the list repeats AuthCookies::clear, which should send them on the engine's response",
+                "doubt": "names, paths and domain are fixed rather than read from AUTH_COOKIE, ADMIN_COOKIE_PATH, COOKIEPATH and COOKIE_DOMAIN, and the wp-settings and post password cookies WordPress also expires are left",
+                "body": "9edae4cca902"
+            },
+            "wp_clearcookie": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_clear_auth_cookie",
+                "body": "588e71cd3c09"
+            },
+            "wp_create_nonce": {
+                "verdict": "delegate",
+                "to": "Minn\\Auth\\Nonce::create",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "the current user's id through nonce_user_logged_out and the session token handed to Nonce::create",
+                "doubt": "nonce_user_logged_out is asked for signed-in users too, where WordPress asks it only for user 0, and the tick comes from Nonce::tick, not the pluggable wp_nonce_tick that wp_verify_nonce uses",
+                "body": "b137e1aa45b5"
+            },
+            "wp_generate_auth_cookie": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\AuthCookies",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "finds the user, makes a session when no token is given, mints with AuthCookies::mint and filters auth_cookie",
+                "doubt": "a missing token is made by Sessions::create directly, so session_token_manager and attach_session_information are not heard, unlike AuthCookies::settle",
+                "body": "d9cf983d80d9"
+            },
+            "wp_generate_password": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Password",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "builds the character set by flags, draws each character with random_int and filters random_password",
+                "body": "2158ac0b2554"
+            },
+            "wp_get_cookie_login": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and false",
+                "body": "565852673873"
+            },
+            "wp_hash_password": {
+                "verdict": "delegate",
+                "to": "Minn\\Auth\\Password::hash",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "the algorithm and options from their filters handed to Password::hash",
+                "doubt": "WordPress hashes the trimmed password under bcrypt and uses a $wp_hasher a plugin set; this hashes it untrimmed, so a password with edge spaces set here fails the trimmed sign-in",
+                "body": "d564d7f972c4"
+            },
+            "wp_login": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_authenticate, the error message left in the global $error",
+                "body": "de16593644f8"
+            },
+            "wp_logout": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_destroy_current_session, wp_clear_auth_cookie and wp_set_current_user (pluggable) by name, then wp_logout with the old id",
+                "body": "b8ba41c0596b"
+            },
+            "wp_mail": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Mailer",
+                "gates": [
+                    "pluggable",
+                    "globals"
+                ],
+                "why": "the wp_mail and pre_wp_mail filters, argument and header parsing, the shared $phpmailer filled and handed to phpmailer_init, the send and the success or failure actions; sending mail is the engine's",
+                "body": "2e419e725751"
+            },
+            "wp_notify_moderator": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Notices",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "decides the recipients (the admin, plus a post author who may edit the comment), words the notice through Notices::moderation and its filters and sends each",
+                "doubt": "the notify_moderator filter is never asked, so a plugin cannot switch the mail on or off per comment",
+                "body": "d23cc445e3be"
+            },
+            "wp_notify_postauthor": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Notices",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "decides the recipients with their filters and the own-comment rule, words the comment or note notice with its filters and sends each",
+                "doubt": "the author is kept when they moderated the comment themselves or can no longer read the post, and the headers start empty where WordPress gives From, Reply-To and Content-Type",
+                "body": "1ae688dcb636"
+            },
+            "wp_parse_auth_cookie": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "reads the scheme's cookie from $_COOKIE (falling back to the request's jar) and splits it into its four parts",
+                "body": "885f83bf0356"
+            },
+            "wp_password_change_notification": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\ChangeNotices",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "skips the admin's own change, words the admin notice, runs wp_password_change_notification_email and sends it; sibling of the change templates ChangeNotices holds",
+                "doubt": "the filter gets the subject already filled in, not the [%s] format, so the later sprintf runs over the site name and a % in it breaks; the admin address check is case-sensitive and the text skips __()",
+                "body": "b207ae899af8"
+            },
+            "wp_password_needs_rehash": {
+                "verdict": "delegate",
+                "to": "Minn\\Auth\\Password::needsRehash",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "Password::needsRehash under the filtered settings, then its filter",
+                "body": "e8ede3657401"
+            },
+            "wp_rand": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Random",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "a random integer between the bounds in either order, 0 to 4294967295 by default",
+                "body": "aafa64c67d83"
+            },
+            "wp_redirect": {
+                "verdict": "move",
+                "to": "Minn\\Http\\Location",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "filters location and status, sanitises, filters X-Redirect-By and records the redirect for the engine's response besides sending the headers",
+                "doubt": "a status outside 3xx goes out as given where WordPress stops with wp_die",
+                "body": "a9c7951d4842"
+            },
+            "wp_safe_redirect": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_sanitize_redirect, the fallback filter, wp_validate_redirect and wp_redirect, all pluggable, by name",
+                "body": "308a90f948f6"
+            },
+            "wp_set_auth_cookie": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\AuthCookies",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "AuthCookies::settle plans the cookies with every hook, then three setcookie calls repeat AuthCookies::attach; the sending belongs on the engine's response",
+                "doubt": "the logged_in cookie's secure flag follows this request's scheme where WordPress follows the home URL's, the values skip the auth_cookie filter of wp_generate_auth_cookie, and the cookie constants are not read",
+                "body": "acccc4eb641c"
+            },
+            "wp_set_current_user": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CurrentUser",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "makes a WP_User the request's in runtime state and fires set_current_user; the request's user is engine state CurrentUser settles",
+                "doubt": "the global $current_user and the setup_userdata globals are never set, and set_current_user fires even when that user is already current",
+                "body": "096a609e742e"
+            },
+            "wp_set_password": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserWrites",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "stores the new hash (Users::setPassword also clears the reset key), cleans the user cache and fires wp_set_password with the old user; a user write for UserWrites, wp_hash_password still called by name",
+                "body": "038dc2e8aa16"
+            },
+            "wp_setcookie": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_set_auth_cookie for the login's user, the password unused as in the API",
+                "body": "fe7015108c47"
+            },
+            "wp_validate_auth_cookie": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Cookie",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "parses the cookie, gives POST and ajax an hour's grace, judges it with Cookie::check and fires the auth_cookie_* verdict actions; the grace and the actions join Cookie",
+                "doubt": "with no cookie on a served request it returns the engine's logged_in session whatever the scheme, firing no action, where WordPress checks the auth or secure_auth cookie",
+                "body": "e6e615b78742"
+            },
+            "wp_validate_logged_in_cookie": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "an earlier user id wins, else wp_validate_auth_cookie (pluggable) on the logged_in cookie",
+                "doubt": "WordPress refuses the logged_in cookie in the blog and network admin (is_blog_admin); here it is accepted everywhere",
+                "body": "e6371f9822cc"
+            },
+            "wp_validate_redirect": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Url::safeRedirect",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "the trimmed, sanitised location judged by Url::safeRedirect against allowed_redirect_hosts, the fallback for a refusal",
+                "doubt": "a relative path without a leading slash falls back where WordPress resolves it against the request's folder, and WordPress also refuses user, password or host parts holding : / ? # @, which is not checked",
+                "body": "0af925f7ba36"
+            },
+            "wp_verify_nonce": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Nonce",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "re-checks the nonce against this tick and the last, answering 1 or 2, and fires wp_verify_nonce_failed; Nonce::verify does the same check but answers only a bool",
+                "doubt": "nonce_user_logged_out is asked for signed-in users too; WordPress asks it only when the user id is 0",
+                "body": "4e3e634df64b"
+            }
+        },
         "plugin.php": {
             "_get_plugin_from_callback": {
                 "verdict": "move",
@@ -10702,6 +11026,376 @@
                 ],
                 "why": "creates a table unless it exists, through the engine's delta",
                 "body": "0ac83b984d7a"
+            }
+        },
+        "user.php": {
+            "_get_additional_user_keys": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserInsert",
+                "why": "the profile meta key list repeats UserInsert::META_KEYS plus infinite_scrolling, then the contact method keys; the list belongs with UserInsert",
+                "body": "e90257140f1a"
+            },
+            "_minn_admin_email_due": {
+                "verdict": "move",
+                "to": "Minn\\Login\\AdminEmailCheck",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "decides whether an administrator's sign-in detours to the admin email check by its interval filter and the stored lifespan, and builds that address",
+                "body": "f4a1b3901f72"
+            },
+            "_minn_admin_email_screen": {
+                "verdict": "move",
+                "to": "Minn\\Login\\AdminEmailCheck",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "verifies the remind and confirm nonces, writes the next lifespan, and gathers the screen's data and printed hooks for LoginController",
+                "doubt": "the lifespan is written even when the remind or check interval is 0 or less, where WordPress leaves it, and a failed remind nonce falls through to the screen rather than back to the login page",
+                "body": "f90c577f1165"
+            },
+            "_minn_confirm_user_request": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "the login page's confirmaction step: checks the id and key, fires user_request_action_confirmed and answers the message; called by LoginController",
+                "body": "e215870856fe"
+            },
+            "_minn_rehash_password": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_password_needs_rehash then wp_set_password, both pluggable, called by name after a good sign-in",
+                "body": "af4ae0e5b385"
+            },
+            "_minn_user_option_lines": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Dropdowns",
+                "why": "the all, none and per-user option markup with the include-selected rule and the label choice; it goes with wp_dropdown_users",
+                "body": "7438a5a37e49"
+            },
+            "_minn_user_place_and_sessions_export": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "the community events location and each session token as export items with their formatted dates",
+                "body": "f2b3fda6b6e6"
+            },
+            "_minn_user_profile_export": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "the profile export item with the wp_privacy_additional_user_profile_data extras, reserved names refused",
+                "body": "a31ec802091b"
+            },
+            "_wp_get_current_user": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CurrentUser",
+                "why": "returns the request's stored user, else asks determine_current_user and makes that user current; settling who the request is belongs with CurrentUser",
+                "doubt": "the global $current_user is never read or written, so a plugin that reads or sets it is not heard",
+                "body": "64cd39c6edaa"
+            },
+            "_wp_privacy_account_request_confirmed": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "marks an open request confirmed with its timestamp meta; request lifecycle",
+                "body": "8003ba7f7b3c"
+            },
+            "_wp_privacy_account_request_confirmed_message": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "picks the confirmation markup by request action, then its filter",
+                "body": "0fb5769e1b25"
+            },
+            "_wp_privacy_send_erasure_fulfillment_notification": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Notices",
+                "why": "words and sends the erasure-complete mail once in the requester's locale with its current and deprecated filters, then records it",
+                "body": "3fdade3f5c6e"
+            },
+            "_wp_privacy_send_request_confirmation_notification": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Notices",
+                "why": "words and sends the admin notice for a confirmed request once, with its recipient, subject, content and headers filters, then records it",
+                "body": "5331b1b90e70"
+            },
+            "author_can": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_post, then user_can for the post's author; false for no post",
+                "body": "dfa181c8c32f"
+            },
+            "check_password_reset_key": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\PasswordReset",
+                "why": "cleans the key, finds the login, reads the expiry filter and maps PasswordReset::status to a user or the invalid and expired errors with password_reset_key_expired; the filters join status, the WP_Error and WP_User shapes stay",
+                "body": "e398aa685ec9"
+            },
+            "count_many_users_posts": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\PostReads",
+                "why": "after pre_count_many_users_posts, counts posts per author by type and status and fills zeros; the status rule PostReads::byAuthorSql holds belongs with it",
+                "doubt": "without public_only every private post counts, where WordPress counts private posts only for a viewer who may read them",
+                "body": "c21389dad208"
+            },
+            "count_users": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Users",
+                "gates": [
+                    "globals"
+                ],
+                "why": "after pre_count_users, counts users and role holders by SQL over the capabilities rows and builds the time or memory shape; counting stored rows is the engine's, today through the global $wpdb",
+                "doubt": "total_users counts every users row and none is the remainder, where WordPress counts only users with this site's capabilities row and none as those with an empty one; the memory strategy also drops unregistered roles",
+                "body": "9f76d7e7d033"
+            },
+            "default_password_nag_edit_user": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a profile_update callback dropping default_password_nag through get_userdata and the user meta functions when the password changed",
+                "body": "bded61ac3c05"
+            },
+            "delete_user_option": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "delete_user_meta under the site-prefixed key unless the option is global",
+                "body": "13fd323eace2"
+            },
+            "get_all_user_settings": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserSettings",
+                "gates": [
+                    "globals"
+                ],
+                "why": "reads the settings cookie or the stored user-settings option, cleans and parses it and keeps it in $_updated_user_settings; one family with the settings writers",
+                "body": "5bfaf70a5894"
+            },
+            "get_role": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "wraps the engine's stored role in a WP_Role, null for an unknown name",
+                "doubt": "WordPress answers wp_roles()->get_role(), the shared object; a fresh WP_Role from storage misses roles a plugin changed in memory on $wp_roles",
+                "body": "a2121bc1fe39"
+            },
+            "get_users": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a WP_User_Query with count_total off and its results, as the API builds it",
+                "body": "8d098cf7f4b3"
+            },
+            "get_users_of_blog": {
+                "verdict": "delegate",
+                "to": "Minn\\Content\\Users::withCapabilities",
+                "gates": [
+                    "globals"
+                ],
+                "why": "deprecated: a notice, then Users::withCapabilities under the site's prefix from the global $wpdb, rows as objects",
+                "body": "61215ba83be7"
+            },
+            "remove_role": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_roles()->remove_role, null returned as the API does",
+                "body": "fad419854783"
+            },
+            "retrieve_password": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\AccountFlows::retrievePassword",
+                "why": "defaults the login from the posted form, then AccountFlows::retrievePassword runs the whole reset mail flow",
+                "doubt": "the default login comes from the engine's parsed form, not $_POST, so a plugin that rewrote $_POST['user_login'] is not heard",
+                "body": "dc976204455e"
+            },
+            "sanitize_user_field": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserFields",
+                "why": "applies the raw, db, edit, display, attribute and js rules with their field filters and escaping, as PostFields and TermFields do for their objects",
+                "doubt": "user_url is esc_url'd only in the edit context, where WordPress escapes it in every non-raw context, and edit escapes description with esc_attr rather than esc_html",
+                "body": "9a5f5bd79cdf"
+            },
+            "send_confirmation_on_profile_email": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\ChangeNotices",
+                "gates": [
+                    "globals"
+                ],
+                "why": "checks the posted address, stores the _new_email request with its hash and mails the confirmation through new_user_email_content; the global $errors and $_POST writes stay in the facade",
+                "doubt": "the mail body skips __(), and $_POST['email'] is reset before the checks where WordPress resets it only after sending",
+                "body": "982a781085fc"
+            },
+            "setup_userdata": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the legacy user globals ($userdata, $user_login, $user_ID and the rest) plugins still read",
+                "body": "cc91f8929531"
+            },
+            "update_user_option": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "update_user_meta under the site-prefixed key unless the option is global",
+                "body": "e5c316da7018"
+            },
+            "wp_authenticate_cookie": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the authenticate callback: an empty sign-in asks wp_validate_auth_cookie (pluggable) and reports an expired session when an auth cookie is still sent",
+                "doubt": "on a served request wp_validate_auth_cookie() answers from the engine's logged_in session, not the auth cookie, and the cookie name follows is_ssl() rather than wp_signon's secure choice",
+                "body": "5725c1962d45"
+            },
+            "wp_authenticate_email_password": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Authenticator",
+                "why": "the email twin: empty-field errors, the address lookup, wp_authenticate_user, the password check and the rehash; it moves with the username rule",
+                "doubt": "an unknown address answers without the dummy password check the username path runs, so the timing guard does not cover email sign-ins",
+                "body": "960af6bf27d0"
+            },
+            "wp_authenticate_username_password": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Authenticator",
+                "why": "the empty-field errors, the login lookup with a dummy hash check, wp_authenticate_user, the password check and the rehash; Authenticator::login holds the same rule without the hooks, the pluggable calls stay by name",
+                "doubt": "with an empty field it adds its codes to an earlier callback's WP_Error where WordPress returns that error untouched; the dummy hash is cost 10 while PHP 8.4 makes real ones at 12, so timing can still tell a registered username",
+                "body": "9de64104227f"
+            },
+            "wp_create_user_request": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "validates the address, action and status, refuses a duplicate open request and inserts the user_request post; request lifecycle work beside the cleanup PersonalData takes",
+                "body": "1e27d0e8f048"
+            },
+            "wp_destroy_current_session": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_session_token and the WP_Session_Tokens manager's destroy for the current user",
+                "body": "3077eddf206a"
+            },
+            "wp_destroy_other_sessions": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_get_session_token, then the session manager's destroy_others for the current user",
+                "body": "7580f0516880"
+            },
+            "wp_dropdown_users": {
+                "verdict": "move",
+                "to": "Minn\\Admin\\Dropdowns",
+                "why": "maps the arguments onto a user query, applies the hide-if-one rule and builds the select markup with its filters; the echo flag stays",
+                "body": "aad9ce15886e"
+            },
+            "wp_generate_user_request_key": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "wp_generate_password (pluggable), then wp_update_post with the wp_fast_hash of the key",
+                "body": "823feaf74119"
+            },
+            "wp_get_password_hint": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the fixed hint text through the password_hint filter",
+                "doubt": "the hint skips __(), so it never translates",
+                "body": "9cfe8aafb598"
+            },
+            "wp_get_session_token": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the token part of wp_parse_auth_cookie for the logged_in scheme, empty for none",
+                "body": "f5a9df10b8da"
+            },
+            "wp_get_user_request": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a user_request post wrapped as WP_User_Request, false otherwise",
+                "body": "225fb97d56dc"
+            },
+            "wp_get_user_request_data": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then wp_get_user_request",
+                "body": "9c0b221101c1"
+            },
+            "wp_get_users_with_no_role": {
+                "verdict": "delegate",
+                "to": "Minn\\Content\\Users::withoutRole",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the role-name pattern and asks Users::withoutRole under the prefix the global $wpdb gives",
+                "body": "eddd20a7cc05"
+            },
+            "wp_is_large_user_count": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "get_user_count against 10000 through the wp_is_large_user_count filter",
+                "body": "507e51ca3d63"
+            },
+            "wp_list_users": {
+                "verdict": "move",
+                "to": "Minn\\Front\\AuthorLists",
+                "why": "queries the users, skips the admin, picks full or display names and builds the list or comma markup with feed links; the echo flag stays, it goes with wp_list_authors",
+                "body": "0038b932887b"
+            },
+            "wp_maybe_grant_install_languages_cap": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Capabilities",
+                "why": "grants install_languages to whoever may update core or install plugins or themes; a capability rule that stays as the named user_has_cap callback",
+                "body": "476726e9b00b"
+            },
+            "wp_maybe_grant_resume_extensions_caps": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Capabilities",
+                "why": "grants resume_plugins and resume_themes from activate_plugins and switch_themes; stays as the named user_has_cap callback",
+                "body": "af4e85c32d33"
+            },
+            "wp_maybe_grant_site_health_caps": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\Capabilities",
+                "why": "grants view_site_health_checks to whoever may install plugins; stays as the named user_has_cap callback",
+                "body": "716873894921"
+            },
+            "wp_register_user_personal_data_exporter": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "adds the WordPress User exporter entry to the filtered list",
+                "body": "f5fc652f0c72"
+            },
+            "wp_roles": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "creates the global $wp_roles on first use and returns it; plugins read and change that global",
+                "body": "5391ba5f9bb4"
+            },
+            "wp_schedule_update_user_counts": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "schedules the twice-daily event through wp_next_scheduled and wp_schedule_event",
+                "doubt": "WordPress skips scheduling while installing (wp_installing) and off the main site; there is no guard here",
+                "body": "b00cb0492346"
+            },
+            "wp_send_user_request": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Notices",
+                "why": "words the confirmation mail with its key link and the subject, content and headers filters in the requester's locale, then sends it; mail wording for Notices",
+                "body": "aed45a907770"
+            },
+            "wp_signon": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "reads the posted credentials, fires wp_authenticate and secure_signon_cookie, then wp_authenticate and wp_set_auth_cookie (both pluggable) by name and the wp_login action",
+                "doubt": "WordPress adds wp_authenticate_cookie to authenticate here, passing the secure choice on, which is missing; and neither this nor the engine's own sign-in clears a pending user_activation_key, so a mailed reset link outlives the login if WordPress clears it (a probe should settle it)",
+                "body": "2a0d9c751bbf"
+            },
+            "wp_user_personal_data_exporter": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "finds the user by address and gathers the profile, location and session export items; beside the comments and media exporters",
+                "body": "2528174253af"
+            },
+            "wp_user_request_action_description": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "the label for each request action with its filter; request wording for PersonalData",
+                "body": "ee8f881f3810"
+            },
+            "wp_validate_user_request_key": {
+                "verdict": "move",
+                "to": "Minn\\Content\\PersonalData",
+                "why": "the request key rule: request and status checks, the expiry filter and the fast hash check, each refusal as its WP_Error",
+                "body": "4cd404651781"
             }
         },
         "view-config.php": {
