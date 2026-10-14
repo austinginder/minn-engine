@@ -214,7 +214,7 @@ Header values from a plugin or theme file. The labels (Plugin Name,
 Theme Name, Version) are the published file-header contract; the
 reader is a line scan of the first 8 KB, never PHP execution.
 
-Used by: `Minn\Admin\App`, `Minn\Admin\ThemesController`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\Plugins`, `Minn\Theme\Folder`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\App`, `Minn\Admin\ThemesController`, `Minn\Cli\ThemeCommand`, `Minn\Content\Inventory`, `Minn\Ops\InstalledSoftware`, `Minn\Ops\Packages`, `Minn\Ops\Updates`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\Plugins`, `Minn\Theme\Folder`
 
 ### static `values(string $file, array $labels): array`
 
@@ -231,6 +231,8 @@ The header values of a plugin or theme file, by label.
 Whole-directory reads and copies. The engine's own installer, the update
 unpacker and the plugins that reach for WordPress's copy_dir all want the
 same two operations: list a tree, and duplicate one.
+
+Used by: `Minn\Admin\AdminPlugin`
 
 ### static `files(string $dir, int $depth = 0, array $skip = array ( ), int $level = 1): array|false`
 
@@ -260,7 +262,7 @@ every step as the result), and the symbolic-to-octal permission string
 conversion. The facade class keeps the reference's argument handling and
 maps each operation here.
 
-Used by: `Minn\Cli\Installer`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\Installer`, `Minn\Ops\EngineChecksums`, `Minn\Ops\EngineUpdate`, `Minn\Ops\Packages`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Upgrade`
 
 ### static `octalFromSymbolic(string $mode): string`
 
@@ -997,7 +999,7 @@ here executes the blob; each reader scans for the one shape it needs.
 - const `MAX_DEPTH` = `4096` — The deepest nesting a record may have, PHP's own default (unserialize_max_depth).
 - const `SMALLEST_PAIR` = `6` — The fewest bytes an array or object member can take: a key "i:0;" and a value "N;".
 
-Used by: `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\StoredObjects`, `Minn\Support\SearchReplace`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\App`, `Minn\Admin\Appearance`, `Minn\Admin\Dashboard`, `Minn\Admin\HiddenIntegrations`, `Minn\Admin\Notifications`, `Minn\Admin\OverviewController`, `Minn\Admin\SiteController`, `Minn\Admin\UploadsSize`, `Minn\Auth\ApplicationPasswords`, `Minn\Auth\Capabilities`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Cli\OptionCommand`, `Minn\Cli\Preflight`, `Minn\Content\Inventory`, `Minn\Content\Menus`, `Minn\Content\PluginState`, `Minn\Content\PostWriter`, `Minn\Content\Terms`, `Minn\Extension\Loader`, `Minn\Mail\MailSettings`, `Minn\Ops\Updates`, `Minn\Rest\MediaObject`, `Minn\Rest\PluginsController`, `Minn\Rest\PostObject`, `Minn\Runtime\CronTable`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\Recovery`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\StoredObjects`, `Minn\Support\SearchReplace`
 
 
 ### static `stringList(?string $blob): array`

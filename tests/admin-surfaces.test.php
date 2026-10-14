@@ -377,7 +377,16 @@ $adminCtx = stream_context_create( array( 'ssl' => array( 'verify_peer' => false
 $off = (string) @file_get_contents( "$ENGINE/minn-admin/", false, $adminCtx );
 $front = (string) @file_get_contents( "$ENGINE/hello-world/", false, $adminCtx );
 [ , $refOff ] = as_fetch( $REF, '/wp/v2/plugins/minn-admin/minn-admin', $admin );
+// Deactivated is as far as it goes: the engine refuses to delete its admin (the folder here is a link to the dev plugin, put back if it ever went).
+$adminLink = minn_test_site_root() . '/public/wp-content/plugins/minn-admin';
+$adminLinkTarget = is_link( $adminLink ) ? (string) readlink( $adminLink ) : '';
+[ $ds, $db ] = as_fetch( $ENGINE, '/wp/v2/plugins/minn-admin/minn-admin', $admin, 'DELETE' );
+$adminLinkKept = '' === $adminLinkTarget || is_link( $adminLink );
+if ( ! $adminLinkKept ) {
+	symlink( $adminLinkTarget, $adminLink );
+}
 as_fetch( $ENGINE, '/wp/v2/plugins/minn-admin/minn-admin', $admin, 'PUT', '{"status":"active"}' );
+check( 400 === $ds && 'rest_cannot_delete_minn_admin' === ( $db['code'] ?? '' ) && $adminLinkKept, 'deleting Minn Admin is refused while the engine runs the site', "status $ds " . json_encode( $db ) );
 check( 'inactive' === ( $b['status'] ?? '' ) && str_contains( $off, 'Minn Admin is off' ) && str_contains( $off, 'wp plugin activate minn-admin' ), 'deactivated, /minn-admin/ explains and names the command back', substr( $off, 0, 120 ) );
 check( ! str_contains( $front, 'minn-bar-root' ), 'the front bar stays off with the admin' );
 check( 'inactive' === ( $refOff['status'] ?? '' ), 'WordPress saw the plugin deactivated too (the same active_plugins record)' );

@@ -9,8 +9,10 @@ use Minn\Support\FileHeaders;
 use Minn\Support\Serialized;
 
 /**
- * The Minn Admin app on disk: the symlinked dev copy the engine serves the
- * shell and assets from. Minn Admin is MIT, so reading its files is fine.
+ * The Minn Admin app on disk the engine serves the shell and assets from:
+ * the plugin in wp-content/plugins, or the engine's own copy at minn/admin
+ * (AdminPlugin::app picks), with the site path its files load from. Minn
+ * Admin is MIT, so reading its files is fine.
  */
 final readonly class App
 {
@@ -24,7 +26,7 @@ final readonly class App
         'json' => 'application/json',
     ];
 
-    public function __construct(private string $dir)
+    public function __construct(private string $dir, private string $path = '/minn/admin')
     {
     }
 
@@ -46,6 +48,12 @@ final readonly class App
     public function dir(): string
     {
         return $this->dir;
+    }
+
+    /** The site path its files load from (no trailing slash). */
+    public function path(): string
+    {
+        return $this->path;
     }
 
     /** Whether the bundle is on disk. */

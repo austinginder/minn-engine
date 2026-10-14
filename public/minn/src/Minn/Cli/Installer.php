@@ -199,6 +199,7 @@ final class Installer
             'layout' => ShapeFiles::LAYOUT,
         ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
         $this->say('Installed. wp-config.php and wp-content were not touched; `minn eject` reverses this.');
+        $this->say('The first request puts Minn Admin in wp-content/plugins/minn-admin and activates it (an older copy there is replaced, a newer one kept).');
         $this->say('Note: a PHP opcode cache may serve the old index.php or wp-settings.php for a few seconds (opcache.revalidate_freq); clear it if the host offers a way.');
         return 0;
     }
@@ -248,6 +249,7 @@ final class Installer
         }
         @unlink("{$root}/" . self::RECORD);
         $this->say("Ejected. Restored {$restored} entries; the engine and its shape files are gone; wp-config.php and wp-content were not touched.");
+        $this->say('Minn Admin stays in wp-content/plugins/minn-admin, so WordPress keeps it.');
         $this->say('Note: a PHP opcode cache may serve the engine\'s wp-settings.php for a few seconds (opcache.revalidate_freq); clear it if the host offers a way.');
         return 0;
     }

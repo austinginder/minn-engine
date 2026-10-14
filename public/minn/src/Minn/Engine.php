@@ -6,6 +6,7 @@ namespace Minn;
 
 use Minn\I18n\Gettext;
 use Minn\Content\PostRecord;
+use Minn\Admin\AdminPlugin;
 use Minn\Admin\AdminTypes;
 use Minn\Admin\App;
 use Minn\Admin\Appearance;
@@ -142,6 +143,7 @@ final readonly class Engine
         $permalinks = \Minn\Front\Permalinks::fromDb($db);
         $theme = Theme::active($site, $permalinks, $context->themesDir());
         $runtime = Runtime::boot(new Runtime($context->withReader($reader)));
+        AdminPlugin::settle($this->engineDir, ABSPATH . 'wp-content', Runtime::options());
         $runtime->set('permalinks', $permalinks);
         // The active theme belongs in the container on this path too: a
         // plugin asking for the site's templates over REST gets nothing
@@ -294,7 +296,7 @@ final readonly class Engine
         $sessions = new Sessions($users);
         $cookie = new Cookie($db, $users, $sessions);
         $authenticator = new Authenticator($cookie, $users);
-        $app = new App($this->engineDir . '/admin');
+        $app = AdminPlugin::app($this->engineDir, ABSPATH . 'wp-content');
 
         $session = $authenticator->session($request->cookies);
         $reader = Reader::forUser(
@@ -313,6 +315,8 @@ final readonly class Engine
         // The WordPress runtime: the site's plugins load as code, then the
         // lifecycle actions fire, before the engine's own extensions register.
         $runtime = Runtime::boot(new Runtime($context, isAdmin: \Minn\Runtime\AjaxController::claims($request)));
+        // Minn Admin's plugin copy is laid once per engine version, before plugins load.
+        AdminPlugin::settle($this->engineDir, ABSPATH . 'wp-content', Runtime::options());
         $runtime->set('block_theme', $theme !== null);
         $runtime->set('theme', $theme);
         $runtime->set('permalinks', $permalinks);

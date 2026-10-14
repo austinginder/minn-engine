@@ -38,7 +38,7 @@ the wp/v2 surface: shapes and controllers
 | [`MenusController`](#menuscontroller) | final readonly class | 305 | wp/v2/menus, menu-items, and menu-locations. Viewing needs edit_posts; |
 | [`NavigationController`](#navigationcontroller) | final readonly class | 48 | wp/v2/navigation: the block theme's navigation menus, stored as |
 | [`ParamCheck`](#paramcheck) | final class | 76 | The required / validate / sanitize pass over a request's declared arguments. |
-| [`PluginsController`](#pluginscontroller) | final readonly class | 243 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
+| [`PluginsController`](#pluginscontroller) | final readonly class | 246 | wp/v2 plugins: what sits in wp-content/plugins, in the reference's |
 | [`PolicyGate`](#policygate) | final readonly class | 166 | Judges a route's policy against the caller, with the reference's |
 | [`PostCollectionParams`](#postcollectionparams) | final class | 242 | A post type's collection parameters as the reference builds them for its |
 | [`PostListArgs`](#postlistargs) | final class | 171 | The WP_Query arguments a post list request makes, as the reference makes |
@@ -1693,7 +1693,7 @@ rendered description.
 - `@param array<string, mixed> $headers the plugin's headers, as get_plugins() holds them`
 - `@return array<string, mixed>`
 
-Internals: `items()` (private, line 147), `find()` (private, line 161), `statusOf()` (private, line 175), `manifestFor()` (private, line 187), `extensionItem()` (private, line 197), `pluginItem()` (private, line 225), `links()` (private, line 259), `extensionKey()` (private, line 264), `refuse()` (private, line 271)
+Internals: `items()` (private, line 151), `find()` (private, line 165), `statusOf()` (private, line 179), `manifestFor()` (private, line 191), `extensionItem()` (private, line 201), `pluginItem()` (private, line 229), `links()` (private, line 263), `extensionKey()` (private, line 268), `refuse()` (private, line 275)
 
 
 ## PolicyGate
@@ -3244,7 +3244,7 @@ The wp/v2 media shape.
 
 The wp/v2 comment shape.
 
-Internals: `share()` (private, line 470)
+Internals: `share()` (private, line 471)
 
 
 ## Settings

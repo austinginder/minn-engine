@@ -326,7 +326,7 @@ final readonly class AdminBar
 
     private function assetUrl(string $relative): string
     {
-        return $this->permalinks->url('/minn/admin/' . $relative) . '?ver=' . rawurlencode($this->app->assetVersion($relative));
+        return $this->permalinks->url($this->app->path() . '/' . $relative) . '?ver=' . rawurlencode($this->app->assetVersion($relative));
     }
 
     private static function icon(string $paths): string

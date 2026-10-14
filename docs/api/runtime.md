@@ -82,7 +82,7 @@ the WordPress runtime plugins load against
 | [`Placeholders`](#placeholders) | final class | 71 | The printf placeholders plugin code hands wpdb::prepare, filled the way |
 | [`PluginActivation`](#pluginactivation) | final class | 70 | Switching a plugin on and off the way the reference's activate_plugin |
 | [`PluginFiles`](#pluginfiles) | final class | 122 | A plugin's files as WordPress's plugin functions know them: where a |
-| [`PluginRemoval`](#pluginremoval) | final class | 124 | Deleting plugins as the reference's delete_plugins does it: each in turn |
+| [`PluginRemoval`](#pluginremoval) | final class | 135 | Deleting plugins as the reference's delete_plugins does it: each in turn |
 | [`PluginRequirements`](#pluginrequirements) | final class | 66 | Whether a plugin can be switched on here, as the reference's |
 | [`PluginUpdates`](#pluginupdates) | final class | 65 | The update offers the site's own plugins publish. A plugin that hosts |
 | [`Plugins`](#plugins) | final class | 268 | Loads the site's plugins into the runtime the way the reference does: |
@@ -3918,7 +3918,7 @@ migration flag, and the post types and taxonomies Minn Admin keeps
 and registers as it loads): read together as a request begins, as one
 read rather than one each.
 
-Used by: `Minn\Cli\OptionCommand`, `Minn\Engine`, `Minn\Runtime\AjaxController`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\OptionCommand`, `Minn\Engine`, `Minn\Runtime\AjaxController`, `Minn\Runtime\MetaData`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Runtime`, `Minn\Runtime\Symbols`
 
 ```php
 __construct(Minn\Db $db)
@@ -4372,7 +4372,7 @@ uninstall_plugin: pre_uninstall_plugin, then the plugin's uninstall.php
 (WP_UNINSTALL_PLUGIN naming it) or the callback it registered (heard on
 uninstall_<file>, with the plugin loaded); either is forgotten once run.
 
-Internals: `deleteOne()` (private, line 74), `removeFiles()` (private, line 89), `removeTranslations()` (private, line 105), `forget()` (private, line 122), `forgetUpdates()` (private, line 131)
+Internals: `deleteOne()` (private, line 86), `removeFiles()` (private, line 101), `removeTranslations()` (private, line 117), `forget()` (private, line 134), `forgetUpdates()` (private, line 143)
 
 
 ## PluginRequirements

@@ -11,6 +11,12 @@
  * The default key file is ~/Keys/minn-release/ed25519.key (mode 600). Keep a
  * copy somewhere safe: a lost key means the next release cannot be signed by
  * a key the installed engines trust.
+ *
+ * KEYS also trusts a recovery key (made with --key=.../recovery.key), kept
+ * offline away from the working key. When the working key is lost or
+ * exposed, the next release is signed with the recovery key
+ * (build-release.php --key=PATH) and ships a KEYS list naming a new working
+ * key and a new recovery key, the old ones dropped.
  */
 
 declare(strict_types=1);

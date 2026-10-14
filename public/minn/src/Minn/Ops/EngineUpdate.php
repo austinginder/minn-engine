@@ -34,9 +34,14 @@ final readonly class EngineUpdate
     /**
      * The public halves of the keys that sign Minn releases (base64 Ed25519;
      * scripts/release-key.php). A new key ships here in a release signed by
-     * an old one before it signs anything.
+     * an old one before it signs anything. The first is the working key; the
+     * second is the recovery key, kept offline and used only to sign a
+     * release that replaces a lost or exposed working key.
      */
-    public const KEYS = ['+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8='];
+    public const KEYS = [
+        '+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8=',
+        'QpNzSZpXf3TPiHs9mqur30xFrOXs/yFG4uNqBkVajQk=',
+    ];
 
     private const MAX_DOWNLOAD = 64 * 1048576;
 
@@ -167,15 +172,20 @@ final readonly class EngineUpdate
         return preg_match("/MINN_ENGINE_VERSION', '([^']+)'/", $bootstrap, $m) === 1 ? $m[1] : '0.0.0';
     }
 
-    /** A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down). */
     private function refuseCheckout(): void
     {
-        $checkout = is_link($this->engineDir);
-        for ($dir = $this->engineDir; !$checkout && dirname($dir) !== $dir; $dir = dirname($dir)) {
-            $checkout = file_exists("{$dir}/.git");
-        }
-        if ($checkout) {
+        if (self::isCheckout($this->engineDir)) {
             throw new RuntimeException('This Minn is a development checkout (a link, or a folder under git), so it is updated with git, not from a release.');
         }
+    }
+
+    /** A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down). */
+    public static function isCheckout(string $dir): bool
+    {
+        $checkout = is_link($dir);
+        for (; !$checkout && dirname($dir) !== $dir; $dir = dirname($dir)) {
+            $checkout = file_exists("{$dir}/.git");
+        }
+        return $checkout;
     }
 }

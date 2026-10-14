@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Ops;
 
 use Closure;
+use Minn\Admin\AdminPlugin;
 use Minn\Content\Inventory;
 use Minn\Content\Site;
 use Minn\Extension\Manifest;
@@ -420,6 +421,9 @@ final readonly class Packages
     {
         if (!Archive::isFolderName($folder)) {
             throw new RestError('bad_slug', 'That is not a folder name.', 400);
+        }
+        if ($kind === 'plugin' && $folder === AdminPlugin::FOLDER) {
+            throw new RestError('minn_admin_kept', AdminPlugin::KEPT, 400);
         }
         $dir = $this->contained($kind, $folder);
         if (is_link($dir)) {

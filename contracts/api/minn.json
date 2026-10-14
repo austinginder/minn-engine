@@ -491,6 +491,236 @@
             ]
         },
         {
+            "name": "Minn\\Admin\\AdminPlugin",
+            "short": "AdminPlugin",
+            "namespace": "Minn\\Admin",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Admin/AdminPlugin.php",
+            "lines": 135,
+            "doc": "Minn Admin's home on a site is wp-content/plugins/minn-admin: the same\nplugin WordPress runs, so an eject leaves the site its admin, and Minn\nAdmin's own updates keep it current between engine releases. The engine\ncarries the Minn Admin release of its build at minn/admin and lays it into\nthe plugins folder the first time a new engine version serves a request:\ninto an empty place, where it is also activated, or over an older copy,\nwhose active state is kept; never over a newer copy, a link, or a folder\nunder git, and never from a development checkout.\n\nThe copy served is the plugin when it is at least the engine's own and\nasks for no newer engine (a \"Requires Minn\" header); otherwise the\nengine's copy, which also stands in while the plugin folder is missing.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Admin\\App",
+                "Minn\\Ops\\EngineUpdate",
+                "Minn\\Runtime\\Options",
+                "Minn\\Support\\FileHeaders",
+                "Minn\\Support\\FileTree",
+                "Minn\\Support\\Files",
+                "Minn\\Support\\Serialized"
+            ],
+            "usedBy": [
+                "Minn\\Admin\\App",
+                "Minn\\Cli\\PluginCommand",
+                "Minn\\Engine",
+                "Minn\\Ops\\Packages",
+                "Minn\\Rest\\PluginsController",
+                "Minn\\Rest\\Services",
+                "Minn\\Runtime\\PluginRemoval"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [
+                {
+                    "name": "FOLDER",
+                    "value": "'minn-admin'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "MAIN",
+                    "value": "'minn-admin/minn-admin.php'",
+                    "doc": "",
+                    "visibility": "public"
+                },
+                {
+                    "name": "OPTION",
+                    "value": "'minn_admin_laid'",
+                    "doc": "The engine version that last settled the plugin: one autoloaded option, so a request with nothing to do reads nothing more.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "KEPT",
+                    "value": "'Minn Admin is this site\\'s admin, so it cannot be deleted while Minn runs the site. Deactivate it to switch the admin off.'",
+                    "doc": "Why deleting Minn Admin is refused, wherever it is asked for.",
+                    "visibility": "public"
+                },
+                {
+                    "name": "LOCK_TIMEOUT",
+                    "value": "600",
+                    "doc": "A lay that died midway leaves its lock behind; one older than this is taken over.",
+                    "visibility": "private"
+                }
+            ],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "app",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "app(string $engineDir, string $contentDir): Minn\\Admin\\App",
+                    "doc": "The app a request serves, with the address its files load from.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 42,
+                    "end": 49
+                },
+                {
+                    "routes": [],
+                    "name": "settle",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "settle(string $engineDir, string $contentDir, Minn\\Runtime\\Options $options): void",
+                    "doc": "Once per engine version: lays the engine's copy into the plugins\nfolder when that is due, activating it when it was not there. A copy\nthat cannot be laid (an unwritable folder) is not retried until the\nnext version; the engine's copy is served meanwhile. Called once the\nruntime has booted, so the check is a read of the autoloaded list.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "contentDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "Minn\\Runtime\\Options",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 58,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "activated",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "activated(?string $stored): ?array",
+                    "doc": "The stored active_plugins list with Minn Admin added, sorted as\nactivation sorts it; null when it is already there.",
+                    "shapes": [
+                        "@return list<string>|null"
+                    ],
+                    "params": [
+                        {
+                            "name": "stored",
+                            "type": "?string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 85,
+                    "end": 94
+                },
+                {
+                    "routes": [],
+                    "name": "lay",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "lay(string $bundle, string $target): string",
+                    "doc": "Puts the engine's copy at $target: \"laid\" into an empty place,\n\"upgraded\" over an older copy, \"kept\" when the copy there is as new or\nnewer, \"skipped\" when nothing may be written (no whole plugin to lay,\na link or a git checkout in the way, another lay in progress). The new\ncopy is built beside the target and swapped in by renames, so a\nrequest never finds half a plugin.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "bundle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "target",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 104,
+                    "end": 145
+                },
+                {
+                    "routes": [],
+                    "name": "servable",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "servable(string $plugin, string $bundle, string $engineVersion): bool",
+                    "doc": "Whether the plugin copy is whole, at least the engine's own, and asks for no newer engine.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "plugin",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "bundle",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "engineVersion",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 148,
+                    "end": 158
+                },
+                {
+                    "routes": [],
+                    "name": "engineVersion",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "engineVersion(string $engineDir): string",
+                    "doc": "",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "engineDir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 160,
+                    "end": 163
+                }
+            ]
+        },
+        {
             "name": "Minn\\Admin\\AdminTypes",
             "short": "AdminTypes",
             "namespace": "Minn\\Admin",
@@ -673,16 +903,18 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/App.php",
-            "lines": 100,
-            "doc": "The Minn Admin app on disk: the symlinked dev copy the engine serves the\nshell and assets from. Minn Admin is MIT, so reading its files is fine.",
+            "lines": 106,
+            "doc": "The Minn Admin app on disk the engine serves the shell and assets from:\nthe plugin in wp-content/plugins, or the engine's own copy at minn/admin\n(AdminPlugin::app picks), with the site path its files load from. Minn\nAdmin is MIT, so reading its files is fine.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Content\\Site",
                 "Minn\\Support\\FileHeaders",
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Admin\\AppController",
                 "Minn\\Admin\\BootPayload",
                 "Minn\\Admin\\BundleController",
@@ -692,7 +924,7 @@
                 "Minn\\Rest\\Services"
             ],
             "constructor": {
-                "signature": "__construct(string $dir)",
+                "signature": "__construct(string $dir, string $path = '/minn/admin')",
                 "doc": "",
                 "shapes": [],
                 "params": [
@@ -702,11 +934,18 @@
                         "shape": "",
                         "default": null,
                         "doc": ""
+                    },
+                    {
+                        "name": "path",
+                        "type": "string",
+                        "shape": "",
+                        "default": "'/minn/admin'",
+                        "doc": ""
                     }
                 ],
                 "visibility": "public",
-                "line": 27,
-                "end": 29
+                "line": 29,
+                "end": 31
             },
             "cases": [],
             "constants": [
@@ -720,6 +959,15 @@
             "properties": [
                 {
                     "name": "dir",
+                    "type": "string",
+                    "readonly": true,
+                    "static": false,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": true
+                },
+                {
+                    "name": "path",
                     "type": "string",
                     "readonly": true,
                     "static": false,
@@ -753,8 +1001,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 37,
-                    "end": 43
+                    "line": 39,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -765,8 +1013,20 @@
                     "doc": "Where the bundle sits on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 46,
-                    "end": 49
+                    "line": 48,
+                    "end": 51
+                },
+                {
+                    "routes": [],
+                    "name": "path",
+                    "static": false,
+                    "visibility": "public",
+                    "signature": "path(): string",
+                    "doc": "The site path its files load from (no trailing slash).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 54,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -777,8 +1037,8 @@
                     "doc": "Whether the bundle is on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 52,
-                    "end": 55
+                    "line": 60,
+                    "end": 63
                 },
                 {
                     "routes": [],
@@ -789,8 +1049,8 @@
                     "doc": "The bundle's version from its plugin header.",
                     "shapes": [],
                     "params": [],
-                    "line": 58,
-                    "end": 72
+                    "line": 66,
+                    "end": 80
                 },
                 {
                     "routes": [],
@@ -809,8 +1069,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 75,
-                    "end": 85
+                    "line": 83,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -829,8 +1089,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 88,
-                    "end": 92
+                    "line": 96,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -851,8 +1111,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 100,
-                    "end": 113
+                    "line": 108,
+                    "end": 121
                 }
             ]
         },
@@ -862,7 +1122,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/AppController.php",
-            "lines": 149,
+            "lines": 150,
             "doc": "Serves Minn Admin from the engine: the path-routed shell (every\nsub-path renders the same page) and the app's assets. The nonce refresh\napp.js asks admin-ajax.php for is the reference's own rest-nonce action\n(Runtime\\AjaxController).",
             "implements": [],
             "extends": null,
@@ -1124,7 +1384,7 @@
                         }
                     ],
                     "line": 129,
-                    "end": 175
+                    "end": 176
                 }
             ]
         },
@@ -23124,7 +23384,7 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/Installer.php",
-            "lines": 324,
+            "lines": 326,
             "doc": "The swap, both ways. Install parks WordPress's own files beside the\nwebroot, lays the engine and its shape files down, and leaves\nwp-config.php and wp-content untouched; eject puts every parked file\nback and removes what install wrote. The install record at the webroot\n(.minn-install.php) is what eject works from. Preflight says what the site will and\nwill not get before anything moves.",
             "implements": [],
             "extends": null,
@@ -23339,7 +23599,7 @@
                         }
                     ],
                     "line": 154,
-                    "end": 204
+                    "end": 205
                 },
                 {
                     "routes": [],
@@ -23358,8 +23618,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 207,
-                    "end": 253
+                    "line": 208,
+                    "end": 255
                 },
                 {
                     "routes": [],
@@ -23378,8 +23638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 256,
-                    "end": 265
+                    "line": 258,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -23400,8 +23660,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 275,
-                    "end": 285
+                    "line": 277,
+                    "end": 287
                 },
                 {
                     "routes": [],
@@ -23432,8 +23692,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 293,
-                    "end": 299
+                    "line": 295,
+                    "end": 301
                 },
                 {
                     "routes": [],
@@ -23459,8 +23719,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 302,
-                    "end": 316
+                    "line": 304,
+                    "end": 318
                 },
                 {
                     "routes": [],
@@ -23486,8 +23746,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 318,
-                    "end": 335
+                    "line": 320,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -23498,8 +23758,8 @@
                     "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 337,
-                    "end": 340
+                    "line": 339,
+                    "end": 342
                 },
                 {
                     "routes": [],
@@ -23518,8 +23778,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 345
+                    "line": 344,
+                    "end": 347
                 }
             ]
         },
@@ -24596,11 +24856,12 @@
             "namespace": "Minn\\Cli",
             "kind": "final class",
             "file": "public/minn/src/Minn/Cli/PluginCommand.php",
-            "lines": 406,
+            "lines": 410,
             "doc": "`wp plugin list|install|update|activate|deactivate|delete`: the inventory and the fleet's install/update/delete.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Cli\\AssetUpdate",
                 "Minn\\Cli\\DirectorySearch",
                 "Minn\\Cli\\PackageInstaller",
@@ -24649,8 +24910,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 56
+                    "line": 48,
+                    "end": 57
                 },
                 {
                     "routes": [],
@@ -24676,8 +24937,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 70,
-                    "end": 73
+                    "line": 71,
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -24703,8 +24964,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 88
+                    "line": 86,
+                    "end": 89
                 },
                 {
                     "routes": [],
@@ -24730,8 +24991,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 109,
-                    "end": 147
+                    "line": 110,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -24757,8 +25018,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 189,
-                    "end": 196
+                    "line": 190,
+                    "end": 197
                 },
                 {
                     "routes": [],
@@ -24784,8 +25045,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 208,
-                    "end": 234
+                    "line": 209,
+                    "end": 239
                 },
                 {
                     "routes": [],
@@ -24811,8 +25072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 246,
-                    "end": 255
+                    "line": 251,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -24838,8 +25099,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 270,
-                    "end": 279
+                    "line": 275,
+                    "end": 284
                 },
                 {
                     "routes": [],
@@ -24865,8 +25126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 321,
-                    "end": 324
+                    "line": 326,
+                    "end": 329
                 },
                 {
                     "routes": [],
@@ -24892,8 +25153,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 327,
-                    "end": 366
+                    "line": 332,
+                    "end": 371
                 },
                 {
                     "routes": [],
@@ -24919,8 +25180,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 369,
-                    "end": 391
+                    "line": 374,
+                    "end": 396
                 },
                 {
                     "routes": [],
@@ -24946,8 +25207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 413
+                    "line": 398,
+                    "end": 418
                 },
                 {
                     "routes": [],
@@ -24966,8 +25227,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 416,
-                    "end": 419
+                    "line": 421,
+                    "end": 424
                 }
             ]
         },
@@ -40833,11 +41094,12 @@
             "namespace": "Minn",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Engine.php",
-            "lines": 335,
+            "lines": 338,
             "doc": "The engine's front door. An unmodified wp-config.php ends by requiring\nwp-settings.php, which is the engine's own boot file; it hands off here.\nREST is dispatched first (from the path or from ?rest_route=), then the\nadmin, the login endpoint, and finally the public site.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Admin\\AdminTypes",
                 "Minn\\Admin\\App",
                 "Minn\\Admin\\AppController",
@@ -40933,8 +41195,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 74,
-                "end": 79
+                "line": 75,
+                "end": 80
             },
             "cases": [],
             "constants": [
@@ -40975,8 +41237,8 @@
                     "doc": "The front door: answer the request that arrived and send it. This is\nthe only place the engine touches the world, so everything under it\nis a function of a request, callable more than once in a process.",
                     "shapes": [],
                     "params": [],
-                    "line": 86,
-                    "end": 92
+                    "line": 87,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -40995,8 +41257,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 99,
-                    "end": 120
+                    "line": 100,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -41015,8 +41277,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 123,
-                    "end": 130
+                    "line": 124,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -41049,8 +41311,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 137,
-                    "end": 171
+                    "line": 138,
+                    "end": 173
                 },
                 {
                     "routes": [],
@@ -41076,8 +41338,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 180,
-                    "end": 193
+                    "line": 182,
+                    "end": 195
                 },
                 {
                     "routes": [],
@@ -41103,8 +41365,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 202,
-                    "end": 218
+                    "line": 204,
+                    "end": 220
                 },
                 {
                     "routes": [],
@@ -41123,8 +41385,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 226,
-                    "end": 232
+                    "line": 228,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -41150,8 +41412,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 243,
-                    "end": 265
+                    "line": 245,
+                    "end": 267
                 },
                 {
                     "routes": [],
@@ -41170,8 +41432,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 268,
-                    "end": 272
+                    "line": 270,
+                    "end": 274
                 },
                 {
                     "routes": [],
@@ -41197,8 +41459,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 274,
-                    "end": 333
+                    "line": 276,
+                    "end": 337
                 },
                 {
                     "routes": [],
@@ -41294,8 +41556,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 336,
-                    "end": 402
+                    "line": 340,
+                    "end": 406
                 }
             ]
         },
@@ -85952,7 +86214,7 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/EngineUpdate.php",
-            "lines": 150,
+            "lines": 160,
             "doc": "Replaces the running engine with a published release. The release's\nminn.zip comes from the Minn update service and nowhere else (every\nredirect hop is judged), must match the sha256 its release records, and\nmust carry an Ed25519 signature made with a key this engine was built to\ntrust (KEYS; the secret half never leaves the release maintainer's\nmachine, so neither GitHub nor the service can stand in a build of their\nown). It is unpacked beside the engine into a folder of its own, where it\nis checked again: its bootstrap names the version on offer and bin/minn is\nthere. Then the swap, two renames in the folder the engine lives in: the\nrunning engine moves aside, the new one moves in, and the old copy is\nremoved; when the second rename fails the first is undone. The webroot's\nshape files are laid again from the new engine (ShapeFiles::refresh): one\nstill as the old engine wrote it, a stock empty placeholder above all, is\nreplaced, and one the site changed is left alone. The legacy\ninstall record (.install.json, from installs that kept it inside the\nengine) comes along. One update runs at a time. A development checkout (a\nsymbolic link, or a folder under git) is refused: git owns those. The\nsite keeps answering throughout.",
             "implements": [],
             "extends": null,
@@ -85966,6 +86228,7 @@
                 "Minn\\Support\\Files"
             ],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Cli\\Installer",
                 "Minn\\Ops\\CoreStatus",
                 "Minn\\Ops\\EngineChecksums",
@@ -86001,15 +86264,15 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 44,
-                "end": 46
+                "line": 49,
+                "end": 51
             },
             "cases": [],
             "constants": [
                 {
                     "name": "KEYS",
-                    "value": "array (   0 => '+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8=', )",
-                    "doc": "The public halves of the keys that sign Minn releases (base64 Ed25519;\nscripts/release-key.php). A new key ships here in a release signed by\nan old one before it signs anything.",
+                    "value": "array (   0 => '+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8=',   1 => 'QpNzSZpXf3TPiHs9mqur30xFrOXs/yFG4uNqBkVajQk=', )",
+                    "doc": "The public halves of the keys that sign Minn releases (base64 Ed25519;\nscripts/release-key.php). A new key ships here in a release signed by\nan old one before it signs anything. The first is the working key; the\nsecond is the recovery key, kept offline and used only to sign a\nrelease that replaces a lost or exposed working key.",
                     "visibility": "public"
                 },
                 {
@@ -86066,8 +86329,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 57
+                    "line": 54,
+                    "end": 62
                 },
                 {
                     "routes": [],
@@ -86107,8 +86370,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 88
+                    "line": 71,
+                    "end": 93
                 },
                 {
                     "routes": [],
@@ -86155,8 +86418,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 134,
-                    "end": 142
+                    "line": 139,
+                    "end": 147
                 },
                 {
                     "routes": [],
@@ -86175,8 +86438,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 164,
-                    "end": 168
+                    "line": 169,
+                    "end": 173
+                },
+                {
+                    "routes": [],
+                    "name": "isCheckout",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "isCheckout(string $dir): bool",
+                    "doc": "A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "dir",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 183,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -86209,8 +86492,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 131
+                    "line": 96,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -86236,8 +86519,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 145,
-                    "end": 161
+                    "line": 150,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -86245,10 +86528,10 @@
                     "static": false,
                     "visibility": "private",
                     "signature": "refuseCheckout(): void",
-                    "doc": "A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).",
+                    "doc": "",
                     "shapes": [],
                     "params": [],
-                    "line": 171,
+                    "line": 175,
                     "end": 180
                 }
             ]
@@ -86594,11 +86877,12 @@
             "namespace": "Minn\\Ops",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Ops/Packages.php",
-            "lines": 481,
+            "lines": 484,
             "doc": "Putting plugins, themes and extensions on disk. Plugins and themes come\nfrom the directory (wordpress.org's, asked through the Minn update\nservice, Ops\\Directory) or an uploaded zip, and are installed through\nWordPress's upgraders (UpgraderRun), so plugins hear every upgrader hook;\na Minn extension (a folder with a minn.json) is placed by the engine.\nEvery archive passes Archive's checks first: exactly one top-level\nfolder that is a plain name (never \".\" or \"..\"), no absolute or dotted\npaths, no symbolic links, bounded entry count and size. Removal proves\nthe folder is a direct child of its kind's directory before anything is\ndeleted.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\Site",
                 "Minn\\Extension\\Manifest",
@@ -86652,8 +86936,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 38,
-                "end": 40
+                "line": 39,
+                "end": 41
             },
             "cases": [],
             "constants": [
@@ -86731,8 +87015,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 43,
-                    "end": 67
+                    "line": 44,
+                    "end": 68
                 },
                 {
                     "routes": [],
@@ -86760,8 +87044,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 108
+                    "line": 75,
+                    "end": 109
                 },
                 {
                     "routes": [],
@@ -86780,8 +87064,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 111,
-                    "end": 145
+                    "line": 112,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -86807,8 +87091,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 151
+                    "line": 149,
+                    "end": 152
                 },
                 {
                     "routes": [],
@@ -86834,8 +87118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 154,
-                    "end": 157
+                    "line": 155,
+                    "end": 158
                 },
                 {
                     "routes": [],
@@ -86856,8 +87140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 198
+                    "line": 188,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -86893,8 +87177,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 211,
-                    "end": 220
+                    "line": 212,
+                    "end": 221
                 },
                 {
                     "routes": [],
@@ -86929,8 +87213,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 233,
-                    "end": 257
+                    "line": 234,
+                    "end": 258
                 },
                 {
                     "routes": [],
@@ -86965,8 +87249,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 288
+                    "line": 265,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -86987,8 +87271,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 295,
-                    "end": 302
+                    "line": 296,
+                    "end": 303
                 },
                 {
                     "routes": [],
@@ -87014,8 +87298,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 305,
-                    "end": 308
+                    "line": 306,
+                    "end": 309
                 },
                 {
                     "routes": [],
@@ -87041,8 +87325,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 311,
-                    "end": 314
+                    "line": 312,
+                    "end": 315
                 },
                 {
                     "routes": [],
@@ -87070,8 +87354,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 342,
-                    "end": 354
+                    "line": 343,
+                    "end": 355
                 },
                 {
                     "routes": [],
@@ -87097,8 +87381,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 357,
-                    "end": 360
+                    "line": 358,
+                    "end": 361
                 },
                 {
                     "routes": [],
@@ -87124,8 +87408,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 419,
-                    "end": 437
+                    "line": 420,
+                    "end": 441
                 },
                 {
                     "routes": [],
@@ -87153,8 +87437,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 469,
-                    "end": 486
+                    "line": 473,
+                    "end": 490
                 },
                 {
                     "routes": [],
@@ -87180,8 +87464,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 499,
-                    "end": 509
+                    "line": 503,
+                    "end": 513
                 },
                 {
                     "routes": [],
@@ -87207,8 +87491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 160,
-                    "end": 180
+                    "line": 161,
+                    "end": 181
                 },
                 {
                     "routes": [],
@@ -87227,8 +87511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 223,
-                    "end": 226
+                    "line": 224,
+                    "end": 227
                 },
                 {
                     "routes": [],
@@ -87254,8 +87538,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 317,
-                    "end": 334
+                    "line": 318,
+                    "end": 335
                 },
                 {
                     "routes": [],
@@ -87291,8 +87575,8 @@
                             "doc": "the upgrader's install arguments"
                         }
                     ],
-                    "line": 370,
-                    "end": 385
+                    "line": 371,
+                    "end": 386
                 },
                 {
                     "routes": [],
@@ -87327,8 +87611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 393,
-                    "end": 416
+                    "line": 394,
+                    "end": 417
                 },
                 {
                     "routes": [],
@@ -87354,8 +87638,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 440,
-                    "end": 448
+                    "line": 444,
+                    "end": 452
                 },
                 {
                     "routes": [],
@@ -87383,8 +87667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 455,
-                    "end": 466
+                    "line": 459,
+                    "end": 470
                 },
                 {
                     "routes": [],
@@ -87403,8 +87687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 489,
-                    "end": 492
+                    "line": 493,
+                    "end": 496
                 }
             ]
         },
@@ -101470,11 +101754,12 @@
             "namespace": "Minn\\Rest",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Rest/PluginsController.php",
-            "lines": 243,
+            "lines": 246,
             "doc": "wp/v2 plugins: what sits in wp-content/plugins, in the reference's\nshape. Minn extensions (a minn.json manifest) are listed alongside the\nWordPress plugins the folder still holds; the engine runs the former\nand only records the latter's stored state. Activation writes the same\noptions the reference and the extension loader read; files are never\ninstalled or deleted from here.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Content\\Inventory",
                 "Minn\\Content\\PluginState",
                 "Minn\\Content\\Site",
@@ -101551,8 +101836,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 37,
-                "end": 45
+                "line": 38,
+                "end": 46
             },
             "cases": [],
             "constants": [],
@@ -101632,8 +101917,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 54
+                    "line": 50,
+                    "end": 55
                 },
                 {
                     "routes": [
@@ -101654,8 +101939,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 58,
-                    "end": 90
+                    "line": 59,
+                    "end": 91
                 },
                 {
                     "routes": [
@@ -101683,8 +101968,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 94,
-                    "end": 97
+                    "line": 95,
+                    "end": 98
                 },
                 {
                     "routes": [
@@ -101714,8 +101999,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 103,
-                    "end": 120
+                    "line": 104,
+                    "end": 121
                 },
                 {
                     "routes": [
@@ -101743,8 +102028,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 124,
-                    "end": 144
+                    "line": 125,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -101787,8 +102072,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 240,
-                    "end": 257
+                    "line": 244,
+                    "end": 261
                 },
                 {
                     "routes": [],
@@ -101801,8 +102086,8 @@
                         "@return list<array>"
                     ],
                     "params": [],
-                    "line": 147,
-                    "end": 158
+                    "line": 151,
+                    "end": 162
                 },
                 {
                     "routes": [],
@@ -101821,8 +102106,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 161,
-                    "end": 172
+                    "line": 165,
+                    "end": 176
                 },
                 {
                     "routes": [],
@@ -101841,8 +102126,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 175,
-                    "end": 185
+                    "line": 179,
+                    "end": 189
                 },
                 {
                     "routes": [],
@@ -101861,8 +102146,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 187,
-                    "end": 195
+                    "line": 191,
+                    "end": 199
                 },
                 {
                     "routes": [],
@@ -101888,8 +102173,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 197,
-                    "end": 218
+                    "line": 201,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -101922,8 +102207,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 225,
-                    "end": 228
+                    "line": 229,
+                    "end": 232
                 },
                 {
                     "routes": [],
@@ -101942,8 +102227,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 259,
-                    "end": 262
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -101962,8 +102247,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 264,
-                    "end": 267
+                    "line": 268,
+                    "end": 271
                 },
                 {
                     "routes": [],
@@ -101982,8 +102267,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 271,
-                    "end": 276
+                    "line": 275,
+                    "end": 280
                 }
             ]
         },
@@ -111207,6 +111492,7 @@
             "uses": [
                 "Minn\\Admin\\ActivityChart",
                 "Minn\\Admin\\ActivityFeed",
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Admin\\App",
                 "Minn\\Admin\\Appearance",
                 "Minn\\Admin\\Dashboard",
@@ -111297,8 +111583,8 @@
                     }
                 ],
                 "visibility": "private",
-                "line": 108,
-                "end": 114
+                "line": 109,
+                "end": 115
             },
             "cases": [],
             "constants": [
@@ -111381,8 +111667,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 117,
-                    "end": 120
+                    "line": 118,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -111401,8 +111687,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 130,
-                    "end": 135
+                    "line": 131,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -111413,8 +111699,8 @@
                     "doc": "The record lookups the policy gate asks before it judges a caller.",
                     "shapes": [],
                     "params": [],
-                    "line": 138,
-                    "end": 141
+                    "line": 139,
+                    "end": 142
                 },
                 {
                     "routes": [],
@@ -111425,8 +111711,8 @@
                     "doc": "The database door.",
                     "shapes": [],
                     "params": [],
-                    "line": 144,
-                    "end": 147
+                    "line": 145,
+                    "end": 148
                 },
                 {
                     "routes": [],
@@ -111437,8 +111723,8 @@
                     "doc": "The request being answered.",
                     "shapes": [],
                     "params": [],
-                    "line": 150,
-                    "end": 153
+                    "line": 151,
+                    "end": 154
                 },
                 {
                     "routes": [],
@@ -111449,8 +111735,8 @@
                     "doc": "The site root, no trailing slash.",
                     "shapes": [],
                     "params": [],
-                    "line": 156,
-                    "end": 159
+                    "line": 157,
+                    "end": 160
                 },
                 {
                     "routes": [],
@@ -111461,8 +111747,8 @@
                     "doc": "wp-content under the site root.",
                     "shapes": [],
                     "params": [],
-                    "line": 162,
-                    "end": 165
+                    "line": 163,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -111473,8 +111759,8 @@
                     "doc": "The users repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 170,
-                    "end": 173
+                    "line": 171,
+                    "end": 174
                 },
                 {
                     "routes": [],
@@ -111485,8 +111771,8 @@
                     "doc": "The posts repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 176,
-                    "end": 179
+                    "line": 177,
+                    "end": 180
                 },
                 {
                     "routes": [],
@@ -111497,8 +111783,8 @@
                     "doc": "The terms repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 182,
-                    "end": 185
+                    "line": 183,
+                    "end": 186
                 },
                 {
                     "routes": [],
@@ -111509,8 +111795,8 @@
                     "doc": "The comments repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 188,
-                    "end": 191
+                    "line": 189,
+                    "end": 192
                 },
                 {
                     "routes": [],
@@ -111521,8 +111807,8 @@
                     "doc": "The site's options.",
                     "shapes": [],
                     "params": [],
-                    "line": 194,
-                    "end": 197
+                    "line": 195,
+                    "end": 198
                 },
                 {
                     "routes": [],
@@ -111533,8 +111819,8 @@
                     "doc": "The post writer.",
                     "shapes": [],
                     "params": [],
-                    "line": 200,
-                    "end": 203
+                    "line": 201,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -111545,8 +111831,8 @@
                     "doc": "Revisions and autosaves.",
                     "shapes": [],
                     "params": [],
-                    "line": 206,
-                    "end": 209
+                    "line": 207,
+                    "end": 210
                 },
                 {
                     "routes": [],
@@ -111557,8 +111843,8 @@
                     "doc": "The site editor's saved global styles.",
                     "shapes": [],
                     "params": [],
-                    "line": 212,
-                    "end": 215
+                    "line": 213,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -111569,8 +111855,8 @@
                     "doc": "The active theme's global styles and variations.",
                     "shapes": [],
                     "params": [],
-                    "line": 218,
-                    "end": 221
+                    "line": 219,
+                    "end": 222
                 },
                 {
                     "routes": [],
@@ -111581,8 +111867,8 @@
                     "doc": "Classic menus and their items.",
                     "shapes": [],
                     "params": [],
-                    "line": 224,
-                    "end": 227
+                    "line": 225,
+                    "end": 228
                 },
                 {
                     "routes": [],
@@ -111593,8 +111879,8 @@
                     "doc": "What wp-content holds: plugins, themes, drop-ins.",
                     "shapes": [],
                     "params": [],
-                    "line": 230,
-                    "end": 233
+                    "line": 231,
+                    "end": 234
                 },
                 {
                     "routes": [],
@@ -111605,8 +111891,8 @@
                     "doc": "Link building from the permalink structure.",
                     "shapes": [],
                     "params": [],
-                    "line": 238,
-                    "end": 241
+                    "line": 239,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -111617,8 +111903,8 @@
                     "doc": "REST URL building.",
                     "shapes": [],
                     "params": [],
-                    "line": 244,
-                    "end": 247
+                    "line": 245,
+                    "end": 248
                 },
                 {
                     "routes": [],
@@ -111629,8 +111915,8 @@
                     "doc": "The capability engine.",
                     "shapes": [],
                     "params": [],
-                    "line": 250,
-                    "end": 253
+                    "line": 251,
+                    "end": 254
                 },
                 {
                     "routes": [],
@@ -111641,8 +111927,8 @@
                     "doc": "Who is making this call.",
                     "shapes": [],
                     "params": [],
-                    "line": 256,
-                    "end": 259
+                    "line": 257,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -111653,8 +111939,8 @@
                     "doc": "The session store.",
                     "shapes": [],
                     "params": [],
-                    "line": 262,
-                    "end": 265
+                    "line": 263,
+                    "end": 266
                 },
                 {
                     "routes": [],
@@ -111665,8 +111951,8 @@
                     "doc": "Application passwords for Basic auth.",
                     "shapes": [],
                     "params": [],
-                    "line": 268,
-                    "end": 271
+                    "line": 269,
+                    "end": 272
                 },
                 {
                     "routes": [],
@@ -111677,8 +111963,8 @@
                     "doc": "The extension loader.",
                     "shapes": [],
                     "params": [],
-                    "line": 276,
-                    "end": 279
+                    "line": 277,
+                    "end": 280
                 },
                 {
                     "routes": [],
@@ -111689,8 +111975,8 @@
                     "doc": "The post types the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 282,
-                    "end": 285
+                    "line": 283,
+                    "end": 286
                 },
                 {
                     "routes": [],
@@ -111701,8 +111987,8 @@
                     "doc": "The taxonomies the REST surface knows.",
                     "shapes": [],
                     "params": [],
-                    "line": 288,
-                    "end": 291
+                    "line": 289,
+                    "end": 292
                 },
                 {
                     "routes": [],
@@ -111713,8 +111999,8 @@
                     "doc": "The uploads directory.",
                     "shapes": [],
                     "params": [],
-                    "line": 294,
-                    "end": 297
+                    "line": 295,
+                    "end": 298
                 },
                 {
                     "routes": [],
@@ -111725,8 +112011,8 @@
                     "doc": "Stores an upload as an attachment.",
                     "shapes": [],
                     "params": [],
-                    "line": 300,
-                    "end": 303
+                    "line": 301,
+                    "end": 304
                 },
                 {
                     "routes": [],
@@ -111737,8 +112023,8 @@
                     "doc": "The JSON Schema validator, with the reference's filters passed in.",
                     "shapes": [],
                     "params": [],
-                    "line": 306,
-                    "end": 313
+                    "line": 307,
+                    "end": 314
                 },
                 {
                     "routes": [],
@@ -111749,8 +112035,8 @@
                     "doc": "The Minn Admin bundle on disk.",
                     "shapes": [],
                     "params": [],
-                    "line": 318,
-                    "end": 321
+                    "line": 319,
+                    "end": 322
                 },
                 {
                     "routes": [],
@@ -111761,8 +112047,8 @@
                     "doc": "Installing and removing themes and extensions.",
                     "shapes": [],
                     "params": [],
-                    "line": 324,
-                    "end": 327
+                    "line": 325,
+                    "end": 328
                 },
                 {
                     "routes": [],
@@ -111773,8 +112059,8 @@
                     "doc": "The debug log reader.",
                     "shapes": [],
                     "params": [],
-                    "line": 330,
-                    "end": 333
+                    "line": 331,
+                    "end": 334
                 },
                 {
                     "routes": [],
@@ -111785,8 +112071,8 @@
                     "doc": "Update checks and offers.",
                     "shapes": [],
                     "params": [],
-                    "line": 336,
-                    "end": 339
+                    "line": 337,
+                    "end": 340
                 },
                 {
                     "routes": [],
@@ -111797,8 +112083,8 @@
                     "doc": "Locales and the app's catalogs.",
                     "shapes": [],
                     "params": [],
-                    "line": 342,
-                    "end": 345
+                    "line": 343,
+                    "end": 346
                 },
                 {
                     "routes": [],
@@ -111809,8 +112095,8 @@
                     "doc": "The app's per-user appearance.",
                     "shapes": [],
                     "params": [],
-                    "line": 348,
-                    "end": 351
+                    "line": 349,
+                    "end": 352
                 },
                 {
                     "routes": [],
@@ -111821,8 +112107,8 @@
                     "doc": "The app's per-user hidden views.",
                     "shapes": [],
                     "params": [],
-                    "line": 354,
-                    "end": 357
+                    "line": 355,
+                    "end": 358
                 },
                 {
                     "routes": [],
@@ -111833,8 +112119,8 @@
                     "doc": "What happened lately.",
                     "shapes": [],
                     "params": [],
-                    "line": 360,
-                    "end": 363
+                    "line": 361,
+                    "end": 364
                 },
                 {
                     "routes": [],
@@ -111845,8 +112131,8 @@
                     "doc": "The overview payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 366,
-                    "end": 369
+                    "line": 367,
+                    "end": 370
                 },
                 {
                     "routes": [],
@@ -111857,8 +112143,8 @@
                     "doc": "Minn's own releases, asked of GitHub once a day.",
                     "shapes": [],
                     "params": [],
-                    "line": 372,
-                    "end": 375
+                    "line": 373,
+                    "end": 376
                 },
                 {
                     "routes": [],
@@ -111869,8 +112155,8 @@
                     "doc": "Minn's changelog, read from its repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 378,
-                    "end": 381
+                    "line": 379,
+                    "end": 382
                 },
                 {
                     "routes": [],
@@ -111881,8 +112167,8 @@
                     "doc": "Minn Admin's changelog, read from its repository.",
                     "shapes": [],
                     "params": [],
-                    "line": 384,
-                    "end": 387
+                    "line": 385,
+                    "end": 388
                 },
                 {
                     "routes": [],
@@ -111893,8 +112179,8 @@
                     "doc": "Minn's version and the release on offer, behind the app's update banner.",
                     "shapes": [],
                     "params": [],
-                    "line": 390,
-                    "end": 393
+                    "line": 391,
+                    "end": 394
                 },
                 {
                     "routes": [],
@@ -111905,8 +112191,8 @@
                     "doc": "The engine replacing itself with a release.",
                     "shapes": [],
                     "params": [],
-                    "line": 396,
-                    "end": 399
+                    "line": 397,
+                    "end": 400
                 },
                 {
                     "routes": [],
@@ -111917,8 +112203,8 @@
                     "doc": "The bell feed.",
                     "shapes": [],
                     "params": [],
-                    "line": 402,
-                    "end": 405
+                    "line": 403,
+                    "end": 406
                 },
                 {
                     "routes": [],
@@ -111929,8 +112215,8 @@
                     "doc": "The System view's payload.",
                     "shapes": [],
                     "params": [],
-                    "line": 408,
-                    "end": 411
+                    "line": 409,
+                    "end": 412
                 },
                 {
                     "routes": [],
@@ -111941,8 +112227,8 @@
                     "doc": "The active block theme's templates; null under a classic theme, where the routes answer as the reference does when it never registered them.",
                     "shapes": [],
                     "params": [],
-                    "line": 416,
-                    "end": 423
+                    "line": 417,
+                    "end": 424
                 },
                 {
                     "routes": [],
@@ -111953,8 +112239,8 @@
                     "doc": "Writes block templates; null under a classic theme.",
                     "shapes": [],
                     "params": [],
-                    "line": 426,
-                    "end": 430
+                    "line": 427,
+                    "end": 431
                 },
                 {
                     "routes": [],
@@ -111965,8 +112251,8 @@
                     "doc": "The wp/v2 post shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 435,
-                    "end": 438
+                    "line": 436,
+                    "end": 439
                 },
                 {
                     "routes": [],
@@ -111977,8 +112263,8 @@
                     "doc": "The wp/v2 term shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 441,
-                    "end": 444
+                    "line": 442,
+                    "end": 445
                 },
                 {
                     "routes": [],
@@ -111989,8 +112275,8 @@
                     "doc": "The wp/v2 user shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 447,
-                    "end": 450
+                    "line": 448,
+                    "end": 451
                 },
                 {
                     "routes": [],
@@ -112001,8 +112287,8 @@
                     "doc": "The wp/v2 media shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 453,
-                    "end": 456
+                    "line": 454,
+                    "end": 457
                 },
                 {
                     "routes": [],
@@ -112013,8 +112299,8 @@
                     "doc": "The wp/v2 comment shape.",
                     "shapes": [],
                     "params": [],
-                    "line": 459,
-                    "end": 462
+                    "line": 460,
+                    "end": 463
                 },
                 {
                     "routes": [],
@@ -112042,8 +112328,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 470,
-                    "end": 474
+                    "line": 471,
+                    "end": 475
                 }
             ]
         },
@@ -135818,6 +136104,7 @@
                 "Minn\\Support\\Serialized"
             ],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Cli\\OptionCommand",
                 "Minn\\Engine",
                 "Minn\\Runtime\\AjaxController",
@@ -137804,11 +138091,12 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/PluginRemoval.php",
-            "lines": 124,
+            "lines": 135,
             "doc": "Deleting plugins as the reference's delete_plugins does it: each in turn\nis uninstalled first when it can be (its uninstall.php, or the callback\nit registered), then delete_plugin, its folder (or file) removed,\ndeleted_plugin, and its installed translations removed with it; the\nupdates offered for the deleted ones are forgotten. A plugin already\ngone counts as deleted. Only what lies inside the plugins folder is\never removed, and a symlinked folder is unlinked, never followed.",
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Objects\\Errors",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\OptionWrites",
@@ -137846,8 +138134,8 @@
                             "doc": "plugin files, relative to the plugins folder"
                         }
                     ],
-                    "line": 27,
-                    "end": 41
+                    "line": 28,
+                    "end": 53
                 },
                 {
                     "routes": [],
@@ -137866,8 +138154,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 48,
-                    "end": 71
+                    "line": 60,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -137895,8 +138183,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 74,
-                    "end": 86
+                    "line": 86,
+                    "end": 98
                 },
                 {
                     "routes": [],
@@ -137915,8 +138203,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 89,
-                    "end": 102
+                    "line": 101,
+                    "end": 114
                 },
                 {
                     "routes": [],
@@ -137944,8 +138232,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 105,
-                    "end": 119
+                    "line": 117,
+                    "end": 131
                 },
                 {
                     "routes": [],
@@ -137973,8 +138261,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 122,
-                    "end": 128
+                    "line": 134,
+                    "end": 140
                 },
                 {
                     "routes": [],
@@ -137995,8 +138283,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 131,
-                    "end": 142
+                    "line": 143,
+                    "end": 154
                 }
             ]
         },
@@ -163166,6 +163454,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Admin\\App",
                 "Minn\\Admin\\ThemesController",
                 "Minn\\Cli\\ThemeCommand",
@@ -163225,7 +163514,9 @@
             "implements": [],
             "extends": null,
             "uses": [],
-            "usedBy": [],
+            "usedBy": [
+                "Minn\\Admin\\AdminPlugin"
+            ],
             "constructor": null,
             "cases": [],
             "constants": [],
@@ -163325,6 +163616,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Cli\\Installer",
                 "Minn\\Ops\\EngineChecksums",
                 "Minn\\Ops\\EngineUpdate",
@@ -166491,6 +166783,7 @@
             "extends": null,
             "uses": [],
             "usedBy": [
+                "Minn\\Admin\\AdminPlugin",
                 "Minn\\Admin\\App",
                 "Minn\\Admin\\Appearance",
                 "Minn\\Admin\\Dashboard",

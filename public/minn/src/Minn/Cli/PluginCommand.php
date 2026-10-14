@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Cli;
 
+use Minn\Admin\AdminPlugin;
 use Minn\Ops\Packages;
 use Minn\Content\Inventory;
 use Minn\Content\PluginState;
@@ -216,6 +217,10 @@ final class PluginCommand
             // A slug is one name in the plugins folder: one that climbs out of it, or names a path, is no plugin.
             if (basename((string) $slug) !== $slug || in_array($slug, ['', '.', '..'], true) || (!is_dir($dir) && !is_file($file))) {
                 WP_CLI::warning("The '{$slug}' plugin could not be found.");
+                continue;
+            }
+            if ($slug === AdminPlugin::FOLDER) {
+                WP_CLI::warning(AdminPlugin::KEPT);
                 continue;
             }
             if (is_file($file) && !is_dir($dir)) {

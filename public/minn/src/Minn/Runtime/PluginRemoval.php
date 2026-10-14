@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Admin\AdminPlugin;
 use Minn\Objects\Errors;
 use Minn\Support\Files;
 use Minn\Support\Paths;
@@ -31,13 +32,24 @@ final class PluginRemoval
         }
         $translations = (array) Translations::installed('plugins');
         $failed = [];
-        foreach (array_map('strval', $plugins) as $plugin) {
+        $plugins = array_map('strval', $plugins);
+        if (in_array(AdminPlugin::MAIN, $plugins, true)) {
+            $plugins = array_values(array_diff($plugins, [AdminPlugin::MAIN]));
+            $kept = Handoff::newError('minn_admin_kept', AdminPlugin::KEPT);
+            if ($plugins === []) {
+                return $kept;
+            }
+        }
+        foreach ($plugins as $plugin) {
             if (!self::deleteOne($plugin, $translations)) {
                 $failed[] = $plugin;
             }
         }
-        self::forgetUpdates(array_diff(array_map('strval', $plugins), $failed));
-        return $failed === [] ? true : Handoff::newError('could_not_remove_plugin', sprintf('Could not fully remove the plugin(s) %s.', implode(', ', $failed)));
+        self::forgetUpdates(array_diff($plugins, $failed));
+        if ($failed !== []) {
+            return Handoff::newError('could_not_remove_plugin', sprintf('Could not fully remove the plugin(s) %s.', implode(', ', $failed)));
+        }
+        return $kept ?? true;
     }
 
     /**

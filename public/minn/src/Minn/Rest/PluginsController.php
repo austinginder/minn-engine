@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Minn\Rest;
 
+use Minn\Admin\AdminPlugin;
 use Minn\Http\Access;
 use Minn\Objects\Errors;
 use Minn\Ops\Packages;
@@ -129,6 +130,9 @@ final readonly class PluginsController
         $item = $this->find($plugin);
         if ($item['status'] === 'active') {
             throw new RestError('rest_cannot_delete_active_plugin', 'Cannot delete an active plugin. Please deactivate it first.', 400);
+        }
+        if ($plugin . '.php' === AdminPlugin::MAIN) {
+            throw new RestError('rest_cannot_delete_minn_admin', AdminPlugin::KEPT, 400);
         }
         // A WordPress plugin is deleted as the reference deletes it (uninstalled first, the delete hooks around it).
         if (array_key_exists($plugin . '.php', $this->inventory->pluginFiles())) {

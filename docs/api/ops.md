@@ -12,10 +12,10 @@
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
 | [`DirectoryApi`](#directoryapi) | final readonly class | 56 | plugins_api() and themes_api() as plugins call them and answer them |
 | [`EngineChecksums`](#enginechecksums) | final readonly class | 157 | Checks a Minn install's files against the release they claim to be, the |
-| [`EngineUpdate`](#engineupdate) | final readonly class | 150 | Replaces the running engine with a published release. The release's |
+| [`EngineUpdate`](#engineupdate) | final readonly class | 160 | Replaces the running engine with a published release. The release's |
 | [`InstalledSoftware`](#installedsoftware) | final readonly class | 59 | What is installed, as the System view lists it: every extension and |
 | [`Logs`](#logs) | final readonly class | 150 | The log files the System view can read and clear: the debug log the |
-| [`Packages`](#packages) | final readonly class | 481 | Putting plugins, themes and extensions on disk. Plugins and themes come |
+| [`Packages`](#packages) | final readonly class | 484 | Putting plugins, themes and extensions on disk. Plugins and themes come |
 | [`Release`](#release) | final readonly class | 58 | One published Minn release as the update service describes it (and as |
 | [`Releases`](#releases) | final class | 87 | Whether a newer Minn is out, asked of the Minn update service at most |
 | [`ShapeFiles`](#shapefiles) | final class | 104 | The files an install lays at the webroot for tooling to find: the shape |
@@ -330,12 +330,14 @@ engine) comes along. One update runs at a time. A development checkout (a
 symbolic link, or a folder under git) is refused: git owns those. The
 site keeps answering throughout.
 
-- const `KEYS` = `array (   0 => '+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8=', )` — The public halves of the keys that sign Minn releases (base64 Ed25519;
+- const `KEYS` = `array (   0 => '+Usjnr1ZTudBbWToqYLkZ1Oy2yKN07d9+u62AIJ2FG8=',   1 => 'QpNzSZpXf3TPiHs9mqur30xFrOXs/yFG4uNqBkVajQk=', )` — The public halves of the keys that sign Minn releases (base64 Ed25519;
 scripts/release-key.php). A new key ships here in a release signed by
-an old one before it signs anything.
+an old one before it signs anything. The first is the working key; the
+second is the recovery key, kept offline and used only to sign a
+release that replaces a lost or exposed working key.
 - const `MAX_DOWNLOAD` = `67108864`
 
-Used by: `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Ops\EngineChecksums`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Cli\Installer`, `Minn\Ops\CoreStatus`, `Minn\Ops\EngineChecksums`, `Minn\Rest\Services`
 
 ```php
 __construct(string $engineDir, array $keys = self::KEYS, Minn\Http $http = \Minn\Http::__set_state(array(    'within' =>    array (   ),    'fake' => NULL,    'refusal' => NULL, )))
@@ -363,7 +365,11 @@ Throws unless an archive matches the checksum its release publishes and carries 
 
 The version a bootstrap.php names; "0.0.0" when it names none.
 
-Internals: `swap()` (private, line 91), `signed()` (private, line 145), `refuseCheckout()` (private, line 171)
+### static `isCheckout(string $dir): bool`
+
+A link, or a folder inside a git working copy at any depth (the engine's own repository keeps it two levels down).
+
+Internals: `swap()` (private, line 96), `signed()` (private, line 150), `refuseCheckout()` (private, line 175)
 
 
 ## InstalledSoftware
@@ -575,7 +581,7 @@ A package over https, every redirect hop included, refusing anything
 else; when host prefixes are given, every hop must start with one.
 The request names the engine, never the site's address.
 
-Internals: `pluginPackage()` (private, line 160), `plain()` (private, line 223), `themePackage()` (private, line 317), `upload()` (private, line 370), `place()` (private, line 393), `contained()` (private, line 440), `identify()` (private, line 455), `ask()` (private, line 489)
+Internals: `pluginPackage()` (private, line 161), `plain()` (private, line 224), `themePackage()` (private, line 318), `upload()` (private, line 371), `place()` (private, line 394), `contained()` (private, line 444), `identify()` (private, line 459), `ask()` (private, line 493)
 
 
 ## Release

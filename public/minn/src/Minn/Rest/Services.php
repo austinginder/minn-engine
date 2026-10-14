@@ -6,6 +6,7 @@ namespace Minn\Rest;
 
 use Closure;
 use LogicException;
+use Minn\Admin\AdminPlugin;
 use Minn\Admin\ActivityChart;
 use Minn\Admin\ActivityFeed;
 use Minn\Admin\App;
@@ -317,7 +318,7 @@ final class Services
     /** The Minn Admin bundle on disk. */
     public function app(): App
     {
-        return $this->share(App::class, fn () => new App($this->engineDir . '/admin'));
+        return $this->share(App::class, fn () => AdminPlugin::app($this->engineDir, $this->contentDir()));
     }
 
     /** Installing and removing themes and extensions. */

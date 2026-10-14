@@ -3,12 +3,12 @@
  * Builds the release archive, dist/minn.zip: one top folder, minn/, holding
  * only what runs a site. The engine as committed (public/minn at HEAD, so
  * nothing untracked or uncommitted rides along; the repository's tests,
- * contracts, docs and changelog never ship) with its licence, and the files
- * the engine reads from the latest Minn Admin release at minn/admin in place
- * of the development symlink: the plugin header (its version), assets,
- * manifest.json (language packs), the user guide and the licence. Minn
- * Admin's PHP, readme, changelog and developer docs stay out: the engine
- * never runs or reads them, and both changelogs are fetched from GitHub.
+ * contracts, docs and changelog never ship) with its licence, and the latest
+ * Minn Admin release, whole, at minn/admin in place of the development
+ * symlink: the engine lays that plugin into wp-content/plugins/minn-admin on
+ * a site (Admin\AdminPlugin), where WordPress runs it after an eject, so it
+ * ships as Minn Admin publishes it, PHP, changelog and all (its PHP exits
+ * unless WordPress loaded it). The engine's own changelog stays on GitHub.
  * Minn Admin's archive is checked against the sha256 GitHub publishes for it
  * and unpacked through the engine's own archive checks. The finished zip is
  * opened again and checked before its sha256 is printed and written beside it.
@@ -35,8 +35,6 @@ Minn\Autoloader::register();
 
 const ADMIN_RELEASE = 'https://api.github.com/repos/austinginder/minn-admin/releases/latest';
 
-/** What the engine reads from Minn Admin (Admin\App, BundleController, Translations, AdminBar); nothing else ships. */
-const ADMIN_KEEP = ['minn-admin.php', 'license', 'manifest.json', 'docs/user-guide.md', 'assets/', 'languages/'];
 
 $options = getopt('', ['admin-zip:', 'out:', 'allow-dirty', 'key:', 'unsigned']);
 $fail = static function (string $message): never {
@@ -106,22 +104,11 @@ $tree = Minn\Ops\Archive::unpackFolder($adminZip, "{$work}/admin-stage");
 if (basename($tree) !== 'minn-admin' || !is_file("{$tree}/minn-admin.php")) {
     $fail('the Minn Admin archive does not hold a minn-admin/ folder with minn-admin.php.');
 }
-mkdir("{$work}/minn/admin");
-$dropped = 0;
-$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($tree, FilesystemIterator::SKIP_DOTS));
-foreach ($files as $file) {
-    $relative = substr($file->getPathname(), strlen($tree) + 1);
-    $keep = false;
-    foreach (ADMIN_KEEP as $kept) {
-        $keep = $keep || $relative === $kept || (str_ends_with($kept, '/') && str_starts_with($relative, $kept));
-    }
-    if (!$keep) {
-        $dropped++;
-        continue;
-    }
-    is_dir(dirname("{$work}/minn/admin/{$relative}")) || mkdir(dirname("{$work}/minn/admin/{$relative}"), 0755, true);
-    rename($file->getPathname(), "{$work}/minn/admin/{$relative}");
+// The plugin as Minn Admin publishes it: the copy a site's plugins folder receives.
+if (!is_dir("{$tree}/includes")) {
+    $fail('the Minn Admin archive holds no includes/: it is not the whole plugin.');
 }
+rename($tree, "{$work}/minn/admin");
 copy("{$root}/LICENSE", "{$work}/minn/LICENSE");
 preg_match('/^\s*\*\s*Version:\s*(\S+)/mi', (string) file_get_contents("{$work}/minn/admin/minn-admin.php"), $adminVersion);
 $adminVersion = $adminVersion[1] ?? '?';
@@ -161,15 +148,15 @@ $zip->close();
 // Opened again: what an install will find.
 $check = new ZipArchive();
 $check->open($target);
-foreach (['minn/bootstrap.php', 'minn/bin/minn', 'minn/LICENSE', 'minn/admin/minn-admin.php', 'minn/admin/license', 'minn/admin/manifest.json', 'minn/admin/docs/user-guide.md', 'minn/admin/assets/js/app.js', 'minn/admin/assets/fonts/ofl-hanken-grotesk.txt'] as $needed) {
+foreach (['minn/bootstrap.php', 'minn/bin/minn', 'minn/LICENSE', 'minn/admin/minn-admin.php', 'minn/admin/includes/class-minn-admin.php', 'minn/admin/license', 'minn/admin/manifest.json', 'minn/admin/docs/user-guide.md', 'minn/admin/assets/js/app.js', 'minn/admin/assets/fonts/ofl-hanken-grotesk.txt'] as $needed) {
     if ($check->locateName($needed) === false) {
         $fail("{$needed} is missing from the archive.");
     }
 }
-// Nothing that is not run or read: no changelog, readme, install record or Minn Admin PHP beyond its header.
+// Nothing of the engine's that is not run or read: no changelog, readme or install record (Minn Admin ships whole).
 for ($i = 0; $i < $check->numFiles; $i++) {
     $name = (string) $check->getNameIndex($i);
-    if (preg_match('#(^|/)(changelog|readme|security)\.md$|/\.install\.json$|^minn/admin/(includes|progress\.php)#i', $name)) {
+    if (preg_match('#^minn/(?!admin/)(.*/)?(changelog|readme|security)\.md$|/\.install\.json$#i', $name)) {
         $fail("{$name} must not ship.");
     }
 }
@@ -199,12 +186,11 @@ if (!isset($options['unsigned'])) {
 }
 
 printf(
-    "%s\n  Minn %s, Minn Admin %s (%s; %d of its files left out)\n  %d files, %.1f MB\n  sha256 %s\n  %s\n",
+    "%s\n  Minn %s, Minn Admin %s (%s, the whole plugin)\n  %d files, %.1f MB\n  sha256 %s\n  %s\n",
     $target,
     $version,
     $adminVersion,
     $adminFrom,
-    $dropped,
     $count,
     filesize($target) / 1048576,
     $sha256,

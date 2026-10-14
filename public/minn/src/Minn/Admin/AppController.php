@@ -131,6 +131,7 @@ final readonly class AppController
         $name = Html::esc((string) ($boot['site']['name'] ?? 'Site'));
         $cssVersion = Html::esc($this->app->assetVersion('assets/css/app.css'));
         $jsVersion = Html::esc($this->app->assetVersion('assets/js/app.js'));
+        $path = Html::attr($this->app->path());
         $json = Json::encode($boot, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         $lang = Html::attr(str_replace('_', '-', (string) ($boot['locale'] ?? 'en_US')));
         $dir = !empty($boot['rtl']) ? 'rtl' : 'ltr';
@@ -144,7 +145,7 @@ final readonly class AppController
         <meta name="robots" content="noindex, nofollow">
         <title>Minn Admin — {$name}</title>
         {$this->favicon()}
-        <link rel="stylesheet" href="/minn/admin/assets/css/app.css?ver={$cssVersion}">
+        <link rel="stylesheet" href="{$path}/assets/css/app.css?ver={$cssVersion}">
         <script>
         try {
         \tvar stored = localStorage.getItem( 'minn-theme' );
@@ -168,7 +169,7 @@ final readonly class AppController
         </head>
         <body>
         <div id="minn-app"><div class="minn-boot-spinner"></div></div>
-        <script src="/minn/admin/assets/js/app.js?ver={$jsVersion}"></script>
+        <script src="{$path}/assets/js/app.js?ver={$jsVersion}"></script>
         </body>
         </html>
         HTML;

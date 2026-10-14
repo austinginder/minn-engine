@@ -6,9 +6,10 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 |---|---|---|---|
 | [`ActivityChart`](#activitychart) | final readonly class | 65 | The overview's activity chart: published posts and pages plus every |
 | [`ActivityFeed`](#activityfeed) | final readonly class | 212 | What happened lately, as the overview and the bell tell it: the caller's |
+| [`AdminPlugin`](#adminplugin) | final class | 135 | Minn Admin's home on a site is wp-content/plugins/minn-admin: the same |
 | [`AdminTypes`](#admintypes) | final class | 85 | Admin-facing type facts (viewable, labels, supports, the edit gate) live |
-| [`App`](#app) | final readonly class | 100 | The Minn Admin app on disk: the symlinked dev copy the engine serves the |
-| [`AppController`](#appcontroller) | final readonly class | 149 | Serves Minn Admin from the engine: the path-routed shell (every |
+| [`App`](#app) | final readonly class | 106 | The Minn Admin app on disk the engine serves the shell and assets from: |
+| [`AppController`](#appcontroller) | final readonly class | 150 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 245 | The window.MINN boot payload, assembled from the engine: the keys app.js |
 | [`BundleController`](#bundlecontroller) | final readonly class | 45 | What the app bundle answers for: the user guide it carries, the |
@@ -115,6 +116,66 @@ A user's display name, empty when the user is gone.
 Internals: `ownPosts()` (private, line 98), `latestComments()` (private, line 143), `publishedBetween()` (private, line 171), `commentsBetween()` (private, line 196)
 
 
+## AdminPlugin
+
+`final class Minn\Admin\AdminPlugin` · `public/minn/src/Minn/Admin/AdminPlugin.php`
+
+Minn Admin's home on a site is wp-content/plugins/minn-admin: the same
+plugin WordPress runs, so an eject leaves the site its admin, and Minn
+Admin's own updates keep it current between engine releases. The engine
+carries the Minn Admin release of its build at minn/admin and lays it into
+the plugins folder the first time a new engine version serves a request:
+into an empty place, where it is also activated, or over an older copy,
+whose active state is kept; never over a newer copy, a link, or a folder
+under git, and never from a development checkout.
+
+The copy served is the plugin when it is at least the engine's own and
+asks for no newer engine (a "Requires Minn" header); otherwise the
+engine's copy, which also stands in while the plugin folder is missing.
+
+- const `FOLDER` = `'minn-admin'`
+- const `MAIN` = `'minn-admin/minn-admin.php'`
+- const `OPTION` = `'minn_admin_laid'` — The engine version that last settled the plugin: one autoloaded option, so a request with nothing to do reads nothing more.
+- const `KEPT` = `'Minn Admin is this site\'s admin, so it cannot be deleted while Minn runs the site. Deactivate it to switch the admin off.'` — Why deleting Minn Admin is refused, wherever it is asked for.
+- const `LOCK_TIMEOUT` = `600` — A lay that died midway leaves its lock behind; one older than this is taken over.
+
+Used by: `Minn\Admin\App`, `Minn\Cli\PluginCommand`, `Minn\Engine`, `Minn\Ops\Packages`, `Minn\Rest\PluginsController`, `Minn\Rest\Services`, `Minn\Runtime\PluginRemoval`
+
+### static `app(string $engineDir, string $contentDir): Minn\Admin\App`
+
+The app a request serves, with the address its files load from.
+
+### static `settle(string $engineDir, string $contentDir, Minn\Runtime\Options $options): void`
+
+Once per engine version: lays the engine's copy into the plugins
+folder when that is due, activating it when it was not there. A copy
+that cannot be laid (an unwritable folder) is not retried until the
+next version; the engine's copy is served meanwhile. Called once the
+runtime has booted, so the check is a read of the autoloaded list.
+
+### static `activated(?string $stored): ?array`
+
+The stored active_plugins list with Minn Admin added, sorted as
+activation sorts it; null when it is already there.
+
+- `@return list<string>|null`
+
+### static `lay(string $bundle, string $target): string`
+
+Puts the engine's copy at $target: "laid" into an empty place,
+"upgraded" over an older copy, "kept" when the copy there is as new or
+newer, "skipped" when nothing may be written (no whole plugin to lay,
+a link or a git checkout in the way, another lay in progress). The new
+copy is built beside the target and swapped in by renames, so a
+request never finds half a plugin.
+
+### static `servable(string $plugin, string $bundle, string $engineVersion): bool`
+
+Whether the plugin copy is whole, at least the engine's own, and asks for no newer engine.
+
+Internals: `engineVersion()` (private, line 160)
+
+
 ## AdminTypes
 
 `final class Minn\Admin\AdminTypes` · `public/minn/src/Minn/Admin/AdminTypes.php`
@@ -161,15 +222,17 @@ Whether a UI post type still supports comments.
 
 `final readonly class Minn\Admin\App` · `public/minn/src/Minn/Admin/App.php`
 
-The Minn Admin app on disk: the symlinked dev copy the engine serves the
-shell and assets from. Minn Admin is MIT, so reading its files is fine.
+The Minn Admin app on disk the engine serves the shell and assets from:
+the plugin in wp-content/plugins, or the engine's own copy at minn/admin
+(AdminPlugin::app picks), with the site path its files load from. Minn
+Admin is MIT, so reading its files is fine.
 
 - const `ASSET_TYPES` = `array (   'css' => 'text/css',   'js' => 'application/javascript',   'woff2' => 'font/woff2',   'woff' => 'font/woff',   'svg' => 'image/svg+xml',   'png' => 'image/png',   'json' => 'application/json', )`
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\BundleController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
+Used by: `Minn\Admin\AdminPlugin`, `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\BundleController`, `Minn\Admin\Translations`, `Minn\Engine`, `Minn\Front\AdminBar`, `Minn\Rest\Services`
 
 ```php
-__construct(string $dir)
+__construct(string $dir, string $path = '/minn/admin')
 ```
 
 
@@ -183,6 +246,10 @@ such record and keeps its admin.
 ### `dir(): string`
 
 Where the bundle sits on disk.
+
+### `path(): string`
+
+The site path its files load from (no trailing slash).
 
 ### `installed(): bool`
 

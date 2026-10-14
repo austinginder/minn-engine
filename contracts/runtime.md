@@ -16435,6 +16435,66 @@ The shared parser (`tests/tools/facade-parse.php`) now sees the alternative synt
 inside `if (!function_exists(...)) :` were read as unconditional, so 24 pluggable and polyfill functions
 had been recorded as generated delegates. They are conditional now and out of the table (1,597 delegates).
 
+## Minn Admin lives in wp-content/plugins; a recovery release key (2026-10-14)
+
+Austin, 2026-10-14: one copy of Minn Admin, in `wp-content/plugins`, put
+there by the engine's install and updates; and a second key the engine
+trusts, for the day the release key is lost.
+
+**Where Minn Admin lives.** A site's Minn Admin is the plugin in
+`wp-content/plugins/minn-admin`, the same plugin WordPress runs, so an
+eject leaves the site its admin and Minn Admin's own updates keep it
+current between engine releases (`Admin\AdminPlugin`).
+
+- The release bundles the Minn Admin release of its build whole at
+  `minn/admin`, as Minn Admin publishes it: PHP, `progress.php`, changelog
+  and user guide included. The laid copy must be a working plugin after an
+  eject, and its PHP exits unless WordPress loaded it. The engine's own
+  changelog, readme and install record still never ship. The release grew
+  from 2.6 MB to 4.9 MB (1,260 files, Minn Admin 0.45.0).
+- **Laying.** The first request a new engine version serves (front or REST,
+  once the runtime has booted, so the check is one autoloaded option,
+  `minn_admin_laid`) lays the engine's copy into the plugins folder: into an
+  empty place, where it is also added to `active_plugins`; over an older
+  copy, whose active state is kept; never over a copy as new or newer, a
+  link, a folder under git, or from a development checkout. The new copy is
+  built beside the target and swapped in by two renames under a lock
+  folder, so a request never finds half a plugin. A copy that cannot be
+  laid (an unwritable folder) is not retried until the next version.
+- **Serving.** The plugin copy is served when it is whole, at least the
+  engine's own version, and asks for no newer engine (an optional
+  `Requires Minn:` header in `minn-admin.php`). Otherwise, and on a
+  development checkout, the engine's copy is, which also stands in while
+  the plugin folder is missing. The shell and the toolbar load the served
+  copy's files from its own path: `/wp-content/plugins/minn-admin/...` or
+  `/minn/admin/...`. A host serves those as static files, so the address
+  has to follow the copy.
+- **Off and deleted.** Deactivating the plugin is still the off switch
+  ("Minn Admin is off", unchanged). Deleting it is refused while the engine
+  runs the site, on every path: `DELETE /wp/v2/plugins/minn-admin/minn-admin`
+  (`rest_cannot_delete_minn_admin`), `delete_plugins()` (`minn_admin_kept`,
+  the other plugins named still go), `wp plugin delete minn-admin`, and the
+  package remover beneath them.
+- Install and eject say where Minn Admin goes; the dev sites, whose engine
+  and plugin folder are links into checkouts, never lay anything and serve
+  the dev link as before.
+
+**A recovery key.** `Ops\EngineUpdate::KEYS` holds two public keys: the
+working key and a recovery key (`~/Keys/minn-release/recovery.key`, made
+with `scripts/release-key.php generate --key=...`). The recovery key is
+kept offline and signs only a release that replaces a lost or exposed
+working key, shipping a KEYS list with a new pair. Every install's trusted
+keys come from the first release it ran, so this had to be in 0.1.0.
+Revocation and a signed freshness record for the release offer stay open
+(register row 14984): they change the update service's protocol, and a
+later release signed with the working key can bring them.
+
+Pinned: unit `admin-plugin` (laid, upgraded, kept, never over a link or
+from a partial copy, the served copy, `Requires Minn`, the dev checkout,
+activation); suite `admin-surfaces` (the REST delete refused, the dev link
+kept); a test build's bundle laid and served from the plugins folder
+(working-copy classes over the unpacked zip).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
@@ -16494,6 +16554,6 @@ rows that are `open` or `austin`.
 | 13632 | The playlist block (10-11) | `playlist-view.js` is an empty module (and, found 2026-10-12, so are the tabs, accordion and image lightbox ones, whose blocks render their directives) | done | 2026-10-12: "The interactive blocks work in the browser" (suite `interactive-blocks`) |
 | 14006 | Imagick editor (10-11) | what `image_strip_meta` removes from a JPEG | accepted | profiles ImageMagick can write survive; the engine strips only names outside that set |
 | 14984 | An outside audit (10-11) | dead ends as a `__call` table, the DKIM key name, splitting this file | accepted | reasons given there |
-| 14984 | An outside audit (10-11) | release key rotation; the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
+| 14984 | An outside audit (10-11) | release key revocation and freshness (the recovery key is built in: "Minn Admin lives in wp-content/plugins; a recovery release key"); the review's B items | austin | they change the update service's protocol, or wait on the agent-first decision |
 | 15221 | Security fixes (10-12) | a post type under a namespace of its own gets no route | done | 2026-10-12: routes, list and writes (probe `namespaced-type`) |
 | 15221 | Security fixes (10-12) | the audit's Lows | done | each verified and fixed or accepted with its reason ("The audit's Lows, route schemas, namespaced types and the block head") |
