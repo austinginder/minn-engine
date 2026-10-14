@@ -2063,6 +2063,825 @@
                 "body": "e0299ac1b630"
             }
         },
+        "classes/PHPMailer.php": {
+            "PHPMailer::DKIM_Add": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\Dkim::signatureHeader",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "narrows DKIM_extraHeaders to the custom headers present and passes the header block, subject and body to Dkim::signatureHeader, which already canonicalizes, hashes and folds; argument conversion only",
+                "body": "2f9a53e66f2b"
+            },
+            "PHPMailer::DKIM_Sign": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "without OpenSSL it throws in exceptions mode or returns empty, otherwise the signature from the Dkim signer the object's settings make; the API's failure convention around one engine call",
+                "body": "45d0d45e6722"
+            },
+            "PHPMailer::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "constructor setting the exceptions flag when one is given; fills the object's property and nothing else",
+                "body": "5bd9b9b1c8eb"
+            },
+            "PHPMailer::addAnAddress": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "checks the kind, validates through validateAddress, and adds to to, cc or bcc once per lower-cased address (Reply-To to its own list); recipient bookkeeping behind getToAddresses and getAllRecipientAddresses",
+                "body": "803d9e977db0"
+            },
+            "PHPMailer::addAttachment": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "checks the file is accessible and the encoding valid, then appends the eight-field attachment row with its type from filenameToType; the list getAttachments returns and Composer reads",
+                "body": "f3484dd41101"
+            },
+            "PHPMailer::addCustomHeader": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "splits name:value, trims, refuses an empty name or a line break (throwing in exceptions mode) and appends to the custom headers wp_mail fills",
+                "body": "b2fba306bd83"
+            },
+            "PHPMailer::addEmbeddedImage": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "checks the file and the encoding and appends an inline attachment row under its content id; wp_mail's embeds and msgHTML call it",
+                "body": "50a2fe146027"
+            },
+            "PHPMailer::addOrEnqueueAnAddress": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "trims the address, strips breaks from the name, queues an address with an 8-bit domain for punycode at send time and adds the rest through addAnAddress; the recipient lists and queues are protected state subclasses read, the address rules already AddressRules'",
+                "body": "ddbafcbdabfb"
+            },
+            "PHPMailer::addStringAttachment": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "validates the encoding and appends an in-memory attachment row, its type from the file name; the object's attachment list",
+                "body": "92efeab4a1b4"
+            },
+            "PHPMailer::addStringEmbeddedImage": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "validates the encoding and appends an in-memory inline row, the type from the name when one is given",
+                "body": "f036c3cc6c1a"
+            },
+            "PHPMailer::addrFormat": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\Composer::address",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "writes an address alone, or the name as an encoded phrase with the address in angle brackets, which is Composer::address; today it goes through $this->encodeHeader and secureHeader",
+                "body": "185c525fd673"
+            },
+            "PHPMailer::cidExists": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "whether an inline attachment carries the content id; a query over the object's attachment list",
+                "body": "f82913fa5cf6"
+            },
+            "PHPMailer::clearAllRecipients": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "empties to, cc, bcc, all_recipients and the recipient queue; wp_mail resets the shared mailer through it",
+                "body": "0f2e21228c8f"
+            },
+            "PHPMailer::clearCustomHeader": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "removes custom headers by name, or by name and value, the name:value form split first; the object's header list",
+                "body": "b6efc48ad2d8"
+            },
+            "PHPMailer::clearReplyTos": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "empties the Reply-To list and its queue",
+                "body": "e198a2cf2820"
+            },
+            "PHPMailer::createBody": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "wraps through setWordWrap, takes the body and its encoding from Composer::body, maps its errors to PHPMailer's Exception codes and signs with S/MIME when a key is set; a template step subclasses override",
+                "body": "699289027bfa"
+            },
+            "PHPMailer::createHeader": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "Composer::headers writes the block from the object's draft, and Composer's To and Subject lines go into mailHeader for mail(); a public template step subclasses override to add headers",
+                "doubt": "for mail() with no To (Cc or Bcc only) mailHeader gets an empty To line, where the reference writes To: undisclosed-recipients:;",
+                "body": "832d3940ba9e"
+            },
+            "PHPMailer::doCallback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "calls action_function with the send result when a plugin set a callable; the object's own hook point subclasses override",
+                "body": "d666712c42c3"
+            },
+            "PHPMailer::edebug": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints DebugOutput::mailer's line for Debugoutput when SMTPDebug is on; an echo of an engine result behind the object's level",
+                "body": "1d42d22f17b7"
+            },
+            "PHPMailer::encodeString": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "encodes through Transfer::encode with the current line ending; an unknown encoding records the error, then throws in exceptions mode or returns empty",
+                "body": "de81b287d40b"
+            },
+            "PHPMailer::getSMTPInstance": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "makes the SMTP client on first use; plugins swap it through setSMTPInstance, so it stays the object's own",
+                "body": "0211ffbfe50b"
+            },
+            "PHPMailer::getSmtpErrorMessage": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a key's wording plus the SMTP client's last error and detail; reads the object's client and lang",
+                "body": "33b87277a58e"
+            },
+            "PHPMailer::getTranslations": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "loads the wording through the overridable setLanguage when empty and returns it; the class's own static state",
+                "body": "da12357fab54"
+            },
+            "PHPMailer::html2text": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a callable $advanced converts, otherwise HtmlMessage::text with the object's CharSet; the API's callable hook around one engine call",
+                "body": "13d380b3a1ce"
+            },
+            "PHPMailer::isQmail": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "as isSendmail for qmail-inject: the path from php.ini when it names qmail, and Mailer qmail; the object's own configuration",
+                "body": "3dc754737f78"
+            },
+            "PHPMailer::isSendmail": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets Mailer and the Sendmail path, taking php.ini's sendmail_path when it names sendmail; public configuration SMTP plugins call on the object's own properties",
+                "body": "cc68ab5f378d"
+            },
+            "PHPMailer::isShellSafe": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Sendmail",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "the rule for handing a Sender to a shell as -f: escapeshellcmd and escapeshellarg leave it unchanged and only safe characters appear; it guards both local transports",
+                "doubt": "+ and = pass here, which the reference refuses as shell-special (it allows letters, digits and @ _ - . only)",
+                "body": "cc5930ad592e"
+            },
+            "PHPMailer::lang": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "loads the wording through setLanguage when empty and returns a key's message, the key itself when missing; reads the static state subclasses fill",
+                "doubt": "smtp_connect_failed comes back without the troubleshooting link the reference's lang appends (smtpSend adds it itself), so a subclass asking lang for it differs",
+                "body": "fbbccf7ec18e"
+            },
+            "PHPMailer::mailPassthru": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\PhpMail",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "encodes the subject, prints the debug lines and calls PHP's mail() with or without the -f parameter; the mail() call is the transport, the edebug calls kept on $this",
+                "doubt": "passes the -f parameter even with UseSendmailOptions off, which the reference checks before giving mail() a fifth argument",
+                "body": "bbeceee7bf43"
+            },
+            "PHPMailer::mailSend": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\PhpMail",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "builds the To list (undisclosed-recipients when empty), the -f parameter for a valid shell-safe Sender, sets and restores php.ini's sendmail_from around the sends and turns a failure into an Exception; Mailer::viaMail repeats a simpler mail() send for the engine's own mail, so both should share one transport",
+                "doubt": "sets sendmail_from only for a shell-safe Sender and never takes it as the Sender when none is set; the reference sets it for any valid Sender and does both",
+                "body": "e2db3d05413b"
+            },
+            "PHPMailer::mb_pathinfo": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\PathParts::of",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "PathParts::of already splits the path; picking one part by the PATHINFO flag or its name is result conversion",
+                "body": "fc48d485d2af"
+            },
+            "PHPMailer::minnAddReplyTo": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "adds a Reply-To once per lower-cased address; the Reply-To half of addAnAddress over the object's ReplyTo list",
+                "doubt": "ReplyTo is a plain list here; the reference keys it by the lower-cased address, which getReplyToAddresses hands out (the wp_mail probe compares it through array_values)",
+                "body": "baa736f558b8"
+            },
+            "PHPMailer::minnCheckSenders": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "trims From, Sender and ConfirmReadingTo, punycodes each and refuses an invalid one through validateAddress; the reference's preSend check on the object's fields",
+                "body": "886573121b71"
+            },
+            "PHPMailer::minnClearKind": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "drops one kind's addresses from all_recipients, empties the list and its queued addresses; the shared step of clearAddresses, clearCCs and clearBCCs",
+                "body": "f1769e4692ff"
+            },
+            "PHPMailer::minnCompose": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the boundaries and Message-ID, builds the body then the header through the overridable createBody and createHeader, and adds the DKIM signature when a domain, selector and key are set; the reference's compose order, each step on $this",
+                "doubt": "when S/MIME signing it trims only the MIME header off createHeader and keeps MIME-Version, which the signed entity's headers repeat; the reference's createHeader leaves both out when a key is set",
+                "body": "ec322717058c"
+            },
+            "PHPMailer::minnDequeue": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "adds the queued IDN recipients and Reply-Tos through addAnAddress after punyencodeAddress, then empties the queues",
+                "body": "99a4f0ae8467"
+            },
+            "PHPMailer::minnDkim": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Dkim",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the Dkim signer from the object's settings, reading the key file when no key string is set; the string-or-file key read belongs in Dkim",
+                "body": "7a2cdce596bb"
+            },
+            "PHPMailer::minnEmbed": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\HtmlMessage",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "embeds a data: image or a file under the base directory (never without one), naming its content id and type, through the overridable add*EmbeddedImage; the resolution rules join HtmlMessage",
+                "body": "bf03555f7ba6"
+            },
+            "PHPMailer::minnGreet": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "EHLO with Helo or the server host name, STARTTLS when asked or when SMTPAutoTLS finds it offered (not over SSL), then EHLO again; Smtp::sendRaw repeats a fixed form of this",
+                "doubt": "auto-TLS is tried against localhost too, where the reference skips it when Host is localhost or OpenSSL is missing",
+                "body": "8c3b9831ec6b"
+            },
+            "PHPMailer::minnMailEach": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "calls the overridable mailPassthru once per target (each recipient for SingleTo) and doCallback after each; only $this calls at the reference's points",
+                "doubt": "a SingleTo callback gets the formatted address string with an empty name, where the reference parses each address into address and name",
+                "body": "9f3fc8da6f57"
+            },
+            "PHPMailer::minnOpenSession": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "greets, upgrades to TLS and signs in when SMTPAuth is set, quitting and returning the Exception on failure so the next host is tried",
+                "body": "f748b2aa9845"
+            },
+            "PHPMailer::minnPrepare": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the reference's preSend body in order: reset errors, dequeue IDN addresses, require a recipient, check senders, setMessageType, refuse an empty body unless AllowEmpty, trim Subject, compose; each step a $this call subclasses may override",
+                "doubt": "never sets ContentType to multipart/alternative when an AltBody exists, which the reference's preSend does and plugins can read after sending",
+                "body": "cbfdf1d678e3"
+            },
+            "PHPMailer::minnRecipients": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "sends RCPT TO with the DSN setting for every to, cc and bcc address, collecting the refused ones with the server's detail; part of the SMTP transaction",
+                "body": "cb7032236f97"
+            },
+            "PHPMailer::minnRefuse": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "records the error, prints it in debug, then throws in exceptions mode or returns false; the API's refusal convention shared by the adders",
+                "body": "1c62adde6ae0"
+            },
+            "PHPMailer::minnSecurity": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "decides SSL (an ssl:// prefix) or STARTTLS from the entry's prefix and SMTPSecure and refuses either without OpenSSL; a connection rule for the engine's SMTP code",
+                "body": "4a75b81da502"
+            },
+            "PHPMailer::minnSendmailCommand": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Sendmail",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "builds the sendmail or qmail command line: the escaped path, -oi and -t, and -f with the Sender when it is valid and shell-safe",
+                "doubt": "applies UseSendmailOptions here and gives qmail no options without a safe Sender, where the reference always uses -oi -t without one and keeps UseSendmailOptions for mail()",
+                "body": "5f6d6c7ec83f"
+            },
+            "PHPMailer::minnSmime": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\Smime::sign",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "hands the MIME header and body with the object's certificate and key to Smime::sign, stores the signed headers and fails with OpenSSL's error; argument and result conversion around one engine call",
+                "doubt": "the body is signed in the encoding Composer chose, where the reference forces 7bit for a signed message",
+                "body": "7ca04ff9a6d1"
+            },
+            "PHPMailer::minnSmtpDone": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "reads the transaction id, resets a kept-alive session or quits and closes, then calls doCallback per recipient with the id; the session-ending rule belongs with the SMTP flow",
+                "body": "52630a600f90"
+            },
+            "PHPMailer::minnTryHost": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "skips an unreadable entry or an invalid host with a debug line, connects with the entry's or the default port, then opens the session; the per-host step of the failover",
+                "doubt": "any port digits in the entry are used, where the reference keeps $this->Port for a port outside 1 to 65535",
+                "body": "a32c0688d914"
+            },
+            "PHPMailer::minnlogSend": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the send method for the engine's log transport (Mailer minnlog, set by _minn_wp_mail_transport): one MailLog::write, a failure raised as the send methods raise it, then doCallback",
+                "body": "ca5862beb65a"
+            },
+            "PHPMailer::msgHTML": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\HtmlMessage",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "rewrites each embeddable src or background to a cid, then sets the HTML body and an AltBody from html2text or the no-text notice; message building whose parsing HtmlMessage already holds, with isHTML, html2text and the embed calls kept on $this",
+                "body": "3a62ae7ba04f"
+            },
+            "PHPMailer::needsSMTPUTF8": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "whether From, Sender or any recipient address has 8-bit characters; a query over the object's addresses",
+                "body": "d284ab90032c"
+            },
+            "PHPMailer::parseAddresses": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\AddressRules::parseList",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "raises the reference's simple-parser notice and returns AddressRules::parseList, which already splits, decodes and validates the list",
+                "doubt": "ignores $useimap and always takes the simple parser with its notice; the reference uses imap_rfc822_parse_adrlist when the IMAP extension is loaded",
+                "body": "65e36328ee29"
+            },
+            "PHPMailer::postSend": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "dispatches to the {Mailer}Send method (custom ones included) and on an Exception records the error, resets a kept-alive SMTP session and rethrows in exceptions mode; the template subclasses and plugins call",
+                "body": "a89b0e37be0b"
+            },
+            "PHPMailer::preSend": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "picks the line ending for the Mailer and runs the prepare step, turning an Exception into ErrorInfo and false or a rethrow; a public step SMTP plugins call before reading the composed message",
+                "body": "081f9391c72b"
+            },
+            "PHPMailer::punyencodeAddress": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\AddressRules::asciiDomain",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "its guards (no charset, no @, no IDN support) repeat the checks AddressRules::asciiDomain already makes before converting the domain",
+                "body": "68bce46e9925"
+            },
+            "PHPMailer::replaceCustomHeader": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "rejects an empty or broken name or value, replaces the first header of that name and drops later ones; the object's header list",
+                "doubt": "refuses a bad header even when none matches and records ErrorInfo through minnRefuse, where the reference checks only a matching header and only throws or returns false",
+                "body": "6049c5629a8f"
+            },
+            "PHPMailer::send": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the reference's template: preSend then postSend, an Exception clearing mailHeader and setting ErrorInfo, rethrown only in exceptions mode; plugins override send (WP Mail SMTP's mail catcher) and call these steps",
+                "body": "46569b0dc51d"
+            },
+            "PHPMailer::sendmailSend": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Sendmail",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "pipes header and body to the sendmail binary through popen, once per recipient for SingleTo, failing on a nonzero exit, with doCallback after each; a transport the engine lacks (MailSettings has mail, smtp and log), the doCallback and lang calls kept at their points",
+                "doubt": "never takes php.ini's sendmail_from as the Sender when none is set, and a SingleTo copy gets the bare address as its To line where the reference writes the formatted one",
+                "body": "d0c5a577379e"
+            },
+            "PHPMailer::serverHostname": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "the host name for Message-ID and EHLO: Hostname, SERVER_NAME, gethostname or the uname node, localhost.localdomain when invalid; the engine's own mail takes gethostname its own way",
+                "doubt": "an empty SERVER_NAME falls through to gethostname here, where the reference takes it and answers localhost.localdomain",
+                "body": "d45745908212"
+            },
+            "PHPMailer::set": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets a declared property by name or records a variable_set error; the object's own properties",
+                "body": "5d98a5057a4f"
+            },
+            "PHPMailer::setBoundaries": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets uniqueid from the overridable generateId and the three boundaries Composer writes from it; public state getBoundaries returns",
+                "body": "7501fd20f557"
+            },
+            "PHPMailer::setError": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "counts the error and writes ErrorInfo, adding the SMTP client's last error, detail and codes in the mailer's wording when sending over SMTP; the field plugins read after a failed send",
+                "body": "bc67d73ede02"
+            },
+            "PHPMailer::setFrom": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "trims and validates the address (an 8-bit domain passes until punycode at send), sets From and FromName and, with $auto, an empty Sender; the sender fields wp_mail and plugins set and read",
+                "body": "4efcb68fa6b1"
+            },
+            "PHPMailer::setLanguage": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills the static $language with the base English set from MailerStrings and answers whether English was asked for; static state WP_PHPMailer overrides and lang reads",
+                "body": "5f431c55b0c2"
+            },
+            "PHPMailer::setSMTPInstance": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "stores and returns the SMTP client a plugin hands in",
+                "body": "9d3c194900a3"
+            },
+            "PHPMailer::setSMTPXclientAttribute": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets or clears one XCLIENT attribute the SMTP class allows, on the object's own list",
+                "body": "8468bf96713a"
+            },
+            "PHPMailer::setWordWrap": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "wraps AltBody for alternative messages or Body otherwise through the overridable wrapText when WordWrap is set; the object's own content",
+                "body": "753de7885b97"
+            },
+            "PHPMailer::sign": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "stores the S/MIME certificate, key, passphrase and extra certificates on the object",
+                "body": "0995c9176ba5"
+            },
+            "PHPMailer::smtpClose": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "quits and closes the SMTP client when it is connected; the object's own connection, closed from __destruct and by plugins using SMTPKeepAlive",
+                "body": "09bb9381dd96"
+            },
+            "PHPMailer::smtpConnect": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "configures the SMTP client from the object (timeout, debug, VERP) and tries each Host entry in turn, closing and raising the last failure when none opens; host failover the engine's Smtp lacks, public and called by plugins that keep a connection",
+                "body": "0fafca1fc3d2"
+            },
+            "PHPMailer::smtpSend": {
+                "verdict": "move",
+                "to": "Minn\\Mail\\Smtp",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the SMTP transaction: connect, MAIL FROM the Sender or From, a RCPT per recipient, DATA only when one was accepted, then the results; Smtp::sendRaw runs a simpler copy for the engine's own mail, so the flow belongs there with $this->smtp, doCallback and lang kept at their points",
+                "doubt": "never sends the SMTPXClient attributes (XCLIENT) before MAIL FROM and never reads UseSMTPUTF8, both of which the reference's SMTP send uses",
+                "body": "e668af64242d"
+            },
+            "PHPMailer::validateAddress": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a callable $patternselect or static $validator (wp_mail sets is_email there) answers first, otherwise the named pattern goes to AddressRules::valid; a non-string is false, the API's return convention",
+                "body": "2a64378773bb"
+            },
+            "SMTP::authenticate": {
+                "verdict": "delegate",
+                "to": "Minn\\Mail\\SmtpSession::authenticate",
+                "why": "turns PHPMailer's OAuth provider into its token through getOauth64 and hands the sign-in to SmtpSession::authenticate, which already speaks every mechanism; only argument conversion remains",
+                "body": "4651d56dcedf"
+            },
+            "SMTP::edebug": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "prints the line DebugOutput::smtp formats for the Debugoutput setting when the level is within do_debug; an echo of an engine result behind the object's own level",
+                "body": "c5f84debe12b"
+            },
+            "SMTP::minn": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the client's lazily made SmtpSession, refreshed with the public Timeout and Timelimit plugins set on the object before every call; plumbing over the class's own state",
+                "body": "b28687757be2"
+            }
+        },
+        "classes/POMO.php": {
+            "Gettext_Translations::gettext_select_plural_form": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "builds the plural function once from the Plural-Forms header through the overridable nplurals_and_expression_from_header and make_plural_form_function, then calls it; the public _nplurals and _gettext_select_plural_form are the object's state",
+                "body": "fb703ca8e4d0"
+            },
+            "Gettext_Translations::make_headers": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\MoFile::headers",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "splits a header block into trimmed name and value pairs, which MoFile's private header reader already does; the literal backslash-n replacement would join it",
+                "body": "82b2c39dcb21"
+            },
+            "Gettext_Translations::make_plural_form_function": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\PluralRule::fromExpression",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "wraps PluralRule's evaluator for the expression in a closure over the count",
+                "doubt": "the reference wraps the legacy Plural_Forms evaluator (LegacyPluralForms here) as an array callable and falls back to n != 1 when it refuses an expression; PluralRule accepts more and sends a bad one to form 0",
+                "body": "6a966fa36ac0"
+            },
+            "Gettext_Translations::nplurals_and_expression_from_header": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\PluralRule::fromHeader",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "PluralRule::fromHeader already reads the count and the expression; returning them as a pair is result conversion",
+                "doubt": "fromHeader accepts headers the reference's anchored pattern (wanting whitespace after the semicolon) sends to the 2 and n != 1 default, and raises nplurals=0 to 1",
+                "body": "866cd2adfee6"
+            },
+            "Gettext_Translations::parenthesize_plural_exression": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "rewrites an expression with each ternary branch parenthesized; an old POMO helper nothing in the engine uses",
+                "doubt": "a semicolon in the expression leaves the closing parentheses after it, where the reference closes them at each semicolon",
+                "body": "8797b5439dd7"
+            },
+            "Gettext_Translations::set_header": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the header through the parent and, for Plural-Forms, rebuilds _nplurals and the plural function through the overridable methods",
+                "body": "bf4c6b768292"
+            },
+            "MO::export": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\MoFile::write",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "keeps the entries is_entry_good_for_export accepts and hands them with the headers to MoFile::write; argument conversion",
+                "doubt": "the writer never consults export_original, export_translations or export_headers, which the reference's export goes through, so subclass overrides of them are ignored",
+                "body": "e79f441bf7ba"
+            },
+            "MO::export_headers": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\MoFile::headerBlock",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "writes each header as name: value on its own line, which MoFile's private headerBlock already does",
+                "body": "26c369c45aee"
+            },
+            "MO::export_original": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\Catalog::key",
+                "gates": [
+                    "subclass",
+                    "unprobed"
+                ],
+                "why": "the context and singular joined as Catalog::key joins them, the plural after a NUL as MoFile::write writes it",
+                "body": "088adba71281"
+            },
+            "MO::import_from_file": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\MoFile",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "checks and reads the file itself and hands the bytes to MoFile::read, then fills the object through set_headers, make_entry and add_entry, which subclasses such as Polylang's override; the path read belongs in MoFile, the filling stays on $this",
+                "body": "461044c73cda"
+            },
+            "MO::make_entry": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "splits an MO original into context, singular and plural and the NUL-joined translations into a Translation_Entry; the engine keeps keys whole and has no use for the split",
+                "body": "db7cc7c8d720"
+            },
+            "Translation_Entry::Translation_Entry": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the PHP 4 constructor: _deprecated_constructor, then __construct",
+                "body": "aa5e3989d1a2"
+            },
+            "Translation_Entry::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "fills the declared properties from $args when a singular is given, derives is_plural from plural and makes the list fields arrays; constructor plumbing",
+                "doubt": "keys that are not declared properties are dropped, where the reference sets them (the class allows dynamic properties), and an explicit is_plural is overwritten",
+                "body": "91e66642cba2"
+            },
+            "Translation_Entry::merge_with": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "merges another entry's flags and references uniquely and appends differing extracted comments; PO metadata the engine's catalogs never carry",
+                "doubt": "array_values reindexes the merged lists, where the reference's array_unique keeps the original keys",
+                "body": "ebe6789e3da7"
+            },
+            "Translations::add_entry": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "stores an entry (made from an array when needed) under its key; the entries registry plugins fill and subclasses such as Polylang's MO read",
+                "body": "7ce51212297d"
+            },
+            "Translations::add_entry_or_merge": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "stores an entry, or merges it into the one already under its key; the object's entries",
+                "body": "b1d43daf0c10"
+            },
+            "Translations::merge_originals_with": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "adds another set's entries, merging into the ones already present",
+                "body": "947ebf43f0fe"
+            },
+            "Translations::merge_with": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "copies another set's entries over these by key",
+                "body": "340ebdd69a4f"
+            },
+            "Translations::set_headers": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets each header through the overridable set_header, which Gettext_Translations hooks for Plural-Forms",
+                "body": "897200fc7619"
+            },
+            "Translations::translate": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "looks the singular up in its context through translate_entry and returns the first translation, else the original",
+                "doubt": "an entry whose first translation is empty returns the original here; the reference returns the empty string whenever the translations list is not empty",
+                "body": "992c4653d11b"
+            },
+            "Translations::translate_entry": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the stored entry under the given entry's key, or false",
+                "body": "9702b3f48fa7"
+            },
+            "Translations::translate_plural": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "looks the pair up and picks the form through the overridable select_plural_form within get_plural_forms_count, else English's singular or plural",
+                "doubt": "an empty stored form falls back to English here; the reference returns the stored form whenever that index is set",
+                "body": "a0e0e07f96c5"
+            }
+        },
+        "classes/POMO_Streams.php": {
+            "POMO_CachedFileReader::POMO_CachedFileReader": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the PHP 4 constructor: _deprecated_constructor, then __construct",
+                "body": "2cbc1a589a99"
+            },
+            "POMO_CachedFileReader::__construct": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "reads the whole file into the string reader up front; the reader's own buffering, done in the engine by MoFile",
+                "body": "2aa4984fd1cb"
+            },
+            "POMO_CachedIntFileReader::POMO_CachedIntFileReader": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the PHP 4 constructor: _deprecated_constructor, then the inherited __construct",
+                "body": "2cbc1a589a99"
+            },
+            "POMO_FileReader::POMO_FileReader": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the PHP 4 constructor: _deprecated_constructor, then __construct",
+                "body": "2cbc1a589a99"
+            },
+            "POMO_FileReader::__construct": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "opens the file for binary reading behind the stream API; the engine reads translation files whole through MoFile",
+                "body": "96d9a202ae5c"
+            },
+            "POMO_FileReader::seekto": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "seeks the open file and records the position, false when fseek fails",
+                "body": "ae5dd649f707"
+            },
+            "POMO_Reader::POMO_Reader": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the PHP 4 constructor: _deprecated_constructor, then __construct",
+                "body": "f92fe3b9c8c7"
+            },
+            "POMO_Reader::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sets is_overloaded false and the position to 0; constructor plumbing",
+                "body": "7a378f44db10"
+            },
+            "POMO_Reader::readint32": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "reads four bytes and unpacks them in the reader's byte order, false when short; the engine's MoFile unpacks its own way",
+                "body": "39dd49e41c26"
+            },
+            "POMO_Reader::readint32array": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "reads a run of 32-bit integers in the reader's byte order, keyed from 1 as unpack gives them, false when short",
+                "body": "935584daa71a"
+            },
+            "POMO_StringReader::POMO_StringReader": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the PHP 4 constructor: _deprecated_constructor, then __construct",
+                "body": "a5e645c1983d"
+            },
+            "POMO_StringReader::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "stores the string and starts at position 0; constructor plumbing",
+                "body": "3439367d640b"
+            },
+            "POMO_StringReader::read": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "returns the next bytes of the string and advances, stopping at its end",
+                "body": "4505a4b4336b"
+            },
+            "POMO_StringReader::seekto": {
+                "verdict": "keep",
+                "reason": "library",
+                "why": "moves within the string, clamped to its length",
+                "body": "f6447616e2db"
+            }
+        },
+        "classes/PasswordHash.php": {
+            "PasswordHash::CheckPassword": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\PortableHash",
+                "why": "refuses over 4096 bytes, checks a $P$ or $H$ hash through crypt_private and anything else through crypt(), compared in constant time; PortableHash::verify covers only $P$, so phpass's check belongs beside it",
+                "body": "1308e9fe8229"
+            },
+            "PasswordHash::HashPassword": {
+                "verdict": "move",
+                "to": "Minn\\Auth\\PortableHash",
+                "why": "refuses over 4096 bytes, tries bcrypt through crypt() unless portable, else the portable $P$ hash at the count plus five, with * when neither has the right length; PortableHash already holds the pieces and a portable hash, so phpass's choice joins it",
+                "body": "eb52931e88fe"
+            },
+            "PasswordHash::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "fills the alphabet, the iteration count (8 outside 4 to 31), the portable flag and a random state; constructor plumbing",
+                "body": "6e5415b6f7c5"
+            }
+        },
         "classes/WP_Admin_Bar.php": {
             "WP_Admin_Bar::_bind": {
                 "verdict": "keep",
@@ -4126,6 +4945,20 @@
                 "reason": "shape",
                 "why": "prints the object's hit and miss counts and the engine's group sizes",
                 "body": "59178a8a55ba"
+            }
+        },
+        "classes/WP_PHPMailer.php": {
+            "WP_PHPMailer::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs PHPMailer's constructor, then this subclass's setLanguage so WordPress's wording replaces the base set",
+                "body": "05ce0eb0b36b"
+            },
+            "WP_PHPMailer::setLanguage": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "WordPress's mailer wording from MailerStrings, each message through __() so gettext filters and loaded translations apply, stored in the static $language; true for any code",
+                "body": "444ea3b45c19"
             }
         },
         "classes/WP_Plugin_Dependencies.php": {
@@ -9185,6 +10018,216 @@
                 "reason": "contract",
                 "why": "the vars, then $this->get_terms",
                 "body": "8b3d76698692"
+            }
+        },
+        "classes/WP_Textdomain_Registry.php": {
+            "WP_Textdomain_Registry::find": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Paths",
+                "why": "asks Paths::translationDir with the domain's custom path and this registry's file lister, falling back to the custom path; the fallback rule belongs in translationDir",
+                "body": "6c4c5fef9749"
+            },
+            "WP_Textdomain_Registry::get": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads the registry's own domain and locale cache, filled once through find, and passes it through lang_dir_for_domain; the registry is the global $wp_textdomain_registry the engine itself writes through set()",
+                "body": "87dbbb166d57"
+            },
+            "WP_Textdomain_Registry::get_language_files_from_path": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TranslationFiles",
+                "why": "lets pre_get_language_files_from_path answer, else globs the folder's .mo and .l10n.php files; a folder scan with its hook, beside TranslationFiles::languages",
+                "doubt": "the filter gets the path as given, where the reference passes it trailing-slashed, and no translation_files cache is kept or used",
+                "body": "7b42e18e4aa7"
+            },
+            "WP_Textdomain_Registry::get_paths_for_domain": {
+                "verdict": "move",
+                "to": "Minn\\Support\\Paths",
+                "gates": [
+                    "unprobed"
+                ],
+                "why": "lists the folders a domain's files may be in: the plugins language folder and the domain's custom path; the list Paths::translationDir walks",
+                "doubt": "omits WP_LANG_DIR/themes, which the reference lists after the plugins folder and Paths::translationDir checks",
+                "body": "8be0c14758a4"
+            },
+            "WP_Textdomain_Registry::set": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "records a domain's folder for a locale, trailing-slashed, as its current one too; the engine records loaded folders through this global's set()",
+                "doubt": "a falsy path is stored as given ('' or null), where the reference stores false",
+                "body": "bb8006fdf894"
+            }
+        },
+        "classes/WP_Translation_Controller.php": {
+            "WP_Translation_Controller::get_entries": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "when loaded for the current locale, merges every loaded file's entries in load order, forms NUL-joined; a merge over TextDomains' catalogs that TextDomains should answer",
+                "body": "5768ab3ba096"
+            },
+            "WP_Translation_Controller::get_headers": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "when loaded for the current locale, merges every loaded file's headers in load order under normalized names; a merge over TextDomains' catalogs that TextDomains should answer",
+                "body": "5f2579323612"
+            },
+            "WP_Translation_Controller::is_textdomain_loaded": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "answers from the facade's per-locale record when the domain is in it, else from TextDomains::has; the locale bookkeeping belongs with TextDomains",
+                "body": "76c62ad7c464"
+            },
+            "WP_Translation_Controller::load_file": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "refuses an unreadable file or one that is not .mo or .php, reads it through TranslationFiles, adds it to TextDomains and records the domain as loaded for the locale; the per-locale record is engine state TextDomains lacks",
+                "doubt": "the path is used as given, where the reference resolves it with realpath first, so a relative or symlinked path can load twice or fail to unload",
+                "body": "e87f94baa20d"
+            },
+            "WP_Translation_Controller::locate_translation": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "finds the first loaded file holding the key and returns its forms with a fresh file object; the lookup is TextDomains', wrapping the file is shape",
+                "body": "3a971778b1bf"
+            },
+            "WP_Translation_Controller::translate_plural": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\TextDomains::translatePlural",
+                "why": "builds the joined-plurals key and the singular key in context and asks TextDomains::translatePlural, false for none; argument conversion",
+                "body": "11a5c155958f"
+            },
+            "WP_Translation_Controller::unload_file": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\TextDomains::unloadFile",
+                "why": "takes the path from a file object or a string and calls TextDomains::unloadFile, answering true",
+                "body": "24efe16f72b4"
+            },
+            "WP_Translation_Controller::unload_textdomain": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\TextDomains",
+                "why": "clears the domain from every locale's record and unloads it from TextDomains; the per-locale record belongs with TextDomains",
+                "doubt": "a given $locale is ignored; the reference unloads the domain for that locale only",
+                "body": "abf8faafd911"
+            }
+        },
+        "classes/WP_Translation_File.php": {
+            "WP_Translation_File::create": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "returns the MO or PHP file object for a readable file, the type from the extension unless given; a factory over the facade's own classes",
+                "doubt": "any extension but .php makes an MO object; the reference takes the extension as the type and answers false for one that is neither mo nor php",
+                "body": "cff23f1a1113"
+            },
+            "WP_Translation_File::entries": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "parses on first use and returns the held entries",
+                "body": "69954aea7f01"
+            },
+            "WP_Translation_File::get_plural_form": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "parses, builds the plural function once from the plural-forms header through the overridable helpers and applies it to the number",
+                "body": "f92f97ee255e"
+            },
+            "WP_Translation_File::headers": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "parses on first use and returns the held headers",
+                "body": "7ed77de2ce89"
+            },
+            "WP_Translation_File::import": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "copies another file object's headers, entries and error, succeeding when it had none; the object's own state",
+                "body": "1907ce5e6ccf"
+            },
+            "WP_Translation_File::make_plural_form_function": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\PluralRule::fromExpression",
+                "why": "wraps PluralRule's evaluator for the expression in a closure",
+                "doubt": "the reference wraps the legacy Plural_Forms evaluator and falls back to n != 1 when it throws; PluralRule accepts more and sends a bad expression to form 0",
+                "body": "ecebe0735ff5"
+            },
+            "WP_Translation_File::parse_file": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\TranslationFiles::read",
+                "why": "reads the file once through TranslationFiles::read, recording Invalid data on failure, and keeps the headers lower-cased and each entry's forms NUL-joined; result conversion into the reference's arrays",
+                "doubt": "TranslationFiles::read picks the reader by extension, so an MO object over a .php path includes it and a PHP object over a .mo path reads it as one; the reference reads by the object's class",
+                "body": "58149a795246"
+            },
+            "WP_Translation_File::transform": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads a file through create, imports it into an empty MO or PHP object and exports that; built from the class's own create, import and export",
+                "body": "87ee0118e8ad"
+            },
+            "WP_Translation_File::translate": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "parses on first use and returns the held translation for a key, false when missing",
+                "body": "7981b3c2e69e"
+            },
+            "WP_Translation_File_MO::detect_endian_and_validate_file": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\MoFile::byteOrder",
+                "why": "reads the magic number as V or N and records the error otherwise; MoFile's private byteOrder already decides the same",
+                "body": "4587f45c73e6"
+            },
+            "WP_Translation_File_MO::export": {
+                "verdict": "delegate",
+                "to": "Minn\\I18n\\MoFile::write",
+                "why": "splits each held translation into its forms and writes the headers and entries through MoFile::write; argument conversion",
+                "doubt": "MoFile::write sorts the entries, where the reference writes them in held order after the header entry",
+                "body": "de3d9ef30dad"
+            },
+            "WP_Translation_File_MO::parse_file": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "runs the shared parse and answers whether it read without error",
+                "doubt": "every failure reads Invalid data, where the reference names a bad magic number (Magic marker does not exist) and refuses a nonzero revision (Unsupported revision), which MoFile::read accepts",
+                "body": "00309b0e9d09"
+            },
+            "WP_Translation_File_PHP::var_export": {
+                "verdict": "move",
+                "to": "Minn\\I18n\\PhpFile",
+                "why": "writes an array as compact PHP source, keys and values through var_export, recursing; the .l10n.php writer belongs beside PhpFile's reader",
+                "doubt": "keys are written for list arrays too, where the reference drops them when array_is_list",
+                "body": "cfa313d9b539"
+            }
+        },
+        "classes/WP_Translations.php": {
+            "WP_Translations::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "stores the controller and the domain; constructor plumbing",
+                "body": "ee9f1e48e1ec"
+            },
+            "WP_Translations::__get": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "entries as a list of Translation_Entry objects made from the controller's entries, headers from its headers, null otherwise; presents the controller's data in the old POMO shape",
+                "body": "ae7912994be5"
+            },
+            "WP_Translations::make_entry": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "splits the context off a key and builds a Translation_Entry with the NUL-split forms",
+                "doubt": "is_plural stays false; the reference marks an entry plural when it has more than one translation",
+                "body": "2514dce158e3"
+            },
+            "WP_Translations::translate": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "asks the controller and falls back to the original when it answers false",
+                "body": "58683de72ad0"
+            },
+            "WP_Translations::translate_plural": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "asks the controller and falls back to English's singular or plural when it answers false",
+                "doubt": "no early return when either form is null, and (int) makes a count of '1' singular, where the reference's strict 1 === $count does not",
+                "body": "2bd309c6a98c"
             }
         },
         "classes/WP_Upgrader.php": {
