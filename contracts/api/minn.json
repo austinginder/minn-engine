@@ -72008,6 +72008,7 @@
             ],
             "usedBy": [
                 "Minn\\Runtime\\SiteInfo",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Support\\Sanitize",
                 "Minn\\Theme\\PageRenderer"
             ],
@@ -72616,7 +72617,8 @@
             ],
             "usedBy": [
                 "Minn\\Rest\\UsersController",
-                "Minn\\Runtime\\OptionSanitizer"
+                "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\Translations"
             ],
             "constructor": null,
             "cases": [],
@@ -83928,6 +83930,7 @@
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\PostTags",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\UserWrites",
                 "Minn\\Theme\\QueryClasses"
             ],
@@ -117579,6 +117582,7 @@
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\UserWrites",
                 "Minn\\Support\\Entities",
                 "Minn\\Support\\Sanitize"
@@ -125684,6 +125688,67 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\FileHeaders",
+            "short": "FileHeaders",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/FileHeaders.php",
+            "lines": 30,
+            "doc": "The headers at the top of a theme, plugin or translation file, as\nWordPress's get_file_data reads them: the first eight kilobytes, each\nheader by its label (the extra ones extra_{context}_headers adds first).",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\PluginRequirements",
+                "Minn\\Runtime\\Plugins",
+                "Minn\\Runtime\\Translations"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "read",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "read(mixed $file, mixed $defaultHeaders, mixed $context = ''): array",
+                    "doc": "A file's headers by field (get_file_data), empty for a header it does\nnot carry.",
+                    "shapes": [
+                        "@return array<string, string>"
+                    ],
+                    "params": [
+                        {
+                            "name": "file",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "defaultHeaders",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 20,
+                    "end": 40
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\FileTypeCheck",
             "short": "FileTypeCheck",
             "namespace": "Minn\\Runtime",
@@ -125984,7 +126049,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 413,
+            "lines": 419,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -126106,6 +126171,7 @@
                 "Minn\\Runtime\\TermWrites",
                 "Minn\\Runtime\\ThemeSupports",
                 "Minn\\Runtime\\Themes",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Runtime\\UserOrder",
@@ -127389,6 +127455,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "translationController",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "translationController(): object",
+                    "doc": "The object that loads translation files and looks translations up (WP_Translation_Controller::get_instance).",
+                    "shapes": [],
+                    "params": [],
+                    "line": 445,
+                    "end": 448
+                },
+                {
+                    "routes": [],
                     "name": "newTheme",
                     "static": true,
                     "visibility": "public",
@@ -127404,8 +127482,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 445,
-                    "end": 448
+                    "line": 451,
+                    "end": 454
                 },
                 {
                     "routes": [],
@@ -127431,8 +127509,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 450,
-                    "end": 454
+                    "line": 456,
+                    "end": 460
                 }
             ]
         },
@@ -130599,6 +130677,7 @@
                 "Minn\\Runtime\\PostTags",
                 "Minn\\Runtime\\PostWrites",
                 "Minn\\Runtime\\TermWrites",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\UserWrites"
             ],
             "constructor": null,
@@ -135223,6 +135302,7 @@
                 "Minn\\Runtime\\OptionWrites",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Transients",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Support\\Files",
                 "Minn\\Support\\Paths"
             ],
@@ -135418,6 +135498,7 @@
             "implements": [],
             "extends": null,
             "uses": [
+                "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\Refusal",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\SiteUrls",
@@ -135637,9 +135718,11 @@
                 "Minn\\Http\\Failure",
                 "Minn\\Login\\ServeLogin",
                 "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Runtime\\Symbols",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Support\\FileHeaders"
             ],
             "usedBy": [
@@ -145989,6 +146072,7 @@
                 "Minn\\Runtime\\Deferrals",
                 "Minn\\Runtime\\DocumentTitle",
                 "Minn\\Runtime\\EditLinks",
+                "Minn\\Runtime\\FileHeaders",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\Interactivity",
@@ -146054,6 +146138,7 @@
                 "Minn\\Runtime\\ThemeSwitch",
                 "Minn\\Runtime\\Themes",
                 "Minn\\Runtime\\Transients",
+                "Minn\\Runtime\\Translations",
                 "Minn\\Runtime\\Upgrade",
                 "Minn\\Runtime\\UserEvents",
                 "Minn\\Runtime\\UserQueryRunner",
@@ -155651,6 +155736,247 @@
                     ],
                     "line": 144,
                     "end": 154
+                }
+            ]
+        },
+        {
+            "name": "Minn\\Runtime\\Translations",
+            "short": "Translations",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/Translations.php",
+            "lines": 126,
+            "doc": "The translations a request loads, as WordPress's l10n functions load\nthem: the locale in force, a text domain loaded from its file (or its\nfolder named for later) and unloaded, the default domain, a plugin's,\na user's locale, and the translations installed on disk; each step with\nthe filters that may answer first.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\I18n\\SiteLanguage",
+                "Minn\\I18n\\TranslationFiles",
+                "Minn\\Objects\\User",
+                "Minn\\Runtime\\FileHeaders",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MetaData",
+                "Minn\\Runtime\\Runtime"
+            ],
+            "usedBy": [
+                "Minn\\Runtime\\AccountFlows",
+                "Minn\\Runtime\\PluginRemoval",
+                "Minn\\Runtime\\Plugins"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "locale",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "locale(): string",
+                    "doc": "The locale in force (determine_locale): a switched one, else pre_determine_locale, else the site's through determine_locale.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 21,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "load",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "load(mixed $domain, mixed $mofile, mixed $locale = NULL): bool",
+                    "doc": "A text domain loaded from a translation file (load_textdomain), the\nPHP file beside the .mo first unless translation_file_format says mo;\nwhether one loaded. Its locale becomes the one translations are looked\nup in, and its folder where its script translations are looked for.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "mofile",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 39,
+                    "end": 64
+                },
+                {
+                    "routes": [],
+                    "name": "unload",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "unload(mixed $domain, mixed $reloadable = false): bool",
+                    "doc": "A text domain unloaded (unload_textdomain): whether it had files; one that did stays closed unless it may load again.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "reloadable",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 67,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "fromFolder",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "fromFolder(string $domain, string $folder, string $file, string $locale): bool",
+                    "doc": "A domain loaded from a folder's file for the locale when there is one, or the folder named for later; a domain closed for good loads nothing.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "folder",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "file",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "locale",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 91
+                },
+                {
+                    "routes": [],
+                    "name": "loadDefault",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadDefault(mixed $locale = NULL): bool",
+                    "doc": "The default domain loaded again for a locale, the one in force unless named (load_default_textdomain).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "locale",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 94,
+                    "end": 99
+                },
+                {
+                    "routes": [],
+                    "name": "loadPlugin",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "loadPlugin(mixed $domain, mixed $deprecated = false, mixed $relativePath = false): bool",
+                    "doc": "A plugin's domain loaded from its folder (load_plugin_textdomain), the plugins folder unless a path under it is given.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "domain",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "deprecated",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        },
+                        {
+                            "name": "relativePath",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "false",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 102,
+                    "end": 107
+                },
+                {
+                    "routes": [],
+                    "name": "userLocale",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "userLocale(mixed $user = 0): string",
+                    "doc": "A user's locale (get_user_locale), the signed-in user's for 0; the site's when the user has none or does not exist.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "user",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 110,
+                    "end": 120
+                },
+                {
+                    "routes": [],
+                    "name": "installed",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "installed(mixed $type): array",
+                    "doc": "The translations installed (wp_get_installed_translations) for core,\nplugins or themes: by text domain and locale, each with its file's\nheaders; a .po without its .mo is not one.",
+                    "shapes": [
+                        "@return array<string, array<string, array<string, string>>>"
+                    ],
+                    "params": [
+                        {
+                            "name": "type",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 129,
+                    "end": 142
                 }
             ]
         },

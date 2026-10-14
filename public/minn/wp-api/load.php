@@ -816,3 +816,6 @@ Minn\Runtime\Handoff::bind(['resetKses' => static function (): void {
 
 // A theme template runs in this layer's globals, so the engine asks for it through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['loadTemplate' => static fn (...$args) => load_template(...$args)]);
+
+// The translation controller, handed over through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['translationController' => static fn () => WP_Translation_Controller::get_instance()]);

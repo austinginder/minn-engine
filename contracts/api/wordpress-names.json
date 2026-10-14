@@ -1,12 +1,12 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 75,
-        "functions": 61,
+        "functionCalls": 72,
+        "functions": 58,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 39
+        "files": 38
     },
     "families": {
         "functions": {
@@ -18,7 +18,6 @@
             "wp-includes/blocks.php": 5,
             "wp-includes/comment.php": 4,
             "wp-includes/plugin.php": 3,
-            "wp-includes/l10n.php": 3,
             "wp-admin/includes/file.php": 3,
             "wp-includes/functions.php": 3,
             "wp-admin/includes/post.php": 2,
@@ -238,13 +237,6 @@
                 "Minn/Rest/TemplatesController.php": 1
             }
         },
-        "get_user_locale": {
-            "uses": 1,
-            "family": "wp-includes/l10n.php",
-            "files": {
-                "Minn/Runtime/AccountFlows.php": 1
-            }
-        },
         "has_site_icon": {
             "uses": 1,
             "family": "wp-includes/general-template.php",
@@ -257,13 +249,6 @@
             "family": "wp-admin/includes/plugin.php",
             "files": {
                 "Minn/Runtime/PluginRemoval.php": 1
-            }
-        },
-        "load_default_textdomain": {
-            "uses": 1,
-            "family": "wp-includes/l10n.php",
-            "files": {
-                "Minn/Runtime/Plugins.php": 1
             }
         },
         "plugin_basename": {
@@ -369,13 +354,6 @@
             "family": "wp-includes/media.php",
             "files": {
                 "Minn/Content/MediaShortcodes.php": 1
-            }
-        },
-        "wp_get_installed_translations": {
-            "uses": 1,
-            "family": "wp-includes/l10n.php",
-            "files": {
-                "Minn/Runtime/PluginRemoval.php": 1
             }
         },
         "wp_get_translation_updates": {

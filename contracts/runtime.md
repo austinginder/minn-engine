@@ -16282,6 +16282,13 @@ too-early notice, a handle queued, and the script elements (wp_get_script_tag, w
 runs in the layer's globals, so the engine loads one through `Handoff::loadTemplate()`. Full run 32 (after batch 34) was green
 throughout. The http-transports probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 37, translations.** `Runtime\Translations` answers determine_locale, load_textdomain (the PHP file
+before the .mo unless translation_file_format says mo), unload_textdomain, load_default_textdomain,
+load_plugin_textdomain, get_user_locale and wp_get_installed_translations; `Runtime\FileHeaders` reads a
+file's headers (get_file_data). The translation controller is handed over through
+`Handoff::translationController()`. The http-transports probe stays out of the comparison; the other probes
+give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

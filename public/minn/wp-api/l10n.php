@@ -14,26 +14,12 @@ function get_locale()
 /** A user's locale (the current user's for 0), or the site's when the user has none or does not exist. */
 function get_user_locale($user = 0)
 {
-    $object = match (true) {
-        $user instanceof WP_User => $user,
-        (int) $user === 0 && !is_object($user) => wp_get_current_user(),
-        is_numeric($user) => get_userdata((int) $user),
-        default => false,
-    };
-    $locale = $object instanceof WP_User ? (string) get_user_meta($object->ID, 'locale', true) : '';
-    return $locale !== '' ? $locale : get_locale();
+    return Minn\Runtime\Translations::userLocale($user);
 }
 
 function determine_locale()
 {
-    if (Runtime::locales()->switched()) {
-        return (string) Runtime::locales()->current();
-    }
-    $locale = apply_filters('pre_determine_locale', null);
-    if (is_string($locale) && $locale !== '') {
-        return $locale;
-    }
-    return apply_filters('determine_locale', get_locale());
+    return Minn\Runtime\Translations::locale();
 }
 
 // Engine code and these names translate through one class; it loads a domain just in time through the facade's loader.
@@ -165,21 +151,12 @@ function esc_attr_x($text, $context, $domain = 'default')
 /** @internal loads the domain from a folder's file for the locale when there is one, or names the folder for later */
 function _minn_load_from_folder(string $domain, string $folder, string $file, string $locale): bool
 {
-    $folder = rtrim($folder, '/');
-    $mofile = "{$folder}/{$file}.mo";
-    // A domain unloaded for good stays closed: naming its folder again loads nothing (probe plugin-data).
-    if (!Runtime::textDomains()->closed($domain) && (is_readable($mofile) || is_readable("{$folder}/{$file}.l10n.php"))) {
-        return load_textdomain($domain, $mofile, $locale);
-    }
-    Runtime::textDomains()->rememberFolder($domain, $folder);
-    return true;
+    return Minn\Runtime\Translations::fromFolder($domain, $folder, $file, $locale);
 }
 
 function load_plugin_textdomain($domain, $deprecated = false, $plugin_rel_path = false)
 {
-    $folder = WP_PLUGIN_DIR . ($plugin_rel_path !== false ? '/' . trim((string) $plugin_rel_path, '/') : '');
-    $locale = determine_locale();
-    return _minn_load_from_folder((string) $domain, $folder, "{$domain}-{$locale}", $locale);
+    return Minn\Runtime\Translations::loadPlugin($domain, $deprecated, $plugin_rel_path);
 }
 
 function load_muplugin_textdomain($domain, $mu_plugin_rel_path = '')
@@ -202,43 +179,12 @@ function load_child_theme_textdomain($domain, $path = false)
 
 function load_textdomain($domain, $mofile, $locale = null)
 {
-    $loaded = apply_filters('pre_load_textdomain', null, $domain, $mofile, $locale);
-    if ($loaded !== null) {
-        return (bool) $loaded;
-    }
-    if (apply_filters('override_load_textdomain', false, $domain, $mofile, $locale)) {
-        return true;
-    }
-    do_action('load_textdomain', $domain, $mofile);
-    $mofile = (string) apply_filters('load_textdomain_mofile', $mofile, $domain);
-    $locale ??= determine_locale();
-    // Loading a domain makes its locale the one translations are looked up in (probe l10n-more).
-    WP_Translation_Controller::get_instance()->set_locale((string) $locale);
-    $format = apply_filters('translation_file_format', 'php', $domain);
-    foreach (TranslationFiles::candidates($mofile, $format === 'mo' ? 'mo' : 'php') as $candidate) {
-        $file = (string) apply_filters('load_translation_file', $candidate, $domain, $locale);
-        if (WP_Translation_Controller::get_instance()->load_file($file, (string) $domain, (string) $locale)) {
-            // The folder a domain loaded from is where its script translations are looked for when no folder is given.
-            $GLOBALS['wp_textdomain_registry']->set((string) $domain, (string) $locale, dirname($file));
-            Runtime::textDomains()->accept((string) $domain);
-            return true;
-        }
-    }
-    return false;
+    return Minn\Runtime\Translations::load($domain, $mofile, $locale);
 }
 
 function unload_textdomain($domain, $reloadable = false)
 {
-    if (apply_filters('override_unload_textdomain', false, $domain, $reloadable)) {
-        return true;
-    }
-    do_action('unload_textdomain', $domain, $reloadable);
-    $had = Runtime::textDomains()->unload((string) $domain);
-    // Only a domain that really had files stays closed; one merely looked for may load later.
-    if ($had && !$reloadable) {
-        Runtime::textDomains()->close((string) $domain);
-    }
-    return $had;
+    return Minn\Runtime\Translations::unload($domain, $reloadable);
 }
 
 /**
@@ -299,9 +245,7 @@ function _minn_reload_textdomains(string $locale): void
 
 function load_default_textdomain($locale = null)
 {
-    $locale = (string) ($locale ?? determine_locale());
-    unload_textdomain('default', true);
-    return load_textdomain('default', WP_LANG_DIR . "/{$locale}.mo", $locale);
+    return Minn\Runtime\Translations::loadDefault($locale);
 }
 
 function is_textdomain_loaded($domain)
@@ -439,18 +383,7 @@ function wp_get_list_item_separator()
 /** Installed .po files by text domain and locale with their headers; "core", "plugins", or "themes". */
 function wp_get_installed_translations($type)
 {
-    $dir = WP_LANG_DIR . ($type === 'core' ? '' : '/' . $type);
-    $out = [];
-    foreach (glob($dir . '/*.po') ?: [] as $file) {
-        $base = basename($file, '.po');
-        // A translation is installed with both halves: the .po without its .mo is not one.
-        if (!is_file(substr($file, 0, -3) . '.mo') || !preg_match('/^(?:(.+)-)?([a-z]{2,3}(?:_[A-Z]{2})?(?:_[a-z]+)?)$/', $base, $m)) {
-            continue;
-        }
-        $domain = $m[1] !== '' ? $m[1] : 'default';
-        $out[$domain][$m[2]] = get_file_data($file, ['POT-Creation-Date' => '"POT-Creation-Date', 'PO-Revision-Date' => '"PO-Revision-Date', 'Project-Id-Version' => '"Project-Id-Version', 'X-Generator' => '"X-Generator']);
-    }
-    return $out;
+    return Minn\Runtime\Translations::installed($type);
 }
 
 function translations_api($type, $args = null)

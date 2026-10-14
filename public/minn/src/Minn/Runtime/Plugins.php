@@ -110,7 +110,7 @@ final class Plugins
         if (!$themeReady) {
             $hooks->action('setup_theme', []);
         }
-        \load_default_textdomain();
+        Translations::loadDefault();
         if (!$themeReady) {
             self::loadThemeFunctions($runtime);
             $hooks->action('after_setup_theme', []);

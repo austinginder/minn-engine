@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 714,
-        "composes": 2194,
+        "minn": 710,
+        "composes": 2189,
         "leaf": 1014,
-        "noop": 3059,
+        "noop": 3068,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8675,
-        "minnMethods": 1329,
+        "minnMethods": 1337,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -37351,14 +37351,12 @@
         },
         "_minn_load_from_folder": {
             "file": "l10n.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::textDomains"
+                "Minn\\Runtime\\Translations::fromFolder"
             ],
-            "composes": [
-                "load_textdomain"
-            ]
+            "composes": []
         },
         "_minn_load_requests": {
             "file": "http.php",
@@ -44811,15 +44809,12 @@
         },
         "determine_locale": {
             "file": "l10n.php",
-            "lines": 8,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::locales"
+                "Minn\\Runtime\\Translations::locale"
             ],
-            "composes": [
-                "apply_filters",
-                "get_locale"
-            ]
+            "composes": []
         },
         "did_action": {
             "file": "hooks.php",
@@ -48577,12 +48572,12 @@
         },
         "get_file_data": {
             "file": "plugin.php",
-            "lines": 18,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\FileHeaders::read"
+            ],
+            "composes": []
         },
         "get_file_description": {
             "file": "deadends.php",
@@ -52097,15 +52092,12 @@
         },
         "get_user_locale": {
             "file": "l10n.php",
-            "lines": 8,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_locale",
-                "get_user_meta",
-                "get_userdata",
-                "wp_get_current_user"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Translations::userLocale"
+            ],
+            "composes": []
         },
         "get_user_meta": {
             "file": "user.php",
@@ -54371,14 +54363,12 @@
         },
         "load_default_textdomain": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "determine_locale",
-                "load_textdomain",
-                "unload_textdomain"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Translations::loadDefault"
+            ],
+            "composes": []
         },
         "load_image_to_edit": {
             "file": "deadends.php",
@@ -54400,13 +54390,12 @@
         },
         "load_plugin_textdomain": {
             "file": "l10n.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_load_from_folder",
-                "determine_locale"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Translations::loadPlugin"
+            ],
+            "composes": []
         },
         "load_script_module_textdomain": {
             "file": "l10n.php",
@@ -54452,17 +54441,12 @@
         },
         "load_textdomain": {
             "file": "l10n.php",
-            "lines": 23,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\I18n\\TranslationFiles::candidates",
-                "Minn\\Runtime\\Runtime::textDomains"
+                "Minn\\Runtime\\Translations::load"
             ],
-            "composes": [
-                "apply_filters",
-                "determine_locale",
-                "do_action"
-            ]
+            "composes": []
         },
         "load_theme_textdomain": {
             "file": "l10n.php",
@@ -62098,15 +62082,12 @@
         },
         "unload_textdomain": {
             "file": "l10n.php",
-            "lines": 10,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::textDomains"
+                "Minn\\Runtime\\Translations::unload"
             ],
-            "composes": [
-                "apply_filters",
-                "do_action"
-            ]
+            "composes": []
         },
         "unregister_block_bindings_source": {
             "file": "blocks.php",
@@ -68837,12 +68818,12 @@
         },
         "wp_get_installed_translations": {
             "file": "l10n.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "get_file_data"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\Translations::installed"
+            ],
+            "composes": []
         },
         "wp_get_json_schema_allowed_keywords": {
             "file": "rest-api.php",

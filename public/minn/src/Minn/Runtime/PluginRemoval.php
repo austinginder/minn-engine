@@ -29,7 +29,7 @@ final class PluginRemoval
         if ($plugins === []) {
             return false;
         }
-        $translations = (array) \wp_get_installed_translations('plugins');
+        $translations = (array) Translations::installed('plugins');
         $failed = [];
         foreach (array_map('strval', $plugins) as $plugin) {
             if (!self::deleteOne($plugin, $translations)) {

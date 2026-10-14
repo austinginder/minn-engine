@@ -441,6 +441,12 @@ final class Handoff
         self::answer('loadTemplate', ...$args);
     }
 
+    /** The object that loads translation files and looks translations up (WP_Translation_Controller::get_instance). */
+    public static function translationController(): object
+    {
+        return self::answer('translationController');
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

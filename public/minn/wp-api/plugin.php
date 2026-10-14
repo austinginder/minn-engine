@@ -193,24 +193,7 @@ function _get_plugin_data_markup_translate($plugin_file, $plugin_data, $markup =
 
 function get_file_data($file, $default_headers, $context = '')
 {
-    $handle = @fopen((string) $file, 'r');
-    $head = $handle ? (string) fread($handle, 8 * KB_IN_BYTES) : '';
-    if ($handle) {
-        fclose($handle);
-    }
-    $head = str_replace("\r", "\n", $head);
-    $headers = $context !== '' ? apply_filters("extra_{$context}_headers", []) : [];
-    $headers = array_merge(array_fill_keys($headers, ''), $default_headers);
-    $out = [];
-    foreach ($headers as $field => $regex) {
-        $label = is_string($regex) && $regex !== '' ? $regex : $field;
-        if (preg_match('/^(?:[ \t]*<\?php)?[ \t\/*#@]*' . preg_quote($label, '/') . ':(.*)$/mi', $head, $m) && $m[1]) {
-            $out[$field] = trim(preg_replace('/\s*(?:\*\/|\?>).*/', '', $m[1]));
-        } else {
-            $out[$field] = '';
-        }
-    }
-    return $out;
+    return Minn\Runtime\FileHeaders::read($file, $default_headers, $context);
 }
 
 function get_mu_plugins()
