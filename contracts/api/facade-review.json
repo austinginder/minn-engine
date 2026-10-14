@@ -2063,6 +2063,95 @@
                 "body": "e0299ac1b630"
             }
         },
+        "classes/WP_Admin_Bar.php": {
+            "WP_Admin_Bar::_bind": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "resets the root node through the bar's own remove_node and add_node, has ToolbarTree::bind build the tree through the bar's accessors, then marks the bar bound",
+                "body": "f37bfe244af8"
+            },
+            "WP_Admin_Bar::_get_node": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a node from the bar's own table by id, root for none, nothing once the bar is bound",
+                "body": "56c7dcddfe01"
+            },
+            "WP_Admin_Bar::_render": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "ToolbarMarkup's wrapper around $this->_render_group for each top group",
+                "body": "4e1ac0e7008b"
+            },
+            "WP_Admin_Bar::_render_container": {
+                "verdict": "move",
+                "to": "Minn\\Front\\ToolbarMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "builds the container's ab-group-container div with its escaped id, the one toolbar tag still made here; it joins groupOpen and itemOpen, the $this->_render_group recursion staying",
+                "body": "6ba12ace32a9"
+            },
+            "WP_Admin_Bar::_render_group": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "dispatches a container to $this->_render_container, else prints ToolbarMarkup::groupOpen and each child through $this->_render_item",
+                "body": "e0732139aeac"
+            },
+            "WP_Admin_Bar::_render_item": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "ToolbarMarkup's item open and close around its submenu groups through $this->_render_group, labelled by the item's menu_title",
+                "body": "211ff9488ee0"
+            },
+            "WP_Admin_Bar::add_group": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "marks the arguments a group and adds them through $this->add_node",
+                "body": "ef5575f2cb9b"
+            },
+            "WP_Admin_Bar::add_menus": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "hooks each of WordPress's menu callbacks by name on admin_bar_menu at its priority from ToolbarMenus::MENUS, then fires add_admin_bar_menus; the names are what plugins unhook",
+                "body": "b5994b75c41e"
+            },
+            "WP_Admin_Bar::add_node": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the node registry plugins fill on admin_bar_menu: the old call shape, an id from the title with its notice, merged over $this->get_node, renamed parents, stored through $this->_set_node",
+                "body": "74851a6aa005"
+            },
+            "WP_Admin_Bar::get_node": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "a copy of the node $this->_get_node holds",
+                "body": "e0ff7fab9bf2"
+            },
+            "WP_Admin_Bar::get_nodes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "copies of every node $this->_get_nodes holds, null when there are none",
+                "body": "db2390eff401"
+            },
+            "WP_Admin_Bar::initialize": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "fills the bar's public $user from public functions, hooks the head printers (a theme's bump callback when it declares one), queues the bar's assets and fires admin_bar_init, all by name for plugins to unhook",
+                "body": "fbef72e77ea4"
+            },
+            "WP_Admin_Bar::recursive_render": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, then $this->_render_item",
+                "body": "3bd64eea1beb"
+            },
+            "WP_Admin_Bar::render": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "binds the tree through $this->_bind and prints it through $this->_render",
+                "body": "ef2c2756adfd"
+            }
+        },
         "classes/WP_Block.php": {
             "WP_Block::__construct": {
                 "verdict": "keep",
@@ -2646,6 +2735,94 @@
                 "to": "Minn\\Query\\DateSql::sanitize",
                 "why": "the engine sanitises; the parent's defaults are argument conversion",
                 "body": "5f6563def0a3"
+            }
+        },
+        "classes/WP_Embed.php": {
+            "WP_Embed::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "hooks the object's own run_shortcode and autoembed at 8 on the content and widget filters and its cache warm-up on the edit forms, callbacks plugins unhook by object",
+                "body": "2009ca2bedfc"
+            },
+            "WP_Embed::autoembed": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Embeds",
+                "why": "finds URLs alone on a line or alone in a paragraph and embeds them through the object's autoembed_callback; a content text rule beside the engine's Clickable",
+                "doubt": "the reference first hides newlines inside HTML tags (wp_replace_in_html_tags) so a URL alone on a line inside a multi-line tag is not embedded",
+                "body": "c8ed38a450c0"
+            },
+            "WP_Embed::autoembed_callback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "turns the object's own linkifunknown off around $this->shortcode and puts the match's surrounding space back",
+                "body": "97ebf55f293c"
+            },
+            "WP_Embed::cache_oembed": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "warms a post's caches by setting the object's own post_ID and usecache and running its own run_shortcode and autoembed, for types embed_cache_oembed_types allows",
+                "doubt": "the reference's default embed_cache_oembed_types is every post type with show_ui, not just post and page, and it skips a post with empty content",
+                "body": "d68422ba5462"
+            },
+            "WP_Embed::delete_oembed_caches": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbedCache",
+                "why": "deletes every _oembed_ prefixed meta key of a post, stored data the oEmbed cache owns",
+                "body": "2f3187cbfe2c"
+            },
+            "WP_Embed::find_oembed_post_id": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbedCache",
+                "why": "finds the oembed_cache post by its key through the oembed_cache_post object cache group, else a posts query, remembering the id",
+                "doubt": "the reference looks it up with a plain WP_Query whose posts_* filters run; suppress_filters hides this lookup from them",
+                "body": "c80a97193d2d"
+            },
+            "WP_Embed::get_embed_handler_html": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Embeds",
+                "why": "the first registered handler by priority whose pattern matches the URL and answers, through embed_handler_html; the object's public $handlers stays the input",
+                "body": "50427dc0c096"
+            },
+            "WP_Embed::inside_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbedCache",
+                "why": "the post meta oEmbed cache: the md5 key, the usecache or ttl rule, {{unknown}} for a failure, the fetch and the meta writes",
+                "doubt": "the reference applies oembed_ttl on every lookup before the usecache check; here it fires only while usecache is off",
+                "body": "11f933b2419a"
+            },
+            "WP_Embed::keep_outside_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbedCache",
+                "why": "inserts or updates the oembed_cache post with post kses off around the write and remembers its id in the cache group; a stored-data write",
+                "body": "5e0725447e5d"
+            },
+            "WP_Embed::maybe_make_link": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Embeds",
+                "why": "the fallback for an unembeddable URL by the object's flags: false, an escaped link or the bare URL, through embed_maybe_make_link",
+                "body": "77c3cf7aff7e"
+            },
+            "WP_Embed::outside_post": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbedCache",
+                "why": "the oembed_cache post cache for an embed outside a post: the key, the usecache or ttl rule against the post's modified time, {{unknown}}, the fetch and the write",
+                "doubt": "embed_oembed_discover is added under any discover attribute the shortcode carried, where the reference overwrites it (inside_post does the same)",
+                "body": "4b0bc2064861"
+            },
+            "WP_Embed::run_shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Shortcodes",
+                "gates": [
+                    "globals"
+                ],
+                "why": "saves the shortcode registry, narrows it to [embed], runs do_shortcode and restores it; a narrowed run the registry should own, and the registry is the $shortcode_tags plugins see",
+                "body": "c2ff162b813b"
+            },
+            "WP_Embed::shortcode": {
+                "verdict": "move",
+                "to": "Minn\\Content\\Embeds",
+                "why": "resolves an embed: the src fallback, the defaults, the &amp; undo, a handler, then the post or oembed_cache answer; the last_url and last_attr properties stay as the wrapper",
+                "body": "bf79239a3e0a"
             }
         },
         "classes/WP_Error.php": {
@@ -7485,6 +7662,226 @@
                 "body": "820c12e3cde2"
             }
         },
+        "classes/WP_Sitemaps.php": {
+            "WP_Sitemaps::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "fills the server's registry, renderer and index properties plugins read and replace",
+                "body": "5c092dcb72df"
+            },
+            "WP_Sitemaps::add_robots": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Sitemaps",
+                "why": "appends the Sitemap line with the index URL on a public site; ProbeController's plugin-less robots.txt builds the same line, so it belongs beside the engine's sitemap URLs, the robots_txt callback staying",
+                "body": "78317e7e05de"
+            },
+            "WP_Sitemaps::init": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the server's start: $this->register_rewrites, its own render_sitemaps on template_redirect, then providers and add_robots only while $this->sitemaps_enabled, hooks plugins unhook by object",
+                "doubt": "the reference also hooks $this->redirect_sitemapxml on pre_handle_404 when sitemaps are on; it is never hooked here and the method only passes $bypass through",
+                "body": "4c68eb435902"
+            },
+            "WP_Sitemaps::register_sitemaps": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "adds the three core providers to the object's own registry through $this->registry->add_provider, which fires wp_sitemaps_add_provider",
+                "body": "020022c5a438"
+            },
+            "WP_Sitemaps_Index::get_index_url": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Sitemaps",
+                "why": "the index address by the permalink rule (?sitemap=index without pretty permalinks, /wp-sitemap.xml with them); the engine routes those addresses and should build them",
+                "body": "3bce178641bd"
+            },
+            "WP_Sitemaps_Index::get_sitemap_list": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "collects each registered provider's own get_sitemap_entries, which plugin providers override, up to the 50,000 entry cap",
+                "body": "898108019cbf"
+            },
+            "WP_Sitemaps_Posts::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sets the provider's name and object type properties",
+                "body": "76cf4b08601c"
+            },
+            "WP_Sitemaps_Posts::get_max_num_pages": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the page count: its pre filter, an ids query counting rows over $this->get_posts_query_args, at least one page of pages when the front page lists posts",
+                "body": "aa3db1aed285"
+            },
+            "WP_Sitemaps_Posts::get_object_subtypes": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "which post types get a sitemap (public and viewable, attachments out) with the wp_sitemaps_post_types filter; a sitemap rule of the engine's",
+                "body": "c163c81009c6"
+            },
+            "WP_Sitemaps_Posts::get_posts_query_args": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the posts query arguments by rule (published, by ID, the max URLs per page, caches and stickies off) and their filter",
+                "body": "ac36ba817625"
+            },
+            "WP_Sitemaps_Posts::get_url_list": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a page of post entries: the pre filter, the query, the front-page entry when it lists posts, each permalink with its W3C lastmod and entry filter; $this->get_posts_query_args stays at its point",
+                "doubt": "the reference may return an empty list for a subtype not in get_object_subtypes before the pre filter, and dates lastmod with wp_date(DATE_W3C) in the site's timezone rather than always +00:00",
+                "body": "54cf0b07eabe"
+            },
+            "WP_Sitemaps_Provider::get_sitemap_entries": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the template method of the extended provider base: an index entry per page of each subtype from $this->get_sitemap_type_data and $this->get_sitemap_url, through wp_sitemaps_index_entry",
+                "body": "9959285fa3dd"
+            },
+            "WP_Sitemaps_Provider::get_sitemap_type_data": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the template method of the extended provider base: each subtype from $this->get_object_subtypes with its $this->get_max_num_pages, one unnamed entry when there are none",
+                "doubt": "the reference names each subtype by its array key; taking the value's name or the value itself breaks a plugin provider whose keyed subtypes hold non-object values, while SitemapRequest looks subtypes up by key",
+                "body": "968a4d65e336"
+            },
+            "WP_Sitemaps_Provider::get_sitemap_url": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Sitemaps",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a provider page's address by the permalink rule (query form or /wp-sitemap-name-subtype-page.xml); the engine's SitemapController routes that shape, $this->name staying the input",
+                "body": "5eada9cae1e9"
+            },
+            "WP_Sitemaps_Registry::add_provider": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the provider registry plugins fill: refuses a taken name, passes the provider through wp_sitemaps_add_provider and keeps it only while still a WP_Sitemaps_Provider",
+                "body": "961564f5158f"
+            },
+            "WP_Sitemaps_Renderer::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "fills the two stylesheet properties from the object's own stylesheet URL getters",
+                "doubt": "the reference keeps the whole xml-stylesheet processing instruction in $stylesheet and $stylesheet_index, not the bare URL a subclass would find here",
+                "body": "c5290a12a47d"
+            },
+            "WP_Sitemaps_Renderer::get_sitemap_index_stylesheet_url": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Sitemaps",
+                "why": "the index stylesheet address by the permalink rule and its wp_sitemaps_stylesheet_index_url filter; beside the sitemap stylesheet address in the engine",
+                "body": "be34962cdf2e"
+            },
+            "WP_Sitemaps_Renderer::get_sitemap_stylesheet_url": {
+                "verdict": "move",
+                "to": "Minn\\Front\\Sitemaps",
+                "why": "the sitemap stylesheet address by the permalink rule and its wp_sitemaps_stylesheet_url filter; the engine serves /wp-sitemap.xsl and should build its address",
+                "body": "d08894dbcbb3"
+            },
+            "WP_Sitemaps_Renderer::render_index": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sends the XML content type and echoes the object's own get_sitemap_index_xml, which SitemapXml builds",
+                "body": "c8e6161cf303"
+            },
+            "WP_Sitemaps_Renderer::render_sitemap": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sends the XML content type and echoes the object's own get_sitemap_xml, which SitemapXml builds",
+                "body": "66cc3fc7fa85"
+            },
+            "WP_Sitemaps_Stylesheet::render_stylesheet": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sends the XML content type and echoes the sitemap or index stylesheet getter by the type asked; the engine's Sitemaps makes both",
+                "body": "ae0bbe82b9b2"
+            },
+            "WP_Sitemaps_Taxonomies::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sets the provider's name and object type properties",
+                "body": "c2e5f21debbc"
+            },
+            "WP_Sitemaps_Taxonomies::get_max_num_pages": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the page count: its pre filter, then the term count over $this->get_taxonomies_query_args divided by the max URLs, rounded up",
+                "body": "ad8ad6832a8b"
+            },
+            "WP_Sitemaps_Taxonomies::get_object_subtypes": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "public taxonomies from get_taxonomies kept by is_taxonomy_viewable, then wp_sitemaps_taxonomies, public functions with no rule of its own",
+                "body": "6bd30ae28f0e"
+            },
+            "WP_Sitemaps_Taxonomies::get_taxonomies_query_args": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the terms query arguments by rule (term order, non-empty, flat, the max URLs, meta cache off) and their filter",
+                "body": "3b8d100d83ef"
+            },
+            "WP_Sitemaps_Taxonomies::get_url_list": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a page of term entries: the pre filter, the term ids at the page's offset, each term link that is not an error through the entry filter; $this->get_taxonomies_query_args stays at its point",
+                "doubt": "the reference may return an empty list before the pre filter when the taxonomy is not among get_object_subtypes",
+                "body": "fc43dd144a92"
+            },
+            "WP_Sitemaps_Users::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "sets the provider's name and object type properties",
+                "body": "915ad5c68750"
+            },
+            "WP_Sitemaps_Users::get_max_num_pages": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the page count: its pre filter, then the user total over $this->get_users_query_args divided by the max URLs, rounded up",
+                "body": "16bd47c20879"
+            },
+            "WP_Sitemaps_Users::get_url_list": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a page of author entries: the pre filter, the user query over $this->get_users_query_args, each author archive link through the entry filter",
+                "body": "5271b4c58264"
+            },
+            "WP_Sitemaps_Users::get_users_query_args": {
+                "verdict": "move",
+                "to": "Minn\\Front\\SitemapEntries",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the users query arguments by rule (published posts of public types other than attachments and pages, the max URLs) and their filter",
+                "body": "8299938ddebe"
+            }
+        },
         "classes/WP_Tax_Query.php": {
             "WP_Tax_Query::__construct": {
                 "verdict": "keep",
@@ -8667,6 +9064,116 @@
                 "why": "chooses visual or legacy filtering, runs widget_text, widget_text_content or wpautop, strips fixed video sizes and wraps the textwidget markup; is_legacy_instance and inject_video_max_width_style stay $this-> calls",
                 "doubt": "the mode comes from is_legacy_instance where the reference reads visual with filter (or filter content); legacy text misses the reference's do_shortcode pass, and the gallery attrs filter and global $post swap are absent",
                 "body": "2d7df6760aa3"
+            }
+        },
+        "classes/WP_oEmbed.php": {
+            "WP_oEmbed::__call": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "lets old callers reach the private compat methods by name, false for anything else",
+                "body": "2027ed4f5b09"
+            },
+            "WP_oEmbed::__construct": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "reads the provider table file, names the site in it, merges the early adds and removes and filters it through oembed_providers; the engine's provider data, the $this->providers assignment and the _strip_newlines hook staying",
+                "body": "5e647039b6cf"
+            },
+            "WP_oEmbed::_add_provider_early": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "records a provider in the class's public static early table for the constructor to merge, before the object exists",
+                "body": "8f218398b89b"
+            },
+            "WP_oEmbed::_fetch_with_format": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "one provider request in a format with its filtered args: a 501 as not-implemented, an empty body false, else parsed; goes with fetch",
+                "body": "dadac912a338"
+            },
+            "WP_oEmbed::_parse_json": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\OEmbed::parseJson",
+                "why": "the engine parses the body; the object cast and false for nothing are the wrapper",
+                "body": "598079c7f923"
+            },
+            "WP_oEmbed::_parse_xml_body": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\OEmbed::parseXml",
+                "why": "the engine parses the oembed document; the object cast and false for nothing are the wrapper",
+                "body": "373d04767516"
+            },
+            "WP_oEmbed::_remove_provider_early": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "records a removal in the class's public static early table for the constructor to apply",
+                "body": "dd3bdaf8a3f5"
+            },
+            "WP_oEmbed::data2html": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\OEmbed::html",
+                "why": "the engine makes the markup by type; false for a typeless answer, the WordPress escapers passed in and the oembed_dataparse filter around it are the wrapper",
+                "body": "4ca104a1dd4d"
+            },
+            "WP_oEmbed::discover": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "fetches the page with the filtered 150 KB limit and reads its oEmbed links by the filtered link types; OEmbed::discovered already parses, the fetch and its filters go with it",
+                "body": "4348f69ad02b"
+            },
+            "WP_oEmbed::fetch": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\OEmbed",
+                "why": "builds the provider request (maxwidth, maxheight, url, dnt, oembed_fetch_url) and tries json then xml, skipping a not-implemented answer; the engine's oEmbed client",
+                "body": "04a8940799f8"
+            },
+            "WP_oEmbed::get_data": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the object's own get_provider then fetch, false when either finds nothing",
+                "body": "bb972d384315"
+            },
+            "WP_oEmbed::get_html": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "pre_oembed_result's short-circuit, else the object's own get_data made markup by $this->data2html through oembed_result",
+                "body": "c6ac12cb8f46"
+            },
+            "WP_oEmbed::get_provider": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\OEmbed::providerFor",
+                "why": "the engine matches the URL against the table; the discover default and the $this->discover fallback, false when neither finds one, are the call's wrapper",
+                "body": "b5c045c8bebb"
+            }
+        },
+        "classes/WP_oEmbed_Controller.php": {
+            "WP_oEmbed_Controller::get_item": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "url_to_postid through oembed_request_post_id, then get_oembed_response_data, public functions by name, a miss the reference's 404 WP_Error",
+                "body": "f4c78efb086a"
+            },
+            "WP_oEmbed_Controller::get_proxy_item": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\OEmbedProxy",
+                "why": "the proxy: a local answer first, else the transient keyed on the request's arguments, a WP_oEmbed fetch with the editor's size, the markup through oembed_result and the rest_oembed_ttl write",
+                "body": "fca5f4730e49"
+            },
+            "WP_oEmbed_Controller::minn_handled": {
+                "verdict": "move",
+                "to": "Minn\\Rest\\OEmbedProxy",
+                "gates": [
+                    "globals"
+                ],
+                "why": "asks the global $wp_embed's handlers for an address no provider takes and answers their markup with the scripts queued meanwhile; part of the proxy's answer",
+                "doubt": "the reference returns every script in the queue as scripts, not only those the handler queued during the call",
+                "body": "55c93779a611"
+            },
+            "WP_oEmbed_Controller::register_routes": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "registers oembed/1.0's embed and proxy routes with their argument schemas and the filtered default width, every callback a $this method",
+                "body": "1051e8dbccfe"
             }
         },
         "classes/Walker.php": {
