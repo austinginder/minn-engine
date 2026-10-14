@@ -2191,6 +2191,242 @@
                 "body": "569fbd647543"
             }
         },
+        "classes/Walker.php": {
+            "Walker::display_element": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\TreeWalk::element",
+                "gates": [
+                    "subclass",
+                    "refs"
+                ],
+                "why": "the engine walks the element, calling back this walker's methods; the casts are argument conversion",
+                "body": "a1eac3bb171c"
+            }
+        },
+        "classes/Walker_Category.php": {
+            "Walker_Category::classes": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "why": "a category item's classes, current, parent and ancestor by the current categories",
+                "body": "24f2dd787925"
+            },
+            "Walker_Category::end_el": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the item closing for the list style; the method stays as the override point",
+                "body": "94fb381eb3f5"
+            },
+            "Walker_Category::end_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the children list closing for the list style; the method stays as the override point",
+                "body": "8527d6aabe40"
+            },
+            "Walker_Category::feed": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "why": "a category's feed link or image markup",
+                "body": "0652383737ab"
+            },
+            "Walker_Category::start_el": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a category's item markup (name and link filters, title, feed, count, current classes) by rules; its $this->feed and $this->classes calls stay at their points",
+                "body": "3ae69ded0aed"
+            },
+            "Walker_Category::start_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the children list opening for the list style; the method stays as the override point",
+                "body": "8a62694c3d8d"
+            }
+        },
+        "classes/Walker_CategoryDropdown.php": {
+            "Walker_CategoryDropdown::start_el": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CategoryListMarkup",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a category's option markup (value field, selected, indent, count) by rules",
+                "body": "59abc5609103"
+            }
+        },
+        "classes/Walker_Comment.php": {
+            "Walker_Comment::comment": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a comment's xhtml markup (author, held note, meta, text, reply) by rules; themes override the method",
+                "body": "df7b16d9bbd6"
+            },
+            "Walker_Comment::display_element": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's walk, then the over-deep children flattened through $this->display_element, the point subclasses override",
+                "body": "525d417191df"
+            },
+            "Walker_Comment::end_el": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the end-callback a theme gives, else the item closing; the override point",
+                "body": "8de0590dc875"
+            },
+            "Walker_Comment::end_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "the children list closing by style, the global $comment_depth kept in step",
+                "body": "0e5bf0301b62"
+            },
+            "Walker_Comment::html5_comment": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a comment's html5 markup by rules; themes override the method",
+                "body": "eb6d4d18e062"
+            },
+            "Walker_Comment::ping": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a pingback's markup by rules; themes override the method",
+                "body": "39f27a69cb75"
+            },
+            "Walker_Comment::start_el": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the comment globals, then dispatches to the callback or $this->ping, html5_comment or comment, which themes override",
+                "body": "26c0c6852e41"
+            },
+            "Walker_Comment::start_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Front\\CommentList",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "the children list opening by style, the global $comment_depth kept in step",
+                "body": "a3bcf0996920"
+            }
+        },
+        "classes/Walker_Nav_Menu.php": {
+            "Walker_Nav_Menu::end_el": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the item closing with its spacing",
+                "body": "28a4b930ec71"
+            },
+            "Walker_Nav_Menu::end_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the submenu closing",
+                "body": "34a46cbd13cd"
+            },
+            "Walker_Nav_Menu::first_print_of": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "whether an item's id is printed for the first time in the request",
+                "body": "59353dedcef5"
+            },
+            "Walker_Nav_Menu::spacing": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "why": "the item spacing's tab and newline",
+                "body": "a5f73b97cd54"
+            },
+            "Walker_Nav_Menu::start_el": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a menu item's markup with its seven filters, the privacy rel and the first-print id; the $this->build_atts calls stay at their points",
+                "body": "9481965beac2"
+            },
+            "Walker_Nav_Menu::start_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\NavMenu",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the submenu opening with its class and attribute filters; its $this->build_atts call stays at its point",
+                "body": "4e493ab2818b"
+            }
+        },
+        "classes/Walker_Page.php": {
+            "Walker_Page::classes": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "why": "a page item's classes, current, parent and ancestor",
+                "body": "4e095747b332"
+            },
+            "Walker_Page::end_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the children list closing with its spacing",
+                "body": "5dde7935df17"
+            },
+            "Walker_Page::start_el": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a page's item markup (classes and link filters, title fallback, date) by rules; its $this->classes call stays at its point",
+                "body": "aaa4f0340cc1"
+            },
+            "Walker_Page::start_lvl": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the children list opening with its spacing",
+                "body": "67b538c099cc"
+            }
+        },
+        "classes/Walker_PageDropdown.php": {
+            "Walker_PageDropdown::start_el": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Pages",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "a page's option markup (value field, selected, indent, title fallback, list_pages filter)",
+                "body": "7af78105b753"
+            }
+        },
         "comment.php": {
             "_clear_modified_cache_on_transition_comment_status": {
                 "verdict": "keep",
