@@ -1935,7 +1935,7 @@
             "namespace": "Minn\\Admin",
             "kind": "final readonly class",
             "file": "public/minn/src/Minn/Admin/BundleController.php",
-            "lines": 45,
+            "lines": 46,
             "doc": "What the app bundle answers for: the user guide it carries, the\ntranslation offers (none: the engine polls no translation channel), and\nthe two changelogs, Minn Admin's and the engine's, read from GitHub\nbecause a release carries neither.",
             "implements": [],
             "extends": null,
@@ -2075,7 +2075,7 @@
                         }
                     ],
                     "line": 42,
-                    "end": 45
+                    "end": 46
                 },
                 {
                     "routes": [
@@ -2096,8 +2096,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 49,
-                    "end": 52
+                    "line": 50,
+                    "end": 53
                 },
                 {
                     "routes": [
@@ -2118,8 +2118,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 56,
-                    "end": 59
+                    "line": 57,
+                    "end": 60
                 },
                 {
                     "routes": [],
@@ -2140,8 +2140,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 62,
-                    "end": 66
+                    "line": 63,
+                    "end": 67
                 }
             ]
         },
@@ -84707,8 +84707,8 @@
             "namespace": "Minn\\Ops",
             "kind": "final class",
             "file": "public/minn/src/Minn/Ops/Changelog.php",
-            "lines": 68,
-            "doc": "A changelog read from its repository rather than shipped: a Minn release\ncarries no notes, its own or Minn Admin's, for anyone to find on the\nsites that run it. The update service reads changelog.md from the\nrepository's default branch on GitHub; the engine asks the service at most\nonce a day and keeps the copy in an option (JSON) with the time it came;\nsections still marked Unreleased are left out, so a site only reads about\nreleases that exist. A fetch GitHub does not answer keeps the last copy; a\n404 (no such file, or a private repository) keeps nothing.",
+            "lines": 73,
+            "doc": "A changelog read from its repository rather than shipped: a Minn release\ncarries no notes, its own or Minn Admin's, for anyone to find on the\nsites that run it. The update service reads changelog.md from the\nrepository's default branch on GitHub; the engine asks the service at most\nonce a day, and again when the version installed changes, and keeps the\ncopy in an option (JSON) with the time it came and the version it was read\nfor; sections still marked Unreleased are left out, so a site only reads\nabout releases that exist. A fetch GitHub does not answer keeps the last copy; a\n404 (no such file, or a private repository) keeps nothing.",
             "implements": [],
             "extends": null,
             "uses": [
@@ -84759,8 +84759,8 @@
                     }
                 ],
                 "visibility": "public",
-                "line": 32,
-                "end": 38
+                "line": 33,
+                "end": 39
             },
             "cases": [],
             "constants": [
@@ -84839,8 +84839,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 41,
-                    "end": 44
+                    "line": 42,
+                    "end": 45
                 },
                 {
                     "routes": [],
@@ -84859,20 +84859,28 @@
                             "doc": ""
                         }
                     ],
-                    "line": 47,
-                    "end": 50
+                    "line": 48,
+                    "end": 51
                 },
                 {
                     "routes": [],
                     "name": "markdown",
                     "static": false,
                     "visibility": "public",
-                    "signature": "markdown(): string",
-                    "doc": "The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.",
+                    "signature": "markdown(string $version = ''): string",
+                    "doc": "The released sections as Markdown, fetched first when the copy is a day\nold or was read for another version than $version (the one installed,\nso an update shows its own notes at once); '' when there is none.",
                     "shapes": [],
-                    "params": [],
-                    "line": 64,
-                    "end": 80
+                    "params": [
+                        {
+                            "name": "version",
+                            "type": "string",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 69,
+                    "end": 86
                 },
                 {
                     "routes": [],
@@ -84891,8 +84899,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 83,
-                    "end": 88
+                    "line": 89,
+                    "end": 94
                 },
                 {
                     "routes": [],
@@ -84925,8 +84933,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 52,
-                    "end": 61
+                    "line": 53,
+                    "end": 62
                 }
             ]
         },
@@ -153125,7 +153133,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Symbols.php",
-            "lines": 391,
+            "lines": 478,
             "doc": "A static read of what a plugin's PHP calls: global functions and classes\nit uses but does not itself declare, minus the ones it guards with\nfunction_exists() or class_exists(). Checked against what the runtime\nprovides, this decides whether a plugin loads at all.\n\nThe read is cached in the minn_runtime_symbols option, keeping only the\nreference's own names (all a verdict reads). An entry is trusted while\nthe folder's fingerprint (its own time and its top-level files' newest)\nholds, for up to FULL_CHECK_EVERY seconds; then the whole folder is\nwalked again, as an update replaces it. Installing, updating or\nactivating a plugin walks its folder at once (recheck()). Walking every\nfolder on every request cost hundreds of milliseconds on a site with\nmany plugins.",
             "implements": [],
             "extends": null,
@@ -153157,7 +153165,7 @@
                 },
                 {
                     "name": "READER",
-                    "value": "3",
+                    "value": "4",
                     "doc": "Bumped whenever the token reader changes, so every cached scan is made again.",
                     "visibility": "private"
                 },
@@ -153494,7 +153502,7 @@
                     "static": true,
                     "visibility": "private",
                     "signature": "scanTokens(array $tokens, Minn\\Runtime\\SymbolTable $table): void",
-                    "doc": "",
+                    "doc": "One file's tokens. A class name is resolved as PHP resolves it: through\nthe file's use imports, else inside its namespace, so a plugin that\nimports a WordPress class (a provider built on the AI client's abstract\nprovider) is judged on the class it really names.",
                     "shapes": [
                         "@param list<array{0: int, 1: string, 2: int}|string> $tokens"
                     ],
@@ -153514,18 +153522,19 @@
                             "doc": ""
                         }
                     ],
-                    "line": 290,
-                    "end": 356
+                    "line": 297,
+                    "end": 376
                 },
                 {
                     "routes": [],
                     "name": "noteName",
                     "static": true,
                     "visibility": "private",
-                    "signature": "noteName(array $tokens, int $i, bool $namespaced, Minn\\Runtime\\SymbolTable $table): void",
+                    "signature": "noteName(array $tokens, int $i, string $namespace, array $imports, Minn\\Runtime\\SymbolTable $table): void",
                     "doc": "A name token: a class reference when it follows new / extends /\nimplements / instanceof or precedes ::, a call when it precedes \"(\",\nand a guard when the call is an existence check on a literal.",
                     "shapes": [
-                        "@param list<array{0: int, 1: string, 2: int}|string> $tokens"
+                        "@param list<array{0: int, 1: string, 2: int}|string> $tokens",
+                        "@param array<string, string> $imports alias (lower case) => class"
                     ],
                     "params": [
                         {
@@ -153543,11 +153552,18 @@
                             "doc": ""
                         },
                         {
-                            "name": "namespaced",
-                            "type": "bool",
+                            "name": "namespace",
+                            "type": "string",
                             "shape": "",
                             "default": null,
                             "doc": ""
+                        },
+                        {
+                            "name": "imports",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "alias (lower case) => class"
                         },
                         {
                             "name": "table",
@@ -153557,8 +153573,81 @@
                             "doc": ""
                         }
                     ],
-                    "line": 365,
-                    "end": 397
+                    "line": 386,
+                    "end": 415
+                },
+                {
+                    "routes": [],
+                    "name": "resolve",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "resolve(string $name, string $namespace, array $imports): string",
+                    "doc": "A class name as PHP resolves it in the file: its first part an imported\nalias, else inside the file's namespace.",
+                    "shapes": [
+                        "@param array<string, string> $imports alias (lower case) => class"
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "namespace",
+                            "type": "string",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "imports",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "alias (lower case) => class"
+                        }
+                    ],
+                    "line": 423,
+                    "end": 430
+                },
+                {
+                    "routes": [],
+                    "name": "readImports",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "readImports(array $tokens, int $i, array $imports): int",
+                    "doc": "Reads one use statement's class imports (use A\\B; use A\\B as C;\nuse A\\{B, C as D};), leaving out function and constant imports, and\nreturns the index of its semicolon.",
+                    "shapes": [
+                        "@param list<array{0: int, 1: string, 2: int}|string> $tokens",
+                        "@param array<string, string> $imports alias (lower case) => class, added to"
+                    ],
+                    "params": [
+                        {
+                            "name": "tokens",
+                            "type": "array",
+                            "shape": "list<array{0: int, 1: string, 2: int}|string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "i",
+                            "type": "int",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "imports",
+                            "type": "array",
+                            "shape": "array<string, string>",
+                            "default": null,
+                            "doc": "alias (lower case) => class, added to"
+                        }
+                    ],
+                    "line": 440,
+                    "end": 484
                 },
                 {
                     "routes": [],
@@ -153593,8 +153682,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 400,
-                    "end": 411
+                    "line": 487,
+                    "end": 498
                 }
             ]
         },

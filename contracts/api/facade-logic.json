@@ -2438,91 +2438,91 @@
         },
         "PromptBuilder::__construct": {
             "file": "ai-client/Builder.php",
-            "line": 204,
+            "line": 211,
             "statements": 3,
             "lines": 11
         },
         "PromptBuilder::asJsonResponse": {
             "file": "ai-client/Builder.php",
-            "line": 378,
+            "line": 385,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::asOutputMediaAspectRatio": {
             "file": "ai-client/Builder.php",
-            "line": 365,
+            "line": 372,
             "statements": 2,
             "lines": 4
         },
         "PromptBuilder::generateResult": {
             "file": "ai-client/Builder.php",
-            "line": 426,
+            "line": 433,
             "statements": 4,
             "lines": 8
         },
         "PromptBuilder::keep": {
             "file": "ai-client/Builder.php",
-            "line": 513,
+            "line": 520,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::usingProvider": {
             "file": "ai-client/Builder.php",
-            "line": 269,
+            "line": 276,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::withFile": {
             "file": "ai-client/Builder.php",
-            "line": 230,
+            "line": 237,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::withFunctionResponse": {
             "file": "ai-client/Builder.php",
-            "line": 236,
+            "line": 243,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::withHistory": {
             "file": "ai-client/Builder.php",
-            "line": 248,
+            "line": 255,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::withMessageParts": {
             "file": "ai-client/Builder.php",
-            "line": 242,
+            "line": 249,
             "statements": 2,
             "lines": 2
         },
         "PromptBuilder::withText": {
             "file": "ai-client/Builder.php",
-            "line": 224,
+            "line": 231,
             "statements": 2,
             "lines": 2
         },
         "ProviderRegistry::findProviderModelsMetadataForSupport": {
             "file": "ai-client/Builder.php",
-            "line": 63,
+            "line": 70,
             "statements": 2,
             "lines": 2
         },
         "ProviderRegistry::getProviderClassName": {
             "file": "ai-client/Builder.php",
-            "line": 38,
+            "line": 45,
             "statements": 2,
             "lines": 4
         },
         "ProviderRegistry::getProviderId": {
             "file": "ai-client/Builder.php",
-            "line": 46,
+            "line": 53,
             "statements": 2,
             "lines": 2
         },
         "ProviderRegistry::getProviderModel": {
             "file": "ai-client/Builder.php",
-            "line": 69,
+            "line": 76,
             "statements": 2,
             "lines": 2
         },

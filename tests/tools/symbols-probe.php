@@ -215,6 +215,33 @@ $say('WP_Filesystem ops', (static function () use ($fs, $dir) {
 // Update and admin helpers.
 $say('wp_get_translation_updates', wp_get_translation_updates());
 $say('get_core_updates', [is_array(get_core_updates()) || get_core_updates() === false, is_array(get_core_updates(['dismissed' => true])) || get_core_updates(['dismissed' => true]) === false]);
+// The update caches are laid first (straight into the table, so no hook
+// hears it) so that clearing them fires the same hooks whenever the site last
+// checked for updates; what was there is put back at the end.
+global $wpdb;
+$updateRows = ['_site_transient_update_plugins', '_site_transient_update_themes'];
+$updateKept = array_combine($updateRows, array_map(static fn (string $name) => $wpdb->get_row($wpdb->prepare("SELECT option_value, autoload FROM {$wpdb->options} WHERE option_name = %s", $name), ARRAY_A), $updateRows));
+$forgetOptions = static function () use ($updateRows): void {
+    wp_cache_delete('alloptions', 'options');
+    wp_cache_delete('notoptions', 'options');
+    foreach ($updateRows as $name) {
+        wp_cache_delete($name, 'options');
+    }
+};
+register_shutdown_function(static function () use ($updateKept, $wpdb, $forgetOptions): void {
+    foreach ($updateKept as $name => $saved) {
+        if ($saved === null) {
+            $wpdb->delete($wpdb->options, ['option_name' => $name]);
+        } else {
+            $wpdb->replace($wpdb->options, ['option_name' => $name, 'option_value' => $saved['option_value'], 'autoload' => $saved['autoload']]);
+        }
+    }
+    $forgetOptions();
+});
+foreach ($updateRows as $name) {
+    $wpdb->replace($wpdb->options, ['option_name' => $name, 'option_value' => serialize((object) ['last_checked' => 0]), 'autoload' => 'off']);
+}
+$forgetOptions();
 $say('wp_clean_plugins_cache', [wp_clean_plugins_cache(), wp_clean_plugins_cache(false), wp_clean_themes_cache(), wp_clean_themes_cache(false)]);
 $say('print_admin_styles', [is_array(print_admin_styles()), $capture(static fn () => print_admin_styles()) === '']);
 $say('upload_is_user_over_quota', [function_exists('upload_is_user_over_quota'), function_exists('get_space_allowed')]);

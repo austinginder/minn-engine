@@ -7,15 +7,17 @@ use Minn\Runtime\Symbols;
 
 /**
  * The static symbol gate judged against a hand-made gap: the runtime here
- * "lacks" wp_missing_fn and WP_Missing_Class and "defines" wp_mail and
- * wp_present_fn. Each case writes a plugin folder and reads the verdict.
+ * "lacks" wp_missing_fn, WP_Missing_Class and Vendor\Sdk\AbstractProvider
+ * (a namespaced class, as the AI client's provider classes are) and
+ * "defines" wp_mail and wp_present_fn. Each case writes a plugin folder and
+ * reads the verdict.
  */
 $scratch = sys_get_temp_dir() . '/minn-unit-symbols-' . getmypid();
 $gapFile = $scratch . '/gap.json';
 @mkdir($scratch, 0755, true);
 file_put_contents($gapFile, json_encode([
     'functions' => ['wp_missing_fn'],
-    'classes' => ['WP_Missing_Class'],
+    'classes' => ['WP_Missing_Class', 'Vendor\\Sdk\\AbstractProvider'],
     'known' => ['wp_missing_fn', 'wp_mail', 'wp_present_fn'],
 ]));
 $gap = SymbolGap::fromFile($gapFile);
@@ -89,6 +91,25 @@ return [
     'a "use function" import is not a declaration' => static function () use ($verdict): bool|string {
         $v = $verdict('use-function', "namespace Acme;\nuse function wp_mail;\nwp_present_fn();");
         return $v['redeclares'] === [] ? true : json_encode($v);
+    },
+    'a class imported with use is judged by the class it names (a provider built on an SDK class the runtime lacks)' => static function () use ($verdict): bool|string {
+        $v = $verdict('use-class', "namespace Acme\\Provider;\nuse Vendor\\Sdk\\AbstractProvider;\nclass Mine extends AbstractProvider {}");
+        return $v['classes'] === ['Vendor\\Sdk\\AbstractProvider'] ? true : json_encode($v);
+    },
+    'an alias, a group import and a qualified name resolve through the import' => static function () use ($verdict): bool|string {
+        $alias = $verdict('use-alias', "namespace Acme;\nuse Vendor\\Sdk\\AbstractProvider as Base;\nclass Mine extends Base {}");
+        $group = $verdict('use-group', "namespace Acme;\nuse Vendor\\{Sdk\\AbstractProvider, Other\\Thing};\n\$x = new AbstractProvider();");
+        $qualified = $verdict('use-qualified', "namespace Acme;\nuse Vendor\\Sdk;\nSdk\\AbstractProvider::make();");
+        $want = ['Vendor\\Sdk\\AbstractProvider'];
+        return $alias['classes'] === $want && $group['classes'] === $want && $qualified['classes'] === $want ? true : json_encode([$alias, $group, $qualified]);
+    },
+    'function and constant imports, a trait\'s use and a closure\'s use import no class' => static function () use ($verdict): bool|string {
+        $v = $verdict('use-other', "namespace Acme;\nuse function Vendor\\Sdk\\AbstractProvider;\nuse const Vendor\\Sdk\\LIMIT;\nclass Mine { use AbstractProvider; }\n\$f = function () use (\$v) { return new AbstractProvider(); };");
+        return $v['classes'] === [] ? true : json_encode($v);
+    },
+    'a folder carrying its own copy of a namespaced class does not need it' => static function () use ($verdict): bool|string {
+        $v = $verdict('own-sdk', "namespace Vendor\\Sdk { abstract class AbstractProvider {} }\nnamespace Acme { use Vendor\\Sdk\\AbstractProvider; class Mine extends AbstractProvider {} }");
+        return $v['classes'] === [] ? true : json_encode($v);
     },
     'the gap knows what it defines and what it lacks' => static function () use ($gap): bool {
         return $gap->defines('wp_mail') && $gap->defines('WP_MAIL') && !$gap->defines('wp_missing_fn') && !$gap->defines('acme_helper') && $gap->lacksFunction('wp_missing_fn');

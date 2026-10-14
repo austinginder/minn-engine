@@ -16495,6 +16495,69 @@ activation); suite `admin-surfaces` (the REST delete refused, the dev link
 kept); a test build's bundle laid and served from the plugins folder
 (working-copy classes over the unpacked zip).
 
+## Before the 0.1.0 cut: AI providers, the changelog copy, two probes (2026-10-14)
+
+Found by the release candidate's full run and by a dogfood site returning 500.
+
+**AI provider plugins are held back.** The AI provider plugins (Anthropic,
+Google, OpenAI) register on `init` with
+`AiClient::defaultRegistry()->registerProvider(...)`, passing a class built
+on the AI SDK's provider classes (`AbstractApiProvider`, `ProviderMetadata`
+and the rest), which the engine does not carry. Two misses let them load:
+
+- The gate (`Runtime\Symbols`) skipped every unqualified class name in a
+  namespaced file, assuming it resolved inside the plugin. It now resolves
+  class names as PHP does: through the file's `use` imports (aliases,
+  groups, a qualified name whose first part is imported; `use function`,
+  `use const`, a trait's `use` and a closure's `use` import no class), else
+  inside the namespace. A class a folder declares counts under its
+  namespaced name too, so a plugin carrying its own copy of a library is
+  not held back for it. `READER` is 4, so every cached scan is made again
+  (the first request after the change took 18 s on a dogfood site with 48
+  active plugins; the next 0.45 s).
+- `data/api-names.json` held 12 of the AI client's classes: the inventory
+  sees what a booted reference has declared, and the client loads on
+  demand. `tests/tools/ai-client-names.php <reference> --merge` asks the
+  client's own autoloader for every class its PSR-4 layout maps a file to
+  (names only, no source read) and added 95 more.
+
+On the 143 plugin folders of the engine sites, the gate's verdict changed
+for exactly the three `ai-provider-for-*` plugins, each now held back for
+the SDK classes it extends. `registerProvider()` no longer throws: a
+provider that reaches it anyway is left unregistered with a line in the
+log (`hasProvider()` false, a prompt finds no model), and its class is
+never loaded, as its parent is missing. The reference throws for a class
+that is not a provider; here every class is one the engine cannot run.
+Carrying the SDK's provider classes is owed.
+
+**Minn Admin's changelog follows an update.** The stored copy of a
+changelog (`minn_admin_changelog`, `minn_changelog`) now records the version
+it was read for, and is read again at once when the installed version
+differs, instead of up to a day later. A site that updated Minn Admin
+showed the previous release's notes until then; the suite caught it the
+day 0.45.0 was released.
+
+**Two probes no longer lean on the site's history.** `boot-defaults` takes
+the cron lock away and `symbols` clears the plugin and theme update
+caches; the delete hooks fire only when the row is there, so the hook
+battery passed or failed on whether the reference had last spawned cron or
+checked for updates. Each probe now lays its row straight into the table
+(no hook hears it) first, and `symbols` puts the update caches back at the
+end. Both scenarios were captured again on the reference: each adds
+`pre_cache_alloptions` (the options are read again after the row is laid),
+and `symbols` no longer fires `cron_schedules`. Both probes' api fixtures
+are unchanged on both stacks.
+
+Also: the reference twin kept serving the dev Minn Admin after its plugin
+link was pointed at the 0.45.0 release, as OPcache keeps the path it was
+given (`opcache.revalidate_path` is off) until FrankenPHP restarts. After
+swapping a link the reference serves through, restart it.
+
+Pinned: unit `symbols` (an import, an alias, a group, a qualified name,
+the imports that name no class, a folder's own copy); unit `releases` (a
+copy read for another version is read again); suite `admin-surfaces`
+(the changelog is the bundled one); suite `hook-parity` (both scenarios).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

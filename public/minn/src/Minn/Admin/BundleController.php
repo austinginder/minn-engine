@@ -41,14 +41,15 @@ final readonly class BundleController
     #[Route(Method::Get, '/minn-admin/v1/changelog', policy: new Policy(Access::Floor))]
     public function changelog(Request $request): Response
     {
-        return Reply::answer($request, ['version' => $this->app->version(), 'markdown' => $this->adminChangelog->markdown()]);
+        $version = $this->app->version();
+        return Reply::answer($request, ['version' => $version, 'markdown' => $this->adminChangelog->markdown($version)]);
     }
 
     /** The engine's own changelog, kept in its repository and not in a release, shown beside the app's on Minn. */
     #[Route(Method::Get, '/minn-admin/v1/engine-changelog', policy: new Policy(Access::Floor))]
     public function engineChangelog(Request $request): Response
     {
-        return Reply::answer($request, ['version' => MINN_ENGINE_VERSION, 'markdown' => $this->engineChangelog->markdown()]);
+        return Reply::answer($request, ['version' => MINN_ENGINE_VERSION, 'markdown' => $this->engineChangelog->markdown(MINN_ENGINE_VERSION)]);
     }
 
     /** The app's bundled user guide. */

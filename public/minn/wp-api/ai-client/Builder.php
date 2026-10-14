@@ -19,10 +19,17 @@ namespace WordPress\AiClient\Providers {
         private $httpTransporter = null;
         private array $authentication = [];
 
-        /** Providers are classes built on the SDK's abstract provider, which the engine does not carry yet. */
+        /**
+         * Providers are classes built on the SDK's abstract provider, which the
+         * engine does not carry yet, so the plugin gate holds back a plugin
+         * whose provider extends it. One that calls here anyway is left
+         * unregistered, with a line in the log, rather than ending the request:
+         * hasProvider() stays false and a prompt finds no model, as with no
+         * provider at all. The class is never loaded, as its parent is missing.
+         */
         public function registerProvider(string $className): void
         {
-            throw new InvalidArgumentException(sprintf('Provider class %s cannot be registered: the engine carries no provider base classes.', $className));
+            error_log(sprintf('Minn: AI provider %s is not used: the engine carries no AI provider classes yet.', $className));
         }
 
         public function getRegisteredProviderIds(): array

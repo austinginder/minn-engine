@@ -93,9 +93,15 @@ $spawn = static function () use (&$sent, &$requested) {
     $returned = spawn_cron();
     return ['returned' => $returned, 'request filter' => $requested, 'sent' => $sent, 'locked' => get_transient('doing_cron') !== false];
 };
-// Nothing due: the stored events all lie ahead.
+// Nothing due: the stored events all lie ahead. A lock is laid first
+// (straight into the table, so no hook hears it) so that taking it away fires
+// the same hooks however the site's own cron last left it.
 $events = _get_cron_array();
 _set_cron_array(array_filter((array) $events, static fn ($time) => $time > time() + HOUR_IN_SECONDS, ARRAY_FILTER_USE_KEY));
+$wpdb->replace($wpdb->options, ['option_name' => '_transient_doing_cron', 'option_value' => sprintf('%.22F', microtime(true) - HOUR_IN_SECONDS), 'autoload' => 'on']);
+wp_cache_delete('alloptions', 'options');
+wp_cache_delete('notoptions', 'options');
+wp_cache_delete('_transient_doing_cron', 'options');
 delete_transient('doing_cron');
 $cron = ['nothing due' => $spawn()];
 wp_schedule_single_event(time() - 60, 'zz_cron_probe');

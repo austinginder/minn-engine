@@ -6,7 +6,7 @@
 |---|---|---|---|
 | [`Archive`](#archive) | final class | 105 | A zip unpacked the safe way, for the plugin and theme installer and for |
 | [`AutoUpdates`](#autoupdates) | final readonly class | 29 | Whether per-item auto-updates apply to plugins or themes, as the |
-| [`Changelog`](#changelog) | final class | 68 | A changelog read from its repository rather than shipped: a Minn release |
+| [`Changelog`](#changelog) | final class | 73 | A changelog read from its repository rather than shipped: a Minn release |
 | [`CoreStatus`](#corestatus) | final readonly class | 48 | The core the app's update banner and chip speak of, which on Minn is |
 | [`Diagnostics`](#diagnostics) | final readonly class | 408 | The System view's facts about this install: the engine, PHP, the |
 | [`Directory`](#directory) | final class | 35 | The Minn update service, https://updates.minn.run: the one place the |
@@ -97,9 +97,10 @@ A changelog read from its repository rather than shipped: a Minn release
 carries no notes, its own or Minn Admin's, for anyone to find on the
 sites that run it. The update service reads changelog.md from the
 repository's default branch on GitHub; the engine asks the service at most
-once a day and keeps the copy in an option (JSON) with the time it came;
-sections still marked Unreleased are left out, so a site only reads about
-releases that exist. A fetch GitHub does not answer keeps the last copy; a
+once a day, and again when the version installed changes, and keeps the
+copy in an option (JSON) with the time it came and the version it was read
+for; sections still marked Unreleased are left out, so a site only reads
+about releases that exist. A fetch GitHub does not answer keeps the last copy; a
 404 (no such file, or a private repository) keeps nothing.
 
 - const `TTL` = `86400`
@@ -123,15 +124,17 @@ Minn's changelog for a site, kept in its minn_changelog option.
 
 Minn Admin's changelog for a site running Minn, kept in its minn_admin_changelog option.
 
-### `markdown(): string`
+### `markdown(string $version = ''): string`
 
-The released sections as Markdown, fetched first when the copy is a day old; '' when there is none.
+The released sections as Markdown, fetched first when the copy is a day
+old or was read for another version than $version (the one installed,
+so an update shows its own notes at once); '' when there is none.
 
 ### static `released(string $markdown): string`
 
 The changelog without its Unreleased sections.
 
-Internals: `kept()` (private, line 52)
+Internals: `kept()` (private, line 53)
 
 
 ## CoreStatus

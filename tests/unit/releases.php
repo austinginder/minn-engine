@@ -146,6 +146,16 @@ return [
         $gone = $changelog(new Fake(['updates.minn.run/*' => Fake::reply('{"error":"not_found"}', 404)]))->markdown();
         return str_contains($first, 'v0.1.0') && $again === $first && $sent === [Directory::BASE . 'minn/changelog'] && $kept === $first && $gone === '' ?: json_encode([$first, $sent, $kept, $gone]);
     },
+    'an update reads the changelog again at once: a copy read for another version is not kept for the day' => static function () use ($memory) {
+        $stored = json_encode(['checked' => time(), 'version' => '0.1.0', 'markdown' => "# Changelog\n\n## **v0.1.0** - November 2 2026\n\nfirst\n"]);
+        [$load, $save] = $memory($stored);
+        $fake = new Fake(['updates.minn.run/*' => "# Changelog\n\n## **v0.2.0** - December 1 2026\n\nsecond\n"]);
+        $same = (new Changelog($load, $save, Changelog::ADMIN_SOURCE, $fake->http()))->markdown('0.1.0');
+        $quiet = $fake->sent() === [];
+        $updated = (new Changelog($load, $save, Changelog::ADMIN_SOURCE, $fake->http()))->markdown('0.2.0');
+        $again = (new Changelog($load, $save, Changelog::ADMIN_SOURCE, $fake->http()))->markdown('0.2.0');
+        return $quiet && str_contains($same, 'v0.1.0') && str_contains($updated, 'v0.2.0') && $again === $updated && count($fake->sent()) === 1 ?: json_encode([$same, $updated, count($fake->sent())]);
+    },
     'the engine swaps itself for a signed release archive and carries the install record' => static function () use ($webroot, $archive, $leftovers, $clean, $public, $sign) {
         $root = $webroot('0.1.0');
         try {

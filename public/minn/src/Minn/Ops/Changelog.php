@@ -14,9 +14,10 @@ use Minn\Json;
  * carries no notes, its own or Minn Admin's, for anyone to find on the
  * sites that run it. The update service reads changelog.md from the
  * repository's default branch on GitHub; the engine asks the service at most
- * once a day and keeps the copy in an option (JSON) with the time it came;
- * sections still marked Unreleased are left out, so a site only reads about
- * releases that exist. A fetch GitHub does not answer keeps the last copy; a
+ * once a day, and again when the version installed changes, and keeps the
+ * copy in an option (JSON) with the time it came and the version it was read
+ * for; sections still marked Unreleased are left out, so a site only reads
+ * about releases that exist. A fetch GitHub does not answer keeps the last copy; a
  * 404 (no such file, or a private repository) keeps nothing.
  */
 final class Changelog
@@ -60,13 +61,18 @@ final class Changelog
         );
     }
 
-    /** The released sections as Markdown, fetched first when the copy is a day old; '' when there is none. */
-    public function markdown(): string
+    /**
+     * The released sections as Markdown, fetched first when the copy is a day
+     * old or was read for another version than $version (the one installed,
+     * so an update shows its own notes at once); '' when there is none.
+     */
+    public function markdown(string $version = ''): string
     {
         $stored = Json::decode((string) (($this->load)() ?? ''), or: null);
         $checked = is_array($stored) ? (int) ($stored['checked'] ?? 0) : 0;
         $markdown = is_array($stored) ? (string) ($stored['markdown'] ?? '') : '';
-        if ($checked > time() - self::TTL) {
+        $for = is_array($stored) ? (string) ($stored['version'] ?? '') : '';
+        if ($checked > time() - self::TTL && $for === $version) {
             return $markdown;
         }
         $reply = $this->http->get($this->source, timeout: 5.0, hosts: [Directory::ORIGIN], maxBytes: 4194304);
@@ -75,7 +81,7 @@ final class Changelog
         } elseif ($reply->code === 404) {
             $markdown = '';
         }
-        ($this->save)(Json::encode(['checked' => time(), 'markdown' => $markdown]));
+        ($this->save)(Json::encode(['checked' => time(), 'version' => $version, 'markdown' => $markdown]));
         return $markdown;
     }
 

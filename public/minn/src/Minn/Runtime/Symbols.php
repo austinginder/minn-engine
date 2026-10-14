@@ -24,7 +24,7 @@ final class Symbols
     private const MAX_FILES = 6000;
     private const SKIP_DIRS = ['node_modules', 'tests', 'test', '.git'];
     /** Bumped whenever the token reader changes, so every cached scan is made again. */
-    private const READER = 3;
+    private const READER = 4;
     /** How long a cached entry is trusted on its fingerprint alone before the folder is walked again. */
     private const FULL_CHECK_EVERY = 300;
 
@@ -286,10 +286,19 @@ final class Symbols
         return $table->toArray(count($files) > self::MAX_FILES);
     }
 
-    /** @param list<array{0: int, 1: string, 2: int}|string> $tokens */
+    /**
+     * One file's tokens. A class name is resolved as PHP resolves it: through
+     * the file's use imports, else inside its namespace, so a plugin that
+     * imports a WordPress class (a provider built on the AI client's abstract
+     * provider) is judged on the class it really names.
+     *
+     * @param list<array{0: int, 1: string, 2: int}|string> $tokens
+     */
     private static function scanTokens(array $tokens, SymbolTable $table): void
     {
-        $namespaced = false;
+        $namespace = '';
+        /** @var array<string, string> $imports alias (lower case) => class */
+        $imports = [];
         $count = count($tokens);
         // Brace depth, and the depths at which class-like bodies opened, so a
         // "function" inside one is known to be a method and not a declaration
@@ -320,7 +329,15 @@ final class Symbols
                 continue;
             }
             if ($id === T_NAMESPACE) {
-                $namespaced = true;
+                $next = self::significant($tokens, $i, 1);
+                $namespace = $next !== null && in_array($next[0], [T_STRING, T_NAME_QUALIFIED], true) ? $next[1] : '';
+                $imports = [];
+                continue;
+            }
+            // An import at the top of the file: not a trait's use (inside a
+            // class body) nor a closure's (before its parameter list).
+            if ($id === T_USE && $bodies === [] && (self::significant($tokens, $i, 1)[1] ?? '') !== '(') {
+                $i = self::readImports($tokens, $i, $imports);
                 continue;
             }
             if ($id === T_FUNCTION) {
@@ -346,11 +363,14 @@ final class Symbols
                 $next = self::significant($tokens, $i, 1);
                 if ($next !== null && $next[0] === T_STRING) {
                     $table->declareClass($next[1]);
+                    if ($namespace !== '') {
+                        $table->declareClass($namespace . '\\' . $next[1]);
+                    }
                 }
                 continue;
             }
-            if ($id === T_STRING || $id === T_NAME_FULLY_QUALIFIED) {
-                self::noteName($tokens, $i, $namespaced, $table);
+            if ($id === T_STRING || $id === T_NAME_FULLY_QUALIFIED || $id === T_NAME_QUALIFIED) {
+                self::noteName($tokens, $i, $namespace, $imports, $table);
             }
         }
     }
@@ -361,8 +381,9 @@ final class Symbols
      * and a guard when the call is an existence check on a literal.
      *
      * @param list<array{0: int, 1: string, 2: int}|string> $tokens
+     * @param array<string, string> $imports alias (lower case) => class
      */
-    private static function noteName(array $tokens, int $i, bool $namespaced, SymbolTable $table): void
+    private static function noteName(array $tokens, int $i, string $namespace, array $imports, SymbolTable $table): void
     {
         [$id, $text] = $tokens[$i];
         $name = ltrim($text, '\\');
@@ -374,14 +395,11 @@ final class Symbols
             if (in_array(strtolower($name), ['self', 'static', 'parent', 'class'], true)) {
                 return;
             }
-            if ($namespaced && $id === T_STRING && !str_contains($text, '\\')) {
-                return; // resolves inside the plugin's own namespace or a use statement
-            }
-            $table->classRef($name);
+            $table->classRef($id === T_NAME_FULLY_QUALIFIED ? $name : self::resolve($name, $namespace, $imports));
             return;
         }
         if ($next !== null && $next[1] === '(' && $prevId !== T_OBJECT_OPERATOR && $prevId !== T_NULLSAFE_OBJECT_OPERATOR && $prevId !== T_DOUBLE_COLON && $prevId !== T_FUNCTION && $prevId !== T_NEW && $prevText !== '&') {
-            if (str_contains($text, '\\') && $id === T_STRING) {
+            if ($id === T_NAME_QUALIFIED || (str_contains($text, '\\') && $id === T_STRING)) {
                 return;
             }
             $lower = strtolower($name);
@@ -394,6 +412,75 @@ final class Symbols
             }
             $table->call($name);
         }
+    }
+
+    /**
+     * A class name as PHP resolves it in the file: its first part an imported
+     * alias, else inside the file's namespace.
+     *
+     * @param array<string, string> $imports alias (lower case) => class
+     */
+    private static function resolve(string $name, string $namespace, array $imports): string
+    {
+        $first = strtolower(explode('\\', $name, 2)[0]);
+        if (isset($imports[$first])) {
+            return $imports[$first] . substr($name, strlen($first));
+        }
+        return $namespace === '' ? $name : $namespace . '\\' . $name;
+    }
+
+    /**
+     * Reads one use statement's class imports (use A\B; use A\B as C;
+     * use A\{B, C as D};), leaving out function and constant imports, and
+     * returns the index of its semicolon.
+     *
+     * @param list<array{0: int, 1: string, 2: int}|string> $tokens
+     * @param array<string, string> $imports alias (lower case) => class, added to
+     */
+    private static function readImports(array $tokens, int $i, array &$imports): int
+    {
+        $count = count($tokens);
+        $notClasses = false;
+        $prefix = '';
+        $name = '';
+        $alias = '';
+        $aliasNext = false;
+        $skip = false;
+        for ($j = $i + 1; $j < $count; $j++) {
+            $token = $tokens[$j];
+            if (is_array($token) && in_array($token[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
+                continue;
+            }
+            [$id, $text] = is_array($token) ? $token : [null, $token];
+            if ($text === ';' || $text === ',' || $text === '}') {
+                if ($name !== '' && !$skip && !$notClasses) {
+                    $class = ltrim($prefix . $name, '\\');
+                    $imports[strtolower($alias !== '' ? $alias : substr((string) strrchr('\\' . $class, '\\'), 1))] = $class;
+                }
+                if ($text === ';') {
+                    return $j;
+                }
+                [$name, $alias, $aliasNext, $skip] = ['', '', false, false];
+            } elseif ($id === T_FUNCTION || $id === T_CONST) {
+                // use function / use const imports no class; inside a group it marks one item.
+                if ($prefix === '') {
+                    $notClasses = true;
+                } else {
+                    $skip = true;
+                }
+            } elseif ($id === T_AS) {
+                $aliasNext = true;
+            } elseif ($aliasNext) {
+                $alias = $text;
+                $aliasNext = false;
+            } elseif ($text === '{') {
+                $prefix = rtrim($name, '\\') . '\\';
+                $name = '';
+            } elseif (in_array($id, [T_STRING, T_NAME_QUALIFIED, T_NAME_FULLY_QUALIFIED, T_NS_SEPARATOR], true)) {
+                $name .= $text;
+            }
+        }
+        return $count - 1;
     }
 
     /** The nearest token in either direction that is not whitespace or a comment, as [id, text]. @param list<array|string> $tokens @return array{0: ?int, 1: string}|null */

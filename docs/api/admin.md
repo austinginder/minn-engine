@@ -12,7 +12,7 @@ the minn-admin/v1 namespace and serving the Minn Admin app
 | [`AppController`](#appcontroller) | final readonly class | 150 | Serves Minn Admin from the engine: the path-routed shell (every |
 | [`Appearance`](#appearance) | final readonly class | 82 | A person's Minn Admin appearance: the colour scheme and its custom |
 | [`BootPayload`](#bootpayload) | final readonly class | 245 | The window.MINN boot payload, assembled from the engine: the keys app.js |
-| [`BundleController`](#bundlecontroller) | final readonly class | 45 | What the app bundle answers for: the user guide it carries, the |
+| [`BundleController`](#bundlecontroller) | final readonly class | 46 | What the app bundle answers for: the user guide it carries, the |
 | [`Dashboard`](#dashboard) | final readonly class | 273 | The overview payload: stat cards, the activity chart, and the recent |
 | [`EditorController`](#editorcontroller) | final readonly class | 45 | The editor's helpers in minn-admin/v1: the edit lock, and the template |
 | [`Format`](#format) | final class | 51 | The dashboard's number, size, age, and title formatting. |
@@ -419,7 +419,7 @@ Route: `GET /minn-admin/v1/guide (floor edit_posts)`
 
 The app's bundled user guide.
 
-Internals: `bundled()` (private, line 62)
+Internals: `bundled()` (private, line 63)
 
 
 ## Dashboard
