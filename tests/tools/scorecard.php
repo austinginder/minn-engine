@@ -106,6 +106,11 @@ $hooks = ($status = $json('contracts/api/hook-status.json')) === null ? null : $
 $wordpressNames = ($names = $json('contracts/api/wordpress-names.json')) === null ? null : $names['summary'];
 // The logic still in the facade, rather than in the engine (tests/tools/facade-logic.php).
 $facadeLogic = ($logic = $json('contracts/api/facade-logic.json')) === null ? null : $logic['summary'];
+// How far the review of that logic has come (tests/tools/facade-review.php).
+$review = json_decode((string) shell_exec('php ' . escapeshellarg(__DIR__ . '/facade-review.php') . ' --json 2>/dev/null'), true);
+if ($facadeLogic !== null && is_array($review['summary'] ?? null)) {
+    $facadeLogic['review'] = array_intersect_key($review['summary'], array_flip(['reviewed', 'unreviewed', 'stale', 'verdicts', 'keep', 'gates', 'doubts']));
+}
 $coverage = ($lines = $json('contracts/line-coverage.json')) === null ? null : ['measured' => $lines['measured'], 'percent' => $lines['percent'], 'lines' => $lines['lines'], 'covered' => $lines['covered'], 'parts' => $lines['parts']];
 
 // The leanness ceilings the style suite holds (each only falls), with the value each started at and whether one ever rose.
@@ -211,8 +216,9 @@ printf("leanness: %d ratchets, %d risen; run %s\n",
     count($ceilings), count(array_filter($ceilings, static fn (array $c): bool => $c['rose'])),
     $run === null ? 'not recorded' : "{$run['green']} of {$run['suites']} suites green, {$run['checks']} checks" . ($run['red'] === [] ? '' : ' (red: ' . implode(', ', $run['red']) . ')') . (isset($run['engineWarnings']) ? ", {$run['engineWarnings']} engine warnings" : ''));
 printf("WordPress names in the engine: %s\n", $wordpressNames === null ? 'unmeasured' : "{$wordpressNames['functionCalls']} calls to {$wordpressNames['functions']} functions, {$wordpressNames['hookApi']} hook API calls, {$wordpressNames['classReferences']} references to {$wordpressNames['classes']} classes, in {$wordpressNames['files']} files (target 0, 0, 0)");
-printf("facade logic: %s\n", $facadeLogic === null ? 'unmeasured' : sprintf('%d functions and %d methods hold logic, %d lines; %d delegates; %d kept on purpose (only falls)',
-    $facadeLogic['logicFunctions'], $facadeLogic['logicMethods'], $facadeLogic['logicLines'], $facadeLogic['delegates'], $facadeLogic['kept']));
+printf("facade logic: %s\n", $facadeLogic === null ? 'unmeasured' : sprintf('%d functions and %d methods hold logic, %d lines; %d delegates; %d kept on purpose (only falls)%s',
+    $facadeLogic['logicFunctions'], $facadeLogic['logicMethods'], $facadeLogic['logicLines'], $facadeLogic['delegates'], $facadeLogic['kept'],
+    isset($facadeLogic['review']) ? sprintf('; reviewed %d, %d left (%d move, %d delegate, %d keep, %d remove)', $facadeLogic['review']['reviewed'], $facadeLogic['review']['unreviewed'], $facadeLogic['review']['verdicts']['move'], $facadeLogic['review']['verdicts']['delegate'], $facadeLogic['review']['verdicts']['keep'], $facadeLogic['review']['verdicts']['remove']) : ''));
 printf("gate: %s\n", !is_array($gate) ? 'gate-scan.php failed' : sprintf('%d calls into stubbed dead ends, %d unproven dead ends written by hand, PHP %s floor (%d lint failures, %d names only newer PHP has), %d hygiene hits',
     $gate['deadEndCalls'], $gate['deadEndsByHand'], $gate['floor']['version'], $gate['floor']['lintFailures'], $gate['floor']['unknown'], $gate['hygiene']['hits']));
 printf("clones: %s\n", !is_array($clones) ? 'clone-scan.php failed' : sprintf('%d duplicated lines; %s',

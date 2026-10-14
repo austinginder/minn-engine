@@ -189,6 +189,16 @@ $check("facade logic: their body lines stay at or under {$facadeLogicLinesCeilin
 exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-gen.php') . ' --check', $facadeGenOut, $facadeGenStale);
 $check('facade delegates: every delegate is recorded in contracts/api/facade-delegates.json and rendered from it', $facadeGenStale === 0, implode(' ', array_slice(array_map('trim', $facadeGenOut), 0, 6)));
 
+// The facade review: a verdict for each definition holding logic (delegate, move, keep with its
+// reason, remove), in contracts/api/facade-review.json (tests/tools/facade-review.php). A verdict
+// is for the body it was given: a changed body is stale and is reviewed again. What is left to
+// review only falls.
+exec('php ' . escapeshellarg(dirname(__DIR__) . '/tests/tools/facade-review.php') . ' --check', $facadeReviewOut, $facadeReviewBad);
+$facadeReview = json_decode(implode("\n", $facadeReviewOut), true);
+$facadeUnreviewedCeiling = 3825;
+$check('facade review: every verdict is current and well formed', $facadeReviewBad === 0, implode(' ', array_slice((array) ($facadeReview['problems'] ?? []), 0, 3)));
+$check("facade review: unreviewed definitions stay at or under {$facadeUnreviewedCeiling}", (int) ($facadeReview['unreviewed'] ?? PHP_INT_MAX) <= $facadeUnreviewedCeiling, (string) ($facadeReview['unreviewed'] ?? '?'));
+
 // Measure 18, strict: engine PHP shares no 40-token stretch with the reference's source, variable
 // names set aside (tests/tools/clone-scan.php). Code moved out of the facade can carry one in; a
 // sequence whose order is behaviour is named in the scan's SEQUENCES instead. Without a reference

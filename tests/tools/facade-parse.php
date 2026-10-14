@@ -7,7 +7,7 @@ declare(strict_types=1);
  * that measure and generate it (facade-logic.php, facade-gen.php): each
  * with its owner class, whether it is defined conditionally (inside an
  * if, as the pluggable functions are), its signature and return type as
- * written, its docblock, its body, how many statements the body holds at
+ * written (an `if (...) :` block counts, as braces do), its docblock, its body, how many statements the body holds at
  * its top level (a control structure counts as one), and the byte offsets
  * of the whole definition, so a tool can rewrite it in place.
  */
@@ -45,6 +45,7 @@ function facade_definitions(string $src): array
     $text = static fn (int $from, int $to): string => substr($src, $offsets[$from], ($to < $count ? $offsets[$to] : strlen($src)) - $offsets[$from]);
     $out = [];
     $depth = 0;
+    $alternative = 0;
     $classStack = [];
     $pendingClass = null;
     $lastDoc = null;
@@ -83,6 +84,28 @@ function facade_definitions(string $src): array
                 array_pop($classStack);
             }
             $depth--;
+            continue;
+        }
+        // The alternative syntax (`if (...) :` to `endif;`) nests without braces: the pluggable
+        // functions are defined inside `if (!function_exists(...)) :`.
+        if (is_array($token) && in_array($token[0], [T_IF, T_WHILE, T_FOR, T_FOREACH, T_SWITCH, T_DECLARE], true)) {
+            $open = 0;
+            for ($c = $i + 1; $c < $count; $c++) {
+                if ($tokens[$c] === '(') {
+                    $open++;
+                } elseif ($tokens[$c] === ')' && --$open === 0) {
+                    break;
+                }
+            }
+            for ($c++; $c < $count && is_array($tokens[$c]) && in_array($tokens[$c][0], [T_WHITESPACE, T_COMMENT], true); $c++) {
+            }
+            if (($tokens[$c] ?? null) === ':') {
+                $alternative++;
+            }
+            continue;
+        }
+        if (is_array($token) && in_array($token[0], [T_ENDIF, T_ENDWHILE, T_ENDFOR, T_ENDFOREACH, T_ENDSWITCH, T_ENDDECLARE], true)) {
+            $alternative--;
             continue;
         }
         if (!is_array($token) || $token[0] !== T_FUNCTION) {
@@ -169,7 +192,7 @@ function facade_definitions(string $src): array
                 $lines++;
             }
         }
-        $conditional = $depth > $ownerDepth;
+        $conditional = $depth > $ownerDepth || ($owner === null && $alternative > 0);
         $docStart = null;
         if ($lastDoc !== null) {
             $between = $text($lastDoc + 1, $start);

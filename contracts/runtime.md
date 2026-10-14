@@ -16416,6 +16416,25 @@ constants equal the literals they replace, and every registered probe but http-t
 identical output on the engine before and after. The style suite now holds the strict figure at 0
 whenever a reference is on the machine to compare with.
 
+## The facade review (2026-10-14)
+
+Measure 29 counts the logic in the facade, but not all of it should move into the engine: a class
+plugins extend keeps its own `$this->` calls, a fallback over the cache functions must call the
+drop-in's versions by name. `tests/tools/facade-review.php` records a verdict for every definition
+holding logic in `contracts/api/facade-review.json`: `delegate` (the engine already does it), `move`
+(and the Minn class it belongs in), `keep` for a reason (`scope`, `shape`, `compose`, `contract`), or
+`remove` (a proposal for Austin). Gates name what a move waits on (`subclass`, `pluggable`, `unprobed`,
+`globals`, `refs`), and a `doubt` names behaviour that looks wrong, for a probe to settle. Each verdict
+holds a hash of the body it judged, so a changed body asks to be judged again. The style suite checks
+the ledger and holds the unreviewed count, which only falls; the scorecard reports the tally.
+
+The pilot judged option.php and WP_Widget (40 definitions): 1 delegate, 11 move, 28 keep. The one
+doubt: `is_serialized()` never passes `$strict` to the engine.
+
+The shared parser (`tests/tools/facade-parse.php`) now sees the alternative syntax: functions defined
+inside `if (!function_exists(...)) :` were read as unconditional, so 24 pluggable and polyfill functions
+had been recorded as generated delegates. They are conditional now and out of the table (1,597 delegates).
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

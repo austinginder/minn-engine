@@ -1,0 +1,268 @@
+{
+    "method": "tests/tools/facade-review.php: a verdict for each facade definition holding logic (facade-logic.php), by file and name; body is a hash of the body the verdict was given for",
+    "verdicts": {
+        "classes/WP_Widget.php": {
+            "WP_Widget::WP_Widget": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the deprecated old-style constructor: a notice, then the real one",
+                "body": "5d0145419f56"
+            },
+            "WP_Widget::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the properties subclasses, the factory and the engine's Widget interface read; get_class($this) names the subclass",
+                "body": "997aaa085ded"
+            },
+            "WP_Widget::_register": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "its $this-> calls (get_settings, _set, _register_one) are points subclasses override",
+                "body": "9c1721109eda"
+            },
+            "WP_Widget::_register_one": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "registers through the public widget registration functions",
+                "body": "31e1508b9f98"
+            },
+            "WP_Widget::_set": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "sets the number and id subclasses read",
+                "body": "f73b8703cffe"
+            },
+            "WP_Widget::display_callback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the template method around the subclass's widget(), with its filter",
+                "body": "ae9d9863cb6b"
+            },
+            "WP_Widget::form": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the default form subclasses inherit when they draw none",
+                "body": "453573a79b25"
+            },
+            "WP_Widget::form_callback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the template method around the subclass's form(), with its filter and in_widget_form",
+                "body": "7b7a7786bf87"
+            },
+            "WP_Widget::get_field_id": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetFields",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the field id scheme, beside the field names",
+                "body": "037806db0e34"
+            },
+            "WP_Widget::get_field_name": {
+                "verdict": "move",
+                "to": "Minn\\Widgets\\WidgetFields",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the form field naming scheme, which Rest\\SidebarsController and Rest\\WidgetsController parse back by hand; one owner for both directions",
+                "body": "0bd5dc234b82"
+            },
+            "WP_Widget::get_settings": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "subclasses and the engine's Widget interface read instances through it",
+                "body": "9e7103b3d9e3"
+            },
+            "WP_Widget::posted_settings": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "a private helper that reads $_POST as plugins may have changed it",
+                "body": "afd9faf87063"
+            },
+            "WP_Widget::save_settings": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the stored shape (the _multiwidget mark) written through update_option; subclasses override it",
+                "body": "e662429e593d"
+            },
+            "WP_Widget::update_callback": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the template method around the subclass's update() and save_settings()",
+                "body": "d743ec9efc35"
+            },
+            "WP_Widget_Factory::WP_Widget_Factory": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "the deprecated old-style constructor: a notice, then the real one",
+                "body": "5fdf6b040f49"
+            },
+            "WP_Widget_Factory::_register_widgets": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "calls each widget object's own _register(), which subclasses may override",
+                "body": "382924af24de"
+            },
+            "WP_Widget_Factory::get_widget_key": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads the widgets array plugins may have changed",
+                "body": "7d4a2c9a55a7"
+            },
+            "WP_Widget_Factory::get_widget_object": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "reads the widgets array plugins may have changed",
+                "body": "f64e920b189c"
+            },
+            "WP_Widget_Factory::register": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "fills the widgets array plugins read and change directly, keyed as the reference keys it",
+                "body": "4eb417b3ddff"
+            },
+            "WP_Widget_Factory::unregister": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the widgets array plugins read and change directly",
+                "body": "569fbd647543"
+            }
+        },
+        "option.php": {
+            "delete_all_user_settings": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserSettings",
+                "why": "clears the stored settings and expires the settings cookie, which then goes out through the engine's response edge",
+                "body": "4bfbe5c1115d"
+            },
+            "delete_expired_transients": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Options",
+                "why": "the engine lists the expired names already; deleting each pair is engine work",
+                "body": "d80982afc6cd"
+            },
+            "delete_user_setting": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserSettings",
+                "why": "one family with the settings writer: read, drop names, write",
+                "body": "e0cbaad0bd91"
+            },
+            "get_options": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "primes, then get_option per name, so each name's pre_option and option filters run as the API runs them",
+                "body": "04d890ed5876"
+            },
+            "is_serialized": {
+                "verdict": "delegate",
+                "to": "Minn\\Support\\Serialized::looksSerialized",
+                "why": "the engine already decides it; the not-a-string guard belongs in the engine method once it takes any value",
+                "doubt": "$strict is never passed on: is_serialized($data, false) may accept what the engine refuses; a probe should settle it",
+                "body": "cce89825c3c8"
+            },
+            "set_user_setting": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserSettings",
+                "why": "one family with the settings writer: read, change one, write",
+                "body": "7b3d6409cd21"
+            },
+            "wp_cache_add": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ObjectCache",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "the cache-addition suspension is cache behaviour; ObjectCache::add should honour Deferrals itself",
+                "body": "749ae901cba8"
+            },
+            "wp_cache_add_global_groups": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "talks to the global $wp_object_cache, which a drop-in may provide",
+                "body": "02b833984da5"
+            },
+            "wp_cache_add_multiple": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a fallback over wp_cache_add, defined only where a drop-in left it out",
+                "body": "7aa27d592495"
+            },
+            "wp_cache_delete_multiple": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a fallback over wp_cache_delete, defined only where a drop-in left it out",
+                "body": "06c52f6a0bd0"
+            },
+            "wp_cache_flush": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ObjectCache",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "two engine caches are flushed together; the engine's flush should own both",
+                "body": "db40b390b2b7"
+            },
+            "wp_cache_get_multiple": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a fallback over wp_cache_get, defined only where a drop-in left it out; it must call the drop-in's single-key function",
+                "body": "8f04a8f656fa"
+            },
+            "wp_cache_init": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "puts the cache object in the global plugins and drop-ins read",
+                "body": "25e97eed3aef"
+            },
+            "wp_cache_replace": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\ObjectCache",
+                "gates": [
+                    "pluggable"
+                ],
+                "why": "replace (set only what is already there) belongs beside add and set in the cache",
+                "body": "fcd081cd8ac5"
+            },
+            "wp_cache_reset": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "deprecated; resets the global $wp_object_cache, a drop-in's object or the engine's",
+                "body": "791f136624af"
+            },
+            "wp_cache_set_multiple": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "a fallback over wp_cache_set, defined only where a drop-in left it out",
+                "body": "df5d8945c0c2"
+            },
+            "wp_cache_set_multiple_salted": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "salts the values and hands them to wp_cache_set_multiple, which a drop-in may define",
+                "body": "da223066c32f"
+            },
+            "wp_filter_default_autoload_value_via_option_size": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\Options",
+                "why": "the autoload size rule is the engine's; the function stays as the named callback plugins unhook",
+                "body": "85950df3f434"
+            },
+            "wp_prime_option_caches": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "turns the API's argument into the engine's list of names and returns null",
+                "body": "f9a02303e79f"
+            },
+            "wp_set_all_user_settings": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserSettings",
+                "gates": [
+                    "globals"
+                ],
+                "why": "cleaning and storing the settings pairs is engine behaviour; $_updated_user_settings stays set for plugins",
+                "body": "d440edafb180"
+            }
+        }
+    }
+}

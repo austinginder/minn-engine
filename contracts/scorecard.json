@@ -344,6 +344,31 @@
         "logicFunctions": 1832,
         "logicMethods": 2033,
         "logicLines": 30383,
-        "kept": 0
+        "kept": 0,
+        "review": {
+            "doubts": 1,
+            "reviewed": 40,
+            "stale": 0,
+            "verdicts": {
+                "delegate": 1,
+                "move": 11,
+                "keep": 28,
+                "remove": 0
+            },
+            "keep": {
+                "scope": 4,
+                "shape": 1,
+                "compose": 9,
+                "contract": 14
+            },
+            "gates": {
+                "subclass": 2,
+                "pluggable": 3,
+                "unprobed": 0,
+                "globals": 1,
+                "refs": 0
+            },
+            "unreviewed": 3825
+        }
     }
 }

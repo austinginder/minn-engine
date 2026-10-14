@@ -1,7 +1,7 @@
 {
     "method": "tests/tools/facade-gen.php: every top-level, unconditional facade function whose body is one statement, with that statement; the PHP is rendered from this table (php tests/tools/facade-gen.php --write) and the style suite checks the two agree",
     "summary": {
-        "delegates": 1621
+        "delegates": 1597
     },
     "functions": {
         "__": {
@@ -748,10 +748,6 @@
             "file": "media.php",
             "statement": "return Minn\\Runtime\\Attachments::relativePath($path);"
         },
-        "_wp_sanitize_utf8_in_redirect": {
-            "file": "pluggable.php",
-            "statement": "return urlencode($matches[0]);"
-        },
         "_wp_scripts_maybe_doing_it_wrong": {
             "file": "script-loader.php",
             "statement": "Minn\\Runtime\\AssetQueue::warnTooEarly($function_name, $handle);"
@@ -935,18 +931,6 @@
         "apply_shortcodes": {
             "file": "shortcodes.php",
             "statement": "return do_shortcode($content, $ignore_html);"
-        },
-        "array_any": {
-            "file": "compat.php",
-            "statement": "return array_find_key($array, $callback) !== null;"
-        },
-        "array_first": {
-            "file": "compat.php",
-            "statement": "return $array === [] ? null : $array[array_key_first($array)];"
-        },
-        "array_last": {
-            "file": "compat.php",
-            "statement": "return $array === [] ? null : $array[array_key_last($array)];"
         },
         "atom_enclosure": {
             "file": "feed.php",
@@ -2440,10 +2424,6 @@
             "file": "user.php",
             "statement": "return get_all_user_settings()[$name] ?? $default_value;"
         },
-        "get_userdata": {
-            "file": "pluggable.php",
-            "statement": "return get_user_by('id', $user_id);"
-        },
         "get_wp_title_rss": {
             "file": "feed.php",
             "statement": "return Minn\\Front\\FeedTags::wpTitleRss($deprecated);"
@@ -2839,10 +2819,6 @@
         "is_user_admin": {
             "file": "load.php",
             "statement": "return _minn_in_admin('user', 'WP_USER_ADMIN');"
-        },
-        "is_user_logged_in": {
-            "file": "pluggable.php",
-            "statement": "return wp_get_current_user()->exists();"
         },
         "is_user_member_of_blog": {
             "file": "user.php",
@@ -4788,46 +4764,6 @@
             "file": "block-supports-states.php",
             "statement": "return States::selector((string) $base_selector, (string) $block_selector, (string) $state);"
         },
-        "wp_cache_close": {
-            "file": "option.php",
-            "statement": "return true;"
-        },
-        "wp_cache_decr": {
-            "file": "option.php",
-            "statement": "return $GLOBALS['wp_object_cache']->decr($key, $offset, $group);"
-        },
-        "wp_cache_delete": {
-            "file": "option.php",
-            "statement": "return Runtime::cache()->delete((string) $key, $group === '' ? 'default' : (string) $group);"
-        },
-        "wp_cache_flush_group": {
-            "file": "option.php",
-            "statement": "return wp_using_ext_object_cache() ? false : Runtime::cache()->flushGroup((string) $group);"
-        },
-        "wp_cache_flush_runtime": {
-            "file": "option.php",
-            "statement": "// An external cache that brought no flush_runtime of its own cannot be asked to.\n    return wp_using_ext_object_cache() ? false : Runtime::cache()->flush();"
-        },
-        "wp_cache_get": {
-            "file": "option.php",
-            "statement": "return Runtime::cache()->get((string) $key, $group === '' ? 'default' : (string) $group, $found);"
-        },
-        "wp_cache_get_multiple_salted": {
-            "file": "option.php",
-            "statement": "return array_map(static fn ($cache) => _minn_cache_salted_data($cache, $salt), wp_cache_get_multiple($cache_keys, $group));"
-        },
-        "wp_cache_get_salted": {
-            "file": "option.php",
-            "statement": "return _minn_cache_salted_data(wp_cache_get($cache_key, $group), $salt);"
-        },
-        "wp_cache_incr": {
-            "file": "option.php",
-            "statement": "return $GLOBALS['wp_object_cache']->incr($key, $offset, $group);"
-        },
-        "wp_cache_set": {
-            "file": "option.php",
-            "statement": "return Runtime::cache()->set((string) $key, $data, $group === '' ? 'default' : (string) $group);"
-        },
         "wp_cache_set_comments_last_changed": {
             "file": "comment.php",
             "statement": "wp_cache_set_last_changed('comment');"
@@ -4836,10 +4772,6 @@
             "file": "post.php",
             "statement": "wp_cache_set_last_changed('posts');"
         },
-        "wp_cache_set_salted": {
-            "file": "option.php",
-            "statement": "return wp_cache_set($cache_key, ['data' => $data, 'salt' => _minn_cache_salt($salt)], $group, $expire);"
-        },
         "wp_cache_set_terms_last_changed": {
             "file": "taxonomy.php",
             "statement": "wp_cache_set('last_changed', microtime(), 'terms');"
@@ -4847,10 +4779,6 @@
         "wp_cache_set_users_last_changed": {
             "file": "misc.php",
             "statement": "wp_cache_set_last_changed('users');"
-        },
-        "wp_cache_supports": {
-            "file": "option.php",
-            "statement": "return !wp_using_ext_object_cache() && in_array($feature, ['flush_runtime', 'flush_group'], true);"
         },
         "wp_calculate_image_sizes": {
             "file": "media.php",
@@ -5224,10 +5152,6 @@
             "file": "comment.php",
             "statement": "return Minn\\Runtime\\CommentChecks::currentCommenter();"
         },
-        "wp_get_current_user": {
-            "file": "pluggable.php",
-            "statement": "return _wp_get_current_user();"
-        },
         "wp_get_db_schema": {
             "file": "upgrade.php",
             "statement": "return '';"
@@ -5479,10 +5403,6 @@
         "wp_has_noncharacters": {
             "file": "formatting.php",
             "statement": "return Minn\\Support\\Utf8::hasNoncharacters((string) $text);"
-        },
-        "wp_hash": {
-            "file": "pluggable.php",
-            "statement": "return hash_hmac($algo, (string) $data, wp_salt($scheme));"
         },
         "wp_head": {
             "file": "template.php",
@@ -5804,17 +5724,9 @@
             "file": "comment.php",
             "statement": "return Minn\\Runtime\\CommentChecks::create($commentdata, $wp_error);"
         },
-        "wp_new_user_notification": {
-            "file": "pluggable.php",
-            "statement": "Minn\\Runtime\\AccountFlows::newUserNotification((int) $user_id, $deprecated, (string) $notify);"
-        },
         "wp_next_scheduled": {
             "file": "cron.php",
             "statement": "return Minn\\Runtime\\CronEvents::next($hook, $args);"
-        },
-        "wp_nonce_tick": {
-            "file": "pluggable.php",
-            "statement": "return Nonce::tick(is_int($action) ? $action : (string) $action);"
         },
         "wp_nonce_url": {
             "file": "functions.php",
@@ -6076,17 +5988,9 @@
             "file": "robots-template.php",
             "statement": "return is_search() ? wp_robots_no_robots($robots) : $robots;"
         },
-        "wp_salt": {
-            "file": "pluggable.php",
-            "statement": "return apply_filters('salt', Salts::for($scheme), $scheme);"
-        },
         "wp_sanitize_block_gap_value": {
             "file": "block-supports-layout.php",
             "statement": "return Layout::sanitizeGap($gap_value);"
-        },
-        "wp_sanitize_redirect": {
-            "file": "pluggable.php",
-            "statement": "return Minn\\Http\\Location::sanitize((string) $location);"
         },
         "wp_schedule_event": {
             "file": "cron.php",
