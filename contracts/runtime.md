@@ -16546,7 +16546,12 @@ checked for updates. Each probe now lays its row straight into the table
 end. Both scenarios were captured again on the reference: each adds
 `pre_cache_alloptions` (the options are read again after the row is laid),
 and `symbols` no longer fires `cron_schedules`. Both probes' api fixtures
-are unchanged on both stacks.
+are unchanged on both stacks. The next full run showed a third:
+`plugin-uninstall` stores and clears its own plugin update check, so its
+add and delete hooks fired only when no check was stored, which had held
+only because `symbols` used to clear the stored check and never put it
+back. It now takes the stored check out first (straight from the table)
+and puts it back after its own sweep; its fixture and capture stand.
 
 Also: the reference twin kept serving the dev Minn Admin after its plugin
 link was pointed at the 0.45.0 release, as OPcache keeps the path it was

@@ -24,6 +24,21 @@ foreach (['wp-admin/includes/plugin.php', 'wp-admin/includes/file.php'] as $admi
     }
 }
 $dir = WP_PLUGIN_DIR;
+// The probe starts with no update check stored, as the reference was
+// captured: the row is taken out straight from the table (no hook hears it),
+// so storing and clearing the probe's own check fires the same hooks
+// whatever the site last stored. What was there is put back at the end.
+global $wpdb;
+$storedCheck = $wpdb->get_row($wpdb->prepare("SELECT option_value, autoload FROM {$wpdb->options} WHERE option_name = %s", '_site_transient_update_plugins'), ARRAY_A);
+$forgetCheck = static function () use ($storedCheck): void {
+    wp_cache_delete('_site_transient_update_plugins', 'options');
+    wp_cache_delete('notoptions', 'options');
+    if (is_array($storedCheck) && !in_array($storedCheck['autoload'], ['no', 'off', 'auto-off'], true)) {
+        wp_cache_delete('alloptions', 'options');
+    }
+};
+$wpdb->delete($wpdb->options, ['option_name' => '_site_transient_update_plugins']);
+$forgetCheck();
 $updates = get_site_transient('update_plugins');
 $plugins = ['zz-uninstall-file/zz-uninstall-file.php', 'zz-uninstall-hook/zz-uninstall-hook.php', 'zz-uninstall-single.php'];
 $sweep = static function () use ($dir, $updates): void {
@@ -47,6 +62,12 @@ $sweep = static function () use ($dir, $updates): void {
     delete_option('zz_uninstall_seen');
 };
 register_shutdown_function($sweep);
+register_shutdown_function(static function () use ($storedCheck, $wpdb, $forgetCheck): void {
+    if (is_array($storedCheck)) {
+        $wpdb->replace($wpdb->options, ['option_name' => '_site_transient_update_plugins', 'option_value' => $storedCheck['option_value'], 'autoload' => $storedCheck['autoload']]);
+        $forgetCheck();
+    }
+});
 $sweep();
 
 $header = static fn (string $name): string => "<?php\n/*\n * Plugin Name: {$name}\n * Version: 1.0\n */\n";
