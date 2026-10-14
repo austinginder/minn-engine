@@ -2569,6 +2569,85 @@
                 "body": "cd7dd61e3497"
             }
         },
+        "classes/WP_Comment_Query.php": {
+            "WP_Comment_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the query_var_defaults plugins read, then $this->query when given",
+                "body": "a9e468994c41"
+            },
+            "WP_Comment_Query::get_comment_ids": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\CommentQueryRunner",
+                "gates": [
+                    "globals"
+                ],
+                "why": "builds the meta query and its SQL before the runner's ids; the meta wiring belongs with the runner",
+                "body": "e3771e97fe8d"
+            },
+            "WP_Comment_Query::get_comments": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\CommentQueryRunner::run",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine runs the query over this object",
+                "body": "b82853735471"
+            },
+            "WP_Comment_Query::parse_orderby": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\CommentOrder::clause",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine writes the order clause; the meta clauses are argument conversion",
+                "body": "8f56b7ee4f95"
+            },
+            "WP_Comment_Query::parse_query": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the vars over the defaults, then parse_comment_query with the object",
+                "body": "e7bdd3e54455"
+            },
+            "WP_Comment_Query::query": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the vars, then $this->get_comments",
+                "body": "3e8ad3ef9746"
+            }
+        },
+        "classes/WP_Date_Query.php": {
+            "WP_Date_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "relation, column and compare through $this->validate_column and get_compare, the queries sanitised by the builder",
+                "body": "2356bfcdbe8e"
+            },
+            "WP_Date_Query::builder": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's DateSql over the site tables, start of week and the valid columns filter",
+                "body": "33135b470439"
+            },
+            "WP_Date_Query::get_compare": {
+                "verdict": "move",
+                "to": "Minn\\Query\\DateSql",
+                "why": "the allowed comparison operators, the object's default otherwise",
+                "body": "11d4710afdf7"
+            },
+            "WP_Date_Query::get_sql": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\DateSql::build",
+                "why": "the engine builds the WHERE; the get_date_sql filter around it stays",
+                "body": "2fb951a1f4d8"
+            },
+            "WP_Date_Query::sanitize_query": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\DateSql::sanitize",
+                "why": "the engine sanitises; the parent's defaults are argument conversion",
+                "body": "5f6563def0a3"
+            }
+        },
         "classes/WP_Error.php": {
             "WP_Error::__construct": {
                 "verdict": "keep",
@@ -2745,6 +2824,344 @@
                 ],
                 "why": "touch with now for unset times",
                 "body": "ac5a92503191"
+            }
+        },
+        "classes/WP_HTML_Decoder.php": {
+            "WP_HTML_Decoder::attribute_starts_with": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Decoder",
+                "why": "whether a decoded attribute value starts with a text, ASCII case-insensitive when asked",
+                "body": "9f22dba58d3f"
+            },
+            "WP_HTML_Decoder::read_character_reference": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's reference and its byte length handed back by reference",
+                "body": "282cfb369f52"
+            }
+        },
+        "classes/WP_HTML_Processor.php": {
+            "WP_HTML_Processor::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's scanner, the direct-construction notice, the bookmark limit and the engine's builder",
+                "body": "fcb792890ea9"
+            },
+            "WP_HTML_Processor::class_list": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the parent's classes for an opener only",
+                "body": "5c4bfd64e7e2"
+            },
+            "WP_HTML_Processor::create_fragment": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a processor for a body fragment over the engine's tree builder, null for another context or encoding",
+                "body": "3d8d1720abc7"
+            },
+            "WP_HTML_Processor::create_full_parser": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a processor for a whole UTF-8 document",
+                "body": "af6d5a0d813f"
+            },
+            "WP_HTML_Processor::get_modifiable_text": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a node's text, or the scanner's for a real tag",
+                "body": "0f0413ea684d"
+            },
+            "WP_HTML_Processor::matches_breadcrumbs": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tree\\Builder",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "matches a breadcrumb path (wildcards, the tail) against the open elements",
+                "body": "8736840f794e"
+            },
+            "WP_HTML_Processor::minnAttributes": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "an opener's attributes as name and value pairs",
+                "body": "439a29ab04bc"
+            },
+            "WP_HTML_Processor::minnMatches": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tree\\Builder",
+                "why": "a tag query's tag name, class and breadcrumbs test",
+                "body": "88af2eabb254"
+            },
+            "WP_HTML_Processor::next_tag": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tree\\Builder",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "walks events to the next tag matching the query (closers when asked, breadcrumb offsets)",
+                "body": "3866077a22ba"
+            },
+            "WP_HTML_Processor::next_token": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the builder's next event, an unsupported error turned into the API's exception",
+                "body": "037a48289619"
+            },
+            "WP_HTML_Processor::release_bookmark": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "forgets a bookmark's operation and the scanner's bookmark",
+                "body": "59022f51c2a5"
+            },
+            "WP_HTML_Processor::seek": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tree\\Builder",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "replays the tree from the start to a bookmark's event, halting when it is gone",
+                "body": "215614e8f1f7"
+            },
+            "WP_HTML_Processor::serialize": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every token through $this->serialize_token, null after an error",
+                "body": "d486f4402bf8"
+            },
+            "WP_HTML_Processor::serialize_token": {
+                "verdict": "delegate",
+                "to": "Minn\\Html\\Tree\\Serializer::open",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the engine serializes the node (open, close or leaf); choosing which by the event is the call's shape",
+                "body": "7077d3b91730"
+            },
+            "WP_HTML_Processor::set_bookmark": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "a scanner bookmark with the event's operation",
+                "body": "93ea3c844bdb"
+            },
+            "WP_HTML_Unsupported_Exception::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the exception's token, position and stacks",
+                "body": "52a381106235"
+            }
+        },
+        "classes/WP_HTML_Tag_Processor.php": {
+            "WP_HTML_Doctype_Info::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the doctype's name, identifiers and mode",
+                "body": "56df4cc4923d"
+            },
+            "WP_HTML_Doctype_Info::from_doctype_token": {
+                "verdict": "delegate",
+                "to": "Minn\\Html\\Tree\\Compat::read",
+                "why": "the engine reads the doctype; the object is its shape",
+                "body": "ecfbeedb61e2"
+            },
+            "WP_HTML_Tag_Processor::change_parsing_namespace": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "switches the scanner's namespace among html, svg and math",
+                "body": "230ddb9aa5ab"
+            },
+            "WP_HTML_Tag_Processor::class_list": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the scanner's classes as a generator",
+                "body": "07e12a1bc511"
+            },
+            "WP_HTML_Tag_Processor::get_doctype_info": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the doctype token's text read into the API's doctype object",
+                "body": "d240bec26087"
+            },
+            "WP_HTML_Tag_Processor::has_class": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the scanner's class test, null off an opener",
+                "body": "c06310b78c06"
+            },
+            "WP_HTML_Tag_Processor::next_tag": {
+                "verdict": "delegate",
+                "to": "Minn\\Html\\Tags::nextTag",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the engine finds the tag; a tag name given as text is argument conversion",
+                "body": "011b135077e8"
+            },
+            "WP_HTML_Tag_Processor::set_attribute": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tags",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the URL attribute rule (through esc_url, a wiped value refused) and the invalid name notice before the scanner sets it",
+                "body": "cd8f49d66004"
+            },
+            "WP_HTML_Tag_Processor::set_modifiable_text": {
+                "verdict": "delegate",
+                "to": "Minn\\Html\\Tags::setModifiableText",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the engine sets the text; the comment-closer refusal and its notice belong inside it",
+                "body": "d07ee8a2cb75"
+            },
+            "WP_HTML_Tag_Processor::subdivide_text_appropriately": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tags",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "splits a text node's leading nulls or whitespace into a node of their own",
+                "body": "f423ac562a98"
+            }
+        },
+        "classes/WP_HTML_Token.php": {
+            "WP_HTML_Active_Formatting_Elements::clear_up_to_last_marker": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "pops entries through the last marker",
+                "body": "70725c19417d"
+            },
+            "WP_HTML_Active_Formatting_Elements::remove_node": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "removes a token from the list",
+                "body": "e6c652388d39"
+            },
+            "WP_HTML_Active_Formatting_Elements::walk_down": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the list from the start",
+                "body": "5740de86aae4"
+            },
+            "WP_HTML_Active_Formatting_Elements::walk_up": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the list from the end",
+                "body": "a28b33eee5bc"
+            },
+            "WP_HTML_Attribute_Token::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the attribute token's fields",
+                "body": "180281f59e4e"
+            },
+            "WP_HTML_Open_Elements::after_element_pop": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the pop handler a processor sets",
+                "body": "3a7b43cf7f33"
+            },
+            "WP_HTML_Open_Elements::after_element_push": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the push handler a processor sets",
+                "body": "ee328aeeb91a"
+            },
+            "WP_HTML_Open_Elements::current_node_is": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "whether the top node has an identity, namespaced or not",
+                "body": "0e2ddfd441e6"
+            },
+            "WP_HTML_Open_Elements::has_element_in_select_scope": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tree\\Builder",
+                "why": "the select scope rule",
+                "body": "15b6feefd3e3"
+            },
+            "WP_HTML_Open_Elements::has_element_in_specific_scope": {
+                "verdict": "move",
+                "to": "Minn\\Html\\Tree\\Builder",
+                "why": "the HTML scope rule: an element above any terminating one",
+                "body": "df19b8b972e8"
+            },
+            "WP_HTML_Open_Elements::minnClearTo": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "pops through $this->pop until one of the names",
+                "body": "3136cd06a778"
+            },
+            "WP_HTML_Open_Elements::pop": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "pops the stack and calls the pop handler",
+                "body": "6f19b1a9f7d5"
+            },
+            "WP_HTML_Open_Elements::pop_until": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "pops through $this->pop until a tag name",
+                "body": "e36b3f7fa37e"
+            },
+            "WP_HTML_Open_Elements::push": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "pushes and calls the push handler",
+                "body": "23ded9d3919c"
+            },
+            "WP_HTML_Open_Elements::remove_node": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "removes a token from the stack and calls the pop handler",
+                "body": "e5ace2586b8a"
+            },
+            "WP_HTML_Open_Elements::walk_down": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the stack bottom up",
+                "body": "5740de86aae4"
+            },
+            "WP_HTML_Open_Elements::walk_up": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the stack top down, from above a node when given",
+                "body": "9a6ed1c4e5d9"
+            },
+            "WP_HTML_Processor_State::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the state's open and formatting element stacks",
+                "body": "08c56a63678b"
+            },
+            "WP_HTML_Span::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the span's start and length",
+                "body": "b0d9a01062ce"
+            },
+            "WP_HTML_Stack_Event::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the event's token, operation and provenance",
+                "body": "34c3c10a124c"
+            },
+            "WP_HTML_Text_Replacement::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the replacement's start, length and text",
+                "body": "5b960ade2032"
+            },
+            "WP_HTML_Token::__construct": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the token's bookmark, node name, self-closing flag and destroy callback",
+                "body": "0067837343d2"
+            },
+            "WP_HTML_Token::__destruct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "calls the token's own destroy callback",
+                "body": "143cef055d0e"
             }
         },
         "classes/WP_HTTP_Proxy.php": {
@@ -3422,6 +3839,50 @@
                 "body": "492cbb6dfcb5"
             }
         },
+        "classes/WP_Meta_Query.php": {
+            "WP_Meta_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the relation and $this->sanitize_query over the clauses",
+                "body": "dccaec2d8262"
+            },
+            "WP_Meta_Query::get_sql": {
+                "verdict": "move",
+                "to": "Minn\\Query\\MetaSql",
+                "why": "the meta table by type, the builder's SQL, the remembered clauses, the OR flag and get_meta_sql",
+                "body": "ab2b4b27fe9b"
+            },
+            "WP_Meta_Query::get_sql_clauses": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\MetaSql::sqlClauses",
+                "why": "the engine builds the clauses; remembering them on the object is the wrapper",
+                "body": "9b9847bdfdfd"
+            },
+            "WP_Meta_Query::get_sql_for_clause": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\MetaSql::clauseSql",
+                "gates": [
+                    "refs"
+                ],
+                "why": "the engine builds the clause's SQL; remembering the clauses is the wrapper",
+                "body": "96b0c6528963"
+            },
+            "WP_Meta_Query::get_sql_for_query": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\MetaSql::querySql",
+                "gates": [
+                    "refs"
+                ],
+                "why": "the engine builds the query's SQL; remembering the clauses is the wrapper",
+                "body": "4da73898a265"
+            },
+            "WP_Meta_Query::remember": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the builder's clauses and aliases as the object's properties plugins read",
+                "body": "4de7de5989ba"
+            }
+        },
         "classes/WP_Object_Cache.php": {
             "WP_Object_Cache::__construct": {
                 "verdict": "keep",
@@ -3488,6 +3949,399 @@
                 "reason": "shape",
                 "why": "prints the object's hit and miss counts and the engine's group sizes",
                 "body": "59178a8a55ba"
+            }
+        },
+        "classes/WP_Query.php": {
+            "WP_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->query when given",
+                "body": "98bf39666992"
+            },
+            "WP_Query::generate_postdata": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\PostData::generate",
+                "why": "the engine generates the post data for this query",
+                "body": "58b64649ea5e"
+            },
+            "WP_Query::get_posts": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\PostQuery::run",
+                "gates": [
+                    "subclass",
+                    "globals"
+                ],
+                "why": "the engine runs the query over this object; the search text from the request is argument conversion",
+                "body": "9d129ac146bd"
+            },
+            "WP_Query::get_queried_object": {
+                "verdict": "move",
+                "to": "Minn\\Query\\QueriedObject",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "fetches the queried object by the kind QueriedObject::locate names and its id",
+                "body": "6b4fdccd5bf9"
+            },
+            "WP_Query::get_queried_object_id": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->get_queried_object, then its id",
+                "body": "cc4328b6ec6c"
+            },
+            "WP_Query::have_comments": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the comment loop state",
+                "body": "9db2e4a8fd23"
+            },
+            "WP_Query::have_posts": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the loop state with loop_end and loop_no_results",
+                "body": "0e4a09d86817"
+            },
+            "WP_Query::init": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "resets the query object's state, then $this->init_query_flags",
+                "body": "9a09f74cce82"
+            },
+            "WP_Query::init_query_flags": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every is_ flag off",
+                "body": "41b32a7d983c"
+            },
+            "WP_Query::is_attachment": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the attachment test against given ids or names",
+                "body": "98cecdae073c"
+            },
+            "WP_Query::is_author": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the author test against given ids, nicenames or names",
+                "body": "1613c2ec7b1b"
+            },
+            "WP_Query::is_comments_popup": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice and false",
+                "body": "61026cb233d1"
+            },
+            "WP_Query::is_feed": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the feed test against given feed types",
+                "body": "15076c20780d"
+            },
+            "WP_Query::is_front_page": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the front page rule by show_on_front and page_on_front",
+                "body": "8eddb63c20bd"
+            },
+            "WP_Query::is_page": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the page test by id, title, slug or path",
+                "body": "d6071e423a34"
+            },
+            "WP_Query::is_post_type_archive": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the post type archive test against given types",
+                "body": "77fbe6b7d8ec"
+            },
+            "WP_Query::is_single": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the single test by id, title or slug",
+                "body": "27f0494b13a7"
+            },
+            "WP_Query::is_singular": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the singular test against given types",
+                "body": "33d2ec27d55f"
+            },
+            "WP_Query::is_tax": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the taxonomy test against given taxonomies and terms",
+                "body": "eac2927e4845"
+            },
+            "WP_Query::is_term_query": {
+                "verdict": "move",
+                "to": "Minn\\Query\\Conditionals",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the shared term test by id, slug or name",
+                "body": "7e1897ed10eb"
+            },
+            "WP_Query::lazyload_comment_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the value unchanged",
+                "body": "82f7f9171b0d"
+            },
+            "WP_Query::lazyload_term_meta": {
+                "verdict": "keep",
+                "reason": "compose",
+                "why": "deprecated: a notice, the value unchanged",
+                "body": "82f7f9171b0d"
+            },
+            "WP_Query::locate_page_path": {
+                "verdict": "move",
+                "to": "Minn\\Query\\QueryFlags",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "the page by path, and the posts page and privacy page flags it brings",
+                "body": "51c9330be5df"
+            },
+            "WP_Query::next_comment": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "advances the comment loop state",
+                "body": "6eae7db0e637"
+            },
+            "WP_Query::next_post": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "advances the loop state",
+                "body": "72a5d2c6f278"
+            },
+            "WP_Query::parse_query": {
+                "verdict": "move",
+                "to": "Minn\\Query\\QueryFlags",
+                "gates": [
+                    "subclass"
+                ],
+                "why": "derives the vars and flags, the tax query, the page path and the vars hash before parse_query; the flags set on the object stay",
+                "body": "e96ac3449011"
+            },
+            "WP_Query::parse_tax_query": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the tax query object from the engine's clauses, then parse_tax_query",
+                "body": "8f7944ac9d7b"
+            },
+            "WP_Query::query": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "resets, sets the vars, then $this->get_posts",
+                "body": "ffd428a5cb4d"
+            },
+            "WP_Query::reset_postdata": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "puts the query's post back in the global $post",
+                "body": "54a8c37a2fe2"
+            },
+            "WP_Query::rewind_posts": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "resets the loop position",
+                "body": "94011b042ffc"
+            },
+            "WP_Query::set_404": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "every flag off but feed and embed, is_404 on, then set_404",
+                "body": "8b207f89ae65"
+            },
+            "WP_Query::setup_postdata": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "sets the global $post and the postdata globals, then the_post",
+                "body": "f09a74fbb9de"
+            },
+            "WP_Query::the_comment": {
+                "verdict": "keep",
+                "reason": "scope",
+                "why": "the next comment in the global $comment, comment_loop_start once",
+                "body": "cda787b1f49b"
+            },
+            "WP_Query::the_post": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "loop_start once, $this->next_post and setup_postdata",
+                "body": "ac89c8e24cb0"
+            }
+        },
+        "classes/WP_Tax_Query.php": {
+            "WP_Tax_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the relation, $this->sanitize_query and the queried terms",
+                "body": "724480bbf108"
+            },
+            "WP_Tax_Query::builder": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the engine's TaxSql over the site tables and the term id resolution",
+                "body": "96a05119c36d"
+            },
+            "WP_Tax_Query::get_sql": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\TaxSql::build",
+                "why": "the engine builds the SQL; the primary table and column are the object's",
+                "body": "3af81ae53333"
+            },
+            "WP_Tax_Query::get_sql_clauses": {
+                "verdict": "delegate",
+                "to": "Minn\\Query\\TaxSql::sqlClauses",
+                "why": "the engine builds the clauses",
+                "body": "0d17fc895a35"
+            },
+            "WP_Tax_Query::transform_query": {
+                "verdict": "move",
+                "to": "Minn\\Query\\TaxSql",
+                "gates": [
+                    "refs"
+                ],
+                "why": "turns a clause's terms into another field through their term_taxonomy ids",
+                "body": "3b70c5ff36dc"
+            }
+        },
+        "classes/WP_Term_Query.php": {
+            "WP_Term_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the query_var_defaults plugins read, then $this->query when given",
+                "body": "a4f06976f86e"
+            },
+            "WP_Term_Query::generate_cache_key": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermQueryRunner",
+                "why": "the get_terms cache key from the arguments that count and the SQL",
+                "body": "62cb08d46ad5"
+            },
+            "WP_Term_Query::get_search_sql": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermQueryRunner",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the name or slug LIKE search clause",
+                "body": "77109ab28767"
+            },
+            "WP_Term_Query::get_terms": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\TermQueryRunner::run",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine runs the query over this object",
+                "body": "9a4e8cc95126"
+            },
+            "WP_Term_Query::parse_query": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\TermQuery",
+                "why": "the defaults through get_terms_defaults, number and offset, parent over child_of, get all, then parse_term_query",
+                "body": "22ba38bc1867"
+            },
+            "WP_Term_Query::query": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "the vars, then $this->get_terms",
+                "body": "8b3d76698692"
+            }
+        },
+        "classes/WP_User_Query.php": {
+            "WP_User_Query::__construct": {
+                "verdict": "keep",
+                "reason": "contract",
+                "why": "$this->prepare_query and query when given",
+                "body": "e91ce8863175"
+            },
+            "WP_User_Query::__get": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the two compatibility properties, a deprecation notice for others",
+                "body": "38338201bd4e"
+            },
+            "WP_User_Query::__isset": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the two compatibility properties, a deprecation notice for others",
+                "body": "cef074e02f54"
+            },
+            "WP_User_Query::__set": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the two compatibility properties, a deprecation notice for others",
+                "body": "51e4c3a4b99d"
+            },
+            "WP_User_Query::__unset": {
+                "verdict": "keep",
+                "reason": "shape",
+                "why": "the two compatibility properties, a deprecation notice for others",
+                "body": "a8b3a796d284"
+            },
+            "WP_User_Query::get_cache_last_changed": {
+                "verdict": "move",
+                "to": "Minn\\Runtime\\UserQueryRunner",
+                "why": "the last-changed salts a user query depends on",
+                "body": "25eaf56083b5"
+            },
+            "WP_User_Query::parse_orderby": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\UserOrder::clause",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine writes the order clause",
+                "body": "5ed97bdb5f7a"
+            },
+            "WP_User_Query::prepare_query": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\UserQueryRunner::prepare",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine prepares the query; filling the vars is argument conversion",
+                "body": "a365bb836b00"
+            },
+            "WP_User_Query::query": {
+                "verdict": "delegate",
+                "to": "Minn\\Runtime\\UserQueryRunner::query",
+                "gates": [
+                    "globals"
+                ],
+                "why": "the engine runs the query over this object",
+                "body": "34782976a5d2"
             }
         },
         "classes/WP_Widget.php": {
