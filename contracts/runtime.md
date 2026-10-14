@@ -16257,6 +16257,15 @@ wp_get_server_protocol, get_http_origin, get_allowed_http_origins, is_allowed_ht
 (`Runtime::facadeLoaded()`). is_multisite, always false, drops out of the user search. The http-transports
 probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 34, edit addresses and the HTML rules.** `Runtime\EditLinks` answers get_edit_post_link,
+get_edit_term_link, get_edit_user_link, get_edit_profile_url, get_dashboard_url and wp_get_shortlink;
+`Runtime\KsesRules` wp_kses_allowed_html, wp_kses, wp_kses_post, wp_kses_one_attr, wp_kses_no_null, the
+allowed-HTML tables and the policy. The comment form sets the content filters again through
+`Handoff::resetKses()`, as they are added and removed by the names plugins remove them by. A context given to
+`KsesRules::filter()` as another scalar is read as text, as PHP coerced it in the facade (wp_kses_data hands
+wp_kses current_filter(), false outside a filter). The http-transports
+probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against

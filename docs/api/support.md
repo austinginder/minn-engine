@@ -353,7 +353,7 @@ block delimiters are written back with their attribute values filtered.
 - const `STRAY_AMPERSAND` = `'/&(?!(?:#[0-9]+|#[xX][0-9a-fA-F]+|[a-zA-Z][a-zA-Z0-9]{0,31});)/'`
 - const `MARKUP` = `array (   '&' => '&amp;',   '<' => '&lt;',   '>' => '&gt;',   '"' => '&quot;',   '\'' => '&apos;', )`
 
-Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
+Used by: `Minn\Blocks\Dynamic\LatestComments`, `Minn\Blocks\Dynamic\SocialLinks`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Content\Users`, `Minn\Rest\MenusController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RevisionsController`, `Minn\Rest\TermsController`, `Minn\Rest\UsersController`, `Minn\Runtime\KsesRules`, `Minn\Runtime\Notices`, `Minn\Runtime\TagEditor`, `Minn\Runtime\UserWrites`, `Minn\Support\Escape`, `Minn\Support\KsesAttributes`, `Minn\Support\KsesCss`, `Minn\Support\KsesPolicy`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Theme\PatternText`
 
 ### static `post(string $html): string`
 
@@ -495,7 +495,7 @@ Kses one attribute at a time, for the shortcode pass that runs inside
 HTML tags: an opening tag cut into its attributes, and one attribute
 judged as kses judges it on its element. Probe shortcode-run.
 
-Used by: `Minn\Runtime\Shortcodes`
+Used by: `Minn\Runtime\KsesRules`, `Minn\Runtime\Shortcodes`
 
 ### static `elementParts(string $element): ?array`
 
@@ -595,7 +595,7 @@ What one kses pass allows: the tags, each tag's attributes (allowed
 plainly or with value rules), whether a tag takes data- attributes,
 which attributes hold URIs, and the schemes those URIs may use.
 
-Used by: `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
+Used by: `Minn\Runtime\KsesRules`, `Minn\Support\Kses`, `Minn\Support\KsesAttributes`
 
 - readonly `array $schemes`
 
@@ -648,7 +648,7 @@ The protocols an address may use, as kses judges them: the site's list
 (kses_allowed_protocols), and an address with a protocol not on the list
 taken off it, encoded colons and entity-spelled protocols seen through.
 
-Used by: `Minn\Support\Escape`
+Used by: `Minn\Runtime\KsesRules`, `Minn\Support\Escape`
 
 ### static `allowed(): array`
 

@@ -10,6 +10,7 @@ use Minn\Objects\Toolbar;
 use Minn\Objects\User;
 use Minn\Runtime\CommentReads;
 use Minn\Runtime\CurrentUser;
+use Minn\Runtime\EditLinks;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\QueryArgs;
 use Minn\Runtime\Recovery;
@@ -59,7 +60,7 @@ final class ToolbarMenus
     /** The profile link for the signed-in user, or false when they cannot read. */
     private static function profileUrl(int $userId): string|false
     {
-        return Can::current('read') ? \get_edit_profile_url($userId) : false;
+        return Can::current('read') ? EditLinks::profile($userId) : false;
     }
 
     /** "Howdy" with the user's name and small avatar, at the right of the bar. */
@@ -297,7 +298,7 @@ final class ToolbarMenus
         [$title, $href] = match (true) {
             !empty($shown->post_type) => self::editPost($shown),
             !empty($shown->taxonomy) => self::editTerm($shown),
-            $shown instanceof User && Can::current('edit_user', $shown->ID) => [Gettext::text('Edit User'), \get_edit_user_link($shown->ID)],
+            $shown instanceof User && Can::current('edit_user', $shown->ID) => [Gettext::text('Edit User'), EditLinks::user($shown->ID)],
             default => [null, null],
         };
         if ($title !== null && $href) {
@@ -312,7 +313,7 @@ final class ToolbarMenus
         if (!$type || !$type->show_in_admin_bar || !Can::current('edit_post', $post->ID)) {
             return [null, null];
         }
-        return [$type->labels->edit_item, \get_edit_post_link($post->ID)];
+        return [$type->labels->edit_item, EditLinks::post($post->ID)];
     }
 
     /** @return array{0: ?string, 1: ?string} the edit label and link for a term, or nulls */
@@ -322,13 +323,13 @@ final class ToolbarMenus
         if (!$taxonomy || !Can::current('edit_term', $term->term_id)) {
             return [null, null];
         }
-        return [$taxonomy->labels->edit_item, \get_edit_term_link($term)];
+        return [$taxonomy->labels->edit_item, EditLinks::term($term)];
     }
 
     /** The page's shortlink, with a box to copy it from. */
     public static function shortlinkMenu(Toolbar $bar): void
     {
-        $short = \wp_get_shortlink(0, 'query');
+        $short = EditLinks::shortlink(0, 'query');
         if (empty($short)) {
             return;
         }

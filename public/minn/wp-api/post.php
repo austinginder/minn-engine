@@ -412,18 +412,7 @@ function the_attachment_link($post = 0, $fullsize = false, $deprecated = false, 
 
 function get_edit_post_link($post = 0, $context = 'display')
 {
-    $post = get_post($post);
-    if ($post === null || !current_user_can('edit_post', $post->ID)) {
-        return null;
-    }
-    // A revision's screen takes no action; everything else is edited.
-    $action = $post->post_type === 'revision' ? '' : ($context === 'display' ? '&amp;' : '&') . 'action=edit';
-    $type = get_post_type_object($post->post_type);
-    if ($type === null) {
-        return null;
-    }
-    $link = $type->_edit_link ? admin_url(sprintf($type->_edit_link . $action, $post->ID)) : '';
-    return apply_filters('get_edit_post_link', $link, $post->ID, $context);
+    return Minn\Runtime\EditLinks::post($post, $context);
 }
 
 function get_delete_post_link($post = 0, $deprecated = '', $force_delete = false)
@@ -504,15 +493,7 @@ function get_post_type_archive_feed_link($post_type, $feed = '')
 
 function wp_get_shortlink($id = 0, $context = 'post', $allow_slugs = true)
 {
-    $shortlink = apply_filters('pre_get_shortlink', false, $id, $context, $allow_slugs);
-    if ($shortlink !== false) {
-        return $shortlink;
-    }
-    $post = $context === 'query' ? (is_singular() ? get_post(get_queried_object_id()) : null) : ($context === 'post' ? get_post($id) : null);
-    $type = $post === null ? null : get_post_type_object($post->post_type);
-    $front = $post !== null && $post->post_type === 'page' && get_option('show_on_front') === 'page' && (int) get_option('page_on_front') === (int) $post->ID;
-    $shortlink = $front ? home_url('/') : ($type !== null && $type->public ? home_url('?p=' . $post->ID) : '');
-    return apply_filters('get_shortlink', $shortlink, $id, $context, $allow_slugs);
+    return Minn\Runtime\EditLinks::shortlink($id, $context, $allow_slugs);
 }
 
 function wp_shortlink_header()

@@ -2,14 +2,14 @@
     "generated": "2026-10-14",
     "method": "static scan of public/minn/wp-api by tests/tools/facade-map.php; kinds: minn (calls src/Minn), composes (calls other facade functions only), leaf (plain PHP), noop (at most one line), placeholder (generated stub, behaviour still owed), deadend (generated stub for wp-admin, the editors, the Customizer or XML-RPC, inert by design); \"deadend\" on any entry names its dead-end area",
     "summary": {
-        "minn": 721,
-        "composes": 2219,
+        "minn": 719,
+        "composes": 2212,
         "leaf": 1015,
-        "noop": 3026,
+        "noop": 3035,
         "placeholder": 0,
         "deadend": 1772,
         "functions": 8675,
-        "minnMethods": 1296,
+        "minnMethods": 1303,
         "leafLinesOver15": 12
     },
     "functions": {
@@ -37240,23 +37240,19 @@
         },
         "_minn_kses_policy": {
             "file": "kses.php",
-            "lines": 13,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Support\\KsesPolicy::fromAllowlist"
+                "Minn\\Runtime\\KsesRules::policy"
             ],
-            "composes": [
-                "wp_kses_allowed_html",
-                "wp_kses_uri_attributes"
-            ]
+            "composes": []
         },
         "_minn_kses_table": {
             "file": "kses.php",
-            "lines": 2,
-            "kind": "minn",
+            "lines": 1,
+            "kind": "noop",
             "minn": [
-                "Minn\\Runtime\\Runtime::current",
-                "Minn\\Runtime\\Runtime::engineDir"
+                "Minn\\Runtime\\KsesRules::table"
             ],
             "composes": []
         },
@@ -48300,14 +48296,12 @@
         },
         "get_dashboard_url": {
             "file": "link-template.php",
-            "lines": 3,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "admin_url",
-                "apply_filters",
-                "get_current_user_id"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EditLinks::dashboard"
+            ],
+            "composes": []
         },
         "get_data": {
             "file": "classes/WP_Http.php",
@@ -48493,28 +48487,21 @@
         },
         "get_edit_post_link": {
             "file": "post.php",
-            "lines": 12,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "admin_url",
-                "apply_filters",
-                "current_user_can",
-                "get_post",
-                "get_post_type_object"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EditLinks::post"
+            ],
+            "composes": []
         },
         "get_edit_profile_url": {
             "file": "link-template.php",
-            "lines": 7,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_query_arg",
-                "apply_filters",
-                "get_current_user_id",
-                "get_dashboard_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EditLinks::profile"
+            ],
+            "composes": []
         },
         "get_edit_tag_link": {
             "file": "link-template.php",
@@ -48528,34 +48515,21 @@
         },
         "get_edit_term_link": {
             "file": "link-template.php",
-            "lines": 16,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_query_arg",
-                "admin_url",
-                "apply_filters",
-                "current_user_can",
-                "get_taxonomy",
-                "get_term",
-                "is_wp_error",
-                "reset"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EditLinks::term"
+            ],
+            "composes": []
         },
         "get_edit_user_link": {
             "file": "link-template.php",
-            "lines": 16,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "add_query_arg",
-                "apply_filters",
-                "current_user_can",
-                "get_current_user_id",
-                "get_edit_profile_url",
-                "get_userdata",
-                "self_admin_url"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EditLinks::user"
+            ],
+            "composes": []
         },
         "get_editable_authors": {
             "file": "deadends.php",
@@ -69551,18 +69525,12 @@
         },
         "wp_get_shortlink": {
             "file": "post.php",
-            "lines": 9,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "apply_filters",
-                "get_option",
-                "get_post",
-                "get_post_type_object",
-                "get_queried_object_id",
-                "home_url",
-                "is_singular"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\EditLinks::shortlink"
+            ],
+            "composes": []
         },
         "wp_get_sidebar": {
             "file": "widgets.php",
@@ -71087,22 +71055,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Kses::allowing"
+                "Minn\\Runtime\\KsesRules::filter"
             ],
-            "composes": [
-                "wp_allowed_protocols",
-                "wp_kses_allowed_html"
-            ]
+            "composes": []
         },
         "wp_kses_allowed_html": {
             "file": "kses.php",
-            "lines": 11,
-            "kind": "composes",
-            "minn": [],
-            "composes": [
-                "_minn_kses_table",
-                "apply_filters"
-            ]
+            "lines": 1,
+            "kind": "noop",
+            "minn": [
+                "Minn\\Runtime\\KsesRules::allowedHtml"
+            ],
+            "composes": []
         },
         "wp_kses_array_lc": {
             "file": "kses.php",
@@ -71259,8 +71223,7 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\Kses::withoutControls",
-                "Minn\\Support\\Kses::withoutNulls"
+                "Minn\\Runtime\\KsesRules::withoutNull"
             ],
             "composes": []
         },
@@ -71296,22 +71259,18 @@
             "lines": 1,
             "kind": "noop",
             "minn": [
-                "Minn\\Support\\KsesAttributes::oneAttribute"
+                "Minn\\Runtime\\KsesRules::oneAttribute"
             ],
-            "composes": [
-                "_minn_kses_policy",
-                "wp_allowed_protocols",
-                "wp_kses_allowed_html"
-            ]
+            "composes": []
         },
         "wp_kses_post": {
             "file": "kses.php",
             "lines": 1,
             "kind": "noop",
-            "minn": [],
-            "composes": [
-                "wp_kses"
-            ]
+            "minn": [
+                "Minn\\Runtime\\KsesRules::post"
+            ],
+            "composes": []
         },
         "wp_kses_post_deep": {
             "file": "kses.php",

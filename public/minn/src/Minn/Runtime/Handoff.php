@@ -429,6 +429,12 @@ final class Handoff
         return self::answer('roles');
     }
 
+    /** The content filters set again for the current user (kses_remove_filters, then kses_init_filters), by the names plugins remove them by. */
+    public static function resetKses(): void
+    {
+        self::answer('resetKses');
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

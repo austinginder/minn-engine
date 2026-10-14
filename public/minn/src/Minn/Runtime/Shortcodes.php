@@ -278,7 +278,7 @@ final class Shortcodes
                 continue;
             }
             $ran = $run($attribute, $count);
-            $judged = $count > 0 ? (string) \wp_kses_one_attr($ran, $element[0]) : '';
+            $judged = $count > 0 ? (string) KsesRules::oneAttribute($ran, $element[0]) : '';
             $parts[$i] = trim($judged) === '' ? $attribute : $judged;
         }
         return $start . implode('', $parts) . $end;

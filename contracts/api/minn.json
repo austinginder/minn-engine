@@ -8485,6 +8485,7 @@
                 "Minn\\Rest\\Caller",
                 "Minn\\Rest\\RestMeta",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\PostLinks",
@@ -11811,6 +11812,7 @@
             "uses": [
                 "Minn\\Blocks\\Block",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Runtime"
             ],
             "usedBy": [
@@ -11847,8 +11849,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 33,
-                    "end": 38
+                    "line": 34,
+                    "end": 39
                 },
                 {
                     "routes": [],
@@ -11877,8 +11879,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 50,
-                    "end": 81
+                    "line": 51,
+                    "end": 82
                 },
                 {
                     "routes": [],
@@ -11913,8 +11915,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 91,
-                    "end": 104
+                    "line": 92,
+                    "end": 105
                 },
                 {
                     "routes": [],
@@ -11949,8 +11951,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 107,
-                    "end": 125
+                    "line": 108,
+                    "end": 126
                 },
                 {
                     "routes": [],
@@ -11983,8 +11985,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 128,
-                    "end": 140
+                    "line": 129,
+                    "end": 141
                 },
                 {
                     "routes": [],
@@ -12003,8 +12005,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 142,
-                    "end": 145
+                    "line": 143,
+                    "end": 146
                 },
                 {
                     "routes": [],
@@ -12044,8 +12046,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 148,
-                    "end": 156
+                    "line": 149,
+                    "end": 157
                 }
             ]
         },
@@ -53300,6 +53302,7 @@
                 "Minn\\Objects\\User",
                 "Minn\\Runtime\\CommentReads",
                 "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\Handoff",
                 "Minn\\Runtime\\QueryArgs",
                 "Minn\\Runtime\\Recovery",
@@ -53348,8 +53351,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 66,
-                    "end": 82
+                    "line": 67,
+                    "end": 83
                 },
                 {
                     "routes": [],
@@ -53368,8 +53371,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 85,
-                    "end": 99
+                    "line": 86,
+                    "end": 100
                 },
                 {
                     "routes": [],
@@ -53388,8 +53391,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 102,
-                    "end": 107
+                    "line": 103,
+                    "end": 108
                 },
                 {
                     "routes": [],
@@ -53408,8 +53411,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 110,
-                    "end": 135
+                    "line": 111,
+                    "end": 136
                 },
                 {
                     "routes": [],
@@ -53428,8 +53431,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 138,
-                    "end": 165
+                    "line": 139,
+                    "end": 166
                 },
                 {
                     "routes": [],
@@ -53448,8 +53451,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 168,
-                    "end": 189
+                    "line": 169,
+                    "end": 190
                 },
                 {
                     "routes": [],
@@ -53468,8 +53471,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 192,
-                    "end": 203
+                    "line": 193,
+                    "end": 204
                 },
                 {
                     "routes": [],
@@ -53488,8 +53491,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 206,
-                    "end": 215
+                    "line": 207,
+                    "end": 216
                 },
                 {
                     "routes": [],
@@ -53508,8 +53511,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 218,
-                    "end": 228
+                    "line": 219,
+                    "end": 229
                 },
                 {
                     "routes": [],
@@ -53528,8 +53531,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 231,
-                    "end": 241
+                    "line": 232,
+                    "end": 242
                 },
                 {
                     "routes": [],
@@ -53548,8 +53551,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 244,
-                    "end": 259
+                    "line": 245,
+                    "end": 260
                 },
                 {
                     "routes": [],
@@ -53568,8 +53571,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 291,
-                    "end": 306
+                    "line": 292,
+                    "end": 307
                 },
                 {
                     "routes": [],
@@ -53588,8 +53591,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 329,
-                    "end": 337
+                    "line": 330,
+                    "end": 338
                 },
                 {
                     "routes": [],
@@ -53608,8 +53611,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 340,
-                    "end": 344
+                    "line": 341,
+                    "end": 345
                 },
                 {
                     "routes": [],
@@ -53628,8 +53631,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 347,
-                    "end": 358
+                    "line": 348,
+                    "end": 359
                 },
                 {
                     "routes": [],
@@ -53648,8 +53651,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 361,
-                    "end": 372
+                    "line": 362,
+                    "end": 373
                 },
                 {
                     "routes": [],
@@ -53668,8 +53671,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 60,
-                    "end": 63
+                    "line": 61,
+                    "end": 64
                 },
                 {
                     "routes": [],
@@ -53682,8 +53685,8 @@
                         "@return array<string, array{0: string, 1: string}> the admin page => [the label, the node id], for what the user may create"
                     ],
                     "params": [],
-                    "line": 262,
-                    "end": 288
+                    "line": 263,
+                    "end": 289
                 },
                 {
                     "routes": [],
@@ -53704,8 +53707,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 309,
-                    "end": 316
+                    "line": 310,
+                    "end": 317
                 },
                 {
                     "routes": [],
@@ -53726,8 +53729,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 319,
-                    "end": 326
+                    "line": 320,
+                    "end": 327
                 }
             ]
         },
@@ -72705,6 +72708,7 @@
                 "Minn\\Runtime\\Constants",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\Interactivity",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\OEmbed",
                 "Minn\\Runtime\\Recovery",
                 "Minn\\Runtime\\Registry",
@@ -121364,7 +121368,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/CommentForm.php",
-            "lines": 107,
+            "lines": 106,
             "doc": "The comment form's submission with plugins loaded\n(wp_handle_comment_submission), in the order the reference runs it\n(contracts/runtime.md \"The comment form\"): a reply to a comment still\nheld is refused; the post is looked at, each refusal with its action\n(comment_id_not_found, comment_closed, comment_on_trash, comment_on_draft,\ncomment_on_password_protected) and pre_comment_on_post when it takes\ncomments; the signed-in user's own name and addresses replace the form's,\nor a site that requires sign-in refuses; the required fields, an empty\ncomment (allow_empty_comment) and the column lengths are checked; then\nwp_new_comment stores it, where preprocess_comment, the duplicate and\nflood checks and pre_comment_approved have their say. A refusal is a\nWP_Error whose data is the status the form answers with; none means a\nblank page.",
             "implements": [],
             "extends": null,
@@ -121411,7 +121415,7 @@
                         }
                     ],
                     "line": 36,
-                    "end": 75
+                    "end": 74
                 },
                 {
                     "routes": [],
@@ -121439,8 +121443,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 78,
-                    "end": 93
+                    "line": 77,
+                    "end": 92
                 },
                 {
                     "routes": [],
@@ -121459,8 +121463,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 96,
-                    "end": 122
+                    "line": 95,
+                    "end": 121
                 },
                 {
                     "routes": [],
@@ -121493,8 +121497,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 125,
-                    "end": 134
+                    "line": 124,
+                    "end": 133
                 }
             ]
         },
@@ -124381,6 +124385,7 @@
             "usedBy": [
                 "Minn\\Front\\ToolbarMenus",
                 "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaData",
                 "Minn\\Runtime\\Plugins",
@@ -125012,6 +125017,225 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\EditLinks",
+            "short": "EditLinks",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/EditLinks.php",
+            "lines": 99,
+            "doc": "The admin addresses WordPress's link functions give for editing: a\npost, a term, a user and one's own profile (null or empty for someone\nwho may not), a user's dashboard, and a post's short link; each as its\nfilter leaves it.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Auth\\Can",
+                "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\MainQuery",
+                "Minn\\Runtime\\QueryArgs",
+                "Minn\\Runtime\\Records",
+                "Minn\\Runtime\\Registered",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Runtime\\SiteUrls"
+            ],
+            "usedBy": [
+                "Minn\\Front\\ToolbarMenus"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(mixed $post = 0, mixed $context = 'display'): mixed",
+                    "doc": "The address a post is edited at (get_edit_post_link), null for a post the user may not edit or of no known type.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "post",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'display'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 18,
+                    "end": 31
+                },
+                {
+                    "routes": [],
+                    "name": "term",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "term(mixed $term, mixed $taxonomy = '', mixed $objectType = ''): mixed",
+                    "doc": "The address a term is edited at (get_edit_term_link), null for one the user may not edit.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "term",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "taxonomy",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "objectType",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 34,
+                    "end": 52
+                },
+                {
+                    "routes": [],
+                    "name": "user",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "user(mixed $userId = NULL): mixed",
+                    "doc": "The address a user is edited at (get_edit_user_link): one's own profile for oneself; empty for one the user may not edit.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 55,
+                    "end": 69
+                },
+                {
+                    "routes": [],
+                    "name": "profile",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "profile(mixed $userId = 0, mixed $scheme = 'admin'): mixed",
+                    "doc": "The address a user's profile is edited at (get_edit_profile_url), as edit_profile_url leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "scheme",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'admin'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 72,
+                    "end": 77
+                },
+                {
+                    "routes": [],
+                    "name": "dashboard",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "dashboard(mixed $userId = 0, mixed $path = '', mixed $scheme = 'admin'): mixed",
+                    "doc": "A user's dashboard address, at a path in it (get_dashboard_url), as user_dashboard_url leaves it.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "userId",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "path",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        },
+                        {
+                            "name": "scheme",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'admin'",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 80,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "shortlink",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "shortlink(mixed $id = 0, mixed $context = 'post', mixed $allowSlugs = true): mixed",
+                    "doc": "A post's short address (wp_get_shortlink), unless pre_get_shortlink\nanswers first: the front page's home address, a public post's ?p=,\nelse empty; the query's post when asked for the query's.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "id",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "0",
+                            "doc": ""
+                        },
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "'post'",
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowSlugs",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "true",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 92,
+                    "end": 106
+                },
+                {
+                    "routes": [],
+                    "name": "me",
+                    "static": true,
+                    "visibility": "private",
+                    "signature": "me(): int",
+                    "doc": "The signed-in user's id.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 109,
+                    "end": 112
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\FileTypeCheck",
             "short": "FileTypeCheck",
             "namespace": "Minn\\Runtime",
@@ -125312,7 +125536,7 @@
             "namespace": "Minn\\Runtime",
             "kind": "final class",
             "file": "public/minn/src/Minn/Runtime/Handoff.php",
-            "lines": 401,
+            "lines": 407,
             "doc": "What the engine asks of the layer it runs under, where a plugin may have\nthe last word. WordPress lets a plugin define its own version of the\nreplaceable functions (the current user, users by id or field, hashes,\nnonces, passwords, mail, avatars, redirects, signing in) before the\ndefaults load; its user records are that layer's objects, and it ends a\nrequest with a message its own way (handlers plugins choose); the\nWordPress layer binds each answer here (the replaceable ones once the\nplugins have had their chance), so a plugin's version answers the engine\nas it answers WordPress. Arguments pass as given, so each answer's own\ndefaults hold.",
             "implements": [],
             "extends": null,
@@ -125400,6 +125624,7 @@
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\MenuEvents",
@@ -126679,6 +126904,18 @@
                 },
                 {
                     "routes": [],
+                    "name": "resetKses",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "resetKses(): void",
+                    "doc": "The content filters set again for the current user (kses_remove_filters, then kses_init_filters), by the names plugins remove them by.",
+                    "shapes": [],
+                    "params": [],
+                    "line": 433,
+                    "end": 436
+                },
+                {
+                    "routes": [],
                     "name": "newTheme",
                     "static": true,
                     "visibility": "public",
@@ -126694,8 +126931,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 433,
-                    "end": 436
+                    "line": 439,
+                    "end": 442
                 },
                 {
                     "routes": [],
@@ -126721,8 +126958,8 @@
                             "doc": ""
                         }
                     ],
-                    "line": 438,
-                    "end": 442
+                    "line": 444,
+                    "end": 448
                 }
             ]
         },
@@ -128291,6 +128528,226 @@
             ]
         },
         {
+            "name": "Minn\\Runtime\\KsesRules",
+            "short": "KsesRules",
+            "namespace": "Minn\\Runtime",
+            "kind": "final class",
+            "file": "public/minn/src/Minn/Runtime/KsesRules.php",
+            "lines": 95,
+            "doc": "The HTML WordPress's kses functions let through: the elements and\nattributes allowed in a context (data/kses.json, as wp_kses_allowed_html\nleaves them), content filtered to them, one attribute judged, and the\nnull bytes taken out.",
+            "implements": [],
+            "extends": null,
+            "uses": [
+                "Minn\\Json",
+                "Minn\\Runtime\\Runtime",
+                "Minn\\Support\\Kses",
+                "Minn\\Support\\KsesAttributes",
+                "Minn\\Support\\KsesPolicy",
+                "Minn\\Support\\KsesProtocols"
+            ],
+            "usedBy": [
+                "Minn\\Blocks\\Bindings",
+                "Minn\\Runtime\\OptionSanitizer",
+                "Minn\\Runtime\\PostData",
+                "Minn\\Runtime\\Shortcodes"
+            ],
+            "constructor": null,
+            "cases": [],
+            "constants": [],
+            "properties": [
+                {
+                    "name": "table",
+                    "type": "?array",
+                    "readonly": false,
+                    "static": true,
+                    "doc": "",
+                    "visibility": "private",
+                    "promoted": false
+                }
+            ],
+            "methods": [
+                {
+                    "routes": [],
+                    "name": "table",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "table(): array",
+                    "doc": "The tables the contexts start from: post, data (the comment and\ndescription rules) and entities.",
+                    "shapes": [
+                        "@return array<string, mixed>"
+                    ],
+                    "params": [],
+                    "line": 30,
+                    "end": 33
+                },
+                {
+                    "routes": [],
+                    "name": "allowedHtml",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "allowedHtml(mixed $context = ''): mixed",
+                    "doc": "The elements and attributes allowed in a context\n(wp_kses_allowed_html): post, a user's description, strip, entities,\nthe comment rules for any other, or an explicit list; as\nwp_kses_allowed_html leaves them.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "context",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "''",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 41,
+                    "end": 55
+                },
+                {
+                    "routes": [],
+                    "name": "filter",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "filter(mixed $content, mixed $allowedHtml, mixed $allowedProtocols = array ( )): string",
+                    "doc": "Content filtered to the HTML allowed (wp_kses), with the site's\nprotocols unless others are given. A context given as another scalar\nis read as text, as wp_kses_data's current_filter() is false outside\na filter.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowedHtml",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowedProtocols",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "array ( )",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 63,
+                    "end": 67
+                },
+                {
+                    "routes": [],
+                    "name": "post",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "post(mixed $data): string",
+                    "doc": "Content filtered to what a post may hold (wp_kses_post).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "data",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 70,
+                    "end": 73
+                },
+                {
+                    "routes": [],
+                    "name": "oneAttribute",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "oneAttribute(mixed $attr, mixed $element): string",
+                    "doc": "One attribute judged as a post's element would carry it (wp_kses_one_attr).",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "attr",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "element",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        }
+                    ],
+                    "line": 76,
+                    "end": 79
+                },
+                {
+                    "routes": [],
+                    "name": "withoutNull",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "withoutNull(mixed $content, mixed $options = NULL): string",
+                    "doc": "Content without its null bytes (wp_kses_no_null), or without any control characters when slash_zero is kept.",
+                    "shapes": [],
+                    "params": [
+                        {
+                            "name": "content",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "options",
+                            "type": "mixed",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 82,
+                    "end": 85
+                },
+                {
+                    "routes": [],
+                    "name": "policy",
+                    "static": true,
+                    "visibility": "public",
+                    "signature": "policy(array|string $allowedHtml, array $allowedProtocols, ?string $content = NULL): Minn\\Support\\KsesPolicy",
+                    "doc": "A caller's allowed HTML in any of its shapes, with the protocols and\nURI attributes in force. For content, the URI attributes are asked\nonly when an opening tag of an allowed element that may carry\nattributes is there, as the reference asks them of each such tag;\notherwise none are consulted.",
+                    "shapes": [
+                        "@param array<string, mixed>|string $allowedHtml",
+                        "@param array<int, string> $allowedProtocols"
+                    ],
+                    "params": [
+                        {
+                            "name": "allowedHtml",
+                            "type": "array|string",
+                            "shape": "array<string, mixed>|string",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "allowedProtocols",
+                            "type": "array",
+                            "shape": "array<int, string>",
+                            "default": null,
+                            "doc": ""
+                        },
+                        {
+                            "name": "content",
+                            "type": "?string",
+                            "shape": "",
+                            "default": "NULL",
+                            "doc": ""
+                        }
+                    ],
+                    "line": 97,
+                    "end": 112
+                }
+            ]
+        },
+        {
             "name": "Minn\\Runtime\\MainQuery",
             "short": "MainQuery",
             "namespace": "Minn\\Runtime",
@@ -128314,6 +128771,7 @@
                 "Minn\\Front\\SitemapController",
                 "Minn\\Front\\SitemapRequest",
                 "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\PostData",
                 "Minn\\Theme\\ClassicContent",
                 "Minn\\Theme\\FrontLifecycle"
@@ -131990,6 +132448,7 @@
             "extends": null,
             "uses": [
                 "Minn\\I18n\\TranslationFiles",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\Escape",
                 "Minn\\Support\\Sanitize"
@@ -135087,6 +135546,7 @@
                 "Minn\\Objects\\Post",
                 "Minn\\Objects\\Query",
                 "Minn\\Runtime\\Handoff",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\Records",
@@ -141437,6 +141897,7 @@
                 "Minn\\Rest\\Api",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\PostLinks",
                 "Minn\\Runtime\\SiteUrls"
             ],
@@ -141826,6 +142287,7 @@
                 "Minn\\Runtime\\CommentTags",
                 "Minn\\Runtime\\CommentWrites",
                 "Minn\\Runtime\\CronEvents",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenu",
@@ -142596,6 +143058,7 @@
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentChecks",
                 "Minn\\Runtime\\CommentForm",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\MetaKeys",
                 "Minn\\Runtime\\NavMenuItems",
@@ -144932,9 +145395,11 @@
                 "Minn\\Runtime\\CronEvents",
                 "Minn\\Runtime\\CurrentUser",
                 "Minn\\Runtime\\Deferrals",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\FileUpload",
                 "Minn\\Runtime\\Heartbeat",
                 "Minn\\Runtime\\Interactivity",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\MainQuery",
                 "Minn\\Runtime\\MenuEvents",
                 "Minn\\Runtime\\MenuItemMarks",
@@ -146882,6 +147347,7 @@
             "extends": null,
             "uses": [
                 "Minn\\Html",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Runtime",
                 "Minn\\Support\\KsesAttributes"
             ],
@@ -147807,6 +148273,7 @@
                 "Minn\\Runtime\\AccountFlows",
                 "Minn\\Runtime\\ArchiveLinks",
                 "Minn\\Runtime\\CommentPages",
+                "Minn\\Runtime\\EditLinks",
                 "Minn\\Runtime\\MenuItemMarks",
                 "Minn\\Runtime\\PluginRequirements",
                 "Minn\\Runtime\\PostLinks",
@@ -158834,6 +159301,7 @@
                 "Minn\\Rest\\RevisionsController",
                 "Minn\\Rest\\TermsController",
                 "Minn\\Rest\\UsersController",
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Notices",
                 "Minn\\Runtime\\TagEditor",
                 "Minn\\Runtime\\UserWrites",
@@ -159685,6 +160153,7 @@
                 "Minn\\Support\\KsesValues"
             ],
             "usedBy": [
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Runtime\\Shortcodes"
             ],
             "constructor": null,
@@ -160053,6 +160522,7 @@
                 "Minn\\Support\\KsesEntities"
             ],
             "usedBy": [
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Support\\Kses",
                 "Minn\\Support\\KsesAttributes"
             ],
@@ -160312,6 +160782,7 @@
                 "Minn\\Support\\Kses"
             ],
             "usedBy": [
+                "Minn\\Runtime\\KsesRules",
                 "Minn\\Support\\Escape"
             ],
             "constructor": null,

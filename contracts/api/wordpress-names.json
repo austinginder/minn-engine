@@ -1,24 +1,22 @@
 {
     "method": "tests/tools/wordpress-names.php: the functions and classes of the reference inventory that public/minn/src uses (calls, and functions handed by name to array_map and its kin; the hook API apart; classes named fully qualified or through an import), each with the files using it and the reference file it lives in",
     "summary": {
-        "functionCalls": 112,
-        "functions": 89,
+        "functionCalls": 101,
+        "functions": 78,
         "hookApi": 0,
         "classReferences": 2,
         "classes": 1,
-        "files": 48
+        "files": 46
     },
     "families": {
         "functions": {
             "wp-includes/post.php": 12,
             "wp-includes/general-template.php": 6,
-            "wp-includes/kses.php": 6,
             "wp-includes/template.php": 5,
             "wp-admin/includes/plugin.php": 5,
             "wp-includes/block-template-utils.php": 5,
             "wp-includes/media.php": 5,
             "wp-includes/blocks.php": 5,
-            "wp-includes/link-template.php": 5,
             "wp-includes/comment-template.php": 4,
             "wp-includes/script-loader.php": 4,
             "wp-includes/category-template.php": 4,
@@ -284,34 +282,6 @@
                 "Minn/Runtime/UpdateCounts.php": 1
             }
         },
-        "get_edit_post_link": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
-        "get_edit_profile_url": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
-        "get_edit_term_link": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
-        "get_edit_user_link": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "get_embed_template": {
             "uses": 1,
             "family": "wp-includes/template.php",
@@ -394,20 +364,6 @@
             "family": "wp-admin/includes/plugin.php",
             "files": {
                 "Minn/Runtime/PluginRemoval.php": 1
-            }
-        },
-        "kses_init_filters": {
-            "uses": 1,
-            "family": "wp-includes/kses.php",
-            "files": {
-                "Minn/Runtime/CommentForm.php": 1
-            }
-        },
-        "kses_remove_filters": {
-            "uses": 1,
-            "family": "wp-includes/kses.php",
-            "files": {
-                "Minn/Runtime/CommentForm.php": 1
             }
         },
         "load_default_textdomain": {
@@ -557,13 +513,6 @@
                 "Minn/Runtime/ScriptModules.php": 1
             }
         },
-        "wp_get_shortlink": {
-            "uses": 1,
-            "family": "wp-includes/link-template.php",
-            "files": {
-                "Minn/Front/ToolbarMenus.php": 1
-            }
-        },
         "wp_get_translation_updates": {
             "uses": 1,
             "family": "wp-includes/update.php",
@@ -604,34 +553,6 @@
             "family": "wp-admin/includes/file.php",
             "files": {
                 "Minn/Rest/MediaController.php": 1
-            }
-        },
-        "wp_kses": {
-            "uses": 1,
-            "family": "wp-includes/kses.php",
-            "files": {
-                "Minn/Runtime/OptionSanitizer.php": 1
-            }
-        },
-        "wp_kses_no_null": {
-            "uses": 1,
-            "family": "wp-includes/kses.php",
-            "files": {
-                "Minn/Runtime/PostData.php": 1
-            }
-        },
-        "wp_kses_one_attr": {
-            "uses": 1,
-            "family": "wp-includes/kses.php",
-            "files": {
-                "Minn/Runtime/Shortcodes.php": 1
-            }
-        },
-        "wp_kses_post": {
-            "uses": 1,
-            "family": "wp-includes/kses.php",
-            "files": {
-                "Minn/Blocks/Bindings.php": 1
             }
         },
         "wp_new_comment": {

@@ -807,3 +807,9 @@ Minn\Runtime\Handoff::bind([
 
 // The site's roles object, handed over through Minn\Runtime\Handoff.
 Minn\Runtime\Handoff::bind(['roles' => static fn () => wp_roles()]);
+
+// The content filters, set again by the names plugins remove them by, through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['resetKses' => static function (): void {
+    kses_remove_filters();
+    kses_init_filters();
+}]);

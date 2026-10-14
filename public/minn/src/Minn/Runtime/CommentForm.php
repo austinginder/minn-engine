@@ -60,8 +60,7 @@ final class CommentForm
             $url = (string) $user->user_url;
             // An administrator's comment is filtered after all unless the form carried its unfiltered-html nonce.
             if (Can::current('unfiltered_html') && !Handoff::verifyNonce((string) ($form['_wp_unfiltered_html_comment'] ?? ''), 'unfiltered-html-comment_' . $postId)) {
-                \kses_remove_filters();
-                \kses_init_filters();
+                Handoff::resetKses();
             }
         } elseif (Runtime::options()->filtered('comment_registration')) {
             return Handoff::newError('not_logged_in', 'Sorry, you must be logged in to comment.', 403);

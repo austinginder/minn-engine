@@ -10,23 +10,12 @@ use Minn\Support\KsesProtocols;
 /** @internal */
 function _minn_kses_table(): array
 {
-    static $table = null;
-    return $table ??= json_decode((string) file_get_contents(Runtime::current()->engineDir . '/data/kses.json'), true);
+    return Minn\Runtime\KsesRules::table();
 }
 
 function wp_kses_allowed_html($context = '')
 {
-    $table = _minn_kses_table();
-    if (is_array($context)) {
-        return apply_filters('wp_kses_allowed_html', $context, 'explicit');
-    }
-    return match ($context) {
-        'post' => apply_filters('wp_kses_allowed_html', $table['post'], 'post'),
-        'user_description', 'pre_user_description' => apply_filters('wp_kses_allowed_html', $table['data'] + ['a' => $table['data']['a'] + ['rel' => true]], $context),
-        'strip' => apply_filters('wp_kses_allowed_html', [], 'strip'),
-        'entities' => apply_filters('wp_kses_allowed_html', $table['entities'], 'entities'),
-        default => apply_filters('wp_kses_allowed_html', $table['data'], $context),
-    };
+    return Minn\Runtime\KsesRules::allowedHtml($context);
 }
 
 function wp_allowed_protocols()
@@ -41,24 +30,12 @@ function wp_allowed_protocols()
  */
 function _minn_kses_policy(array|string $allowed_html, array $allowed_protocols, ?string $content = null): KsesPolicy
 {
-    if (is_string($allowed_html)) {
-        $allowed_html = wp_kses_allowed_html($allowed_html);
-    }
-    $asked = $content === null;
-    if (!$asked && preg_match_all('/<([a-zA-Z][a-zA-Z0-9:-]*)/', $content, $tags) > 0) {
-        foreach (array_unique(array_map('strtolower', $tags[1])) as $tag) {
-            if (!empty($allowed_html[$tag])) {
-                $asked = true;
-                break;
-            }
-        }
-    }
-    return KsesPolicy::fromAllowlist((array) $allowed_html, array_values($allowed_protocols), $asked ? (array) wp_kses_uri_attributes() : []);
+    return Minn\Runtime\KsesRules::policy($allowed_html, $allowed_protocols, $content);
 }
 
 function wp_kses($content, $allowed_html, $allowed_protocols = [])
 {
-    return Kses::allowing((string) $content, $allowed_html, $allowed_protocols === [] ? wp_allowed_protocols() : $allowed_protocols, static fn (string $context): array => (array) wp_kses_allowed_html($context));
+    return Minn\Runtime\KsesRules::filter($content, $allowed_html, $allowed_protocols);
 }
 
 function wp_kses_hook($content, $allowed_html, $allowed_protocols)
@@ -68,7 +45,7 @@ function wp_kses_hook($content, $allowed_html, $allowed_protocols)
 
 function wp_kses_post($data)
 {
-    return wp_kses((string) $data, 'post');
+    return Minn\Runtime\KsesRules::post($data);
 }
 
 function wp_kses_post_deep($data)
@@ -98,7 +75,7 @@ function wp_filter_nohtml_kses($data)
 
 function wp_kses_no_null($content, $options = null)
 {
-    return ($options['slash_zero'] ?? 'remove') === 'keep' ? Kses::withoutControls((string) $content) : Kses::withoutNulls((string) $content);
+    return Minn\Runtime\KsesRules::withoutNull($content, $options);
 }
 
 function wp_kses_normalize_entities($content, $context = 'html')
@@ -210,7 +187,7 @@ function wp_kses_attr_parse($element)
 
 function wp_kses_one_attr($attr, $element)
 {
-    return Minn\Support\KsesAttributes::oneAttribute((string) $attr, (string) $element, _minn_kses_policy(wp_kses_allowed_html('post'), wp_allowed_protocols()));
+    return Minn\Runtime\KsesRules::oneAttribute($attr, $element);
 }
 
 function wp_kses_array_lc($inarray)

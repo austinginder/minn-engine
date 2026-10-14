@@ -97,7 +97,7 @@ final class PostData
             $content = (string) preg_replace('/<!-- \/?wp:more(.*?) -->/', '', $content);
             $parts = explode($matches[0], $content, 2);
             if (!empty($matches[1]) && $moreLinkText !== '') {
-                $moreLinkText = strip_tags(\wp_kses_no_null(trim($matches[1])));
+                $moreLinkText = strip_tags(KsesRules::withoutNull(trim($matches[1])));
             }
         }
         if (str_contains((string) $post->post_content, '<!--noteaser-->') && (!$elements['multipage'] || (int) $elements['page'] === 1)) {

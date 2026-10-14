@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Blocks;
 
 use Minn\Runtime\Handoff;
+use Minn\Runtime\KsesRules;
 use Minn\Runtime\Runtime;
 
 /**
@@ -95,7 +96,7 @@ final class Bindings
             $definition = (array) ($definitions[$attribute] ?? []);
             $selector = (string) ($definition['selector'] ?? '');
             $html = match ($definition['source'] ?? '') {
-                'html', 'rich-text' => self::inner($html, explode(',', $selector), (string) \wp_kses_post((string) $value)),
+                'html', 'rich-text' => self::inner($html, explode(',', $selector), (string) KsesRules::post((string) $value)),
                 'attribute' => self::attribute($html, $selector, (string) ($definition['attribute'] ?? ''), $value),
                 default => $html,
             };
