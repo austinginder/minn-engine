@@ -250,7 +250,7 @@ Reads and writes over the comments table.
 - const `UPDATABLE` = `array (   0 => 'comment_post_ID',   1 => 'comment_author',   2 => 'comment_author_email',   3 => 'comment_author_url',   4 => 'comment_author_IP',   5 => 'comment_date',   6 => 'comment_date_gmt',   7 => 'comment_content',   8 => 'comment_karma',   9 => 'comment_approved',   10 => 'comment_agent',   11 => 'comment_type',   12 => 'comment_parent',   13 => 'user_id', )`
 - const `FIELD_LENGTHS` = `array (   'comment_author' => 245,   'comment_author_email' => 100,   'comment_author_url' => 200,   'comment_content' => 65525, )` — The comment form fields whose length the table limits, with the length a stock table gives each.
 
-Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`
+Used by: `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Services`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`
 
 ```php
 __construct(Minn\Db $db)
@@ -1216,7 +1216,7 @@ and format side effects, and revision snapshots.
 - const `ZERO_DATE` = `'0000-00-00 00:00:00'`
 - const `LENGTHS` = `array (   'post_status' => 20,   'comment_status' => 20,   'ping_status' => 20,   'post_password' => 255,   'post_name' => 200,   'guid' => 255,   'post_type' => 20,   'post_mime_type' => 100, )` — The posts table's short text columns, cut to fit as the reference's database layer cuts them.
 
-Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
+Used by: `Minn\Admin\EditorController`, `Minn\Content\Menus`, `Minn\Content\Revisions`, `Minn\Cron\Cron`, `Minn\Rest\PostsWriteController`, `Minn\Rest\Services`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostInsert`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserWrites`, `Minn\Theme\TemplateWriter`, `Minn\Theme\UserStyles`
 
 ```php
 __construct(Minn\Db $db, Minn\Content\Posts $posts, Minn\Content\Site $site)

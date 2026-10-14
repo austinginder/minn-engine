@@ -827,3 +827,6 @@ Minn\Runtime\Handoff::bind([
     'sitemaps' => static fn () => wp_sitemaps_get_server(),
     'newMenuWalker' => static fn () => new Walker_Nav_Menu(),
 ]);
+
+// An attachment's metadata is made by the image editors plugins choose, so the engine asks for it through Minn\Runtime\Handoff.
+Minn\Runtime\Handoff::bind(['attachmentMetadata' => static fn ($attachment_id, $file) => wp_generate_attachment_metadata($attachment_id, $file)]);

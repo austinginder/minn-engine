@@ -471,6 +471,12 @@ final class Handoff
         return self::answer('newMenuWalker');
     }
 
+    /** An attachment's metadata made from its file by the layer's image editors (wp_generate_attachment_metadata): sizes, previews, the file's size. */
+    public static function attachmentMetadata(mixed $attachmentId, mixed $file): mixed
+    {
+        return self::answer('attachmentMetadata', $attachmentId, $file);
+    }
+
     /** A theme by its folder and root (new WP_Theme). */
     public static function newTheme(mixed ...$args): Theme
     {

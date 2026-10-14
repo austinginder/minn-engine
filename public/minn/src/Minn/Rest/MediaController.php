@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Minn\Rest;
 
 use Minn\Objects\Errors;
+use Minn\Runtime\Attachments;
 use Minn\Runtime\Handoff;
 use Minn\Runtime\MetaData;
 use Minn\Runtime\PostEvents;
@@ -21,6 +22,7 @@ use Minn\Http\Route;
 use Minn\Media\Upload;
 use Minn\Media\Writer;
 use Minn\RestError;
+use Minn\Runtime\FileUpload;
 use Minn\Runtime\PostWrites;
 use Minn\Runtime\Runtime;
 use Minn\Support\Sanitize;
@@ -135,7 +137,7 @@ final readonly class MediaController
             file_put_contents($tmp, (string) $upload->raw);
         }
         $file = ['name' => $upload->filename, 'type' => (string) ($request->header('content-type') ?? ''), 'tmp_name' => $tmp, 'error' => 0, 'size' => (int) filesize($tmp)];
-        $result = $upload->movedFrom === null ? \wp_handle_sideload($file, ['test_form' => false]) : \wp_handle_upload($file, ['test_form' => false]);
+        $result = FileUpload::handle($file, ['test_form' => false], null, $upload->movedFrom === null ? 'wp_handle_sideload' : 'wp_handle_upload');
         if (is_file($tmp) && $upload->movedFrom === null) {
             @unlink($tmp);
         }
@@ -162,7 +164,7 @@ final readonly class MediaController
         if (isset($params['title'])) {
             $attachment->post_title = PostsWriteController::field($params['title']);
         }
-        $meta = \wp_read_image_metadata($file);
+        $meta = Attachments::readImageMetadata($file);
         if (is_array($meta) && !isset($params['title']) && trim((string) $meta['title']) !== '' && !is_numeric(Sanitize::title((string) $meta['title']))) {
             $attachment->post_title = (string) $meta['title'];
         }
@@ -174,7 +176,7 @@ final readonly class MediaController
         $args = $this->preparedAttachment($attachment, $params, $request) + ['post_mime_type' => $type, 'guid' => $this->library->urlOf($relative), 'post_parent' => $upload->parent];
         // No title left after the filter: the file's name, without its extension.
         $args = array_filter($args, static fn ($value, $key) => $key !== 'post_title' || trim((string) $value) !== '', ARRAY_FILTER_USE_BOTH) + ['post_title' => (string) preg_replace('/\.[^.]+$/', '', basename($relative))];
-        $id = \wp_insert_attachment(Slashes::add($args), $file, 0, true, false);
+        $id = Attachments::insert(Slashes::add($args), $file, 0, true, false);
         if ($id instanceof Errors) {
             throw new RestError($id->get_error_code(), $id->get_error_message(), 500);
         }
@@ -311,7 +313,7 @@ final readonly class MediaController
             return Reply::answer($request, $data);
         }
         $data = ['deleted' => true, 'previous' => array_diff_key($this->object->build($attachment, Context::Edit), ['_links' => true])];
-        \wp_delete_attachment($attachmentId, true);
+        Attachments::delete($attachmentId, true);
         (new PostEvents())->restDeleted($attachment, $data, $request);
         return Reply::answer($request, $data);
     }

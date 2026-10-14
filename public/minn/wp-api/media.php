@@ -1031,15 +1031,7 @@ function _minn_pdf_previews(string $file, int $attachment_id): array
  */
 function wp_read_image_metadata($file)
 {
-    if (!file_exists((string) $file)) {
-        return false;
-    }
-    $types = (array) apply_filters('wp_read_image_metadata_types', PhotoMeta::EXIF_TYPES);
-    $read = PhotoMeta::read((string) $file, $types, static fn (string $text): string => (string) wp_kses_post($text));
-    if ($read === null) {
-        return false;
-    }
-    return apply_filters('wp_read_image_metadata', $read['meta'], $file, $read['type'], $read['iptc'], $read['exif']);
+    return Minn\Runtime\Attachments::readImageMetadata($file);
 }
 
 function wp_getimagesize($filename, &$image_info = null)
@@ -1050,76 +1042,27 @@ function wp_getimagesize($filename, &$image_info = null)
 
 function wp_insert_attachment($args, $file = false, $parent_post_id = 0, $wp_error = false, $fire_after_hooks = true)
 {
-    $defaults = ['file' => $file, 'post_parent' => 0];
-    $data = wp_parse_args($args, $defaults);
-    if (!empty($parent_post_id)) {
-        $data['post_parent'] = (int) $parent_post_id;
-    }
-    $data['post_type'] = 'attachment';
-    // The file is recorded inside the save, before add_attachment, as on the reference.
-    return wp_insert_post($data, $wp_error, $fire_after_hooks);
+    return Minn\Runtime\Attachments::insert($args, $file, $parent_post_id, $wp_error, $fire_after_hooks);
 }
 
 function wp_delete_attachment($post_id, $force_delete = false)
 {
-    $post = get_post((int) $post_id);
-    if ($post === null || $post->post_type !== 'attachment') {
-        return $post;
-    }
-    if (!$force_delete && EMPTY_TRASH_DAYS && MEDIA_TRASH && $post->post_status !== 'trash') {
-        return wp_trash_post($post->ID);
-    }
-    $check = apply_filters('pre_delete_attachment', null, $post, $force_delete);
-    if ($check !== null) {
-        return $check;
-    }
-    $meta = wp_get_attachment_metadata($post->ID);
-    $backup_sizes = get_post_meta($post->ID, '_wp_attachment_backup_sizes', true);
-    $file = get_attached_file($post->ID);
-    do_action('delete_attachment', $post->ID, $post);
-    // As the reference removes it: its terms, its comments, its meta row by row, then the row between delete_post and deleted_post.
-    wp_delete_object_term_relationships($post->ID, get_object_taxonomies($post->post_type));
-    foreach (_minn_comments()->idsOf($post->ID) as $comment_id) {
-        wp_delete_comment($comment_id, true);
-    }
-    Minn\Runtime\PostWrites::deleteMeta($post->ID);
-    do_action('delete_post', $post->ID, $post);
-    _minn_post_writer()->destroy($post->ID);
-    do_action('deleted_post', $post->ID, $post);
-    clean_post_cache($post);
-    wp_delete_attachment_files($post->ID, $meta, $backup_sizes, $file);
-    return $post;
+    return Minn\Runtime\Attachments::delete($post_id, $force_delete);
 }
 
 function wp_delete_attachment_files($post_id, $meta, $backup_sizes, $file)
 {
-    // False when any of the files is missing or outside the uploads folder (probe post-remaining).
-    $deleted = true;
-    $base = wp_get_upload_dir()['basedir'];
-    foreach (Uploads::attachmentFiles((string) $file, is_array($meta) ? $meta : [], is_array($backup_sizes) ? $backup_sizes : null) as $path) {
-        $deleted = wp_delete_file_from_directory($path, $base) && $deleted;
-    }
-    return $deleted;
+    return Minn\Runtime\Attachments::deleteFiles($post_id, $meta, $backup_sizes, $file);
 }
 
 function wp_delete_file($file)
 {
-    $delete = apply_filters('wp_delete_file', (string) $file);
-    if ($delete !== '' && is_file($delete)) {
-        return @unlink($delete);
-    }
-    return false;
+    return Minn\Runtime\FileNames::delete($file);
 }
 
 function wp_delete_file_from_directory($file, $directory)
 {
-    $real_file = realpath(wp_normalize_path((string) $file));
-    $real_directory = realpath(wp_normalize_path((string) $directory));
-    if ($real_file === false || $real_directory === false || !str_starts_with(wp_normalize_path($real_file), trailingslashit(wp_normalize_path($real_directory)))) {
-        return false;
-    }
-    wp_delete_file($file);
-    return true;
+    return Minn\Runtime\FileNames::deleteFromDirectory($file, $directory);
 }
 
 function get_site_icon_url($size = 512, $url = '', $blog_id = 0)

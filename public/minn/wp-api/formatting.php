@@ -219,41 +219,13 @@ function sanitize_title_with_dashes($title, $raw_title = '', $context = 'display
  */
 function sanitize_file_name($filename)
 {
-    $raw = (string) $filename;
-    $special = ['?', '[', ']', '/', '\\', '=', '<', '>', ':', ';', ',', "'", '"', '&', '$', '#', '*', '(', ')', '|', '~', '`', '!', '{', '}', '%', '+', '’', '«', '»', '”', '“', chr(0)];
-    $special = apply_filters('sanitize_file_name_chars', $special, $raw);
-    $filename = remove_accents(str_replace("\x00", '', $raw));
-    $filename = (string) preg_replace("#\x{00a0}#siu", ' ', $filename);
-    $filename = str_replace($special, '', $filename);
-    $filename = str_replace(['%20', '+'], '-', $filename);
-    $filename = (string) preg_replace('/\.{2,}/', '.', $filename);
-    $filename = (string) preg_replace('/[\r\n\t -]+/', '-', $filename);
-    $filename = trim($filename, '.-_');
-    $filename = _minn_neutralize_inner_extensions($filename);
-    if (!str_contains($filename, '.')) {
-        $named = wp_check_filetype('test.' . $filename, _minn_mime_table()['mime']);
-        if ($named['ext'] !== false && $named['ext'] === $filename) {
-            $filename = 'unnamed-file.' . $named['ext'];
-        }
-    }
-    return apply_filters('sanitize_file_name', $filename, $raw);
+    return Minn\Runtime\FileNames::sanitize($filename);
 }
 
 /** @internal an inner part of a file name that looks like an extension (two to five letters, maybe a digit) and is no allowed type gets an underscore */
 function _minn_neutralize_inner_extensions(string $filename): string
 {
-    $parts = explode('.', $filename);
-    if (count($parts) <= 2) {
-        return $filename;
-    }
-    $first = array_shift($parts);
-    $last = array_pop($parts);
-    $allowed = array_keys(get_allowed_mime_types());
-    foreach ($parts as $i => $part) {
-        $known = array_filter($allowed, static fn (string $pattern): bool => preg_match('!^(' . $pattern . ')$!i', $part) === 1) !== [];
-        $parts[$i] = preg_match('/^[a-zA-Z]{2,5}\d?$/', $part) === 1 && !$known ? $part . '_' : $part;
-    }
-    return implode('.', [$first, ...$parts, $last]);
+    return Minn\Runtime\FileNames::neutralizeInnerExtensions($filename);
 }
 
 function sanitize_email($email)

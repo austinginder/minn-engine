@@ -755,12 +755,7 @@ function wp_zip_file_is_valid($file)
 
 function unzip_file($file, $to)
 {
-    global $wp_filesystem;
-    if (!$wp_filesystem || !is_object($wp_filesystem)) {
-        return new WP_Error('fs_unavailable', __('Could not access filesystem.'));
-    }
-    $result = (new Minn\Ops\Unzip($wp_filesystem, apply_filters(...), defined('FS_CHMOD_DIR') ? FS_CHMOD_DIR : 0755, defined('FS_CHMOD_FILE') ? FS_CHMOD_FILE : 0644))->into((string) $file, (string) $to);
-    return $result instanceof Minn\Runtime\Refusal ? new WP_Error($result->code, __($result->message), $result->data) : $result;
+    return Minn\Runtime\Upgrade::unzip($file, $to);
 }
 
 function WP_Filesystem($args = false, $context = false, $allow_relaxed_file_ownership = false)

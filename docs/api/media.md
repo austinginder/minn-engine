@@ -122,7 +122,7 @@ MIME type, the ones a user may upload, the kind each extension is (image,
 audio, document...), and the type a file name's extension says, each
 list through the filter plugins hook.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\FileTypeCheck`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\FeedTags`, `Minn\Media\Icons`, `Minn\Rest\PostCollectionParams`, `Minn\Runtime\Attachments`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileTypeCheck`
 
 
 ### static `table(): array`
@@ -312,6 +312,8 @@ every value is cleaned (the reference runs wp_kses_post) and made a
 string; a short caption doubles as the title.
 
 - const `EXIF_TYPES` = `array (   0 => 2,   1 => 7,   2 => 8, )` — EXIF is read for these image types only: JPEG and TIFF, both byte orders.
+
+Used by: `Minn\Runtime\Attachments`
 
 ### static `read(string $file, array $exifTypes, Closure $clean): ?array`
 

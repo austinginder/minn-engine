@@ -51,7 +51,7 @@ locale with spellings of its own (German, Danish, Catalan, Serbian,
 Bosnian) has them, and a string that is not UTF-8 is read as Latin-1.
 Anything the table does not name stays as it is.
 
-Used by: `Minn\Content\Slug`, `Minn\Support\Sanitize`
+Used by: `Minn\Content\Slug`, `Minn\Runtime\FileNames`, `Minn\Support\Sanitize`
 
 
 ### static `strip(string $text, string $locale = ''): string`
@@ -715,7 +715,7 @@ wp_list_sort() promises (loose comparison per field, first difference
 wins) and the row-shape conversions wpdb hands back for its OBJECT_K /
 ARRAY_A / ARRAY_N output formats.
 
-Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\HeadLinks`
+Used by: `Minn\Query\CommentOrder`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\MenusController`, `Minn\Rest\RegisteredFields`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryWhere`, `Minn\Runtime\CommentTags`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Pages`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostTags`, `Minn\Runtime\Registered`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserOrder`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\WidgetAreas`, `Minn\Theme\HeadLinks`
 
 ### static `args(mixed $args, mixed $defaults = array ( )): array`
 
@@ -857,7 +857,7 @@ keeps the empty line after its final newline.
 
 File-system path and permission spellings, and whether a path is safe to use.
 
-Used by: `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
+Used by: `Minn\Runtime\FileNames`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\ThemeSwitch`
 
 ### static `validate(mixed $file, mixed $allowed = array ( )): int`
 

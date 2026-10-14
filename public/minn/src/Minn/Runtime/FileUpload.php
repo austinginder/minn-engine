@@ -49,7 +49,7 @@ final class FileUpload
         }
         $type = (string) ($file['type'] ?? '');
         if ($options['test_type']) {
-            $checked = \wp_check_filetype_and_ext((string) $file['tmp_name'], (string) $file['name'], $options['mimes']);
+            $checked = FileNames::checkUpload((string) $file['tmp_name'], (string) $file['name'], $options['mimes']);
             if (!empty($checked['proper_filename'])) {
                 $file['name'] = (string) $checked['proper_filename'];
             }
@@ -62,7 +62,7 @@ final class FileUpload
         if (($uploads['error'] ?? false) !== false) {
             return ['error' => (string) $uploads['error']];
         }
-        $filename = \wp_unique_filename((string) $uploads['path'], (string) $file['name'], $options['unique_filename_callback']);
+        $filename = FileNames::unique((string) $uploads['path'], (string) $file['name'], $options['unique_filename_callback']);
         $target = rtrim((string) $uploads['path'], '/') . '/' . $filename;
         return self::move($file, $target, $type, (string) $uploads['url'] . '/' . $filename, $action);
     }

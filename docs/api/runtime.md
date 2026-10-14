@@ -17,7 +17,7 @@ the WordPress runtime plugins load against
 | [`AssetQueue`](#assetqueue) | final class | 60 | The scripts and styles a request queues, as WordPress's asset functions |
 | [`Assets`](#assets) | final class | 432 | The registry behind wp_register_/wp_enqueue_ for scripts and styles: |
 | [`AttachmentImages`](#attachmentimages) | final class | 422 | An attachment's image as WordPress's media functions make it: the |
-| [`Attachments`](#attachments) | final class | 175 | Attachments as WordPress's media functions keep them: the uploads folder |
+| [`Attachments`](#attachments) | final class | 257 | Attachments as WordPress's media functions keep them: the uploads folder |
 | [`Avatar`](#avatar) | final class | 62 | Avatars the way get_avatar_data and get_avatar decide them: the argument |
 | [`BlockFilters`](#blockfilters) | final class | 127 | The block-level filters plugin code hooks (pre_render_block, |
 | [`BlockHooks`](#blockhooks) | final class | 69 | The Block Hooks API on the engine's own front end: a plugin asks for its |
@@ -50,9 +50,10 @@ the WordPress runtime plugins load against
 | [`EarlyFilters`](#earlyfilters) | final class | 20 | Filters that run before the runtime exists, over the hooks added that |
 | [`EditLinks`](#editlinks) | final class | 99 | The admin addresses WordPress's link functions give for editing: a |
 | [`FileHeaders`](#fileheaders) | final class | 30 | The headers at the top of a theme, plugin or translation file, as |
+| [`FileNames`](#filenames) | final class | 117 | Files as WordPress's file functions name and remove them: a name made |
 | [`FileTypeCheck`](#filetypecheck) | final class | 77 | A file's type from its content as much as its name, as the reference's |
 | [`FileUpload`](#fileupload) | final class | 105 | A file a plugin hands to wp_handle_upload or wp_handle_sideload, taken in |
-| [`Handoff`](#handoff) | final class | 443 | What the engine asks of the layer it runs under, where a plugin may have |
+| [`Handoff`](#handoff) | final class | 449 | What the engine asks of the layer it runs under, where a plugin may have |
 | [`Heartbeat`](#heartbeat) | final class | 30 | The heartbeat a signed-in page beats through admin-ajax.php, answered as |
 | [`Hooks`](#hooks) | final class | 385 | The hook registry plugin code registers into and the engine fires. |
 | [`Interactivity`](#interactivity) | final class | 534 | Server-side directive processing for the Interactivity API: the state and |
@@ -147,7 +148,7 @@ the WordPress runtime plugins load against
 | [`TreeWalk`](#treewalk) | final class | 182 | The Walker contract's traversal: elements keyed by the walker's |
 | [`TypeProps`](#typeprops) | final class | 150 | A post type's or taxonomy's properties from the arguments it was built |
 | [`UpdateCounts`](#updatecounts) | final class | 67 | The updates waiting, as wp_get_update_data counts them for the user |
-| [`Upgrade`](#upgrade) | final class | 349 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
+| [`Upgrade`](#upgrade) | final class | 360 | What WP_Upgrader does with a package (probe upgrader), for the facade's |
 | [`UserEvents`](#userevents) | final readonly class | 102 | What the reference's REST users controller tells plugins, for the |
 | [`UserInsert`](#userinsert) | final readonly class | 122 | The decisions behind wp_insert_user: what a new account needs, which email |
 | [`UserOrder`](#userorder) | final class | 43 | A user query's ORDER BY keys as the reference writes them (probe |
@@ -887,7 +888,7 @@ and its address, an attachment's file (stored relative to the folder),
 its address and metadata, and what kind of file it is; each as its
 filter leaves it.
 
-Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\FileUpload`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostWrites`
+Used by: `Minn\Content\MediaShortcodes`, `Minn\Front\EmbedCard`, `Minn\Front\PostEmbed`, `Minn\Media\Icons`, `Minn\Rest\MediaController`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileUpload`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostWrites`
 
 ### static `uploadDir(mixed $time = NULL): mixed`
 
@@ -948,6 +949,28 @@ The audio file extensions the player takes (wp_get_audio_extensions), as wp_audi
 ### static `videoExtensions(): mixed`
 
 The video file extensions the player takes (wp_get_video_extensions), as wp_video_extensions leaves them.
+
+### static `insert(mixed $args, mixed $file = false, mixed $parentPostId = 0, mixed $wpError = false, mixed $fireAfterHooks = true): mixed`
+
+An attachment stored (wp_insert_attachment): the arguments over a file
+and no parent, the parent given, saved as a post of type attachment.
+
+### static `delete(mixed $postId, mixed $force = false): mixed`
+
+An attachment deleted (wp_delete_attachment): to the trash first
+unless forced or the media trash is off; unless pre_delete_attachment
+answers, its terms, comments and meta removed, the row between
+delete_post and deleted_post, then its files. The post, or null.
+
+### static `deleteFiles(mixed $postId, mixed $meta, mixed $backupSizes, mixed $file): bool`
+
+An attachment's files deleted, its sizes and backups too (wp_delete_attachment_files); false when any was missing or outside the uploads folder.
+
+### static `readImageMetadata(mixed $file): mixed`
+
+A photo's own description from its IPTC and EXIF (wp_read_image_metadata),
+through wp_read_image_metadata_types and wp_read_image_metadata; false
+when there is no such file.
 
 
 ## Avatar
@@ -1720,7 +1743,7 @@ fires in its order, and the cached rows let go.
 
 - const `DEFAULTS` = `array (   'comment_post_ID' => 0,   'comment_author' => '',   'comment_author_email' => '',   'comment_author_url' => '',   'comment_author_IP' => '',   'comment_date' => '',   'comment_date_gmt' => '',   'comment_content' => '',   'comment_karma' => 0,   'comment_approved' => '1',   'comment_agent' => '',   'comment_type' => '',   'comment_parent' => 0,   'user_id' => 0, )` — The columns a stored comment has, each with what a new comment takes when it gives none (an integer column is read as one).
 
-Used by: `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Deferrals`, `Minn\Runtime\PostWrites`
+Used by: `Minn\Runtime\Attachments`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\Deferrals`, `Minn\Runtime\PostWrites`
 
 ### static `insert(mixed $commentdata): int`
 
@@ -2327,6 +2350,51 @@ not carry.
 - `@return array<string, string>`
 
 
+## FileNames
+
+`final class Minn\Runtime\FileNames` · `public/minn/src/Minn/Runtime/FileNames.php`
+
+Files as WordPress's file functions name and remove them: a name made
+safe to store, a name no file in the folder has, a file's type from its
+content as much as its name, and a file deleted (only inside the folder
+it should be in).
+
+Used by: `Minn\Runtime\Attachments`, `Minn\Runtime\FileUpload`
+
+### static `sanitize(mixed $filename): mixed`
+
+A file name safe to store (sanitize_file_name): accents transliterated,
+the special characters out, spaces and runs of dashes as one dash, no
+dots or dashes at the ends; an inner part that looks like an extension
+but is no type the site allows gets an underscore; a name that is only
+an extension becomes unnamed-file.{ext}; as sanitize_file_name leaves it.
+
+### static `neutralizeInnerExtensions(string $filename): string`
+
+An inner part of a file name that looks like an extension (two to five letters, maybe a digit) and is no allowed type, given an underscore.
+
+### static `unique(mixed $dir, mixed $filename, mixed $callback = NULL): mixed`
+
+A clean name no file in the folder has (wp_unique_filename): the name
+sanitized, its extension lowercased, a callback's name when one is
+given, else -1, -2... before the extension; as wp_unique_filename
+leaves it.
+
+### static `checkUpload(mixed $file, mixed $filename, mixed $mimes = NULL): mixed`
+
+A file's extension and type from its content as much as its name
+(wp_check_filetype_and_ext), with a corrected name when an image
+carried the wrong extension; as wp_check_filetype_and_ext leaves them.
+
+### static `delete(mixed $file): bool`
+
+A file deleted (wp_delete_file), as wp_delete_file names it; whether it went.
+
+### static `deleteFromDirectory(mixed $file, mixed $directory): bool`
+
+A file deleted only when it is inside the folder (wp_delete_file_from_directory); false when it is not, or not there.
+
+
 ## FileTypeCheck
 
 `final class Minn\Runtime\FileTypeCheck` · `public/minn/src/Minn/Runtime/FileTypeCheck.php`
@@ -2343,6 +2411,8 @@ the type must be one the site allows.
 - const `IMAGES` = `array (   'image/jpeg' => 'jpg',   'image/png' => 'png',   'image/gif' => 'gif',   'image/bmp' => 'bmp',   'image/tiff' => 'tif',   'image/webp' => 'webp',   'image/avif' => 'avif',   'image/heic' => 'heic', )` — The image types measured by their bytes, and the extension each takes.
 - const `TEXT_TYPES` = `array (   0 => 'text/plain',   1 => 'text/csv',   2 => 'application/csv',   3 => 'text/richtext',   4 => 'text/tsv',   5 => 'text/vtt', )`
 - const `CONTAINERS` = `array (   0 => 'application/octet-stream',   1 => 'application/encrypted',   2 => 'application/CDFV2-encrypted',   3 => 'application/zip', )`
+
+Used by: `Minn\Runtime\FileNames`
 
 ### static `check(string $file, string $filename, ?array $mimes, array $images): array`
 
@@ -2371,6 +2441,8 @@ user may upload anything; the uploads folder; a unique, clean name
 itself; the move; and wp_handle_upload over the result.
 
 - const `UPLOAD_ERRORS` = `array (   1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',   2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',   3 => 'The uploaded file was only partially uploaded.',   4 => 'No file was uploaded.',   6 => 'Missing a temporary folder.',   7 => 'Failed to write file to disk.',   8 => 'A PHP extension stopped the file upload.', )`
+
+Used by: `Minn\Rest\MediaController`
 
 ### static `handle(array $file, array|false $overrides, ?string $time, string $action): array`
 
@@ -2688,11 +2760,15 @@ The sitemap server, started the first time it is asked for (wp_sitemaps_get_serv
 
 The walker a menu is printed with when its arguments name none (new Walker_Nav_Menu).
 
+### static `attachmentMetadata(mixed $attachmentId, mixed $file): mixed`
+
+An attachment's metadata made from its file by the layer's image editors (wp_generate_attachment_metadata): sizes, previews, the file's size.
+
 ### static `newTheme(mixed ...$args): Minn\Objects\Theme`
 
 A theme by its folder and root (new WP_Theme).
 
-Internals: `answer()` (private, line 480)
+Internals: `answer()` (private, line 486)
 
 
 ## Heartbeat
@@ -2945,7 +3021,7 @@ attributes allowed in a context (data/kses.json, as wp_kses_allowed_html
 leaves them), content filtered to them, one attribute judged, and the
 null bytes taken out.
 
-Used by: `Minn\Blocks\Bindings`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PostData`, `Minn\Runtime\Shortcodes`
+Used by: `Minn\Blocks\Bindings`, `Minn\Runtime\Attachments`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PostData`, `Minn\Runtime\Shortcodes`
 
 
 ### static `table(): array`
@@ -4368,7 +4444,7 @@ A post's cached rows let go as WordPress lets them go: its row, its meta
 and the terms read with it, then plugins told (a page told twice); held
 back while cache invalidation is suspended.
 
-Used by: `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostWrites`
+Used by: `Minn\Runtime\Attachments`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\PostWrites`
 
 ### static `clean(mixed $post): void`
 
@@ -5361,7 +5437,7 @@ hangs off it, its terms and categories set, made sticky or not; each step
 with the actions the reference fires in its order, and the cached rows
 let go.
 
-Used by: `Minn\Cron\Cron`, `Minn\Rest\MediaController`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\UserWrites`
+Used by: `Minn\Cron\Cron`, `Minn\Rest\MediaController`, `Minn\Runtime\Attachments`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\UserWrites`
 
 ### static `insert(mixed $postarr, mixed $wpError = false, mixed $fireAfterHooks = true): mixed`
 
@@ -5729,7 +5805,7 @@ names or the objects); whether one exists, is hierarchical or viewable;
 and the features a post type supports. A name that is not text or a
 number finds nothing.
 
-Used by: `Minn\Auth\RegisteredCaps`, `Minn\Content\PostSlugs`, `Minn\Front\ToolbarMenus`, `Minn\Rest\BatchController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RegisteredType`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\ObjectTerms`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\FrontLifecycle`, `Minn\Widgets\WidgetForms`
+Used by: `Minn\Auth\RegisteredCaps`, `Minn\Content\PostSlugs`, `Minn\Front\ToolbarMenus`, `Minn\Rest\BatchController`, `Minn\Rest\Caller`, `Minn\Rest\Embed`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostObject`, `Minn\Rest\PostsController`, `Minn\Rest\RegisteredFields`, `Minn\Rest\RegisteredType`, `Minn\Rest\StatusesController`, `Minn\Rest\TermObject`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\Attachments`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentForm`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\EditLinks`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\ObjectTerms`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryStatus`, `Minn\Runtime\PostQueryTax`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostWrites`, `Minn\Runtime\Records`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWrites`, `Minn\Runtime\UserQueryRunner`, `Minn\Theme\FrontLifecycle`, `Minn\Widgets\WidgetForms`
 
 ### static `postType(mixed $type): ?object`
 
@@ -6210,7 +6286,7 @@ attributes. What it has not (an attachment's own link, smilies, the
 capital P, insecure home addresses) runs with the plugins' own
 callbacks.
 
-Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Can`, `Minn\Auth\Capabilities`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\CronCommand`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Http\NoCache`, `Minn\I18n\Gettext`, `Minn\I18n\Numbers`, `Minn\I18n\SiteLanguage`, `Minn\I18n\TranslationFiles`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\FileTypes`, `Minn\Media\Icons`, `Minn\Ops\AutoUpdates`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Query\DateSql`, `Minn\Query\TaxSql`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Constants`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileHeaders`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\Interactivity`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Notices`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Pages`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registered`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\SiteTime`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermFields`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Themes`, `Minn\Runtime\Transients`, `Minn\Runtime\Translations`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`, `Minn\Runtime\VersionCheck`, `Minn\Runtime\WidgetAreas`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Support\Text`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\StyleLayers`, `Minn\Theme\TemplateBuffer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
+Used by: `Minn\Admin\AppController`, `Minn\Admin\BootPayload`, `Minn\Admin\PackagesController`, `Minn\Admin\ThemesController`, `Minn\Auth\AuthCookies`, `Minn\Auth\Authenticator`, `Minn\Auth\Can`, `Minn\Auth\Capabilities`, `Minn\Auth\LoginThrottle`, `Minn\Auth\Nonce`, `Minn\Auth\PasswordReset`, `Minn\Auth\RegisteredCaps`, `Minn\Blocks\Bindings`, `Minn\Blocks\Dynamic\Theme\Comments`, `Minn\Blocks\Dynamic\Theme\Navigation`, `Minn\Blocks\Dynamic\Theme\PostBlocks`, `Minn\Blocks\Dynamic\Theme\QueryBlocks`, `Minn\Blocks\Dynamic\Theme\Structure`, `Minn\Blocks\Elements`, `Minn\Blocks\ImageTags`, `Minn\Blocks\Layout`, `Minn\Blocks\RenderState`, `Minn\Blocks\Renderer`, `Minn\Cli\CronCommand`, `Minn\Cli\Runtime`, `Minn\Content\Blocks`, `Minn\Content\MediaShortcodes`, `Minn\Content\PasswordGate`, `Minn\Content\PluginState`, `Minn\Content\PostSlugs`, `Minn\Content\PostWriter`, `Minn\Content\Reader`, `Minn\Content\Site`, `Minn\Content\Terms`, `Minn\Content\Texturize`, `Minn\Content\Users`, `Minn\Cron\Cron`, `Minn\Db`, `Minn\Engine`, `Minn\Extension\Extensions`, `Minn\Front\CommentPostController`, `Minn\Front\CustomLogo`, `Minn\Front\EmbedCard`, `Minn\Front\FeedTags`, `Minn\Front\FeedTemplates`, `Minn\Front\FrontController`, `Minn\Front\Permalinks`, `Minn\Front\PostEmbed`, `Minn\Front\ProbeController`, `Minn\Front\QueryMoves`, `Minn\Front\RequestParse`, `Minn\Front\Resolver`, `Minn\Front\RuleRoutes`, `Minn\Front\SingleQueries`, `Minn\Front\SitemapRequest`, `Minn\Front\ToolbarMarkup`, `Minn\Front\ToolbarMenus`, `Minn\Http\NoCache`, `Minn\I18n\Gettext`, `Minn\I18n\Numbers`, `Minn\I18n\SiteLanguage`, `Minn\I18n\TranslationFiles`, `Minn\Login\LoginController`, `Minn\Login\LoginHooks`, `Minn\Login\LoginNotices`, `Minn\Mail\Mailer`, `Minn\Media\FileTypes`, `Minn\Media\Icons`, `Minn\Ops\AutoUpdates`, `Minn\Ops\Updates`, `Minn\Ops\UpgraderRun`, `Minn\Query\DateSql`, `Minn\Query\TaxSql`, `Minn\Rest\Api`, `Minn\Rest\BatchController`, `Minn\Rest\BlockRendererController`, `Minn\Rest\BlockTypesController`, `Minn\Rest\Caller`, `Minn\Rest\CommentObject`, `Minn\Rest\CommentsController`, `Minn\Rest\Embed`, `Minn\Rest\InstalledThemesController`, `Minn\Rest\LiveSettings`, `Minn\Rest\MediaController`, `Minn\Rest\MenusController`, `Minn\Rest\PolicyGate`, `Minn\Rest\PostCollectionParams`, `Minn\Rest\PostListArgs`, `Minn\Rest\PostsController`, `Minn\Rest\PostsWriteController`, `Minn\Rest\RegisteredType`, `Minn\Rest\RenderedFields`, `Minn\Rest\Responses`, `Minn\Rest\RestMeta`, `Minn\Rest\RevisionsController`, `Minn\Rest\RuntimeEnvelope`, `Minn\Rest\RuntimePrepare`, `Minn\Rest\RuntimeRoutes`, `Minn\Rest\Services`, `Minn\Rest\SettingsController`, `Minn\Rest\SidebarsController`, `Minn\Rest\StatusesController`, `Minn\Rest\TemplatesController`, `Minn\Rest\TermFilters`, `Minn\Rest\TermsController`, `Minn\Rest\Types`, `Minn\Rest\UserCollectionParams`, `Minn\Rest\UsersController`, `Minn\Rest\WidgetsController`, `Minn\Runtime\Abilities`, `Minn\Runtime\AccountFlows`, `Minn\Runtime\AjaxController`, `Minn\Runtime\ApplicationPasswordEvents`, `Minn\Runtime\ApplicationPasswordRecords`, `Minn\Runtime\ApplicationPasswordSignIn`, `Minn\Runtime\ArchiveLinks`, `Minn\Runtime\AssetQueue`, `Minn\Runtime\AttachmentImages`, `Minn\Runtime\Attachments`, `Minn\Runtime\BlockFilters`, `Minn\Runtime\BlockHooks`, `Minn\Runtime\CommentChecks`, `Minn\Runtime\CommentEvents`, `Minn\Runtime\CommentFeedQuery`, `Minn\Runtime\CommentForm`, `Minn\Runtime\CommentPages`, `Minn\Runtime\CommentQueryRunner`, `Minn\Runtime\CommentReads`, `Minn\Runtime\CommentTags`, `Minn\Runtime\CommentWrites`, `Minn\Runtime\Constants`, `Minn\Runtime\CronEvents`, `Minn\Runtime\CurrentUser`, `Minn\Runtime\Deferrals`, `Minn\Runtime\DocumentTitle`, `Minn\Runtime\EditLinks`, `Minn\Runtime\FileHeaders`, `Minn\Runtime\FileNames`, `Minn\Runtime\FileUpload`, `Minn\Runtime\Heartbeat`, `Minn\Runtime\Interactivity`, `Minn\Runtime\KsesRules`, `Minn\Runtime\MainQuery`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\MenuItemMarks`, `Minn\Runtime\MetaData`, `Minn\Runtime\MetaKeys`, `Minn\Runtime\NavMenu`, `Minn\Runtime\NavMenuItems`, `Minn\Runtime\Notices`, `Minn\Runtime\OptionSanitizer`, `Minn\Runtime\OptionWrites`, `Minn\Runtime\Options`, `Minn\Runtime\OptionsGroup`, `Minn\Runtime\Pages`, `Minn\Runtime\Patterns`, `Minn\Runtime\PlaceholderTrace`, `Minn\Runtime\PluginActivation`, `Minn\Runtime\PluginFiles`, `Minn\Runtime\PluginRemoval`, `Minn\Runtime\PluginRequirements`, `Minn\Runtime\PluginUpdates`, `Minn\Runtime\Plugins`, `Minn\Runtime\PostCaches`, `Minn\Runtime\PostData`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostFields`, `Minn\Runtime\PostLinks`, `Minn\Runtime\PostQuery`, `Minn\Runtime\PostQueryResults`, `Minn\Runtime\PostQueryWhere`, `Minn\Runtime\PostReads`, `Minn\Runtime\PostRevisions`, `Minn\Runtime\PostSave`, `Minn\Runtime\PostTags`, `Minn\Runtime\PostWrites`, `Minn\Runtime\QueryArgs`, `Minn\Runtime\Records`, `Minn\Runtime\Registered`, `Minn\Runtime\RegisteredSettings`, `Minn\Runtime\Registry`, `Minn\Runtime\RequestHeaders`, `Minn\Runtime\RewriteRules`, `Minn\Runtime\ScriptModules`, `Minn\Runtime\Shortcodes`, `Minn\Runtime\SiteInfo`, `Minn\Runtime\SiteOptions`, `Minn\Runtime\SiteTime`, `Minn\Runtime\SiteUrls`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermFields`, `Minn\Runtime\TermLookup`, `Minn\Runtime\TermOrder`, `Minn\Runtime\TermQueryRunner`, `Minn\Runtime\TermQueryTree`, `Minn\Runtime\TermSave`, `Minn\Runtime\TermTags`, `Minn\Runtime\TermWriter`, `Minn\Runtime\TermWrites`, `Minn\Runtime\ThemeMods`, `Minn\Runtime\ThemeSupports`, `Minn\Runtime\ThemeSwitch`, `Minn\Runtime\Themes`, `Minn\Runtime\Transients`, `Minn\Runtime\Translations`, `Minn\Runtime\UpdateCounts`, `Minn\Runtime\Upgrade`, `Minn\Runtime\UserEvents`, `Minn\Runtime\UserQueryRunner`, `Minn\Runtime\UserSave`, `Minn\Runtime\UserWrites`, `Minn\Runtime\VersionCheck`, `Minn\Runtime\WidgetAreas`, `Minn\Support\Escape`, `Minn\Support\Kses`, `Minn\Support\KsesProtocols`, `Minn\Support\Sanitize`, `Minn\Support\Text`, `Minn\Theme\ArchiveTitle`, `Minn\Theme\ClassicContent`, `Minn\Theme\ClassicRenderer`, `Minn\Theme\EmbedRenderer`, `Minn\Theme\FeedHeaders`, `Minn\Theme\FrontLifecycle`, `Minn\Theme\GlobalStyles`, `Minn\Theme\HeadLinks`, `Minn\Theme\MainQueryBridge`, `Minn\Theme\PageRenderer`, `Minn\Theme\StyleLayers`, `Minn\Theme\TemplateBuffer`, `Minn\Theme\Templates`, `Minn\Theme\Theme`, `Minn\Theme\ThemeJsonData`
 
 ```php
 __construct(Minn\Context $context, bool $isAdmin = false)
@@ -7685,7 +7761,7 @@ no other term holds, an object's terms set, and the terms' counts kept
 through the taxonomy's own callback; each step with the actions the
 reference fires in its order.
 
-Used by: `Minn\Runtime\Deferrals`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`
+Used by: `Minn\Runtime\Attachments`, `Minn\Runtime\Deferrals`, `Minn\Runtime\MenuEvents`, `Minn\Runtime\PostEvents`, `Minn\Runtime\PostWrites`, `Minn\Runtime\TermEvents`, `Minn\Runtime\TermSave`
 
 ### static `insert(mixed $term, mixed $taxonomy, mixed $args = array ( )): mixed`
 
@@ -8252,6 +8328,10 @@ cleared or refused when something is there, the folder moved in (and
 walked by the symbol gate at its next check), and the result offered
 to upgrader_post_install.
 
+### static `unzip(mixed $file, mixed $to): mixed`
+
+An archive unpacked into a folder through the site's filesystem (unzip_file): true, or the error why not.
+
 ### static `unpack(Minn\Objects\Upgrader $upgrader, string $package): Minn\Objects\Errors|string`
 
 WP_Upgrader::unpack_package, without the package's deletion (the
@@ -8271,7 +8351,7 @@ Maintenance mode on, as a bulk update of active plugins turns it on: the .mainte
 
 Maintenance mode off; said only when it was on.
 
-Internals: `destinationFor()` (private, line 240), `clearOrRefuse()` (private, line 249), `move()` (private, line 270), `copyInto()` (private, line 281), `report()` (private, line 295), `setAside()` (private, line 313), `putBack()` (private, line 326), `forget()` (private, line 338), `backedUp()` (private, line 347), `listing()` (private, line 364)
+Internals: `destinationFor()` (private, line 253), `clearOrRefuse()` (private, line 262), `move()` (private, line 283), `copyInto()` (private, line 294), `report()` (private, line 308), `setAside()` (private, line 326), `putBack()` (private, line 339), `forget()` (private, line 351), `backedUp()` (private, line 360), `listing()` (private, line 377)
 
 
 ## UserEvents

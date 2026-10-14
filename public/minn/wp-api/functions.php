@@ -122,10 +122,7 @@ function wp_check_filetype($filename, $mimes = null)
 /** A file's extension and type from its content as much as its name (Minn\Runtime\FileTypeCheck), with a corrected name when an image carried the wrong extension. */
 function wp_check_filetype_and_ext($file, $filename, $mimes = null)
 {
-    $images = (array) apply_filters('getimagesize_mimes_to_exts', \Minn\Runtime\FileTypeCheck::IMAGES);
-    $checked = \Minn\Runtime\FileTypeCheck::check((string) $file, (string) $filename, is_array($mimes) ? $mimes : null, $images);
-    $result = ['ext' => $checked['ext'], 'type' => $checked['type'], 'proper_filename' => $checked['proper_filename']];
-    return apply_filters('wp_check_filetype_and_ext', $result, $file, $filename, $mimes, $checked['real_mime']);
+    return Minn\Runtime\FileNames::checkUpload($file, $filename, $mimes);
 }
 
 /** An image's real type from its header (Media\ImageMime), or false. */
@@ -215,32 +212,7 @@ function get_temp_dir()
  */
 function wp_unique_filename($dir, $filename, $unique_filename_callback = null)
 {
-    $filename = sanitize_file_name($filename);
-    $dot = strrpos($filename, '.');
-    $ext = $dot === false ? '' : substr($filename, $dot);
-    $name = $dot === false ? $filename : substr($filename, 0, $dot);
-    // The reference looks at the type and the uploads folder here, for an image's sub-size names.
-    wp_check_filetype($filename);
-    $uploads = rtrim((string) (wp_upload_dir()['path'] ?? ''), '/');
-    $dir = rtrim((string) $dir, '/');
-    $number = '';
-    // The uploads folder's files through pre_wp_unique_filename_file_list (probe filter-inputs-3); a list given is checked
-    // instead of the folder. Another folder is only looked at (probe functions-remaining).
-    $listed = $dir === $uploads ? apply_filters('pre_wp_unique_filename_file_list', null, $dir, $filename) : null;
-    $taken = is_array($listed) ? static fn (string $candidate): bool => in_array($candidate, $listed, true) : static fn (string $candidate): bool => file_exists($dir . '/' . $candidate);
-    if ($unique_filename_callback !== null && is_callable($unique_filename_callback)) {
-        // The callback is handed the whole file name and the extension (probe functions-remaining).
-        $candidate = (string) call_user_func($unique_filename_callback, $dir, $filename, $ext);
-    } else {
-        // A name that reads like a size of an image (-150x150, -scaled, -rotated) takes a number even when it is free (probe rest-attachments-sideload).
-        $number = preg_match('/-(?:\d+x\d+|scaled|rotated)$/', $name) === 1 ? 1 : '';
-        $candidate = $name . ($number === '' ? '' : '-' . $number) . strtolower($ext);
-        while ($taken($candidate)) {
-            $number = $number === '' ? 1 : $number + 1;
-            $candidate = $name . '-' . $number . strtolower($ext);
-        }
-    }
-    return apply_filters('wp_unique_filename', $candidate, $ext, $dir, $unique_filename_callback, [], $number);
+    return Minn\Runtime\FileNames::unique($dir, $filename, $unique_filename_callback);
 }
 
 

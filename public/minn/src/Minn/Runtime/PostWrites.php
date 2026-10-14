@@ -88,7 +88,7 @@ final class PostWrites
         }
         ['post_type' => $mergedType] = $merged + ['post_type' => null];
         if ($mergedType === 'attachment') {
-            return \wp_insert_attachment(Slashes::add($merged), false, 0, $wpError, $fireAfterHooks);
+            return Attachments::insert(Slashes::add($merged), false, 0, $wpError, $fireAfterHooks);
         }
         if (!isset($postarr['tags_input'])) {
             unset($merged['tags_input']);
@@ -112,7 +112,7 @@ final class PostWrites
             return self::trash($postId);
         }
         if ($post->post_type === 'attachment') {
-            return \wp_delete_attachment($postId, $force);
+            return Attachments::delete($postId, $force);
         }
         $hooks = Runtime::hooks();
         $check = $hooks->filter('pre_delete_post', [null, $post, $force]);

@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\Content\Comments;
+use Minn\Content\PostWriter;
 use Minn\Content\Posts;
 use Minn\Media\FileTypes;
 use Minn\Media\Kind;
 use Minn\Media\Metadata as StoredMetadata;
+use Minn\Media\PhotoMeta;
 use Minn\Media\Uploads;
+use Minn\Support\Lists;
 
 /**
  * Attachments as WordPress's media functions keep them: the uploads folder
@@ -189,5 +193,87 @@ final class Attachments
     public static function videoExtensions(): mixed
     {
         return Runtime::hooks()->filter('wp_video_extensions', [['mp4', 'm4v', 'webm', 'ogv', 'flv']]);
+    }
+
+    /**
+     * An attachment stored (wp_insert_attachment): the arguments over a file
+     * and no parent, the parent given, saved as a post of type attachment.
+     */
+    public static function insert(mixed $args, mixed $file = false, mixed $parentPostId = 0, mixed $wpError = false, mixed $fireAfterHooks = true): mixed
+    {
+        $data = Lists::args($args, ['file' => $file, 'post_parent' => 0]);
+        if (!empty($parentPostId)) {
+            $data = array_replace($data, ['post_parent' => (int) $parentPostId]);
+        }
+        $data = array_replace($data, ['post_type' => 'attachment']);
+        return PostWrites::insert($data, $wpError, $fireAfterHooks);
+    }
+
+    /**
+     * An attachment deleted (wp_delete_attachment): to the trash first
+     * unless forced or the media trash is off; unless pre_delete_attachment
+     * answers, its terms, comments and meta removed, the row between
+     * delete_post and deleted_post, then its files. The post, or null.
+     */
+    public static function delete(mixed $postId, mixed $force = false): mixed
+    {
+        $post = Records::post((int) $postId);
+        if ($post === null || $post->post_type !== 'attachment') {
+            return $post;
+        }
+        if (!$force && EMPTY_TRASH_DAYS && MEDIA_TRASH && $post->post_status !== 'trash') {
+            return PostWrites::trash($post->ID);
+        }
+        $hooks = Runtime::hooks();
+        $check = $hooks->filter('pre_delete_attachment', [null, $post, $force]);
+        if ($check !== null) {
+            return $check;
+        }
+        $meta = self::metadata($post->ID);
+        $backupSizes = MetaData::get('post', $post->ID, '_wp_attachment_backup_sizes', true);
+        $file = self::file($post->ID);
+        $hooks->action('delete_attachment', [$post->ID, $post]);
+        TermWrites::deleteObjectRelationships($post->ID, Registered::objectTaxonomies($post->post_type));
+        foreach ((new Comments(Runtime::current()->db))->idsOf($post->ID) as $commentId) {
+            CommentWrites::delete($commentId, true);
+        }
+        PostWrites::deleteMeta($post->ID);
+        $hooks->action('delete_post', [$post->ID, $post]);
+        $db = Runtime::current()->db;
+        (new PostWriter($db, new Posts($db), Runtime::current()->site))->destroy($post->ID);
+        $hooks->action('deleted_post', [$post->ID, $post]);
+        PostCaches::clean($post);
+        self::deleteFiles($post->ID, $meta, $backupSizes, $file);
+        return $post;
+    }
+
+    /** An attachment's files deleted, its sizes and backups too (wp_delete_attachment_files); false when any was missing or outside the uploads folder. */
+    public static function deleteFiles(mixed $postId, mixed $meta, mixed $backupSizes, mixed $file): bool
+    {
+        $deleted = true;
+        $base = self::uploadDir()['basedir'];
+        foreach (Uploads::attachmentFiles((string) $file, is_array($meta) ? $meta : [], is_array($backupSizes) ? $backupSizes : null) as $path) {
+            $deleted = FileNames::deleteFromDirectory($path, $base) && $deleted;
+        }
+        return $deleted;
+    }
+
+    /**
+     * A photo's own description from its IPTC and EXIF (wp_read_image_metadata),
+     * through wp_read_image_metadata_types and wp_read_image_metadata; false
+     * when there is no such file.
+     */
+    public static function readImageMetadata(mixed $file): mixed
+    {
+        if (!file_exists((string) $file)) {
+            return false;
+        }
+        $hooks = Runtime::hooks();
+        $types = (array) $hooks->filter('wp_read_image_metadata_types', [PhotoMeta::EXIF_TYPES]);
+        $read = PhotoMeta::read((string) $file, $types, static fn (string $text): string => KsesRules::post($text));
+        if ($read === null) {
+            return false;
+        }
+        return $hooks->filter('wp_read_image_metadata', [$read['meta'], $file, $read['type'], $read['iptc'], $read['exif']]);
     }
 }

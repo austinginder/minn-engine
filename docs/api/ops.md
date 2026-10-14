@@ -727,6 +727,8 @@ result, each with the folders to make and the space needed. An archive
 the reader cannot open is refused in the words of the library the
 reference falls back to.
 
+Used by: `Minn\Runtime\Upgrade`
+
 ```php
 __construct(object $filesystem, Closure $filter, int $dirMode, int $fileMode)
 ```

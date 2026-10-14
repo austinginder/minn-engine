@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Minn\Runtime;
 
+use Minn\I18n\Gettext;
 use Minn\Objects\Errors;
 use Minn\Objects\Upgrader;
+use Minn\Ops\Unzip;
 use Minn\Support\Files;
 use Minn\Support\Url;
 
@@ -187,6 +189,17 @@ final class Upgrade
         return $upgrader->result;
     }
 
+    /** An archive unpacked into a folder through the site's filesystem (unzip_file): true, or the error why not. */
+    public static function unzip(mixed $file, mixed $to): mixed
+    {
+        $filesystem = $GLOBALS['wp_filesystem'] ?? null;
+        if (!$filesystem || !is_object($filesystem)) {
+            return Handoff::newError('fs_unavailable', Gettext::text('Could not access filesystem.'));
+        }
+        $result = (new Unzip($filesystem, static fn (string $hook, mixed ...$args): mixed => Runtime::hooks()->filter($hook, $args), defined('FS_CHMOD_DIR') ? FS_CHMOD_DIR : 0755, defined('FS_CHMOD_FILE') ? FS_CHMOD_FILE : 0644))->into((string) $file, (string) $to);
+        return $result instanceof Refusal ? Handoff::newError($result->code, Gettext::text($result->message), $result->data) : $result;
+    }
+
     /**
      * WP_Upgrader::unpack_package, without the package's deletion (the
      * caller's): the upgrade folder emptied of what earlier passes left,
@@ -201,7 +214,7 @@ final class Upgrade
             Files::deleteTree("{$folder}/{$left}");
         }
         $working = $folder . '/' . basename(basename($package, '.tmp'), '.zip');
-        $unzipped = \unzip_file($package, $working);
+        $unzipped = self::unzip($package, $working);
         if ($unzipped instanceof Errors) {
             Files::deleteTree($working);
             return $unzipped->get_error_code() === 'incompatible_archive'

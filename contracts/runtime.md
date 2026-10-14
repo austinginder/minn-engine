@@ -16329,6 +16329,14 @@ image_downsize, wp_get_attachment_image_src, the srcset and sizes, wp_get_loadin
 wp_lazy_loading_enabled, image_hwstring, wp_get_attachment_image, get_site_icon_url and has_site_icon. The
 http-transports probe stays out of the comparison; the other probes give identical output before and after.
 
+**Batch 43, files and attachment writes.** `Runtime\FileNames` answers sanitize_file_name,
+wp_unique_filename, wp_check_filetype_and_ext, wp_delete_file and wp_delete_file_from_directory;
+`Attachments::insert()`, `delete()`, `deleteFiles()` and `readImageMetadata()` wp_insert_attachment,
+wp_delete_attachment, wp_delete_attachment_files and wp_read_image_metadata; `Upgrade::unzip()` unzip_file.
+The REST media upload takes its file through FileUpload::handle directly; an attachment's metadata is made by
+the image editors plugins choose, so the engine asks for it through `Handoff::attachmentMetadata()`. The
+http-transports probe stays out of the comparison; the other probes give identical output before and after.
+
 ## Open items register (2026-10-12)
 
 Every "Open", "Owed", "Left" and "Not taken" note above, checked against
